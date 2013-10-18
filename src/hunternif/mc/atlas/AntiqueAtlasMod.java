@@ -47,7 +47,7 @@ public class AntiqueAtlasMod {
 		MinecraftForge.EVENT_BUS.register(playerTracker);
 		GameRegistry.registerPlayerTracker(playerTracker);
 		KeyBindingRegistry.registerKeyBinding(new AtlasKeyHandler());
-		LanguageRegistry.instance().addStringLocalization(AtlasKeyHandler.KEY_DESCRIPTION_ATLAS, "en_US", "Open Antique Atlas");
+		LanguageRegistry.instance().addStringLocalization(AtlasKeyHandler.KEY_DESCRIPTION_ATLAS, "en_US", "Antique Atlas");
 	}
 	
 	@EventHandler

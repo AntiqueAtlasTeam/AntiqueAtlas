@@ -17,7 +17,7 @@ import cpw.mods.fml.common.TickType;
 public class AtlasKeyHandler extends KeyHandler {
 	public static final String KEY_DESCRIPTION_ATLAS = "antiqueatlas.key.atlas"; 
 	
-	public static final KeyBinding bindingJournal = new KeyBinding(KEY_DESCRIPTION_ATLAS, Keyboard.KEY_F);
+	public static final KeyBinding bindingJournal = new KeyBinding(KEY_DESCRIPTION_ATLAS, Keyboard.KEY_M);
 	
 	public AtlasKeyHandler() {
 		super(new KeyBinding[]{bindingJournal}, new boolean[]{false});

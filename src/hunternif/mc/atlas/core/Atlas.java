@@ -29,7 +29,7 @@ public class Atlas {
 	private static final String TAG_VISITED_CHUNKS = "qVisitedChunks";
 
 	/** In [chunks] */
-	public static double LOOK_RADIUS = 8;
+	public static double LOOK_RADIUS = 9;
 	/** In [ticks] */
 	public static int UPDATE_INTERVAL = 20;
 	
