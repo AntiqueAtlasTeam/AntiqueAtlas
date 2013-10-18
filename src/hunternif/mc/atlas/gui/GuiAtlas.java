@@ -1,5 +1,6 @@
 package hunternif.mc.atlas.gui;
 
+import hunternif.mc.atlas.core.MapTile;
 import hunternif.mc.atlas.core.PlayerInfo;
 import hunternif.mc.atlas.util.AtlasRenderHelper;
 import hunternif.mc.atlas.util.ShortVec2;

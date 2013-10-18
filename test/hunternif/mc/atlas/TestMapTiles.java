@@ -1,6 +1,6 @@
 package hunternif.mc.atlas;
 
-import hunternif.mc.atlas.gui.MapTile;
+import hunternif.mc.atlas.core.MapTile;
 import hunternif.mc.atlas.gui.MapTileStitcher;
 import hunternif.mc.atlas.util.ShortVec2;
 
@@ -31,10 +31,10 @@ public class TestMapTiles {
 	@Before
 	public void init() {
 		tiles = new HashMap<ShortVec2, MapTile>();
-		tile1 = new MapTile(-1);
-		tile2 = new MapTile(-1);
-		tile3 = new MapTile(-1);
-		tile4 = new MapTile(-1);
+		tile1 = new MapTile((byte)-1);
+		tile2 = new MapTile((byte)-1);
+		tile3 = new MapTile((byte)-1);
+		tile4 = new MapTile((byte)-1);
 	}
 	
 	@Test

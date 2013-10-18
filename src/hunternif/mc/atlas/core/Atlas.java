@@ -2,7 +2,6 @@ package hunternif.mc.atlas.core;
 
 import hunternif.mc.atlas.AntiqueAtlasMod;
 import hunternif.mc.atlas.core.ChunkBiomeAnalyzer.BiomeFlag;
-import hunternif.mc.atlas.gui.MapTile;
 import hunternif.mc.atlas.gui.MapTileStitcher;
 import hunternif.mc.atlas.network.MapDataPacket;
 import hunternif.mc.atlas.util.ShortVec2;
@@ -133,7 +132,7 @@ public class Atlas {
 				Chunk chunk = info.getPlayer().worldObj.getChunkFromChunkCoords(coords.x, coords.y);
 				int meanBiomeId = biomeAnalyzer.getChunkBiomeID(chunk);
 				if (meanBiomeId != BiomeFlag.NONE) {
-					putTile(seenChunks, coords, new MapTile(meanBiomeId));
+					putTile(seenChunks, coords, new MapTile((byte)meanBiomeId));
 				}
 			}
 		}

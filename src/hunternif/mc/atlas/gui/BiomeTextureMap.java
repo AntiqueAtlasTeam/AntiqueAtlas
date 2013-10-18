@@ -3,6 +3,8 @@ package hunternif.mc.atlas.gui;
 import static net.minecraft.world.biome.BiomeGenBase.*;
 import static hunternif.mc.atlas.gui.Textures.*;
 
+import hunternif.mc.atlas.core.MapTile;
+
 import java.util.ArrayList;
 import java.util.List;
 

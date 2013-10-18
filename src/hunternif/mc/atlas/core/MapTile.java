@@ -1,14 +1,16 @@
-package hunternif.mc.atlas.gui;
+package hunternif.mc.atlas.core;
+
+import hunternif.mc.atlas.gui.BiomeTextureMap;
 
 import java.util.Random;
 
 import net.minecraft.world.biome.BiomeGenBase;
 
 public class MapTile {
-	public int biomeID;
+	public byte biomeID;
 	
 	/** Used by randomized textures. */
-	public transient int variationNumber;
+	public transient byte variationNumber;
 	
 	// ========== Corner flags ==========
 	public static final byte CONVEX = 0;
@@ -28,13 +30,13 @@ public class MapTile {
 	}
 	
 	public MapTile(BiomeGenBase biome) {
-		this(biome.biomeID);
+		this((byte)biome.biomeID);
 	}
-	public MapTile(int biomeID) {
+	public MapTile(byte biomeID) {
 		this.biomeID = biomeID;
 		int maxVariations = BiomeTextureMap.instance().getVariations(getBiome());
 		if (maxVariations <= 0) variationNumber = 0;
-		else variationNumber = new Random().nextInt(maxVariations);
+		else variationNumber = (byte)(new Random().nextInt(maxVariations));
 	}
 	
 	public BiomeGenBase getBiome() {
