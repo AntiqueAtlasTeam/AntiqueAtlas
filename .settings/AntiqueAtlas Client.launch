@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<launchConfiguration type="org.eclipse.jdt.launching.localJavaApplication">
+<stringAttribute key="bad_container_name" value="\AntiqueAtlas\.sett"/>
+<setAttribute key="name.schedenig.eclipse.grepconsole.DisabledIds"/>
+<setAttribute key="name.schedenig.eclipse.grepconsole.EnabledIds"/>
+<setAttribute key="name.schedenig.eclipse.grepconsole.FilterDisabledIds"/>
+<setAttribute key="name.schedenig.eclipse.grepconsole.FilterEnabledIds"/>
+<listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_PATHS">
+<listEntry value="/AntiqueAtlas"/>
+</listAttribute>
+<listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_TYPES">
+<listEntry value="4"/>
+</listAttribute>
+<stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="net.minecraft.launchwrapper.Launch"/>
+<stringAttribute key="org.eclipse.jdt.launching.PROGRAM_ARGUMENTS" value="--version 1.6 --tweakClass cpw.mods.fml.common.launcher.FMLTweaker"/>
+<stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="AntiqueAtlas"/>
+<stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-Xincgc -Xmx1024M -Xms1024M"/>
+<stringAttribute key="org.eclipse.jdt.launching.WORKING_DIRECTORY" value="${workspace_loc:Minecraft/jars}"/>
+</launchConfiguration>
