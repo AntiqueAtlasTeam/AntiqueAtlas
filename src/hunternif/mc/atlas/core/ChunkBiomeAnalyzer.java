@@ -18,7 +18,7 @@ public class ChunkBiomeAnalyzer {
 		int[] biomeOccurences = new int[256];
 		for (int i = 0; i < chunk.getBiomeArray().length; i++) {
 			int biomeId = chunk.getBiomeArray()[i];
-			if (biomeId >= 0) {
+			if (biomeId >= 0 && BiomeGenBase.biomeList[biomeId] != null) {
 				// Water is more important than any other biome:
 				if (BiomeDictionary.isBiomeOfType(BiomeGenBase.biomeList[biomeId], Type.WATER)) {
 					biomeOccurences[biomeId] += 4;
