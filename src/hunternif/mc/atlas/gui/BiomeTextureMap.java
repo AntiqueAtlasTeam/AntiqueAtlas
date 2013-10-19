@@ -45,7 +45,7 @@ public enum BiomeTextureMap {
 		addTexture(jungle,		MAP_FOREST, MAP_FOREST2);
 		addTexture(taiga,		MAP_PINES, MAP_PINES2);
 		addTexture(taigaHills,	MAP_PINES, MAP_PINES2);
-		addTexture(swampland,	MAP_SWAMP, MAP_SWAMP2, MAP_SWAMP3, MAP_SWAMP4, MAP_SWAMP5);
+		addTexture(swampland,	MAP_SWAMP, MAP_SWAMP, MAP_SWAMP, MAP_SWAMP2, MAP_SWAMP3, MAP_SWAMP4, MAP_SWAMP5, MAP_SWAMP6);
 		addTexture(sky,			MAP_BEACH);
 		//addTexture(hell,		NETHER);
 		//addTexture(mushroomIsland, MUSHROOM);
