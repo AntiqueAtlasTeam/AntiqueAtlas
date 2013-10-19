@@ -27,9 +27,9 @@ public class GuiAtlas extends GuiScreen {
 	private static final double MAP_BLOCK_PIXEL_RATIO = 16d /*Chunk size*/ / MAP_TILE_SIZE;
 	private static final int MAP_WIDTH_IN_TILES = MAP_WIDTH / MAP_TILE_SIZE;
 	private static final int MAP_HEIGHT_IN_TILES = MAP_HEIGHT / MAP_TILE_SIZE;
-	private static final float PLAYER_ROTATION_STEPS = 8;
+	private static final float PLAYER_ROTATION_STEPS = 16;
 	private static final int PLAYER_ICON_WIDTH = 7;
-	private static final int PLAYER_ICON_HEIGHT = 16;
+	private static final int PLAYER_ICON_HEIGHT = 8;
 	
 	private PlayerInfo info;
 	private int guiLeft;
