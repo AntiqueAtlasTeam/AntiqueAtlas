@@ -5,10 +5,8 @@ import hunternif.mc.atlas.core.ChunkBiomeAnalyzer.BiomeFlag;
 import hunternif.mc.atlas.gui.MapTileStitcher;
 import hunternif.mc.atlas.network.MapDataPacket;
 import hunternif.mc.atlas.util.ShortVec2;
-import hunternif.mc.atlas.util.ShortVec3;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -36,11 +34,6 @@ public class Atlas {
 	 * CAREFUL! Don't chunk coordinates that are already put in the map! */
 	private Map<Integer /*dimension ID*/, Map<ShortVec2, MapTile>> dimensionMap =
 			new ConcurrentHashMap<Integer, Map<ShortVec2, MapTile>>();
-	/** All chunks that the info.getPlayer() has actually visited. This set is not saved
-	 * to NBT to force updating all seen chunks when the world is reloaded.
-	 * The 'y' in IntVec3 represents dimension id.
-	 * CAREFUL! Don't change coordinates that are already put in the map!*/
-	private transient Set<ShortVec3> visitedChunks = new HashSet<ShortVec3>();
 
 	private MapTileStitcher tileStitcher;
 	private ChunkBiomeAnalyzer biomeAnalyzer;
@@ -111,28 +104,26 @@ public class Atlas {
 		}
 		int playerX = MathHelper.floor_double(info.getPlayer().posX) >> 4;
 		int playerZ = MathHelper.floor_double(info.getPlayer().posZ) >> 4;
-		ShortVec3 coords3 = new ShortVec3(playerX, info.getPlayer().dimension, playerZ);
-		// Don't look around if the we've already *visited* (not just seen) this chunk
-		if (visitedChunks.contains(coords3)) {
-			return;
-		} else {
-			visitedChunks.add(coords3);
-		}
 		Map<ShortVec2, MapTile> seenChunks = getSeenChunksInDimension(info.getPlayer().dimension);
+		
 		// Look around in a circular area
+		ShortVec2 coords = new ShortVec2(0, 0);
 		for (double dx = -LOOK_RADIUS; dx <= LOOK_RADIUS; dx++) {
 			for (double dz = -LOOK_RADIUS; dz <= LOOK_RADIUS; dz++) {
 				if (dx*dx + dz*dz > LOOK_RADIUS*LOOK_RADIUS) {
 					continue; // Out of the circle of view
 				}
-				ShortVec2 coords = new ShortVec2(playerX + dx, playerZ + dz);
-				if (seenChunks.containsKey(coords)) {
+				coords.x = (short)(playerX + dx);
+				coords.y = (short)(playerZ + dz);
+				if (seenChunks.containsKey(coords) ||
+						!info.getPlayer().worldObj.
+						blockExists((int)coords.x << 4, 0, (int)coords.y << 4)) {
 					continue;
 				}
 				Chunk chunk = info.getPlayer().worldObj.getChunkFromChunkCoords(coords.x, coords.y);
 				int meanBiomeId = biomeAnalyzer.getChunkBiomeID(chunk);
 				if (meanBiomeId != BiomeFlag.NONE) {
-					putTile(seenChunks, coords, new MapTile((byte)meanBiomeId));
+					putTile(seenChunks, coords.copy(), new MapTile((byte)meanBiomeId));
 				}
 			}
 		}
