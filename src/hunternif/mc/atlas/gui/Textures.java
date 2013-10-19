@@ -18,6 +18,10 @@ public class Textures {
 	public static final ResourceLocation MAP_WATER = new ResourceLocation(GUI_MAP + "water.png");
 	public static final ResourceLocation MAP_FOREST = new ResourceLocation(GUI_MAP + "forest.png");
 	public static final ResourceLocation MAP_FOREST2 = new ResourceLocation(GUI_MAP + "forest2.png");
+	public static final ResourceLocation MAP_FOREST_HILLS = new ResourceLocation(GUI_MAP + "forest_hills.png");
+	public static final ResourceLocation MAP_FOREST_HILLS2 = new ResourceLocation(GUI_MAP + "forest_hills2.png");
+	public static final ResourceLocation MAP_FOREST_HILLS3 = new ResourceLocation(GUI_MAP + "forest_hills3.png");
+	public static final ResourceLocation MAP_FOREST_HILLS4 = new ResourceLocation(GUI_MAP + "forest_hills4.png");
 	public static final ResourceLocation MAP_HILLS = new ResourceLocation(GUI_MAP + "hills.png");
 	public static final ResourceLocation MAP_PINES = new ResourceLocation(GUI_MAP + "pines.png");
 	public static final ResourceLocation MAP_PINES2 = new ResourceLocation(GUI_MAP + "pines2.png");

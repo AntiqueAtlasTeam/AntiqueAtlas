@@ -69,43 +69,41 @@ public class GuiAtlas extends GuiScreen {
 				MapTile tile = tiles.get(chunkCoords);
 				if (tile != null) {
 					ResourceLocation texture = BiomeTextureMap.instance().getTexture(tile);
-					if (texture != null) {
-						if (tile.isSingleObject()) {
-							AtlasRenderHelper.drawTexturedRect(texture, screenX, screenY, 0, 0,
-									MAP_TILE_SIZE, MAP_TILE_SIZE, MAP_TILE_SIZE*2, MAP_TILE_SIZE*3);
-						} else {
-							// Top left corner:
-							if (tile.topLeft == MapTile.CONCAVE) { u = 2; v = 0; }
-							else if (tile.topLeft == MapTile.VERTICAL) { u = 0; v = 4; }
-							else if (tile.topLeft == MapTile.HORIZONTAL) { u = 2; v = 2; }
-							else if (tile.topLeft == MapTile.FULL) { u = 2; v = 4; } 
-							else if (tile.topLeft == MapTile.CONVEX) { u = 0; v = 2; }
-							drawCorner(texture, screenX, screenY, u, v);
-							
-							// Top right corner:
-							if (tile.topRight == MapTile.CONCAVE) { u = 3; v = 0; }
-							else if (tile.topRight == MapTile.VERTICAL) { u = 3; v = 4; }
-							else if (tile.topRight == MapTile.HORIZONTAL) { u = 1; v = 2; }
-							else if (tile.topRight == MapTile.FULL) { u = 1; v = 4; } 
-							else if (tile.topRight == MapTile.CONVEX) { u = 3; v = 2; }
-							drawCorner(texture, screenX + MAP_TILE_SIZE/2, screenY, u, v);
-							
-							// Bottom left corner:
-							if (tile.bottomLeft == MapTile.CONCAVE) { u = 2; v = 1; }
-							else if (tile.bottomLeft == MapTile.VERTICAL) { u = 0; v = 3; }
-							else if (tile.bottomLeft == MapTile.HORIZONTAL) { u = 2; v = 5; }
-							else if (tile.bottomLeft == MapTile.FULL) { u = 2; v = 3; } 
-							else if (tile.bottomLeft == MapTile.CONVEX) { u = 0; v = 5; }
-							drawCorner(texture, screenX, screenY + MAP_TILE_SIZE/2, u, v);
-							
-							// Bottom right corner:
-							if (tile.bottomRight == MapTile.CONCAVE) { u = 3; v = 1; }
-							else if (tile.bottomRight == MapTile.VERTICAL) { u = 3; v = 3; }
-							else if (tile.bottomRight == MapTile.HORIZONTAL) { u = 1; v = 5; }
-							else if (tile.bottomRight == MapTile.FULL) { u = 1; v = 3; } 
-							else if (tile.bottomRight == MapTile.CONVEX) { u = 3; v = 5; }
-							drawCorner(texture, screenX + MAP_TILE_SIZE/2, screenY + MAP_TILE_SIZE/2, u, v);
-						}
+					if (tile.isSingleObject()) {
+						AtlasRenderHelper.drawTexturedRect(texture, screenX, screenY, 0, 0,
+								MAP_TILE_SIZE, MAP_TILE_SIZE, MAP_TILE_SIZE*2, MAP_TILE_SIZE*3);
+					} else {
+						// Top left corner:
+						if (tile.topLeft == MapTile.CONCAVE) { u = 2; v = 0; }
+						else if (tile.topLeft == MapTile.VERTICAL) { u = 0; v = 4; }
+						else if (tile.topLeft == MapTile.HORIZONTAL) { u = 2; v = 2; }
+						else if (tile.topLeft == MapTile.FULL) { u = 2; v = 4; } 
+						else if (tile.topLeft == MapTile.CONVEX) { u = 0; v = 2; }
+						drawCorner(texture, screenX, screenY, u, v);
+						
+						// Top right corner:
+						if (tile.topRight == MapTile.CONCAVE) { u = 3; v = 0; }
+						else if (tile.topRight == MapTile.VERTICAL) { u = 3; v = 4; }
+						else if (tile.topRight == MapTile.HORIZONTAL) { u = 1; v = 2; }
+						else if (tile.topRight == MapTile.FULL) { u = 1; v = 4; } 
+						else if (tile.topRight == MapTile.CONVEX) { u = 3; v = 2; }
+						drawCorner(texture, screenX + MAP_TILE_SIZE/2, screenY, u, v);
+						
+						// Bottom left corner:
+						if (tile.bottomLeft == MapTile.CONCAVE) { u = 2; v = 1; }
+						else if (tile.bottomLeft == MapTile.VERTICAL) { u = 0; v = 3; }
+						else if (tile.bottomLeft == MapTile.HORIZONTAL) { u = 2; v = 5; }
+						else if (tile.bottomLeft == MapTile.FULL) { u = 2; v = 3; } 
+						else if (tile.bottomLeft == MapTile.CONVEX) { u = 0; v = 5; }
+						drawCorner(texture, screenX, screenY + MAP_TILE_SIZE/2, u, v);
+						
+						// Bottom right corner:
+						if (tile.bottomRight == MapTile.CONCAVE) { u = 3; v = 1; }
+						else if (tile.bottomRight == MapTile.VERTICAL) { u = 3; v = 3; }
+						else if (tile.bottomRight == MapTile.HORIZONTAL) { u = 1; v = 5; }
+						else if (tile.bottomRight == MapTile.FULL) { u = 1; v = 3; } 
+						else if (tile.bottomRight == MapTile.CONVEX) { u = 3; v = 5; }
+						drawCorner(texture, screenX + MAP_TILE_SIZE/2, screenY + MAP_TILE_SIZE/2, u, v);
 					}
 				}
 				chunkCoords.y++;
