@@ -30,4 +30,6 @@ public class Textures {
 	public static final ResourceLocation MAP_SWAMP4 = new ResourceLocation(GUI_MAP + "swamp4.png");
 	public static final ResourceLocation MAP_SWAMP5 = new ResourceLocation(GUI_MAP + "swamp5.png");
 	public static final ResourceLocation MAP_SWAMP6 = new ResourceLocation(GUI_MAP + "swamp6.png");
+	public static final ResourceLocation MAP_MUSHROOM = new ResourceLocation(GUI_MAP + "mushroom.png");
+	public static final ResourceLocation MAP_MUSHROOM2 = new ResourceLocation(GUI_MAP + "mushroom2.png");
 }

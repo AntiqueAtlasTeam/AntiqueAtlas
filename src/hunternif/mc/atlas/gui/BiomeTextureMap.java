@@ -48,7 +48,7 @@ public enum BiomeTextureMap {
 		addTexture(swampland,	MAP_SWAMP, MAP_SWAMP, MAP_SWAMP, MAP_SWAMP2, MAP_SWAMP3, MAP_SWAMP4, MAP_SWAMP5, MAP_SWAMP6);
 		addTexture(sky,			MAP_BEACH);
 		//addTexture(hell,		NETHER);
-		//addTexture(mushroomIsland, MUSHROOM);
+		addTexture(mushroomIsland, MAP_MUSHROOM, MAP_MUSHROOM2);
 		addTexture(mushroomIslandShore, MAP_BEACH);
 	}
 
