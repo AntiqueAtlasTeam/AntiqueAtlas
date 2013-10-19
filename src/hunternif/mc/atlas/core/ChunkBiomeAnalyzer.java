@@ -19,9 +19,13 @@ public class ChunkBiomeAnalyzer {
 		for (int i = 0; i < chunk.getBiomeArray().length; i++) {
 			int biomeId = chunk.getBiomeArray()[i];
 			if (biomeId >= 0 && BiomeGenBase.biomeList[biomeId] != null) {
-				// Water is more important than any other biome:
 				if (BiomeDictionary.isBiomeOfType(BiomeGenBase.biomeList[biomeId], Type.WATER)) {
+					// Water is important to show connected rivers:
 					biomeOccurences[biomeId] += 4;
+				} else if (BiomeDictionary.isBiomeOfType(BiomeGenBase.biomeList[biomeId], Type.SWAMP)) {
+					// Swamps are often intermingled with water, but they look
+					// like water themselves, so they take precedence:
+					biomeOccurences[biomeId] += 6;
 				} else {
 					biomeOccurences[biomeId] ++;
 				}
