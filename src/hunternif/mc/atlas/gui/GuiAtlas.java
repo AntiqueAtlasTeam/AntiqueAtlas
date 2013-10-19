@@ -27,9 +27,9 @@ public class GuiAtlas extends GuiScreen {
 	private static final double MAP_BLOCK_PIXEL_RATIO = 16d /*Chunk size*/ / MAP_TILE_SIZE;
 	private static final int MAP_WIDTH_IN_TILES = MAP_WIDTH / MAP_TILE_SIZE;
 	private static final int MAP_HEIGHT_IN_TILES = MAP_HEIGHT / MAP_TILE_SIZE;
-	private static final float PLAYER_ROTATION_STEPS = 16;
-	private static final int PLAYER_ICON_WIDTH = 8;
-	private static final int PLAYER_ICON_HEIGHT = 8;
+	private static final float PLAYER_ROTATION_STEPS = 8;
+	private static final int PLAYER_ICON_WIDTH = 7;
+	private static final int PLAYER_ICON_HEIGHT = 16;
 	
 	private PlayerInfo info;
 	private int guiLeft;
@@ -122,7 +122,7 @@ public class GuiAtlas extends GuiScreen {
 		GL11.glTranslated(CONTENT_X + guiLeft + MAP_WIDTH/2 + offsetX, guiTop + CONTENT_Y + MAP_HEIGHT/2 + offsetZ, 0);
 		float playerRotation = (float) Math.round(info.getPlayer().rotationYaw / 360f * PLAYER_ROTATION_STEPS) / PLAYER_ROTATION_STEPS * 360f;
 		GL11.glRotatef(180 + playerRotation, 0, 0, 1);
-		GL11.glTranslatef(-PLAYER_ICON_WIDTH/2, -PLAYER_ICON_HEIGHT/2, 0);
+		GL11.glTranslatef(-(float)PLAYER_ICON_WIDTH/2f, -(float)PLAYER_ICON_HEIGHT/2f, 0);
 		AtlasRenderHelper.drawFullTexture(Textures.MAP_PLAYER, 0, 0, PLAYER_ICON_WIDTH, PLAYER_ICON_HEIGHT);
 		GL11.glPopMatrix();
 	}
