@@ -1,35 +1,7 @@
 package hunternif.mc.atlas.gui;
 
-import static hunternif.mc.atlas.gui.Textures.MAP_BEACH;
-import static hunternif.mc.atlas.gui.Textures.MAP_FOREST;
-import static hunternif.mc.atlas.gui.Textures.MAP_FOREST2;
-import static hunternif.mc.atlas.gui.Textures.MAP_HILLS;
-import static hunternif.mc.atlas.gui.Textures.MAP_MOUNTAINS;
-import static hunternif.mc.atlas.gui.Textures.MAP_MOUNTAINS2;
-import static hunternif.mc.atlas.gui.Textures.MAP_PINES;
-import static hunternif.mc.atlas.gui.Textures.MAP_PINES2;
-import static hunternif.mc.atlas.gui.Textures.MAP_PLAINS;
-import static hunternif.mc.atlas.gui.Textures.MAP_SAND;
-import static hunternif.mc.atlas.gui.Textures.MAP_WATER;
-import static net.minecraft.world.biome.BiomeGenBase.beach;
-import static net.minecraft.world.biome.BiomeGenBase.desert;
-import static net.minecraft.world.biome.BiomeGenBase.desertHills;
-import static net.minecraft.world.biome.BiomeGenBase.extremeHills;
-import static net.minecraft.world.biome.BiomeGenBase.extremeHillsEdge;
-import static net.minecraft.world.biome.BiomeGenBase.forest;
-import static net.minecraft.world.biome.BiomeGenBase.forestHills;
-import static net.minecraft.world.biome.BiomeGenBase.frozenOcean;
-import static net.minecraft.world.biome.BiomeGenBase.frozenRiver;
-import static net.minecraft.world.biome.BiomeGenBase.iceMountains;
-import static net.minecraft.world.biome.BiomeGenBase.jungle;
-import static net.minecraft.world.biome.BiomeGenBase.jungleHills;
-import static net.minecraft.world.biome.BiomeGenBase.mushroomIslandShore;
-import static net.minecraft.world.biome.BiomeGenBase.ocean;
-import static net.minecraft.world.biome.BiomeGenBase.plains;
-import static net.minecraft.world.biome.BiomeGenBase.river;
-import static net.minecraft.world.biome.BiomeGenBase.sky;
-import static net.minecraft.world.biome.BiomeGenBase.taiga;
-import static net.minecraft.world.biome.BiomeGenBase.taigaHills;
+import static hunternif.mc.atlas.gui.Textures.*;
+import static net.minecraft.world.biome.BiomeGenBase.*;
 import hunternif.mc.atlas.core.MapTile;
 
 import java.util.ArrayList;
@@ -62,7 +34,7 @@ public enum BiomeTextureMap {
 		addTexture(beach,		MAP_BEACH);
 		addTexture(desert,		MAP_SAND);
 		addTexture(plains,		MAP_PLAINS);
-		//addTexture(icePlains,	null);
+		//addTexture(icePlains,	MAP_PLAINS);
 		addTexture(jungleHills,	MAP_MOUNTAINS, MAP_MOUNTAINS2);
 		addTexture(forestHills,	MAP_MOUNTAINS, MAP_MOUNTAINS2);
 		addTexture(desertHills,	MAP_HILLS);
@@ -73,7 +45,7 @@ public enum BiomeTextureMap {
 		addTexture(jungle,		MAP_FOREST, MAP_FOREST2);
 		addTexture(taiga,		MAP_PINES, MAP_PINES2);
 		addTexture(taigaHills,	MAP_PINES, MAP_PINES2);
-		//addTexture(swampland,	SWAMP);
+		addTexture(swampland,	MAP_SWAMP, MAP_SWAMP2, MAP_SWAMP3, MAP_SWAMP4, MAP_SWAMP5);
 		addTexture(sky,			MAP_BEACH);
 		//addTexture(hell,		NETHER);
 		//addTexture(mushroomIsland, MUSHROOM);
