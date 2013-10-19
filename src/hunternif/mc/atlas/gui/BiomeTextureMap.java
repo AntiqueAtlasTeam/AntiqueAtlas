@@ -41,14 +41,14 @@ public enum BiomeTextureMap {
 		addTexture(desert,		MAP_SAND);
 		addTexture(plains,		MAP_PLAINS);
 		//addTexture(icePlains,	MAP_PLAINS);
-		addTexture(jungleHills,	MAP_FOREST_HILLS, MAP_FOREST_HILLS2);
+		addTexture(jungleHills,	MAP_JUNGLE_HILLS, MAP_JUNGLE_HILLS2);
 		addTexture(forestHills,	MAP_FOREST_HILLS, MAP_FOREST_HILLS2);
 		addTexture(desertHills,	MAP_HILLS);
 		addTexture(extremeHills,	 MAP_MOUNTAINS, MAP_MOUNTAINS2);
 		addTexture(extremeHillsEdge, MAP_MOUNTAINS, MAP_MOUNTAINS2);
 		addTexture(iceMountains,MAP_MOUNTAINS, MAP_MOUNTAINS2);
 		addTexture(forest,		MAP_FOREST, MAP_FOREST2);
-		addTexture(jungle,		MAP_FOREST, MAP_FOREST2);
+		addTexture(jungle,		MAP_JUNGLE, MAP_JUNGLE2);
 		addTexture(taiga,		MAP_PINES, MAP_PINES2, MAP_PINES3);
 		addTexture(taigaHills,	MAP_PINES_HILLS, MAP_PINES_HILLS2, MAP_PINES_HILLS3);
 		addTexture(swampland,	MAP_SWAMP, MAP_SWAMP, MAP_SWAMP, MAP_SWAMP2, MAP_SWAMP3, MAP_SWAMP4, MAP_SWAMP5, MAP_SWAMP6);
