@@ -24,6 +24,9 @@ public class Textures {
 	public static final ResourceLocation MAP_PINES = new ResourceLocation(GUI_MAP + "pines.png");
 	public static final ResourceLocation MAP_PINES2 = new ResourceLocation(GUI_MAP + "pines2.png");
 	public static final ResourceLocation MAP_PINES3 = new ResourceLocation(GUI_MAP + "pines3.png");
+	public static final ResourceLocation MAP_PINES_HILLS = new ResourceLocation(GUI_MAP + "pines_hills.png");
+	public static final ResourceLocation MAP_PINES_HILLS2 = new ResourceLocation(GUI_MAP + "pines_hills2.png");
+	public static final ResourceLocation MAP_PINES_HILLS3 = new ResourceLocation(GUI_MAP + "pines_hills3.png");
 	public static final ResourceLocation MAP_SAND = new ResourceLocation(GUI_MAP + "sand.png");
 	public static final ResourceLocation MAP_BEACH = new ResourceLocation(GUI_MAP + "beach.png");
 	public static final ResourceLocation MAP_PLAINS = new ResourceLocation(GUI_MAP + "plains.png");
