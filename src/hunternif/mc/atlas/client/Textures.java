@@ -1,4 +1,4 @@
-package hunternif.mc.atlas.gui;
+package hunternif.mc.atlas.client;
 
 import hunternif.mc.atlas.AntiqueAtlasMod;
 import net.minecraft.util.ResourceLocation;

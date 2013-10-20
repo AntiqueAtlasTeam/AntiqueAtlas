@@ -23,7 +23,7 @@ import cpw.mods.fml.common.registry.LanguageRegistry;
 public class AntiqueAtlasMod {
 	public static final String ID = "antiqueatlas";
 	public static final String NAME = "Antique Atlas";
-	public static final String VERSION = "1.0";
+	public static final String VERSION = "1.1";
 	public static final String CHANNEL = ID;
 	
 	@Instance(ID)
@@ -31,7 +31,7 @@ public class AntiqueAtlasMod {
 	
 	public static Logger logger;
 	
-	@SidedProxy(clientSide="hunternif.mc.atlas.ClientProxy", serverSide="hunternif.mc.atlas.CommonProxy")
+	@SidedProxy(clientSide="hunternif.mc.atlas.client.ClientProxy", serverSide="hunternif.mc.atlas.CommonProxy")
 	public static CommonProxy proxy;
 	
 	public static PlayerTracker playerTracker = new PlayerTracker();
@@ -39,11 +39,12 @@ public class AntiqueAtlasMod {
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent event) {
 		logger = event.getModLog();
+		proxy.preInit(event);
 	}
 	
 	@EventHandler
 	public void init(FMLInitializationEvent event){
-		proxy.init();
+		proxy.init(event);
 		MinecraftForge.EVENT_BUS.register(playerTracker);
 		GameRegistry.registerPlayerTracker(playerTracker);
 		KeyBindingRegistry.registerKeyBinding(new AtlasKeyHandler());
@@ -52,6 +53,6 @@ public class AntiqueAtlasMod {
 	
 	@EventHandler
 	public void postInit(FMLPostInitializationEvent event) {
-		proxy.postInit();
+		proxy.postInit(event);
 	}
 }

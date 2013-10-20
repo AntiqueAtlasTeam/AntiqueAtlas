@@ -1,7 +1,7 @@
 package hunternif.mc.atlas;
 
+import hunternif.mc.atlas.client.GuiAtlas;
 import hunternif.mc.atlas.core.PlayerInfo;
-import hunternif.mc.atlas.gui.GuiAtlas;
 
 import java.util.EnumSet;
 

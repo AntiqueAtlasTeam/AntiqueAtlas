@@ -1,8 +1,8 @@
 package hunternif.mc.atlas.core;
 
 import hunternif.mc.atlas.AntiqueAtlasMod;
+import hunternif.mc.atlas.client.MapTileStitcher;
 import hunternif.mc.atlas.core.ChunkBiomeAnalyzer.BiomeFlag;
-import hunternif.mc.atlas.gui.MapTileStitcher;
 import hunternif.mc.atlas.network.MapDataPacket;
 import hunternif.mc.atlas.util.ShortVec2;
 

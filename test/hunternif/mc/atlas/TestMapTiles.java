@@ -1,14 +1,13 @@
 package hunternif.mc.atlas;
 
+import hunternif.mc.atlas.client.MapTileStitcher;
 import hunternif.mc.atlas.core.MapTile;
-import hunternif.mc.atlas.gui.MapTileStitcher;
 import hunternif.mc.atlas.util.ShortVec2;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import junit.framework.Assert;
-import net.minecraft.world.biome.BiomeGenBase;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -16,7 +15,7 @@ import org.junit.Test;
 public class TestMapTiles {
 	private static class BlindStitcher extends MapTileStitcher {
 		@Override
-		public boolean shouldStitch(BiomeGenBase... biomes) {
+		public boolean shouldStitch(int ... biomeIDs) {
 			return true;
 		}
 	}

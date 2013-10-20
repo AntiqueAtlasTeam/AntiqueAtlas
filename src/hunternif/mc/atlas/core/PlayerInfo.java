@@ -1,6 +1,6 @@
 package hunternif.mc.atlas.core;
 
-import hunternif.mc.atlas.gui.MapTileStitcher;
+import hunternif.mc.atlas.client.MapTileStitcher;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;

@@ -1,11 +1,9 @@
-package hunternif.mc.atlas.gui;
+package hunternif.mc.atlas.client;
 
 import hunternif.mc.atlas.core.MapTile;
 import hunternif.mc.atlas.util.ShortVec2;
 
 import java.util.Map;
-
-import net.minecraft.world.biome.BiomeGenBase;
 
 public class MapTileStitcher {
 	public static final MapTileStitcher instance = new MapTileStitcher();
@@ -31,7 +29,7 @@ public class MapTileStitcher {
 		stitchSquare(tile, right, bottom, bottomRight);
 	}
 	public void stitchVertically(MapTile upper, MapTile lower) {
-		if (upper == null || lower == null || !shouldStitch(upper.getBiome(), lower.getBiome())) return;
+		if (upper == null || lower == null || !shouldStitch(upper.biomeID, lower.biomeID)) return;
 		if (upper.bottomLeft == MapTile.CONVEX) upper.bottomLeft = MapTile.VERTICAL;
 		if (upper.bottomLeft == MapTile.HORIZONTAL) upper.bottomLeft = MapTile.CONCAVE;
 		if (upper.bottomRight == MapTile.CONVEX) upper.bottomRight = MapTile.VERTICAL;
@@ -42,7 +40,7 @@ public class MapTileStitcher {
 		if (lower.topRight == MapTile.HORIZONTAL) lower.topRight = MapTile.CONCAVE;
 	}
 	public void stitchHorizontally(MapTile left, MapTile right) {
-		if (left == null || right == null || !shouldStitch(left.getBiome(), right.getBiome())) return;
+		if (left == null || right == null || !shouldStitch(left.biomeID, right.biomeID)) return;
 		if (left.topRight == MapTile.CONVEX) left.topRight = MapTile.HORIZONTAL;
 		if (left.topRight == MapTile.VERTICAL) left.topRight = MapTile.CONCAVE;
 		if (left.bottomRight == MapTile.CONVEX) left.bottomRight = MapTile.HORIZONTAL;
@@ -55,7 +53,7 @@ public class MapTileStitcher {
 	public void stitchSquare(MapTile topLeft, MapTile topRight,
 							MapTile bottomLeft, MapTile bottomRight) {
 		if (topLeft == null || topRight == null || bottomLeft == null || bottomRight == null ||
-				!shouldStitch(topLeft.getBiome(), topRight.getBiome(), bottomLeft.getBiome(), bottomRight.getBiome())) {
+				!shouldStitch(topLeft.biomeID, topRight.biomeID, bottomLeft.biomeID, bottomRight.biomeID)) {
 			return;
 		}
 		topLeft.bottomRight = MapTile.FULL;
@@ -64,7 +62,7 @@ public class MapTileStitcher {
 		bottomRight.topLeft = MapTile.FULL;
 	}
 	
-	public boolean shouldStitch(BiomeGenBase ... biomes) {
-		return BiomeTextureMap.instance().haveSameTexture(biomes);
+	public boolean shouldStitch(int ... biomeIDs) {
+		return BiomeTextureMap.instance().haveSameTexture(biomeIDs);
 	}
 }

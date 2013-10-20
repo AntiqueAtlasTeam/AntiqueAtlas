@@ -1,4 +1,4 @@
-package hunternif.mc.atlas.gui;
+package hunternif.mc.atlas.client;
 
 import hunternif.mc.atlas.core.MapTile;
 import hunternif.mc.atlas.core.PlayerInfo;
