@@ -1,5 +1,6 @@
 package hunternif.mc.atlas;
 
+import hunternif.mc.atlas.client.BiomeTextureMap;
 import hunternif.mc.atlas.client.MapTileStitcher;
 import hunternif.mc.atlas.core.MapTile;
 import hunternif.mc.atlas.util.ShortVec2;
@@ -10,6 +11,7 @@ import java.util.Map;
 import junit.framework.Assert;
 
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 public class TestMapTiles {
@@ -27,13 +29,18 @@ public class TestMapTiles {
 	private MapTile tile3;
 	private MapTile tile4;
 	
+	@BeforeClass
+	public static void setup() {
+		BiomeTextureMap.instance().addTexture(-1);
+	}
+	
 	@Before
 	public void init() {
 		tiles = new HashMap<ShortVec2, MapTile>();
-		tile1 = new MapTile((byte)-1);
-		tile2 = new MapTile((byte)-1);
-		tile3 = new MapTile((byte)-1);
-		tile4 = new MapTile((byte)-1);
+		tile1 = new MapTile(-1);
+		tile2 = new MapTile(-1);
+		tile3 = new MapTile(-1);
+		tile4 = new MapTile(-1);
 	}
 	
 	@Test
