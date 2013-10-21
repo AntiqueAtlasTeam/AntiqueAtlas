@@ -31,7 +31,7 @@ public class AntiqueAtlasMod {
 	
 	public static Logger logger;
 	
-	@SidedProxy(clientSide="hunternif.mc.atlas.client.ClientProxy", serverSide="hunternif.mc.atlas.CommonProxy")
+	@SidedProxy(clientSide="hunternif.mc.atlas.ClientProxy", serverSide="hunternif.mc.atlas.CommonProxy")
 	public static CommonProxy proxy;
 	
 	public static PlayerTracker playerTracker = new PlayerTracker();

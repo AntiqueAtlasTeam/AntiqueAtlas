@@ -1,6 +1,7 @@
-package hunternif.mc.atlas.client;
+package hunternif.mc.atlas;
 
-import hunternif.mc.atlas.CommonProxy;
+import hunternif.mc.atlas.client.BiomeTextureMap;
+import hunternif.mc.atlas.client.Config;
 
 import java.io.File;
 
