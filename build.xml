@@ -1,0 +1,60 @@
+<?xml version="1.0"?>
+<project name="AntiqueAtlas" default="build-release">
+
+	<property file="local.properties" />
+	<property file="build.properties"/>
+
+	<property name="mcp.src" value="${dir.mcp}/src/minecraft" />
+
+	<target name="copy_src">
+		<copy todir="${mcp.src}" verbose="true">
+			<fileset dir="src" excludes="assets/**,mcmod.info,*.png"/>
+		</copy>
+	</target>
+	<target name="clean">
+		<delete verbose="true">
+		<!-- delete copied sources -->
+			<fileset dir="${mcp.src}">
+				<present present="both" targetdir="src" />
+			</fileset>
+		<!-- delete empty directories -->
+			<dirset dir="${mcp.src}">
+				<present present="both" targetdir="src" />
+				<size value="0"/>
+			</dirset>
+		</delete>
+	</target>
+
+	<target name="recompile">
+		<exec dir="${dir.mcp}" executable="cmd" osfamily="windows">
+			<arg line="/c recompile.bat" />
+		</exec>
+		<exec dir="${dir.mcp}" executable="bash" osfamily="unix">
+			<arg line="recompile.sh" />
+		</exec>
+	</target>
+	<target name="reobfuscate">
+		<exec dir="${dir.mcp}" executable="cmd" osfamily="windows">
+			<arg line="/c reobfuscate_srg.bat" />
+		</exec>
+		<exec dir="${dir.mcp}" executable="bash" osfamily="unix">
+			<arg line="reobfuscate_srg.sh" />
+		</exec>
+	</target>
+
+	<target name="package">
+		<mkdir dir="${dir.release}" />
+		<zip destfile="${dir.release}/${mod.name}-${mod.version}-mc${minecraft.version}.zip">
+			<fileset dir="${dir.mcp}/reobf/minecraft" />
+			<fileset dir="src" includes="assets/**,mcmod.info,*.png"/>
+		</zip>
+	</target>
+
+	<target name="build-release">
+		<antcall target="copy_src" />
+		<antcall target="recompile" />
+		<antcall target="reobfuscate" />
+		<antcall target="package" />
+		<antcall target="clean" />
+	</target>
+</project>
