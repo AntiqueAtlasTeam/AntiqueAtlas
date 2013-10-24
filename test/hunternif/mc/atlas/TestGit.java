@@ -20,10 +20,9 @@ public class TestGit {
 			System.out.println(git.getRepository().getBranch());
 			Ref master = git.getRepository().getRef("master");
 			List<Ref> branches = Arrays.asList(master);
-			git.getRepository().getTags();
 			List<Ref> tags = git.tagList().call();
 			
-			// Only interested tags on branch "master":
+			// Only interested in tags on branch "master":
 			RevWalk rw = new RevWalk(git.getRepository());
 			Ref tag = null;
 			rw.setRetainBody(false);

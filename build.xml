@@ -20,16 +20,34 @@
 		<script language="javascript" classpathref="jgit">
 			<![CDATA[
 			importClass(java.io.File);
+			importClass(java.util.Arrays);
 			importClass(Packages.org.eclipse.jgit.api.Git);
-			importClass(Packages.org.eclipse.jgit.lib.ObjectId);
+			importClass(Packages.org.eclipse.jgit.revwalk.RevWalk);
+			importClass(Packages.org.eclipse.jgit.revwalk.RevWalkUtils);
 			
 			var git = Git.open(new File("."));
 			
+			// We need to find the last tag that is reachable from the branch "master"
+			var master = git.getRepository().getRef("master");
+			var masterList = Arrays.asList(master);
+			
+			var rw = new RevWalk(git.getRepository());
 			var tagList = git.tagList().call();
-			var lastTag = tagList.get(tagList.size()-1);
-			// Need to "peel" the tag to access underlying commit:
-			lastTag = git.getRepository().peel(lastTag);
-			var tagCommitId = lastTag.getPeeledObjectId();
+			var tag = null;
+			var tagIter = tagList.listIterator(tagList.size());
+			while (tagIter.hasPrevious()) {
+			    tag = tagIter.previous();
+			    if (!tag.isPeeled()) {
+			        // Need to "peel" the tag to access underlying commit:
+			        tag = git.getRepository().peel(tag);
+			    }
+			    var commit = rw.parseCommit(tag.getPeeledObjectId());
+			    var reachableBranches = RevWalkUtils.findBranchesReachableFrom(commit, rw, masterList);
+			    if (reachableBranches.contains(master)) {
+			        break;
+			    }
+			}
+			var tagCommitId = tag.getPeeledObjectId();
 			
 			var commitIter = git.log().call().iterator();
 			var commitsSince = 0;
@@ -41,7 +59,7 @@
 			    commitsSince++;
 			}
 
-			var version = lastTag.getName();
+			var version = tag.getName();
 			if (version.indexOf("refs/tags/") == 0) {
 			    version = version.substring("refs/tags/".length);
 			}
