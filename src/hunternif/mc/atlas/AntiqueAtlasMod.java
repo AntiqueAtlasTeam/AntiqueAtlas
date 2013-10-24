@@ -21,9 +21,9 @@ import cpw.mods.fml.common.registry.LanguageRegistry;
 @Mod(modid=AntiqueAtlasMod.ID, name=AntiqueAtlasMod.NAME, version=AntiqueAtlasMod.VERSION)
 @NetworkMod(clientSideRequired=true, serverSideRequired=false, packetHandler=CustomPacketHandler.class, channels={AntiqueAtlasMod.CHANNEL})
 public class AntiqueAtlasMod {
-	public static final String ID = "antiqueatlas";
-	public static final String NAME = "Antique Atlas";
-	public static final String VERSION = "1.1";
+	public static final String ID = "@@MOD_ID@@";
+	public static final String NAME = "@@MOD_NAME@@";
+	public static final String VERSION = "@@MOD_VERSION@@";
 	public static final String CHANNEL = ID;
 	
 	@Instance(ID)

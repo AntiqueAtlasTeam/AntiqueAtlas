@@ -1,10 +1,10 @@
 [
 {
-  "modid": "antiqueatlas",
+  "modid": "@@MOD_ID@@",
   "name": "Antique Atlas",
   "description": "Adds a fancy antique-looking atlas GUI (M is default key). Maps are generated around the player based on chunk-average biome. All data is saved on the server; this means that if the server does not have this mod installed, the atlas will work, but will start blank every time you connect to that server.",
-  "version": "1.1",
-  "mcversion": "1.6.4",
+  "version": "@@MOD_VERSION@@",
+  "mcversion": "@@MC_VERSION@@",
   "logoFile": "",
   "url": "http://www.minecraftforum.net/topic/2045745-164forge-antique-atlas-v10",
   "updateUrl": "",
