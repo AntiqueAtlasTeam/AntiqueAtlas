@@ -21,7 +21,6 @@ public class TestGit {
 			RevCommit lastCommit = log.iterator().next();
 			System.out.println(ObjectId.toString(lastTagPeeled.getPeeledObjectId()));
 			System.out.println(ObjectId.toString(lastCommit.getId()));
-			System.out.println("lol");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
