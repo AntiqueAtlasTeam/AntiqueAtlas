@@ -1,10 +1,45 @@
 <?xml version="1.0"?>
-<project name="AntiqueAtlas" default="build-release">
+<project name="AntiqueAtlas" default="get version from git">
 
 	<property file="local.properties" />
 	<property file="build.properties"/>
 
 	<property name="mcp.src" value="${dir.mcp}/src/minecraft" />
+
+	<path id="jgit">
+		<pathelement location="lib/org.eclipse.jgit_2.2.0.201212191850-r.jar"/>
+	</path>
+	<target name="get version from git">
+		<script language="javascript" classpathref="jgit">
+			<![CDATA[
+			importClass(java.io.File);
+			importClass(Packages.org.eclipse.jgit.api.Git);
+			importClass(Packages.org.eclipse.jgit.lib.ObjectId);
+			
+			var git = Git.open(new File("."));
+			
+			var tagList = git.tagList().call();
+			var lastTag = tagList.get(tagList.size()-1);
+			// Need to "peel" the tag to access underlying commit:
+			lastTag = git.getRepository().peel(lastTag);
+			var tagCommitId = lastTag.getPeeledObjectId();
+			
+			var commitIter = git.log().call().iterator();
+			var commitsSince = 0;
+			while (commitIter.hasNext()) {
+			    var commit = commitIter.next();
+				if (commit.getId().equals(tagCommitId)) {
+			        break;
+			    }
+			    commitsSince++;
+			}
+
+			project.setProperty("build.version",
+			    lastTag.getName().substring("refs/tags/".length) + "." + commitsSince);
+			]]>
+		</script>
+		<echo message="${build.version}" />
+	</target>
 
 	<target name="copy_src">
 		<copy todir="${mcp.src}" verbose="true">
@@ -13,11 +48,11 @@
 	</target>
 	<target name="clean">
 		<delete verbose="true">
-		<!-- delete copied sources -->
+			<!-- delete copied sources -->
 			<fileset dir="${mcp.src}">
 				<present present="both" targetdir="src" />
 			</fileset>
-		<!-- delete empty directories -->
+			<!-- delete empty directories -->
 			<dirset dir="${mcp.src}">
 				<present present="both" targetdir="src" />
 				<size value="0"/>
