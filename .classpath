@@ -13,7 +13,7 @@
 	<classpathentry kind="lib" path="/Minecraft/jars/libraries/org/lwjgl/lwjgl/lwjgl_util/2.9.0/lwjgl_util-2.9.0.jar" sourcepath="/Minecraft/jars/libraries/org/lwjgl/lwjgl/lwjgl_util/2.9.0/lwjgl_util-2.9.0-sources.jar"/>
 	<classpathentry kind="lib" path="/Minecraft/jars/libraries/com/google/guava/guava/14.0/guava-14.0.jar" sourcepath="/Minecraft/jars/libraries/com/google/guava/guava/14.0/guava-14.0-sources.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
-	<classpathentry kind="lib" path="lib/org.eclipse.jgit_2.2.0.201212191850-r.jar"/>
-	<classpathentry kind="lib" path="lib/gitective-core-0.9.9.jar"/>
+	<classpathentry kind="lib" path="lib/gitective/gitective-core-0.9.9.jar"/>
+	<classpathentry kind="lib" path="lib/jgit/org.eclipse.jgit_2.2.0.201212191850-r.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

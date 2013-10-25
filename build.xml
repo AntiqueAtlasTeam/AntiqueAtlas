@@ -9,12 +9,12 @@
 
 	<taskdef resource="net/sf/antcontrib/antcontrib.properties">
 		<classpath>
-			<pathelement location="lib/ant-contrib-1.0b3.jar" />
+			<pathelement location="lib/ant-contrib/ant-contrib-1.0b3.jar" />
 		</classpath>
 	</taskdef>
 
 	<path id="jgit">
-		<pathelement location="lib/org.eclipse.jgit_2.2.0.201212191850-r.jar"/>
+		<pathelement location="lib/jgit/org.eclipse.jgit_2.2.0.201212191850-r.jar"/>
 	</path>
 	<target name="get version from git">
 		<script language="javascript" classpathref="jgit">
