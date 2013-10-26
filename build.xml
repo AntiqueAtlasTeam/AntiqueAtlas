@@ -13,64 +13,13 @@
 		</classpath>
 	</taskdef>
 
-	<path id="jgit">
-		<pathelement location="lib/jgit/org.eclipse.jgit_2.2.0.201212191850-r.jar"/>
-	</path>
-	<target name="get version from git">
-		<script language="javascript" classpathref="jgit">
-			<![CDATA[
-			importClass(java.io.File);
-			importClass(java.util.Arrays);
-			importClass(Packages.org.eclipse.jgit.api.Git);
-			importClass(Packages.org.eclipse.jgit.revwalk.RevWalk);
-			importClass(Packages.org.eclipse.jgit.revwalk.RevWalkUtils);
-			
-			var git = Git.open(new File("."));
-			
-			// We need to find the last tag that is reachable from the branch "master"
-			var master = git.getRepository().getRef("master");
-			var masterList = Arrays.asList(master);
-			
-			var rw = new RevWalk(git.getRepository());
-			var tagList = git.tagList().call();
-			var tag = null;
-			var tagIter = tagList.listIterator(tagList.size());
-			while (tagIter.hasPrevious()) {
-			    tag = tagIter.previous();
-			    if (!tag.isPeeled()) {
-			        // Need to "peel" the tag to access underlying commit:
-			        tag = git.getRepository().peel(tag);
-			    }
-			    var commit = rw.parseCommit(tag.getPeeledObjectId());
-			    var reachableBranches = RevWalkUtils.findBranchesReachableFrom(commit, rw, masterList);
-			    if (reachableBranches.contains(master)) {
-			        break;
-			    }
-			}
-			var tagCommitId = tag.getPeeledObjectId();
-			
-			var commitIter = git.log().call().iterator();
-			var commitsSince = 0;
-			while (commitIter.hasNext()) {
-			    var commit = commitIter.next();
-				if (commit.getId().equals(tagCommitId)) {
-			        break;
-			    }
-			    commitsSince++;
-			}
-
-			var version = tag.getName();
-			if (version.indexOf("refs/tags/") == 0) {
-			    version = version.substring("refs/tags/".length);
-			}
-			if (version.indexOf("v") == 0) {
-                version = version.substring("v".length);
-            }
-			project.setProperty("mod.version", version + "." + commitsSince);
-			]]>
-		</script>
-		<echo message="Mod version is ${mod.version}" />
-	</target>
+    <taskdef name="jgitversion" classname="hunternif.jgitversion.JGitVersionTask">
+        <classpath>
+            <pathelement path="lib/jgitversion-1.0.2.jar"/>
+            <pathelement path="lib/gitective/gitective-core-0.9.9.jar"/>
+            <pathelement path="lib/jgit/org.eclipse.jgit_2.2.0.201212191850-r.jar"/>
+        </classpath>
+    </taskdef>
 
 	<target name="copy_src">
 		<copy todir="${mcp.src}">
@@ -142,7 +91,8 @@
 	</target>
 
 	<target name="build-release">
-		<antcallback target="get version from git" return="mod.version" />
+		<jgitversion dir="." property="mod.version"/>
+		<echo message="${mod.version}" />
 		<antcallback target="copy_src" />
 		<antcallback target="replace tokens in src" />
 		<antcallback target="recompile" />
