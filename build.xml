@@ -1,17 +1,17 @@
 <?xml version="1.0"?>
 <project name="AntiqueAtlas" default="build-release">
 
-	<property file="local.properties" />
-	<property file="build.properties"/>
+    <property file="local.properties" />
+    <property file="build.properties"/>
 
-	<property name="mcp.src" value="${dir.mcp}/src/minecraft" />
-	<property name="mcp.reobf" value="${dir.mcp}/reobf/minecraft" />
+    <property name="mcp.src" value="${dir.mcp}/src/minecraft" />
+    <property name="mcp.reobf" value="${dir.mcp}/reobf/minecraft" />
 
-	<taskdef resource="net/sf/antcontrib/antcontrib.properties">
-		<classpath>
-			<pathelement location="lib/ant-contrib/ant-contrib-1.0b3.jar" />
-		</classpath>
-	</taskdef>
+    <taskdef resource="net/sf/antcontrib/antcontrib.properties">
+        <classpath>
+            <pathelement location="lib/ant-contrib/ant-contrib-1.0b3.jar" />
+        </classpath>
+    </taskdef>
 
     <taskdef name="jgitversion" classname="hunternif.jgitversion.JGitVersionTask">
         <classpath>
@@ -21,84 +21,71 @@
         </classpath>
     </taskdef>
 
-	<target name="copy_src">
-		<copy todir="${mcp.src}">
-			<fileset dir="src" excludes="assets/**,mcmod.info,*.png"/>
-		</copy>
-	</target>
-	<target name="cleanup">
-		<delete>
-			<!-- delete copied sources -->
-			<fileset dir="${mcp.src}">
-				<present present="both" targetdir="src" />
-			</fileset>
-			<!-- delete empty directories -->
-			<dirset dir="${mcp.src}">
-				<present present="both" targetdir="src" />
-				<size value="0"/>
-			</dirset>
-		</delete>
-	</target>
+    <target name="copy and replace tokens in src">
+        <copy todir="${mcp.src}">
+            <fileset dir="src" excludes="assets/**,mcmod.info,*.png"/>
+            <filterset begintoken="@@" endtoken="@@">
+                <filter token="MOD_VERSION" value="${mod.version}"/>
+                <filter token="MC_VERSION" value="${minecraft.version}"/>
+            </filterset>
+        </copy>
+    </target>
+    <target name="cleanup">
+        <delete>
+            <!-- delete copied sources -->
+            <fileset dir="${mcp.src}">
+                <present present="both" targetdir="src" />
+            </fileset>
+            <!-- delete empty directories -->
+            <dirset dir="${mcp.src}">
+                <present present="both" targetdir="src" />
+                <size value="0"/>
+            </dirset>
+        </delete>
+    </target>
 
-	<target name="replace tokens in src">
-		<fileset dir="${mcp.src}" id="copied_mod_src">
-			<present present="both" targetdir="src" />
-		</fileset>
-		<replace token="@@MOD_ID@@" value="${mod.id}">
-			<fileset refid="copied_mod_src" />
-		</replace>
-		<replace token="@@MOD_NAME@@" value="${mod.name}">
-			<fileset refid="copied_mod_src" />
-		</replace>
-		<replace token="@@MOD_VERSION@@" value="${mod.version}">
-			<fileset refid="copied_mod_src" />
-		</replace>
-		<replace token="@@MC_VERSION@@" value="${minecraft.version}">
-			<fileset refid="copied_mod_src" />
-		</replace>
-	</target>
-	<target name="copy and replace tokens in mcmod.info">
-		<copy file="src/mcmod.info" todir="${mcp.reobf}" />
-		<replace token="@@MOD_ID@@" value="${mod.id}" file="${mcp.reobf}/mcmod.info" />
-		<replace token="@@MOD_NAME@@" value="${mod.name}" file="${mcp.reobf}/mcmod.info" />
-		<replace token="@@MOD_VERSION@@" value="${mod.version}" file="${mcp.reobf}/mcmod.info" />
-		<replace token="@@MC_VERSION@@" value="${minecraft.version}" file="${mcp.reobf}/mcmod.info" />
-	</target>
+    <target name="copy and replace tokens in mcmod.info">
+        <copy file="src/mcmod.info" todir="${mcp.reobf}">
+            <filterset begintoken="@@" endtoken="@@">
+                <filter token="MOD_VERSION" value="${mod.version}"/>
+                <filter token="MC_VERSION" value="${minecraft.version}"/>
+            </filterset>
+        </copy>
+    </target>
 
-	<target name="recompile">
-		<exec dir="${dir.mcp}" executable="cmd" osfamily="windows">
-			<arg line="/c recompile.bat" />
-		</exec>
-		<exec dir="${dir.mcp}" executable="bash" osfamily="unix">
-			<arg line="recompile.sh" />
-		</exec>
-	</target>
-	<target name="reobfuscate">
-		<exec dir="${dir.mcp}" executable="cmd" osfamily="windows">
-			<arg line="/c reobfuscate_srg.bat" />
-		</exec>
-		<exec dir="${dir.mcp}" executable="bash" osfamily="unix">
-			<arg line="reobfuscate_srg.sh" />
-		</exec>
-	</target>
+    <target name="recompile">
+        <exec dir="${dir.mcp}" executable="cmd" osfamily="windows">
+            <arg line="/c recompile.bat" />
+        </exec>
+        <exec dir="${dir.mcp}" executable="bash" osfamily="unix">
+            <arg line="recompile.sh" />
+        </exec>
+    </target>
+    <target name="reobfuscate">
+        <exec dir="${dir.mcp}" executable="cmd" osfamily="windows">
+            <arg line="/c reobfuscate_srg.bat" />
+        </exec>
+        <exec dir="${dir.mcp}" executable="bash" osfamily="unix">
+            <arg line="reobfuscate_srg.sh" />
+        </exec>
+    </target>
 
-	<target name="package">
-		<mkdir dir="${dir.release}" />
-		<zip destfile="${dir.release}/${mod.id}-${mod.version}-mc${minecraft.version}.zip">
-			<fileset dir="${mcp.reobf}" />
-			<fileset dir="src" includes="assets/**,*.png" />
-		</zip>
-	</target>
+    <target name="package">
+        <mkdir dir="${dir.release}" />
+        <zip destfile="${dir.release}/${mod.id}-${mod.version}-mc${minecraft.version}.zip">
+            <fileset dir="${mcp.reobf}" />
+            <fileset dir="src" includes="assets/**,*.png" />
+        </zip>
+    </target>
 
-	<target name="build-release">
-		<jgitversion dir="." property="mod.version"/>
-		<echo message="${mod.version}" />
-		<antcallback target="copy_src" />
-		<antcallback target="replace tokens in src" />
-		<antcallback target="recompile" />
-		<antcallback target="reobfuscate" />
-		<antcallback target="copy and replace tokens in mcmod.info" />
-		<antcallback target="package" />
-		<antcallback target="cleanup" />
-	</target>
+    <target name="build-release">
+        <jgitversion dir="." property="mod.version"/>
+        <echo message="${mod.version}" />
+        <antcallback target="copy and replace tokens in src" />
+        <antcallback target="recompile" />
+        <antcallback target="reobfuscate" />
+        <antcallback target="copy and replace tokens in mcmod.info" />
+        <antcallback target="package" />
+        <antcallback target="cleanup" />
+    </target>
 </project>

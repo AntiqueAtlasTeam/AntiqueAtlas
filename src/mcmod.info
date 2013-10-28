@@ -1,6 +1,6 @@
 [
 {
-  "modid": "@@MOD_ID@@",
+  "modid": "antiqueatlas",
   "name": "Antique Atlas",
   "description": "Adds a fancy antique-looking atlas GUI (M is default key). Maps are generated around the player based on chunk-average biome. All data is saved on the server; this means that if the server does not have this mod installed, the atlas will work, but will start blank every time you connect to that server.",
   "version": "@@MOD_VERSION@@",
