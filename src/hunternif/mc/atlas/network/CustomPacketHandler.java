@@ -37,6 +37,9 @@ public class CustomPacketHandler implements IPacketHandler {
 			if (player instanceof EntityPlayerMP) {
 				((EntityPlayerMP) player).playerNetServerHandler.kickPlayerFromServer("Protocol Exception!");
 				AntiqueAtlasMod.logger.log(Level.WARNING, String.format("Player %s caused a Protocl Exception and was kicked.", ((EntityPlayer)player).username), e);
+			} else {
+				// Can't tolerate protocol exceptions on the client:
+				throw new RuntimeException(e);
 			}
 		} catch (InstantiationException e) {
 			throw new RuntimeException("Unexpected InstantiationException during Packet construction!", e);

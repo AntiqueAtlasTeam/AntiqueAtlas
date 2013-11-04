@@ -1,12 +1,14 @@
 package hunternif.mc.atlas;
 
-import hunternif.mc.atlas.core.PlayerTracker;
+import hunternif.mc.atlas.core.ChunkBiomeAnalyzer;
+import hunternif.mc.atlas.item.ItemAtlas;
+import hunternif.mc.atlas.item.ItemEmptyAtlas;
 import hunternif.mc.atlas.network.CustomPacketHandler;
 
 import java.util.logging.Logger;
 
-import net.minecraftforge.common.MinecraftForge;
-import cpw.mods.fml.client.registry.KeyBindingRegistry;
+import net.minecraft.creativetab.CreativeTabs;
+import net.minecraftforge.common.Configuration;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.Mod.Instance;
@@ -15,7 +17,6 @@ import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.network.NetworkMod;
-import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.registry.LanguageRegistry;
 
 @Mod(modid=AntiqueAtlasMod.ID, name=AntiqueAtlasMod.NAME, version=AntiqueAtlasMod.VERSION)
@@ -34,21 +35,30 @@ public class AntiqueAtlasMod {
 	@SidedProxy(clientSide="hunternif.mc.atlas.ClientProxy", serverSide="hunternif.mc.atlas.CommonProxy")
 	public static CommonProxy proxy;
 	
-	public static PlayerTracker playerTracker = new PlayerTracker();
-	
+	public static ItemAtlas itemAtlas;
+	public static ItemEmptyAtlas itemEmptyAtlas;
+
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent event) {
 		logger = event.getModLog();
 		proxy.preInit(event);
+		Configuration config = new Configuration(event.getSuggestedConfigurationFile());
+		int atlasItemID = config.getItem("antiqueAtlas", 26949).getInt();
+		int emptyAtlasItemID = config.getItem("emptyAntiqueAtlas", 26948).getInt();
+		config.save();
+		
+		itemAtlas = (ItemAtlas) new ItemAtlas(atlasItemID).setUnlocalizedName("antiqueAtlas");
+		LanguageRegistry.addName(itemAtlas, "Antique Atlas");
+		itemAtlas.setBiomeAnalyzer(ChunkBiomeAnalyzer.instance);
+		
+		itemEmptyAtlas = (ItemEmptyAtlas) new ItemEmptyAtlas(emptyAtlasItemID)
+			.setUnlocalizedName("emptyAntiqueAtlas").setCreativeTab(CreativeTabs.tabTools);
+		LanguageRegistry.addName(itemEmptyAtlas, "Empty Antique Atlas");
 	}
 	
 	@EventHandler
 	public void init(FMLInitializationEvent event){
 		proxy.init(event);
-		MinecraftForge.EVENT_BUS.register(playerTracker);
-		GameRegistry.registerPlayerTracker(playerTracker);
-		KeyBindingRegistry.registerKeyBinding(new AtlasKeyHandler());
-		LanguageRegistry.instance().addStringLocalization(AtlasKeyHandler.KEY_DESCRIPTION_ATLAS, "en_US", "Antique Atlas");
 	}
 	
 	@EventHandler

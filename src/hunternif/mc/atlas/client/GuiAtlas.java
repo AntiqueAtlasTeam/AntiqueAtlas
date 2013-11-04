@@ -1,7 +1,8 @@
 package hunternif.mc.atlas.client;
 
+import hunternif.mc.atlas.core.AtlasData;
 import hunternif.mc.atlas.core.MapTile;
-import hunternif.mc.atlas.core.PlayerInfo;
+import hunternif.mc.atlas.item.ItemAtlas;
 import hunternif.mc.atlas.util.AtlasRenderHelper;
 import hunternif.mc.atlas.util.ShortVec2;
 
@@ -10,6 +11,8 @@ import java.util.Map;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.ResourceLocation;
 
@@ -31,12 +34,14 @@ public class GuiAtlas extends GuiScreen {
 	private static final int PLAYER_ICON_WIDTH = 7;
 	private static final int PLAYER_ICON_HEIGHT = 8;
 	
-	private PlayerInfo info;
+	private EntityPlayer player;
+	private ItemStack stack;
 	private int guiLeft;
 	private int guiTop;
 	
-	public GuiAtlas(PlayerInfo info) {
-		this.info = info;
+	public GuiAtlas(ItemStack stack) {
+		this.player = Minecraft.getMinecraft().thePlayer;
+		this.stack = stack;
 	}
 	
 	@Override
@@ -51,11 +56,14 @@ public class GuiAtlas extends GuiScreen {
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 		AtlasRenderHelper.drawFullTexture(Textures.BOOK, guiLeft, guiTop, WIDTH, HEIGHT);
 		
+		AtlasData data = ((ItemAtlas) stack.getItem()).getAtlasData(stack, player.worldObj);
+		if (data == null) return;
+		
 		GL11.glEnable(GL11.GL_BLEND);
 		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-		Map<ShortVec2, MapTile> tiles = info.atlas.getSeenChunksInCurrentDimension();
-		int playerChunkX = MathHelper.floor_double(info.getPlayer().posX) >> 4;
-		int playerChunkZ = MathHelper.floor_double(info.getPlayer().posZ) >> 4;
+		Map<ShortVec2, MapTile> tiles = data.getSeenChunksInDimension(player.dimension);
+		int playerChunkX = MathHelper.floor_double(player.posX) >> 4;
+		int playerChunkZ = MathHelper.floor_double(player.posZ) >> 4;
 		// Find chunk coordinates of the top left corner of the map:
 		ShortVec2 chunkCoords = new ShortVec2(playerChunkX - MAP_WIDTH_IN_TILES/2, playerChunkZ - MAP_HEIGHT_IN_TILES/2);
 		int screenX = guiLeft + CONTENT_X;
@@ -113,12 +121,12 @@ public class GuiAtlas extends GuiScreen {
 			screenX += MAP_TILE_SIZE;
 		}
 		// How much the player has moved from the top left corner of the tile, in pixels:
-		int offsetX = MathHelper.floor_double((info.getPlayer().posX - (playerChunkX << 4)) / MAP_BLOCK_PIXEL_RATIO);
-		int offsetZ = MathHelper.floor_double((info.getPlayer().posZ - (playerChunkZ << 4)) / MAP_BLOCK_PIXEL_RATIO);
+		int offsetX = MathHelper.floor_double((player.posX - (playerChunkX << 4)) / MAP_BLOCK_PIXEL_RATIO);
+		int offsetZ = MathHelper.floor_double((player.posZ - (playerChunkZ << 4)) / MAP_BLOCK_PIXEL_RATIO);
 		// Draw player icon:
 		GL11.glPushMatrix();
 		GL11.glTranslated(CONTENT_X + guiLeft + MAP_WIDTH/2 + offsetX, guiTop + CONTENT_Y + MAP_HEIGHT/2 + offsetZ, 0);
-		float playerRotation = (float) Math.round(info.getPlayer().rotationYaw / 360f * PLAYER_ROTATION_STEPS) / PLAYER_ROTATION_STEPS * 360f;
+		float playerRotation = (float) Math.round(player.rotationYaw / 360f * PLAYER_ROTATION_STEPS) / PLAYER_ROTATION_STEPS * 360f;
 		GL11.glRotatef(180 + playerRotation, 0, 0, 1);
 		GL11.glTranslatef(-(float)PLAYER_ICON_WIDTH/2f, -(float)PLAYER_ICON_HEIGHT/2f, 0);
 		AtlasRenderHelper.drawFullTexture(Textures.MAP_PLAYER, 0, 0, PLAYER_ICON_WIDTH, PLAYER_ICON_HEIGHT);
