@@ -10,7 +10,8 @@ public class Textures {
 	
 	public static final ResourceLocation BOOK = new ResourceLocation(GUI + "book.png");
 	public static final ResourceLocation BOOK_FRAME = new ResourceLocation(GUI + "bookFrame.png");
-	public static final ResourceLocation ARROWS = new ResourceLocation(GUI + "navigateArrows.png");
+	public static final ResourceLocation BTN_ARROWS = new ResourceLocation(GUI + "navigateArrows.png");
+	public static final ResourceLocation BTN_POSITION = new ResourceLocation(GUI + "position.png");
 	
 	public static final ResourceLocation MAP_PLAYER = new ResourceLocation(GUI_MAP + "player.png");
 	

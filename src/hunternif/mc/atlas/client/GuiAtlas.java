@@ -9,6 +9,7 @@ import hunternif.mc.atlas.util.ShortVec2;
 import java.util.Map;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.entity.player.EntityPlayer;
@@ -16,6 +17,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.ResourceLocation;
 
+import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
 
 public class GuiAtlas extends GuiScreen {
@@ -34,14 +36,30 @@ public class GuiAtlas extends GuiScreen {
 	private static final int PLAYER_ICON_WIDTH = 7;
 	private static final int PLAYER_ICON_HEIGHT = 8;
 	
+	private GuiArrowButton btnUp;
+	private GuiArrowButton btnDown;
+	private GuiArrowButton btnLeft;
+	private GuiArrowButton btnRight;
+	public static int navigateStep = 2;
+	
+	private GuiPositionButton btnPosition;
+	
 	private EntityPlayer player;
 	private ItemStack stack;
 	private int guiLeft;
 	private int guiTop;
 	
-	public GuiAtlas(ItemStack stack) {
+	private int mapOffsetX = 0;
+	private int mapOffsetY = 0;
+	
+	public GuiAtlas() {
+		mapOffsetX = 0;
+		mapOffsetY = 0;
+	}
+	public GuiAtlas setAtlasItemStack(ItemStack stack) {
 		this.player = Minecraft.getMinecraft().thePlayer;
 		this.stack = stack;
+		return this;
 	}
 	
 	@Override
@@ -49,6 +67,63 @@ public class GuiAtlas extends GuiScreen {
 		super.initGui();
 		guiLeft = (this.width - WIDTH) / 2;
 		guiTop = (this.height - HEIGHT) / 2;
+		btnUp = GuiArrowButton.up(1, guiLeft + 148, guiTop + 10);
+		btnDown = GuiArrowButton.down(2, guiLeft + 148, guiTop + 194);
+		btnLeft = GuiArrowButton.left(3, guiLeft + 15, guiTop + 100);
+		btnRight = GuiArrowButton.right(4, guiLeft + 283, guiTop + 100);
+		btnPosition = new GuiPositionButton(5, guiLeft + 283, guiTop + 194, "Reset position");
+		buttonList.add(btnUp);
+		buttonList.add(btnDown);
+		buttonList.add(btnLeft);
+		buttonList.add(btnRight);
+		buttonList.add(btnPosition);
+		navigateMap(0, 0);
+	}
+	
+	@Override
+	protected void actionPerformed(GuiButton btn) {
+		if (btn.equals(btnUp)) {
+			navigateMap(0, -navigateStep);
+		} else if (btn.equals(btnDown)) {
+			navigateMap(0, navigateStep);
+		} else if (btn.equals(btnLeft)) {
+			navigateMap(-navigateStep, 0);
+		} else if (btn.equals(btnRight)) {
+			navigateMap(navigateStep, 0);
+		} else if (btn.equals(btnPosition)) {
+			mapOffsetX = 0;
+			mapOffsetY = 0;
+			btnPosition.drawButton = false;
+		}
+	}
+	
+	@Override
+	public void handleKeyboardInput() {
+		if (Keyboard.getEventKeyState()) {
+			int key = Keyboard.getEventKey();
+			if (key == Keyboard.KEY_UP) {
+				navigateMap(0, -navigateStep);
+			} else if (key == Keyboard.KEY_DOWN) {
+				navigateMap(0, navigateStep);
+			} else if (key == Keyboard.KEY_LEFT) {
+				navigateMap(-navigateStep, 0);
+			} else if (key == Keyboard.KEY_RIGHT) {
+				navigateMap(navigateStep, 0);
+			}
+		}
+		super.handleKeyboardInput();
+	}
+	
+	public void navigateMap(int dx, int dy) {
+		mapOffsetX += dx;
+		mapOffsetY += dy;
+		if (btnPosition != null) {
+			if (mapOffsetX != 0 || mapOffsetY != 0) {
+				btnPosition.drawButton = true;
+			} else {
+				btnPosition.drawButton = false;
+			}
+		}
 	}
 	
 	@Override
@@ -56,6 +131,7 @@ public class GuiAtlas extends GuiScreen {
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 		AtlasRenderHelper.drawFullTexture(Textures.BOOK, guiLeft, guiTop, WIDTH, HEIGHT);
 		
+		if (stack == null) return;
 		AtlasData data = ((ItemAtlas) stack.getItem()).getAtlasData(stack, player.worldObj);
 		if (data == null) return;
 		
@@ -65,14 +141,17 @@ public class GuiAtlas extends GuiScreen {
 		int playerChunkX = MathHelper.floor_double(player.posX) >> 4;
 		int playerChunkZ = MathHelper.floor_double(player.posZ) >> 4;
 		// Find chunk coordinates of the top left corner of the map:
-		ShortVec2 chunkCoords = new ShortVec2(playerChunkX - MAP_WIDTH_IN_TILES/2, playerChunkZ - MAP_HEIGHT_IN_TILES/2);
+		ShortVec2 mapStartCoords = new ShortVec2(
+				playerChunkX + mapOffsetX - MAP_WIDTH_IN_TILES/2,
+				playerChunkZ + mapOffsetY - MAP_HEIGHT_IN_TILES/2);
+		ShortVec2 chunkCoords = new ShortVec2(mapStartCoords);
 		int screenX = guiLeft + CONTENT_X;
 		int screenY;
 		int u = 0;
 		int v = 0;
 		for (int x = 0; x < MAP_WIDTH_IN_TILES; x++) {
 			screenY = guiTop + CONTENT_Y;
-			chunkCoords.y = (short) (playerChunkZ - MAP_HEIGHT_IN_TILES/2);
+			chunkCoords.y = mapStartCoords.y;
 			for (int z = 0; z < MAP_HEIGHT_IN_TILES; z++) {
 				MapTile tile = tiles.get(chunkCoords);
 				if (tile != null) {
@@ -120,21 +199,28 @@ public class GuiAtlas extends GuiScreen {
 			chunkCoords.x++;
 			screenX += MAP_TILE_SIZE;
 		}
-		// How much the player has moved from the top left corner of the tile, in pixels:
-		int offsetX = MathHelper.floor_double((player.posX - (playerChunkX << 4)) / MAP_BLOCK_PIXEL_RATIO);
-		int offsetZ = MathHelper.floor_double((player.posZ - (playerChunkZ << 4)) / MAP_BLOCK_PIXEL_RATIO);
+		// Overlay the frame so that edges of the map are smooth:
+		GL11.glColor4f(1.0F, 1.0F, 1.0F, 0.8F);
+		AtlasRenderHelper.drawFullTexture(Textures.BOOK_FRAME, guiLeft, guiTop, WIDTH, HEIGHT);
+		
+		// How much the player has moved from the top left corner of the map, in pixels:
+		int playerOffsetX = MathHelper.floor_double((player.posX - (mapStartCoords.x << 4)) / MAP_BLOCK_PIXEL_RATIO);
+		int playerOffsetZ = MathHelper.floor_double((player.posZ - (mapStartCoords.y << 4)) / MAP_BLOCK_PIXEL_RATIO);
+		if (playerOffsetX < 0) playerOffsetX = 0;
+		if (playerOffsetX > MAP_WIDTH) playerOffsetX = MAP_WIDTH;
+		if (playerOffsetZ < 0) playerOffsetZ = 0;
+		if (playerOffsetZ > MAP_HEIGHT) playerOffsetZ = MAP_HEIGHT;
 		// Draw player icon:
 		GL11.glPushMatrix();
-		GL11.glTranslated(CONTENT_X + guiLeft + MAP_WIDTH/2 + offsetX, guiTop + CONTENT_Y + MAP_HEIGHT/2 + offsetZ, 0);
+		GL11.glTranslated(CONTENT_X + guiLeft + playerOffsetX, guiTop + CONTENT_Y + playerOffsetZ, 0);
 		float playerRotation = (float) Math.round(player.rotationYaw / 360f * PLAYER_ROTATION_STEPS) / PLAYER_ROTATION_STEPS * 360f;
 		GL11.glRotatef(180 + playerRotation, 0, 0, 1);
 		GL11.glTranslatef(-(float)PLAYER_ICON_WIDTH/2f, -(float)PLAYER_ICON_HEIGHT/2f, 0);
 		AtlasRenderHelper.drawFullTexture(Textures.MAP_PLAYER, 0, 0, PLAYER_ICON_WIDTH, PLAYER_ICON_HEIGHT);
 		GL11.glPopMatrix();
 		
-		// Overlay the frame so that edges of the map are smooth:
-		GL11.glColor4f(1.0F, 1.0F, 1.0F, 0.8F);
-		AtlasRenderHelper.drawFullTexture(Textures.BOOK_FRAME, guiLeft, guiTop, WIDTH, HEIGHT);
+		// Draw buttons:
+		super.drawScreen(mouseX, mouseY, par3);
 	}
 	
 	@Override
