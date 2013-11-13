@@ -9,6 +9,8 @@ public class Textures {
 	public static final String GUI_MAP = MOD_PREFIX + "textures/gui/map/";
 	
 	public static final ResourceLocation BOOK = new ResourceLocation(GUI + "book.png");
+	public static final ResourceLocation BOOK_FRAME = new ResourceLocation(GUI + "bookFrame.png");
+	public static final ResourceLocation ARROWS = new ResourceLocation(GUI + "navigateArrows.png");
 	
 	public static final ResourceLocation MAP_PLAYER = new ResourceLocation(GUI_MAP + "player.png");
 	

@@ -131,6 +131,10 @@ public class GuiAtlas extends GuiScreen {
 		GL11.glTranslatef(-(float)PLAYER_ICON_WIDTH/2f, -(float)PLAYER_ICON_HEIGHT/2f, 0);
 		AtlasRenderHelper.drawFullTexture(Textures.MAP_PLAYER, 0, 0, PLAYER_ICON_WIDTH, PLAYER_ICON_HEIGHT);
 		GL11.glPopMatrix();
+		
+		// Overlay the frame so that edges of the map are smooth:
+		GL11.glColor4f(1.0F, 1.0F, 1.0F, 0.8F);
+		AtlasRenderHelper.drawFullTexture(Textures.BOOK_FRAME, guiLeft, guiTop, WIDTH, HEIGHT);
 	}
 	
 	@Override
