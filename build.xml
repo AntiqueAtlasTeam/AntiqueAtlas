@@ -15,7 +15,7 @@
 
     <taskdef name="jgitversion" classname="hunternif.jgitversion.JGitVersionTask">
         <classpath>
-            <pathelement path="lib/jgitversion-1.0.2.jar"/>
+            <pathelement path="lib/jgitversion-1.0.9.jar"/>
             <pathelement path="lib/gitective/gitective-core-0.9.9.jar"/>
             <pathelement path="lib/jgit/org.eclipse.jgit_2.2.0.201212191850-r.jar"/>
         </classpath>
