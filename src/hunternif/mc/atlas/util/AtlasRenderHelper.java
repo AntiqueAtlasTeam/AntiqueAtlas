@@ -1,13 +1,12 @@
 package hunternif.mc.atlas.util;
 
-import org.lwjgl.opengl.GL11;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.util.ResourceLocation;
+
+import org.lwjgl.opengl.GL11;
 
 public class AtlasRenderHelper {
-	public static void drawTexturedRect(ResourceLocation texture, int x, int y, int u, int v, int width, int height, int imageWidth, int imageHeight) {
+	public static void drawTexturedRect(String texture, int x, int y, int u, int v, int width, int height, int imageWidth, int imageHeight) {
 		Minecraft.getMinecraft().renderEngine.bindTexture(texture);
 		double minU = (double)u / (double)imageWidth;
 		double maxU = (double)(u + width) / (double)imageWidth;
@@ -22,7 +21,7 @@ public class AtlasRenderHelper {
 		tessellator.draw();
 	}
 	
-	public static void drawFullTexture(ResourceLocation texture, int x, int y, int width, int height) {
+	public static void drawFullTexture(String texture, int x, int y, int width, int height) {
 		drawTexturedRect(texture, x, y, 0, 0, width, height, width, height);
 	}
 	

@@ -3,7 +3,7 @@
   "modid": "antiqueatlas",
   "name": "Antique Atlas",
   "description": "Adds item Antique Atlas. It's like a fancy antique-looking map, which saves all visited locations so you can browse them.
-  Maps are generated around the player based on chunk-average biome. All data is saved on the server; this means that if the server does not have this mod installed, the atlas will work, but will start blank every time you connect to that server.",
+  Maps are generated around the player based on chunk-average biome. All data is saved on the server.",
   "version": "@@MOD_VERSION@@",
   "mcversion": "@@MC_VERSION@@",
   "logoFile": "",

@@ -15,7 +15,6 @@ import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.MathHelper;
-import net.minecraft.util.ResourceLocation;
 
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
@@ -155,7 +154,7 @@ public class GuiAtlas extends GuiScreen {
 			for (int z = 0; z < MAP_HEIGHT_IN_TILES; z++) {
 				MapTile tile = tiles.get(chunkCoords);
 				if (tile != null) {
-					ResourceLocation texture = BiomeTextureMap.instance().getTexture(tile);
+					String texture = BiomeTextureMap.instance().getTexture(tile);
 					if (tile.isSingleObject()) {
 						AtlasRenderHelper.drawTexturedRect(texture, screenX, screenY, 0, 0,
 								MAP_TILE_SIZE, MAP_TILE_SIZE, MAP_TILE_SIZE*2, MAP_TILE_SIZE*3);
@@ -228,7 +227,7 @@ public class GuiAtlas extends GuiScreen {
 		return false;
 	}
 	
-	private void drawCorner(ResourceLocation texture, int x, int y, int u, int v) {
+	private void drawCorner(String texture, int x, int y, int u, int v) {
 		Minecraft.getMinecraft().renderEngine.bindTexture(texture);
 		double minU = (double) u / 4d;
 		double maxU = (double)(u + 1) / 4d;
