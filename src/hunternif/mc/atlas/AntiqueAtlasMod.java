@@ -12,8 +12,10 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.Configuration;
 import cpw.mods.fml.common.Mod;
-import cpw.mods.fml.common.Mod.EventHandler;
+import cpw.mods.fml.common.Mod.Init;
 import cpw.mods.fml.common.Mod.Instance;
+import cpw.mods.fml.common.Mod.PostInit;
+import cpw.mods.fml.common.Mod.PreInit;
 import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
@@ -41,7 +43,7 @@ public class AntiqueAtlasMod {
 	public static ItemAtlas itemAtlas;
 	public static ItemEmptyAtlas itemEmptyAtlas;
 
-	@EventHandler
+	@PreInit
 	public void preInit(FMLPreInitializationEvent event) {
 		logger = event.getModLog();
 		proxy.preInit(event);
@@ -61,12 +63,12 @@ public class AntiqueAtlasMod {
 		GameRegistry.addShapelessRecipe(new ItemStack(itemEmptyAtlas), Item.book, Item.compass);
 	}
 	
-	@EventHandler
+	@Init
 	public void init(FMLInitializationEvent event){
 		proxy.init(event);
 	}
 	
-	@EventHandler
+	@PostInit
 	public void postInit(FMLPostInitializationEvent event) {
 		proxy.postInit(event);
 	}

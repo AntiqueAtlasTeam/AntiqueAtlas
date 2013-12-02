@@ -23,7 +23,7 @@
 
     <target name="copy and replace tokens in src">
         <copy todir="${mcp.src}">
-            <fileset dir="src" excludes="assets/**,mcmod.info,*.png"/>
+            <fileset dir="src" excludes="mods/**,mcmod.info,*.png"/>
             <filterset begintoken="@@" endtoken="@@">
                 <filter token="MOD_VERSION" value="${mod.version}"/>
                 <filter token="MC_VERSION" value="${minecraft.version}"/>
@@ -74,7 +74,7 @@
         <mkdir dir="${dir.release}" />
         <zip destfile="${dir.release}/${mod.id}-${mod.version}-mc${minecraft.version}.zip">
             <fileset dir="${mcp.reobf}" />
-            <fileset dir="src" includes="assets/**,*.png" />
+            <fileset dir="src" includes="mods/**,*.png" />
         </zip>
     </target>
 

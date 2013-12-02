@@ -1,7 +1,6 @@
 package hunternif.mc.atlas.client;
 
 import static hunternif.mc.atlas.client.Textures.*;
-import net.minecraft.util.ResourceLocation;
 
 public enum StandardTextureSet {
 	WATER		(MAP_WATER), 
@@ -19,9 +18,9 @@ public enum StandardTextureSet {
 	SWAMP		(MAP_SWAMP, MAP_SWAMP, MAP_SWAMP, MAP_SWAMP2, MAP_SWAMP3, MAP_SWAMP4, MAP_SWAMP5, MAP_SWAMP6), 
 	MUSHROOM	(MAP_MUSHROOM, MAP_MUSHROOM2);
 	
-	public final ResourceLocation[] textures;
+	public final String[] textures;
 	
-	StandardTextureSet(ResourceLocation ... textures) {
+	StandardTextureSet(String ... textures) {
 		this.textures = textures;
 	}
 	

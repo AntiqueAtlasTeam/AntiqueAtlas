@@ -15,7 +15,6 @@ import java.io.InputStreamReader;
 import java.util.List;
 import java.util.Map.Entry;
 
-import net.minecraft.util.ResourceLocation;
 import argo.format.JsonFormatter;
 import argo.format.PrettyJsonFormatter;
 import argo.jdom.JdomParser;
@@ -50,7 +49,7 @@ public class Config {
 					// List of textures:
 					List<JsonNode> paths = entry.getValue().getArrayNode();
 					for (JsonNode path : paths) {
-						ResourceLocation texture = new ResourceLocation(path.getText());
+						String texture = path.getText();
 						BiomeTextureMap.instance().addTexture(biomeID, texture);
 					}
 					AntiqueAtlasMod.logger.info("Registered custom texture for biome " + biomeID);
@@ -76,7 +75,7 @@ public class Config {
 					builder.withField(String.valueOf(entry.biomeID), aStringBuilder(entry.textureSet.name()));
 				} else {
 					JsonArrayNodeBuilder arrayBuilder = anArrayBuilder();
-					for (ResourceLocation texture : entry.textures) {
+					for (String texture : entry.textures) {
 						arrayBuilder.withElement(aStringBuilder(texture.toString()));
 					}
 					builder.withField(String.valueOf(entry.biomeID), arrayBuilder);

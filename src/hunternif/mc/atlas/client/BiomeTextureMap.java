@@ -11,7 +11,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.common.BiomeDictionary.Type;
@@ -25,18 +24,18 @@ public enum BiomeTextureMap {
 	protected static class BiomeTextureEntry {
 		public final int biomeID;
 		public StandardTextureSet textureSet;
-		public final List<ResourceLocation> textures;
-		public BiomeTextureEntry(int biomeID, ResourceLocation ... textures) {
+		public final List<String> textures;
+		public BiomeTextureEntry(int biomeID, String ... textures) {
 			this(biomeID, null, textures);
 		}
 		public BiomeTextureEntry(int biomeID, StandardTextureSet textureSet) {
 			this(biomeID, textureSet, textureSet.textures);
 		}
-		public BiomeTextureEntry(int biomeID, StandardTextureSet textureSet, ResourceLocation ... textures) {
+		public BiomeTextureEntry(int biomeID, StandardTextureSet textureSet, String ... textures) {
 			this.biomeID = biomeID;
 			this.textureSet = textureSet;
-			this.textures = new ArrayList<ResourceLocation>();
-			for (ResourceLocation texture : textures) {
+			this.textures = new ArrayList<String>();
+			for (String texture : textures) {
 				this.textures.add(texture);
 			}
 		}
@@ -82,7 +81,7 @@ public enum BiomeTextureMap {
 			addTexture(biome.biomeID, textureSet);
 		}
 	}
-	public void addTextureIfNone(BiomeGenBase biome, ResourceLocation ... textures) {
+	public void addTextureIfNone(BiomeGenBase biome, String ... textures) {
 		if (!isRegistered(biome.biomeID)) {
 			addTexture(biome.biomeID, textures);
 		}
@@ -97,21 +96,21 @@ public enum BiomeTextureMap {
 				// Adding textures from multiple sets breaks the "standard-ness"
 				entry.textureSet = null;
 			}
-			for (ResourceLocation texture : textureSet.textures) {
+			for (String texture : textureSet.textures) {
 				entry.textures.add(texture);
 			}
 		}
 	}
-	public void addTexture(int biomeID, ResourceLocation ... textures) {
+	public void addTexture(int biomeID, String ... textures) {
 		addTexture(biomeID, false, textures);
 	}
-	public void addTexture(int biomeID, boolean isStandard, ResourceLocation ... textures) {
+	public void addTexture(int biomeID, boolean isStandard, String ... textures) {
 		BiomeTextureEntry entry = textureMap.get(biomeID);
 		if (entry == null) {
 			entry = new BiomeTextureEntry(biomeID, textures);
 			textureMap.put(biomeID, entry);
 		} else {
-			for (ResourceLocation texture : textures) {
+			for (String texture : textures) {
 				entry.textures.add(texture);
 			}
 		}
@@ -165,19 +164,19 @@ public enum BiomeTextureMap {
 		return entry.textures.size();
 	}
 
-	public ResourceLocation getTexture(MapTile tile) {
+	public String getTexture(MapTile tile) {
 		checkRegistration(tile.biomeID);
 		BiomeTextureEntry entry = textureMap.get(tile.biomeID);
 		return entry.textures.get(tile.variationNumber);
 	}
 	
 	public boolean haveSameTexture(int ... biomeIDs) {
-		List<ResourceLocation> textures = null;
+		List<String> textures = null;
 		for (int biomeID : biomeIDs) {
 			checkRegistration(biomeID);
 			if (textures == null) {
 				textureMap.get(biomeID);
-				textures = new ArrayList<ResourceLocation>(textureMap.get(biomeID).textures);
+				textures = new ArrayList<String>(textureMap.get(biomeID).textures);
 			} else {
 				textures.retainAll(textureMap.get(biomeID).textures);
 			}

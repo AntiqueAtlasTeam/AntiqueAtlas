@@ -4,16 +4,14 @@
 	<classpathentry kind="src" path="test"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/Minecraft"/>
-	<classpathentry kind="lib" path="/Minecraft/jars/libraries/argo/argo/2.25_fixed/argo-2.25_fixed.jar" sourcepath="/Minecraft/jars/libraries/net/sourceforge/argo/argo/2.25/argo-2.25-sources.jar"/>
-	<classpathentry kind="lib" path="/Minecraft/jars/libraries/commons-io/commons-io/2.4/commons-io-2.4.jar" sourcepath="/Minecraft/jars/libraries/commons-io/commons-io/2.4/commons-io-2.4-sources.jar"/>
-	<classpathentry kind="lib" path="/Minecraft/jars/libraries/net/java/jinput/jinput/2.0.5/jinput-2.0.5.jar" sourcepath="/Minecraft/jars/libraries/net/java/jinput/jinput/2.0.5/jinput-2.0.5-sources.jar"/>
-	<classpathentry kind="lib" path="/Minecraft/jars/libraries/net/java/jutils/jutils/1.0.0/jutils-1.0.0.jar" sourcepath="/Minecraft/jars/libraries/net/java/jutils/jutils/1.0.0/jutils-1.0.0-sources.jar"/>
-	<classpathentry kind="lib" path="/Minecraft/jars/libraries/org/apache/commons/commons-lang3/3.1/commons-lang3-3.1.jar" sourcepath="/Minecraft/jars/libraries/org/apache/commons/commons-lang3/3.1/commons-lang3-3.1-sources.jar"/>
-	<classpathentry kind="lib" path="/Minecraft/jars/libraries/org/lwjgl/lwjgl/lwjgl/2.9.0/lwjgl-2.9.0.jar" sourcepath="/Minecraft/jars/libraries/org/lwjgl/lwjgl/lwjgl/2.9.0/lwjgl-2.9.0-sources.jar"/>
-	<classpathentry kind="lib" path="/Minecraft/jars/libraries/org/lwjgl/lwjgl/lwjgl_util/2.9.0/lwjgl_util-2.9.0.jar" sourcepath="/Minecraft/jars/libraries/org/lwjgl/lwjgl/lwjgl_util/2.9.0/lwjgl_util-2.9.0-sources.jar"/>
-	<classpathentry kind="lib" path="/Minecraft/jars/libraries/com/google/guava/guava/14.0/guava-14.0.jar" sourcepath="/Minecraft/jars/libraries/com/google/guava/guava/14.0/guava-14.0-sources.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry kind="lib" path="lib/gitective/gitective-core-0.9.9.jar"/>
 	<classpathentry kind="lib" path="lib/jgit/org.eclipse.jgit_2.2.0.201212191850-r.jar"/>
+	<classpathentry kind="lib" path="/Minecraft/jars/bin/jinput.jar"/>
+	<classpathentry kind="lib" path="/Minecraft/jars/bin/lwjgl_util.jar"/>
+	<classpathentry kind="lib" path="/Minecraft/jars/bin/lwjgl.jar"/>
+	<classpathentry kind="lib" path="/Minecraft/lib/argo-3.2-src.jar" sourcepath="/Minecraft/lib/argo-3.2-src.jar"/>
+	<classpathentry kind="lib" path="/Minecraft/lib/guava-14.0-rc3-sources.jar"/>
+	<classpathentry kind="lib" path="/Minecraft/lib/guava-14.0-rc3.jar" sourcepath="/Minecraft/lib/guava-14.0-rc3-sources.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
