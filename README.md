@@ -8,3 +8,4 @@ TODO
 ====
 * Export the map in PNG
 * Redraw textures for sand and plains. Consider using wavy lines for sand. Plains have to look more distinct from unexplored regions.
+* The config file should only rewrite itself when biomes are missing from it or so.
