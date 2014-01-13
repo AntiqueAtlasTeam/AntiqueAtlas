@@ -67,10 +67,8 @@ public class MapDataPacket extends CustomPacket {
 	public void execute(EntityPlayer player, Side side) throws ProtocolException {
 		if (side.isClient()) {
 			AtlasData atlasData = AntiqueAtlasMod.itemAtlas.getClientAtlasData(atlasID);
-			Map<ShortVec2, MapTile> clientSeenChunks = atlasData
-					.getSeenChunksInDimension(dimension);
 			for (Entry<ShortVec2, MapTile> entry : data.entrySet()) {
-				atlasData.putTile(clientSeenChunks, entry.getKey(), entry.getValue());
+				atlasData.putTile(dimension, entry.getKey(), entry.getValue());
 			}
 		} else {
 			throw new ProtocolException("Cannot send this packet to the server!");

@@ -25,14 +25,15 @@ public class AtlasData extends WorldSavedData {
 	private static final String TAG_DIMENSION_ID = "qDimensionID";
 	private static final String TAG_VISITED_CHUNKS = "qVisitedChunks";
 	
-	/** This map contains, for each dimension, a map of chunks the info.getPlayer()
+	/** This map contains, for each dimension, a map of chunks the player
 	 * has seen. This map is thread-safe.
 	 * CAREFUL! Don't modify chunk coordinates that are already put in the map! */
-	private Map<Integer /*dimension ID*/, Map<ShortVec2, MapTile>> dimensionMap =
-			new ConcurrentHashMap<Integer, Map<ShortVec2, MapTile>>();
+	private Map<Integer /*dimension ID*/, DimensionData> dimensionMap =
+			new ConcurrentHashMap<Integer, DimensionData>();
 	
 	private MapTileStitcher tileStitcher;
 	
+	/** Set of players this Atlas data has been sent to. */
 	private Set<Entity> playersSentTo = new HashSet<Entity>();
 
 	public AtlasData(String key) {
@@ -54,19 +55,18 @@ public class AtlasData extends WorldSavedData {
 			for (int i = 0; i < intArray.length; i += 3) {
 				ShortVec2 coords = new ShortVec2(intArray[i], intArray[i+1]);
 				BiomeGenBase biome = BiomeGenBase.biomeList[intArray[i+2]];
-				putTile(seenChunks, coords, new MapTile(biome));
+				putTile(dimensionID, coords, new MapTile(biome));
 			}
-			dimensionMap.put(Integer.valueOf(dimensionID), seenChunks);
 		}
 	}
 
 	@Override
 	public void writeToNBT(NBTTagCompound compound) {
 		NBTTagList dimensionMapList = new NBTTagList();
-		for (Entry<Integer, Map<ShortVec2, MapTile>> dimensionEntry : dimensionMap.entrySet()) {
+		for (Entry<Integer, DimensionData> dimensionEntry : dimensionMap.entrySet()) {
 			NBTTagCompound tag = new NBTTagCompound();
 			tag.setInteger(TAG_DIMENSION_ID, dimensionEntry.getKey().intValue());
-			Map<ShortVec2, MapTile> seenChunks = dimensionEntry.getValue();
+			Map<ShortVec2, MapTile> seenChunks = dimensionEntry.getValue().getSeenChunks();
 			int[] intArray = new int[seenChunks.size()*3];
 			int i = 0;
 			for (Entry<ShortVec2, MapTile> entry : seenChunks.entrySet()) {
@@ -82,29 +82,35 @@ public class AtlasData extends WorldSavedData {
 	
 	/** Puts a given tile into given map at specified coordinates and,
 	 * if tileStitcher is present, sets appropriate sectors on adjacent tiles. */
-	public void putTile(Map<ShortVec2, MapTile> tiles, ShortVec2 tileCoords, MapTile tile) {
-		tiles.put(tileCoords, tile);
+	public void putTile(int dimension, ShortVec2 tileCoords, MapTile tile) {
+		DimensionData dimData = getDimensionData(dimension);
+		dimData.putTile(tileCoords, tile);
 		if (tileStitcher != null) {
-			tileStitcher.stitchAdjacentTiles(tiles, new ShortVec2(tileCoords), tile);
+			tileStitcher.stitchAdjacentTiles(dimData.getSeenChunks(), new ShortVec2(tileCoords), tile);
 		}
 	}
 	
 	public Set<Integer> getVisitedDimensions() {
 		return dimensionMap.keySet();
 	}
-	public Map<ShortVec2, MapTile> getSeenChunksInDimension(int dimension) {
-		Map<ShortVec2, MapTile> seenChunks = dimensionMap.get(Integer.valueOf(dimension));
-		if (seenChunks == null) {
-			seenChunks = new ConcurrentHashMap<ShortVec2, MapTile>();
-			dimensionMap.put(Integer.valueOf(dimension), seenChunks);
+	/** If this dimension is not yet visited, empty DimensionData will be created. */
+	public DimensionData getDimensionData(int dimension) {
+		DimensionData dimData = dimensionMap.get(Integer.valueOf(dimension));
+		if (dimData == null) {
+			dimData = new DimensionData(dimension);
+			dimensionMap.put(Integer.valueOf(dimension), dimData);
 		}
-		return seenChunks;
+		return dimData;
+	}
+	public Map<ShortVec2, MapTile> getSeenChunksInDimension(int dimension) {
+		return getDimensionData(dimension).getSeenChunks();
 	}
 	
 	public boolean isSyncedOnPlayer(Entity player) {
 		return playersSentTo.contains(player);
 	}
 
+	/** Send all data to player in several zipped packets. */
 	public void syncOnPlayer(int atlasID, Entity player) {
 		int pieces = 0;
 		int dataSizeBytes = 0;
