@@ -2,6 +2,7 @@ package hunternif.mc.atlas.util;
 
 import hunternif.mc.atlas.AntiqueAtlasMod;
 import hunternif.mc.atlas.client.BiomeTextureMap;
+import hunternif.mc.atlas.client.ExportUpdateListener;
 import hunternif.mc.atlas.core.DimensionData;
 import hunternif.mc.atlas.core.MapTile;
 
@@ -57,7 +58,11 @@ public class ExportImageUtil {
 	}
 	
 	/** Renders the map into file as PNG image. */
-	public static void exportPngImage(DimensionData data, File file) {
+	public static void exportPngImage(DimensionData data, File file, ExportUpdateListener listener) {
+		Map<ShortVec2, MapTile> tiles = data.getSeenChunks();
+		int totalTiles = tiles.size();
+		int drawnTiles = 0;
+		
 		// Prepare output image:
 		int minX = data.getMinX() * TILE_SIZE;
 		int minY = data.getMinY() * TILE_SIZE;
@@ -67,7 +72,6 @@ public class ExportImageUtil {
 		BufferedImage outImage = new BufferedImage(outWidth, outHeight, BufferedImage.TYPE_INT_ARGB);
 		Graphics2D graphics = outImage.createGraphics();
 		
-		Map<ShortVec2, MapTile> tiles = data.getSeenChunks();
 		ShortVec2 coords = new ShortVec2(0, 0);
 		try {
 			for (coords.x = data.getMinX(); coords.x <= data.getMaxX(); coords.x++) {
@@ -151,6 +155,11 @@ public class ExportImageUtil {
 							coords.y*TILE_SIZE + TILE_SIZE - minY,
 							u*TILE_SIZE/2, v*TILE_SIZE/2,
 							(u + 1)*TILE_SIZE/2, (v + 1)*TILE_SIZE/2, null);
+					
+					drawnTiles++;
+					if (drawnTiles % 10 == 0) { // Update every 10 tiles
+						listener.update((float)drawnTiles / (float) totalTiles);
+					}
 				}
 			}
 			

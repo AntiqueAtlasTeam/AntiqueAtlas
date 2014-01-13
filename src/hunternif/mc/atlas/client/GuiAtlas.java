@@ -1,6 +1,7 @@
 package hunternif.mc.atlas.client;
 
 import hunternif.mc.atlas.AntiqueAtlasMod;
+import hunternif.mc.atlas.ClientProxy;
 import hunternif.mc.atlas.core.AtlasData;
 import hunternif.mc.atlas.core.MapTile;
 import hunternif.mc.atlas.item.ItemAtlas;
@@ -61,6 +62,10 @@ public class GuiAtlas extends GuiScreen {
 	 * before continuous navigation using the arrow buttons. */
 	private long timeButtonPressed = 0;
 	
+	/** Progress bar for exporting images. */
+	private ProgressBarOverlay progressBar = new ProgressBarOverlay(100, 2);
+	private volatile boolean isExporting = false;
+	
 	private EntityPlayer player;
 	private ItemStack stack;
 	private int guiLeft;
@@ -108,6 +113,7 @@ public class GuiAtlas extends GuiScreen {
 			mapOffsetY = 0;
 			btnPosition.drawButton = false;
 		} else if (btn.equals(btnExportPng) && stack != null) {
+			progressBar.reset();
 			new Thread(new Runnable() {
 				@Override
 				public void run() {
@@ -124,15 +130,17 @@ public class GuiAtlas extends GuiScreen {
 	/** Opens a dialog window to select which file to save to, then performs
 	 * rendering of the map of current dimension into a PNG image. */
 	private void exportImage(ItemStack stack) {
+		isExporting = true;
 		// Default file name is "Atlas <N>.png"
 		File file = ExportImageUtil.selectPngFileToSave("Atlas " + stack.getItemDamage());
 		if (file != null) {
 			AntiqueAtlasMod.logger.info("Exporting image from Atlas #" +
 					stack.getItemDamage() +	" to file " + file.getAbsolutePath());
 			AtlasData data = ((ItemAtlas) stack.getItem()).getAtlasData(stack, player.worldObj);
-			ExportImageUtil.exportPngImage(data.getDimensionData(player.dimension), file);
+			ExportImageUtil.exportPngImage(data.getDimensionData(player.dimension), file, progressBar);
 			AntiqueAtlasMod.logger.info("Finished exporting image");
 		}
+		isExporting = false;
 	}
 	
 	@Override
@@ -288,6 +296,13 @@ public class GuiAtlas extends GuiScreen {
 		
 		// Draw buttons:
 		super.drawScreen(mouseX, mouseY, par3);
+		
+		// Draw progress overlay:
+		if (isExporting) {
+			drawDefaultBackground();
+			progressBar.draw((width - 100)/2, height/2 - 20);
+			fontRenderer.drawStringWithShadow("Exporting", width/2 - 26, height/2 - 34, 0xffffff);
+		}
 	}
 	
 	@Override
