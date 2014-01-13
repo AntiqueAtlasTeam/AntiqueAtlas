@@ -13,8 +13,9 @@ public class DimensionData {
 	 * CAREFUL! Don't modify chunk coordinates that are already put in the map! */
 	private final Map<ShortVec2, MapTile> tiles;
 	
-	/** Limits of explored areas. */
-	private short minX, maxX, minY, maxY;
+	/** Limits of explored area. */
+	private short minX = Short.MAX_VALUE, maxX = Short.MIN_VALUE,
+				  minY = Short.MAX_VALUE, maxY = Short.MIN_VALUE;
 	
 	protected DimensionData(int dimension) {
 		this(dimension, new ConcurrentHashMap<ShortVec2, MapTile>());

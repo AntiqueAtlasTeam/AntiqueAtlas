@@ -73,8 +73,8 @@ public class ExportImageUtil {
 		// Leave padding of one row of map tiles on each side
 		int minX = (data.getMinX() - 1) * TILE_SIZE;
 		int minY = (data.getMinY() - 1) * TILE_SIZE;
-		int outWidth = (data.getMaxX() + 1) * TILE_SIZE - minX;
-		int outHeight = (data.getMaxY() + 1) * TILE_SIZE - minY;
+		int outWidth = (data.getMaxX() + 2) * TILE_SIZE - minX;
+		int outHeight = (data.getMaxY() + 2) * TILE_SIZE - minY;
 		AntiqueAtlasMod.logger.info("Image size: " + outWidth + "*" + outHeight);
 		BufferedImage outImage = new BufferedImage(outWidth, outHeight, BufferedImage.TYPE_INT_ARGB);
 		Graphics2D graphics = outImage.createGraphics();
