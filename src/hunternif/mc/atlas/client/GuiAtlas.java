@@ -78,6 +78,7 @@ public class GuiAtlas extends GuiScreen {
 		buttonList.add(btnRight);
 		buttonList.add(btnPosition);
 		navigateMap(0, 0);
+		Keyboard.enableRepeatEvents(true);
 	}
 	
 	@Override
@@ -241,5 +242,10 @@ public class GuiAtlas extends GuiScreen {
 		tessellator.addVertexWithUV(x, y, 0, minU, minV);
 		tessellator.addVertexWithUV(x, y + MAP_TILE_SIZE/2, 0, minU, maxV);
 		tessellator.draw();
+	}
+	
+	@Override
+	public void onGuiClosed() {
+		Keyboard.enableRepeatEvents(false);
 	}
 }
