@@ -36,13 +36,26 @@ public class GuiAtlas extends GuiScreen {
 	private static final int PLAYER_ICON_WIDTH = 7;
 	private static final int PLAYER_ICON_HEIGHT = 8;
 	
+	/** Pause between after the arrow button is pressed and continuous
+	 * navigation starts, in ticks. */
+	private static final int BUTTON_PAUSE = 8;
+	
 	private GuiArrowButton btnUp;
 	private GuiArrowButton btnDown;
 	private GuiArrowButton btnLeft;
 	private GuiArrowButton btnRight;
 	public static int navigateStep = 2;
 	
+	/** Button for restoring player's position at the center of the Atlas. */
 	private GuiPositionButton btnPosition;
+	
+	/** The button which is currently being pressed. Used for continuous
+	 * navigation using the arrow buttons. */
+	private GuiButton selectedButton = null;
+	
+	/** Time in world ticks when the button was pressed. Used to create a pause
+	 * before continuous navigation using the arrow buttons. */
+	private long timeButtonPressed = 0;
 	
 	private EntityPlayer player;
 	private ItemStack stack;
@@ -83,19 +96,16 @@ public class GuiAtlas extends GuiScreen {
 	
 	@Override
 	protected void actionPerformed(GuiButton btn) {
-		if (btn.equals(btnUp)) {
-			navigateMap(0, -navigateStep);
-		} else if (btn.equals(btnDown)) {
-			navigateMap(0, navigateStep);
-		} else if (btn.equals(btnLeft)) {
-			navigateMap(-navigateStep, 0);
-		} else if (btn.equals(btnRight)) {
-			navigateMap(navigateStep, 0);
-		} else if (btn.equals(btnPosition)) {
+		selectedButton = btn;
+		if (btn.equals(btnPosition)) {
 			mapOffsetX = 0;
 			mapOffsetY = 0;
 			btnPosition.drawButton = false;
 		}
+		
+		// Navigate once, before enabling pause:
+		navigateByButton(selectedButton);
+		timeButtonPressed = player.worldObj.getTotalWorldTime();
 	}
 	
 	@Override
@@ -115,6 +125,35 @@ public class GuiAtlas extends GuiScreen {
 		super.handleKeyboardInput();
 	}
 	
+	@Override
+	protected void mouseMovedOrUp(int mouseX, int mouseY, int mouseState) {
+		super.mouseMovedOrUp(mouseX, mouseY, mouseState);
+		selectedButton = null;
+	}
+	
+	@Override
+	public void updateScreen() {
+		super.updateScreen();
+		if (player.worldObj.getTotalWorldTime() > timeButtonPressed + BUTTON_PAUSE) {
+			navigateByButton(selectedButton);
+		}
+	}
+	
+	/** Offset the map view depending on which button was pressed. */
+	private void navigateByButton(GuiButton btn) {
+		if (btn == null) return;
+		if (btn.equals(btnUp)) {
+			navigateMap(0, -navigateStep);
+		} else if (btn.equals(btnDown)) {
+			navigateMap(0, navigateStep);
+		} else if (btn.equals(btnLeft)) {
+			navigateMap(-navigateStep, 0);
+		} else if (btn.equals(btnRight)) {
+			navigateMap(navigateStep, 0);
+		}
+	}
+	
+	/** Offset the map view by given values. */
 	public void navigateMap(int dx, int dy) {
 		mapOffsetX += dx;
 		mapOffsetY += dy;
