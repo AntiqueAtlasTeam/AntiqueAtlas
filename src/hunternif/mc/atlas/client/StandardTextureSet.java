@@ -6,7 +6,7 @@ import net.minecraft.util.ResourceLocation;
 public enum StandardTextureSet {
 	WATER		(MAP_WATER), 
 	BEACH		(MAP_BEACH), 
-	SAND		(MAP_SAND), 
+	SAND		(MAP_SAND, MAP_SAND2), 
 	PLAINS		(MAP_PLAINS), 
 	MOUNTAINS	(MAP_MOUNTAINS, MAP_MOUNTAINS2),  
 	HILLS		(MAP_HILLS), 

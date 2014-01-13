@@ -32,6 +32,7 @@ public class Textures {
 	public static final ResourceLocation MAP_PINES_HILLS2 = new ResourceLocation(GUI_MAP + "pines_hills2.png");
 	public static final ResourceLocation MAP_PINES_HILLS3 = new ResourceLocation(GUI_MAP + "pines_hills3.png");
 	public static final ResourceLocation MAP_SAND = new ResourceLocation(GUI_MAP + "sand.png");
+	public static final ResourceLocation MAP_SAND2 = new ResourceLocation(GUI_MAP + "sand2.png");
 	public static final ResourceLocation MAP_BEACH = new ResourceLocation(GUI_MAP + "beach.png");
 	public static final ResourceLocation MAP_PLAINS = new ResourceLocation(GUI_MAP + "plains.png");
 	public static final ResourceLocation MAP_SWAMP = new ResourceLocation(GUI_MAP + "swamp.png");
