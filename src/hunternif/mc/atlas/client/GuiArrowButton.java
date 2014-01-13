@@ -53,7 +53,11 @@ public class GuiArrowButton extends GuiButton {
 			if (isMouseOver) {
 				GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 			} else {
-				GL11.glColor4f(1.0F, 1.0F, 1.0F, 0.5F);
+				// Fade out when the mouse is far from them:
+				int distanceSq = (mouseX - xPosition - width/2)*(mouseX - xPosition - width/2) +
+						(mouseY - yPosition - height/2)*(mouseY - yPosition - height/2);
+				double alpha = distanceSq < 400 ? 0.5 : Math.pow((double)distanceSq, -0.28);
+				GL11.glColor4d(1, 1, 1, alpha);
 			}
 			
 			int u = 0, v = 0;
