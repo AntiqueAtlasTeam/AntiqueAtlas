@@ -6,5 +6,4 @@ Maps are generated around the player based on chunk-average biome. All data is s
 
 TODO
 ====
-* Export the map in PNG
 * Redraw textures for sand and plains. Consider using wavy lines for sand. Plains have to look more distinct from unexplored regions.

@@ -21,7 +21,9 @@ public class ProgressBarOverlay implements ExportUpdateListener {
 	
 	@Override
 	public void update(float percentage) {
-		completedWidth = (int)(percentage * (float) barWidth);
+		if (percentage < 0) percentage = 0;
+		if (percentage > 1) percentage = 1;
+		completedWidth = Math.round(percentage * (float) barWidth);
 	}
 	
 	/** Render progress bar on the screen. */
