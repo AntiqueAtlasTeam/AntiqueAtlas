@@ -64,7 +64,9 @@ public class GuiAtlas extends GuiScreen {
 	/** Set to true when dragging the map view. */
 	private boolean isDragging = false;
 	/** The starting cursor position when dragging. */
-	private int lastMouseX, lastMouseY;
+	private int dragMouseX, dragMouseY;
+	/** Map offset at the beginning of drag. */
+	private int dragMapOffsetX, dragMapOffsetY;
 	
 	/** Progress bar for exporting images. */
 	private ProgressBarOverlay progressBar = new ProgressBarOverlay(100, 2);
@@ -117,8 +119,10 @@ public class GuiAtlas extends GuiScreen {
 		if (mouseX >= mapX && mouseX <= mapX + MAP_WIDTH &&
 				mouseY >= mapY && mouseY <= mapY + MAP_HEIGHT) {
 			isDragging = true;
-			lastMouseX = mouseX;
-			lastMouseY = mouseY;
+			dragMouseX = mouseX;
+			dragMouseY = mouseY;
+			dragMapOffsetX = mapOffsetX;
+			dragMapOffsetY = mapOffsetY;
 		}
 		// If clicked on a button, dragging will be cancelled in actionPerformed()
 		super.mouseClicked(mouseX, mouseY, mouseState);
@@ -191,10 +195,9 @@ public class GuiAtlas extends GuiScreen {
 	protected void mouseClickMove(int mouseX, int mouseY, int lastMouseButton, long timeSinceMouseClick) {
 		super.mouseClickMove(mouseX, mouseY, lastMouseButton, timeSinceMouseClick);
 		if (isDragging) {
-			navigateMap(Math.round((float)(lastMouseX - mouseX)/(float)MAP_TILE_SIZE),
-						Math.round((float)(lastMouseY - mouseY)/(float)MAP_TILE_SIZE));
-			lastMouseX = mouseX;
-			lastMouseY = mouseY;
+			int dx = Math.round((float)(mouseX - dragMouseX)/(float)MAP_TILE_SIZE);
+			int dy = Math.round((float)(mouseY - dragMouseY)/(float)MAP_TILE_SIZE);
+			navigateMap(dragMapOffsetX - dx - mapOffsetX, dragMapOffsetY - dy - mapOffsetY);
 		}
 	}
 	
