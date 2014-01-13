@@ -10,6 +10,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.biome.BiomeGenBase;
@@ -47,7 +48,7 @@ public enum BiomeTextureMap {
 	
 	/** This map allows keys other than the 256 biome IDs to use for special tiles. */
 	protected final Map<Integer, BiomeTextureEntry> textureMap =
-			new HashMap<Integer, BiomeTextureMap.BiomeTextureEntry>();
+			new ConcurrentHashMap<Integer, BiomeTextureMap.BiomeTextureEntry>();
 	
 	public static final StandardTextureSet defaultTexture = PLAINS;
 

@@ -1,17 +1,19 @@
 package hunternif.mc.atlas.client;
 
+import hunternif.mc.atlas.AntiqueAtlasMod;
 import hunternif.mc.atlas.core.AtlasData;
 import hunternif.mc.atlas.core.MapTile;
 import hunternif.mc.atlas.item.ItemAtlas;
 import hunternif.mc.atlas.util.AtlasRenderHelper;
+import hunternif.mc.atlas.util.ExportImageUtil;
 import hunternif.mc.atlas.util.ShortVec2;
 
+import java.io.File;
 import java.util.Map;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.MathHelper;
@@ -40,11 +42,13 @@ public class GuiAtlas extends GuiScreen {
 	 * navigation starts, in ticks. */
 	private static final int BUTTON_PAUSE = 8;
 	
-	private GuiArrowButton btnUp;
-	private GuiArrowButton btnDown;
-	private GuiArrowButton btnLeft;
-	private GuiArrowButton btnRight;
+	/** Arrow buttons for navigating the map view via mouse clicks. */
+	private GuiArrowButton btnUp, btnDown, btnLeft, btnRight;
+	/** How much the map view is offset, in chunks, per click (or per tick). */
 	public static int navigateStep = 2;
+	
+	/** Button for exporting PNG image of the Atlas's contents. */
+	private GuiButton btnExportPng;
 	
 	/** Button for restoring player's position at the center of the Atlas. */
 	private GuiPositionButton btnPosition;
@@ -85,11 +89,13 @@ public class GuiAtlas extends GuiScreen {
 		btnLeft = GuiArrowButton.left(3, guiLeft + 15, guiTop + 100);
 		btnRight = GuiArrowButton.right(4, guiLeft + 283, guiTop + 100);
 		btnPosition = new GuiPositionButton(5, guiLeft + 283, guiTop + 194, "Reset position");
+		btnExportPng = new GuiButton(6, width - 80, height - 20, 80, 20, "Export Image");
 		buttonList.add(btnUp);
 		buttonList.add(btnDown);
 		buttonList.add(btnLeft);
 		buttonList.add(btnRight);
 		buttonList.add(btnPosition);
+		buttonList.add(btnExportPng);
 		navigateMap(0, 0);
 		Keyboard.enableRepeatEvents(true);
 	}
@@ -101,11 +107,32 @@ public class GuiAtlas extends GuiScreen {
 			mapOffsetX = 0;
 			mapOffsetY = 0;
 			btnPosition.drawButton = false;
+		} else if (btn.equals(btnExportPng) && stack != null) {
+			new Thread(new Runnable() {
+				@Override
+				public void run() {
+					exportImage(stack.copy());
+				}
+			}).start();
 		}
 		
 		// Navigate once, before enabling pause:
 		navigateByButton(selectedButton);
 		timeButtonPressed = player.worldObj.getTotalWorldTime();
+	}
+	
+	/** Opens a dialog window to select which file to save to, then performs
+	 * rendering of the map of current dimension into a PNG image. */
+	private void exportImage(ItemStack stack) {
+		// Default file name is "Atlas <N>.png"
+		File file = ExportImageUtil.selectPngFileToSave("Atlas " + stack.getItemDamage());
+		if (file != null) {
+			AntiqueAtlasMod.logger.info("Exporting image from Atlas #" +
+					stack.getItemDamage() +	" to file " + file.getAbsolutePath());
+			AtlasData data = ((ItemAtlas) stack.getItem()).getAtlasData(stack, player.worldObj);
+			ExportImageUtil.exportPngImage(data.getDimensionData(player.dimension), file);
+			AntiqueAtlasMod.logger.info("Finished exporting image");
+		}
 	}
 	
 	@Override
@@ -206,7 +233,7 @@ public class GuiAtlas extends GuiScreen {
 						else if (tile.topLeft == MapTile.HORIZONTAL) { u = 2; v = 2; }
 						else if (tile.topLeft == MapTile.FULL) { u = 2; v = 4; } 
 						else if (tile.topLeft == MapTile.CONVEX) { u = 0; v = 2; }
-						drawCorner(texture, screenX, screenY, u, v);
+						AtlasRenderHelper.drawAutotileCorner(texture, screenX, screenY, u, v, MAP_TILE_SIZE/2);
 						
 						// Top right corner:
 						if (tile.topRight == MapTile.CONCAVE) { u = 3; v = 0; }
@@ -214,7 +241,7 @@ public class GuiAtlas extends GuiScreen {
 						else if (tile.topRight == MapTile.HORIZONTAL) { u = 1; v = 2; }
 						else if (tile.topRight == MapTile.FULL) { u = 1; v = 4; } 
 						else if (tile.topRight == MapTile.CONVEX) { u = 3; v = 2; }
-						drawCorner(texture, screenX + MAP_TILE_SIZE/2, screenY, u, v);
+						AtlasRenderHelper.drawAutotileCorner(texture, screenX + MAP_TILE_SIZE/2, screenY, u, v, MAP_TILE_SIZE/2);
 						
 						// Bottom left corner:
 						if (tile.bottomLeft == MapTile.CONCAVE) { u = 2; v = 1; }
@@ -222,7 +249,7 @@ public class GuiAtlas extends GuiScreen {
 						else if (tile.bottomLeft == MapTile.HORIZONTAL) { u = 2; v = 5; }
 						else if (tile.bottomLeft == MapTile.FULL) { u = 2; v = 3; } 
 						else if (tile.bottomLeft == MapTile.CONVEX) { u = 0; v = 5; }
-						drawCorner(texture, screenX, screenY + MAP_TILE_SIZE/2, u, v);
+						AtlasRenderHelper.drawAutotileCorner(texture, screenX, screenY + MAP_TILE_SIZE/2, u, v, MAP_TILE_SIZE/2);
 						
 						// Bottom right corner:
 						if (tile.bottomRight == MapTile.CONCAVE) { u = 3; v = 1; }
@@ -230,7 +257,7 @@ public class GuiAtlas extends GuiScreen {
 						else if (tile.bottomRight == MapTile.HORIZONTAL) { u = 1; v = 5; }
 						else if (tile.bottomRight == MapTile.FULL) { u = 1; v = 3; } 
 						else if (tile.bottomRight == MapTile.CONVEX) { u = 3; v = 5; }
-						drawCorner(texture, screenX + MAP_TILE_SIZE/2, screenY + MAP_TILE_SIZE/2, u, v);
+						AtlasRenderHelper.drawAutotileCorner(texture, screenX + MAP_TILE_SIZE/2, screenY + MAP_TILE_SIZE/2, u, v, MAP_TILE_SIZE/2);
 					}
 				}
 				chunkCoords.y++;
@@ -266,21 +293,6 @@ public class GuiAtlas extends GuiScreen {
 	@Override
 	public boolean doesGuiPauseGame() {
 		return false;
-	}
-	
-	private void drawCorner(ResourceLocation texture, int x, int y, int u, int v) {
-		Minecraft.getMinecraft().renderEngine.bindTexture(texture);
-		double minU = (double) u / 4d;
-		double maxU = (double)(u + 1) / 4d;
-		double minV = (double) v / 6d;
-		double maxV = (double)(v + 1) / 6d;
-		Tessellator tessellator = Tessellator.instance;
-		tessellator.startDrawingQuads();
-		tessellator.addVertexWithUV(x + MAP_TILE_SIZE/2, y + MAP_TILE_SIZE/2, 0, maxU, maxV);
-		tessellator.addVertexWithUV(x + MAP_TILE_SIZE/2, y, 0, maxU, minV);
-		tessellator.addVertexWithUV(x, y, 0, minU, minV);
-		tessellator.addVertexWithUV(x, y + MAP_TILE_SIZE/2, 0, minU, maxV);
-		tessellator.draw();
 	}
 	
 	@Override
