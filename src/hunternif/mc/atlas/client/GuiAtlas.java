@@ -1,7 +1,6 @@
 package hunternif.mc.atlas.client;
 
 import hunternif.mc.atlas.AntiqueAtlasMod;
-import hunternif.mc.atlas.ClientProxy;
 import hunternif.mc.atlas.core.AtlasData;
 import hunternif.mc.atlas.core.MapTile;
 import hunternif.mc.atlas.item.ItemAtlas;
@@ -15,7 +14,6 @@ import java.util.Map;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.settings.GameSettings;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.MathHelper;
@@ -63,6 +61,11 @@ public class GuiAtlas extends GuiScreen {
 	 * before continuous navigation using the arrow buttons. */
 	private long timeButtonPressed = 0;
 	
+	/** Set to true when dragging the map view. */
+	private boolean isDragging = false;
+	/** The starting cursor position when dragging. */
+	private int lastMouseX, lastMouseY;
+	
 	/** Progress bar for exporting images. */
 	private ProgressBarOverlay progressBar = new ProgressBarOverlay(100, 2);
 	private volatile boolean isExporting = false;
@@ -107,7 +110,23 @@ public class GuiAtlas extends GuiScreen {
 	}
 	
 	@Override
+	protected void mouseClicked(int mouseX, int mouseY, int mouseState) {
+		// If clicked on the map, start dragging
+		int mapX = (width - MAP_WIDTH)/2;
+		int mapY = (height - MAP_HEIGHT)/2;
+		if (mouseX >= mapX && mouseX <= mapX + MAP_WIDTH &&
+				mouseY >= mapY && mouseY <= mapY + MAP_HEIGHT) {
+			isDragging = true;
+			lastMouseX = mouseX;
+			lastMouseY = mouseY;
+		}
+		// If clicked on a button, dragging will be cancelled in actionPerformed()
+		super.mouseClicked(mouseX, mouseY, mouseState);
+	}
+	
+	@Override
 	protected void actionPerformed(GuiButton btn) {
+		isDragging = false;
 		selectedButton = btn;
 		if (btn.equals(btnPosition)) {
 			mapOffsetX = 0;
@@ -165,6 +184,18 @@ public class GuiAtlas extends GuiScreen {
 	protected void mouseMovedOrUp(int mouseX, int mouseY, int mouseState) {
 		super.mouseMovedOrUp(mouseX, mouseY, mouseState);
 		selectedButton = null;
+		isDragging = false;
+	}
+	
+	@Override
+	protected void mouseClickMove(int mouseX, int mouseY, int lastMouseButton, long timeSinceMouseClick) {
+		super.mouseClickMove(mouseX, mouseY, lastMouseButton, timeSinceMouseClick);
+		if (isDragging) {
+			navigateMap(Math.round((float)(lastMouseX - mouseX)/(float)MAP_TILE_SIZE),
+						Math.round((float)(lastMouseY - mouseY)/(float)MAP_TILE_SIZE));
+			lastMouseX = mouseX;
+			lastMouseY = mouseY;
+		}
 	}
 	
 	@Override
