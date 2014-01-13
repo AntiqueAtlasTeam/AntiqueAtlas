@@ -15,6 +15,7 @@ import java.util.Map;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.settings.GameSettings;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.MathHelper;
@@ -147,13 +148,13 @@ public class GuiAtlas extends GuiScreen {
 	public void handleKeyboardInput() {
 		if (Keyboard.getEventKeyState()) {
 			int key = Keyboard.getEventKey();
-			if (key == Keyboard.KEY_UP) {
+			if (key == Keyboard.KEY_UP || key == mc.gameSettings.keyBindForward.keyCode) {
 				navigateMap(0, -navigateStep);
-			} else if (key == Keyboard.KEY_DOWN) {
+			} else if (key == Keyboard.KEY_DOWN || key == mc.gameSettings.keyBindBack.keyCode) {
 				navigateMap(0, navigateStep);
-			} else if (key == Keyboard.KEY_LEFT) {
+			} else if (key == Keyboard.KEY_LEFT || key == mc.gameSettings.keyBindLeft.keyCode) {
 				navigateMap(-navigateStep, 0);
-			} else if (key == Keyboard.KEY_RIGHT) {
+			} else if (key == Keyboard.KEY_RIGHT || key == mc.gameSettings.keyBindRight.keyCode) {
 				navigateMap(navigateStep, 0);
 			}
 		}
