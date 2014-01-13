@@ -51,36 +51,44 @@ public enum BiomeTextureMap {
 	
 	public static final StandardTextureSet defaultTexture = PLAINS;
 
-	public void assignVanillaTextures() {
-		addTextureIfNone(ocean,			WATER);
-		addTextureIfNone(frozenOcean,	WATER);
-		addTextureIfNone(river,			WATER);
-		addTextureIfNone(frozenRiver,	WATER);
-		addTextureIfNone(beach,			BEACH);
-		addTextureIfNone(desert,		SAND);
-		addTextureIfNone(plains,		PLAINS);
-		//addTextureIfNone(icePlains,	PLAINS);
-		addTextureIfNone(jungleHills,	JUNGLE_HILLS);
-		addTextureIfNone(forestHills,	FOREST_HILLS);
-		addTextureIfNone(desertHills,	HILLS);
-		addTextureIfNone(extremeHills,	MOUNTAINS);
-		addTextureIfNone(extremeHillsEdge, MOUNTAINS);
-		addTextureIfNone(iceMountains,	MOUNTAINS);
-		addTextureIfNone(forest,		FOREST);
-		addTextureIfNone(jungle,		JUNGLE);
-		addTextureIfNone(taiga,			PINES);
-		addTextureIfNone(taigaHills,	PINES_HILLS);
-		addTextureIfNone(swampland,		SWAMP);
-		addTextureIfNone(sky,			BEACH);
-		//addTextureIfNone(hell,		NETHER);
-		addTextureIfNone(mushroomIsland, MUSHROOM);
-		addTextureIfNone(mushroomIslandShore, BEACH);
+	/** Assign default textures to vanilla biomes. Returns true if any texture
+	 * was changed. */
+	public boolean assignVanillaTextures() {
+		boolean changed = false;
+		changed |= addTextureIfNone(ocean,			WATER);
+		changed |= addTextureIfNone(frozenOcean,	WATER);
+		changed |= addTextureIfNone(river,			WATER);
+		changed |= addTextureIfNone(frozenRiver,	WATER);
+		changed |= addTextureIfNone(beach,			BEACH);
+		changed |= addTextureIfNone(desert,		SAND);
+		changed |= addTextureIfNone(plains,		PLAINS);
+		//changed |= addTextureIfNone(icePlains,	PLAINS);
+		changed |= addTextureIfNone(jungleHills,	JUNGLE_HILLS);
+		changed |= addTextureIfNone(forestHills,	FOREST_HILLS);
+		changed |= addTextureIfNone(desertHills,	HILLS);
+		changed |= addTextureIfNone(extremeHills,	MOUNTAINS);
+		changed |= addTextureIfNone(extremeHillsEdge, MOUNTAINS);
+		changed |= addTextureIfNone(iceMountains,	MOUNTAINS);
+		changed |= addTextureIfNone(forest,		FOREST);
+		changed |= addTextureIfNone(jungle,		JUNGLE);
+		changed |= addTextureIfNone(taiga,			PINES);
+		changed |= addTextureIfNone(taigaHills,	PINES_HILLS);
+		changed |= addTextureIfNone(swampland,		SWAMP);
+		changed |= addTextureIfNone(sky,			BEACH);
+		//changed |= addTextureIfNone(hell,		NETHER);
+		changed |= addTextureIfNone(mushroomIsland, MUSHROOM);
+		changed |= addTextureIfNone(mushroomIslandShore, BEACH);
+		return changed;
 	}
 
-	public void addTextureIfNone(BiomeGenBase biome, StandardTextureSet textureSet) {
+	/** Assigns texture to biome, if this biome has no texture assigned.
+	 * Returns true if a new texture was assigned. */
+	public boolean addTextureIfNone(BiomeGenBase biome, StandardTextureSet textureSet) {
 		if (!isRegistered(biome.biomeID)) {
 			addTexture(biome.biomeID, textureSet);
+			return true;
 		}
+		return false;
 	}
 	public void addTextureIfNone(BiomeGenBase biome, ResourceLocation ... textures) {
 		if (!isRegistered(biome.biomeID)) {

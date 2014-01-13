@@ -33,8 +33,10 @@ public class ClientProxy extends CommonProxy {
 	@Override
 	public void postInit(FMLPostInitializationEvent event) {
 		super.postInit(event);
-		BiomeTextureMap.instance().assignVanillaTextures();
-		updateConfig();
+		if (BiomeTextureMap.instance().assignVanillaTextures()) {
+			// Only rewrite config, if new textures were automatically assigned.
+			updateConfig();
+		}
 	}
 	
 	@Override
