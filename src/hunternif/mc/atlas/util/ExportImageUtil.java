@@ -48,7 +48,7 @@ public class ExportImageUtil {
 			}
 			@Override
 			public boolean accept(File file) {
-				// Accept all non-extisted files. PNG extension can be added later.
+				// Accept all non-extisting files. PNG extension can be added later.
 				return !file.exists();
 			}
 		});
