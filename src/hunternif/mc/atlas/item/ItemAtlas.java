@@ -19,6 +19,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
+import net.minecraft.world.chunk.IChunkProvider;
+import net.minecraft.world.gen.ChunkProviderServer;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
@@ -27,7 +29,7 @@ public class ItemAtlas extends Item {
 	protected static final String WORLD_DATA_ID = "aAtlas";
 	
 	/** In [chunks] */
-	public static double LOOK_RADIUS = 9;
+	public static double LOOK_RADIUS = 50;
 	/** In [ticks] */
 	public static int UPDATE_INTERVAL = 20;
 	
@@ -62,6 +64,12 @@ public class ItemAtlas extends Item {
 		return stack;
 	}
 	
+	private boolean loaded = false;
+	private int chunksLoaded = 0;
+	
+	private static final int SIDE_Y = 120;//157;
+	private static final int SIDE_X = (int)(SIDE_Y*1.618);
+	
 	@Override
 	public void onUpdate(ItemStack stack, World world, Entity player, int slot, boolean isEquipped) {
 		AtlasData data = getAtlasData(stack, world);
@@ -72,10 +80,16 @@ public class ItemAtlas extends Item {
 			data.syncOnPlayer(stack.getItemDamage(), player);
 		}
 		
+		if (loaded || world.isRemote) return;
+		
 		// Update the actual map only so often:
-		if (player.ticksExisted % UPDATE_INTERVAL != 0 || biomeAnalyzer == null) {
+		/*if (player.ticksExisted % UPDATE_INTERVAL != 0 || biomeAnalyzer == null) {
 			return;
-		}
+		}*/
+		
+		IChunkProvider chunkProvider = player.worldObj.getChunkProvider();
+		ChunkProviderServer cp = null;
+		if (chunkProvider instanceof ChunkProviderServer) cp = (ChunkProviderServer) chunkProvider;
 		
 		int playerX = MathHelper.floor_double(player.posX) >> 4;
 		int playerZ = MathHelper.floor_double(player.posZ) >> 4;
@@ -83,19 +97,22 @@ public class ItemAtlas extends Item {
 		
 		// Look at chunks around in a circular area:
 		ShortVec2 coords = new ShortVec2(0, 0);
-		for (double dx = -LOOK_RADIUS; dx <= LOOK_RADIUS; dx++) {
-			for (double dz = -LOOK_RADIUS; dz <= LOOK_RADIUS; dz++) {
-				if (dx*dx + dz*dz > LOOK_RADIUS*LOOK_RADIUS) {
-					continue; // Outside the circle
+		for (double dx = -SIDE_X; dx <= SIDE_X; dx++) {
+			for (double dz = -SIDE_Y; dz <= SIDE_Y; dz++) {
+				if (dz % 100 == 0) {
+					System.out.println("Generating chunk: (" + dx + ", " + dz + ")");
 				}
+				/*if (dx*dx + dz*dz > LOOK_RADIUS*LOOK_RADIUS) {
+					continue; // Outside the circle
+				}*/
 				coords.x = (short)(playerX + dx);
 				coords.y = (short)(playerZ + dz);
 				// Check if the chunk has been loaded:
-				if (seenChunks.containsKey(coords) ||
+				/*if (seenChunks.containsKey(coords) ||
 						!player.worldObj.
 						blockExists((int)coords.x << 4, 0, (int)coords.y << 4)) {
 					continue;
-				}
+				}*/
 				// Retrieve mean chunk biome and store it in AtlasData:
 				Chunk chunk = player.worldObj.getChunkFromChunkCoords(coords.x, coords.y);
 				int meanBiomeId = biomeAnalyzer.getChunkBiomeID(chunk);
@@ -105,8 +122,16 @@ public class ItemAtlas extends Item {
 						data.markDirty();
 					}
 				}
+				chunksLoaded++;
+				if (cp != null && chunksLoaded >= 100) {
+					cp.unloadAllChunks();
+					cp.unloadQueuedChunks();
+					chunksLoaded = 0;
+				}
 			}
 		}
+		System.out.println("Finished generating world.");
+		loaded = true;
 	}
 	
 	public AtlasData getAtlasData(ItemStack stack, World world) {

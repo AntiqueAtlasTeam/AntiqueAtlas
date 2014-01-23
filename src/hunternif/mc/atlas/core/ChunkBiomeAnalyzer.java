@@ -14,7 +14,7 @@ public class ChunkBiomeAnalyzer {
 	public static final ChunkBiomeAnalyzer instance = new ChunkBiomeAnalyzer();
 	
 	public int getChunkBiomeID(Chunk chunk) {
-		if (!chunk.isChunkLoaded) return BiomeFlag.NONE;
+		//if (!chunk.isChunkLoaded) return BiomeFlag.NONE;
 		int[] biomeOccurences = new int[256];
 		for (int i = 0; i < chunk.getBiomeArray().length; i++) {
 			int biomeId = chunk.getBiomeArray()[i];
