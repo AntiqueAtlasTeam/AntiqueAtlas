@@ -97,6 +97,7 @@ public enum BiomeTextureMap {
 		}
 	}
 	public void addTexture(int biomeID, StandardTextureSet textureSet) {
+		checkBiomeID(biomeID);
 		BiomeTextureEntry entry = textureMap.get(biomeID);
 		if (entry == null) {
 			entry = new BiomeTextureEntry(biomeID, textureSet);
@@ -115,6 +116,7 @@ public enum BiomeTextureMap {
 		addTexture(biomeID, false, textures);
 	}
 	public void addTexture(int biomeID, boolean isStandard, ResourceLocation ... textures) {
+		checkBiomeID(biomeID);
 		BiomeTextureEntry entry = textureMap.get(biomeID);
 		if (entry == null) {
 			entry = new BiomeTextureEntry(biomeID, textures);
@@ -127,10 +129,6 @@ public enum BiomeTextureMap {
 	}
 	
 	private void autoRegister(int biomeID) {
-		if (biomeID < 0 || biomeID >= 256) {
-			addTexture(biomeID, defaultTexture);
-			return;
-		}
 		BiomeGenBase biome = biomeList[biomeID];
 		List<Type> types = Arrays.asList(BiomeDictionary.getTypesForBiome(biome));
 		if (types.contains(Type.WATER)) {
@@ -162,7 +160,9 @@ public enum BiomeTextureMap {
 		AntiqueAtlasMod.logger.info("Auto-registered standard texture set for biome " + biomeID);
 	}
 	
+	/** Auto-registers the biome ID if it is not registered. */
 	public void checkRegistration(int biomeID) {
+		checkBiomeID(biomeID);
 		if (!isRegistered(biomeID)) {
 			autoRegister(biomeID);
 			AntiqueAtlasMod.proxy.updateConfig();
@@ -214,5 +214,13 @@ public enum BiomeTextureMap {
 			list.addAll(entry.getValue().textures);
 		}
 		return list;
+	}
+	
+	/** @throws IllegalArgumentException if the specified biome ID is out of range [0, 256) */
+	private static void checkBiomeID(int biomeID) {
+		if (biomeID < 0 && biomeID >= 256) {
+			throw new IllegalArgumentException("Biome ID " + biomeID + " is out of range. " +
+					"Did you forget to convert it to unsigned?");
+		}
 	}
 }

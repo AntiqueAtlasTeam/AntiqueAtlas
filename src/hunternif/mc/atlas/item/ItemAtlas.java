@@ -100,7 +100,7 @@ public class ItemAtlas extends Item {
 				Chunk chunk = player.worldObj.getChunkFromChunkCoords(coords.x, coords.y);
 				int meanBiomeId = biomeAnalyzer.getChunkBiomeID(chunk);
 				if (meanBiomeId != BiomeFlag.NONE) {
-					data.putTile(player.dimension, coords.copy(), new MapTile((byte)meanBiomeId));
+					data.putTile(player.dimension, coords.copy(), new MapTile(meanBiomeId));
 					if (!world.isRemote && !data.isDirty()) {
 						data.markDirty();
 					}

@@ -3,6 +3,7 @@ package hunternif.mc.atlas.network;
 import hunternif.mc.atlas.AntiqueAtlasMod;
 import hunternif.mc.atlas.core.AtlasData;
 import hunternif.mc.atlas.core.MapTile;
+import hunternif.mc.atlas.util.ByteUtil;
 import hunternif.mc.atlas.util.ShortVec2;
 
 import java.util.HashMap;
@@ -53,7 +54,7 @@ public class MapDataPacket extends CustomPacket {
 		int length = in.readShort();
 		for (int i = 0; i < length; i++) {
 			ShortVec2 coords = new ShortVec2(in.readShort(), in.readShort());
-			byte biomeID = in.readByte();
+			int biomeID = ByteUtil.unsignedByteToInt(in.readByte());
 			data.put(coords, new MapTile(biomeID));
 		}
 	}
