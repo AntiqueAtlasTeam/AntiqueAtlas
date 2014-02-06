@@ -126,7 +126,7 @@ public enum BiomeTextureMap {
 		}
 	}
 	
-	public void autoRegister(int biomeID) {
+	private void autoRegister(int biomeID) {
 		if (biomeID < 0 || biomeID >= 256) {
 			addTexture(biomeID, defaultTexture);
 			return;
@@ -134,7 +134,12 @@ public enum BiomeTextureMap {
 		BiomeGenBase biome = biomeList[biomeID];
 		List<Type> types = Arrays.asList(BiomeDictionary.getTypesForBiome(biome));
 		if (types.contains(Type.WATER)) {
-			addTexture(biomeID, WATER);
+			// Water + trees = swamp
+			if (types.contains(Type.FOREST) || types.contains(Type.JUNGLE) || types.contains(Type.SWAMP)) {
+				addTexture(biomeID, SWAMP);
+			} else {
+				addTexture(biomeID, WATER);
+			}
 		} else if (types.contains(Type.HILLS)) {
 			if (types.contains(Type.FOREST)) {
 				addTexture(biomeID, FOREST_HILLS);
