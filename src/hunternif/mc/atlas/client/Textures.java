@@ -20,6 +20,7 @@ public class Textures {
 	public static final ResourceLocation MAP_MOUNTAINS = new ResourceLocation(GUI_MAP + "mountains.png");
 	public static final ResourceLocation MAP_MOUNTAINS2 = new ResourceLocation(GUI_MAP + "mountains2.png");
 	public static final ResourceLocation MAP_WATER = new ResourceLocation(GUI_MAP + "water.png");
+	public static final ResourceLocation MAP_FROZEN_WATER = new ResourceLocation(GUI_MAP + "frozen_water.png");
 	public static final ResourceLocation MAP_FOREST = new ResourceLocation(GUI_MAP + "forest.png");
 	public static final ResourceLocation MAP_FOREST2 = new ResourceLocation(GUI_MAP + "forest2.png");
 	public static final ResourceLocation MAP_FOREST_HILLS = new ResourceLocation(GUI_MAP + "forest_hills.png");
@@ -34,7 +35,13 @@ public class Textures {
 	public static final ResourceLocation MAP_SAND = new ResourceLocation(GUI_MAP + "sand.png");
 	public static final ResourceLocation MAP_SAND2 = new ResourceLocation(GUI_MAP + "sand2.png");
 	public static final ResourceLocation MAP_BEACH = new ResourceLocation(GUI_MAP + "beach.png");
-	public static final ResourceLocation MAP_PLAINS = new ResourceLocation(GUI_MAP + "plains.png");
+	//public static final ResourceLocation MAP_PLAINS = new ResourceLocation(GUI_MAP + "plains.png");
+	public static final ResourceLocation MAP_GRASS = new ResourceLocation(GUI_MAP + "grass.png");
+	public static final ResourceLocation MAP_GRASS2 = new ResourceLocation(GUI_MAP + "grass2.png");
+	public static final ResourceLocation MAP_GRASS3 = new ResourceLocation(GUI_MAP + "grass3.png");
+	public static final ResourceLocation MAP_GRASS4 = new ResourceLocation(GUI_MAP + "grass4.png");
+	public static final ResourceLocation MAP_SNOW = new ResourceLocation(GUI_MAP + "snow.png");
+	public static final ResourceLocation MAP_SNOW2 = new ResourceLocation(GUI_MAP + "snow2.png");
 	public static final ResourceLocation MAP_SWAMP = new ResourceLocation(GUI_MAP + "swamp.png");
 	public static final ResourceLocation MAP_SWAMP2 = new ResourceLocation(GUI_MAP + "swamp2.png");
 	public static final ResourceLocation MAP_SWAMP3 = new ResourceLocation(GUI_MAP + "swamp3.png");

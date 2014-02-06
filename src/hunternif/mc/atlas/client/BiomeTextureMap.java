@@ -57,13 +57,13 @@ public enum BiomeTextureMap {
 	public boolean assignVanillaTextures() {
 		boolean changed = false;
 		changed |= addTextureIfNone(ocean,			WATER);
-		changed |= addTextureIfNone(frozenOcean,	WATER);
 		changed |= addTextureIfNone(river,			WATER);
-		changed |= addTextureIfNone(frozenRiver,	WATER);
+		changed |= addTextureIfNone(frozenOcean,	FROZEN_WATER);
+		changed |= addTextureIfNone(frozenRiver,	FROZEN_WATER);
 		changed |= addTextureIfNone(beach,			BEACH);
 		changed |= addTextureIfNone(desert,		SAND);
 		changed |= addTextureIfNone(plains,		PLAINS);
-		//changed |= addTextureIfNone(icePlains,	PLAINS);
+		changed |= addTextureIfNone(icePlains,	SNOW);
 		changed |= addTextureIfNone(jungleHills,	JUNGLE_HILLS);
 		changed |= addTextureIfNone(forestHills,	FOREST_HILLS);
 		changed |= addTextureIfNone(desertHills,	HILLS);
@@ -131,16 +131,27 @@ public enum BiomeTextureMap {
 	private void autoRegister(int biomeID) {
 		BiomeGenBase biome = biomeList[biomeID];
 		List<Type> types = Arrays.asList(BiomeDictionary.getTypesForBiome(biome));
-		if (types.contains(Type.WATER)) {
+		if (types.contains(Type.SWAMP)) {
+			addTexture(biomeID, SWAMP);
+		} else if (types.contains(Type.WATER)) {
 			// Water + trees = swamp
 			if (types.contains(Type.FOREST) || types.contains(Type.JUNGLE) || types.contains(Type.SWAMP)) {
 				addTexture(biomeID, SWAMP);
+			} else if (types.contains(Type.FROZEN)){
+				addTexture(biomeID, FROZEN_WATER);
 			} else {
 				addTexture(biomeID, WATER);
 			}
+		} else if (types.contains(Type.MOUNTAIN)) {
+			addTexture(biomeID, MOUNTAINS);
 		} else if (types.contains(Type.HILLS)) {
 			if (types.contains(Type.FOREST)) {
-				addTexture(biomeID, FOREST_HILLS);
+				// Frozen forest automatically counts as pines:
+				if (types.contains(Type.FROZEN)) {
+					addTexture(biomeID, PINES_HILLS);
+				} else {
+					addTexture(biomeID, FOREST_HILLS);
+				}
 			} else if (types.contains(Type.JUNGLE)) {
 				addTexture(biomeID, JUNGLE_HILLS);
 			} else {
@@ -149,11 +160,20 @@ public enum BiomeTextureMap {
 		} else if (types.contains(Type.JUNGLE)) {
 			addTexture(biomeID, JUNGLE);
 		} else if (types.contains(Type.FOREST)) {
-			addTexture(biomeID, FOREST);
-		} else if (types.contains(Type.MOUNTAIN)) {
-			addTexture(biomeID, MOUNTAINS);
+			// Frozen forest automatically counts as pines:
+			if (types.contains(Type.FROZEN)) {
+				addTexture(biomeID, PINES);
+			} else {
+				addTexture(biomeID, FOREST);
+			}
 		} else if (types.contains(Type.DESERT) || types.contains(Type.WASTELAND)) {
-			addTexture(biomeID, SAND);
+			if (types.contains(Type.FROZEN)) {
+				addTexture(biomeID, SNOW);
+			} else {
+				addTexture(biomeID, SAND);
+			}
+		} else if (types.contains(Type.BEACH)){
+			addTexture(biomeID, BEACH);
 		} else {
 			addTexture(biomeID, defaultTexture);
 		}
