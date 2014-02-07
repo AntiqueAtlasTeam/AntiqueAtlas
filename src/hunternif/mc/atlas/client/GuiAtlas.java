@@ -156,7 +156,7 @@ public class GuiAtlas extends GuiScreen {
 	private void exportImage(ItemStack stack) {
 		isExporting = true;
 		// Default file name is "Atlas <N>.png"
-		File file = ExportImageUtil.selectPngFileToSave("Atlas " + stack.getItemDamage());
+		File file = ExportImageUtil.selectPngFileToSave("Atlas " + stack.getItemDamage(), progressBar);
 		if (file != null) {
 			AntiqueAtlasMod.logger.info("Exporting image from Atlas #" +
 					stack.getItemDamage() +	" to file " + file.getAbsolutePath());
@@ -335,8 +335,7 @@ public class GuiAtlas extends GuiScreen {
 		// Draw progress overlay:
 		if (isExporting) {
 			drawDefaultBackground();
-			progressBar.draw((width - 100)/2, height/2 - 20);
-			fontRenderer.drawStringWithShadow("Exporting", width/2 - 26, height/2 - 34, 0xffffff);
+			progressBar.draw((width - 100)/2, height/2 - 34);
 		}
 	}
 	

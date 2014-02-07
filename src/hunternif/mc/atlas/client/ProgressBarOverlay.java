@@ -1,5 +1,7 @@
 package hunternif.mc.atlas.client;
 
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.Tessellator;
 
 import org.lwjgl.opengl.GL11;
@@ -14,9 +16,18 @@ public class ProgressBarOverlay implements ExportUpdateListener {
 	/** With of the currently completed part of the bar. */
 	private int completedWidth;
 	
+	private String status;
+	private FontRenderer font;
+	
 	public ProgressBarOverlay(int barWidth, int barHeight) {
 		this.barWidth = barWidth;
 		this.barHeight = barHeight;
+		font = Minecraft.getMinecraft().fontRenderer;
+	}
+	
+	@Override
+	public void setStatusString(String status) {
+		this.status = status;
 	}
 	
 	@Override
@@ -28,6 +39,10 @@ public class ProgressBarOverlay implements ExportUpdateListener {
 	
 	/** Render progress bar on the screen. */
 	public void draw(int x, int y) {
+		int statusWidth = font.getStringWidth(status);
+		font.drawStringWithShadow(status, x + (barWidth - statusWidth)/2, y, 0xffffff);
+		y += 14;
+		
         GL11.glDisable(GL11.GL_TEXTURE_2D);
         Tessellator tessellator = Tessellator.instance;
         tessellator.startDrawingQuads();

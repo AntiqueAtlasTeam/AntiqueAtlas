@@ -7,6 +7,7 @@ import hunternif.mc.atlas.client.Textures;
 import hunternif.mc.atlas.core.DimensionData;
 import hunternif.mc.atlas.core.MapTile;
 
+import java.awt.Frame;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -32,12 +33,23 @@ public class ExportImageUtil {
 	public static final int BG_TILE_SIZE = 22;
 	
 	/** Opens a dialog and returns the file that was chosen, null if none or error. */
-	public static File selectPngFileToSave(String atlasName) {
+	public static File selectPngFileToSave(String atlasName, ExportUpdateListener listener) {
+		listener.setStatusString("Opening file system dialog...");
 		try {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 		} catch (Exception e) {
 			AntiqueAtlasMod.logger.log(Level.WARNING, "Setting system Look&Feel for JFileChooser", e);
 		}
+		// Hack to bring the file chooser to front: 
+		Frame frame = new Frame();
+		frame.setUndecorated(true);
+		frame.setOpacity(0);
+		frame.setLocationRelativeTo(null);
+		frame.setVisible(true);
+		frame.toFront();
+		frame.setVisible(false);
+		frame.dispose();
+		
 		JFileChooser chooser = new JFileChooser();
 		chooser.setDialogTitle("Export image");
 		chooser.setSelectedFile(new File(atlasName + ".png"));
@@ -52,7 +64,8 @@ public class ExportImageUtil {
 				return !file.exists();
 			}
 		});
-		if (chooser.showSaveDialog(null) == JFileChooser.APPROVE_OPTION) {
+		listener.setStatusString("Select PNG file to save to");
+		if (chooser.showSaveDialog(frame) == JFileChooser.APPROVE_OPTION) {
 			File file = chooser.getSelectedFile();
 			// Check file extension:
 			if (!file.getName().substring(file.getName().length() - 4).equalsIgnoreCase(".png")) {
@@ -87,6 +100,7 @@ public class ExportImageUtil {
 		totalTiles += (bgTilesX + 1) * (bgTilesY + 1);
 		
 		// Preload all textures (they should be small enough)
+		listener.setStatusString("Loading textures...");
 		BufferedImage bg = null;
 		Map<ResourceLocation, BufferedImage> textureImageMap = new HashMap<ResourceLocation, BufferedImage>();
 		try {
@@ -110,6 +124,7 @@ public class ExportImageUtil {
 		listener.update((float)drawnTiles / (float) totalTiles);
 		
 		//================ Draw map background ================
+		listener.setStatusString("Rendering...");
 		// Top left corner:
 		graphics.drawImage(bg, 0, 0, BG_TILE_SIZE * scale, BG_TILE_SIZE * scale,
 				0, 0, BG_TILE_SIZE, BG_TILE_SIZE, null);
@@ -259,6 +274,7 @@ public class ExportImageUtil {
 		}
 			
 		try {
+			listener.setStatusString("Writing to file...");
 			ImageIO.write(outImage, "PNG", file);
 		} catch (IOException e) {
 			e.printStackTrace();
