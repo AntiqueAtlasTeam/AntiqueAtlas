@@ -43,7 +43,7 @@ public class ExportImageUtil {
 		// Hack to bring the file chooser to front: 
 		Frame frame = new Frame();
 		frame.setUndecorated(true);
-		frame.setOpacity(0);
+		//frame.setOpacity(0);
 		frame.setLocationRelativeTo(null);
 		frame.setVisible(true);
 		frame.toFront();
