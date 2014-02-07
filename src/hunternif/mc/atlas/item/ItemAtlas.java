@@ -6,6 +6,7 @@ import hunternif.mc.atlas.core.AtlasData;
 import hunternif.mc.atlas.core.ChunkBiomeAnalyzer;
 import hunternif.mc.atlas.core.ChunkBiomeAnalyzer.BiomeFlag;
 import hunternif.mc.atlas.core.MapTile;
+import hunternif.mc.atlas.network.TilePacket;
 import hunternif.mc.atlas.util.ShortVec2;
 
 import java.util.Map;
@@ -19,6 +20,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
+import cpw.mods.fml.common.network.PacketDispatcher;
+import cpw.mods.fml.common.network.Player;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
@@ -103,6 +106,10 @@ public class ItemAtlas extends Item {
 					data.putTile(player.dimension, coords.copy(), new MapTile(meanBiomeId));
 					if (!world.isRemote && !data.isDirty()) {
 						data.markDirty();
+					}
+					if (!world.isRemote && biomeAnalyzer.shouldSyncBiomeOnClient(meanBiomeId)) {
+						TilePacket packet = new TilePacket(stack.getItemDamage(), player.dimension, coords, meanBiomeId);
+						PacketDispatcher.sendPacketToPlayer(packet.makePacket(), (Player)player);
 					}
 				}
 			}

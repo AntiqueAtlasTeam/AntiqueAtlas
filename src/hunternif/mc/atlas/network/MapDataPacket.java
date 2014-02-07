@@ -17,6 +17,10 @@ import com.google.common.io.ByteArrayDataOutput;
 
 import cpw.mods.fml.relauncher.Side;
 
+/**
+ * User to sync atlas data from server to client.
+ * @author Hunternif
+ */
 public class MapDataPacket extends CustomPacket {
 	public static final int ENTRY_SIZE_BYTES = 2 + 2 + 2;
 	public static final int MAX_SIZE_BYTES = 32000;
@@ -72,7 +76,7 @@ public class MapDataPacket extends CustomPacket {
 				atlasData.putTile(dimension, entry.getKey(), entry.getValue());
 			}
 		} else {
-			throw new ProtocolException("Cannot send this packet to the server!");
+			throw new ProtocolException("Cannot send MapDataPacket to the server!");
 		}
 	}
 

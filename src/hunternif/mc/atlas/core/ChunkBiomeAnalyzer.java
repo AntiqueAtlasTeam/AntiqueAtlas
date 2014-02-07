@@ -16,11 +16,10 @@ public class ChunkBiomeAnalyzer {
 	public static class BiomeFlag {
 		/** Indicates that the chunk is empty or not loaded. */
 		public static final int NONE = -1;
-		/** Indicates a village. One of the 2 pseudo-biomes is chosen at random
-		 * to make the village look more varied. */
+		/** Indicates a village. */
 		//TODO: add support for unlimited number of randomizations.
-		public static final int VILLAGE1 = -2,
-								VILLAGE2 = -3;
+		public static final int VILLAGE_HOUSE = -2,
+								VILLAGE_TERRITORY = -3;
 	}
 	
 	public static final ChunkBiomeAnalyzer instance = new ChunkBiomeAnalyzer();
@@ -28,8 +27,9 @@ public class ChunkBiomeAnalyzer {
 	public int getChunkBiomeID(Chunk chunk) {
 		if (!chunk.isChunkLoaded) return BiomeFlag.NONE;
 		
-		if (isVillageInChunk(chunk)) {
-			return Math.random() < 0.5 ? BiomeFlag.VILLAGE1 : BiomeFlag.VILLAGE2;
+		Village village = getVillageInChunk(chunk);
+		if (village != null) {
+			return isVillageDoorInChunk(village, chunk) ? BiomeFlag.VILLAGE_HOUSE : BiomeFlag.VILLAGE_TERRITORY;
 		}
 		
 		int[] biomeOccurences = new int[256];
@@ -59,8 +59,7 @@ public class ChunkBiomeAnalyzer {
 		return meanBiomeId;
 	}
 	
-	//TODO: bug: on the client the village may not have spawned yet.
-	public static boolean isVillageInChunk(Chunk chunk) {
+	public static Village getVillageInChunk(Chunk chunk) {
 		int centerX = (chunk.xPosition << 4) + 8;
 		int centerZ = (chunk.zPosition << 4) + 8;
 		List<Village> villages = chunk.worldObj.villageCollectionObj.getVillageList();
@@ -68,10 +67,10 @@ public class ChunkBiomeAnalyzer {
 			ChunkCoordinates coords = village.getCenter();
 			if ((centerX - coords.posX)*(centerX - coords.posX) + (centerZ - coords.posZ)*(centerZ - coords.posZ)
 					<= village.getVillageRadius()*village.getVillageRadius()) {
-				return isVillageDoorInChunk(village, chunk);
+				return village;
 			}
 		}
-		return false;
+		return null;
 	}
 	
 	public static boolean isVillageDoorInChunk(Village village, Chunk chunk) {
@@ -88,5 +87,9 @@ public class ChunkBiomeAnalyzer {
 			}
 		}
 		return false;
+	}
+	
+	public boolean shouldSyncBiomeOnClient(int biomeID) {
+		return biomeID == BiomeFlag.VILLAGE_HOUSE || biomeID == BiomeFlag.VILLAGE_TERRITORY;
 	}
 }

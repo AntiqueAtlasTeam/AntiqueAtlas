@@ -82,8 +82,8 @@ public enum BiomeTextureMap {
 		changed |= addTextureIfNone(mushroomIslandShore, BEACH);
 		
 		//Village
-		changed |= addTextureIfNone(BiomeFlag.VILLAGE1, HOUSE);
-		changed |= addTextureIfNone(BiomeFlag.VILLAGE2, FENCE);
+		changed |= addTextureIfNone(BiomeFlag.VILLAGE_HOUSE, HOUSE);
+		changed |= addTextureIfNone(BiomeFlag.VILLAGE_TERRITORY, FENCE);
 		
 		return changed;
 	}
