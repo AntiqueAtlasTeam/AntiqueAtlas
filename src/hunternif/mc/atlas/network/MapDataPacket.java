@@ -18,7 +18,7 @@ import com.google.common.io.ByteArrayDataOutput;
 import cpw.mods.fml.relauncher.Side;
 
 public class MapDataPacket extends CustomPacket {
-	public static final int ENTRY_SIZE_BYTES = 2 + 2 + 1;
+	public static final int ENTRY_SIZE_BYTES = 2 + 2 + 2;
 	public static final int MAX_SIZE_BYTES = 32000;
 	
 	private int atlasID;
@@ -43,7 +43,7 @@ public class MapDataPacket extends CustomPacket {
 		for (Entry<ShortVec2, MapTile> entry : data.entrySet()) {
 			out.writeShort(entry.getKey().x);
 			out.writeShort(entry.getKey().y);
-			out.writeByte(entry.getValue().biomeID);
+			out.writeShort(entry.getValue().biomeID);
 		}
 	}
 
@@ -54,7 +54,7 @@ public class MapDataPacket extends CustomPacket {
 		int length = in.readShort();
 		for (int i = 0; i < length; i++) {
 			ShortVec2 coords = new ShortVec2(in.readShort(), in.readShort());
-			int biomeID = ByteUtil.unsignedByteToInt(in.readByte());
+			int biomeID = in.readShort();
 			data.put(coords, new MapTile(biomeID));
 		}
 	}

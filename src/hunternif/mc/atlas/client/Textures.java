@@ -54,4 +54,8 @@ public class Textures {
 	public static final ResourceLocation MAP_JUNGLE2 = new ResourceLocation(GUI_MAP + "jungle2.png");
 	public static final ResourceLocation MAP_JUNGLE_HILLS = new ResourceLocation(GUI_MAP + "jungle_hills.png");
 	public static final ResourceLocation MAP_JUNGLE_HILLS2 = new ResourceLocation(GUI_MAP + "jungle_hills2.png");
+	
+	// Village:
+	public static final ResourceLocation MAP_HOUSE = new ResourceLocation(GUI_MAP + "house.png");
+	public static final ResourceLocation MAP_FENCE = new ResourceLocation(GUI_MAP + "fence.png");
 }

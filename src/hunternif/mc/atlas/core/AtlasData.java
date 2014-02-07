@@ -16,7 +16,6 @@ import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.world.WorldSavedData;
-import net.minecraft.world.biome.BiomeGenBase;
 import cpw.mods.fml.common.network.PacketDispatcher;
 import cpw.mods.fml.common.network.Player;
 
@@ -54,8 +53,7 @@ public class AtlasData extends WorldSavedData {
 			int[] intArray = tag.getIntArray(TAG_VISITED_CHUNKS);
 			for (int i = 0; i < intArray.length; i += 3) {
 				ShortVec2 coords = new ShortVec2(intArray[i], intArray[i+1]);
-				BiomeGenBase biome = BiomeGenBase.biomeList[intArray[i+2]];
-				putTile(dimensionID, coords, new MapTile(biome));
+				putTile(dimensionID, coords, new MapTile(intArray[i+2]));
 			}
 		}
 	}

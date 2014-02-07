@@ -3,6 +3,7 @@ package hunternif.mc.atlas.client;
 import static hunternif.mc.atlas.client.StandardTextureSet.*;
 import static net.minecraft.world.biome.BiomeGenBase.*;
 import hunternif.mc.atlas.AntiqueAtlasMod;
+import hunternif.mc.atlas.core.ChunkBiomeAnalyzer.BiomeFlag;
 import hunternif.mc.atlas.core.MapTile;
 
 import java.util.ArrayList;
@@ -79,6 +80,11 @@ public enum BiomeTextureMap {
 		//changed |= addTextureIfNone(hell,		NETHER);
 		changed |= addTextureIfNone(mushroomIsland, MUSHROOM);
 		changed |= addTextureIfNone(mushroomIslandShore, BEACH);
+		
+		//Village
+		changed |= addTextureIfNone(BiomeFlag.VILLAGE1, HOUSE);
+		changed |= addTextureIfNone(BiomeFlag.VILLAGE2, FENCE);
+		
 		return changed;
 	}
 
@@ -91,13 +97,19 @@ public enum BiomeTextureMap {
 		}
 		return false;
 	}
+	public boolean addTextureIfNone(int biomeID, StandardTextureSet textureSet) {
+		if (!isRegistered(biomeID)) {
+			addTexture(biomeID, textureSet);
+			return true;
+		}
+		return false;
+	}
 	public void addTextureIfNone(BiomeGenBase biome, ResourceLocation ... textures) {
 		if (!isRegistered(biome.biomeID)) {
 			addTexture(biome.biomeID, textures);
 		}
 	}
 	public void addTexture(int biomeID, StandardTextureSet textureSet) {
-		checkBiomeID(biomeID);
 		BiomeTextureEntry entry = textureMap.get(biomeID);
 		if (entry == null) {
 			entry = new BiomeTextureEntry(biomeID, textureSet);
@@ -116,7 +128,6 @@ public enum BiomeTextureMap {
 		addTexture(biomeID, false, textures);
 	}
 	public void addTexture(int biomeID, boolean isStandard, ResourceLocation ... textures) {
-		checkBiomeID(biomeID);
 		BiomeTextureEntry entry = textureMap.get(biomeID);
 		if (entry == null) {
 			entry = new BiomeTextureEntry(biomeID, textures);
@@ -182,7 +193,6 @@ public enum BiomeTextureMap {
 	
 	/** Auto-registers the biome ID if it is not registered. */
 	public void checkRegistration(int biomeID) {
-		checkBiomeID(biomeID);
 		if (!isRegistered(biomeID)) {
 			autoRegister(biomeID);
 			AntiqueAtlasMod.proxy.updateConfig();
@@ -234,13 +244,5 @@ public enum BiomeTextureMap {
 			list.addAll(entry.getValue().textures);
 		}
 		return list;
-	}
-	
-	/** @throws IllegalArgumentException if the specified biome ID is out of range [0, 256) */
-	private static void checkBiomeID(int biomeID) {
-		if (biomeID < 0 && biomeID >= 256) {
-			throw new IllegalArgumentException("Biome ID " + biomeID + " is out of range. " +
-					"Did you forget to convert it to unsigned?");
-		}
 	}
 }
