@@ -1,6 +1,5 @@
 package hunternif.mc.atlas.network;
 
-import quest.core.network.CustomExecPacket.PacketDirection;
 import hunternif.mc.atlas.AntiqueAtlasMod;
 import hunternif.mc.atlas.util.ZipUtil;
 import net.minecraft.entity.player.EntityPlayer;
@@ -28,6 +27,7 @@ public abstract class CustomPacket {
 		
 		builder.put(Integer.valueOf(0), MapDataPacket.class);
 		builder.put(Integer.valueOf(1), TilesPacket.class);
+		builder.put(Integer.valueOf(2), TileNameIDPacket.class);
 		
 		idMap = builder.build();
 	}

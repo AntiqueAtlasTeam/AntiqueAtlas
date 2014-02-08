@@ -1,6 +1,6 @@
 package hunternif.mc.atlas;
 
-import hunternif.mc.atlas.api.TileAPI;
+import hunternif.mc.atlas.api.AtlasAPI;
 import hunternif.mc.atlas.client.StandardTextureSet;
 import hunternif.mc.atlas.core.ChunkBiomeAnalyzer;
 import hunternif.mc.atlas.ext.ExtBiomeDataHandler;
@@ -74,8 +74,8 @@ public class AntiqueAtlasMod {
 	public void init(FMLInitializationEvent event){
 		proxy.init(event);
 		
-		TileAPI.setTextureIfNone(ExtTileIdMap.TILE_VILLAGE_HOUSE, StandardTextureSet.HOUSE);
-		TileAPI.setTextureIfNone(ExtTileIdMap.TILE_VILLAGE_TERRITORY, StandardTextureSet.FENCE);
+		AtlasAPI.getTileAPI().setTextureIfNone(ExtTileIdMap.TILE_VILLAGE_HOUSE, StandardTextureSet.HOUSE);
+		AtlasAPI.getTileAPI().setTextureIfNone(ExtTileIdMap.TILE_VILLAGE_TERRITORY, StandardTextureSet.FENCE);
 		
 		MinecraftForge.EVENT_BUS.register(extBiomeData);
 		GameRegistry.registerPlayerTracker(AntiqueAtlasMod.extBiomeData);

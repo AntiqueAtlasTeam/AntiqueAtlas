@@ -24,7 +24,7 @@ public class TilesPacket extends CustomPacket {
 	public static final int ENTRY_SIZE_BYTES = 2 + 2 + 2;
 
 	private int dimension;
-	private Map<ShortVec2, Integer> biomeMap = new HashMap<ShortVec2, Integer>();
+	private final Map<ShortVec2, Integer> biomeMap = new HashMap<ShortVec2, Integer>();
 	
 	public TilesPacket() {}
 	

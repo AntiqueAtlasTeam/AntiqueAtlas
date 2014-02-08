@@ -2,9 +2,17 @@ package hunternif.mc.atlas.ext;
 
 import hunternif.mc.atlas.AntiqueAtlasMod;
 import hunternif.mc.atlas.core.ChunkBiomeAnalyzer;
+import hunternif.mc.atlas.network.TileNameIDPacket;
+
+import java.util.Map;
+
+import net.minecraft.entity.player.EntityPlayer;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
+
+import cpw.mods.fml.common.network.PacketDispatcher;
+import cpw.mods.fml.common.network.Player;
 
 
 /** Maps unique names of external tiles to pseudo-biome IDs. Set on the server,
@@ -33,7 +41,6 @@ public enum ExtTileIdMap {
 			id = Integer.valueOf(findNewID());
 			nameToIdMap.put(uniqueName, id);
 			AntiqueAtlasMod.proxy.updateExtTileConfig();
-			//TODO send packet to clients
 		}
 		return id.intValue();
 	}
@@ -51,11 +58,19 @@ public enum ExtTileIdMap {
 		return lastID;
 	}
 	
-	/** Map of unique tile name to pseudo biome ID. */
-	BiMap<String, Integer> getMap() {
+	/** This method must only be called when reading from the config file or
+	 *  when executing {@link TileNameIDPacket}. */
+	public void setPseudoBiomeID(String uniqueName, int id) {
+		nameToIdMap.put(uniqueName, Integer.valueOf(id));
+	}
+	
+	/** Map of tile names to biome ID, used for saving config file. */
+	Map<String, Integer> getMap() {
 		return nameToIdMap;
 	}
-	void setPseudoBiomeID(String uniqueName, int id) {
-		nameToIdMap.put(uniqueName, Integer.valueOf(id));
+	
+	/** Send all name-biomeID pairs to the player. */
+	public void syncOnPlayer(EntityPlayer player) {
+		PacketDispatcher.sendPacketToPlayer(new TileNameIDPacket(nameToIdMap).makePacket(), (Player)player);
 	}
 }

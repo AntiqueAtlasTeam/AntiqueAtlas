@@ -134,7 +134,7 @@ public class AtlasData extends WorldSavedData {
 				data.clear();
 			}
 		}
-		AntiqueAtlasMod.logger.info("Sent Atlas #" + atlasID + " data to player " + player.username + "in " + pieces + " pieces.");
+		AntiqueAtlasMod.logger.info("Sent Atlas #" + atlasID + " data to player " + player.username + " in " + pieces + " pieces.");
 		playersSentTo.add(player);
 	}
 

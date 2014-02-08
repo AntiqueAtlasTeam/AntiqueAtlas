@@ -1,6 +1,6 @@
 package hunternif.mc.atlas.ext;
 
-import hunternif.mc.atlas.util.ShortVec2;
+import hunternif.mc.atlas.api.AtlasAPI;
 
 import java.util.List;
 
@@ -26,23 +26,22 @@ public class ExtBiomeDataHandler implements IPlayerTracker {
 			}
 			
 			// Put all villages on the map:
-			int houseID = ExtTileIdMap.instance().getOrCreatePseudoBiomeID(ExtTileIdMap.TILE_VILLAGE_HOUSE);
-			int territoryID = ExtTileIdMap.instance().getOrCreatePseudoBiomeID(ExtTileIdMap.TILE_VILLAGE_TERRITORY);
 			List<Village> villages = event.world.villageCollectionObj.getVillageList();
 			for (Village village : villages) {
-				// Cover village territory
+				// Cover village territory:
 				for (int dx = -village.getVillageRadius(); dx <= village.getVillageRadius(); dx += 16) {
 					for (int dz = -village.getVillageRadius(); dz <= village.getVillageRadius(); dz += 16) {
 						// Fill only the inside of the circle:
 						if (dx*dx + dz*dz > village.getVillageRadius()*village.getVillageRadius()) {
 							continue;
 						}
-						data.setBiomeIdAt(0, territoryID, new ShortVec2(
+						AtlasAPI.getTileAPI().putCustomTile(event.world, 0, ExtTileIdMap.TILE_VILLAGE_TERRITORY,
 								(village.getCenter().posX + dx) >> 4,
-								(village.getCenter().posZ + dz) >> 4));
+								(village.getCenter().posZ + dz) >> 4);
 						data.markDirty();
 					}
 				}
+				// Cover doors with houses:
 			}
 		}
 	}
@@ -54,6 +53,7 @@ public class ExtBiomeDataHandler implements IPlayerTracker {
 	@Override
 	public void onPlayerLogin(EntityPlayer player) {
 		data.syncOnPlayer(player);
+		ExtTileIdMap.instance().syncOnPlayer(player);
 	}
 
 	@Override

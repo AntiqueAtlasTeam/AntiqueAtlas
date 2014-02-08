@@ -1,79 +1,29 @@
 package hunternif.mc.atlas.api;
 
-import hunternif.mc.atlas.AntiqueAtlasMod;
 import hunternif.mc.atlas.client.StandardTextureSet;
-import hunternif.mc.atlas.core.BiomeTextureMap;
-import hunternif.mc.atlas.core.ChunkBiomeAnalyzer;
-import hunternif.mc.atlas.ext.ExtBiomeData;
-import hunternif.mc.atlas.ext.ExtTileIdMap;
-import hunternif.mc.atlas.network.TilesPacket;
-import hunternif.mc.atlas.util.NetworkUtil;
-import hunternif.mc.atlas.util.ShortVec2;
-
-import java.util.HashMap;
-import java.util.Map;
-
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-/** API for custom tiles, i.e. dungeons, towns etc. */
-public class TileAPI {
-	/**
-	 * Because pseudo-biome IDs have to be synced with the server, they may not
-	 * have been initialized when the texture registration methods are called on
-	 * the client. In that case the textures are put in this map to be later
-	 * registered when the server sends the packet with pseudo-biome ID for the
-	 * corresponding unique name.
-	 * <p>This map maps unique tile name to a StandardTextureSet or an array of
-	 * ResourceLocations of textures.</p>
-	 */
-	private static final Map<String, Object> pendingTextures = new HashMap<String, Object>();
-	
+/** API for custom tiles, i.e. dungeons, towns etc. Texture methods are only for
+ * the client side. */
+public interface TileAPI {
 	/** Assign texture to tile. The textures will be added as variations. */
 	@SideOnly(Side.CLIENT)
-	public static void setTexture(String uniqueTileName, ResourceLocation ... textures) {
-		int id = ExtTileIdMap.instance().getPseudoBiomeID(uniqueTileName);
-		if (id != ChunkBiomeAnalyzer.NOT_FOUND) {
-			BiomeTextureMap.instance().setTexture(id, textures);
-		} else {
-			pendingTextures.put(uniqueTileName, textures);
-		}
-	}
+	void setTexture(String uniqueTileName, ResourceLocation ... textures);
 	
 	/** Assign texture set to tile. */
 	@SideOnly(Side.CLIENT)
-	public static void setTexture(String uniqueTileName, StandardTextureSet textureSet) {
-		int id = ExtTileIdMap.instance().getPseudoBiomeID(uniqueTileName);
-		if (id != ChunkBiomeAnalyzer.NOT_FOUND) {
-			BiomeTextureMap.instance().setTexture(id, textureSet);
-		} else {
-			pendingTextures.put(uniqueTileName, textureSet);
-		}
-	}
+	void setTexture(String uniqueTileName, StandardTextureSet textureSet);
 	
 	/** Assigns texture to tile, if this tile has no texture assigned. */
 	@SideOnly(Side.CLIENT)
-	public static void setTextureIfNone(String uniqueTileName, ResourceLocation ... textures) {
-		int id = ExtTileIdMap.instance().getPseudoBiomeID(uniqueTileName);
-		if (id != ChunkBiomeAnalyzer.NOT_FOUND) {
-			BiomeTextureMap.instance().setTexture(id, textures);
-		} else {
-			pendingTextures.put(uniqueTileName, textures);
-		}
-	}
+	void setTextureIfNone(String uniqueTileName, ResourceLocation ... textures);
 	
 	/** Assigns texture set to tile, if this tile has no texture assigned. */
 	@SideOnly(Side.CLIENT)
-	public static void setTextureIfNone(String uniqueTileName, StandardTextureSet textureSet) {
-		int id = ExtTileIdMap.instance().getPseudoBiomeID(uniqueTileName);
-		if (id != ChunkBiomeAnalyzer.NOT_FOUND) {
-			BiomeTextureMap.instance().setTexture(id, textureSet);
-		} else {
-			pendingTextures.put(uniqueTileName, textureSet);
-		}
-	}
+	void setTextureIfNone(String uniqueTileName, StandardTextureSet textureSet);
 	
 	/**
 	 * Put the specified custom tile at the specified chunk coordinates. This
@@ -85,16 +35,5 @@ public class TileAPI {
 	 * @param chunkX	x chunk coordinate. (block coordinate << 4)
 	 * @param chunkZ	z chunk coordinate. (block coordinate << 4)
 	 */
-	public static void putCustomTile(World world, int dimension, String tileName, int chunkX, int chunkZ) {
-		int biomeID = ExtTileIdMap.instance().getOrCreatePseudoBiomeID(tileName);
-		ExtBiomeData data = AntiqueAtlasMod.extBiomeData.getData();
-		ShortVec2 coords = new ShortVec2(chunkX, chunkZ);
-		data.setBiomeIdAt(dimension, biomeID, coords);
-		if (!world.isRemote) {
-			data.markDirty();
-			TilesPacket packet = new TilesPacket(dimension);
-			packet.addTile(coords, biomeID);
-			NetworkUtil.sendPacketToAllPlayersInWorld(world, packet.makePacket());
-		}
-	}
+	void putCustomTile(World world, int dimension, String tileName, int chunkX, int chunkZ);
 }
