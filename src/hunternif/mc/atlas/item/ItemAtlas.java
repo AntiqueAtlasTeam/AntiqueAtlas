@@ -26,7 +26,7 @@ public class ItemAtlas extends Item {
 	protected static final String WORLD_DATA_ID = "aAtlas";
 	
 	/** In [chunks] */
-	public static double LOOK_RADIUS = 9;
+	public static double LOOK_RADIUS = 11;
 	/** In [ticks] */
 	public static int UPDATE_INTERVAL = 20;
 	

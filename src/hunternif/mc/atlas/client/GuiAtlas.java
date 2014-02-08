@@ -315,6 +315,7 @@ public class GuiAtlas extends GuiScreen {
 		AtlasRenderHelper.drawFullTexture(Textures.BOOK_FRAME, guiLeft, guiTop, WIDTH, HEIGHT);
 		
 		// How much the player has moved from the top left corner of the map, in pixels:
+		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 		int playerOffsetX = MathHelper.floor_double((player.posX - (mapStartCoords.x << 4)) / MAP_BLOCK_PIXEL_RATIO);
 		int playerOffsetZ = MathHelper.floor_double((player.posZ - (mapStartCoords.y << 4)) / MAP_BLOCK_PIXEL_RATIO);
 		if (playerOffsetX < 0) playerOffsetX = 0;
