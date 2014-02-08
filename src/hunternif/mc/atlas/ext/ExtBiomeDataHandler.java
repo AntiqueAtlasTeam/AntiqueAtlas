@@ -6,6 +6,7 @@ import java.util.List;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.village.Village;
+import net.minecraft.village.VillageDoorInfo;
 import net.minecraftforge.event.ForgeSubscribe;
 import net.minecraftforge.event.world.WorldEvent;
 import cpw.mods.fml.common.IPlayerTracker;
@@ -42,6 +43,11 @@ public class ExtBiomeDataHandler implements IPlayerTracker {
 					}
 				}
 				// Cover doors with houses:
+				for (Object doorInfo : village.getVillageDoorInfoList()) {
+					VillageDoorInfo door = (VillageDoorInfo) doorInfo;
+					AtlasAPI.getTileAPI().putCustomTile(event.world, 0, ExtTileIdMap.TILE_VILLAGE_HOUSE, door.posX >> 4, door.posZ >> 4);
+					data.markDirty();
+				}
 			}
 		}
 	}
