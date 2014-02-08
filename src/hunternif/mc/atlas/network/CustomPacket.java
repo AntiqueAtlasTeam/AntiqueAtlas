@@ -18,12 +18,15 @@ import cpw.mods.fml.relauncher.Side;
  * @author credits to diesieben07
  */
 public abstract class CustomPacket {
+	public static final int MAX_SIZE_BYTES = 32000;
+	
 	private static final BiMap<Integer, Class<? extends CustomPacket>> idMap;
 		
 	static {
 		ImmutableBiMap.Builder<Integer, Class<? extends CustomPacket>> builder = ImmutableBiMap.builder();
 		
 		builder.put(Integer.valueOf(0), MapDataPacket.class);
+		builder.put(Integer.valueOf(1), TilesPacket.class);
 		
 		idMap = builder.build();
 	}

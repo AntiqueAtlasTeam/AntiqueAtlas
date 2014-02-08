@@ -1,15 +1,21 @@
 package hunternif.mc.atlas.ext;
 
+import hunternif.mc.atlas.AntiqueAtlasMod;
 import hunternif.mc.atlas.core.ChunkBiomeAnalyzer;
+import hunternif.mc.atlas.network.CustomPacket;
+import hunternif.mc.atlas.network.TilesPacket;
 import hunternif.mc.atlas.util.ShortVec2;
 
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.world.WorldSavedData;
+import cpw.mods.fml.common.network.PacketDispatcher;
+import cpw.mods.fml.common.network.Player;
 
 /**
  * This world-saved data contains all the custom pseudo-biome IDs in a world.
@@ -20,7 +26,7 @@ public class ExtBiomeData extends WorldSavedData {
 	private static final String TAG_DIMENSION_MAP_LIST = "dimMap";
 	private static final String TAG_DIMENSION_ID = "dimID";
 	private static final String TAG_BIOME_IDS = "biomeIDs";
-
+	
 	public ExtBiomeData(String key) {
 		super(key);
 	}
@@ -78,9 +84,35 @@ public class ExtBiomeData extends WorldSavedData {
 		return biomeID == null ? ChunkBiomeAnalyzer.NOT_FOUND : biomeID;
 	}
 	
+	/** If setting biome on the server, a packet should be sent to all players. */
 	public void setBiomeIdAt(int dimension, int biomeID, ShortVec2 coords) {
 		getBiomesInDimension(dimension).put(coords, biomeID);
-		markDirty();
+	}
+	
+	/** Send all data to player in several zipped packets. */
+	public void syncOnPlayer(EntityPlayer player) {
+		int pieces = 0;
+		int dataSizeBytes = 0;
+		for (Integer dimension : dimensionMap.keySet()) {
+			TilesPacket packet = new TilesPacket(dimension);
+			Map<ShortVec2, Integer> biomes = getBiomesInDimension(dimension);
+			for (Entry<ShortVec2, Integer> entry : biomes.entrySet()) {
+				packet.addTile(entry.getKey(), entry.getValue());
+				dataSizeBytes += TilesPacket.ENTRY_SIZE_BYTES;
+				if (dataSizeBytes >= CustomPacket.MAX_SIZE_BYTES) {
+					PacketDispatcher.sendPacketToPlayer(packet.makePacket(), (Player)player);
+					pieces++;
+					dataSizeBytes = 0;
+					packet = new TilesPacket(dimension);
+				}
+			}
+			if (!packet.isEmpty()) {
+				PacketDispatcher.sendPacketToPlayer(packet.makePacket(), (Player)player);
+				pieces++;
+				dataSizeBytes = 0;
+			}
+		}
+		AntiqueAtlasMod.logger.info("Sent custom biome data to player " + player.username + " in " + pieces + " pieces.");
 	}
 
 }

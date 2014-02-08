@@ -21,8 +21,8 @@ import cpw.mods.fml.relauncher.Side;
  * @author Hunternif
  */
 public class MapDataPacket extends CustomPacket {
+	/** Size of ine entry in the map in bytes. */
 	public static final int ENTRY_SIZE_BYTES = 2 + 2 + 2;
-	public static final int MAX_SIZE_BYTES = 32000;
 	
 	private int atlasID;
 	private int dimension;

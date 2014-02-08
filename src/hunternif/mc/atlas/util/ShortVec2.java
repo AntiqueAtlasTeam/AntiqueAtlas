@@ -37,7 +37,8 @@ public class ShortVec2 {
 		return "(" + x + ", " + y + ")";
 	}
 	
-	public ShortVec2 copy() {
+	@Override
+	public ShortVec2 clone() {
 		return new ShortVec2(x, y);
 	}
 	

@@ -2,6 +2,7 @@ package hunternif.mc.atlas.core;
 
 import hunternif.mc.atlas.AntiqueAtlasMod;
 import hunternif.mc.atlas.client.MapTileStitcher;
+import hunternif.mc.atlas.network.CustomPacket;
 import hunternif.mc.atlas.network.MapDataPacket;
 import hunternif.mc.atlas.util.ShortVec2;
 
@@ -12,7 +13,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.world.WorldSavedData;
@@ -33,7 +34,7 @@ public class AtlasData extends WorldSavedData {
 	private MapTileStitcher tileStitcher;
 	
 	/** Set of players this Atlas data has been sent to. */
-	private Set<Entity> playersSentTo = new HashSet<Entity>();
+	private Set<EntityPlayer> playersSentTo = new HashSet<EntityPlayer>();
 
 	public AtlasData(String key) {
 		super(key);
@@ -103,12 +104,12 @@ public class AtlasData extends WorldSavedData {
 		return getDimensionData(dimension).getSeenChunks();
 	}
 	
-	public boolean isSyncedOnPlayer(Entity player) {
+	public boolean isSyncedOnPlayer(EntityPlayer player) {
 		return playersSentTo.contains(player);
 	}
 
 	/** Send all data to player in several zipped packets. */
-	public void syncOnPlayer(int atlasID, Entity player) {
+	public void syncOnPlayer(int atlasID, EntityPlayer player) {
 		int pieces = 0;
 		int dataSizeBytes = 0;
 		Map<ShortVec2, MapTile> data = new HashMap<ShortVec2, MapTile>();
@@ -117,7 +118,7 @@ public class AtlasData extends WorldSavedData {
 			for (Entry<ShortVec2, MapTile> entry : seenChunks.entrySet()) {
 				data.put(entry.getKey(), entry.getValue());
 				dataSizeBytes += MapDataPacket.ENTRY_SIZE_BYTES;
-				if (dataSizeBytes >= MapDataPacket.MAX_SIZE_BYTES) {
+				if (dataSizeBytes >= CustomPacket.MAX_SIZE_BYTES) {
 					MapDataPacket packet = new MapDataPacket(atlasID, dimension.intValue(), data);
 					PacketDispatcher.sendPacketToPlayer(packet.makePacket(), (Player)player);
 					pieces++;
@@ -133,7 +134,7 @@ public class AtlasData extends WorldSavedData {
 				data.clear();
 			}
 		}
-		AntiqueAtlasMod.logger.info("Sent Atlas #" + atlasID + " data in " + pieces + " pieces.");
+		AntiqueAtlasMod.logger.info("Sent Atlas #" + atlasID + " data to player " + player.username + "in " + pieces + " pieces.");
 		playersSentTo.add(player);
 	}
 

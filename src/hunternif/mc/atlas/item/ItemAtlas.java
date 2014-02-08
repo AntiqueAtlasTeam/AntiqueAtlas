@@ -62,11 +62,12 @@ public class ItemAtlas extends Item {
 	}
 	
 	@Override
-	public void onUpdate(ItemStack stack, World world, Entity player, int slot, boolean isEquipped) {
+	public void onUpdate(ItemStack stack, World world, Entity entity, int slot, boolean isEquipped) {
 		AtlasData data = getAtlasData(stack, world);
-		if (data == null) return;
+		if (data == null || !(entity instanceof EntityPlayer)) return;
 		
 		// On first run send the map from the server to the client:
+		EntityPlayer player = (EntityPlayer) entity;
 		if (!world.isRemote && !data.isSyncedOnPlayer(player) && !data.isEmpty()) {
 			data.syncOnPlayer(stack.getItemDamage(), player);
 		}
@@ -113,7 +114,7 @@ public class ItemAtlas extends Item {
 					if (world.isRemote) {
 						tile.randomizeTexture();
 					}
-					data.putTile(player.dimension, coords.copy(), tile);
+					data.putTile(player.dimension, coords.clone(), tile);
 					if (!world.isRemote) {
 						data.markDirty();
 					}

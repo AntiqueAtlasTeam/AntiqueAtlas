@@ -4,7 +4,10 @@ import hunternif.mc.atlas.AntiqueAtlasMod;
 import hunternif.mc.atlas.client.StandardTextureSet;
 import hunternif.mc.atlas.core.BiomeTextureMap;
 import hunternif.mc.atlas.core.ChunkBiomeAnalyzer;
+import hunternif.mc.atlas.ext.ExtBiomeData;
 import hunternif.mc.atlas.ext.ExtTileIdMap;
+import hunternif.mc.atlas.network.TilesPacket;
+import hunternif.mc.atlas.util.NetworkUtil;
 import hunternif.mc.atlas.util.ShortVec2;
 
 import java.util.HashMap;
@@ -83,10 +86,15 @@ public class TileAPI {
 	 * @param chunkZ	z chunk coordinate. (block coordinate << 4)
 	 */
 	public static void putCustomTile(World world, int dimension, String tileName, int chunkX, int chunkZ) {
-		int id = ExtTileIdMap.instance().getOrCreatePseudoBiomeID(tileName);
-		AntiqueAtlasMod.extBiomeData.getData().setBiomeIdAt(dimension, id, new ShortVec2(chunkX, chunkZ));
+		int biomeID = ExtTileIdMap.instance().getOrCreatePseudoBiomeID(tileName);
+		ExtBiomeData data = AntiqueAtlasMod.extBiomeData.getData();
+		ShortVec2 coords = new ShortVec2(chunkX, chunkZ);
+		data.setBiomeIdAt(dimension, biomeID, coords);
 		if (!world.isRemote) {
-			//TODO send packet to all clients
+			data.markDirty();
+			TilesPacket packet = new TilesPacket(dimension);
+			packet.addTile(coords, biomeID);
+			NetworkUtil.sendPacketToAllPlayersInWorld(world, packet.makePacket());
 		}
 	}
 }

@@ -40,6 +40,7 @@ public class ExtBiomeDataHandler implements IPlayerTracker {
 						data.setBiomeIdAt(0, territoryID, new ShortVec2(
 								(village.getCenter().posX + dx) >> 4,
 								(village.getCenter().posZ + dz) >> 4));
+						data.markDirty();
 					}
 				}
 			}
@@ -52,7 +53,7 @@ public class ExtBiomeDataHandler implements IPlayerTracker {
 	
 	@Override
 	public void onPlayerLogin(EntityPlayer player) {
-		//TODO sync tileIDs
+		data.syncOnPlayer(player);
 	}
 
 	@Override
