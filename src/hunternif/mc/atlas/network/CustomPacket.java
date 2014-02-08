@@ -1,5 +1,6 @@
 package hunternif.mc.atlas.network;
 
+import quest.core.network.CustomExecPacket.PacketDirection;
 import hunternif.mc.atlas.AntiqueAtlasMod;
 import hunternif.mc.atlas.util.ZipUtil;
 import net.minecraft.entity.player.EntityPlayer;
@@ -79,6 +80,17 @@ public abstract class CustomPacket {
 	protected boolean isCompressed() {
 		return false;
 	}
+	
+	protected enum PacketDirection {
+		CLIENT_TO_SERVER(false, true), SERVER_TO_CLIENT(true, false), BOTH(true, true);
+		public final boolean toClient;
+		public final boolean toServer;
+		private PacketDirection(boolean toClient, boolean toServer) {
+			this.toClient = toClient;
+			this.toServer = toServer;
+		}
+	}
+	public abstract PacketDirection getPacketDirection();
 
 	public abstract void write(ByteArrayDataOutput out);
 	

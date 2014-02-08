@@ -31,15 +31,20 @@ public class CustomPacketHandler implements IPacketHandler {
 				byte[] unzipped = ZipUtil.decompressByteArray(packet.data, 1);
 				in = ByteStreams.newDataInput(unzipped);
 			}
+			Side side = entityPlayer.worldObj.isRemote ? Side.CLIENT : Side.SERVER;
+			if (side.isClient() && !customPacket.getPacketDirection().toClient) {
+				throw new ProtocolException("Can't send " + getClass().getSimpleName() + " to client");
+			} else if (!side.isClient() && !customPacket.getPacketDirection().toServer) {
+				throw new ProtocolException("Can't send " + getClass().getSimpleName() + " to server");
+			}
 			customPacket.read(in);
-			customPacket.execute(entityPlayer, entityPlayer.worldObj.isRemote ? Side.CLIENT : Side.SERVER);
+			customPacket.execute(entityPlayer, side);
 		} catch (ProtocolException e) {
 			if (player instanceof EntityPlayerMP) {
 				((EntityPlayerMP) player).playerNetServerHandler.kickPlayerFromServer("Protocol Exception!");
 				AntiqueAtlasMod.logger.log(Level.WARNING, String.format("Player %s caused a Protocl Exception and was kicked.", ((EntityPlayer)player).username), e);
 			} else {
-				// Can't tolerate protocol exceptions on the client:
-				throw new RuntimeException(e);
+				AntiqueAtlasMod.logger.log(Level.SEVERE, "Packet handler", e);
 			}
 		} catch (InstantiationException e) {
 			throw new RuntimeException("Unexpected InstantiationException during Packet construction!", e);

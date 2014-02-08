@@ -63,19 +63,20 @@ public class TilesPacket extends CustomPacket {
 
 	@Override
 	public void execute(EntityPlayer player, Side side) throws ProtocolException {
-		if (side.isClient()) {
-			ExtBiomeData data = AntiqueAtlasMod.extBiomeData.getData();
-			for (Entry<ShortVec2, Integer> entry : biomeMap.entrySet()) {
-				data.setBiomeIdAt(dimension, entry.getValue(), entry.getKey());
-			}
-		} else {
-			throw new ProtocolException("Cannot send TilePacket to the server!");
+		ExtBiomeData data = AntiqueAtlasMod.extBiomeData.getData();
+		for (Entry<ShortVec2, Integer> entry : biomeMap.entrySet()) {
+			data.setBiomeIdAt(dimension, entry.getValue(), entry.getKey());
 		}
 	}
 	
 	@Override
 	protected boolean isCompressed() {
 		return true;
+	}
+
+	@Override
+	public PacketDirection getPacketDirection() {
+		return PacketDirection.SERVER_TO_CLIENT;
 	}
 
 }

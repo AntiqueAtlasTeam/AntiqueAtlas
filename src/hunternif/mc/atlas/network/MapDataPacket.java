@@ -71,14 +71,15 @@ public class MapDataPacket extends CustomPacket {
 
 	@Override
 	public void execute(EntityPlayer player, Side side) throws ProtocolException {
-		if (side.isClient()) {
-			AtlasData atlasData = AntiqueAtlasMod.itemAtlas.getClientAtlasData(atlasID);
-			for (Entry<ShortVec2, MapTile> entry : data.entrySet()) {
-				atlasData.putTile(dimension, entry.getKey(), entry.getValue());
-			}
-		} else {
-			throw new ProtocolException("Cannot send MapDataPacket to the server!");
+		AtlasData atlasData = AntiqueAtlasMod.itemAtlas.getClientAtlasData(atlasID);
+		for (Entry<ShortVec2, MapTile> entry : data.entrySet()) {
+			atlasData.putTile(dimension, entry.getKey(), entry.getValue());
 		}
+	}
+
+	@Override
+	public PacketDirection getPacketDirection() {
+		return PacketDirection.SERVER_TO_CLIENT;
 	}
 
 }
