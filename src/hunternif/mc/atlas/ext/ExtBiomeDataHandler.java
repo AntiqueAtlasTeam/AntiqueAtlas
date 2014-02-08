@@ -52,8 +52,8 @@ public class ExtBiomeDataHandler implements IPlayerTracker {
 	
 	@Override
 	public void onPlayerLogin(EntityPlayer player) {
-		data.syncOnPlayer(player);
 		ExtTileIdMap.instance().syncOnPlayer(player);
+		data.syncOnPlayer(player);
 	}
 
 	@Override

@@ -1,7 +1,21 @@
 package hunternif.mc.atlas.core;
 
-import static hunternif.mc.atlas.client.StandardTextureSet.*;
-import static net.minecraft.world.biome.BiomeGenBase.*;
+import static hunternif.mc.atlas.client.StandardTextureSet.BEACH;
+import static hunternif.mc.atlas.client.StandardTextureSet.FOREST;
+import static hunternif.mc.atlas.client.StandardTextureSet.FOREST_HILLS;
+import static hunternif.mc.atlas.client.StandardTextureSet.FROZEN_WATER;
+import static hunternif.mc.atlas.client.StandardTextureSet.HILLS;
+import static hunternif.mc.atlas.client.StandardTextureSet.JUNGLE;
+import static hunternif.mc.atlas.client.StandardTextureSet.JUNGLE_HILLS;
+import static hunternif.mc.atlas.client.StandardTextureSet.MOUNTAINS;
+import static hunternif.mc.atlas.client.StandardTextureSet.PINES;
+import static hunternif.mc.atlas.client.StandardTextureSet.PINES_HILLS;
+import static hunternif.mc.atlas.client.StandardTextureSet.PLAINS;
+import static hunternif.mc.atlas.client.StandardTextureSet.SAND;
+import static hunternif.mc.atlas.client.StandardTextureSet.SNOW;
+import static hunternif.mc.atlas.client.StandardTextureSet.SWAMP;
+import static hunternif.mc.atlas.client.StandardTextureSet.WATER;
+import static net.minecraft.world.biome.BiomeGenBase.biomeList;
 import hunternif.mc.atlas.AntiqueAtlasMod;
 import hunternif.mc.atlas.client.StandardTextureSet;
 
@@ -60,47 +74,7 @@ public enum BiomeTextureMap {
 			new HashMap<Integer, BiomeTextureMap.BiomeTextureEntry>();
 	
 	public static final StandardTextureSet defaultTexture = PLAINS;
-
-	/** Assign default textures to vanilla biomes. Returns true if any texture
-	 * was changed. */
-	public boolean assignVanillaTextures() {
-		boolean changed = false;
-		changed |= setTextureIfNone(ocean,			WATER);
-		changed |= setTextureIfNone(river,			WATER);
-		changed |= setTextureIfNone(frozenOcean,	FROZEN_WATER);
-		changed |= setTextureIfNone(frozenRiver,	FROZEN_WATER);
-		changed |= setTextureIfNone(beach,			BEACH);
-		changed |= setTextureIfNone(desert,		SAND);
-		changed |= setTextureIfNone(plains,		PLAINS);
-		changed |= setTextureIfNone(icePlains,	SNOW);
-		changed |= setTextureIfNone(jungleHills,	JUNGLE_HILLS);
-		changed |= setTextureIfNone(forestHills,	FOREST_HILLS);
-		changed |= setTextureIfNone(desertHills,	HILLS);
-		changed |= setTextureIfNone(extremeHills,	MOUNTAINS);
-		changed |= setTextureIfNone(extremeHillsEdge, MOUNTAINS);
-		changed |= setTextureIfNone(iceMountains,	MOUNTAINS);
-		changed |= setTextureIfNone(forest,		FOREST);
-		changed |= setTextureIfNone(jungle,		JUNGLE);
-		changed |= setTextureIfNone(taiga,			PINES);
-		changed |= setTextureIfNone(taigaHills,	PINES_HILLS);
-		changed |= setTextureIfNone(swampland,		SWAMP);
-		changed |= setTextureIfNone(sky,			BEACH);
-		//changed |= addTextureIfNone(hell,		NETHER);
-		changed |= setTextureIfNone(mushroomIsland, MUSHROOM);
-		changed |= setTextureIfNone(mushroomIslandShore, BEACH);
-		
-		return changed;
-	}
-
-	/** Assigns texture to biome, if this biome has no texture assigned.
-	 * Returns true if a new texture was assigned. */
-	public boolean setTextureIfNone(BiomeGenBase biome, StandardTextureSet textureSet) {
-		if (!isRegistered(biome.biomeID)) {
-			setTexture(biome.biomeID, textureSet);
-			return true;
-		}
-		return false;
-	}
+	
 	/** Assigns texture to biome, if this biome has no texture assigned.
 	 * Returns true if a new texture was assigned. */
 	public boolean setTextureIfNone(int biomeID, StandardTextureSet textureSet) {
@@ -159,6 +133,12 @@ public enum BiomeTextureMap {
 	/** Find the most appropriate standard texture set depending on
 	 * BiomeDictionary types. */
 	private void autoRegister(int biomeID) {
+		if (biomeID < 0 || biomeID >= 256) {
+			AntiqueAtlasMod.logger.warning("Biome ID " + biomeID + " is out of range. "
+					+ "Auto-registering default texture set");
+			setTexture(biomeID, defaultTexture);
+			return;
+		}
 		BiomeGenBase biome = biomeList[biomeID];
 		List<Type> types = Arrays.asList(BiomeDictionary.getTypesForBiome(biome));
 		if (types.contains(Type.SWAMP)) {
