@@ -58,7 +58,9 @@ public class MapDataPacket extends CustomPacket {
 		for (int i = 0; i < length; i++) {
 			ShortVec2 coords = new ShortVec2(in.readShort(), in.readShort());
 			int biomeID = in.readShort();
-			data.put(coords, new MapTile(biomeID));
+			MapTile tile = new MapTile(biomeID);
+			tile.randomizeTexture();
+			data.put(coords, tile);
 		}
 	}
 	

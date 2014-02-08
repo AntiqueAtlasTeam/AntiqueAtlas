@@ -24,7 +24,6 @@ public abstract class CustomPacket {
 		ImmutableBiMap.Builder<Integer, Class<? extends CustomPacket>> builder = ImmutableBiMap.builder();
 		
 		builder.put(Integer.valueOf(0), MapDataPacket.class);
-		builder.put(Integer.valueOf(1), TilePacket.class);
 		
 		idMap = builder.build();
 	}
