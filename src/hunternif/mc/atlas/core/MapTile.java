@@ -1,16 +1,15 @@
 package hunternif.mc.atlas.core;
 
-import hunternif.mc.atlas.client.BiomeTextureMap;
-
 import java.util.Random;
 
-import net.minecraft.world.biome.BiomeGenBase;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 public class MapTile {
 	public final int biomeID;
 	
-	/** Used by randomized textures. */
-	public final transient byte variationNumber;
+	/** Used for randomizing textures. */
+	private transient byte variationNumber;
 	
 	// ========== Corner flags ==========
 	public static final byte CONVEX = 0;
@@ -29,21 +28,26 @@ public class MapTile {
 		return topLeft == CONVEX && topRight == CONVEX && bottomLeft == CONVEX && bottomRight == CONVEX;
 	}
 	
-	public MapTile(BiomeGenBase biome) {
-		this(biome.biomeID);
-	}
 	public MapTile(int biomeID) {
 		this.biomeID = biomeID;
+	}
+	
+	/** Chooses a random texture from the set of texture variations registered
+	 * for this biome ID. */
+	@SideOnly(Side.CLIENT)
+	public void randomizeTexture() {
 		int maxVariations = BiomeTextureMap.instance().getVariations(biomeID);
 		if (maxVariations <= 0) variationNumber = 0;
 		else variationNumber = (byte)(new Random().nextInt(maxVariations));
 	}
 	
-	public BiomeGenBase getBiome() {
-		if (biomeID >= 0) {
-			return BiomeGenBase.biomeList[biomeID];
-		} else {
-			return null;
-		}
+	@SideOnly(Side.CLIENT)
+	public int getVariationNumber() {
+		return variationNumber;
+	}
+	
+	@Override
+	public String toString() {
+		return "tile" + biomeID;
 	}
 }

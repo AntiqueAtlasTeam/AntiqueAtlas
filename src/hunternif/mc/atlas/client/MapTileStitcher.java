@@ -1,5 +1,6 @@
 package hunternif.mc.atlas.client;
 
+import hunternif.mc.atlas.core.BiomeTextureMap;
 import hunternif.mc.atlas.core.MapTile;
 import hunternif.mc.atlas.util.ShortVec2;
 

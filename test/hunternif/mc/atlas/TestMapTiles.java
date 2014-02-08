@@ -1,7 +1,7 @@
 package hunternif.mc.atlas;
 
-import hunternif.mc.atlas.client.BiomeTextureMap;
 import hunternif.mc.atlas.client.MapTileStitcher;
+import hunternif.mc.atlas.core.BiomeTextureMap;
 import hunternif.mc.atlas.core.MapTile;
 import hunternif.mc.atlas.util.ShortVec2;
 
@@ -31,7 +31,7 @@ public class TestMapTiles {
 	
 	@BeforeClass
 	public static void setup() {
-		BiomeTextureMap.instance().addTexture(-1);
+		BiomeTextureMap.instance().setTexture(-1);
 	}
 	
 	@Before

@@ -1,6 +1,10 @@
 package hunternif.mc.atlas;
 
+import hunternif.mc.atlas.api.TileAPI;
+import hunternif.mc.atlas.client.StandardTextureSet;
 import hunternif.mc.atlas.core.ChunkBiomeAnalyzer;
+import hunternif.mc.atlas.ext.ExtBiomeDataHandler;
+import hunternif.mc.atlas.ext.ExtTileIdMap;
 import hunternif.mc.atlas.item.ItemAtlas;
 import hunternif.mc.atlas.item.ItemEmptyAtlas;
 import hunternif.mc.atlas.network.CustomPacketHandler;
@@ -11,6 +15,7 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.Configuration;
+import net.minecraftforge.common.MinecraftForge;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.Mod.Instance;
@@ -38,6 +43,8 @@ public class AntiqueAtlasMod {
 	@SidedProxy(clientSide="hunternif.mc.atlas.ClientProxy", serverSide="hunternif.mc.atlas.CommonProxy")
 	public static CommonProxy proxy;
 	
+	public static final ExtBiomeDataHandler extBiomeData = new ExtBiomeDataHandler();
+	
 	public static ItemAtlas itemAtlas;
 	public static ItemEmptyAtlas itemEmptyAtlas;
 
@@ -45,6 +52,7 @@ public class AntiqueAtlasMod {
 	public void preInit(FMLPreInitializationEvent event) {
 		logger = event.getModLog();
 		proxy.preInit(event);
+		
 		Configuration config = new Configuration(event.getSuggestedConfigurationFile());
 		int atlasItemID = config.getItem("antiqueAtlas", 26949).getInt();
 		int emptyAtlasItemID = config.getItem("emptyAntiqueAtlas", 26948).getInt();
@@ -59,11 +67,18 @@ public class AntiqueAtlasMod {
 		LanguageRegistry.addName(itemEmptyAtlas, "Empty Antique Atlas");
 		
 		GameRegistry.addShapelessRecipe(new ItemStack(itemEmptyAtlas), Item.book, Item.compass);
+		
 	}
 	
 	@EventHandler
 	public void init(FMLInitializationEvent event){
 		proxy.init(event);
+		
+		TileAPI.setTextureIfNone(ExtTileIdMap.TILE_VILLAGE_HOUSE, StandardTextureSet.HOUSE);
+		TileAPI.setTextureIfNone(ExtTileIdMap.TILE_VILLAGE_TERRITORY, StandardTextureSet.FENCE);
+		
+		MinecraftForge.EVENT_BUS.register(extBiomeData);
+		GameRegistry.registerPlayerTracker(AntiqueAtlasMod.extBiomeData);
 	}
 	
 	@EventHandler

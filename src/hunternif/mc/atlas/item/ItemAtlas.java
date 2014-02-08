@@ -4,9 +4,7 @@ import hunternif.mc.atlas.AntiqueAtlasMod;
 import hunternif.mc.atlas.client.MapTileStitcher;
 import hunternif.mc.atlas.core.AtlasData;
 import hunternif.mc.atlas.core.ChunkBiomeAnalyzer;
-import hunternif.mc.atlas.core.ChunkBiomeAnalyzer.BiomeFlag;
 import hunternif.mc.atlas.core.MapTile;
-import hunternif.mc.atlas.network.TilePacket;
 import hunternif.mc.atlas.util.ShortVec2;
 
 import java.util.Map;
@@ -20,8 +18,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
-import cpw.mods.fml.common.network.PacketDispatcher;
-import cpw.mods.fml.common.network.Player;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
@@ -93,24 +89,35 @@ public class ItemAtlas extends Item {
 				}
 				coords.x = (short)(playerX + dx);
 				coords.y = (short)(playerZ + dz);
-				// Check if the chunk has been loaded:
-				if (seenChunks.containsKey(coords) ||
-						!player.worldObj.
-						blockExists((int)coords.x << 4, 0, (int)coords.y << 4)) {
-					continue;
+				
+				// Check if the chunk has been seen already:
+				if (seenChunks.containsKey(coords)) continue;
+				
+				// Check if there's a custom tile at the location:
+				int biomeId = AntiqueAtlasMod.extBiomeData.getData().getBiomeIdAt(player.dimension, coords);
+				
+				// If there's no custom tile, check the actual chunk:
+				if (biomeId == ChunkBiomeAnalyzer.NOT_FOUND) {
+					// Check if the chunk has been loaded:
+					if (!player.worldObj.blockExists((int)coords.x << 4, 0, (int)coords.y << 4)) {
+						continue;
+					}
+					// Retrieve mean chunk biome and store it in AtlasData:
+					Chunk chunk = player.worldObj.getChunkFromChunkCoords(coords.x, coords.y);
+					biomeId = biomeAnalyzer.getChunkBiomeID(chunk);
 				}
-				// Retrieve mean chunk biome and store it in AtlasData:
-				Chunk chunk = player.worldObj.getChunkFromChunkCoords(coords.x, coords.y);
-				int meanBiomeId = biomeAnalyzer.getChunkBiomeID(chunk);
-				if (meanBiomeId != BiomeFlag.NONE) {
-					data.putTile(player.dimension, coords.copy(), new MapTile(meanBiomeId));
-					if (!world.isRemote && !data.isDirty()) {
+				
+				// Finally, put the tile in place:
+				if (biomeId != ChunkBiomeAnalyzer.NOT_FOUND) {
+					MapTile tile = new MapTile(biomeId);
+					if (world.isRemote) {
+						tile.randomizeTexture();
+					}
+					data.putTile(player.dimension, coords.copy(), tile);
+					if (!world.isRemote) {
 						data.markDirty();
 					}
-					if (!world.isRemote && biomeAnalyzer.shouldSyncBiomeOnClient(meanBiomeId)) {
-						TilePacket packet = new TilePacket(stack.getItemDamage(), player.dimension, coords, meanBiomeId);
-						PacketDispatcher.sendPacketToPlayer(packet.makePacket(), (Player)player);
-					}
+					
 				}
 			}
 		}

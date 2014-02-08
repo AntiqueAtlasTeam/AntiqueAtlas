@@ -2,6 +2,7 @@ package hunternif.mc.atlas.client;
 
 import hunternif.mc.atlas.AntiqueAtlasMod;
 import hunternif.mc.atlas.core.AtlasData;
+import hunternif.mc.atlas.core.BiomeTextureMap;
 import hunternif.mc.atlas.core.MapTile;
 import hunternif.mc.atlas.item.ItemAtlas;
 import hunternif.mc.atlas.util.AtlasRenderHelper;

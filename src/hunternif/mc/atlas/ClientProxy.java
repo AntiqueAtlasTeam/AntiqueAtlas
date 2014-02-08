@@ -1,8 +1,8 @@
 package hunternif.mc.atlas;
 
-import hunternif.mc.atlas.client.BiomeTextureMap;
-import hunternif.mc.atlas.client.Config;
 import hunternif.mc.atlas.client.GuiAtlas;
+import hunternif.mc.atlas.core.BiomeTextureMap;
+import hunternif.mc.atlas.core.TextureConfig;
 
 import java.io.File;
 
@@ -13,15 +13,15 @@ import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 
 public class ClientProxy extends CommonProxy {
-	private Config config;
+	private TextureConfig textureConfig;
 	
 	private GuiAtlas guiAtlas;
 	
 	@Override
 	public void preInit(FMLPreInitializationEvent event) {
 		super.preInit(event);
-		config = new Config(new File(event.getModConfigurationDirectory(), "AtlasTextures.json"));
-		config.load();
+		textureConfig = new TextureConfig(new File(configDir, "textures.json"));
+		textureConfig.load();
 	}
 	
 	@Override
@@ -35,13 +35,13 @@ public class ClientProxy extends CommonProxy {
 		super.postInit(event);
 		if (BiomeTextureMap.instance().assignVanillaTextures()) {
 			// Only rewrite config, if new textures were automatically assigned.
-			updateConfig();
+			updateTextureConfig();
 		}
 	}
 	
 	@Override
-	public void updateConfig() {
-		config.save();
+	public void updateTextureConfig() {
+		textureConfig.save();
 	}
 	
 	@Override

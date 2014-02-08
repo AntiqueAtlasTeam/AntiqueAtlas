@@ -49,7 +49,6 @@ public class AtlasData extends WorldSavedData {
 		for (int d = 0; d < dimensionMapList.tagCount(); d++) {
 			NBTTagCompound tag = (NBTTagCompound) dimensionMapList.tagAt(d);
 			int dimensionID = tag.getInteger(TAG_DIMENSION_ID);
-			Map<ShortVec2, MapTile> seenChunks = new ConcurrentHashMap<ShortVec2, MapTile>();
 			int[] intArray = tag.getIntArray(TAG_VISITED_CHUNKS);
 			for (int i = 0; i < intArray.length; i += 3) {
 				ShortVec2 coords = new ShortVec2(intArray[i], intArray[i+1]);

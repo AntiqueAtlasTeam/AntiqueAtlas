@@ -3,7 +3,6 @@ package hunternif.mc.atlas.network;
 import hunternif.mc.atlas.AntiqueAtlasMod;
 import hunternif.mc.atlas.core.AtlasData;
 import hunternif.mc.atlas.core.MapTile;
-import hunternif.mc.atlas.util.ByteUtil;
 import hunternif.mc.atlas.util.ShortVec2;
 
 import java.util.HashMap;
