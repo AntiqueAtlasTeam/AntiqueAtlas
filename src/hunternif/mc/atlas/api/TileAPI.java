@@ -6,8 +6,12 @@ import net.minecraft.world.World;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-/** API for custom tiles, i.e. dungeons, towns etc. Texture methods are only for
- * the client side. */
+/** API for custom tiles, i.e. dungeons, towns etc. Texture methods are for the
+ * client side only.
+ * <p>Methods accepting arrays of ResourceLocations produce the same result as
+ * the ones accepting StandardTextureSet if you supplied the same textures that
+ * constitute the set. Only in case of the set only its name is written to the
+ * config; otherwise a complete list of texture files is written.</p> */
 public interface TileAPI {
 	/** Assign texture to tile. The textures will be added as variations. */
 	@SideOnly(Side.CLIENT)
@@ -30,7 +34,7 @@ public interface TileAPI {
 	 * method should only be called on the server, then the change is
 	 * automatically sent to all clients. You only need to call this method
 	 * once for every chunk, after that the tile will be persisted with the
-	 * world.
+	 * world and loaded when the server starts up.
 	 * @param world		
 	 * @param dimension	dimension the chunk is located in.
 	 * @param tileName	the unique name for your tile. You must use the same
