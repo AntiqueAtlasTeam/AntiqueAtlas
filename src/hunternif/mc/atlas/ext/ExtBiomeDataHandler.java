@@ -23,6 +23,9 @@ public class ExtBiomeDataHandler implements IPlayerTracker {
 	}
 	
 	public ExtBiomeData getData() {
+		if (data == null) { // This will happen on the client
+			data = new ExtBiomeData(DATA_KEY);
+		}
 		return data;
 	}
 	
