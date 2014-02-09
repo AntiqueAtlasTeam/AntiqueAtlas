@@ -3,6 +3,10 @@ package hunternif.mc.atlas.api;
 import hunternif.mc.atlas.api.impl.BiomeApiImpl;
 import hunternif.mc.atlas.api.impl.TileApiImpl;
 
+/**
+ * Obtain the reference to the APIs from this class.
+ * @author Hunternif
+ */
 public class AtlasAPI {
 	private static final BiomeAPI biomeApi = new BiomeApiImpl();
 	private static final TileAPI tileApi = new TileApiImpl();
