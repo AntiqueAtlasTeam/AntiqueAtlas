@@ -28,11 +28,13 @@ public interface TileAPI {
 	/**
 	 * Put the specified custom tile at the specified chunk coordinates. This
 	 * method should only be called on the server, then the change is
-	 * automatically sent to all clients.
+	 * automatically sent to all clients. You only need to call this method
+	 * once for every chunk, after that the tile will be persisted with the
+	 * world.
 	 * @param world		
 	 * @param dimension	dimension the chunk is located in.
-	 * @param tileName	the unique name you for your tile. You must use the
-	 * 			same name when setting textures for it.
+	 * @param tileName	the unique name for your tile. You must use the same
+	 * 			name when setting textures for it.
 	 * @param chunkX	x chunk coordinate. (block coordinate >> 4)
 	 * @param chunkZ	z chunk coordinate. (block coordinate >> 4)
 	 */
