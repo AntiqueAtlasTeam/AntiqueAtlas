@@ -91,14 +91,15 @@ public class ItemAtlas extends Item {
 				coords.x = (short)(playerX + dx);
 				coords.y = (short)(playerZ + dz);
 				
-				// Check if the chunk has been seen already:
-				if (seenChunks.containsKey(coords)) continue;
-				
 				// Check if there's a custom tile at the location:
 				int biomeId = AntiqueAtlasMod.extBiomeData.getData().getBiomeIdAt(player.dimension, coords);
+				// Custom tiles overwrite even the chunks already seen.
 				
 				// If there's no custom tile, check the actual chunk:
 				if (biomeId == ChunkBiomeAnalyzer.NOT_FOUND) {
+					// Check if the chunk has been seen already:
+					if (seenChunks.containsKey(coords)) continue;
+					
 					// Check if the chunk has been loaded:
 					if (!player.worldObj.blockExists((int)coords.x << 4, 0, (int)coords.y << 4)) {
 						continue;
