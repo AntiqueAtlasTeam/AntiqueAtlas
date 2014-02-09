@@ -5,6 +5,7 @@ import hunternif.mc.atlas.client.StandardTextureSet;
 import hunternif.mc.atlas.core.ChunkBiomeAnalyzer;
 import hunternif.mc.atlas.ext.ExtBiomeDataHandler;
 import hunternif.mc.atlas.ext.ExtTileIdMap;
+import hunternif.mc.atlas.ext.VillageWatcher;
 import hunternif.mc.atlas.item.ItemAtlas;
 import hunternif.mc.atlas.item.ItemEmptyAtlas;
 import hunternif.mc.atlas.network.CustomPacketHandler;
@@ -74,11 +75,12 @@ public class AntiqueAtlasMod {
 	public void init(FMLInitializationEvent event){
 		proxy.init(event);
 		
-		AtlasAPI.getTileAPI().setTextureIfNone(ExtTileIdMap.TILE_VILLAGE_HOUSE, StandardTextureSet.HOUSE);
-		AtlasAPI.getTileAPI().setTextureIfNone(ExtTileIdMap.TILE_VILLAGE_TERRITORY, StandardTextureSet.FENCE);
-		
 		MinecraftForge.EVENT_BUS.register(extBiomeData);
 		GameRegistry.registerPlayerTracker(AntiqueAtlasMod.extBiomeData);
+		
+		MinecraftForge.EVENT_BUS.register(new VillageWatcher());
+		AtlasAPI.getTileAPI().setTextureIfNone(ExtTileIdMap.TILE_VILLAGE_HOUSE, StandardTextureSet.HOUSE);
+		AtlasAPI.getTileAPI().setTextureIfNone(ExtTileIdMap.TILE_VILLAGE_TERRITORY, StandardTextureSet.FENCE);
 	}
 	
 	@EventHandler
