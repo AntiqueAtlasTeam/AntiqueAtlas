@@ -54,7 +54,7 @@ public class AntiqueAtlasMod {
 		logger = event.getModLog();
 		proxy.preInit(event);
 		
-		Configuration config = new Configuration(event.getSuggestedConfigurationFile());
+		Configuration config = new Configuration(proxy.getItemConfigFile());
 		int atlasItemID = config.getItem("antiqueAtlas", 26949).getInt();
 		int emptyAtlasItemID = config.getItem("emptyAntiqueAtlas", 26948).getInt();
 		config.save();
