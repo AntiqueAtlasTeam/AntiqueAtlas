@@ -8,10 +8,10 @@ import cpw.mods.fml.relauncher.SideOnly;
 
 /** API for custom biomes. All methods are for the client side only.
  * <p>Methods accepting BiomeGenBase and integer biome ID are equivalent.</p>
- * <p>Methods accepting arrays of ResourceLocations produce the same result as
- * the ones accepting StandardTextureSet if you supplied the textures in the
- * set. Only in case of a texture set only the name of the set is written to
- * the config, otherwise the whole list of textures is written.</p> */
+ * <p>Methods accepting arrays of ResourceLocations will produce the same result
+ * as the ones accepting StandardTextureSet if you supplied the same textures that
+ * constitute the set. Only in case of the set only its name is written to the
+ * config; otherwise a complete list of texture files is written.</p> */
 public interface BiomeAPI {
 	/** Assign texture to biome ID. The textures will be added as variations. */
 	@SideOnly(Side.CLIENT)
