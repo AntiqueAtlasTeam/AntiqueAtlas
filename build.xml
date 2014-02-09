@@ -4,6 +4,7 @@
     <property file="local.properties" />
     <property file="build.properties"/>
 
+	<property name="mcp.bin" value="${dir.mcp}/bin/minecraft" />
     <property name="mcp.src" value="${dir.mcp}/src/minecraft" />
     <property name="mcp.reobf" value="${dir.mcp}/reobf/minecraft" />
 
@@ -77,6 +78,16 @@
             <fileset dir="src" includes="assets/**,*.png" />
         </zip>
     </target>
+	<target name="package-deobf">
+        <mkdir dir="${dir.release}" />
+        <zip destfile="${dir.release}/${mod.id}-${mod.version}-mc${minecraft.version}-deobf.zip">
+        	<fileset dir="${mcp.bin}">
+                <present present="both" targetdir="${mcp.reobf}" />
+            </fileset>
+            <fileset dir="${mcp.reobf}" includes="mcmod.info" />
+            <fileset dir="src" includes="assets/**,*.png" />
+        </zip>
+    </target>
 
     <target name="build-release">
         <jgitversion dir="." property="mod.version"/>
@@ -86,6 +97,17 @@
         <antcallback target="reobfuscate" />
         <antcallback target="copy and replace tokens in mcmod.info" />
         <antcallback target="package" />
+        <antcallback target="cleanup" />
+    </target>
+	<target name="build-release-deobf">
+        <jgitversion dir="." property="mod.version"/>
+        <echo message="${mod.version}" />
+        <antcallback target="copy and replace tokens in src" />
+        <antcallback target="recompile" />
+		<!-- need reobfuscation to compare file names in bin -->
+		<antcallback target="reobfuscate" />
+        <antcallback target="copy and replace tokens in mcmod.info" />
+        <antcallback target="package-deobf" />
         <antcallback target="cleanup" />
     </target>
 </project>
