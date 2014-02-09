@@ -90,7 +90,7 @@
     </target>
 	<target name="javadoc zip" depends="getversion">
 		<mkdir dir="javadoc-temp"/>
-		<javadoc sourcepath="src" destdir="javadoc-temp" verbose="false"/>
+		<javadoc sourcepath="src" destdir="javadoc-temp" classpath="${mcp.bin}"/>
 		<zip basedir="javadoc-temp" destfile="${dir.release}/${mod.id}-${mod.version}-mc${minecraft.version}-javadoc.zip"/>
 		<delete dir="javadoc-temp"/>
 		<delete file="javadoc-temp"/>
