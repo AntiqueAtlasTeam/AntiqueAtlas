@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Set;
 
 import net.minecraft.village.Village;
+import net.minecraft.village.VillageCollection;
 import net.minecraft.village.VillageDoorInfo;
 import net.minecraft.world.World;
 import net.minecraftforge.event.EventPriority;
@@ -37,8 +38,9 @@ public class VillageWatcher {
 	}
 	
 	public void visitAllUnvisitedVillages(World world) {
-		List<Village> villages = world.villageCollectionObj.getVillageList();
-		for (Village village : villages) {
+		VillageCollection villageCollection = world.villageCollectionObj;
+		if (villageCollection == null) return;
+		for (Village village : (List<Village>) villageCollection.getVillageList()) {
 			if (!visited.contains(village)) {
 				visitVillage(world, village);
 			}
