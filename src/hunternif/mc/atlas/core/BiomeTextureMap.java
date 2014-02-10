@@ -1,20 +1,6 @@
 package hunternif.mc.atlas.core;
 
-import static hunternif.mc.atlas.client.StandardTextureSet.BEACH;
-import static hunternif.mc.atlas.client.StandardTextureSet.FOREST;
-import static hunternif.mc.atlas.client.StandardTextureSet.FOREST_HILLS;
-import static hunternif.mc.atlas.client.StandardTextureSet.FROZEN_WATER;
-import static hunternif.mc.atlas.client.StandardTextureSet.HILLS;
-import static hunternif.mc.atlas.client.StandardTextureSet.JUNGLE;
-import static hunternif.mc.atlas.client.StandardTextureSet.JUNGLE_HILLS;
-import static hunternif.mc.atlas.client.StandardTextureSet.MOUNTAINS;
-import static hunternif.mc.atlas.client.StandardTextureSet.PINES;
-import static hunternif.mc.atlas.client.StandardTextureSet.PINES_HILLS;
-import static hunternif.mc.atlas.client.StandardTextureSet.PLAINS;
-import static hunternif.mc.atlas.client.StandardTextureSet.SAND;
-import static hunternif.mc.atlas.client.StandardTextureSet.SNOW;
-import static hunternif.mc.atlas.client.StandardTextureSet.SWAMP;
-import static hunternif.mc.atlas.client.StandardTextureSet.WATER;
+import static hunternif.mc.atlas.client.StandardTextureSet.*;
 import static net.minecraft.world.biome.BiomeGenBase.biomeList;
 import hunternif.mc.atlas.AntiqueAtlasMod;
 import hunternif.mc.atlas.client.StandardTextureSet;
