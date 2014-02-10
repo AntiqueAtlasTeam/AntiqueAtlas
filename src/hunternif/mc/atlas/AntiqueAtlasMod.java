@@ -64,13 +64,15 @@ public class AntiqueAtlasMod {
 			.setUnlocalizedName("emptyAntiqueAtlas").setCreativeTab(CreativeTabs.tabTools);
 		LanguageRegistry.addName(itemEmptyAtlas, "Empty Antique Atlas");
 		
-		GameRegistry.addShapelessRecipe(new ItemStack(itemEmptyAtlas), Item.book, Item.compass);
-		
+		GameRegistry.registerItem(itemAtlas, "antiqueAtlas");
+		GameRegistry.registerItem(itemEmptyAtlas, "emptyAntiqueAtlas");
 	}
 	
 	@EventHandler
 	public void init(FMLInitializationEvent event){
 		proxy.init(event);
+		
+		GameRegistry.addShapelessRecipe(new ItemStack(itemEmptyAtlas), Item.book, Item.compass);
 		
 		MinecraftForge.EVENT_BUS.register(extBiomeData);
 		GameRegistry.registerPlayerTracker(AntiqueAtlasMod.extBiomeData);
