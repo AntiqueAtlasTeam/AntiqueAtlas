@@ -7,7 +7,9 @@ import hunternif.mc.atlas.network.MarkersPacket;
 import hunternif.mc.atlas.util.ShortVec2;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.SortedSet;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentSkipListSet;
@@ -45,6 +47,9 @@ public class MarkersData extends WorldSavedData {
 			return new ConcurrentSkipListSet<Marker>();
 		}
 	};
+	
+	/** Set of players this data has been sent to. */
+	private final Set<EntityPlayer> playersSentTo = new HashSet<EntityPlayer>();
 	
 	public MarkersData(String key) {
 		super(key);
@@ -119,8 +124,13 @@ public class MarkersData extends WorldSavedData {
 		getMarkersInDimension(dimension).put(marker.getChunkCoords(), marker);
 	}
 	
-	/** Send all data to the player in several zipped packets. */
-	protected void syncOnPlayer(int atlasID, EntityPlayer player) {
+	public boolean isSyncedOnPlayer(EntityPlayer player) {
+		return playersSentTo.contains(player);
+	}
+	
+	/** Send all data to the player in several packets. Called once during the
+	 * first run of ItemAtals.onUpdate(). */
+	public void syncOnPlayer(int atlasID, EntityPlayer player) {
 		int pieces = 0;
 		int dataSizeBytes = 0;
 		for (Integer dimension : dimensionMap.keySet()) {
@@ -143,9 +153,15 @@ public class MarkersData extends WorldSavedData {
 			}
 		}
 		AntiqueAtlasMod.logger.info("Sent markers data to player " + player.username + " in " + pieces + " pieces.");
+		playersSentTo.add(player);
 	}
+	
 	/** To be overriden in GlobalMarkersData. */
 	protected MarkersPacket newMarkersPacket(int atlasID, int dimension) {
 		return new MarkersPacket(atlasID, dimension);
+	}
+	
+	public boolean isEmpty() {
+		return dimensionMap.isEmpty();
 	}
 }

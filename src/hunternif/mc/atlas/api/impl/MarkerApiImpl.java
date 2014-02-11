@@ -40,6 +40,7 @@ public class MarkerApiImpl implements MarkerAPI {
 				return;
 			}
 			data.putMarker(dimension, marker);
+			data.markDirty();
 			NetworkUtil.sendPacketToAllPlayersInWorld(world, packet.makePacket());
 		} else {
 			PacketDispatcher.sendPacketToServer(packet.makePacket());

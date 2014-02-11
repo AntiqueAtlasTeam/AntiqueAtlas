@@ -36,6 +36,7 @@ public enum MarkerTextureMap {
 		return true;
 	}
 	
+	/** If no texture has been registered, returns default texture. */
 	public ResourceLocation getTexture(String markerType) {
 		ResourceLocation texture = map.get(markerType);
 		return texture == null ? defaultTexture : texture;

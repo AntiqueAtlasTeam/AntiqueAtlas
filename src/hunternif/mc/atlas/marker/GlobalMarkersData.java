@@ -11,7 +11,7 @@ public class GlobalMarkersData extends MarkersData {
 		super(key);
 	}
 	
-	/** Send all data to the player in several zipped packets. */
+	/** Send all data to the player in several packets. */
 	protected void syncOnPlayer(EntityPlayer player) {
 		syncOnPlayer(0, player);
 	}

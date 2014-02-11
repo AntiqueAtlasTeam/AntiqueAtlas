@@ -80,20 +80,18 @@ public class MarkersPacket extends CustomPacket {
 
 	@Override
 	public void execute(EntityPlayer player, Side side) throws ProtocolException {
-		MarkersData markersData = AntiqueAtlasMod.itemAtlas.getClientMarkersData(atlasID);
+		MarkersData markersData = side.isClient() ?
+				AntiqueAtlasMod.itemAtlas.getClientMarkersData(atlasID) :
+				AntiqueAtlasMod.itemAtlas.getMarkersData(atlasID, player.worldObj);
 		for (Marker marker : markersByType.values()) {
 			markersData.putMarker(dimension, marker);
 		}
 		if (side.isServer()) {
+			markersData.markDirty();
 			// If these are a manually set markers sent from the client, forward
 			// them to other players:
-			NetworkUtil.sendPacketToAllPlayersInWorldExcluding(player.worldObj, this.makePacket(), player);
+			NetworkUtil.sendPacketToAllPlayersInWorld(player.worldObj, this.makePacket());
 		}
-	}
-	
-	@Override
-	protected boolean isCompressed() {
-		return markersByType.size() > 1;
 	}
 	
 	public boolean isEmpty() {

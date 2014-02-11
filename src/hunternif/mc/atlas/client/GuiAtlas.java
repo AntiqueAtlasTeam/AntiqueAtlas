@@ -1,16 +1,22 @@
 package hunternif.mc.atlas.client;
 
 import hunternif.mc.atlas.AntiqueAtlasMod;
+import hunternif.mc.atlas.api.AtlasAPI;
 import hunternif.mc.atlas.core.AtlasData;
 import hunternif.mc.atlas.core.BiomeTextureMap;
 import hunternif.mc.atlas.core.MapTile;
-import hunternif.mc.atlas.item.ItemAtlas;
+import hunternif.mc.atlas.marker.GlobalMarkersData;
+import hunternif.mc.atlas.marker.Marker;
+import hunternif.mc.atlas.marker.MarkerTextureMap;
+import hunternif.mc.atlas.marker.MarkersData;
 import hunternif.mc.atlas.util.AtlasRenderHelper;
 import hunternif.mc.atlas.util.ExportImageUtil;
 import hunternif.mc.atlas.util.ShortVec2;
 
 import java.io.File;
 import java.util.Map;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
@@ -39,6 +45,10 @@ public class GuiAtlas extends GuiScreen {
 	private static final int PLAYER_ICON_WIDTH = 7;
 	private static final int PLAYER_ICON_HEIGHT = 8;
 	
+	//TODO: make marker icon size variable
+	private static final int MARKER_ICON_WIDTH = 11;
+	private static final int MARKER_ICON_HEIGHT = 17;
+	
 	/** Pause between after the arrow button is pressed and continuous
 	 * navigation starts, in ticks. */
 	private static final int BUTTON_PAUSE = 8;
@@ -50,6 +60,9 @@ public class GuiAtlas extends GuiScreen {
 	
 	/** Button for exporting PNG image of the Atlas's contents. */
 	private GuiButton btnExportPng;
+	
+	/** Button for placing a marker at current position, local to this Atlas instance. */
+	private GuiMarkerButton btnMarker;
 	
 	/** Button for restoring player's position at the center of the Atlas. */
 	private GuiPositionButton btnPosition;
@@ -78,6 +91,9 @@ public class GuiAtlas extends GuiScreen {
 	 * offset. */
 	private boolean followPlayer = true;
 	
+	/** Temporary set for loading markers in chunk. */
+	private final SortedSet<Marker> tempMarkers = new TreeSet<Marker>();
+	
 	/** Progress bar for exporting images. */
 	private ProgressBarOverlay progressBar = new ProgressBarOverlay(100, 2);
 	private volatile boolean isExporting = false;
@@ -86,7 +102,7 @@ public class GuiAtlas extends GuiScreen {
 	private ItemStack stack;
 	/** Coordinates of the top left corner of the GUI on the screen. */
 	private int guiLeft, guiTop;
-	/** Coordinate scale factor realtive to the actual screen size. */
+	/** Coordinate scale factor relative to the actual screen size. */
 	private int scale;
 	
 	public GuiAtlas() {
@@ -108,13 +124,16 @@ public class GuiAtlas extends GuiScreen {
 		btnLeft = GuiArrowButton.left(3, guiLeft + 15, guiTop + 100);
 		btnRight = GuiArrowButton.right(4, guiLeft + 283, guiTop + 100);
 		btnPosition = new GuiPositionButton(5, guiLeft + 283, guiTop + 194, "Reset position");
+		btnPosition.drawButton = !followPlayer;
 		btnExportPng = new GuiButton(6, width - 80, height - 20, 80, 20, "Export Image");
+		btnMarker = new GuiMarkerButton(7, width-22, height-42);
 		buttonList.add(btnUp);
 		buttonList.add(btnDown);
 		buttonList.add(btnLeft);
 		buttonList.add(btnRight);
 		buttonList.add(btnPosition);
 		buttonList.add(btnExportPng);
+		buttonList.add(btnMarker);
 		Keyboard.enableRepeatEvents(true);
 		scale = new ScaledResolution(mc.gameSettings, mc.displayWidth, mc.displayHeight).getScaleFactor();
 	}
@@ -127,8 +146,6 @@ public class GuiAtlas extends GuiScreen {
 		if (mouseX >= mapX && mouseX <= mapX + MAP_WIDTH &&
 				mouseY >= mapY && mouseY <= mapY + MAP_HEIGHT) {
 			isDragging = true;
-			followPlayer = false;
-			btnPosition.drawButton = true;
 			dragMouseX = mouseX;
 			dragMouseY = mouseY;
 			dragMapOffsetX = mapOffsetX;
@@ -153,6 +170,9 @@ public class GuiAtlas extends GuiScreen {
 					exportImage(stack.copy());
 				}
 			}).start();
+		} else if (btn.equals(btnMarker) && stack != null) {
+			AtlasAPI.getMarkerAPI().putMarker(player.worldObj, player.dimension, stack.getItemDamage(),
+					"default", "Test marker", (int)player.posX, (int)player.posZ);
 		}
 		
 		// Navigate once, before enabling pause:
@@ -169,7 +189,7 @@ public class GuiAtlas extends GuiScreen {
 		if (file != null) {
 			AntiqueAtlasMod.logger.info("Exporting image from Atlas #" +
 					stack.getItemDamage() +	" to file " + file.getAbsolutePath());
-			AtlasData data = ((ItemAtlas) stack.getItem()).getAtlasData(stack, player.worldObj);
+			AtlasData data = AntiqueAtlasMod.itemAtlas.getAtlasData(stack, player.worldObj);
 			ExportImageUtil.exportPngImage(data.getDimensionData(player.dimension), file, progressBar);
 			AntiqueAtlasMod.logger.info("Finished exporting image");
 		}
@@ -204,6 +224,8 @@ public class GuiAtlas extends GuiScreen {
 	protected void mouseClickMove(int mouseX, int mouseY, int lastMouseButton, long timeSinceMouseClick) {
 		super.mouseClickMove(mouseX, mouseY, lastMouseButton, timeSinceMouseClick);
 		if (isDragging) {
+			followPlayer = false;
+			btnPosition.drawButton = true;
 			mapOffsetX = dragMapOffsetX + mouseX - dragMouseX;
 			mapOffsetY = dragMapOffsetY + mouseY - dragMouseY;
 		}
@@ -249,8 +271,12 @@ public class GuiAtlas extends GuiScreen {
 		AtlasRenderHelper.drawFullTexture(Textures.BOOK, guiLeft, guiTop, WIDTH, HEIGHT);
 		
 		if (stack == null) return;
-		AtlasData data = ((ItemAtlas) stack.getItem()).getAtlasData(stack, player.worldObj);
+		AtlasData data = AntiqueAtlasMod.itemAtlas.getAtlasData(stack, player.worldObj);
 		if (data == null) return;
+		
+		GlobalMarkersData globalMarkers = AntiqueAtlasMod.globalMarkersData.getData();
+		//TODO: retrieve local markers data properly
+		MarkersData localMarkers = AntiqueAtlasMod.itemAtlas.getClientMarkersData(stack.getItemDamage());
 		
 		GL11.glEnable(GL11.GL_SCISSOR_TEST);
 		GL11.glScissor((guiLeft + CONTENT_X)*scale,
@@ -311,6 +337,20 @@ public class GuiAtlas extends GuiScreen {
 						else if (tile.bottomRight == MapTile.CONVEX) { u = 3; v = 5; }
 						AtlasRenderHelper.drawAutotileCorner(texture, screenX + MAP_TILE_SIZE/2, screenY + MAP_TILE_SIZE/2, u, v, MAP_TILE_SIZE/2);
 					}
+					
+					// Render global markers
+					//TODO consider optimizing loading the markers:
+					tempMarkers.addAll(globalMarkers.getMarkersAtChunk(player.dimension, chunkCoords));
+					tempMarkers.addAll(localMarkers.getMarkersAtChunk(player.dimension, chunkCoords));
+					for (Marker marker : tempMarkers) {
+						AtlasRenderHelper.drawFullTexture(
+								MarkerTextureMap.instance().getTexture(marker.getType()),
+								screenX + marker.getInChunkX()/BLOCK_TO_PIXEL_RATIO - (double)MARKER_ICON_WIDTH/4,
+								screenY + marker.getInChunkY()/BLOCK_TO_PIXEL_RATIO - MARKER_ICON_HEIGHT/2,
+								MARKER_ICON_WIDTH, MARKER_ICON_HEIGHT, 0.5);
+						// TODO render label tooltip on mouseover
+					}
+					tempMarkers.clear();
 				}
 				chunkCoords.y++;
 				screenY += MAP_TILE_SIZE;
@@ -322,9 +362,6 @@ public class GuiAtlas extends GuiScreen {
 		
 		// Overlay the frame so that edges of the map are smooth:
 		AtlasRenderHelper.drawFullTexture(Textures.BOOK_FRAME, guiLeft, guiTop, WIDTH, HEIGHT);
-		
-		//TODO: render markers
-		//TODO: add a button to place a marker
 		
 		// How much the player has moved from the top left corner of the map, in pixels:
 		int playerOffsetX = (int)(player.posX / BLOCK_TO_PIXEL_RATIO) + mapOffsetX;

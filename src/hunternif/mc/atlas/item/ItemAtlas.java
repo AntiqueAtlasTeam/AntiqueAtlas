@@ -26,7 +26,6 @@ public class ItemAtlas extends Item {
 	protected static final String ATLAS_DATA_PREFIX = "aAtlas_";
 	protected static final String WORLD_ATLAS_DATA_ID = "aAtlas";
 	protected static final String MARKERS_DATA_PREFIX = "aaMarkers_";
-	protected static final String WORLD_MARKERS_DATA_ID = "aaMarker";
 	
 	/** In [chunks] */
 	public static double LOOK_RADIUS = 11;
@@ -69,10 +68,17 @@ public class ItemAtlas extends Item {
 		AtlasData data = getAtlasData(stack, world);
 		if (data == null || !(entity instanceof EntityPlayer)) return;
 		
-		// On first run send the map from the server to the client:
+		// On the first run send the map from the server to the client:
 		EntityPlayer player = (EntityPlayer) entity;
 		if (!world.isRemote && !data.isSyncedOnPlayer(player) && !data.isEmpty()) {
+			//FIXME: once the data ceases being empty, it is immediately synchronized
 			data.syncOnPlayer(stack.getItemDamage(), player);
+		}
+		
+		// Same thing with the local markers:
+		MarkersData markers = getMarkersData(stack, world);
+		if (!world.isRemote && !markers.isSyncedOnPlayer(player) && !markers.isEmpty()) {
+			markers.syncOnPlayer(stack.getItemDamage(), player);
 		}
 		
 		// Update the actual map only so often:
@@ -173,9 +179,7 @@ public class ItemAtlas extends Item {
 		String key = getMarkersDataKey(stack);
 		MarkersData data = (MarkersData) world.loadItemData(MarkersData.class, key);
 		if (data == null && !world.isRemote) {
-			// This shouldn't really happen
-			stack.setItemDamage(world.getUniqueDataId(WORLD_MARKERS_DATA_ID));
-			key = getMarkersDataKey(stack);
+			// Biome data defines the ID; Markers data is secondary and has to cope.
 			data = new MarkersData(key);
 			world.setItemData(key, data);
 		}

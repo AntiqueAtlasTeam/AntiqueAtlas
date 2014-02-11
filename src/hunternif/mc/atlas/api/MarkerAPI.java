@@ -32,7 +32,8 @@ public interface MarkerAPI {
 	 * on the client.
 	 * @param world
 	 * @param dimension
-	 * @param atlasID		the ID of the atlas you want to put marker in.
+	 * @param atlasID		the ID of the atlas you want to put marker in. Equal
+	 * 						to ItemStack damage for ItemAtlas.
 	 * @param markerType	name of your custom marker type.
 	 * @param label			text label to be displayed on mouseover.
 	 * @param x				block coordinate

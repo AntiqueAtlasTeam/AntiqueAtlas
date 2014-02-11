@@ -15,7 +15,7 @@ public class NetworkUtil {
 	public static void sendPacketToAllPlayersInWorldExcluding(World world, Packet packet, EntityPlayer player) {
 		for (Object playerObj : world.playerEntities) {
 			EntityPlayer curPlayer = (EntityPlayer) playerObj;
-			if (curPlayer != player) {
+			if (!curPlayer.equals(player)) {
 				PacketDispatcher.sendPacketToPlayer(packet, (Player)curPlayer);
 			}
 		}

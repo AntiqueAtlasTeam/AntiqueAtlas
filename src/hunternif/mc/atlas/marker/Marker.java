@@ -35,6 +35,16 @@ public class Marker implements Comparable<Marker> {
 	public int getY() {
 		return y;
 	}
+	
+	/** X coordinate within the chunk. */
+	public int getInChunkX() {
+		return x & 0xf;
+	}
+	
+	/** Y coordinate within the chunk. */
+	public int getInChunkY() {
+		return y & 0xf;
+	}
 
 	@Override
 	public int compareTo(Marker marker) {
@@ -51,5 +61,10 @@ public class Marker implements Comparable<Marker> {
 	/** Returns the coordinates of the chunk this marker is located in. */
 	public ShortVec2 getChunkCoords() {
 		return new ShortVec2(x >> 4, y >> 4);
+	}
+	
+	@Override
+	public String toString() {
+		return "\"" + label + "\"" + "@(" + x + ", " + y + ")";
 	}
 }

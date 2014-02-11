@@ -34,7 +34,7 @@ public class AtlasData extends WorldSavedData {
 	private MapTileStitcher tileStitcher;
 	
 	/** Set of players this Atlas data has been sent to. */
-	private Set<EntityPlayer> playersSentTo = new HashSet<EntityPlayer>();
+	private final Set<EntityPlayer> playersSentTo = new HashSet<EntityPlayer>();
 
 	public AtlasData(String key) {
 		super(key);
@@ -108,7 +108,8 @@ public class AtlasData extends WorldSavedData {
 		return playersSentTo.contains(player);
 	}
 
-	/** Send all data to player in several zipped packets. */
+	/** Send all data to the player in several zipped packets. Called once
+	 * during the first run of ItemAtals.onUpdate(). */
 	public void syncOnPlayer(int atlasID, EntityPlayer player) {
 		int pieces = 0;
 		int dataSizeBytes = 0;
