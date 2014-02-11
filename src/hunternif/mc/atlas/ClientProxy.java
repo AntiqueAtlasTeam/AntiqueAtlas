@@ -4,10 +4,13 @@ import static hunternif.mc.atlas.client.StandardTextureSet.*;
 import static net.minecraft.world.biome.BiomeGenBase.*;
 import hunternif.mc.atlas.api.AtlasAPI;
 import hunternif.mc.atlas.api.BiomeAPI;
+import hunternif.mc.atlas.api.MarkerAPI;
 import hunternif.mc.atlas.client.GuiAtlas;
 import hunternif.mc.atlas.client.StandardTextureSet;
-import hunternif.mc.atlas.core.TextureConfig;
+import hunternif.mc.atlas.client.Textures;
+import hunternif.mc.atlas.core.BiomeTextureConfig;
 import hunternif.mc.atlas.ext.ExtTileIdMap;
+import hunternif.mc.atlas.marker.MarkerTextureConfig;
 
 import java.io.File;
 
@@ -18,15 +21,18 @@ import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 
 public class ClientProxy extends CommonProxy {
-	private TextureConfig textureConfig;
+	private BiomeTextureConfig biomeTextureConfig;
+	private MarkerTextureConfig markerTextureConfig;
 	
 	private GuiAtlas guiAtlas;
 	
 	@Override
 	public void preInit(FMLPreInitializationEvent event) {
 		super.preInit(event);
-		textureConfig = new TextureConfig(new File(configDir, "textures.json"));
-		textureConfig.load();
+		biomeTextureConfig = new BiomeTextureConfig(new File(configDir, "textures.json"));
+		biomeTextureConfig.load();
+		markerTextureConfig = new MarkerTextureConfig(new File(configDir, "markertextures.json"));
+		markerTextureConfig.load();
 	}
 	
 	@Override
@@ -42,13 +48,21 @@ public class ClientProxy extends CommonProxy {
 		super.postInit(event);
 		if (assignVanillaTextures()) {
 			// Only rewrite config, if new textures were automatically assigned.
-			updateTextureConfig();
+			updateBiomeTextureConfig();
+		}
+		if (setDefaultMarker()) {
+			updateMarkerTextureConfig();
 		}
 	}
 	
 	@Override
-	public void updateTextureConfig() {
-		textureConfig.save();
+	public void updateBiomeTextureConfig() {
+		biomeTextureConfig.save();
+	}
+	
+	@Override
+	public void updateMarkerTextureConfig() {
+		markerTextureConfig.save();
 	}
 	
 	@Override
@@ -88,6 +102,13 @@ public class ClientProxy extends CommonProxy {
 		changed |= api.setTextureIfNone(mushroomIsland, MUSHROOM);
 		changed |= api.setTextureIfNone(mushroomIslandShore, BEACH);
 		
+		return changed;
+	}
+	
+	public boolean setDefaultMarker() {
+		boolean changed = false;
+		MarkerAPI api = AtlasAPI.getMarkerAPI();
+		changed |= api.setTextureIfNone("default", Textures.MAP_MARKER);
 		return changed;
 	}
 }

@@ -35,6 +35,7 @@ public class CommonProxy {
 	}
 	
 	// Purely client stuff
-	public void updateTextureConfig() {}
+	public void updateBiomeTextureConfig() {}
+	public void updateMarkerTextureConfig() {}
 	public void openAtlasGUI(ItemStack stack) {}
 }

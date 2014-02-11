@@ -31,7 +31,7 @@ public class ExtBiomeData extends WorldSavedData {
 		super(key);
 	}
 	
-	private Map<Integer /*dimension ID*/, Map<ShortVec2, Integer /*biome ID*/>> dimensionMap =
+	private final Map<Integer /*dimension ID*/, Map<ShortVec2, Integer /*biome ID*/>> dimensionMap =
 			new ConcurrentHashMap<Integer, Map<ShortVec2, Integer /*biome ID*/>>();
 
 	@Override

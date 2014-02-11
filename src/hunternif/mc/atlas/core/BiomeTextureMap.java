@@ -180,7 +180,7 @@ public enum BiomeTextureMap {
 	public void checkRegistration(int biomeID) {
 		if (!isRegistered(biomeID)) {
 			autoRegister(biomeID);
-			AntiqueAtlasMod.proxy.updateTextureConfig();
+			AntiqueAtlasMod.proxy.updateBiomeTextureConfig();
 		}
 	}
 	

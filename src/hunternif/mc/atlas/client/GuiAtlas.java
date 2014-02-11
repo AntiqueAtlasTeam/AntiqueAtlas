@@ -323,6 +323,9 @@ public class GuiAtlas extends GuiScreen {
 		// Overlay the frame so that edges of the map are smooth:
 		AtlasRenderHelper.drawFullTexture(Textures.BOOK_FRAME, guiLeft, guiTop, WIDTH, HEIGHT);
 		
+		//TODO: render markers
+		//TODO: add a button to place a marker
+		
 		// How much the player has moved from the top left corner of the map, in pixels:
 		int playerOffsetX = (int)(player.posX / BLOCK_TO_PIXEL_RATIO) + mapOffsetX;
 		int playerOffsetZ = (int)(player.posZ / BLOCK_TO_PIXEL_RATIO) + mapOffsetY;

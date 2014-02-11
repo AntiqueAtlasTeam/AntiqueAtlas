@@ -15,6 +15,7 @@ public class Textures {
 	public static final ResourceLocation BTN_POSITION = new ResourceLocation(GUI + "position.png");
 	
 	public static final ResourceLocation MAP_PLAYER = new ResourceLocation(GUI_MAP + "player.png");
+	public static final ResourceLocation MAP_MARKER = new ResourceLocation(GUI_MAP + "marker.png");
 	
 	public static final ResourceLocation MAP_TEST = new ResourceLocation(GUI_MAP + "test.png");
 	public static final ResourceLocation MAP_MOUNTAINS = new ResourceLocation(GUI_MAP + "mountains.png");

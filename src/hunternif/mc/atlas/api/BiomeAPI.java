@@ -50,7 +50,8 @@ public interface BiomeAPI {
 	boolean setTextureIfNone(BiomeGenBase biome, StandardTextureSet textureSet);
 	
 	/** Save the biome ID config file. You might want to avoid saving if no
-	 * texture was actually changed, so that the config file is not overwritten
-	 * too often (that makes it easier to modify manually). */
+	 * texture has actually been changed, so that the config file is not
+	 * overwritten too often (that makes it easier to modify manually). */
+	@SideOnly(Side.CLIENT)
 	void save();
 }

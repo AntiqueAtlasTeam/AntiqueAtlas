@@ -5,6 +5,7 @@ import hunternif.mc.atlas.client.MapTileStitcher;
 import hunternif.mc.atlas.core.AtlasData;
 import hunternif.mc.atlas.core.ChunkBiomeAnalyzer;
 import hunternif.mc.atlas.core.MapTile;
+import hunternif.mc.atlas.marker.MarkersData;
 import hunternif.mc.atlas.util.ShortVec2;
 
 import java.util.Map;
@@ -22,8 +23,10 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
 public class ItemAtlas extends Item {
-	protected static final String DATA_PREFIX = "aAtlas_";
-	protected static final String WORLD_DATA_ID = "aAtlas";
+	protected static final String ATLAS_DATA_PREFIX = "aAtlas_";
+	protected static final String WORLD_ATLAS_DATA_ID = "aAtlas";
+	protected static final String MARKERS_DATA_PREFIX = "aaMarkers_";
+	protected static final String WORLD_MARKERS_DATA_ID = "aaMarker";
 	
 	/** In [chunks] */
 	public static double LOOK_RADIUS = 11;
@@ -125,13 +128,15 @@ public class ItemAtlas extends Item {
 		}
 	}
 	
+	// ====================== Obtaining AtlasData ======================
+	
 	public AtlasData getAtlasData(ItemStack stack, World world) {
-		String key = getDataKey(stack);
+		String key = getAtlasDataKey(stack);
 		AtlasData data = (AtlasData) world.loadItemData(AtlasData.class, key);
 		if (data == null && !world.isRemote) {
 			// This shouldn't really happen
-			stack.setItemDamage(world.getUniqueDataId(WORLD_DATA_ID));
-			key = getDataKey(stack);
+			stack.setItemDamage(world.getUniqueDataId(WORLD_ATLAS_DATA_ID));
+			key = getAtlasDataKey(stack);
 			data = new AtlasData(key);
 			world.setItemData(key, data);
 			if (world.isRemote) {
@@ -141,9 +146,10 @@ public class ItemAtlas extends Item {
 		return data;
 	}
 	
+	/** Used to update data from the server. */
 	@SideOnly(Side.CLIENT)
 	public AtlasData getClientAtlasData(int atlasID) {
-		String key = getDataKey(atlasID);
+		String key = getAtlasDataKey(atlasID);
 		World world = Minecraft.getMinecraft().theWorld;
 		AtlasData data = (AtlasData) world.loadItemData(AtlasData.class, key);
 		if (data == null) {
@@ -154,11 +160,53 @@ public class ItemAtlas extends Item {
 		return data;
 	}
 	
-	protected String getDataKey(ItemStack stack) {
-		return getDataKey(stack.getItemDamage());
+	protected String getAtlasDataKey(ItemStack stack) {
+		return getAtlasDataKey(stack.getItemDamage());
 	}
-	protected String getDataKey(int atlasID) {
-		return DATA_PREFIX + atlasID;
+	protected String getAtlasDataKey(int atlasID) {
+		return ATLAS_DATA_PREFIX + atlasID;
+	}
+	
+	// ====================== Obtaining MarkersData ======================
+	
+	public MarkersData getMarkersData(ItemStack stack, World world) {
+		String key = getMarkersDataKey(stack);
+		MarkersData data = (MarkersData) world.loadItemData(MarkersData.class, key);
+		if (data == null && !world.isRemote) {
+			// This shouldn't really happen
+			stack.setItemDamage(world.getUniqueDataId(WORLD_MARKERS_DATA_ID));
+			key = getMarkersDataKey(stack);
+			data = new MarkersData(key);
+			world.setItemData(key, data);
+		}
+		return data;
+	}
+	
+	/** Returns null if such atlasID was not found. */
+	public MarkersData getMarkersData(int atlasID, World world) {
+		String key = getMarkersDataKey(atlasID);
+		MarkersData data = (MarkersData) world.loadItemData(MarkersData.class, key);
+		return data;
+	}
+	
+	/** Used to update data from the server. */
+	@SideOnly(Side.CLIENT)
+	public MarkersData getClientMarkersData(int atlasID) {
+		String key = getMarkersDataKey(atlasID);
+		World world = Minecraft.getMinecraft().theWorld;
+		MarkersData data = (MarkersData) world.loadItemData(MarkersData.class, key);
+		if (data == null) {
+			data = new MarkersData(key);
+			world.setItemData(key, data);
+		}
+		return data;
+	}
+	
+	protected String getMarkersDataKey(ItemStack stack) {
+		return getMarkersDataKey(stack.getItemDamage());
+	}
+	protected String getMarkersDataKey(int atlasID) {
+		return MARKERS_DATA_PREFIX + atlasID;
 	}
 
 }

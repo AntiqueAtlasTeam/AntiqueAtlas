@@ -28,6 +28,8 @@ public abstract class CustomPacket {
 		builder.put(Integer.valueOf(0), MapDataPacket.class);
 		builder.put(Integer.valueOf(1), TilesPacket.class);
 		builder.put(Integer.valueOf(2), TileNameIDPacket.class);
+		builder.put(Integer.valueOf(3), MarkersPacket.class);
+		builder.put(Integer.valueOf(4), GlobalMarkersPacket.class);
 		
 		idMap = builder.build();
 	}

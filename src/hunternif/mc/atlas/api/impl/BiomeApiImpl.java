@@ -50,6 +50,6 @@ public class BiomeApiImpl implements BiomeAPI {
 	
 	@Override
 	public void save() {
-		AntiqueAtlasMod.proxy.updateTextureConfig();
+		AntiqueAtlasMod.proxy.updateBiomeTextureConfig();
 	}
 }

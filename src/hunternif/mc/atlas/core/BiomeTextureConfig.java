@@ -26,10 +26,10 @@ import cpw.mods.fml.relauncher.SideOnly;
  * @author Hunternif
  */
 @SideOnly(Side.CLIENT)
-public class TextureConfig {
+public class BiomeTextureConfig {
 	private final File file;
 	
-	public TextureConfig(File file) {
+	public BiomeTextureConfig(File file) {
 		this.file = file;
 	}
 	

@@ -5,6 +5,7 @@ import hunternif.mc.atlas.ext.ExtBiomeDataHandler;
 import hunternif.mc.atlas.ext.VillageWatcher;
 import hunternif.mc.atlas.item.ItemAtlas;
 import hunternif.mc.atlas.item.ItemEmptyAtlas;
+import hunternif.mc.atlas.marker.GlobalMarkersDataHandler;
 import hunternif.mc.atlas.network.CustomPacketHandler;
 
 import java.util.logging.Logger;
@@ -42,6 +43,7 @@ public class AntiqueAtlasMod {
 	public static CommonProxy proxy;
 	
 	public static final ExtBiomeDataHandler extBiomeData = new ExtBiomeDataHandler();
+	public static final GlobalMarkersDataHandler globalMarkersData = new GlobalMarkersDataHandler();
 	
 	public static ItemAtlas itemAtlas;
 	public static ItemEmptyAtlas itemEmptyAtlas;
@@ -75,7 +77,10 @@ public class AntiqueAtlasMod {
 		GameRegistry.addShapelessRecipe(new ItemStack(itemEmptyAtlas), Item.book, Item.compass);
 		
 		MinecraftForge.EVENT_BUS.register(extBiomeData);
-		GameRegistry.registerPlayerTracker(AntiqueAtlasMod.extBiomeData);
+		GameRegistry.registerPlayerTracker(extBiomeData);
+		
+		MinecraftForge.EVENT_BUS.register(globalMarkersData);
+		GameRegistry.registerPlayerTracker(globalMarkersData);
 		
 		MinecraftForge.EVENT_BUS.register(new VillageWatcher());
 	}
