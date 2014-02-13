@@ -89,7 +89,8 @@ public class MarkersPacket extends CustomPacket {
 		if (side.isServer()) {
 			markersData.markDirty();
 			// If these are a manually set markers sent from the client, forward
-			// them to other players:
+			// them to other players. Including the original sender, because he
+			// waits on the server to verify his marker.
 			NetworkUtil.sendPacketToAllPlayersInWorld(player.worldObj, this.makePacket());
 		}
 	}
