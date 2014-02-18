@@ -7,7 +7,8 @@ import cpw.mods.fml.relauncher.SideOnly;
 
 /**
  * API for putting custom markers to the atlases. Set the textures on the
- * client side, put markers into atlases on the server side.
+ * client side, put markers into atlases on the server side. Marker texture
+ * has to be square; the center of the texture will point to the marked spot.
  * @author Hunternif
  */
 public interface MarkerAPI {

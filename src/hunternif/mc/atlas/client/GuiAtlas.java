@@ -45,9 +45,8 @@ public class GuiAtlas extends GuiScreen {
 	private static final int PLAYER_ICON_WIDTH = 7;
 	private static final int PLAYER_ICON_HEIGHT = 8;
 	
-	//TODO: make marker icon size variable
-	private static final int MARKER_ICON_WIDTH = 11;
-	private static final int MARKER_ICON_HEIGHT = 17;
+	private static final int MARKER_ICON_WIDTH = 16;
+	private static final int MARKER_ICON_HEIGHT = 16;
 	
 	/** Pause between after the arrow button is pressed and continuous
 	 * navigation starts, in ticks. */
@@ -126,7 +125,7 @@ public class GuiAtlas extends GuiScreen {
 		btnPosition = new GuiPositionButton(5, guiLeft + 283, guiTop + 194, "Reset position");
 		btnPosition.drawButton = !followPlayer;
 		btnExportPng = new GuiButton(6, width - 80, height - 20, 80, 20, "Export Image");
-		btnMarker = new GuiMarkerButton(7, width-22, height-42);
+		btnMarker = new GuiMarkerButton(7, width-20, height-42, 20, 20);
 		buttonList.add(btnUp);
 		buttonList.add(btnDown);
 		buttonList.add(btnLeft);
@@ -345,9 +344,9 @@ public class GuiAtlas extends GuiScreen {
 					for (Marker marker : tempMarkers) {
 						AtlasRenderHelper.drawFullTexture(
 								MarkerTextureMap.instance().getTexture(marker.getType()),
-								screenX + marker.getInChunkX()/BLOCK_TO_PIXEL_RATIO - (double)MARKER_ICON_WIDTH/4,
+								screenX + marker.getInChunkX()/BLOCK_TO_PIXEL_RATIO - (double)MARKER_ICON_WIDTH/2,
 								screenY + marker.getInChunkY()/BLOCK_TO_PIXEL_RATIO - MARKER_ICON_HEIGHT/2,
-								MARKER_ICON_WIDTH, MARKER_ICON_HEIGHT, 0.5);
+								MARKER_ICON_WIDTH, MARKER_ICON_HEIGHT, 1);
 						// TODO render label tooltip on mouseover
 					}
 					tempMarkers.clear();

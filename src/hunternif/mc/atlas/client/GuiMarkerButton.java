@@ -8,13 +8,9 @@ import net.minecraft.client.renderer.RenderHelper;
 import org.lwjgl.opengl.GL11;
 
 public class GuiMarkerButton extends GuiButton {
-	public static final int BTN_WIDTH = 22;
-	public static final int BTN_HEIGHT = 22;
-	public static final int ICON_WIDTH = 11;
-	public static final int ICON_HEIGHT = 17;
 	
-	public GuiMarkerButton(int id, int x, int y) {
-		super(id, x, y, BTN_WIDTH, BTN_HEIGHT, "");
+	public GuiMarkerButton(int id, int x, int y, int width, int height) {
+		super(id, x, y, width, height, "");
 	}
 
 	@Override
@@ -30,9 +26,9 @@ public class GuiMarkerButton extends GuiButton {
 				GL11.glColor4f(1.0F, 1.0F, 1.0F, 0.5F);
 			}
 			
-			AtlasRenderHelper.drawFullTexture(Textures.MAP_MARKER,
-					(width - ICON_WIDTH)/2 + xPosition,
-					(height - ICON_HEIGHT)/2 + yPosition, ICON_WIDTH, ICON_HEIGHT);
+			AtlasRenderHelper.drawTexturedRect(Textures.MAP_MARKER,
+					(width - 11)/2 + xPosition, (height - 17)/2 + 1 + yPosition,
+					16-6, 0, 11, 17, 32, 32);
 		}
 	}
 }
