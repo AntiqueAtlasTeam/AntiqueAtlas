@@ -94,12 +94,12 @@ public class GuiAtlas extends GuiComponent {
 	 * offset. */
 	private boolean followPlayer = true;
 	
-	/** Temporary set for loading markers in chunk. */
-	private final SortedSet<Marker> tempMarkers = new TreeSet<Marker>();
-	
 	/** Progress bar for exporting images. */
 	private ProgressBarOverlay progressBar = new ProgressBarOverlay(100, 2);
 	private volatile boolean isExporting = false;
+	
+	/** Temporary set for loading markers currently visible on the map. */
+	private final SortedSet<Marker> visibleMarkers = new TreeSet<Marker>();
 	
 	/** If true, a semi-transparent marker is attached to the cursor, and the
 	 * player's icon becomes semi-transparent as well. */
@@ -259,8 +259,8 @@ public class GuiAtlas extends GuiComponent {
 				if (mouseState == 0 /*left button*/ &&
 						mouseX >= mapX && mouseX <= mapX + MAP_WIDTH &&
 						mouseY >= mapY && mouseY <= mapY + MAP_HEIGHT) {
-					int x = mouseXToWorldX(mouseX);
-					int z = mouseYToWorldZ(mouseY);
+					int x = screenXToWorldX(mouseX);
+					int z = screenYToWorldZ(mouseY);
 					AtlasAPI.getMarkerAPI().putMarker(player.worldObj, player.dimension, stack.getItemDamage(),
 							defaultMarker, "Test marker", x, z);
 					//TODO add a GUI to enter marker label.
@@ -326,8 +326,8 @@ public class GuiAtlas extends GuiComponent {
 		if (data == null) return;
 		
 		GlobalMarkersData globalMarkers = AntiqueAtlasMod.globalMarkersData.getData();
-		//TODO: retrieve local markers data properly
-		MarkersData localMarkers = AntiqueAtlasMod.itemAtlas.getClientMarkersData(stack.getItemDamage());
+		MarkersData localMarkers = AntiqueAtlasMod.itemAtlas.getMarkersData(stack, player.worldObj);
+		visibleMarkers.clear();
 		
 		GL11.glEnable(GL11.GL_SCISSOR_TEST);
 		GL11.glScissor((getGuiX() + CONTENT_X)*scale,
@@ -390,23 +390,10 @@ public class GuiAtlas extends GuiComponent {
 					}
 					
 					// Render global markers
-					//TODO load markers after the chunks are rendered
-					//TODO render markers on not yet explored chunks.
-					tempMarkers.addAll(globalMarkers.getMarkersAtChunk(player.dimension, chunkCoords));
-					tempMarkers.addAll(localMarkers.getMarkersAtChunk(player.dimension, chunkCoords));
-					for (Marker marker : tempMarkers) {
-						double markerX = screenX + marker.getInChunkX()/BLOCK_TO_PIXEL_RATIO;
-						double markerY = screenY + marker.getInChunkY()/BLOCK_TO_PIXEL_RATIO;
-						AtlasRenderHelper.drawFullTexture(
-								MarkerTextureMap.instance().getTexture(marker.getType()),
-								markerX - (double)MARKER_ICON_WIDTH/2,
-								markerY - (double)MARKER_ICON_HEIGHT/2,
-								MARKER_ICON_WIDTH, MARKER_ICON_HEIGHT);
-						if (isPointInRadius((int)markerX, (int)markerY, MARKER_RADIUS, mouseX, mouseY)) {
-							drawTopLevelHoveringText(Arrays.asList(marker.getLabel()), mouseX, mouseY, Minecraft.getMinecraft().fontRenderer);
-						}
+					visibleMarkers.addAll(globalMarkers.getMarkersAtChunk(player.dimension, chunkCoords));
+					if (localMarkers != null) {
+						visibleMarkers.addAll(localMarkers.getMarkersAtChunk(player.dimension, chunkCoords));
 					}
-					tempMarkers.clear();
 				}
 				chunkCoords.y++;
 				screenY += MAP_TILE_SIZE;
@@ -414,6 +401,20 @@ public class GuiAtlas extends GuiComponent {
 			chunkCoords.x++;
 			screenX += MAP_TILE_SIZE;
 		}
+		// Draw markers:
+		for (Marker marker : visibleMarkers) {
+			double markerX = worldXToScreenX(marker.getX());
+			double markerY = worldZToScreenY(marker.getY());
+			AtlasRenderHelper.drawFullTexture(
+					MarkerTextureMap.instance().getTexture(marker.getType()),
+					markerX - (double)MARKER_ICON_WIDTH/2,
+					markerY - (double)MARKER_ICON_HEIGHT/2,
+					MARKER_ICON_WIDTH, MARKER_ICON_HEIGHT);
+			if (isPointInRadius((int)markerX, (int)markerY, MARKER_RADIUS, mouseX, mouseY)) {
+				drawTopLevelHoveringText(Arrays.asList(marker.getLabel()), mouseX, mouseY, Minecraft.getMinecraft().fontRenderer);
+			}
+		}
+		
 		GL11.glDisable(GL11.GL_SCISSOR_TEST);
 		
 		// Overlay the frame so that edges of the map are smooth:
@@ -471,11 +472,18 @@ public class GuiAtlas extends GuiComponent {
 	}
 	
 	/** Returns the Y coordinate that the cursor is pointing at. */
-	private int mouseXToWorldX(int mouseX) {
+	private int screenXToWorldX(int mouseX) {
 		return (int)Math.round((double)(mouseX - this.width/2 - mapOffsetX) * BLOCK_TO_PIXEL_RATIO);
 	}
 	/** Returns the Y block coordinate that the cursor is pointing at. */
-	private int mouseYToWorldZ(int mouseY) {
+	private int screenYToWorldZ(int mouseY) {
 		return (int)Math.round((double)(mouseY - this.height/2 - mapOffsetY) * BLOCK_TO_PIXEL_RATIO);
+	}
+	
+	private int worldXToScreenX(int x) {
+		return (int)Math.round((double)x / BLOCK_TO_PIXEL_RATIO + this.width/2 + mapOffsetX);
+	}
+	private int worldZToScreenY(int z) {
+		return (int)Math.round((double)z / BLOCK_TO_PIXEL_RATIO + this.height/2 + mapOffsetY);
 	}
 }
