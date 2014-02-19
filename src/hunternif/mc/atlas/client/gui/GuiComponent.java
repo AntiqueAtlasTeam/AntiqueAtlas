@@ -144,7 +144,7 @@ public class GuiComponent extends GuiScreen {
 		this.allowUserInput = !interceptsMouse | !interceptsKeyboard;
 	}
 	/** If true, pressing keyboard keys will only affect this GUI, else they
-	 * will only affect the in-game controller. */
+	 * will only affect the in-game controller. Or both? */
 	public void setInterceptKeyboard(boolean value) {
 		this.interceptsKeyboard = value;
 		this.allowUserInput = !interceptsMouse | !interceptsKeyboard;

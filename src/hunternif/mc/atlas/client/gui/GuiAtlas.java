@@ -118,6 +118,7 @@ public class GuiAtlas extends GuiComponent {
 	
 	public GuiAtlas() {
 		followPlayer = true;
+		setInterceptKeyboard(false);
 		
 		btnUp = GuiArrowButton.up();
 		addChild(btnUp).offsetGuiCoords(148, 10);
@@ -230,13 +231,13 @@ public class GuiAtlas extends GuiComponent {
 	public void handleKeyboardInput() {
 		if (Keyboard.getEventKeyState()) {
 			int key = Keyboard.getEventKey();
-			if (key == Keyboard.KEY_UP || key == mc.gameSettings.keyBindForward.keyCode) {
+			if (key == Keyboard.KEY_UP) {
 				navigateMap(0, navigateStep);
-			} else if (key == Keyboard.KEY_DOWN || key == mc.gameSettings.keyBindBack.keyCode) {
+			} else if (key == Keyboard.KEY_DOWN) {
 				navigateMap(0, -navigateStep);
-			} else if (key == Keyboard.KEY_LEFT || key == mc.gameSettings.keyBindLeft.keyCode) {
+			} else if (key == Keyboard.KEY_LEFT) {
 				navigateMap(navigateStep, 0);
-			} else if (key == Keyboard.KEY_RIGHT || key == mc.gameSettings.keyBindRight.keyCode) {
+			} else if (key == Keyboard.KEY_RIGHT) {
 				navigateMap(-navigateStep, 0);
 			}
 		}
