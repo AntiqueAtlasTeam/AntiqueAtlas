@@ -256,7 +256,8 @@ public class GuiAtlas extends GuiComponent {
 				// If clicked on the map, place marker
 				int mapX = (width - MAP_WIDTH)/2;
 				int mapY = (height - MAP_HEIGHT)/2;
-				if (mouseX >= mapX && mouseX <= mapX + MAP_WIDTH &&
+				if (mouseState == 0 /*left button*/ &&
+						mouseX >= mapX && mouseX <= mapX + MAP_WIDTH &&
 						mouseY >= mapY && mouseY <= mapY + MAP_HEIGHT) {
 					int x = mouseXToWorldX(mouseX);
 					int z = mouseYToWorldZ(mouseY);
@@ -390,6 +391,7 @@ public class GuiAtlas extends GuiComponent {
 					
 					// Render global markers
 					//TODO load markers after the chunks are rendered
+					//TODO render markers on not yet explored chunks.
 					tempMarkers.addAll(globalMarkers.getMarkersAtChunk(player.dimension, chunkCoords));
 					tempMarkers.addAll(localMarkers.getMarkersAtChunk(player.dimension, chunkCoords));
 					for (Marker marker : tempMarkers) {
@@ -464,6 +466,7 @@ public class GuiAtlas extends GuiComponent {
 	
 	@Override
 	public void onGuiClosed() {
+		isPlacingMarker = false;
 		Keyboard.enableRepeatEvents(false);
 	}
 	
