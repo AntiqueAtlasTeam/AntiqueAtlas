@@ -15,6 +15,7 @@ import hunternif.mc.atlas.util.ExportImageUtil;
 import hunternif.mc.atlas.util.ShortVec2;
 
 import java.io.File;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -34,6 +35,8 @@ public class GuiAtlas extends GuiComponent {
 	private static final int CONTENT_X = 17;
 	private static final int CONTENT_Y = 11;
 	
+	public static final String defaultMarker = "red_x";
+	
 	private static final int MAP_WIDTH = WIDTH - 17*2;
 	private static final int MAP_HEIGHT = 194;
 	private static final int MAP_TILE_SIZE = 8;
@@ -46,6 +49,8 @@ public class GuiAtlas extends GuiComponent {
 	
 	private static final int MARKER_ICON_WIDTH = 16;
 	private static final int MARKER_ICON_HEIGHT = 16;
+	/** The radius of the area in which the marker will display hovering label. */
+	private static final int MARKER_RADIUS = 4;
 	
 	/** Pause between after the arrow button is pressed and continuous
 	 * navigation starts, in ticks. */
@@ -95,6 +100,15 @@ public class GuiAtlas extends GuiComponent {
 	/** Progress bar for exporting images. */
 	private ProgressBarOverlay progressBar = new ProgressBarOverlay(100, 2);
 	private volatile boolean isExporting = false;
+	
+	/** If true, a semi-transparent marker is attached to the cursor, and the
+	 * player's icon becomes semi-transparent as well. */
+	private boolean isPlacingMarker = false;
+	/** Set to true after mouse is released on the "Add marker" button.
+	 * Required because when mouse-up handler is called, the button has already
+	 * been clicked an isPlacingMarker is true.
+	 * FIXME: fix this hack with releasedMarkerButton */
+	private boolean releasedMarkerButton = true;
 	
 	private EntityPlayer player;
 	private ItemStack stack;
@@ -159,8 +173,8 @@ public class GuiAtlas extends GuiComponent {
 			@Override
 			public void onClick(GuiComponentButton button) {
 				if (stack != null) {
-					AtlasAPI.getMarkerAPI().putMarker(player.worldObj, player.dimension, stack.getItemDamage(),
-							"red_x", "Test marker", (int)player.posX, (int)player.posZ);
+					releasedMarkerButton = false;
+					isPlacingMarker = true;
 				}
 			}
 		});
@@ -234,6 +248,25 @@ public class GuiAtlas extends GuiComponent {
 		super.mouseMovedOrUp(mouseX, mouseY, mouseState);
 		selectedButton = null;
 		isDragging = false;
+		if (isPlacingMarker) {
+			if (!releasedMarkerButton) {
+				releasedMarkerButton = true;
+			} else {
+				// If clicked on the map, place marker
+				int mapX = (width - MAP_WIDTH)/2;
+				int mapY = (height - MAP_HEIGHT)/2;
+				if (mouseX >= mapX && mouseX <= mapX + MAP_WIDTH &&
+						mouseY >= mapY && mouseY <= mapY + MAP_HEIGHT) {
+					int x = mouseXToWorldX(mouseX);
+					int z = mouseYToWorldZ(mouseY);
+					AtlasAPI.getMarkerAPI().putMarker(player.worldObj, player.dimension, stack.getItemDamage(),
+							defaultMarker, "Test marker", x, z);
+					//TODO add a GUI to enter marker label.
+					AntiqueAtlasMod.logger.info("Put marker in Atlas #" + stack.getItemDamage() + " at (" + x + ", " + z + ")");
+				}
+				isPlacingMarker = false;
+			}
+		}
 	}
 	
 	@Override
@@ -355,16 +388,20 @@ public class GuiAtlas extends GuiComponent {
 					}
 					
 					// Render global markers
-					//TODO consider optimizing loading the markers:
+					//TODO load markers after the chunks are rendered
 					tempMarkers.addAll(globalMarkers.getMarkersAtChunk(player.dimension, chunkCoords));
 					tempMarkers.addAll(localMarkers.getMarkersAtChunk(player.dimension, chunkCoords));
 					for (Marker marker : tempMarkers) {
+						double markerX = screenX + marker.getInChunkX()/BLOCK_TO_PIXEL_RATIO;
+						double markerY = screenY + marker.getInChunkY()/BLOCK_TO_PIXEL_RATIO;
 						AtlasRenderHelper.drawFullTexture(
 								MarkerTextureMap.instance().getTexture(marker.getType()),
-								screenX + marker.getInChunkX()/BLOCK_TO_PIXEL_RATIO - (double)MARKER_ICON_WIDTH/2,
-								screenY + marker.getInChunkY()/BLOCK_TO_PIXEL_RATIO - MARKER_ICON_HEIGHT/2,
-								MARKER_ICON_WIDTH, MARKER_ICON_HEIGHT, 1);
-						// TODO render label tooltip on mouseover
+								markerX - (double)MARKER_ICON_WIDTH/2,
+								markerY - (double)MARKER_ICON_HEIGHT/2,
+								MARKER_ICON_WIDTH, MARKER_ICON_HEIGHT);
+						if (isPointInRadius((int)markerX, (int)markerY, MARKER_RADIUS, mouseX, mouseY)) {
+							drawTopLevelHoveringText(Arrays.asList(marker.getLabel()), mouseX, mouseY, Minecraft.getMinecraft().fontRenderer);
+						}
 					}
 					tempMarkers.clear();
 				}
@@ -387,6 +424,7 @@ public class GuiAtlas extends GuiComponent {
 		if (playerOffsetZ < -MAP_HEIGHT/2) playerOffsetZ = -MAP_HEIGHT/2;
 		if (playerOffsetZ > MAP_HEIGHT/2 - 2) playerOffsetZ = MAP_HEIGHT/2 - 2;
 		// Draw player icon:
+		GL11.glColor4f(1, 1, 1, isPlacingMarker ? 0.5f : 1);
 		GL11.glPushMatrix();
 		GL11.glTranslated(getGuiX() + WIDTH/2 + playerOffsetX, getGuiY() + HEIGHT/2 + playerOffsetZ, 0);
 		float playerRotation = (float) Math.round(player.rotationYaw / 360f * PLAYER_ROTATION_STEPS) / PLAYER_ROTATION_STEPS * 360f;
@@ -394,9 +432,22 @@ public class GuiAtlas extends GuiComponent {
 		GL11.glTranslatef(-(float)PLAYER_ICON_WIDTH/2f, -(float)PLAYER_ICON_HEIGHT/2f, 0);
 		AtlasRenderHelper.drawFullTexture(Textures.MAP_PLAYER, 0, 0, PLAYER_ICON_WIDTH, PLAYER_ICON_HEIGHT);
 		GL11.glPopMatrix();
+		GL11.glColor4f(1, 1, 1, 1);
 		
 		// Draw buttons:
 		super.drawScreen(mouseX, mouseY, par3);
+		
+		// Draw the semi-transparent marker attached to the cursor:
+		GL11.glEnable(GL11.GL_BLEND);
+		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+		if (isPlacingMarker) {
+			GL11.glColor4f(1, 1, 1, 0.5f);
+			AtlasRenderHelper.drawFullTexture(
+					MarkerTextureMap.instance().getTexture(defaultMarker),
+					mouseX - MARKER_ICON_WIDTH/2, mouseY - MARKER_ICON_HEIGHT/2,
+					MARKER_ICON_WIDTH, MARKER_ICON_HEIGHT);
+			GL11.glColor4f(1, 1, 1, 1);
+		}
 		
 		// Draw progress overlay:
 		if (isExporting) {
@@ -413,5 +464,14 @@ public class GuiAtlas extends GuiComponent {
 	@Override
 	public void onGuiClosed() {
 		Keyboard.enableRepeatEvents(false);
+	}
+	
+	/** Returns the Y coordinate that the cursor is pointing at. */
+	private int mouseXToWorldX(int mouseX) {
+		return (int)Math.round((double)(mouseX - this.width/2 - mapOffsetX) * BLOCK_TO_PIXEL_RATIO);
+	}
+	/** Returns the Y block coordinate that the cursor is pointing at. */
+	private int mouseYToWorldZ(int mouseY) {
+		return (int)Math.round((double)(mouseY - this.height/2 - mapOffsetY) * BLOCK_TO_PIXEL_RATIO);
 	}
 }

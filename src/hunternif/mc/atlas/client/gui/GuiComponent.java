@@ -25,7 +25,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 public class GuiComponent extends GuiScreen {
 	private GuiComponent parent = null;
 	private final List<GuiComponent> children = new CopyOnWriteArrayList<GuiComponent>();
-		
+	
 	protected int contentWidth;
 	protected int contentHeight;
 	/** If true, content size will be validated on the next update. */
@@ -292,6 +292,18 @@ public class GuiComponent extends GuiScreen {
 		mouseY -= getGuiY();
 		return mouseX >= left - 1 && mouseX < left + width + 1 && mouseY >= top - 1
 				&& mouseY < top + height + 1;
+	}
+	/**
+	 * Returns true if the mouse cursor is within a rectangular box of the specified
+	 * size with its center at the specified point.
+	 * @param x center of the box, absolute
+	 * @param y center of the box, absolute
+	 * @param radius half the side of the box
+	 * @param mouseX absolute
+	 * @param mouseY absolute
+	 */
+	protected boolean isPointInRadius(int x, int y, int radius, int mouseX, int mouseY) {
+		return mouseX >= x - radius && mouseX < x + radius && mouseY >= y - radius && mouseY < y + radius;
 	}
 	
 	/** Draws a standard Minecraft hovering text window, constrained by this
