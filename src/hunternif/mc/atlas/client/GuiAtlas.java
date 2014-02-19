@@ -171,7 +171,7 @@ public class GuiAtlas extends GuiScreen {
 			}).start();
 		} else if (btn.equals(btnMarker) && stack != null) {
 			AtlasAPI.getMarkerAPI().putMarker(player.worldObj, player.dimension, stack.getItemDamage(),
-					"default", "Test marker", (int)player.posX, (int)player.posZ);
+					"red_x", "Test marker", (int)player.posX, (int)player.posZ);
 		}
 		
 		// Navigate once, before enabling pause:

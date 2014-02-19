@@ -31,7 +31,7 @@ public class ClientProxy extends CommonProxy {
 		super.preInit(event);
 		biomeTextureConfig = new BiomeTextureConfig(new File(configDir, "textures.json"));
 		biomeTextureConfig.load();
-		markerTextureConfig = new MarkerTextureConfig(new File(configDir, "markertextures.json"));
+		markerTextureConfig = new MarkerTextureConfig(new File(configDir, "marker_textures.json"));
 		markerTextureConfig.load();
 	}
 	
@@ -108,7 +108,8 @@ public class ClientProxy extends CommonProxy {
 	public boolean setDefaultMarker() {
 		boolean changed = false;
 		MarkerAPI api = AtlasAPI.getMarkerAPI();
-		changed |= api.setTextureIfNone("default", Textures.MAP_MARKER);
+		changed |= api.setTextureIfNone("google", Textures.MAP_GOOGLE_MARKER);
+		changed |= api.setTextureIfNone("red_x", Textures.MAP_RED_X);
 		return changed;
 	}
 }

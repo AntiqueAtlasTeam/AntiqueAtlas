@@ -26,7 +26,7 @@ public class GuiMarkerButton extends GuiButton {
 				GL11.glColor4f(1.0F, 1.0F, 1.0F, 0.5F);
 			}
 			
-			AtlasRenderHelper.drawTexturedRect(Textures.MAP_MARKER,
+			AtlasRenderHelper.drawTexturedRect(Textures.MAP_GOOGLE_MARKER,
 					(width - 11)/2 + xPosition, (height - 17)/2 + 1 + yPosition,
 					16-6, 0, 11, 17, 32, 32);
 		}
