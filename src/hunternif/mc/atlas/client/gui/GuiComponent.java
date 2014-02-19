@@ -167,19 +167,19 @@ public class GuiComponent extends GuiScreen {
 	/** Handle mouse input for this GUI and its children. */
 	@Override
 	public void handleMouseInput() {
-		super.handleMouseInput();
 		for (GuiComponent child : children) {
 			child.handleMouseInput();
 		}
+		super.handleMouseInput();
 	}
 	
 	/** Handle keyboard input for this GUI and its children. */
 	@Override
 	public void handleKeyboardInput() {
-		super.handleKeyboardInput();
 		for (GuiComponent child : children) {
 			child.handleKeyboardInput();
 		}
+		super.handleKeyboardInput();
 	}
 	
 	/** Render this GUI and its children. */

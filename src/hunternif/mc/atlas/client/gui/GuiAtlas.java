@@ -71,7 +71,8 @@ public class GuiAtlas extends GuiComponent {
 	private GuiPositionButton btnPosition;
 	
 	/** The button which is currently being pressed. Used for continuous
-	 * navigation using the arrow buttons. */
+	 * navigation using the arrow buttons. Also used to prevent immediate
+	 * canceling of placing marker. */
 	private GuiComponentButton selectedButton = null;
 	
 	/** Time in world ticks when the button was pressed. Used to create a pause
@@ -104,11 +105,6 @@ public class GuiAtlas extends GuiComponent {
 	/** If true, a semi-transparent marker is attached to the cursor, and the
 	 * player's icon becomes semi-transparent as well. */
 	private boolean isPlacingMarker = false;
-	/** Set to true after mouse is released on the "Add marker" button.
-	 * Required because when mouse-up handler is called, the button has already
-	 * been clicked an isPlacingMarker is true.
-	 * FIXME: fix this hack with releasedMarkerButton */
-	private boolean releasedMarkerButton = true;
 	
 	private EntityPlayer player;
 	private ItemStack stack;
@@ -174,7 +170,7 @@ public class GuiAtlas extends GuiComponent {
 			@Override
 			public void onClick(GuiComponentButton button) {
 				if (stack != null) {
-					releasedMarkerButton = false;
+					selectedButton = button;
 					isPlacingMarker = true;
 				}
 			}
@@ -196,19 +192,35 @@ public class GuiAtlas extends GuiComponent {
 	
 	@Override
 	protected void mouseClicked(int mouseX, int mouseY, int mouseState) {
+		super.mouseClicked(mouseX, mouseY, mouseState);
+		
 		// If clicked on the map, start dragging
 		int mapX = (width - MAP_WIDTH)/2;
 		int mapY = (height - MAP_HEIGHT)/2;
-		if (mouseX >= mapX && mouseX <= mapX + MAP_WIDTH &&
-				mouseY >= mapY && mouseY <= mapY + MAP_HEIGHT) {
+		boolean isMouseOverMap = mouseX >= mapX && mouseX <= mapX + MAP_WIDTH &&
+				mouseY >= mapY && mouseY <= mapY + MAP_HEIGHT;
+		if (isPlacingMarker) {
+			if (selectedButton == btnMarker) {
+				selectedButton = null;
+			} else {
+				// If clicked on the map, place marker
+				if (isMouseOverMap && mouseState == 0 /* left click */) {
+					int x = screenXToWorldX(mouseX);
+					int z = screenYToWorldZ(mouseY);
+					AtlasAPI.getMarkerAPI().putMarker(player.worldObj, player.dimension, stack.getItemDamage(),
+							defaultMarker, "Test marker", x, z);
+					//TODO add a GUI to enter marker label.
+					AntiqueAtlasMod.logger.info("Put marker in Atlas #" + stack.getItemDamage() + " at (" + x + ", " + z + ")");
+				}
+				isPlacingMarker = false;
+			}
+		} else if (isMouseOverMap && selectedButton == null) {
 			isDragging = true;
 			dragMouseX = mouseX;
 			dragMouseY = mouseY;
 			dragMapOffsetX = mapOffsetX;
 			dragMapOffsetY = mapOffsetY;
 		}
-		// If clicked on a button, dragging will be cancelled in actionPerformed()
-		super.mouseClicked(mouseX, mouseY, mouseState);
 	}
 	
 	/** Opens a dialog window to select which file to save to, then performs
@@ -247,27 +259,9 @@ public class GuiAtlas extends GuiComponent {
 	@Override
 	protected void mouseMovedOrUp(int mouseX, int mouseY, int mouseState) {
 		super.mouseMovedOrUp(mouseX, mouseY, mouseState);
-		selectedButton = null;
-		isDragging = false;
-		if (isPlacingMarker) {
-			if (!releasedMarkerButton) {
-				releasedMarkerButton = true;
-			} else {
-				// If clicked on the map, place marker
-				int mapX = (width - MAP_WIDTH)/2;
-				int mapY = (height - MAP_HEIGHT)/2;
-				if (mouseState == 0 /*left button*/ &&
-						mouseX >= mapX && mouseX <= mapX + MAP_WIDTH &&
-						mouseY >= mapY && mouseY <= mapY + MAP_HEIGHT) {
-					int x = screenXToWorldX(mouseX);
-					int z = screenYToWorldZ(mouseY);
-					AtlasAPI.getMarkerAPI().putMarker(player.worldObj, player.dimension, stack.getItemDamage(),
-							defaultMarker, "Test marker", x, z);
-					//TODO add a GUI to enter marker label.
-					AntiqueAtlasMod.logger.info("Put marker in Atlas #" + stack.getItemDamage() + " at (" + x + ", " + z + ")");
-				}
-				isPlacingMarker = false;
-			}
+		if (mouseState != -1) {
+			selectedButton = null;
+			isDragging = false;
 		}
 	}
 	
