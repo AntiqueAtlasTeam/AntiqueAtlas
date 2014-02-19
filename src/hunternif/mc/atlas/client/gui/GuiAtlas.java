@@ -1,7 +1,8 @@
-package hunternif.mc.atlas.client;
+package hunternif.mc.atlas.client.gui;
 
 import hunternif.mc.atlas.AntiqueAtlasMod;
 import hunternif.mc.atlas.api.AtlasAPI;
+import hunternif.mc.atlas.client.Textures;
 import hunternif.mc.atlas.core.AtlasData;
 import hunternif.mc.atlas.core.BiomeTextureMap;
 import hunternif.mc.atlas.core.MapTile;
@@ -19,8 +20,6 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiButton;
-import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -29,7 +28,7 @@ import net.minecraft.util.ResourceLocation;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
 
-public class GuiAtlas extends GuiScreen {
+public class GuiAtlas extends GuiComponent {
 	public static final int WIDTH = 310;
 	public static final int HEIGHT = 218;
 	private static final int CONTENT_X = 17;
@@ -58,17 +57,17 @@ public class GuiAtlas extends GuiScreen {
 	public static int navigateStep = 24;
 	
 	/** Button for exporting PNG image of the Atlas's contents. */
-	private GuiButton btnExportPng;
+	private GuiBookmarkButton btnExportPng;
 	
 	/** Button for placing a marker at current position, local to this Atlas instance. */
-	private GuiMarkerButton btnMarker;
+	private GuiBookmarkButton btnMarker;
 	
 	/** Button for restoring player's position at the center of the Atlas. */
 	private GuiPositionButton btnPosition;
 	
 	/** The button which is currently being pressed. Used for continuous
 	 * navigation using the arrow buttons. */
-	private GuiButton selectedButton = null;
+	private GuiComponentButton selectedButton = null;
 	
 	/** Time in world ticks when the button was pressed. Used to create a pause
 	 * before continuous navigation using the arrow buttons. */
@@ -99,13 +98,72 @@ public class GuiAtlas extends GuiScreen {
 	
 	private EntityPlayer player;
 	private ItemStack stack;
-	/** Coordinates of the top left corner of the GUI on the screen. */
-	private int guiLeft, guiTop;
+	
 	/** Coordinate scale factor relative to the actual screen size. */
 	private int scale;
 	
 	public GuiAtlas() {
 		followPlayer = true;
+		
+		btnUp = GuiArrowButton.up();
+		addChild(btnUp).offsetGuiCoords(148, 10);
+		btnDown = GuiArrowButton.down();
+		addChild(btnDown).offsetGuiCoords(148, 194);
+		btnLeft = GuiArrowButton.left();
+		addChild(btnLeft).offsetGuiCoords(15, 100);
+		btnRight = GuiArrowButton.right();
+		addChild(btnRight).offsetGuiCoords(283, 100);
+		btnPosition = new GuiPositionButton();
+		btnPosition.setEnabled(!followPlayer);
+		addChild(btnPosition).offsetGuiCoords(283, 194);
+		IButtonListener positionListener = new IButtonListener() {
+			@Override
+			public void onClick(GuiComponentButton button) {
+				selectedButton = button;
+				if (button.equals(btnPosition)) {
+					followPlayer = true;
+					btnPosition.setEnabled(false);
+				} else {
+					// Navigate once, before enabling pause:
+					navigateByButton(selectedButton);
+					timeButtonPressed = player.worldObj.getTotalWorldTime();
+				}
+			}
+		};
+		btnUp.addListener(positionListener);
+		btnDown.addListener(positionListener);
+		btnLeft.addListener(positionListener);
+		btnRight.addListener(positionListener);
+		btnPosition.addListener(positionListener);
+		
+		btnExportPng = new GuiBookmarkButton(1, Textures.ICON_EXPORT, "Export image");
+		addChild(btnExportPng).offsetGuiCoords(299, 190);
+		btnExportPng.addListener(new IButtonListener() {
+			@Override
+			public void onClick(GuiComponentButton button) {
+				progressBar.reset();
+				if (stack != null) {
+					new Thread(new Runnable() {
+						@Override
+						public void run() {
+							exportImage(stack.copy());
+						}
+					}).start();
+				}
+			}
+		});
+		
+		btnMarker = new GuiBookmarkButton(0, Textures.ICON_MARKER, "Add marker");
+		addChild(btnMarker).offsetGuiCoords(299, 171);
+		btnMarker.addListener(new IButtonListener() {
+			@Override
+			public void onClick(GuiComponentButton button) {
+				if (stack != null) {
+					AtlasAPI.getMarkerAPI().putMarker(player.worldObj, player.dimension, stack.getItemDamage(),
+							"red_x", "Test marker", (int)player.posX, (int)player.posZ);
+				}
+			}
+		});
 	}
 	public GuiAtlas setAtlasItemStack(ItemStack stack) {
 		this.player = Minecraft.getMinecraft().thePlayer;
@@ -116,25 +174,9 @@ public class GuiAtlas extends GuiScreen {
 	@Override
 	public void initGui() {
 		super.initGui();
-		guiLeft = (this.width - WIDTH) / 2;
-		guiTop = (this.height - HEIGHT) / 2;
-		btnUp = GuiArrowButton.up(1, guiLeft + 148, guiTop + 10);
-		btnDown = GuiArrowButton.down(2, guiLeft + 148, guiTop + 194);
-		btnLeft = GuiArrowButton.left(3, guiLeft + 15, guiTop + 100);
-		btnRight = GuiArrowButton.right(4, guiLeft + 283, guiTop + 100);
-		btnPosition = new GuiPositionButton(5, guiLeft + 283, guiTop + 194, "Reset position");
-		btnPosition.drawButton = !followPlayer;
-		btnExportPng = new GuiButton(6, width - 80, height - 20, 80, 20, "Export Image");
-		btnMarker = new GuiMarkerButton(7, width-20, height-42, 20, 20);
-		buttonList.add(btnUp);
-		buttonList.add(btnDown);
-		buttonList.add(btnLeft);
-		buttonList.add(btnRight);
-		buttonList.add(btnPosition);
-		buttonList.add(btnExportPng);
-		buttonList.add(btnMarker);
 		Keyboard.enableRepeatEvents(true);
 		scale = new ScaledResolution(mc.gameSettings, mc.displayWidth, mc.displayHeight).getScaleFactor();
+		setGuiCoords((this.width - WIDTH) / 2, (this.height - HEIGHT) / 2);
 	}
 	
 	@Override
@@ -152,31 +194,6 @@ public class GuiAtlas extends GuiScreen {
 		}
 		// If clicked on a button, dragging will be cancelled in actionPerformed()
 		super.mouseClicked(mouseX, mouseY, mouseState);
-	}
-	
-	@Override
-	protected void actionPerformed(GuiButton btn) {
-		isDragging = false;
-		selectedButton = btn;
-		if (btn.equals(btnPosition)) {
-			followPlayer = true;
-			btnPosition.drawButton = false;
-		} else if (btn.equals(btnExportPng) && stack != null) {
-			progressBar.reset();
-			new Thread(new Runnable() {
-				@Override
-				public void run() {
-					exportImage(stack.copy());
-				}
-			}).start();
-		} else if (btn.equals(btnMarker) && stack != null) {
-			AtlasAPI.getMarkerAPI().putMarker(player.worldObj, player.dimension, stack.getItemDamage(),
-					"red_x", "Test marker", (int)player.posX, (int)player.posZ);
-		}
-		
-		// Navigate once, before enabling pause:
-		navigateByButton(selectedButton);
-		timeButtonPressed = player.worldObj.getTotalWorldTime();
 	}
 	
 	/** Opens a dialog window to select which file to save to, then performs
@@ -224,7 +241,7 @@ public class GuiAtlas extends GuiScreen {
 		super.mouseClickMove(mouseX, mouseY, lastMouseButton, timeSinceMouseClick);
 		if (isDragging) {
 			followPlayer = false;
-			btnPosition.drawButton = true;
+			btnPosition.setEnabled(true);
 			mapOffsetX = dragMapOffsetX + mouseX - dragMouseX;
 			mapOffsetY = dragMapOffsetY + mouseY - dragMouseY;
 		}
@@ -243,7 +260,7 @@ public class GuiAtlas extends GuiScreen {
 	}
 	
 	/** Offset the map view depending on which button was pressed. */
-	private void navigateByButton(GuiButton btn) {
+	private void navigateByButton(GuiComponentButton btn) {
 		if (btn == null) return;
 		if (btn.equals(btnUp)) {
 			navigateMap(0, navigateStep);
@@ -261,13 +278,13 @@ public class GuiAtlas extends GuiScreen {
 		mapOffsetX += dx;
 		mapOffsetY += dy;
 		followPlayer = false;
-		btnPosition.drawButton = true;
+		btnPosition.setEnabled(true);
 	}
 	
 	@Override
 	public void drawScreen(int mouseX, int mouseY, float par3) {
 		GL11.glColor4f(1, 1, 1, 1);
-		AtlasRenderHelper.drawFullTexture(Textures.BOOK, guiLeft, guiTop, WIDTH, HEIGHT);
+		AtlasRenderHelper.drawFullTexture(Textures.BOOK, getGuiX(), getGuiY(), WIDTH, HEIGHT);
 		
 		if (stack == null) return;
 		AtlasData data = AntiqueAtlasMod.itemAtlas.getAtlasData(stack, player.worldObj);
@@ -278,8 +295,8 @@ public class GuiAtlas extends GuiScreen {
 		MarkersData localMarkers = AntiqueAtlasMod.itemAtlas.getClientMarkersData(stack.getItemDamage());
 		
 		GL11.glEnable(GL11.GL_SCISSOR_TEST);
-		GL11.glScissor((guiLeft + CONTENT_X)*scale,
-				mc.displayHeight - (guiTop + CONTENT_Y + MAP_HEIGHT)*scale,
+		GL11.glScissor((getGuiX() + CONTENT_X)*scale,
+				mc.displayHeight - (getGuiY() + CONTENT_Y + MAP_HEIGHT)*scale,
 				MAP_WIDTH*scale, MAP_HEIGHT*scale);
 		GL11.glEnable(GL11.GL_BLEND);
 		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
@@ -289,12 +306,12 @@ public class GuiAtlas extends GuiScreen {
 				Math.round(-((double)MAP_WIDTH/2d + mapOffsetX) * BLOCK_TO_PIXEL_RATIO) >> 4,
 				Math.round(-((double)MAP_HEIGHT/2d + mapOffsetY) * BLOCK_TO_PIXEL_RATIO) >> 4);
 		ShortVec2 chunkCoords = new ShortVec2(mapStartCoords);
-		int screenX = guiLeft + WIDTH/2 + (int)((mapStartCoords.x << 4) / BLOCK_TO_PIXEL_RATIO) + mapOffsetX;
+		int screenX = getGuiX() + WIDTH/2 + (int)((mapStartCoords.x << 4) / BLOCK_TO_PIXEL_RATIO) + mapOffsetX;
 		int screenY;
 		int u = 0;
 		int v = 0;
 		for (int x = 0; x < MAP_WIDTH_IN_TILES + 2; x++) {
-			screenY = guiTop + HEIGHT/2 + (int)((mapStartCoords.y << 4) / BLOCK_TO_PIXEL_RATIO) + mapOffsetY;
+			screenY = getGuiY() + HEIGHT/2 + (int)((mapStartCoords.y << 4) / BLOCK_TO_PIXEL_RATIO) + mapOffsetY;
 			chunkCoords.y = mapStartCoords.y;
 			for (int z = 0; z < MAP_HEIGHT_IN_TILES + 2; z++) {
 				MapTile tile = tiles.get(chunkCoords);
@@ -360,7 +377,7 @@ public class GuiAtlas extends GuiScreen {
 		GL11.glDisable(GL11.GL_SCISSOR_TEST);
 		
 		// Overlay the frame so that edges of the map are smooth:
-		AtlasRenderHelper.drawFullTexture(Textures.BOOK_FRAME, guiLeft, guiTop, WIDTH, HEIGHT);
+		AtlasRenderHelper.drawFullTexture(Textures.BOOK_FRAME, getGuiX(), getGuiY(), WIDTH, HEIGHT);
 		
 		// How much the player has moved from the top left corner of the map, in pixels:
 		int playerOffsetX = (int)(player.posX / BLOCK_TO_PIXEL_RATIO) + mapOffsetX;
@@ -371,7 +388,7 @@ public class GuiAtlas extends GuiScreen {
 		if (playerOffsetZ > MAP_HEIGHT/2 - 2) playerOffsetZ = MAP_HEIGHT/2 - 2;
 		// Draw player icon:
 		GL11.glPushMatrix();
-		GL11.glTranslated(guiLeft + WIDTH/2 + playerOffsetX, guiTop + HEIGHT/2 + playerOffsetZ, 0);
+		GL11.glTranslated(getGuiX() + WIDTH/2 + playerOffsetX, getGuiY() + HEIGHT/2 + playerOffsetZ, 0);
 		float playerRotation = (float) Math.round(player.rotationYaw / 360f * PLAYER_ROTATION_STEPS) / PLAYER_ROTATION_STEPS * 360f;
 		GL11.glRotatef(180 + playerRotation, 0, 0, 1);
 		GL11.glTranslatef(-(float)PLAYER_ICON_WIDTH/2f, -(float)PLAYER_ICON_HEIGHT/2f, 0);

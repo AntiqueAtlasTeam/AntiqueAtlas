@@ -1,4 +1,4 @@
-package hunternif.mc.atlas.client;
+package hunternif.mc.atlas.client.gui;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;

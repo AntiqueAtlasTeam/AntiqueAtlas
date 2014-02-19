@@ -1,8 +1,8 @@
 package hunternif.mc.atlas.util;
 
 import hunternif.mc.atlas.AntiqueAtlasMod;
-import hunternif.mc.atlas.client.ExportUpdateListener;
 import hunternif.mc.atlas.client.Textures;
+import hunternif.mc.atlas.client.gui.ExportUpdateListener;
 import hunternif.mc.atlas.core.BiomeTextureMap;
 import hunternif.mc.atlas.core.DimensionData;
 import hunternif.mc.atlas.core.MapTile;

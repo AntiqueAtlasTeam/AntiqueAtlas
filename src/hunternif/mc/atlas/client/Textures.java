@@ -13,6 +13,10 @@ public class Textures {
 	public static final ResourceLocation BOOK_FRAME = new ResourceLocation(GUI + "bookFrame.png");
 	public static final ResourceLocation BTN_ARROWS = new ResourceLocation(GUI + "navigateArrows.png");
 	public static final ResourceLocation BTN_POSITION = new ResourceLocation(GUI + "position.png");
+	public static final ResourceLocation BOOKMARKS = new ResourceLocation(GUI + "bookmarks.png");
+	
+	public static final ResourceLocation ICON_EXPORT = new ResourceLocation(GUI + "icon_export.png");
+	public static final ResourceLocation ICON_MARKER = new ResourceLocation(GUI + "icon_marker.png");
 	
 	public static final ResourceLocation MAP_PLAYER = new ResourceLocation(GUI_MAP + "player.png");
 	public static final ResourceLocation MAP_GOOGLE_MARKER = new ResourceLocation(GUI_MAP + "google_marker.png");
