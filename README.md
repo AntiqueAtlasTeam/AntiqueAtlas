@@ -11,4 +11,4 @@ Also you can edit the configs to set which biome uses what texture, or even assi
 API
 ===
 
-Use the class `hunternif.mc.atlas.api.AtlasAPI` to obtain a reference to the API. There are 2 actual APIs: BiomeAPI and TileAPI. See the wiki for more: https://github.com/Hunternif/AntiqueAtlas/wiki/API
+Use the class `hunternif.mc.atlas.api.AtlasAPI` to obtain a reference to the API. There are 3 actual APIs: BiomeAPI, TileAPI and MarkerAPI. See the javadocs and the wiki for more: https://github.com/Hunternif/AntiqueAtlas/wiki/API
