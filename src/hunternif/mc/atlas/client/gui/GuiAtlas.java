@@ -1,7 +1,6 @@
 package hunternif.mc.atlas.client.gui;
 
 import hunternif.mc.atlas.AntiqueAtlasMod;
-import hunternif.mc.atlas.api.AtlasAPI;
 import hunternif.mc.atlas.client.Textures;
 import hunternif.mc.atlas.core.AtlasData;
 import hunternif.mc.atlas.core.BiomeTextureMap;
@@ -35,8 +34,6 @@ public class GuiAtlas extends GuiComponent {
 	private static final int CONTENT_X = 17;
 	private static final int CONTENT_Y = 11;
 	
-	public static final String defaultMarker = "red_x";
-	
 	private static final int MAP_WIDTH = WIDTH - 17*2;
 	private static final int MAP_HEIGHT = 194;
 	private static final int MAP_TILE_SIZE = 8;
@@ -52,14 +49,10 @@ public class GuiAtlas extends GuiComponent {
 	/** The radius of the area in which the marker will display hovering label. */
 	private static final int MARKER_RADIUS = 4;
 	
-	/** Pause between after the arrow button is pressed and continuous
-	 * navigation starts, in ticks. */
-	private static final int BUTTON_PAUSE = 8;
+	// Buttons =================================================================
 	
 	/** Arrow buttons for navigating the map view via mouse clicks. */
 	private GuiArrowButton btnUp, btnDown, btnLeft, btnRight;
-	/** How much the map view is offset, in blocks, per click (or per tick). */
-	public static int navigateStep = 24;
 	
 	/** Button for exporting PNG image of the Atlas's contents. */
 	private GuiBookmarkButton btnExportPng;
@@ -69,6 +62,16 @@ public class GuiAtlas extends GuiComponent {
 	
 	/** Button for restoring player's position at the center of the Atlas. */
 	private GuiPositionButton btnPosition;
+	
+	
+	// Navigation ==============================================================
+	
+	/** Pause between after the arrow button is pressed and continuous
+	 * navigation starts, in ticks. */
+	private static final int BUTTON_PAUSE = 8;
+	
+	/** How much the map view is offset, in blocks, per click (or per tick). */
+	public static int navigateStep = 24;
 	
 	/** The button which is currently being pressed. Used for continuous
 	 * navigation using the arrow buttons. Also used to prevent immediate
@@ -95,9 +98,15 @@ public class GuiAtlas extends GuiComponent {
 	 * offset. */
 	private boolean followPlayer = true;
 	
+	
+	// Exporting image =========================================================
+	
 	/** Progress bar for exporting images. */
 	private ProgressBarOverlay progressBar = new ProgressBarOverlay(100, 2);
 	private volatile boolean isExporting = false;
+	
+	
+	// Markers =================================================================
 	
 	/** Temporary set for loading markers currently visible on the map. */
 	private final SortedSet<Marker> visibleMarkers = new TreeSet<Marker>();
@@ -105,6 +114,12 @@ public class GuiAtlas extends GuiComponent {
 	/** If true, a semi-transparent marker is attached to the cursor, and the
 	 * player's icon becomes semi-transparent as well. */
 	private boolean isPlacingMarker = false;
+	/** If true, a text input field will appear. */
+	private boolean isEnteringMarkerLabel = false;
+	
+	private GuiMarkerFinalizer markerFinalizer = new GuiMarkerFinalizer();
+	
+	// Misc stuff ==============================================================
 	
 	private EntityPlayer player;
 	private ItemStack stack;
@@ -169,13 +184,14 @@ public class GuiAtlas extends GuiComponent {
 		btnMarker.addListener(new IButtonListener() {
 			@Override
 			public void onClick(GuiComponentButton button) {
-				if (stack != null) {
+				if (stack != null && !isPlacingMarker && !isEnteringMarkerLabel) {
 					selectedButton = button;
 					isPlacingMarker = true;
 				}
 			}
 		});
 	}
+	
 	public GuiAtlas setAtlasItemStack(ItemStack stack) {
 		this.player = Minecraft.getMinecraft().thePlayer;
 		this.stack = stack;
@@ -205,12 +221,15 @@ public class GuiAtlas extends GuiComponent {
 			} else {
 				// If clicked on the map, place marker
 				if (isMouseOverMap && mouseState == 0 /* left click */) {
-					int x = screenXToWorldX(mouseX);
-					int z = screenYToWorldZ(mouseY);
-					AtlasAPI.getMarkerAPI().putMarker(player.worldObj, player.dimension, stack.getItemDamage(),
-							defaultMarker, "Test marker", x, z);
-					//TODO add a GUI to enter marker label.
-					AntiqueAtlasMod.logger.info("Put marker in Atlas #" + stack.getItemDamage() + " at (" + x + ", " + z + ")");
+					isEnteringMarkerLabel = true;
+					markerFinalizer.setMarkerData(player.worldObj,
+							stack.getItemDamage(), player.dimension,
+							screenXToWorldX(mouseX), screenYToWorldZ(mouseY));
+					addChild(markerFinalizer).setCentered();
+					// Need to intercept keyboard events to type in the label:
+					//TODO: BUG: player walks infinitely in the same direction,
+					// if he was moving when he placed the marker. 
+					setInterceptKeyboard(true);
 				}
 				isPlacingMarker = false;
 			}
@@ -404,7 +423,8 @@ public class GuiAtlas extends GuiComponent {
 					markerX - (double)MARKER_ICON_WIDTH/2,
 					markerY - (double)MARKER_ICON_HEIGHT/2,
 					MARKER_ICON_WIDTH, MARKER_ICON_HEIGHT);
-			if (isPointInRadius((int)markerX, (int)markerY, MARKER_RADIUS, mouseX, mouseY)) {
+			if (isPointInRadius((int)markerX, (int)markerY, MARKER_RADIUS, mouseX, mouseY)
+					&& marker.getLabel().length() > 0) {
 				drawTopLevelHoveringText(Arrays.asList(marker.getLabel()), mouseX, mouseY, Minecraft.getMinecraft().fontRenderer);
 			}
 		}
@@ -441,7 +461,7 @@ public class GuiAtlas extends GuiComponent {
 		if (isPlacingMarker) {
 			GL11.glColor4f(1, 1, 1, 0.5f);
 			AtlasRenderHelper.drawFullTexture(
-					MarkerTextureMap.instance().getTexture(defaultMarker),
+					MarkerTextureMap.instance().getTexture(GuiMarkerFinalizer.defaultMarker),
 					mouseX - MARKER_ICON_WIDTH/2, mouseY - MARKER_ICON_HEIGHT/2,
 					MARKER_ICON_WIDTH, MARKER_ICON_HEIGHT);
 			GL11.glColor4f(1, 1, 1, 1);
@@ -462,6 +482,7 @@ public class GuiAtlas extends GuiComponent {
 	@Override
 	public void onGuiClosed() {
 		isPlacingMarker = false;
+		markerFinalizer.close();
 		Keyboard.enableRepeatEvents(false);
 	}
 	
@@ -479,5 +500,13 @@ public class GuiAtlas extends GuiComponent {
 	}
 	private int worldZToScreenY(int z) {
 		return (int)Math.round((double)z / BLOCK_TO_PIXEL_RATIO + this.height/2 + mapOffsetY);
+	}
+	
+	@Override
+	protected void onChildClosed(GuiComponent child) {
+		if (child.equals(markerFinalizer)) {
+			isEnteringMarkerLabel = false;
+			setInterceptKeyboard(false);
+		}
 	}
 }

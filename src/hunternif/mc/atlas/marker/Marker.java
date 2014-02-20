@@ -15,7 +15,7 @@ public class Marker implements Comparable<Marker> {
 	
 	public Marker(String type, String label, int x, int y) {
 		this.type = type;
-		this.label = label;
+		this.label = label == null ? "" : label;
 		this.x = x;
 		this.y = y;
 	}

@@ -84,6 +84,10 @@ public class GuiComponent extends GuiScreen {
 	public final void offsetGuiCoords(int dx, int dy) {
 		setGuiCoords(guiX + dx, guiY + dy);
 	}
+	/** Position this component in the center of its parent. */
+	public final void setCentered() {
+		setRelativeCoords((parent.getWidth() - getWidth())/2, (parent.getHeight() - getHeight())/2);
+	}
 	/** Absolute X coordinate on the screen. */
 	public int getGuiX() {
 		return guiX;
@@ -413,4 +417,16 @@ public class GuiComponent extends GuiScreen {
 		 * This flag is reset to false after rendering finishes. */
 		boolean shouldDraw = false;
 	}
+	
+	/** Remove itself from its parent component (if any), notifying it. */
+	public void close() {
+		if (parent != null) {
+			GuiComponent oldParent = parent;
+			parent.removeChild(this);
+			oldParent.onChildClosed(this);
+		}
+	}
+	
+	/** Called when a child removes itself from this component. */
+	protected void onChildClosed(GuiComponent child) {}
 }
