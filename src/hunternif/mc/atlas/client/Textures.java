@@ -20,7 +20,8 @@ public class Textures {
 	
 	public static final ResourceLocation MAP_PLAYER = new ResourceLocation(GUI_MAP + "player.png");
 	public static final ResourceLocation MAP_GOOGLE_MARKER = new ResourceLocation(GUI_MAP + "google_marker.png");
-	public static final ResourceLocation MAP_RED_X = new ResourceLocation(GUI_MAP + "red_x.png");
+	public static final ResourceLocation MAP_RED_X_LARGE = new ResourceLocation(GUI_MAP + "red_x_large.png");
+	public static final ResourceLocation MAP_RED_X_SMALL = new ResourceLocation(GUI_MAP + "red_x_small.png");
 	
 	public static final ResourceLocation MAP_TEST = new ResourceLocation(GUI_MAP + "test.png");
 	public static final ResourceLocation MAP_MOUNTAINS = new ResourceLocation(GUI_MAP + "mountains.png");

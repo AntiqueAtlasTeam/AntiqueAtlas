@@ -22,7 +22,7 @@ public enum MarkerTextureMap {
 	}
 	
 	private final Map<String, ResourceLocation> map = new HashMap<String, ResourceLocation>();
-	private final ResourceLocation defaultTexture = Textures.MAP_RED_X;
+	private final ResourceLocation defaultTexture = Textures.MAP_RED_X_LARGE;
 	
 	public void setTexture(String markerType, ResourceLocation texture) {
 		map.put(markerType, texture);

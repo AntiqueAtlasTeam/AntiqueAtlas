@@ -109,7 +109,7 @@ public class ClientProxy extends CommonProxy {
 		boolean changed = false;
 		MarkerAPI api = AtlasAPI.getMarkerAPI();
 		changed |= api.setTextureIfNone("google", Textures.MAP_GOOGLE_MARKER);
-		changed |= api.setTextureIfNone("red_x", Textures.MAP_RED_X);
+		changed |= api.setTextureIfNone("red_x_large", Textures.MAP_RED_X_LARGE);
 		return changed;
 	}
 }
