@@ -30,6 +30,7 @@ public class MarkersPacket extends CustomPacket {
 	
 	public MarkersPacket(int atlasID, int dimension, Marker... markers) {
 		this.atlasID = atlasID;
+		this.dimension = dimension;
 		for (Marker marker : markers) {
 			markersByType.put(marker.getType(), marker);
 		}
