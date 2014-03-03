@@ -26,6 +26,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 
 import org.lwjgl.input.Keyboard;
+import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
 public class GuiAtlas extends GuiComponent {
@@ -36,10 +37,10 @@ public class GuiAtlas extends GuiComponent {
 	
 	private static final int MAP_WIDTH = WIDTH - 17*2;
 	private static final int MAP_HEIGHT = 194;
-	private static final int MAP_TILE_SIZE = 8;
-	private static final double BLOCK_TO_PIXEL_RATIO = 16d /*Chunk size*/ / MAP_TILE_SIZE;
-	private static final int MAP_WIDTH_IN_TILES = MAP_WIDTH / MAP_TILE_SIZE;
-	private static final int MAP_HEIGHT_IN_TILES = MAP_HEIGHT / MAP_TILE_SIZE;
+	//private static final int MAP_TILE_SIZE = 8;
+	//private static final double BLOCK_TO_PIXEL_RATIO = 16d /*Chunk size*/ / MAP_TILE_SIZE;
+	//private static final int MAP_WIDTH_IN_TILES = MAP_WIDTH / MAP_TILE_SIZE;
+	//private static final int MAP_HEIGHT_IN_TILES = MAP_HEIGHT / MAP_TILE_SIZE;
 	private static final float PLAYER_ROTATION_STEPS = 16;
 	private static final int PLAYER_ICON_WIDTH = 7;
 	private static final int PLAYER_ICON_HEIGHT = 8;
@@ -99,6 +100,8 @@ public class GuiAtlas extends GuiComponent {
 	private boolean followPlayer = true;
 	
 	private GuiScaleBar scaleBar = new GuiScaleBar();
+	/** Pixel-to-block ratio. */
+	private double mapScale = 0.5;
 	
 	
 	// Exporting image =========================================================
@@ -127,7 +130,7 @@ public class GuiAtlas extends GuiComponent {
 	private ItemStack stack;
 	
 	/** Coordinate scale factor relative to the actual screen size. */
-	private int scale;
+	private int screenScale;
 	
 	public GuiAtlas() {
 		followPlayer = true;
@@ -207,7 +210,7 @@ public class GuiAtlas extends GuiComponent {
 	public void initGui() {
 		super.initGui();
 		Keyboard.enableRepeatEvents(true);
-		scale = new ScaledResolution(mc.gameSettings, mc.displayWidth, mc.displayHeight).getScaleFactor();
+		screenScale = new ScaledResolution(mc.gameSettings, mc.displayWidth, mc.displayHeight).getScaleFactor();
 		setGuiCoords((this.width - WIDTH) / 2, (this.height - HEIGHT) / 2);
 	}
 	
@@ -275,9 +278,23 @@ public class GuiAtlas extends GuiComponent {
 				navigateMap(navigateStep, 0);
 			} else if (key == Keyboard.KEY_RIGHT) {
 				navigateMap(-navigateStep, 0);
+			} else if (key == Keyboard.KEY_ADD || key == Keyboard.KEY_EQUALS) {
+				setMapScale(mapScale * 2);
+			} else if (key == Keyboard.KEY_SUBTRACT || key == Keyboard.KEY_MINUS) {
+				setMapScale(mapScale / 2);
 			}
 		}
 		super.handleKeyboardInput();
+	}
+	
+	@Override
+	public void handleMouseInput() {
+		super.handleMouseInput();
+		int wheelMove = Mouse.getEventDWheel();
+		if (wheelMove != 0) {
+			wheelMove = wheelMove > 0 ? -1 : 1;
+			setMapScale(mapScale * Math.pow(2, wheelMove));
+		}
 	}
 	
 	@Override
@@ -304,8 +321,8 @@ public class GuiAtlas extends GuiComponent {
 	public void updateScreen() {
 		super.updateScreen();
 		if (followPlayer) {
-			mapOffsetX = (int)(- player.posX / BLOCK_TO_PIXEL_RATIO);
-			mapOffsetY = (int)(- player.posZ / BLOCK_TO_PIXEL_RATIO);
+			mapOffsetX = (int)(- player.posX * mapScale);
+			mapOffsetY = (int)(- player.posZ * mapScale);
 		}
 		if (player.worldObj.getTotalWorldTime() > timeButtonPressed + BUTTON_PAUSE) {
 			navigateByButton(selectedButton);
@@ -334,6 +351,20 @@ public class GuiAtlas extends GuiComponent {
 		btnPosition.setEnabled(true);
 	}
 	
+	/** Set the pixel-to-block ratio, maintaining the current center of the screen. */
+	public void setMapScale(double scale) {
+		double oldScale = mapScale;
+		mapScale = scale;
+		if (mapScale < 0.25) mapScale = 0.25;
+		if (mapScale > 1) mapScale = 1;
+		// Times 2 because the contents of the Atlas are rendered at resolution 2 times larger:
+		scaleBar.setMapScale(mapScale*2);
+		mapOffsetX *= mapScale / oldScale;
+		mapOffsetY *= mapScale / oldScale;
+		dragMapOffsetX *= mapScale / oldScale;
+		dragMapOffsetY *= mapScale / oldScale;
+	}
+	
 	@Override
 	public void drawScreen(int mouseX, int mouseY, float par3) {
 		GL11.glColor4f(1, 1, 1, 1);
@@ -348,31 +379,35 @@ public class GuiAtlas extends GuiComponent {
 		visibleMarkers.clear();
 		
 		GL11.glEnable(GL11.GL_SCISSOR_TEST);
-		GL11.glScissor((getGuiX() + CONTENT_X)*scale,
-				mc.displayHeight - (getGuiY() + CONTENT_Y + MAP_HEIGHT)*scale,
-				MAP_WIDTH*scale, MAP_HEIGHT*scale);
+		GL11.glScissor((getGuiX() + CONTENT_X)*screenScale,
+				mc.displayHeight - (getGuiY() + CONTENT_Y + MAP_HEIGHT)*screenScale,
+				MAP_WIDTH*screenScale, MAP_HEIGHT*screenScale);
 		GL11.glEnable(GL11.GL_BLEND);
 		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 		Map<ShortVec2, MapTile> tiles = data.getSeenChunksInDimension(player.dimension);
 		// Find chunk coordinates of the top left corner of the map:
 		ShortVec2 mapStartCoords = new ShortVec2(
-				Math.round(-((double)MAP_WIDTH/2d + mapOffsetX) * BLOCK_TO_PIXEL_RATIO) >> 4,
-				Math.round(-((double)MAP_HEIGHT/2d + mapOffsetY) * BLOCK_TO_PIXEL_RATIO) >> 4);
+				Math.round(-((double)MAP_WIDTH/2d + mapOffsetX) / mapScale) >> 4,
+				Math.round(-((double)MAP_HEIGHT/2d + mapOffsetY) / mapScale) >> 4);
 		ShortVec2 chunkCoords = new ShortVec2(mapStartCoords);
-		int screenX = getGuiX() + WIDTH/2 + (int)((mapStartCoords.x << 4) / BLOCK_TO_PIXEL_RATIO) + mapOffsetX;
+		int screenX = getGuiX() + WIDTH/2 + (int)((mapStartCoords.x << 4) * mapScale) + mapOffsetX;
 		int screenY;
 		int u = 0;
 		int v = 0;
-		for (int x = 0; x < MAP_WIDTH_IN_TILES + 2; x++) {
-			screenY = getGuiY() + HEIGHT/2 + (int)((mapStartCoords.y << 4) / BLOCK_TO_PIXEL_RATIO) + mapOffsetY;
+		int tileSize = (int)Math.round(16 * mapScale);
+		//TODO: for smaller scale use different tile data.
+		int mapWidthInTiles = MAP_WIDTH / tileSize;
+		int mapHeightInTiles = MAP_HEIGHT / tileSize;
+		for (int x = 0; x < mapWidthInTiles + 2; x++) {
+			screenY = getGuiY() + HEIGHT/2 + (int)((mapStartCoords.y << 4) * mapScale) + mapOffsetY;
 			chunkCoords.y = mapStartCoords.y;
-			for (int z = 0; z < MAP_HEIGHT_IN_TILES + 2; z++) {
+			for (int z = 0; z < mapHeightInTiles + 2; z++) {
 				MapTile tile = tiles.get(chunkCoords);
 				if (tile != null) {
 					ResourceLocation texture = BiomeTextureMap.instance().getTexture(tile);
 					if (tile.isSingleObject()) {
 						AtlasRenderHelper.drawTexturedRect(texture, screenX, screenY, 0, 0,
-								MAP_TILE_SIZE, MAP_TILE_SIZE, MAP_TILE_SIZE*2, MAP_TILE_SIZE*3);
+								tileSize, tileSize, tileSize*2, tileSize*3);
 					} else {
 						// Top left corner:
 						if (tile.topLeft == MapTile.CONCAVE) { u = 2; v = 0; }
@@ -380,7 +415,7 @@ public class GuiAtlas extends GuiComponent {
 						else if (tile.topLeft == MapTile.HORIZONTAL) { u = 2; v = 2; }
 						else if (tile.topLeft == MapTile.FULL) { u = 2; v = 4; } 
 						else if (tile.topLeft == MapTile.CONVEX) { u = 0; v = 2; }
-						AtlasRenderHelper.drawAutotileCorner(texture, screenX, screenY, u, v, MAP_TILE_SIZE/2);
+						AtlasRenderHelper.drawAutotileCorner(texture, screenX, screenY, u, v, tileSize/2);
 						
 						// Top right corner:
 						if (tile.topRight == MapTile.CONCAVE) { u = 3; v = 0; }
@@ -388,7 +423,7 @@ public class GuiAtlas extends GuiComponent {
 						else if (tile.topRight == MapTile.HORIZONTAL) { u = 1; v = 2; }
 						else if (tile.topRight == MapTile.FULL) { u = 1; v = 4; } 
 						else if (tile.topRight == MapTile.CONVEX) { u = 3; v = 2; }
-						AtlasRenderHelper.drawAutotileCorner(texture, screenX + MAP_TILE_SIZE/2, screenY, u, v, MAP_TILE_SIZE/2);
+						AtlasRenderHelper.drawAutotileCorner(texture, screenX + tileSize/2, screenY, u, v, tileSize/2);
 						
 						// Bottom left corner:
 						if (tile.bottomLeft == MapTile.CONCAVE) { u = 2; v = 1; }
@@ -396,7 +431,7 @@ public class GuiAtlas extends GuiComponent {
 						else if (tile.bottomLeft == MapTile.HORIZONTAL) { u = 2; v = 5; }
 						else if (tile.bottomLeft == MapTile.FULL) { u = 2; v = 3; } 
 						else if (tile.bottomLeft == MapTile.CONVEX) { u = 0; v = 5; }
-						AtlasRenderHelper.drawAutotileCorner(texture, screenX, screenY + MAP_TILE_SIZE/2, u, v, MAP_TILE_SIZE/2);
+						AtlasRenderHelper.drawAutotileCorner(texture, screenX, screenY + tileSize/2, u, v, tileSize/2);
 						
 						// Bottom right corner:
 						if (tile.bottomRight == MapTile.CONCAVE) { u = 3; v = 1; }
@@ -404,7 +439,7 @@ public class GuiAtlas extends GuiComponent {
 						else if (tile.bottomRight == MapTile.HORIZONTAL) { u = 1; v = 5; }
 						else if (tile.bottomRight == MapTile.FULL) { u = 1; v = 3; } 
 						else if (tile.bottomRight == MapTile.CONVEX) { u = 3; v = 5; }
-						AtlasRenderHelper.drawAutotileCorner(texture, screenX + MAP_TILE_SIZE/2, screenY + MAP_TILE_SIZE/2, u, v, MAP_TILE_SIZE/2);
+						AtlasRenderHelper.drawAutotileCorner(texture, screenX + tileSize/2, screenY + tileSize/2, u, v, tileSize/2);
 					}
 					
 					// Render global markers
@@ -414,10 +449,10 @@ public class GuiAtlas extends GuiComponent {
 					}
 				}
 				chunkCoords.y++;
-				screenY += MAP_TILE_SIZE;
+				screenY += tileSize;
 			}
 			chunkCoords.x++;
-			screenX += MAP_TILE_SIZE;
+			screenX += tileSize;
 		}
 		// Draw markers:
 		for (Marker marker : visibleMarkers) {
@@ -440,8 +475,8 @@ public class GuiAtlas extends GuiComponent {
 		AtlasRenderHelper.drawFullTexture(Textures.BOOK_FRAME, getGuiX(), getGuiY(), WIDTH, HEIGHT);
 		
 		// How much the player has moved from the top left corner of the map, in pixels:
-		int playerOffsetX = (int)(player.posX / BLOCK_TO_PIXEL_RATIO) + mapOffsetX;
-		int playerOffsetZ = (int)(player.posZ / BLOCK_TO_PIXEL_RATIO) + mapOffsetY;
+		int playerOffsetX = (int)(player.posX * mapScale) + mapOffsetX;
+		int playerOffsetZ = (int)(player.posZ * mapScale) + mapOffsetY;
 		if (playerOffsetX < -MAP_WIDTH/2) playerOffsetX = -MAP_WIDTH/2;
 		if (playerOffsetX > MAP_WIDTH/2) playerOffsetX = MAP_WIDTH/2;
 		if (playerOffsetZ < -MAP_HEIGHT/2) playerOffsetZ = -MAP_HEIGHT/2;
@@ -493,18 +528,18 @@ public class GuiAtlas extends GuiComponent {
 	
 	/** Returns the Y coordinate that the cursor is pointing at. */
 	private int screenXToWorldX(int mouseX) {
-		return (int)Math.round((double)(mouseX - this.width/2 - mapOffsetX) * BLOCK_TO_PIXEL_RATIO);
+		return (int)Math.round((double)(mouseX - this.width/2 - mapOffsetX) / mapScale);
 	}
 	/** Returns the Y block coordinate that the cursor is pointing at. */
 	private int screenYToWorldZ(int mouseY) {
-		return (int)Math.round((double)(mouseY - this.height/2 - mapOffsetY) * BLOCK_TO_PIXEL_RATIO);
+		return (int)Math.round((double)(mouseY - this.height/2 - mapOffsetY) / mapScale);
 	}
 	
 	private int worldXToScreenX(int x) {
-		return (int)Math.round((double)x / BLOCK_TO_PIXEL_RATIO + this.width/2 + mapOffsetX);
+		return (int)Math.round((double)x * mapScale + this.width/2 + mapOffsetX);
 	}
 	private int worldZToScreenY(int z) {
-		return (int)Math.round((double)z / BLOCK_TO_PIXEL_RATIO + this.height/2 + mapOffsetY);
+		return (int)Math.round((double)z * mapScale + this.height/2 + mapOffsetY);
 	}
 	
 	@Override

@@ -14,17 +14,17 @@ public class GuiScaleBar extends GuiComponent {
 	public static final int WIDTH = 40, HEIGHT = 24;
 	
 	/** Pixel-to-block ratio. */
-	private float mapScale = 1;
+	private double mapScale = 1;
 	
-	public void setMapScale(float scale) {
+	public void setMapScale(double scale) {
 		this.mapScale = scale;
 	}
 	
 	/** Returns the background texture depending on the scale. */
 	private ResourceLocation getTexture() {
-		return mapScale == 0.5f ? Textures.SCALEBAR_05 :
+		return mapScale == 0.5f ? Textures.SCALEBAR_2 :
 			   mapScale == 1 ? Textures.SCALEBAR_1 :
-			   mapScale == 2 ? Textures.SCALEBAR_2 :
+			   mapScale == 2 ? Textures.SCALEBAR_05 :
 			null;
 	}
 	
