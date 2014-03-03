@@ -98,6 +98,8 @@ public class GuiAtlas extends GuiComponent {
 	 * offset. */
 	private boolean followPlayer = true;
 	
+	private GuiScaleBar scaleBar = new GuiScaleBar();
+	
 	
 	// Exporting image =========================================================
 	
@@ -190,6 +192,9 @@ public class GuiAtlas extends GuiComponent {
 				}
 			}
 		});
+		
+		addChild(scaleBar).offsetGuiCoords(20, 190);
+		scaleBar.setMapScale(1);
 	}
 	
 	public GuiAtlas setAtlasItemStack(ItemStack stack) {
