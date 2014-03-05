@@ -21,6 +21,7 @@ import java.util.TreeSet;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScaledResolution;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
@@ -167,7 +168,7 @@ public class GuiAtlas extends GuiComponent {
 		btnRight.addListener(positionListener);
 		btnPosition.addListener(positionListener);
 		
-		btnExportPng = new GuiBookmarkButton(1, Textures.ICON_EXPORT, "Export image");
+		btnExportPng = new GuiBookmarkButton(1, Textures.ICON_EXPORT, I18n.getString("gui.antiqueatlas.exportImage"));
 		addChild(btnExportPng).offsetGuiCoords(299, 190);
 		btnExportPng.addListener(new IButtonListener() {
 			@Override
@@ -184,7 +185,7 @@ public class GuiAtlas extends GuiComponent {
 			}
 		});
 		
-		btnMarker = new GuiBookmarkButton(0, Textures.ICON_MARKER, "Add marker");
+		btnMarker = new GuiBookmarkButton(0, Textures.ICON_MARKER, I18n.getString("gui.antiqueatlas.addMarker"));
 		addChild(btnMarker).offsetGuiCoords(299, 171);
 		btnMarker.addListener(new IButtonListener() {
 			@Override

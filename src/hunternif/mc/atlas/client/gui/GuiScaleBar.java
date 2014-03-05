@@ -2,6 +2,7 @@ package hunternif.mc.atlas.client.gui;
 
 import hunternif.mc.atlas.client.Textures;
 import hunternif.mc.atlas.util.AtlasRenderHelper;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.util.ResourceLocation;
 
 import org.lwjgl.opengl.GL11;
@@ -40,7 +41,14 @@ public class GuiScaleBar extends GuiComponent {
 		GL11.glPushMatrix();
 		GL11.glScaled(0.5, 0.5, 1);
 		AtlasRenderHelper.drawFullTexture(texture, getGuiX()*2, getGuiY()*2, WIDTH, HEIGHT);
-		fontRenderer.drawString("Blocks", getGuiX()*2 + 3, getGuiY()*2 + 3, 0x000000);
-		GL11.glPopMatrix();
+		if (fontRenderer.getUnicodeFlag()) {
+			// If the font is "small", don't downscale it:
+			GL11.glPopMatrix();
+			fontRenderer.drawString(I18n.getString("gui.antiqueatlas.scalebar"), getGuiX() - 1, getGuiY() - 1, 0x000000);
+			//TODO: it doesn't actually fit!
+		} else {
+			fontRenderer.drawString(I18n.getString("gui.antiqueatlas.scalebar"), getGuiX()*2 + 3, getGuiY()*2 + 3, 0x000000);
+			GL11.glPopMatrix();
+		}
 	}
 }

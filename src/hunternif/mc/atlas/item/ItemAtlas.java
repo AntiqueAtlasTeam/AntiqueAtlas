@@ -13,6 +13,7 @@ import java.util.Map;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.IconRegister;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -53,7 +54,7 @@ public class ItemAtlas extends Item {
 	
 	@Override
 	public String getItemDisplayName(ItemStack stack) {
-		return super.getItemDisplayName(stack) + " #" + stack.getItemDamage();
+		return String.format(I18n.getString("gui.antiqueatlas.atlasTitle"), stack.getItemDamage());
 	}
 	
 	@Override

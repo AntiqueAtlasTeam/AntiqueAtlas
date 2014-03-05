@@ -24,7 +24,6 @@ import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.network.NetworkMod;
 import cpw.mods.fml.common.registry.GameRegistry;
-import cpw.mods.fml.common.registry.LanguageRegistry;
 
 @Mod(modid=AntiqueAtlasMod.ID, name=AntiqueAtlasMod.NAME, version=AntiqueAtlasMod.VERSION)
 @NetworkMod(clientSideRequired=true, serverSideRequired=false, packetHandler=CustomPacketHandler.class, channels={AntiqueAtlasMod.CHANNEL})
@@ -59,12 +58,10 @@ public class AntiqueAtlasMod {
 		config.save();
 		
 		itemAtlas = (ItemAtlas) new ItemAtlas(atlasItemID).setUnlocalizedName("antiqueAtlas");
-		LanguageRegistry.addName(itemAtlas, "Antique Atlas");
 		itemAtlas.setBiomeAnalyzer(new ChunkBiomeAnalyzer());
 		
 		itemEmptyAtlas = (ItemEmptyAtlas) new ItemEmptyAtlas(emptyAtlasItemID)
 			.setUnlocalizedName("emptyAntiqueAtlas").setCreativeTab(CreativeTabs.tabTools);
-		LanguageRegistry.addName(itemEmptyAtlas, "Empty Antique Atlas");
 		
 		GameRegistry.registerItem(itemAtlas, "antiqueAtlas");
 		GameRegistry.registerItem(itemEmptyAtlas, "emptyAntiqueAtlas");

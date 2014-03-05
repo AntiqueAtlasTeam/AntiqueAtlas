@@ -6,6 +6,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiTextField;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.world.World;
 
 /**
@@ -40,8 +41,8 @@ public class GuiMarkerFinalizer extends GuiComponent {
 	
 	@Override
 	public void initGui() {
-		buttonList.add(btnDone = new GuiButton(0, this.width/2 - BUTTON_WIDTH - BUTTON_SPACING/2, this.height / 4 + 120, BUTTON_WIDTH, 20, "Done"));
-		buttonList.add(btnCancel = new GuiButton(0, this.width/2 + BUTTON_SPACING/2, this.height / 4 + 120, BUTTON_WIDTH, 20, "Cancel"));
+		buttonList.add(btnDone = new GuiButton(0, this.width/2 - BUTTON_WIDTH - BUTTON_SPACING/2, this.height / 4 + 120, BUTTON_WIDTH, 20, I18n.getString("gui.done")));
+		buttonList.add(btnCancel = new GuiButton(0, this.width/2 + BUTTON_SPACING/2, this.height / 4 + 120, BUTTON_WIDTH, 20, I18n.getString("gui.cancel")));
 		textField = new GuiTextField(font, (this.width - 200)/2, this.height/2 - 40, 200, 20);
 		textField.setFocused(true);
 		textField.setText("");
@@ -72,7 +73,7 @@ public class GuiMarkerFinalizer extends GuiComponent {
 	@Override
 	public void drawScreen(int mouseX, int mouseY, float partialTick) {
 		drawDefaultBackground();
-		drawCenteredString("Enter label:", this.height/2 - 57, 0xffffff, true);
+		drawCenteredString(I18n.getString("gui.antiqueatlas.enterLabel"), this.height/2 - 57, 0xffffff, true);
 		textField.drawTextBox();
 		super.drawScreen(mouseX, mouseY, partialTick);
 	}
