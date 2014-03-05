@@ -60,7 +60,7 @@ public class AntiqueAtlasMod {
 		
 		itemAtlas = (ItemAtlas) new ItemAtlas(atlasItemID).setUnlocalizedName("antiqueAtlas");
 		LanguageRegistry.addName(itemAtlas, "Antique Atlas");
-		itemAtlas.setBiomeAnalyzer(ChunkBiomeAnalyzer.instance);
+		itemAtlas.setBiomeAnalyzer(new ChunkBiomeAnalyzer());
 		
 		itemEmptyAtlas = (ItemEmptyAtlas) new ItemEmptyAtlas(emptyAtlasItemID)
 			.setUnlocalizedName("emptyAntiqueAtlas").setCreativeTab(CreativeTabs.tabTools);

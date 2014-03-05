@@ -6,6 +6,7 @@ import hunternif.mc.atlas.core.AtlasData;
 import hunternif.mc.atlas.core.ChunkBiomeAnalyzer;
 import hunternif.mc.atlas.core.MapTile;
 import hunternif.mc.atlas.marker.MarkersData;
+import hunternif.mc.atlas.util.ByteUtil;
 import hunternif.mc.atlas.util.ShortVec2;
 
 import java.util.Map;
@@ -115,7 +116,12 @@ public class ItemAtlas extends Item {
 					}
 					// Retrieve mean chunk biome and store it in AtlasData:
 					Chunk chunk = player.worldObj.getChunkFromChunkCoords(coords.x, coords.y);
-					biomeId = biomeAnalyzer.getChunkBiomeID(chunk);
+					if (!chunk.isChunkLoaded) {
+						biomeId = ChunkBiomeAnalyzer.NOT_FOUND;
+					} else {
+						biomeId = biomeAnalyzer.getMeanBiomeID(
+								ByteUtil.unsignedByteToIntArray(chunk.getBiomeArray()));
+					}
 				}
 				
 				// Finally, put the tile in place:

@@ -1,21 +1,17 @@
 package hunternif.mc.atlas.core;
 
-import hunternif.mc.atlas.util.ByteUtil;
 import net.minecraft.world.biome.BiomeGenBase;
-import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.common.BiomeDictionary.Type;
 
 public class ChunkBiomeAnalyzer {
 	public static final int NOT_FOUND = -1;
-	public static final ChunkBiomeAnalyzer instance = new ChunkBiomeAnalyzer();
 	
-	/** If biome is not found or the chunk is not loaded, returns -1. */
-	public int getChunkBiomeID(Chunk chunk) {
-		if (!chunk.isChunkLoaded) return NOT_FOUND;
+	/** If no valid biome ID is found, returns {@link ChunkBiomeAnalyzer#NOT_FOUND}. */
+	public int getMeanBiomeID(int[] biomeIDs) {
 		int[] biomeOccurences = new int[256];
-		for (int i = 0; i < chunk.getBiomeArray().length; i++) {
-			int biomeId = ByteUtil.unsignedByteToInt(chunk.getBiomeArray()[i]);
+		for (int i = 0; i < biomeIDs.length; i++) {
+			int biomeId = biomeIDs[i];
 			if (biomeId >= 0 && BiomeGenBase.biomeList[biomeId] != null) {
 				if (BiomeDictionary.isBiomeOfType(BiomeGenBase.biomeList[biomeId], Type.WATER)) {
 					// Water is important to show connected rivers:

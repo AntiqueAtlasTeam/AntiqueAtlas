@@ -395,7 +395,6 @@ public class GuiAtlas extends GuiComponent {
 		int u = 0;
 		int v = 0;
 		int tileSize = (int)Math.round(16 * mapScale);
-		//TODO: for smaller scale use different tile data.
 		int mapWidthInTiles = MAP_WIDTH / tileSize;
 		int mapHeightInTiles = MAP_HEIGHT / tileSize;
 		for (int x = 0; x < mapWidthInTiles + 2; x++) {

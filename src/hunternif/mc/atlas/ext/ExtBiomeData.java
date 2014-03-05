@@ -78,7 +78,8 @@ public class ExtBiomeData extends WorldSavedData {
 		return map;
 	}
 	
-	/** If no custom tile is set at the specified coordinates, returns -1. */
+	/** If no custom tile is set at the specified coordinates, returns
+	 * {@link ChunkBiomeAnalyzer#NOT_FOUND}. */
 	public int getBiomeIdAt(int dimension, ShortVec2 coords) {
 		Integer biomeID = getBiomesInDimension(dimension).get(coords);
 		return biomeID == null ? ChunkBiomeAnalyzer.NOT_FOUND : biomeID;
