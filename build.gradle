@@ -1,0 +1,45 @@
+buildscript {
+    repositories {
+        mavenCentral()
+        maven {
+            name = "forge"
+            url = "http://files.minecraftforge.net/maven"
+        }
+    }
+    dependencies {
+        classpath 'net.minecraftforge.gradle:ForgeGradle:1.0-SNAPSHOT'
+    }
+}
+
+apply plugin: 'forge'
+
+//TODO: obtain version from git tags
+version = "3.1-1.6.4"
+group= "hunternif.mc.atlas" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
+archivesBaseName = "antiqueatlas"
+
+minecraft {
+	version = "1.6.4-9.11.1.964"
+	if (file('../run').exists()) {
+		assetDir = "../run/assets"
+	} else {
+		assetDir = "assets"
+	}
+}
+
+processResources
+{
+    // replace stuff in mcmod.info, nothing else
+    from (sourceSets.main.resources.srcDirs) {
+        include 'mcmod.info'
+                
+        // replace version and mcversion
+		// TODO: fix this, not working
+        expand 'version':project.version, 'mcversion':project.minecraft.version
+    }
+        
+    // copy everything else, thats not the mcmod.info
+    from (sourceSets.main.resources.srcDirs) {
+        exclude 'mcmod.info'
+    }
+}
