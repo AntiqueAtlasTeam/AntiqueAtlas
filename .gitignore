@@ -1,9 +1,33 @@
+# Build dirs:
 bin
+release
+dist
+build
+
+# Gradle
+.gradle
+
+## IDE
+
+# IntelliJ IDEA
+*.iml
+*.ipr
+*.iws
+.idea
+
+# Eclipse
+.classpath
+.project
+.settings
+eclipse
+
+# NetBeans
+nbproject
+
+# ViM
+.*.sw[a-p]
+
+# Garbage
 Thumbs.db
 *.log
-*.zip
 *.bak
-
-# Building:
-release
-local.properties
