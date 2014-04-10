@@ -126,6 +126,12 @@ public enum BiomeTextureMap {
 			return;
 		}
 		BiomeGenBase biome = biomeList[biomeID];
+		if (biome == null) {
+			AntiqueAtlasMod.logger.warning("Biome ID " + biomeID + " is null. "
+					+ "Auto-registering default texture set");
+			setTexture(biomeID, defaultTexture);
+			return;
+		}
 		List<Type> types = Arrays.asList(BiomeDictionary.getTypesForBiome(biome));
 		if (types.contains(Type.SWAMP)) {
 			setTexture(biomeID, SWAMP);

@@ -12,7 +12,7 @@ public class ChunkBiomeAnalyzer {
 		int[] biomeOccurences = new int[256];
 		for (int i = 0; i < biomeIDs.length; i++) {
 			int biomeId = biomeIDs[i];
-			if (biomeId >= 0 && BiomeGenBase.biomeList[biomeId] != null) {
+			if (biomeId >= 0 && biomeId < 256 && BiomeGenBase.biomeList[biomeId] != null) {
 				if (BiomeDictionary.isBiomeOfType(BiomeGenBase.biomeList[biomeId], Type.WATER)) {
 					// Water is important to show connected rivers:
 					biomeOccurences[biomeId] += 4;
