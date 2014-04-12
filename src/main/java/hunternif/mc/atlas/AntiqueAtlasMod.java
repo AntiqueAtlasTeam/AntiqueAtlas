@@ -29,11 +29,12 @@ import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.registry.GameRegistry;
 
-@Mod(modid=AntiqueAtlasMod.ID, name=AntiqueAtlasMod.NAME, version="3.1-1.7.2")
+@Mod(modid=AntiqueAtlasMod.ID, name=AntiqueAtlasMod.NAME, version=AntiqueAtlasMod.VERSION)
 public class AntiqueAtlasMod {
 	public static final String ID = "antiqueatlas";
 	public static final String NAME = "Antique Atlas";
 	public static final String CHANNEL = ID;
+	public static final String VERSION = "4.0a-1.7.2";
 	
 	@Instance(ID)
 	public static AntiqueAtlasMod instance;
