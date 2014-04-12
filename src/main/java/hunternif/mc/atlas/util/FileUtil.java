@@ -10,19 +10,19 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
-import argo.format.JsonFormatter;
-import argo.format.PrettyJsonFormatter;
-import argo.jdom.JdomParser;
-import argo.jdom.JsonRootNode;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
 
 public class FileUtil {
-	private static final JdomParser parser = new JdomParser();
-	private static final JsonFormatter formatter = new PrettyJsonFormatter();
+	private static final JsonParser parser = new JsonParser();
+	private static final Gson gson = new GsonBuilder().setPrettyPrinting().create();
 	
 	/** Parse the specified file. Returns null if the file is not found or
 	 * cannot be parsed correctly. */
-	public static JsonRootNode readJson(File file) {
-		JsonRootNode root = null;
+	public static JsonElement readJson(File file) {
+		JsonElement root = null;
 		InputStream input = null;
 		try {
 			if (!file.exists()) {
@@ -33,7 +33,7 @@ public class FileUtil {
 			InputStreamReader reader = new InputStreamReader(input);
 			root = parser.parse(reader);
 		} catch (Exception e) {
-			AntiqueAtlasMod.logger.severe("Error reading file \"" + file.getName() + "\": " + e.toString());
+			AntiqueAtlasMod.logger.error("Error reading file \"" + file.getName() + "\": " + e.toString());
 		} finally {
 			if (input != null) {
 				try {
@@ -47,16 +47,16 @@ public class FileUtil {
 	}
 	
 	/** Pretty-print JSON root node in the specified text file. */
-	public static void writeJson(JsonRootNode root, File file) {
+	public static void writeJson(JsonElement root, File file) {
 		BufferedWriter writer = null;
 		try {
 			if (!file.exists()) {
 				file.createNewFile();
 			}
 			writer = new BufferedWriter(new FileWriter(file));
-			writer.write(formatter.format(root));
+			gson.toJson(root, writer);
 		} catch (Exception e) {
-			AntiqueAtlasMod.logger.severe("Error writing file \"" + file.getName() + "\": " + e.toString());
+			AntiqueAtlasMod.logger.error("Error writing file \"" + file.getName() + "\": " + e.toString());
 		} finally {
 			if (writer != null) {
 				try {

@@ -133,6 +133,7 @@ public class GuiAtlas extends GuiComponent {
 	/** Coordinate scale factor relative to the actual screen size. */
 	private int screenScale;
 	
+	@SuppressWarnings("rawtypes")
 	public GuiAtlas() {
 		followPlayer = true;
 		setInterceptKeyboard(false);
@@ -168,7 +169,7 @@ public class GuiAtlas extends GuiComponent {
 		btnRight.addListener(positionListener);
 		btnPosition.addListener(positionListener);
 		
-		btnExportPng = new GuiBookmarkButton(1, Textures.ICON_EXPORT, I18n.getString("gui.antiqueatlas.exportImage"));
+		btnExportPng = new GuiBookmarkButton(1, Textures.ICON_EXPORT, I18n.format("gui.antiqueatlas.exportImage"));
 		addChild(btnExportPng).offsetGuiCoords(299, 190);
 		btnExportPng.addListener(new IButtonListener() {
 			@Override
@@ -185,7 +186,7 @@ public class GuiAtlas extends GuiComponent {
 			}
 		});
 		
-		btnMarker = new GuiBookmarkButton(0, Textures.ICON_MARKER, I18n.getString("gui.antiqueatlas.addMarker"));
+		btnMarker = new GuiBookmarkButton(0, Textures.ICON_MARKER, I18n.format("gui.antiqueatlas.addMarker"));
 		addChild(btnMarker).offsetGuiCoords(299, 171);
 		btnMarker.addListener(new IButtonListener() {
 			@Override
@@ -441,13 +442,14 @@ public class GuiAtlas extends GuiComponent {
 						else if (tile.bottomRight == MapTile.CONVEX) { u = 3; v = 5; }
 						AtlasRenderHelper.drawAutotileCorner(texture, screenX + tileSize/2, screenY + tileSize/2, u, v, tileSize/2);
 					}
-					
-					// Render global markers
-					visibleMarkers.addAll(globalMarkers.getMarkersAtChunk(player.dimension, chunkCoords));
-					if (localMarkers != null) {
-						visibleMarkers.addAll(localMarkers.getMarkersAtChunk(player.dimension, chunkCoords));
-					}
 				}
+				
+				// Remember markers to render them later
+				visibleMarkers.addAll(globalMarkers.getMarkersAtChunk(player.dimension, chunkCoords));
+				if (localMarkers != null) {
+					visibleMarkers.addAll(localMarkers.getMarkersAtChunk(player.dimension, chunkCoords));
+				}
+				
 				chunkCoords.y++;
 				screenY += tileSize;
 			}

@@ -1,16 +1,15 @@
 package hunternif.mc.atlas.ext;
 
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraftforge.event.ForgeSubscribe;
 import net.minecraftforge.event.world.WorldEvent;
-import cpw.mods.fml.common.IPlayerTracker;
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import cpw.mods.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
 
-public class ExtBiomeDataHandler implements IPlayerTracker {
+public class ExtBiomeDataHandler {
 	private static final String DATA_KEY = "aAtlasExtTiles";
 	
 	private ExtBiomeData data;
 	
-	@ForgeSubscribe
+	@SubscribeEvent
 	public void onWorldLoad(WorldEvent.Load event) {
 		if (!event.world.isRemote) {
 			data = (ExtBiomeData) event.world.loadItemData(ExtBiomeData.class, DATA_KEY);
@@ -29,19 +28,10 @@ public class ExtBiomeDataHandler implements IPlayerTracker {
 		return data;
 	}
 	
-	@Override
-	public void onPlayerLogin(EntityPlayer player) {
-		ExtTileIdMap.instance().syncOnPlayer(player);
-		data.syncOnPlayer(player);
+	@SubscribeEvent
+	public void onPlayerLogin(PlayerLoggedInEvent event) {
+		ExtTileIdMap.instance().syncOnPlayer(event.player);
+		data.syncOnPlayer(event.player);
 	}
-
-	@Override
-	public void onPlayerLogout(EntityPlayer player) {}
-
-	@Override
-	public void onPlayerChangedDimension(EntityPlayer player) {}
-
-	@Override
-	public void onPlayerRespawn(EntityPlayer player) {}
 
 }

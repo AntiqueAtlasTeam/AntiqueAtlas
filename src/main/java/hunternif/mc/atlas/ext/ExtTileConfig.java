@@ -1,17 +1,13 @@
 package hunternif.mc.atlas.ext;
 
-import static argo.jdom.JsonNodeBuilders.aStringBuilder;
-import static argo.jdom.JsonNodeBuilders.anObjectBuilder;
 import hunternif.mc.atlas.AntiqueAtlasMod;
 import hunternif.mc.atlas.util.FileUtil;
 
 import java.io.File;
 import java.util.Map.Entry;
 
-import argo.jdom.JsonNode;
-import argo.jdom.JsonObjectNodeBuilder;
-import argo.jdom.JsonRootNode;
-import argo.jdom.JsonStringNode;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 
 /**
  * Maps unique names of external tiles to pseudo-biome IDs.
@@ -25,29 +21,37 @@ public class ExtTileConfig {
 	}
 	
 	public void load() {
-		JsonRootNode root = FileUtil.readJson(file);
+		JsonElement root = FileUtil.readJson(file);
 		if (root == null) {
-			AntiqueAtlasMod.logger.info("No tileIDs config found");
+			AntiqueAtlasMod.logger.info("tileIDs config not found");
+			return;
+		}
+		if (!root.isJsonObject()) {
+			AntiqueAtlasMod.logger.error("Malformed tileIDs config");
 			return;
 		}
 		
-		for (Entry<JsonStringNode, JsonNode> entry : root.getFields().entrySet()) {
+		for (Entry<String, JsonElement> entry : root.getAsJsonObject().entrySet()) {
+			String name = entry.getKey();
+			if (!entry.getValue().isJsonPrimitive()) {
+				AntiqueAtlasMod.logger.error("Malformed tileIDs config entry: " + name);
+				break;
+			}
 			try {
-				String name = entry.getKey().getText();
-				int id = Integer.parseInt(entry.getValue().getText());
+				int id = entry.getValue().getAsInt();
 				ExtTileIdMap.instance().setPseudoBiomeID(name, id);
 			} catch (NumberFormatException e) {
-				AntiqueAtlasMod.logger.severe("Malformed tileIDs config: " + e.toString());
+				AntiqueAtlasMod.logger.error("Malformed tileIDs config entry: " + name);
+				break;
 			}
 		}
 	}
 	
 	public void save() {
-		JsonObjectNodeBuilder builder = anObjectBuilder();
+		JsonObject root = new JsonObject();
 		for (Entry<String, Integer> entry : ExtTileIdMap.instance().getMap().entrySet()) {
-			builder.withField(entry.getKey(), aStringBuilder(entry.getValue().toString()));
+			root.addProperty(entry.getKey(), entry.getValue());
 		}
-		JsonRootNode root = builder.build();
 		FileUtil.writeJson(root, file);
 	}
 }

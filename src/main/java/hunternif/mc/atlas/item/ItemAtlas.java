@@ -12,7 +12,7 @@ import hunternif.mc.atlas.util.ShortVec2;
 import java.util.Map;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.texture.IconRegister;
+import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
@@ -36,8 +36,7 @@ public class ItemAtlas extends Item {
 	
 	private ChunkBiomeAnalyzer biomeAnalyzer;
 
-	public ItemAtlas(int id) {
-		super(id);
+	public ItemAtlas() {
 		setHasSubtypes(true);
 		setMaxStackSize(1);
 	}
@@ -48,13 +47,13 @@ public class ItemAtlas extends Item {
 	
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void registerIcons(IconRegister iconRegister) {
+	public void registerIcons(IIconRegister iconRegister) {
 		this.itemIcon = iconRegister.registerIcon(AntiqueAtlasMod.ID + ":" + getUnlocalizedName().substring("item.".length()));
 	}
 	
 	@Override
-	public String getItemDisplayName(ItemStack stack) {
-		return String.format(I18n.getString("gui.antiqueatlas.atlasTitle"), stack.getItemDamage());
+	public String getItemStackDisplayName(ItemStack stack) {
+		return I18n.format("gui.antiqueatlas.atlasTitle", stack.getItemDamage());
 	}
 	
 	@Override
@@ -123,20 +122,32 @@ public class ItemAtlas extends Item {
 						biomeId = biomeAnalyzer.getMeanBiomeID(
 								ByteUtil.unsignedByteToIntArray(chunk.getBiomeArray()));
 					}
+					// Finally, put the tile in place:
+					if (biomeId != ChunkBiomeAnalyzer.NOT_FOUND) {
+						MapTile tile = new MapTile(biomeId);
+						if (world.isRemote) {
+							tile.randomizeTexture();
+						}
+						data.putTile(player.dimension, coords.clone(), tile);
+						if (!world.isRemote) {
+							data.markDirty();
+						}
+					}
+				} else {
+					// Only update the custom tile if it doesn't rewrite itself:
+					MapTile oldTile = seenChunks.get(coords);
+					if (oldTile == null || oldTile.biomeID != biomeId) {
+						MapTile tile = new MapTile(biomeId);
+						if (world.isRemote) {
+							tile.randomizeTexture();
+						}
+						data.putTile(player.dimension, coords.clone(), tile);
+						if (!world.isRemote) {
+							data.markDirty();
+						}
+					}
 				}
 				
-				// Finally, put the tile in place:
-				if (biomeId != ChunkBiomeAnalyzer.NOT_FOUND) {
-					MapTile tile = new MapTile(biomeId);
-					if (world.isRemote) {
-						tile.randomizeTexture();
-					}
-					data.putTile(player.dimension, coords.clone(), tile);
-					if (!world.isRemote) {
-						data.markDirty();
-					}
-					
-				}
 			}
 		}
 	}

@@ -41,13 +41,13 @@ public class GuiScaleBar extends GuiComponent {
 		GL11.glPushMatrix();
 		GL11.glScaled(0.5, 0.5, 1);
 		AtlasRenderHelper.drawFullTexture(texture, getGuiX()*2, getGuiY()*2, WIDTH, HEIGHT);
-		if (fontRenderer.getUnicodeFlag()) {
+		if (fontRendererObj.getUnicodeFlag()) {
 			// If the font is "small", don't downscale it:
 			GL11.glPopMatrix();
-			fontRenderer.drawString(I18n.getString("gui.antiqueatlas.scalebar"), getGuiX() - 1, getGuiY() - 1, 0x000000);
+			fontRendererObj.drawString(I18n.format("gui.antiqueatlas.scalebar"), getGuiX() - 1, getGuiY() - 1, 0x000000);
 			//TODO: it doesn't actually fit!
 		} else {
-			fontRenderer.drawString(I18n.getString("gui.antiqueatlas.scalebar"), getGuiX()*2 + 3, getGuiY()*2 + 3, 0x000000);
+			fontRendererObj.drawString(I18n.format("gui.antiqueatlas.scalebar"), getGuiX()*2 + 3, getGuiY()*2 + 3, 0x000000);
 			GL11.glPopMatrix();
 		}
 	}

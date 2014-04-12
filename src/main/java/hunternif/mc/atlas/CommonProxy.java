@@ -21,11 +21,6 @@ public class CommonProxy {
 		extTileConfig.load();
 	}
 	
-	/** Must be called after preInit! */
-	public File getItemConfigFile() {
-		return new File(configDir, "items.cfg");
-	}
-	
 	public void init(FMLInitializationEvent event) {}
 	
 	public void postInit(FMLPostInitializationEvent event) {}

@@ -2,8 +2,8 @@ package hunternif.mc.atlas.core;
 
 import hunternif.mc.atlas.AntiqueAtlasMod;
 import hunternif.mc.atlas.client.MapTileStitcher;
-import hunternif.mc.atlas.network.CustomPacket;
 import hunternif.mc.atlas.network.MapDataPacket;
+import hunternif.mc.atlas.network.ModPacket;
 import hunternif.mc.atlas.util.ShortVec2;
 
 import java.util.HashMap;
@@ -17,8 +17,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.world.WorldSavedData;
-import cpw.mods.fml.common.network.PacketDispatcher;
-import cpw.mods.fml.common.network.Player;
+import net.minecraftforge.common.util.Constants;
 
 public class AtlasData extends WorldSavedData {
 	private static final String TAG_DIMENSION_MAP_LIST = "qDimensionMap";
@@ -46,9 +45,9 @@ public class AtlasData extends WorldSavedData {
 
 	@Override
 	public void readFromNBT(NBTTagCompound compound) {
-		NBTTagList dimensionMapList = compound.getTagList(TAG_DIMENSION_MAP_LIST);
+		NBTTagList dimensionMapList = compound.getTagList(TAG_DIMENSION_MAP_LIST, Constants.NBT.TAG_COMPOUND);
 		for (int d = 0; d < dimensionMapList.tagCount(); d++) {
-			NBTTagCompound tag = (NBTTagCompound) dimensionMapList.tagAt(d);
+			NBTTagCompound tag = dimensionMapList.getCompoundTagAt(d);
 			int dimensionID = tag.getInteger(TAG_DIMENSION_ID);
 			int[] intArray = tag.getIntArray(TAG_VISITED_CHUNKS);
 			for (int i = 0; i < intArray.length; i += 3) {
@@ -119,9 +118,9 @@ public class AtlasData extends WorldSavedData {
 			for (Entry<ShortVec2, MapTile> entry : seenChunks.entrySet()) {
 				data.put(entry.getKey(), entry.getValue());
 				dataSizeBytes += MapDataPacket.ENTRY_SIZE_BYTES;
-				if (dataSizeBytes >= CustomPacket.MAX_SIZE_BYTES) {
+				if (dataSizeBytes >= ModPacket.MAX_SIZE_BYTES) {
 					MapDataPacket packet = new MapDataPacket(atlasID, dimension.intValue(), data);
-					PacketDispatcher.sendPacketToPlayer(packet.makePacket(), (Player)player);
+					AntiqueAtlasMod.packetPipeline.sendTo(packet, player);
 					pieces++;
 					dataSizeBytes = 0;
 					data.clear();
@@ -129,13 +128,13 @@ public class AtlasData extends WorldSavedData {
 			}
 			if (data.size() > 0) {
 				MapDataPacket packet = new MapDataPacket(atlasID, dimension.intValue(), data);
-				PacketDispatcher.sendPacketToPlayer(packet.makePacket(), (Player)player);
+				AntiqueAtlasMod.packetPipeline.sendTo(packet, player);
 				pieces++;
 				dataSizeBytes = 0;
 				data.clear();
 			}
 		}
-		AntiqueAtlasMod.logger.info("Sent Atlas #" + atlasID + " data to player " + player.username + " in " + pieces + " pieces.");
+		AntiqueAtlasMod.logger.info("Sent Atlas #" + atlasID + " data to player " + player.getCommandSenderName() + " in " + pieces + " pieces.");
 		playersSentTo.add(player);
 	}
 

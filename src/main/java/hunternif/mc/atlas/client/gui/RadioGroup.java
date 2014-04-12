@@ -53,6 +53,7 @@ public class RadioGroup<B extends GuiRadioButton> implements Iterable<B> {
 	}
 	
 	private class ClickListener implements IButtonListener<B> {
+		@SuppressWarnings({ "rawtypes", "unchecked" })
 		@Override
 		public void onClick(B button) {
 			if (button != selectedButton) {

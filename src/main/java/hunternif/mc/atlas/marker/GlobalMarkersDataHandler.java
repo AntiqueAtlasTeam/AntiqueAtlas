@@ -1,20 +1,19 @@
 package hunternif.mc.atlas.marker;
 
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraftforge.event.ForgeSubscribe;
 import net.minecraftforge.event.world.WorldEvent;
-import cpw.mods.fml.common.IPlayerTracker;
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import cpw.mods.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
 
 /**
  * Handles the world-saved data with global markers.
  * @author Hunternif
  */
-public class GlobalMarkersDataHandler implements IPlayerTracker {
+public class GlobalMarkersDataHandler {
 	private static final String DATA_KEY = "aAtlasGlobalMarkers";
 	
 	private GlobalMarkersData data;
 	
-	@ForgeSubscribe
+	@SubscribeEvent
 	public void onWorldLoad(WorldEvent.Load event) {
 		if (!event.world.isRemote) {
 			data = (GlobalMarkersData) event.world.loadItemData(GlobalMarkersData.class, DATA_KEY);
@@ -33,18 +32,9 @@ public class GlobalMarkersDataHandler implements IPlayerTracker {
 		return data;
 	}
 	
-	@Override
-	public void onPlayerLogin(EntityPlayer player) {
-		data.syncOnPlayer(player);
+	@SubscribeEvent
+	public void onPlayerLogin(PlayerLoggedInEvent event) {
+		data.syncOnPlayer(event.player);
 	}
-
-	@Override
-	public void onPlayerLogout(EntityPlayer player) {}
-
-	@Override
-	public void onPlayerChangedDimension(EntityPlayer player) {}
-
-	@Override
-	public void onPlayerRespawn(EntityPlayer player) {}
 
 }

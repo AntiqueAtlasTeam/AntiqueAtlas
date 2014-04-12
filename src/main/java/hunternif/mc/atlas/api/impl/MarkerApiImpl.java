@@ -7,10 +7,8 @@ import hunternif.mc.atlas.marker.MarkerTextureMap;
 import hunternif.mc.atlas.marker.MarkersData;
 import hunternif.mc.atlas.network.GlobalMarkersPacket;
 import hunternif.mc.atlas.network.MarkersPacket;
-import hunternif.mc.atlas.util.NetworkUtil;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
-import cpw.mods.fml.common.network.PacketDispatcher;
 
 public class MarkerApiImpl implements MarkerAPI {
 
@@ -36,14 +34,14 @@ public class MarkerApiImpl implements MarkerAPI {
 		if (!world.isRemote) {
 			MarkersData data = AntiqueAtlasMod.itemAtlas.getMarkersData(atlasID, world);
 			if (data == null) {
-				AntiqueAtlasMod.logger.warning("Tried to put marker into non-existent Atlas ID: " + atlasID);
+				AntiqueAtlasMod.logger.warn("Tried to put marker into non-existent Atlas ID: " + atlasID);
 				return;
 			}
 			data.putMarker(dimension, marker);
 			data.markDirty();
-			NetworkUtil.sendPacketToAllPlayersInWorld(world, packet.makePacket());
+			AntiqueAtlasMod.packetPipeline.sendToWorld(packet, world);
 		} else {
-			PacketDispatcher.sendPacketToServer(packet.makePacket());
+			AntiqueAtlasMod.packetPipeline.sendToServer(packet);
 		}
 	}
 
@@ -51,9 +49,9 @@ public class MarkerApiImpl implements MarkerAPI {
 	public void putGlobalMarker(World world, int dimension, String markerType, String label, int x, int z) {
 		GlobalMarkersPacket packet = new GlobalMarkersPacket(dimension, new Marker(markerType, label, x, z));
 		if (!world.isRemote) {
-			NetworkUtil.sendPacketToAllPlayersInWorld(world, packet.makePacket());
+			AntiqueAtlasMod.packetPipeline.sendToWorld(packet, world);
 		} else {
-			PacketDispatcher.sendPacketToServer(packet.makePacket());
+			AntiqueAtlasMod.packetPipeline.sendToServer(packet);
 		}
 	}
 

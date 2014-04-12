@@ -200,7 +200,7 @@ public class GuiComponent extends GuiScreen {
 			// Disable unicode flag by default:
 			boolean unicode = hoveringTextInfo.font.getUnicodeFlag();
 			hoveringTextInfo.font.setUnicodeFlag(false);
-			drawHoveringText(hoveringTextInfo.lines, hoveringTextInfo.x, hoveringTextInfo.y, hoveringTextInfo.font);
+			drawHoveringText2(hoveringTextInfo.lines, hoveringTextInfo.x, hoveringTextInfo.y, hoveringTextInfo.font);
 			hoveringTextInfo.shouldDraw = false;
 			hoveringTextInfo.font.setUnicodeFlag(unicode);
 		}
@@ -313,7 +313,7 @@ public class GuiComponent extends GuiScreen {
 	/** Draws a standard Minecraft hovering text window, constrained by this
 	 * component's dimensions (i.e. if it won't fit in when drawn to the left
 	 * of the cursor, it will be drawn to the right instead). */
-	protected void drawHoveringText(List<String> lines, int x, int y, FontRenderer font) {
+	protected void drawHoveringText2(List<String> lines, int x, int y, FontRenderer font) {
 		if (!lines.isEmpty()) {
 			// Stencil test is used by VScrollingComponent to hide the content
 			// that is currently outside the viewport; that shouldn't affect
@@ -432,7 +432,7 @@ public class GuiComponent extends GuiScreen {
 	
 	/** Draw a text string centered horizontally, using this GUI's FontRenderer. */
 	protected void drawCenteredString(String text, int y, int color, boolean dropShadow) {
-		int length = fontRenderer.getStringWidth(text);
-		fontRenderer.drawString(text, (this.width - length)/2, y, color, dropShadow);
+		int length = fontRendererObj.getStringWidth(text);
+		fontRendererObj.drawString(text, (this.width - length)/2, y, color, dropShadow);
 	}
 }

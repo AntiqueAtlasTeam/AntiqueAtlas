@@ -1,21 +1,18 @@
 package hunternif.mc.atlas.marker;
 
-import static argo.jdom.JsonNodeBuilders.aStringBuilder;
-import static argo.jdom.JsonNodeBuilders.anObjectBuilder;
 import hunternif.mc.atlas.AntiqueAtlasMod;
 import hunternif.mc.atlas.util.FileUtil;
 
 import java.io.File;
 import java.util.Map.Entry;
 
+import net.minecraft.util.ResourceLocation;
+
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-
-import net.minecraft.util.ResourceLocation;
-import argo.jdom.JsonNode;
-import argo.jdom.JsonObjectNodeBuilder;
-import argo.jdom.JsonRootNode;
-import argo.jdom.JsonStringNode;
 
 /**
  * Maps marker type to texture.
@@ -30,29 +27,32 @@ public class MarkerTextureConfig {
 	}
 	
 	public void load() {
-		JsonRootNode root = FileUtil.readJson(file);
+		JsonElement root = FileUtil.readJson(file);
 		if (root == null) {
-			AntiqueAtlasMod.logger.info("No marker textures config found");
+			AntiqueAtlasMod.logger.info("Marker textures config not found");
+			return;
+		}
+		if (!root.isJsonObject()) {
+			AntiqueAtlasMod.logger.error("Malformed marker textures config");
 			return;
 		}
 		
-		for (Entry<JsonStringNode, JsonNode> entry : root.getFields().entrySet()) {
-			try {
-				String markerType = entry.getKey().getText();
-				ResourceLocation texture = new ResourceLocation(entry.getValue().getText());
-				MarkerTextureMap.instance().setTexture(markerType, texture);
-			} catch (NumberFormatException e) {
-				AntiqueAtlasMod.logger.severe("Malformed marker textures config: " + e.toString());
+		for (Entry<String, JsonElement> entry : root.getAsJsonObject().entrySet()) {
+			String markerType = entry.getKey();
+			if (!entry.getValue().isJsonPrimitive()) {
+				AntiqueAtlasMod.logger.error("Malformed marker textures config entry: " + markerType);
+				break;
 			}
+			ResourceLocation texture = new ResourceLocation(entry.getValue().getAsString());
+			MarkerTextureMap.instance().setTexture(markerType, texture);
 		}
 	}
 	
 	public void save() {
-		JsonObjectNodeBuilder builder = anObjectBuilder();
+		JsonObject root = new JsonObject();
 		for (Entry<String, ResourceLocation> entry : MarkerTextureMap.instance().getMap().entrySet()) {
-			builder.withField(entry.getKey(), aStringBuilder(entry.getValue().toString()));
+			root.addProperty(entry.getKey(), entry.getValue().toString());
 		}
-		JsonRootNode root = builder.build();
 		FileUtil.writeJson(root, file);
 	}
 }

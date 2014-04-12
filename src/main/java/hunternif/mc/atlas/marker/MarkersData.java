@@ -2,8 +2,8 @@ package hunternif.mc.atlas.marker;
 
 import hunternif.mc.atlas.AntiqueAtlasMod;
 import hunternif.mc.atlas.api.MarkerAPI;
-import hunternif.mc.atlas.network.CustomPacket;
 import hunternif.mc.atlas.network.MarkersPacket;
+import hunternif.mc.atlas.network.ModPacket;
 import hunternif.mc.atlas.util.ShortVec2;
 
 import java.util.Collection;
@@ -18,13 +18,11 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.world.WorldSavedData;
+import net.minecraftforge.common.util.Constants;
 
 import com.google.common.base.Supplier;
 import com.google.common.collect.Multimaps;
 import com.google.common.collect.SortedSetMultimap;
-
-import cpw.mods.fml.common.network.PacketDispatcher;
-import cpw.mods.fml.common.network.Player;
 
 /**
  * Contains markers, mapped to dimensions, and then to their chunk coordinates.
@@ -64,14 +62,14 @@ public class MarkersData extends WorldSavedData {
 
 	@Override
 	public void readFromNBT(NBTTagCompound compound) {
-		NBTTagList dimensionMapList = compound.getTagList(TAG_DIMENSION_MAP_LIST);
+		NBTTagList dimensionMapList = compound.getTagList(TAG_DIMENSION_MAP_LIST, Constants.NBT.TAG_COMPOUND);
 		for (int d = 0; d < dimensionMapList.tagCount(); d++) {
-			NBTTagCompound tag = (NBTTagCompound) dimensionMapList.tagAt(d);
+			NBTTagCompound tag = dimensionMapList.getCompoundTagAt(d);
 			int dimensionID = tag.getInteger(TAG_DIMENSION_ID);
 			SortedSetMultimap<ShortVec2, Marker> markers = getMarkersInDimension(dimensionID);
-			NBTTagList tagList = tag.getTagList(TAG_MARKERS);
+			NBTTagList tagList = tag.getTagList(TAG_MARKERS, Constants.NBT.TAG_COMPOUND);
 			for (int i = 0; i < tagList.tagCount(); i++) {
-				NBTTagCompound markerTag = (NBTTagCompound) tagList.tagAt(i);
+				NBTTagCompound markerTag = tagList.getCompoundTagAt(i);
 				Marker marker = new Marker(
 						markerTag.getString(TAG_MARKER_TYPE),
 						markerTag.getString(TAG_MARKER_LABEL),
@@ -139,20 +137,20 @@ public class MarkersData extends WorldSavedData {
 			for (Marker marker : markers.values()) {
 				packet.putMarker(marker);
 				dataSizeBytes += 4 + 4 + (marker.getLabel().length() + marker.getType().length())*2;
-				if (dataSizeBytes >= CustomPacket.MAX_SIZE_BYTES) {
-					PacketDispatcher.sendPacketToPlayer(packet.makePacket(), (Player)player);
+				if (dataSizeBytes >= ModPacket.MAX_SIZE_BYTES) {
+					AntiqueAtlasMod.packetPipeline.sendTo(packet, player);
 					pieces++;
 					dataSizeBytes = 0;
 					packet = newMarkersPacket(atlasID, dimension);
 				}
 			}
 			if (!packet.isEmpty()) {
-				PacketDispatcher.sendPacketToPlayer(packet.makePacket(), (Player)player);
+				AntiqueAtlasMod.packetPipeline.sendTo(packet, player);
 				pieces++;
 				dataSizeBytes = 0;
 			}
 		}
-		AntiqueAtlasMod.logger.info("Sent markers data to player " + player.username + " in " + pieces + " pieces.");
+		AntiqueAtlasMod.logger.info("Sent markers data to player " + player.getCommandSenderName() + " in " + pieces + " pieces.");
 		playersSentTo.add(player);
 	}
 	

@@ -1,5 +1,5 @@
-item.antiqueAtlas=Antique Atlas
-item.emptyAntiqueAtlas=Empty Antique Atlas
+item.antiqueAtlas.name=Antique Atlas
+item.emptyAntiqueAtlas.name=Empty Antique Atlas
 
 gui.antiqueatlas.atlasTitle=Antique Atlas #%d
 gui.antiqueatlas.scalebar=Blocks

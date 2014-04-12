@@ -10,10 +10,10 @@ import net.minecraft.village.Village;
 import net.minecraft.village.VillageCollection;
 import net.minecraft.village.VillageDoorInfo;
 import net.minecraft.world.World;
-import net.minecraftforge.event.EventPriority;
-import net.minecraftforge.event.ForgeSubscribe;
 import net.minecraftforge.event.terraingen.PopulateChunkEvent;
 import net.minecraftforge.event.world.WorldEvent;
+import cpw.mods.fml.common.eventhandler.EventPriority;
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 
 public class VillageWatcher {
 	private final Set<Village> visited = new HashSet<Village>();
@@ -21,7 +21,7 @@ public class VillageWatcher {
 	/** Used to look for villages that have not been added to ExtBiomeData when
 	 * they were generated. It could have happened in a previous version of the
 	 * mod. */
-	@ForgeSubscribe(priority=EventPriority.LOWEST)
+	@SubscribeEvent(priority=EventPriority.LOWEST)
 	public void onWorldLoad(WorldEvent.Load event) {
 		if (!event.world.isRemote) {
 			visitAllUnvisitedVillages(event.world);
@@ -30,13 +30,14 @@ public class VillageWatcher {
 	
 	/** Used to look for newly spawned villages. */
 	// This is still buggy, a freshly-generated village might not show up on an Atlas.
-	@ForgeSubscribe
+	@SubscribeEvent
 	public void onPopulateChunk(PopulateChunkEvent.Post event) {
 		if (!event.world.isRemote) {
 			visitAllUnvisitedVillages(event.world);
 		}
 	}
 	
+	@SuppressWarnings("unchecked")
 	public void visitAllUnvisitedVillages(World world) {
 		VillageCollection villageCollection = world.villageCollectionObj;
 		if (villageCollection == null) return;
