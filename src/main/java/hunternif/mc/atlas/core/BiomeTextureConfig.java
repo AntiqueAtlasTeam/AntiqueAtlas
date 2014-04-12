@@ -1,23 +1,20 @@
 package hunternif.mc.atlas.core;
 
-import static argo.jdom.JsonNodeBuilders.aStringBuilder;
-import static argo.jdom.JsonNodeBuilders.anArrayBuilder;
-import static argo.jdom.JsonNodeBuilders.anObjectBuilder;
 import hunternif.mc.atlas.AntiqueAtlasMod;
 import hunternif.mc.atlas.client.StandardTextureSet;
 import hunternif.mc.atlas.core.BiomeTextureMap.BiomeTextureEntry;
 import hunternif.mc.atlas.util.FileUtil;
 
 import java.io.File;
-import java.util.List;
 import java.util.Map.Entry;
 
 import net.minecraft.util.ResourceLocation;
-import argo.jdom.JsonArrayNodeBuilder;
-import argo.jdom.JsonNode;
-import argo.jdom.JsonObjectNodeBuilder;
-import argo.jdom.JsonRootNode;
-import argo.jdom.JsonStringNode;
+
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
+
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
@@ -28,57 +25,68 @@ import cpw.mods.fml.relauncher.SideOnly;
 @SideOnly(Side.CLIENT)
 public class BiomeTextureConfig {
 	private final File file;
-	
+
 	public BiomeTextureConfig(File file) {
 		this.file = file;
 	}
-	
+
 	public void load() {
-		JsonRootNode root = FileUtil.readJson(file);
+		JsonElement root = FileUtil.readJson(file);
 		if (root == null) {
-			AntiqueAtlasMod.logger.info("No texture config found");
+			AntiqueAtlasMod.logger.info("Biome texture config not found");
 			return;
 		}
-		
-		for (Entry<JsonStringNode, JsonNode> entry : root.getFields().entrySet()) {
+		if (!root.isJsonObject()) {
+			AntiqueAtlasMod.logger.severe("Malformed biome texture config");
+			return;
+		}
+
+		for (Entry<String, JsonElement> entry : root.getAsJsonObject().entrySet()) {
 			try {
-				int biomeID = Integer.parseInt(entry.getKey().getText());
-				if (entry.getValue().isArrayNode()) {
+				int biomeID = Integer.parseInt(entry.getKey());
+				if (entry.getValue().isJsonArray()) {
 					// List of textures:
-					List<JsonNode> paths = entry.getValue().getArrayNode();
-					for (JsonNode path : paths) {
-						ResourceLocation texture = new ResourceLocation(path.getText());
+					for (JsonElement path : entry.getValue().getAsJsonArray()) {
+						if (!path.isJsonPrimitive()) {
+							AntiqueAtlasMod.logger.severe("Malformed biome texture path: " + path.toString());
+							break;
+						}
+						ResourceLocation texture = new ResourceLocation(path.getAsString());
 						BiomeTextureMap.instance().setTexture(biomeID, texture);
 					}
 					AntiqueAtlasMod.logger.info("Registered custom texture for biome " + biomeID);
 				} else {
 					// Standard texture set:
-					String textureSetName = entry.getValue().getText();
+					if (!entry.getValue().isJsonPrimitive()) {
+						AntiqueAtlasMod.logger.severe("Malformed biome texture config entry: " + entry.getValue().toString());
+						break;
+					}
+					String textureSetName = entry.getValue().getAsString();
 					if (StandardTextureSet.contains(textureSetName)) {
 						BiomeTextureMap.instance().setTexture(biomeID, StandardTextureSet.valueOf(textureSetName));
 					}
 					AntiqueAtlasMod.logger.info("Registered standard texture set for biome " + biomeID);
 				}
 			} catch (NumberFormatException e) {
-				AntiqueAtlasMod.logger.severe("Malformed texture config: " + e.toString());
+				AntiqueAtlasMod.logger.severe("Malformed biome texture config entry: " + e.toString());
+				break;
 			}
 		}
 	}
-	
+
 	public void save() {
-		JsonObjectNodeBuilder builder = anObjectBuilder();
+		JsonObject root = new JsonObject();
 		for (BiomeTextureEntry entry : BiomeTextureMap.instance().textureMap.values()) {
 			if (entry.isStandardSet()) {
-				builder.withField(String.valueOf(entry.biomeID), aStringBuilder(entry.textureSet.name()));
+				root.addProperty(String.valueOf(entry.biomeID), entry.textureSet.name());
 			} else {
-				JsonArrayNodeBuilder arrayBuilder = anArrayBuilder();
+				JsonArray paths = new JsonArray();
 				for (ResourceLocation texture : entry.textures) {
-					arrayBuilder.withElement(aStringBuilder(texture.toString()));
+					paths.add(new JsonPrimitive(texture.toString()));
 				}
-				builder.withField(String.valueOf(entry.biomeID), arrayBuilder);
+				root.add(String.valueOf(entry.biomeID), paths);
 			}
 		}
-		JsonRootNode root = builder.build();
 		FileUtil.writeJson(root, file);
 	}
 }
