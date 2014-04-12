@@ -37,6 +37,7 @@ public class VillageWatcher {
 		}
 	}
 	
+	@SuppressWarnings("unchecked")
 	public void visitAllUnvisitedVillages(World world) {
 		VillageCollection villageCollection = world.villageCollectionObj;
 		if (villageCollection == null) return;

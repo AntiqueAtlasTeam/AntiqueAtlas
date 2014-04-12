@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /** A GuiComponent that can act like a button. */
+@SuppressWarnings("rawtypes")
 public class GuiComponentButton extends GuiComponent {
 	public static final String DEFAULT_CLICK_SOUND = "random.click";
 	
@@ -37,6 +38,7 @@ public class GuiComponentButton extends GuiComponent {
 	}
 	
 	/** Called when the user left-clicks on this component. */
+	@SuppressWarnings("unchecked")
 	protected void onClick() {
 		if (clickSound != null) {
 			mc.sndManager.playSoundFX(clickSound, 1.0F, 1.0F);

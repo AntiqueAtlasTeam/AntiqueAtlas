@@ -34,7 +34,6 @@ processResources
         include 'mcmod.info'
                 
         // replace version and mcversion
-		// TODO: fix this, not working
         expand 'version':project.version, 'mcversion':project.minecraft.version
     }
         

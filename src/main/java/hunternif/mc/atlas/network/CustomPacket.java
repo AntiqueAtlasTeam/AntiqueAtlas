@@ -45,6 +45,7 @@ public abstract class CustomPacket {
 	}
 
 	public static class ProtocolException extends Exception {
+		private static final long serialVersionUID = 1L;
 		public ProtocolException() {
 		}
 		public ProtocolException(String message, Throwable cause) {

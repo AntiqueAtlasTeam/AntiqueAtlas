@@ -123,19 +123,30 @@ public class ItemAtlas extends Item {
 						biomeId = biomeAnalyzer.getMeanBiomeID(
 								ByteUtil.unsignedByteToIntArray(chunk.getBiomeArray()));
 					}
-				}
-				
-				// Finally, put the tile in place:
-				if (biomeId != ChunkBiomeAnalyzer.NOT_FOUND) {
-					MapTile tile = new MapTile(biomeId);
-					if (world.isRemote) {
-						tile.randomizeTexture();
+					// Finally, put the tile in place:
+					if (biomeId != ChunkBiomeAnalyzer.NOT_FOUND) {
+						MapTile tile = new MapTile(biomeId);
+						if (world.isRemote) {
+							tile.randomizeTexture();
+						}
+						data.putTile(player.dimension, coords.clone(), tile);
+						if (!world.isRemote) {
+							data.markDirty();
+						}
 					}
-					data.putTile(player.dimension, coords.clone(), tile);
-					if (!world.isRemote) {
-						data.markDirty();
+				} else {
+					// Only update the custom tile if it doesn't rewrite itself:
+					MapTile oldTile = seenChunks.get(coords);
+					if (oldTile == null || oldTile.biomeID != biomeId) {
+						MapTile tile = new MapTile(biomeId);
+						if (world.isRemote) {
+							tile.randomizeTexture();
+						}
+						data.putTile(player.dimension, coords.clone(), tile);
+						if (!world.isRemote) {
+							data.markDirty();
+						}
 					}
-					
 				}
 			}
 		}

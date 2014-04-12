@@ -39,6 +39,7 @@ public class GuiMarkerFinalizer extends GuiComponent {
 		font = Minecraft.getMinecraft().fontRenderer;
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	public void initGui() {
 		buttonList.add(btnDone = new GuiButton(0, this.width/2 - BUTTON_WIDTH - BUTTON_SPACING/2, this.height / 4 + 120, BUTTON_WIDTH, 20, I18n.getString("gui.done")));

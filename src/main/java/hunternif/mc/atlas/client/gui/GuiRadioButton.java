@@ -2,6 +2,7 @@ package hunternif.mc.atlas.client.gui;
 
 /** A button that can be toggled on, and only toggled off by selecting
  * a different RadioButton. */
+@SuppressWarnings("rawtypes")
 public class GuiRadioButton extends GuiComponentButton {
 	private boolean selected;
 	
