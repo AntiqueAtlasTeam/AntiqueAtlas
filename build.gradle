@@ -14,7 +14,7 @@ buildscript {
 apply plugin: 'forge'
 
 //TODO: obtain version from git tags
-version = "3.1-1.6.4"
+version = "3.1.1-1.6.4"
 group= "hunternif.mc.atlas" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "antiqueatlas"
 
