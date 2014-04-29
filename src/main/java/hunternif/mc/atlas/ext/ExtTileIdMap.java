@@ -58,7 +58,7 @@ public enum ExtTileIdMap {
 	/** This method must only be called when reading from the config file or
 	 *  when executing {@link TileNameIDPacket}. */
 	public void setPseudoBiomeID(String uniqueName, int id) {
-		nameToIdMap.put(uniqueName, Integer.valueOf(id));
+		nameToIdMap.forcePut(uniqueName, Integer.valueOf(id));
 	}
 	
 	/** Map of tile names to biome ID, used for saving config file. */
