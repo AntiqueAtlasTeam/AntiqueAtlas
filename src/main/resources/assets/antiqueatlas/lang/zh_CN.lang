@@ -1,0 +1,12 @@
+item.antiqueAtlas.name=古式地图
+item.emptyAntiqueAtlas.name=空白古式地图
+
+gui.antiqueatlas.atlasTitle=古式地图#%d
+gui.antiqueatlas.scalebar=方块
+gui.antiqueatlas.enterLabel=进入标签:
+gui.antiqueatlas.addMarker=增加标记
+gui.antiqueatlas.exportImage=导出图像
+gui.antiqueatlas.export.opening=打开文件系统对话框...
+gui.antiqueatlas.export.selectFile=选择PNG格式图片并另存为
+gui.antiqueatlas.export.rendering=渲染...
+gui.antiqueatlas.export.writing=写入文件...
