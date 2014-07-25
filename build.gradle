@@ -11,18 +11,18 @@ buildscript {
         }
     }
     dependencies {
-        classpath 'net.minecraftforge.gradle:ForgeGradle:1.1-SNAPSHOT'
+        classpath 'net.minecraftforge.gradle:ForgeGradle:1.2-SNAPSHOT'
     }
 }
 
 apply plugin: 'forge'
 
-version = "4.0.1a-1.7.2"
+version = "4.0.1a-1.7.10"
 group= "hunternif.mc.atlas" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "antiqueatlas"
 
 minecraft {
-    version = "1.7.2-10.12.0.1024"
+    version = "1.7.10-10.13.0.1180"
     if (file('../run').exists()) {
 		assetDir = "../run/assets"
 	} else {
