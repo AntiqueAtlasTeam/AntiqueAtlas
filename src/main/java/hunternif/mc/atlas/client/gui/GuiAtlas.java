@@ -212,7 +212,7 @@ public class GuiAtlas extends GuiComponent {
 	public void initGui() {
 		super.initGui();
 		Keyboard.enableRepeatEvents(true);
-		screenScale = new ScaledResolution(mc.gameSettings, mc.displayWidth, mc.displayHeight).getScaleFactor();
+		screenScale = new ScaledResolution(mc, mc.displayWidth, mc.displayHeight).getScaleFactor();
 		setGuiCoords((this.width - WIDTH) / 2, (this.height - HEIGHT) / 2);
 	}
 	
