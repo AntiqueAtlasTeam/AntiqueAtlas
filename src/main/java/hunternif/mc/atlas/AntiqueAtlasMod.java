@@ -34,7 +34,7 @@ public class AntiqueAtlasMod {
 	public static final String ID = "antiqueatlas";
 	public static final String NAME = "Antique Atlas";
 	public static final String CHANNEL = ID;
-	public static final String VERSION = "4.0.1a-1.7.2";
+	public static final String VERSION = "4.0.1a-1.7.10";
 	
 	@Instance(ID)
 	public static AntiqueAtlasMod instance;

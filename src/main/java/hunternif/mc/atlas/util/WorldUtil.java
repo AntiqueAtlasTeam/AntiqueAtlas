@@ -11,7 +11,6 @@ public class WorldUtil {
 	/**
 	 * Returns the village if the specified chunk overlays its territory.
 	 */
-	@SuppressWarnings("unchecked")
 	public static Village getVillageInChunk(Chunk chunk) {
 		int centerX = (chunk.xPosition << 4) + 8;
 		int centerZ = (chunk.zPosition << 4) + 8;
