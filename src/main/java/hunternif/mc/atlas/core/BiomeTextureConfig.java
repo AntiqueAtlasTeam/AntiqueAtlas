@@ -37,10 +37,10 @@ public class BiomeTextureConfig {
 			return;
 		}
 		if (!root.isJsonObject()) {
-			AntiqueAtlasMod.logger.severe("Malformed biome texture config");
+			AntiqueAtlasMod.logger.error("Malformed biome texture config");
 			return;
 		}
-
+		
 		for (Entry<String, JsonElement> entry : root.getAsJsonObject().entrySet()) {
 			try {
 				int biomeID = Integer.parseInt(entry.getKey());
@@ -48,7 +48,7 @@ public class BiomeTextureConfig {
 					// List of textures:
 					for (JsonElement path : entry.getValue().getAsJsonArray()) {
 						if (!path.isJsonPrimitive()) {
-							AntiqueAtlasMod.logger.severe("Malformed biome texture path: " + path.toString());
+							AntiqueAtlasMod.logger.error("Malformed biome texture path: " + path.toString());
 							break;
 						}
 						ResourceLocation texture = new ResourceLocation(path.getAsString());
@@ -58,7 +58,7 @@ public class BiomeTextureConfig {
 				} else {
 					// Standard texture set:
 					if (!entry.getValue().isJsonPrimitive()) {
-						AntiqueAtlasMod.logger.severe("Malformed biome texture config entry: " + entry.getValue().toString());
+						AntiqueAtlasMod.logger.error("Malformed biome texture config entry: " + entry.getValue().toString());
 						break;
 					}
 					String textureSetName = entry.getValue().getAsString();
@@ -68,7 +68,7 @@ public class BiomeTextureConfig {
 					AntiqueAtlasMod.logger.info("Registered standard texture set for biome " + biomeID);
 				}
 			} catch (NumberFormatException e) {
-				AntiqueAtlasMod.logger.severe("Malformed biome texture config entry: " + e.toString());
+				AntiqueAtlasMod.logger.error("Malformed biome texture config entry: " + e.toString());
 				break;
 			}
 		}

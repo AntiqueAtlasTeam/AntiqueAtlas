@@ -16,7 +16,6 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
 
 import javax.imageio.ImageIO;
 import javax.swing.JFileChooser;
@@ -35,11 +34,11 @@ public class ExportImageUtil {
 	
 	/** Opens a dialog and returns the file that was chosen, null if none or error. */
 	public static File selectPngFileToSave(String atlasName, ExportUpdateListener listener) {
-		listener.setStatusString(I18n.getString("gui.antiqueatlas.export.opening"));
+		listener.setStatusString(I18n.format("gui.antiqueatlas.export.opening"));
 		try {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 		} catch (Exception e) {
-			AntiqueAtlasMod.logger.log(Level.WARNING, "Setting system Look&Feel for JFileChooser", e);
+			AntiqueAtlasMod.logger.warn("Setting system Look&Feel for JFileChooser", e);
 		}
 		// Hack to bring the file chooser to front: 
 		Frame frame = new Frame();
@@ -52,7 +51,7 @@ public class ExportImageUtil {
 		frame.dispose();
 		
 		JFileChooser chooser = new JFileChooser();
-		chooser.setDialogTitle(I18n.getString("gui.antiqueatlas.exportImage"));
+		chooser.setDialogTitle(I18n.format("gui.antiqueatlas.exportImage"));
 		chooser.setSelectedFile(new File(atlasName + ".png"));
 		chooser.setFileFilter(new FileFilter() {
 			@Override
@@ -65,7 +64,7 @@ public class ExportImageUtil {
 				return true;
 			}
 		});
-		listener.setStatusString(I18n.getString("gui.antiqueatlas.export.selectFile"));
+		listener.setStatusString(I18n.format("gui.antiqueatlas.export.selectFile"));
 		if (chooser.showSaveDialog(frame) == JFileChooser.APPROVE_OPTION) {
 			File file = chooser.getSelectedFile();
 			// Check file extension:
@@ -125,7 +124,7 @@ public class ExportImageUtil {
 		listener.update((float)drawnTiles / (float) totalTiles);
 		
 		//================ Draw map background ================
-		listener.setStatusString(I18n.getString("gui.antiqueatlas.export.rendering"));
+		listener.setStatusString(I18n.format("gui.antiqueatlas.export.rendering"));
 		// Top left corner:
 		graphics.drawImage(bg, 0, 0, BG_TILE_SIZE * scale, BG_TILE_SIZE * scale,
 				0, 0, BG_TILE_SIZE, BG_TILE_SIZE, null);
@@ -275,7 +274,7 @@ public class ExportImageUtil {
 		}
 			
 		try {
-			listener.setStatusString(I18n.getString("gui.antiqueatlas.export.writing"));
+			listener.setStatusString(I18n.format("gui.antiqueatlas.export.writing"));
 			ImageIO.write(outImage, "PNG", file);
 		} catch (IOException e) {
 			e.printStackTrace();

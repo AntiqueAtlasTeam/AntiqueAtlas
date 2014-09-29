@@ -3,15 +3,18 @@ package hunternif.mc.atlas.client.gui;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.minecraft.client.audio.PositionedSoundRecord;
+import net.minecraft.util.ResourceLocation;
+
 /** A GuiComponent that can act like a button. */
 @SuppressWarnings("rawtypes")
 public class GuiComponentButton extends GuiComponent {
-	public static final String DEFAULT_CLICK_SOUND = "random.click";
+	public static final ResourceLocation DEFAULT_CLICK_SOUND = new ResourceLocation("gui.button.press");
 	
 	private final List<IButtonListener> listeners = new ArrayList<IButtonListener>();
 	
 	private boolean enabled = true;
-	private String clickSound = DEFAULT_CLICK_SOUND;
+	private ResourceLocation clickSound = DEFAULT_CLICK_SOUND;
 	protected int buttonWidth, buttonHeight;
 	
 	public void setEnabled(boolean value) {
@@ -21,7 +24,7 @@ public class GuiComponentButton extends GuiComponent {
 		return enabled;
 	}
 	
-	public void setClickSound(String clickSound) {
+	public void setClickSound(ResourceLocation clickSound) {
 		this.clickSound = clickSound;
 	}
 	/** Makes the button produce no sound when clicked on. */
@@ -41,7 +44,7 @@ public class GuiComponentButton extends GuiComponent {
 	@SuppressWarnings("unchecked")
 	protected void onClick() {
 		if (clickSound != null) {
-			mc.sndManager.playSoundFX(clickSound, 1.0F, 1.0F);
+			mc.getSoundHandler().playSound(PositionedSoundRecord.func_147674_a(clickSound, 1.0F));
 		}
 		for (IButtonListener listener : listeners) {
 			listener.onClick(this);

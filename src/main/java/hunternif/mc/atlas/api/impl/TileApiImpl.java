@@ -9,7 +9,6 @@ import hunternif.mc.atlas.ext.ExtBiomeData;
 import hunternif.mc.atlas.ext.ExtTileIdMap;
 import hunternif.mc.atlas.network.TileNameIDPacket;
 import hunternif.mc.atlas.network.TilesPacket;
-import hunternif.mc.atlas.util.NetworkUtil;
 import hunternif.mc.atlas.util.ShortVec2;
 
 import java.util.HashMap;
@@ -52,22 +51,24 @@ public class TileApiImpl implements TileAPI {
 	}
 	
 	@Override
-	public void setTextureIfNone(String uniqueTileName, ResourceLocation ... textures) {
+	public boolean setTextureIfNone(String uniqueTileName, ResourceLocation ... textures) {
 		int id = ExtTileIdMap.instance().getPseudoBiomeID(uniqueTileName);
 		if (id != ChunkBiomeAnalyzer.NOT_FOUND) {
-			BiomeTextureMap.instance().setTextureIfNone(id, textures);
+			return BiomeTextureMap.instance().setTextureIfNone(id, textures);
 		} else {
 			pendingTexturesIfNone.put(uniqueTileName, textures);
+			return false;
 		}
 	}
 	
 	@Override
-	public void setTextureIfNone(String uniqueTileName, StandardTextureSet textureSet) {
+	public boolean setTextureIfNone(String uniqueTileName, StandardTextureSet textureSet) {
 		int id = ExtTileIdMap.instance().getPseudoBiomeID(uniqueTileName);
 		if (id != ChunkBiomeAnalyzer.NOT_FOUND) {
-			BiomeTextureMap.instance().setTextureIfNone(id, textureSet);
+			return BiomeTextureMap.instance().setTextureIfNone(id, textureSet);
 		} else {
 			pendingTexturesIfNone.put(uniqueTileName, textureSet);
+			return false;
 		}
 	}
 	
@@ -84,12 +85,12 @@ public class TileApiImpl implements TileAPI {
 			if (!isIdRegistered) {
 				TileNameIDPacket packet = new TileNameIDPacket();
 				packet.put(tileName, biomeID);
-				NetworkUtil.sendPacketToAllPlayersInWorld(world, packet.makePacket());
+				AntiqueAtlasMod.packetPipeline.sendToWorld(packet, world);
 			}
 			// Send tile packet:
 			TilesPacket packet = new TilesPacket(dimension);
 			packet.addTile(coords, biomeID);
-			NetworkUtil.sendPacketToAllPlayersInWorld(world, packet.makePacket());
+			AntiqueAtlasMod.packetPipeline.sendToWorld(packet, world);
 		}
 	}
 }

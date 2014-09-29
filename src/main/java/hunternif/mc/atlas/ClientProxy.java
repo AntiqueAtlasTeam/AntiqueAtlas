@@ -5,6 +5,7 @@ import static net.minecraft.world.biome.BiomeGenBase.*;
 import hunternif.mc.atlas.api.AtlasAPI;
 import hunternif.mc.atlas.api.BiomeAPI;
 import hunternif.mc.atlas.api.MarkerAPI;
+import hunternif.mc.atlas.api.TileAPI;
 import hunternif.mc.atlas.client.StandardTextureSet;
 import hunternif.mc.atlas.client.Textures;
 import hunternif.mc.atlas.client.gui.GuiAtlas;
@@ -39,8 +40,9 @@ public class ClientProxy extends CommonProxy {
 	public void init(FMLInitializationEvent event) {
 		super.init(event);
 		guiAtlas = new GuiAtlas();
-		AtlasAPI.getTileAPI().setTextureIfNone(ExtTileIdMap.TILE_VILLAGE_HOUSE, StandardTextureSet.HOUSE);
-		AtlasAPI.getTileAPI().setTextureIfNone(ExtTileIdMap.TILE_VILLAGE_TERRITORY, StandardTextureSet.FENCE);
+		if (registerVillageTiles()) {
+			updateBiomeTextureConfig();
+		}
 	}
 	
 	@Override
@@ -105,12 +107,20 @@ public class ClientProxy extends CommonProxy {
 		return changed;
 	}
 	
-	public boolean setDefaultMarker() {
+	private boolean setDefaultMarker() {
 		boolean changed = false;
 		MarkerAPI api = AtlasAPI.getMarkerAPI();
 		changed |= api.setTextureIfNone("google", Textures.MARKER_GOOGLE_MARKER);
 		changed |= api.setTextureIfNone("red_x_large", Textures.MARKER_RED_X_LARGE);
 		changed |= api.setTextureIfNone("red_x_small", Textures.MARKER_RED_X_SMALL);
+		return changed;
+	}
+	
+	private boolean registerVillageTiles() {
+		boolean changed = false;
+		TileAPI api = AtlasAPI.getTileAPI();
+		changed |= api.setTextureIfNone(ExtTileIdMap.TILE_VILLAGE_HOUSE, StandardTextureSet.HOUSE);
+		changed |= api.setTextureIfNone(ExtTileIdMap.TILE_VILLAGE_TERRITORY, StandardTextureSet.FENCE);
 		return changed;
 	}
 }

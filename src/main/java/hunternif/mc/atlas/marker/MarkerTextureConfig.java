@@ -33,14 +33,14 @@ public class MarkerTextureConfig {
 			return;
 		}
 		if (!root.isJsonObject()) {
-			AntiqueAtlasMod.logger.severe("Malformed marker textures config");
+			AntiqueAtlasMod.logger.error("Malformed marker textures config");
 			return;
 		}
-
+		
 		for (Entry<String, JsonElement> entry : root.getAsJsonObject().entrySet()) {
 			String markerType = entry.getKey();
 			if (!entry.getValue().isJsonPrimitive()) {
-				AntiqueAtlasMod.logger.severe("Malformed marker textures config entry: " + markerType);
+				AntiqueAtlasMod.logger.error("Malformed marker textures config entry: " + markerType);
 				break;
 			}
 			ResourceLocation texture = new ResourceLocation(entry.getValue().getAsString());

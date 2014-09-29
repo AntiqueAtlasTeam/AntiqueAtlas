@@ -4,6 +4,8 @@ import hunternif.mc.atlas.AntiqueAtlasMod;
 import hunternif.mc.atlas.core.AtlasData;
 import hunternif.mc.atlas.core.MapTile;
 import hunternif.mc.atlas.util.ShortVec2;
+import io.netty.buffer.ByteBuf;
+import io.netty.channel.ChannelHandlerContext;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -11,16 +13,12 @@ import java.util.Map.Entry;
 
 import net.minecraft.entity.player.EntityPlayer;
 
-import com.google.common.io.ByteArrayDataInput;
-import com.google.common.io.ByteArrayDataOutput;
-
-import cpw.mods.fml.relauncher.Side;
-
 /**
  * User to sync atlas data from server to client.
+ * TODO: proper multi-part packets.
  * @author Hunternif
  */
-public class MapDataPacket extends CustomPacket {
+public class MapDataPacket extends ModPacket {
 	/** Size of ine entry in the map in bytes. */
 	public static final int ENTRY_SIZE_BYTES = 2 + 2 + 2;
 	
@@ -39,25 +37,25 @@ public class MapDataPacket extends CustomPacket {
 	}
 	
 	@Override
-	public void write(ByteArrayDataOutput out) {
-		out.writeShort(atlasID);
-		out.writeShort(dimension);
-		out.writeShort(data.size());
+	public void encodeInto(ChannelHandlerContext ctx, ByteBuf buffer) {
+		buffer.writeShort(atlasID);
+		buffer.writeShort(dimension);
+		buffer.writeShort(data.size());
 		for (Entry<ShortVec2, MapTile> entry : data.entrySet()) {
-			out.writeShort(entry.getKey().x);
-			out.writeShort(entry.getKey().y);
-			out.writeShort(entry.getValue().biomeID);
+			buffer.writeShort(entry.getKey().x);
+			buffer.writeShort(entry.getKey().y);
+			buffer.writeShort(entry.getValue().biomeID);
 		}
 	}
 
 	@Override
-	public void read(ByteArrayDataInput in) throws ProtocolException {
-		atlasID = in.readShort();
-		dimension = in.readShort();
-		int length = in.readShort();
+	public void decodeInto(ChannelHandlerContext ctx, ByteBuf buffer) {
+		atlasID = buffer.readShort();
+		dimension = buffer.readShort();
+		int length = buffer.readShort();
 		for (int i = 0; i < length; i++) {
-			ShortVec2 coords = new ShortVec2(in.readShort(), in.readShort());
-			int biomeID = in.readShort();
+			ShortVec2 coords = new ShortVec2(buffer.readShort(), buffer.readShort());
+			int biomeID = buffer.readShort();
 			MapTile tile = new MapTile(biomeID);
 			tile.randomizeTexture();
 			data.put(coords, tile);
@@ -70,16 +68,14 @@ public class MapDataPacket extends CustomPacket {
 	}
 
 	@Override
-	public void execute(EntityPlayer player, Side side) throws ProtocolException {
+	public void handleServerSide(EntityPlayer player) {}
+	
+	@Override
+	public void handleClientSide(EntityPlayer player) {
 		AtlasData atlasData = AntiqueAtlasMod.itemAtlas.getClientAtlasData(atlasID);
 		for (Entry<ShortVec2, MapTile> entry : data.entrySet()) {
 			atlasData.putTile(dimension, entry.getKey(), entry.getValue());
 		}
-	}
-
-	@Override
-	public PacketDirection getPacketDirection() {
-		return PacketDirection.SERVER_TO_CLIENT;
 	}
 
 }

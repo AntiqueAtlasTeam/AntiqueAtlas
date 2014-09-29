@@ -3,22 +3,22 @@ package hunternif.mc.atlas.item;
 import hunternif.mc.atlas.AntiqueAtlasMod;
 import hunternif.mc.atlas.core.AtlasData;
 import hunternif.mc.atlas.marker.MarkersData;
-import net.minecraft.client.renderer.texture.IconRegister;
+import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
+import net.minecraftforge.common.ForgeHooks;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
 public class ItemEmptyAtlas extends Item {
-	public ItemEmptyAtlas(int id) {
-		super(id);
+	public ItemEmptyAtlas() {
 	}
 	
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void registerIcons(IconRegister iconRegister) {
+	public void registerIcons(IIconRegister iconRegister) {
 		this.itemIcon = iconRegister.registerIcon(AntiqueAtlasMod.ID + ":" + getUnlocalizedName().substring("item.".length()));
 	}
 	
@@ -42,7 +42,7 @@ public class ItemEmptyAtlas extends Item {
 			return atlasStack;
 		} else {
 			if (!player.inventory.addItemStackToInventory(atlasStack.copy())) {
-				player.dropPlayerItem(atlasStack);
+				ForgeHooks.onPlayerTossEvent(player, atlasStack, false);
 			}
 			return stack;
 		}

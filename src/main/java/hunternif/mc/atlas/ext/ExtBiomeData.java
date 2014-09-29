@@ -2,7 +2,7 @@ package hunternif.mc.atlas.ext;
 
 import hunternif.mc.atlas.AntiqueAtlasMod;
 import hunternif.mc.atlas.core.ChunkBiomeAnalyzer;
-import hunternif.mc.atlas.network.CustomPacket;
+import hunternif.mc.atlas.network.ModPacket;
 import hunternif.mc.atlas.network.TilesPacket;
 import hunternif.mc.atlas.util.ShortVec2;
 
@@ -14,8 +14,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.world.WorldSavedData;
-import cpw.mods.fml.common.network.PacketDispatcher;
-import cpw.mods.fml.common.network.Player;
+import net.minecraftforge.common.util.Constants;
 
 /**
  * This world-saved data contains all the custom pseudo-biome IDs in a world.
@@ -36,9 +35,9 @@ public class ExtBiomeData extends WorldSavedData {
 
 	@Override
 	public void readFromNBT(NBTTagCompound compound) {
-		NBTTagList dimensionMapList = compound.getTagList(TAG_DIMENSION_MAP_LIST);
+		NBTTagList dimensionMapList = compound.getTagList(TAG_DIMENSION_MAP_LIST, Constants.NBT.TAG_COMPOUND);
 		for (int d = 0; d < dimensionMapList.tagCount(); d++) {
-			NBTTagCompound tag = (NBTTagCompound) dimensionMapList.tagAt(d);
+			NBTTagCompound tag = dimensionMapList.getCompoundTagAt(d);
 			int dimensionID = tag.getInteger(TAG_DIMENSION_ID);
 			Map<ShortVec2, Integer> biomeMap = getBiomesInDimension(dimensionID);
 			int[] intArray = tag.getIntArray(TAG_BIOME_IDS);
@@ -100,20 +99,20 @@ public class ExtBiomeData extends WorldSavedData {
 			for (Entry<ShortVec2, Integer> entry : biomes.entrySet()) {
 				packet.addTile(entry.getKey(), entry.getValue());
 				dataSizeBytes += TilesPacket.ENTRY_SIZE_BYTES;
-				if (dataSizeBytes >= CustomPacket.MAX_SIZE_BYTES) {
-					PacketDispatcher.sendPacketToPlayer(packet.makePacket(), (Player)player);
+				if (dataSizeBytes >= ModPacket.MAX_SIZE_BYTES) {
+					AntiqueAtlasMod.packetPipeline.sendTo(packet, player);
 					pieces++;
 					dataSizeBytes = 0;
 					packet = new TilesPacket(dimension);
 				}
 			}
 			if (!packet.isEmpty()) {
-				PacketDispatcher.sendPacketToPlayer(packet.makePacket(), (Player)player);
+				AntiqueAtlasMod.packetPipeline.sendTo(packet, player);
 				pieces++;
 				dataSizeBytes = 0;
 			}
 		}
-		AntiqueAtlasMod.logger.info("Sent custom biome data to player " + player.username + " in " + pieces + " pieces.");
+		AntiqueAtlasMod.logger.info("Sent custom biome data to player " + player.getCommandSenderName() + " in " + pieces + " pieces.");
 	}
 
 }

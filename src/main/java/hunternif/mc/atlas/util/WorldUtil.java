@@ -15,6 +15,7 @@ public class WorldUtil {
 	public static Village getVillageInChunk(Chunk chunk) {
 		int centerX = (chunk.xPosition << 4) + 8;
 		int centerZ = (chunk.zPosition << 4) + 8;
+		@SuppressWarnings("unchecked")
 		List<Village> villages = chunk.worldObj.villageCollectionObj.getVillageList();
 		for (Village village : villages) {
 			ChunkCoordinates coords = village.getCenter();

@@ -7,10 +7,10 @@ import java.util.zip.Deflater;
 import java.util.zip.Inflater;
 
 public class ZipUtil {
-	public static byte[] decompressByteArray(byte[] bytes, int offset) {
+	public static byte[] decompressByteArray(byte[] bytes) {
 		ByteArrayOutputStream baos = null;
 		Inflater iflr = new Inflater();
-		iflr.setInput(bytes, offset, bytes.length - offset);
+		iflr.setInput(bytes);
 		baos = new ByteArrayOutputStream();
 		byte[] tmp = new byte[4 * 1024];
 		try {
@@ -19,13 +19,13 @@ public class ZipUtil {
 				baos.write(tmp, 0, size);
 			}
 		} catch (Exception ex) {
-			AntiqueAtlasMod.logger.severe("Error unzipping bytes: " + ex.toString());
+			AntiqueAtlasMod.logger.error("Error unzipping bytes: " + ex.toString());
 		} finally {
 			try {
 				if (baos != null)
 					baos.close();
 			} catch (Exception ex) {
-				AntiqueAtlasMod.logger.severe("Error unzipping bytes: " + ex.toString());
+				AntiqueAtlasMod.logger.error("Error unzipping bytes: " + ex.toString());
 			}
 		}
 		return baos.toByteArray();
@@ -45,13 +45,13 @@ public class ZipUtil {
 				baos.write(tmp, 0, size);
 			}
 		} catch (Exception ex) {
-			AntiqueAtlasMod.logger.severe("Error zipping bytes: " + ex.toString());
+			AntiqueAtlasMod.logger.error("Error zipping bytes: " + ex.toString());
 		} finally {
 			try {
 				if (baos != null)
 					baos.close();
 			} catch (Exception ex) {
-				AntiqueAtlasMod.logger.severe("Error zipping bytes: " + ex.toString());
+				AntiqueAtlasMod.logger.error("Error zipping bytes: " + ex.toString());
 			}
 		}
 		return baos.toByteArray();

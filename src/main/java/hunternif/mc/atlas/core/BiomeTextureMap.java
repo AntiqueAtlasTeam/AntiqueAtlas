@@ -1,7 +1,6 @@
 package hunternif.mc.atlas.core;
 
 import static hunternif.mc.atlas.client.StandardTextureSet.*;
-import static net.minecraft.world.biome.BiomeGenBase.biomeList;
 import hunternif.mc.atlas.AntiqueAtlasMod;
 import hunternif.mc.atlas.client.StandardTextureSet;
 
@@ -53,6 +52,14 @@ public enum BiomeTextureMap {
 		public boolean isStandardSet() {
 			return textureSet != null;
 		}
+		@Override
+		public String toString() {
+			if (isStandardSet()) {
+				return textureSet.name();
+			} else {
+				return textures.toString();
+			}
+		}
 	}
 	
 	/** This map allows keys other than the 256 biome IDs to use for special tiles. */
@@ -91,7 +98,7 @@ public enum BiomeTextureMap {
 				entry.textureSet = null;
 			}
 			if (!entry.textures.isEmpty()) {
-				AntiqueAtlasMod.logger.warning("Overwriting textures for biome " + biomeID);
+				AntiqueAtlasMod.logger.warn("Overwriting textures for biome " + biomeID);
 			}
 			entry.textures.clear();
 			for (ResourceLocation texture : textureSet.textures) {
@@ -107,7 +114,7 @@ public enum BiomeTextureMap {
 			textureMap.put(biomeID, entry);
 		} else {
 			if (!entry.textures.isEmpty()) {
-				AntiqueAtlasMod.logger.warning("Overwriting textures for biome " + biomeID);
+				AntiqueAtlasMod.logger.warn("Overwriting textures for biome " + biomeID);
 			}
 			entry.textures.clear();
 			for (ResourceLocation texture : textures) {
@@ -120,14 +127,14 @@ public enum BiomeTextureMap {
 	 * BiomeDictionary types. */
 	private void autoRegister(int biomeID) {
 		if (biomeID < 0 || biomeID >= 256) {
-			AntiqueAtlasMod.logger.warning("Biome ID " + biomeID + " is out of range. "
+			AntiqueAtlasMod.logger.warn("Biome ID " + biomeID + " is out of range. "
 					+ "Auto-registering default texture set");
 			setTexture(biomeID, defaultTexture);
 			return;
 		}
-		BiomeGenBase biome = biomeList[biomeID];
+		BiomeGenBase biome = BiomeGenBase.getBiome(biomeID);
 		if (biome == null) {
-			AntiqueAtlasMod.logger.warning("Biome ID " + biomeID + " is null. "
+			AntiqueAtlasMod.logger.warn("Biome ID " + biomeID + " is null. "
 					+ "Auto-registering default texture set");
 			setTexture(biomeID, defaultTexture);
 			return;

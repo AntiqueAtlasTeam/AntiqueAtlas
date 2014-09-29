@@ -6,6 +6,8 @@ import hunternif.mc.atlas.api.impl.TileApiImpl;
 import hunternif.mc.atlas.client.StandardTextureSet;
 import hunternif.mc.atlas.core.BiomeTextureMap;
 import hunternif.mc.atlas.ext.ExtTileIdMap;
+import io.netty.buffer.ByteBuf;
+import io.netty.channel.ChannelHandlerContext;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -13,18 +15,14 @@ import java.util.Map.Entry;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
-
-import com.google.common.io.ByteArrayDataInput;
-import com.google.common.io.ByteArrayDataOutput;
-
-import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.common.network.ByteBufUtils;
 
 /**
  * Used to send pairs (unique tile name)-(pseudo-biome ID) from the server
  * to clients.
  * @author Hunternif
  */
-public class TileNameIDPacket extends CustomPacket {
+public class TileNameIDPacket extends ModPacket {
 
 	private Map<String, Integer> nameToIdMap;
 	
@@ -42,26 +40,31 @@ public class TileNameIDPacket extends CustomPacket {
 		return this;
 	}
 	
+	
 	@Override
-	public void write(ByteArrayDataOutput out) {
-		out.writeShort(nameToIdMap.size());
+	public void encodeInto(ChannelHandlerContext ctx, ByteBuf buffer) {
+		buffer.writeShort(nameToIdMap.size());
 		for (Entry<String, Integer> entry : nameToIdMap.entrySet()) {
-			out.writeUTF(entry.getKey());
-			out.writeShort(entry.getValue());
+			ByteBufUtils.writeUTF8String(buffer, entry.getKey());
+			buffer.writeShort(entry.getValue());
 		}
 	}
 
 	@Override
-	public void read(ByteArrayDataInput in) throws ProtocolException {
-		int length = in.readShort();
+	public void decodeInto(ChannelHandlerContext ctx, ByteBuf buffer) {
+		int length = buffer.readShort();
 		nameToIdMap = new HashMap<String, Integer>();
 		for (int i = 0; i < length; i++) {
-			nameToIdMap.put(in.readUTF(), Integer.valueOf(in.readShort()));
+			String name = ByteBufUtils.readUTF8String(buffer);
+			nameToIdMap.put(name, Integer.valueOf(buffer.readShort()));
 		}
 	}
 
 	@Override
-	public void execute(EntityPlayer player, Side side) throws ProtocolException {
+	public void handleServerSide(EntityPlayer player) {}
+	
+	@Override
+	public void handleClientSide(EntityPlayer player) {
 		TileApiImpl api = (TileApiImpl) AtlasAPI.getTileAPI();
 		for (Entry<String, Integer> entry : nameToIdMap.entrySet()) {
 			String name = entry.getKey();
@@ -91,11 +94,6 @@ public class TileNameIDPacket extends CustomPacket {
 				}
 			}
 		}
-	}
-	
-	@Override
-	public PacketDirection getPacketDirection() {
-		return PacketDirection.SERVER_TO_CLIENT;
 	}
 
 }

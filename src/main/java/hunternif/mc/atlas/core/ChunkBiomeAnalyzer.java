@@ -9,14 +9,15 @@ public class ChunkBiomeAnalyzer {
 	
 	/** If no valid biome ID is found, returns {@link ChunkBiomeAnalyzer#NOT_FOUND}. */
 	public int getMeanBiomeID(int[] biomeIDs) {
-		int[] biomeOccurences = new int[256];
-		for (int i = 0; i < biomeIDs.length; i++) {
+		BiomeGenBase[] biomes = BiomeGenBase.getBiomeGenArray();
+		int[] biomeOccurences = new int[biomes.length];
+		for (int i = 0; i < biomes.length; i++) {
 			int biomeId = biomeIDs[i];
-			if (biomeId >= 0 && biomeId < 256 && BiomeGenBase.biomeList[biomeId] != null) {
-				if (BiomeDictionary.isBiomeOfType(BiomeGenBase.biomeList[biomeId], Type.WATER)) {
+			if (biomeId >= 0 && biomeId < biomes.length && biomes[biomeId] != null) {
+				if (BiomeDictionary.isBiomeOfType(biomes[biomeId], Type.WATER)) {
 					// Water is important to show connected rivers:
 					biomeOccurences[biomeId] += 4;
-				} else if (BiomeDictionary.isBiomeOfType(BiomeGenBase.biomeList[biomeId], Type.SWAMP)) {
+				} else if (BiomeDictionary.isBiomeOfType(biomes[biomeId], Type.SWAMP)) {
 					// Swamps are often intermingled with water, but they look
 					// like water themselves, so they take precedence:
 					biomeOccurences[biomeId] += 6;

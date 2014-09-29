@@ -169,7 +169,7 @@ public class GuiAtlas extends GuiComponent {
 		btnRight.addListener(positionListener);
 		btnPosition.addListener(positionListener);
 		
-		btnExportPng = new GuiBookmarkButton(1, Textures.ICON_EXPORT, I18n.getString("gui.antiqueatlas.exportImage"));
+		btnExportPng = new GuiBookmarkButton(1, Textures.ICON_EXPORT, I18n.format("gui.antiqueatlas.exportImage"));
 		addChild(btnExportPng).offsetGuiCoords(299, 190);
 		btnExportPng.addListener(new IButtonListener() {
 			@Override
@@ -186,7 +186,7 @@ public class GuiAtlas extends GuiComponent {
 			}
 		});
 		
-		btnMarker = new GuiBookmarkButton(0, Textures.ICON_MARKER, I18n.getString("gui.antiqueatlas.addMarker"));
+		btnMarker = new GuiBookmarkButton(0, Textures.ICON_MARKER, I18n.format("gui.antiqueatlas.addMarker"));
 		addChild(btnMarker).offsetGuiCoords(299, 171);
 		btnMarker.addListener(new IButtonListener() {
 			@Override
@@ -212,7 +212,7 @@ public class GuiAtlas extends GuiComponent {
 	public void initGui() {
 		super.initGui();
 		Keyboard.enableRepeatEvents(true);
-		screenScale = new ScaledResolution(mc.gameSettings, mc.displayWidth, mc.displayHeight).getScaleFactor();
+		screenScale = new ScaledResolution(mc, mc.displayWidth, mc.displayHeight).getScaleFactor();
 		setGuiCoords((this.width - WIDTH) / 2, (this.height - HEIGHT) / 2);
 	}
 	
@@ -449,6 +449,7 @@ public class GuiAtlas extends GuiComponent {
 				if (localMarkers != null) {
 					visibleMarkers.addAll(localMarkers.getMarkersAtChunk(player.dimension, chunkCoords));
 				}
+				
 				chunkCoords.y++;
 				screenY += tileSize;
 			}

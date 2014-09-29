@@ -21,13 +21,15 @@ public interface TileAPI {
 	@SideOnly(Side.CLIENT)
 	void setTexture(String uniqueTileName, StandardTextureSet textureSet);
 	
-	/** Assigns texture to tile, if this tile has no texture assigned. */
+	/** Assigns texture to tile, if this tile has no texture assigned.
+	 * Returns true if the texture was changed. */
 	@SideOnly(Side.CLIENT)
-	void setTextureIfNone(String uniqueTileName, ResourceLocation ... textures);
+	boolean setTextureIfNone(String uniqueTileName, ResourceLocation ... textures);
 	
-	/** Assigns texture set to tile, if this tile has no texture assigned. */
+	/** Assigns texture set to tile, if this tile has no texture assigned.
+	 * Returns true if the texture was changed. */
 	@SideOnly(Side.CLIENT)
-	void setTextureIfNone(String uniqueTileName, StandardTextureSet textureSet);
+	boolean setTextureIfNone(String uniqueTileName, StandardTextureSet textureSet);
 	
 	/**
 	 * Put the specified custom tile at the specified chunk coordinates. This

@@ -11,9 +11,6 @@ import net.minecraft.entity.player.EntityPlayer;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 
-import cpw.mods.fml.common.network.PacketDispatcher;
-import cpw.mods.fml.common.network.Player;
-
 
 /** Maps unique names of external tiles to pseudo-biome IDs. Set on the server,
  * then sent to the clients. <i>Not thread-safe!</i>
@@ -71,6 +68,6 @@ public enum ExtTileIdMap {
 	
 	/** Send all name-biomeID pairs to the player. */
 	public void syncOnPlayer(EntityPlayer player) {
-		PacketDispatcher.sendPacketToPlayer(new TileNameIDPacket(nameToIdMap).makePacket(), (Player)player);
+		AntiqueAtlasMod.packetPipeline.sendTo(new TileNameIDPacket(nameToIdMap), player);
 	}
 }

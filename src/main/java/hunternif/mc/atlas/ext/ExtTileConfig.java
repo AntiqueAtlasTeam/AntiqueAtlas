@@ -27,21 +27,21 @@ public class ExtTileConfig {
 			return;
 		}
 		if (!root.isJsonObject()) {
-			AntiqueAtlasMod.logger.severe("Malformed tileIDs config");
+			AntiqueAtlasMod.logger.error("Malformed tileIDs config");
 			return;
 		}
-
+		
 		for (Entry<String, JsonElement> entry : root.getAsJsonObject().entrySet()) {
 			String name = entry.getKey();
 			if (!entry.getValue().isJsonPrimitive()) {
-				AntiqueAtlasMod.logger.severe("Malformed tileIDs config entry: " + name);
+				AntiqueAtlasMod.logger.error("Malformed tileIDs config entry: " + name);
 				break;
 			}
 			try {
 				int id = entry.getValue().getAsInt();
 				ExtTileIdMap.instance().setPseudoBiomeID(name, id);
 			} catch (NumberFormatException e) {
-				AntiqueAtlasMod.logger.severe("Malformed tileIDs config entry: " + name);
+				AntiqueAtlasMod.logger.error("Malformed tileIDs config entry: " + name);
 				break;
 			}
 		}

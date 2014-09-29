@@ -18,7 +18,7 @@ import com.google.gson.JsonParser;
 public class FileUtil {
 	private static final JsonParser parser = new JsonParser();
 	private static final Gson gson = new GsonBuilder().setPrettyPrinting().create();
-
+	
 	/** Parse the specified file. Returns null if the file is not found or
 	 * cannot be parsed correctly. */
 	public static JsonElement readJson(File file) {
@@ -33,7 +33,7 @@ public class FileUtil {
 			InputStreamReader reader = new InputStreamReader(input);
 			root = parser.parse(reader);
 		} catch (Exception e) {
-			AntiqueAtlasMod.logger.severe("Error reading file \"" + file.getName() + "\": " + e.toString());
+			AntiqueAtlasMod.logger.error("Error reading file \"" + file.getName() + "\": " + e.toString());
 		} finally {
 			if (input != null) {
 				try {
@@ -56,7 +56,7 @@ public class FileUtil {
 			writer = new BufferedWriter(new FileWriter(file));
 			gson.toJson(root, writer);
 		} catch (Exception e) {
-			AntiqueAtlasMod.logger.severe("Error writing file \"" + file.getName() + "\": " + e.toString());
+			AntiqueAtlasMod.logger.error("Error writing file \"" + file.getName() + "\": " + e.toString());
 		} finally {
 			if (writer != null) {
 				try {
