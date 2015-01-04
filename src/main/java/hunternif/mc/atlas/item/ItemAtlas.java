@@ -66,7 +66,6 @@ public class ItemAtlas extends Item {
 		// On the first run send the map from the server to the client:
 		EntityPlayer player = (EntityPlayer) entity;
 		if (!world.isRemote && !data.isSyncedOnPlayer(player) && !data.isEmpty()) {
-			//FIXME: once the data ceases being empty, it is immediately synchronized
 			data.syncOnPlayer(stack.getItemDamage(), player);
 		}
 		
