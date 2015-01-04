@@ -1,0 +1,12 @@
+item.antiqueAtlas.name=Старинный атлас
+item.emptyAntiqueAtlas.name=Пустой старинный атлас
+
+gui.antiqueatlas.atlasTitle=Старинный атлас
+gui.antiqueatlas.scalebar=Блоков
+gui.antiqueatlas.enterLabel=Текст метки:
+gui.antiqueatlas.addMarker=Добавить метку
+gui.antiqueatlas.exportImage=Сохранить изображение
+gui.antiqueatlas.export.opening=Открывается диалоговое окно...
+gui.antiqueatlas.export.selectFile=Укажите PNG файл, куда сохранять изображение карты
+gui.antiqueatlas.export.rendering=Отрисовка...
+gui.antiqueatlas.export.writing=Запись в файл...
