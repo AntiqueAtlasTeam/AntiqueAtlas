@@ -154,7 +154,7 @@ public class MarkersData extends WorldSavedData {
 		playersSentTo.add(player);
 	}
 	
-	/** To be overriden in GlobalMarkersData. */
+	/** To be overridden in GlobalMarkersData. */
 	protected MarkersPacket newMarkersPacket(int atlasID, int dimension) {
 		return new MarkersPacket(atlasID, dimension);
 	}

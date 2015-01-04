@@ -9,7 +9,7 @@ import net.minecraft.entity.player.EntityPlayer;
  * @author credits to sirgingalot
  */
 public abstract class ModPacket {
-	public static final int MAX_SIZE_BYTES = 32000;
+	public static final int MAX_SIZE_BYTES = 500000;
 	
 	/** Whether to zip this packet before sending. */
 	protected boolean isCompressed() {

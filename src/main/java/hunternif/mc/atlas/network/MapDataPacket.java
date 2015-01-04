@@ -14,12 +14,11 @@ import java.util.Map.Entry;
 import net.minecraft.entity.player.EntityPlayer;
 
 /**
- * User to sync atlas data from server to client.
- * TODO: proper multi-part packets.
+ * Used to sync atlas data from server to client.
  * @author Hunternif
  */
 public class MapDataPacket extends ModPacket {
-	/** Size of ine entry in the map in bytes. */
+	/** Size of one entry in the map in bytes. */
 	public static final int ENTRY_SIZE_BYTES = 2 + 2 + 2;
 	
 	private int atlasID;
