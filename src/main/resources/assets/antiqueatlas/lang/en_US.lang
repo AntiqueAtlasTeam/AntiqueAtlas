@@ -1,7 +1,7 @@
 item.antiqueAtlas.name=Antique Atlas
 item.emptyAntiqueAtlas.name=Empty Antique Atlas
 
-gui.antiqueatlas.atlasTitle=Antique Atlas #%d
+gui.antiqueatlas.atlasTitle=Antique Atlas
 gui.antiqueatlas.scalebar=Blocks
 gui.antiqueatlas.enterLabel=Enter label:
 gui.antiqueatlas.addMarker=Add marker

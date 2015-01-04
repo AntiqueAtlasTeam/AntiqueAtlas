@@ -22,10 +22,13 @@ import javax.swing.JFileChooser;
 import javax.swing.UIManager;
 import javax.swing.filechooser.FileFilter;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.ResourceLocation;
 
+@SideOnly(Side.CLIENT)
 public class ExportImageUtil {
 	public static final int TILE_SIZE = 16;
 	

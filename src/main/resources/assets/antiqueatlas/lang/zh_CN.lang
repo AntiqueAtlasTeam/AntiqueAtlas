@@ -1,7 +1,7 @@
 item.antiqueAtlas.name=古式地图
 item.emptyAntiqueAtlas.name=空白古式地图
 
-gui.antiqueatlas.atlasTitle=古式地图#%d
+gui.antiqueatlas.atlasTitle=古式地图
 gui.antiqueatlas.scalebar=方块
 gui.antiqueatlas.enterLabel=进入标签:
 gui.antiqueatlas.addMarker=增加标记
