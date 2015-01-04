@@ -31,6 +31,8 @@ import com.google.common.collect.SortedSetMultimap;
  * @author Hunternif
  */
 public class MarkersData extends WorldSavedData {
+	private static final int VERSION = 1;
+	private static final String TAG_VERSION = "aaVersion";
 	private static final String TAG_DIMENSION_MAP_LIST = "dimMap";
 	private static final String TAG_DIMENSION_ID = "dimID";
 	private static final String TAG_MARKERS = "markers";
@@ -62,6 +64,11 @@ public class MarkersData extends WorldSavedData {
 
 	@Override
 	public void readFromNBT(NBTTagCompound compound) {
+		int version = compound.getInteger(TAG_VERSION);
+		if (version < VERSION) {
+			AntiqueAtlasMod.logger.warn("Outdated atlas data format!");
+			this.markDirty();
+		}
 		NBTTagList dimensionMapList = compound.getTagList(TAG_DIMENSION_MAP_LIST, Constants.NBT.TAG_COMPOUND);
 		for (int d = 0; d < dimensionMapList.tagCount(); d++) {
 			NBTTagCompound tag = dimensionMapList.getCompoundTagAt(d);
@@ -82,6 +89,7 @@ public class MarkersData extends WorldSavedData {
 
 	@Override
 	public void writeToNBT(NBTTagCompound compound) {
+		compound.setInteger(TAG_VERSION, VERSION);
 		NBTTagList dimensionMapList = new NBTTagList();
 		for (Integer dimension : dimensionMap.keySet()) {
 			NBTTagCompound tag = new NBTTagCompound();

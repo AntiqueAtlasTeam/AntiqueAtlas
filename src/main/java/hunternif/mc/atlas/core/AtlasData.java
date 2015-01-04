@@ -20,6 +20,8 @@ import net.minecraft.world.WorldSavedData;
 import net.minecraftforge.common.util.Constants;
 
 public class AtlasData extends WorldSavedData {
+	private static final int VERSION = 1;
+	private static final String TAG_VERSION = "aaVersion";
 	private static final String TAG_DIMENSION_MAP_LIST = "qDimensionMap";
 	private static final String TAG_DIMENSION_ID = "qDimensionID";
 	private static final String TAG_VISITED_CHUNKS = "qVisitedChunks";
@@ -45,6 +47,11 @@ public class AtlasData extends WorldSavedData {
 
 	@Override
 	public void readFromNBT(NBTTagCompound compound) {
+		int version = compound.getInteger(TAG_VERSION);
+		if (version < VERSION) {
+			AntiqueAtlasMod.logger.warn("Outdated atlas data format!");
+			this.markDirty();
+		}
 		NBTTagList dimensionMapList = compound.getTagList(TAG_DIMENSION_MAP_LIST, Constants.NBT.TAG_COMPOUND);
 		for (int d = 0; d < dimensionMapList.tagCount(); d++) {
 			NBTTagCompound tag = dimensionMapList.getCompoundTagAt(d);
@@ -59,6 +66,7 @@ public class AtlasData extends WorldSavedData {
 
 	@Override
 	public void writeToNBT(NBTTagCompound compound) {
+		compound.setInteger(TAG_VERSION, VERSION);
 		NBTTagList dimensionMapList = new NBTTagList();
 		for (Entry<Integer, DimensionData> dimensionEntry : dimensionMap.entrySet()) {
 			NBTTagCompound tag = new NBTTagCompound();
