@@ -220,6 +220,7 @@ public class GuiAtlas extends GuiComponent {
 	public GuiAtlas setAtlasItemStack(ItemStack stack) {
 		this.player = Minecraft.getMinecraft().thePlayer;
 		this.stack = stack;
+		updateContent();
 		return this;
 	}
 	
@@ -355,6 +356,10 @@ public class GuiAtlas extends GuiComponent {
 		if (player.worldObj.getTotalWorldTime() > timeButtonPressed + BUTTON_PAUSE) {
 			navigateByButton(selectedButton);
 		}
+		updateContent();
+	}
+	
+	private void updateContent() {
 		data = AntiqueAtlasMod.itemAtlas.getAtlasData(stack, player.worldObj);
 		GlobalMarkersData globalMarkers = AntiqueAtlasMod.globalMarkersData.getData();
 		MarkersData localMarkers = AntiqueAtlasMod.itemAtlas.getMarkersData(stack, player.worldObj);
