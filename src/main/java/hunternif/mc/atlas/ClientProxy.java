@@ -6,10 +6,10 @@ import hunternif.mc.atlas.api.AtlasAPI;
 import hunternif.mc.atlas.api.BiomeAPI;
 import hunternif.mc.atlas.api.MarkerAPI;
 import hunternif.mc.atlas.api.TileAPI;
+import hunternif.mc.atlas.client.BiomeTextureConfig;
 import hunternif.mc.atlas.client.StandardTextureSet;
 import hunternif.mc.atlas.client.Textures;
 import hunternif.mc.atlas.client.gui.GuiAtlas;
-import hunternif.mc.atlas.core.BiomeTextureConfig;
 import hunternif.mc.atlas.ext.ExtTileIdMap;
 import hunternif.mc.atlas.marker.MarkerTextureConfig;
 
@@ -71,6 +71,7 @@ public class ClientProxy extends CommonProxy {
 	public void openAtlasGUI(ItemStack stack) {
 		Minecraft mc = Minecraft.getMinecraft();
 		if (mc.currentScreen == null) { // In-game screen
+			guiAtlas.updateL18n();
 			mc.displayGuiScreen(guiAtlas.setAtlasItemStack(stack));
 		}
 	}

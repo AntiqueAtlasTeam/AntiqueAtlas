@@ -1,8 +1,8 @@
-package hunternif.mc.atlas.core;
+package hunternif.mc.atlas.client;
 
 import static hunternif.mc.atlas.client.StandardTextureSet.*;
 import hunternif.mc.atlas.AntiqueAtlasMod;
-import hunternif.mc.atlas.client.StandardTextureSet;
+import hunternif.mc.atlas.core.Tile;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -207,7 +207,7 @@ public enum BiomeTextureMap {
 		return entry.textures.size();
 	}
 
-	public ResourceLocation getTexture(MapTile tile) {
+	public ResourceLocation getTexture(Tile tile) {
 		checkRegistration(tile.biomeID);
 		BiomeTextureEntry entry = textureMap.get(tile.biomeID);
 		return entry.textures.get(tile.getVariationNumber());

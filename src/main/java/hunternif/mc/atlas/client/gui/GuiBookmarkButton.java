@@ -21,7 +21,7 @@ public class GuiBookmarkButton extends GuiComponentButton {
 	
 	private final int colorIndex;
 	private final ResourceLocation iconTexture;
-	private final String title;
+	private String title;
 	
 	/**
 	 * @param colorIndex 0=red, 1=blue
@@ -29,12 +29,15 @@ public class GuiBookmarkButton extends GuiComponentButton {
 	 * @param title hovering text.
 	 */
 	public GuiBookmarkButton(int colorIndex, ResourceLocation iconTexture, String title) {
-		this.title = title;
 		this.colorIndex = colorIndex;
 		this.iconTexture = iconTexture;
+		setTitle(title);
 		setSize(WIDTH, HEIGHT);
 	}
 	
+	public void setTitle(String title) {
+		this.title = title;
+	}
 	public String getTitle() {
 		return title;
 	}

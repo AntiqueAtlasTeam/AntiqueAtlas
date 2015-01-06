@@ -55,12 +55,18 @@ public class MarkersData extends WorldSavedData {
 		super(key);
 	}
 	
-	/** SetMultimap, because markers shouldn't be duplicated. SortedSet, because
+	/**
+	 * SetMultimap, because markers shouldn't be duplicated. SortedSet, because
 	 * markers must be sorted by their y coordinate. ConcurrentHashMap, because
 	 * it is concurrently updated by executing MarkerPacket.
-	 * The sorted sets inside the multimap allow concurrent iteration. */
+	 * The sorted sets inside the multimap allow concurrent iteration.
+	 * 
+	 * TODO: I'm not actually using this sorted multimap nonsense.
+	 */
 	private final Map<Integer /*dimension ID*/, SortedSetMultimap<ShortVec2, Marker>> dimensionMap =
 			new ConcurrentHashMap<Integer, SortedSetMultimap<ShortVec2, Marker>>();
+	
+	private final ShortVec2 tempCoords = new ShortVec2(0, 0);
 
 	@Override
 	public void readFromNBT(NBTTagCompound compound) {
@@ -121,8 +127,12 @@ public class MarkersData extends WorldSavedData {
 		return map;
 	}
 	
-	public SortedSet<Marker> getMarkersAtChunk(int dimension, ShortVec2 coords) {
-		return getMarkersInDimension(dimension).get(coords);
+	public Collection<Marker> getAllMarkersInDimension(int dimension) {
+		return getMarkersInDimension(dimension).values();
+	}
+	
+	public SortedSet<Marker> getMarkersAtChunk(int dimension, int x, int y) {
+		return getMarkersInDimension(dimension).get(tempCoords.set(x, y));
 	}
 	
 	/** Use the {@link MarkerAPI} to put markers! */

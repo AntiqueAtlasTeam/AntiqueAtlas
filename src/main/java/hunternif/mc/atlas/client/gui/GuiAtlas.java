@@ -1,30 +1,32 @@
 package hunternif.mc.atlas.client.gui;
 
 import hunternif.mc.atlas.AntiqueAtlasMod;
+import hunternif.mc.atlas.client.BiomeTextureMap;
+import hunternif.mc.atlas.client.SubTile;
+import hunternif.mc.atlas.client.SubTileQuartet;
 import hunternif.mc.atlas.client.Textures;
+import hunternif.mc.atlas.client.TileRenderIterator;
 import hunternif.mc.atlas.core.AtlasData;
-import hunternif.mc.atlas.core.BiomeTextureMap;
-import hunternif.mc.atlas.core.MapTile;
 import hunternif.mc.atlas.marker.GlobalMarkersData;
 import hunternif.mc.atlas.marker.Marker;
 import hunternif.mc.atlas.marker.MarkerTextureMap;
 import hunternif.mc.atlas.marker.MarkersData;
 import hunternif.mc.atlas.util.AtlasRenderHelper;
 import hunternif.mc.atlas.util.ExportImageUtil;
-import hunternif.mc.atlas.util.ShortVec2;
+import hunternif.mc.atlas.util.MathUtil;
+import hunternif.mc.atlas.util.Rect;
 
 import java.io.File;
 import java.util.Arrays;
-import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
 
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
@@ -38,10 +40,6 @@ public class GuiAtlas extends GuiComponent {
 	
 	private static final int MAP_WIDTH = WIDTH - 17*2;
 	private static final int MAP_HEIGHT = 194;
-	//private static final int MAP_TILE_SIZE = 8;
-	//private static final double BLOCK_TO_PIXEL_RATIO = 16d /*Chunk size*/ / MAP_TILE_SIZE;
-	//private static final int MAP_WIDTH_IN_TILES = MAP_WIDTH / MAP_TILE_SIZE;
-	//private static final int MAP_HEIGHT_IN_TILES = MAP_HEIGHT / MAP_TILE_SIZE;
 	private static final float PLAYER_ROTATION_STEPS = 16;
 	private static final int PLAYER_ICON_WIDTH = 7;
 	private static final int PLAYER_ICON_HEIGHT = 8;
@@ -50,6 +48,16 @@ public class GuiAtlas extends GuiComponent {
 	private static final int MARKER_ICON_HEIGHT = 16;
 	/** The radius of the area in which the marker will display hovering label. */
 	private static final int MARKER_RADIUS = 4;
+	
+	private static final double MAX_SCALE = 4;
+	private static final double MIN_SCALE = 1.0 / 32.0;
+	/** If the map scale goes below this value, the tiles will not scale down
+	 * visually, but will instead span greater area. */
+	private static final double MIN_SCALE_THRESHOLD = 0.5;
+	
+	private boolean DEBUG_RENDERING = false;
+	private long[] renderTimes = new long[30];
+	private int renderTimesIndex = 0;
 	
 	// Buttons =================================================================
 	
@@ -91,7 +99,7 @@ public class GuiAtlas extends GuiComponent {
 	/** Map offset at the beginning of drag. */
 	private int dragMapOffsetX, dragMapOffsetY;
 	
-	/** Offset of the top left corner of the tile at (0, 0) from the center of
+	/** Offset to the top left corner of the tile at (0, 0) from the center of
 	 * the map drawing area, in pixels. */
 	private int mapOffsetX, mapOffsetY;
 	/** If true, the player's icon will be in the center of the GUI, and the
@@ -103,6 +111,12 @@ public class GuiAtlas extends GuiComponent {
 	private GuiScaleBar scaleBar = new GuiScaleBar();
 	/** Pixel-to-block ratio. */
 	private double mapScale = 0.5;
+	/** The visual size of a tile in pixels. */
+	private int tileHalfSize = 4;
+	/** The number of chunks a tile spans. */
+	private int tile2ChunkScale = 1;
+	private int mapWidthInChunks = (int)Math.round(MAP_WIDTH / 8 / mapScale);
+	private int mapHeightInChunks = (int)Math.round(MAP_HEIGHT / 8 / mapScale);
 	
 	
 	// Exporting image =========================================================
@@ -129,6 +143,7 @@ public class GuiAtlas extends GuiComponent {
 	
 	private EntityPlayer player;
 	private ItemStack stack;
+	private AtlasData data;
 	
 	/** Coordinate scale factor relative to the actual screen size. */
 	private int screenScale;
@@ -285,6 +300,16 @@ public class GuiAtlas extends GuiComponent {
 			} else if (key == Keyboard.KEY_SUBTRACT || key == Keyboard.KEY_MINUS) {
 				setMapScale(mapScale / 2);
 			}
+			// Close the GUI if a hotbar key is pressed
+			else if (!isEnteringMarkerLabel) {
+				KeyBinding[] hotbarKeys = Minecraft.getMinecraft().gameSettings.keyBindsHotbar;
+				for (KeyBinding bind : hotbarKeys) {
+					if (key == bind.getKeyCode()) {
+						close();
+						break;
+					}
+				}
+			}
 		}
 		super.handleKeyboardInput();
 	}
@@ -322,12 +347,21 @@ public class GuiAtlas extends GuiComponent {
 	@Override
 	public void updateScreen() {
 		super.updateScreen();
+		if (player == null) return;
 		if (followPlayer) {
 			mapOffsetX = (int)(- player.posX * mapScale);
 			mapOffsetY = (int)(- player.posZ * mapScale);
 		}
 		if (player.worldObj.getTotalWorldTime() > timeButtonPressed + BUTTON_PAUSE) {
 			navigateByButton(selectedButton);
+		}
+		data = AntiqueAtlasMod.itemAtlas.getAtlasData(stack, player.worldObj);
+		GlobalMarkersData globalMarkers = AntiqueAtlasMod.globalMarkersData.getData();
+		MarkersData localMarkers = AntiqueAtlasMod.itemAtlas.getMarkersData(stack, player.worldObj);
+		visibleMarkers.clear();
+		visibleMarkers.addAll(globalMarkers.getAllMarkersInDimension(player.dimension));
+		if (localMarkers != null) {
+			visibleMarkers.addAll(localMarkers.getAllMarkersInDimension(player.dimension));
 		}
 	}
 	
@@ -357,8 +391,17 @@ public class GuiAtlas extends GuiComponent {
 	public void setMapScale(double scale) {
 		double oldScale = mapScale;
 		mapScale = scale;
-		if (mapScale < 0.25) mapScale = 0.25;
-		if (mapScale > 1) mapScale = 1;
+		if (mapScale < MIN_SCALE) mapScale = MIN_SCALE;
+		if (mapScale > MAX_SCALE) mapScale = MAX_SCALE;
+		if (mapScale >= MIN_SCALE_THRESHOLD) {
+			tileHalfSize = (int)Math.round(8 * mapScale);
+			tile2ChunkScale = 1;
+		} else {
+			tileHalfSize = (int)Math.round(8 * MIN_SCALE_THRESHOLD);
+			tile2ChunkScale = (int)Math.round(MIN_SCALE_THRESHOLD / mapScale);
+		}
+		mapWidthInChunks = MAP_WIDTH / tileHalfSize / 2 * tile2ChunkScale;
+		mapHeightInChunks = MAP_HEIGHT / tileHalfSize / 2 * tile2ChunkScale;
 		// Times 2 because the contents of the Atlas are rendered at resolution 2 times larger:
 		scaleBar.setMapScale(mapScale*2);
 		mapOffsetX *= mapScale / oldScale;
@@ -369,16 +412,22 @@ public class GuiAtlas extends GuiComponent {
 	
 	@Override
 	public void drawScreen(int mouseX, int mouseY, float par3) {
+		if (DEBUG_RENDERING) {
+			renderTimes[renderTimesIndex++] = System.currentTimeMillis();
+			if (renderTimesIndex == renderTimes.length) {
+				renderTimesIndex = 0;
+				double elapsed = 0;
+				for (int i = 0; i < renderTimes.length - 1; i++) {
+					elapsed += renderTimes[i + 1] - renderTimes[i];
+				}
+				System.out.printf("AtlasGui avg. render time: %.3f\n", elapsed / renderTimes.length);
+			}
+		}
+		
 		GL11.glColor4f(1, 1, 1, 1);
 		AtlasRenderHelper.drawFullTexture(Textures.BOOK, getGuiX(), getGuiY(), WIDTH, HEIGHT);
 		
-		if (stack == null) return;
-		AtlasData data = AntiqueAtlasMod.itemAtlas.getAtlasData(stack, player.worldObj);
-		if (data == null) return;
-		
-		GlobalMarkersData globalMarkers = AntiqueAtlasMod.globalMarkersData.getData();
-		MarkersData localMarkers = AntiqueAtlasMod.itemAtlas.getMarkersData(stack, player.worldObj);
-		visibleMarkers.clear();
+		if (stack == null || data == null) return;
 		
 		GL11.glEnable(GL11.GL_SCISSOR_TEST);
 		GL11.glScissor((getGuiX() + CONTENT_X)*screenScale,
@@ -386,80 +435,40 @@ public class GuiAtlas extends GuiComponent {
 				MAP_WIDTH*screenScale, MAP_HEIGHT*screenScale);
 		GL11.glEnable(GL11.GL_BLEND);
 		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-		Map<ShortVec2, MapTile> tiles = data.getSeenChunksInDimension(player.dimension);
-		// Find chunk coordinates of the top left corner of the map:
-		ShortVec2 mapStartCoords = new ShortVec2(
-				Math.round(-((double)MAP_WIDTH/2d + mapOffsetX) / mapScale) >> 4,
-				Math.round(-((double)MAP_HEIGHT/2d + mapOffsetY) / mapScale) >> 4);
-		ShortVec2 chunkCoords = new ShortVec2(mapStartCoords);
-		int screenX = getGuiX() + WIDTH/2 + (int)((mapStartCoords.x << 4) * mapScale) + mapOffsetX;
-		int screenY;
-		int u = 0;
-		int v = 0;
-		int tileSize = (int)Math.round(16 * mapScale);
-		int mapWidthInTiles = MAP_WIDTH / tileSize;
-		int mapHeightInTiles = MAP_HEIGHT / tileSize;
-		for (int x = 0; x < mapWidthInTiles + 2; x++) {
-			screenY = getGuiY() + HEIGHT/2 + (int)((mapStartCoords.y << 4) * mapScale) + mapOffsetY;
-			chunkCoords.y = mapStartCoords.y;
-			for (int z = 0; z < mapHeightInTiles + 2; z++) {
-				MapTile tile = tiles.get(chunkCoords);
-				if (tile != null) {
-					ResourceLocation texture = BiomeTextureMap.instance().getTexture(tile);
-					if (tile.isSingleObject()) {
-						AtlasRenderHelper.drawTexturedRect(texture, screenX, screenY, 0, 0,
-								tileSize, tileSize, tileSize*2, tileSize*3);
-					} else {
-						// Top left corner:
-						if (tile.topLeft == MapTile.CONCAVE) { u = 2; v = 0; }
-						else if (tile.topLeft == MapTile.VERTICAL) { u = 0; v = 4; }
-						else if (tile.topLeft == MapTile.HORIZONTAL) { u = 2; v = 2; }
-						else if (tile.topLeft == MapTile.FULL) { u = 2; v = 4; } 
-						else if (tile.topLeft == MapTile.CONVEX) { u = 0; v = 2; }
-						AtlasRenderHelper.drawAutotileCorner(texture, screenX, screenY, u, v, tileSize/2);
-						
-						// Top right corner:
-						if (tile.topRight == MapTile.CONCAVE) { u = 3; v = 0; }
-						else if (tile.topRight == MapTile.VERTICAL) { u = 3; v = 4; }
-						else if (tile.topRight == MapTile.HORIZONTAL) { u = 1; v = 2; }
-						else if (tile.topRight == MapTile.FULL) { u = 1; v = 4; } 
-						else if (tile.topRight == MapTile.CONVEX) { u = 3; v = 2; }
-						AtlasRenderHelper.drawAutotileCorner(texture, screenX + tileSize/2, screenY, u, v, tileSize/2);
-						
-						// Bottom left corner:
-						if (tile.bottomLeft == MapTile.CONCAVE) { u = 2; v = 1; }
-						else if (tile.bottomLeft == MapTile.VERTICAL) { u = 0; v = 3; }
-						else if (tile.bottomLeft == MapTile.HORIZONTAL) { u = 2; v = 5; }
-						else if (tile.bottomLeft == MapTile.FULL) { u = 2; v = 3; } 
-						else if (tile.bottomLeft == MapTile.CONVEX) { u = 0; v = 5; }
-						AtlasRenderHelper.drawAutotileCorner(texture, screenX, screenY + tileSize/2, u, v, tileSize/2);
-						
-						// Bottom right corner:
-						if (tile.bottomRight == MapTile.CONCAVE) { u = 3; v = 1; }
-						else if (tile.bottomRight == MapTile.VERTICAL) { u = 3; v = 3; }
-						else if (tile.bottomRight == MapTile.HORIZONTAL) { u = 1; v = 5; }
-						else if (tile.bottomRight == MapTile.FULL) { u = 1; v = 3; } 
-						else if (tile.bottomRight == MapTile.CONVEX) { u = 3; v = 5; }
-						AtlasRenderHelper.drawAutotileCorner(texture, screenX + tileSize/2, screenY + tileSize/2, u, v, tileSize/2);
-					}
-				}
-				
-				// Remember markers to render them later
-				visibleMarkers.addAll(globalMarkers.getMarkersAtChunk(player.dimension, chunkCoords));
-				if (localMarkers != null) {
-					visibleMarkers.addAll(localMarkers.getMarkersAtChunk(player.dimension, chunkCoords));
-				}
-				
-				chunkCoords.y++;
-				screenY += tileSize;
+		// Find chunk coordinates of the top left corner of the map.
+		// The 'roundToBase' is required so that when the map scales below the
+		// threshold the tiles don't change when map position changes slightly.
+		// The -2 and -1 at the end provide margin so that tiles at the edges of
+		// the page have their stitched texture correct.
+		int mapStartX = MathUtil.roundToBase((int)(Math.round(-((double)MAP_WIDTH/2d + mapOffsetX) / mapScale) >> 4), tile2ChunkScale) - 2;
+		int mapStartZ = MathUtil.roundToBase((int)(Math.round(-((double)MAP_HEIGHT/2d + mapOffsetY) / mapScale) >> 4), tile2ChunkScale) - 1;
+		int mapStartScreenX = getGuiX() + WIDTH/2 + (int)((mapStartX << 4) * mapScale) + mapOffsetX;
+		int mapStartScreenY = getGuiY() + HEIGHT/2 + (int)((mapStartZ << 4) * mapScale) + mapOffsetY;
+		
+		TileRenderIterator iter = new TileRenderIterator(data.getDimensionData(player.dimension));
+		iter.setScope(new Rect().setOrigin(mapStartX, mapStartZ)
+								.setSize(mapWidthInChunks + 2, mapHeightInChunks + 2));
+		iter.setStep(tile2ChunkScale);
+		while (iter.hasNext()) {
+			SubTileQuartet subtiles = iter.next();
+			for (SubTile subtile : subtiles) {
+				if (subtile == null || subtile.tile == null) continue;
+				AtlasRenderHelper.drawAutotileCorner(
+						BiomeTextureMap.instance().getTexture(subtile.tile),
+						mapStartScreenX + subtile.x * tileHalfSize,
+						mapStartScreenY + subtile.y * tileHalfSize,
+						subtile.getTextureU(), subtile.getTextureV(), tileHalfSize);
 			}
-			chunkCoords.x++;
-			screenX += tileSize;
 		}
+		
 		// Draw markers:
 		for (Marker marker : visibleMarkers) {
 			double markerX = worldXToScreenX(marker.getX());
 			double markerY = worldZToScreenY(marker.getY());
+			if (markerX < getGuiX() || markerX > getGuiX() + WIDTH ||
+				markerY < getGuiY() || markerY > getGuiY() + HEIGHT) {
+				continue;
+			}
 			AtlasRenderHelper.drawFullTexture(
 					MarkerTextureMap.instance().getTexture(marker.getType()),
 					markerX - (double)MARKER_ICON_WIDTH/2,
@@ -476,6 +485,7 @@ public class GuiAtlas extends GuiComponent {
 		// Overlay the frame so that edges of the map are smooth:
 		AtlasRenderHelper.drawFullTexture(Textures.BOOK_FRAME, getGuiX(), getGuiY(), WIDTH, HEIGHT);
 		
+		// Draw player icon:
 		// How much the player has moved from the top left corner of the map, in pixels:
 		int playerOffsetX = (int)(player.posX * mapScale) + mapOffsetX;
 		int playerOffsetZ = (int)(player.posZ * mapScale) + mapOffsetY;
@@ -483,7 +493,7 @@ public class GuiAtlas extends GuiComponent {
 		if (playerOffsetX > MAP_WIDTH/2) playerOffsetX = MAP_WIDTH/2;
 		if (playerOffsetZ < -MAP_HEIGHT/2) playerOffsetZ = -MAP_HEIGHT/2;
 		if (playerOffsetZ > MAP_HEIGHT/2 - 2) playerOffsetZ = MAP_HEIGHT/2 - 2;
-		// Draw player icon:
+		// Draw the icon:
 		GL11.glColor4f(1, 1, 1, isPlacingMarker ? 0.5f : 1);
 		GL11.glPushMatrix();
 		GL11.glTranslated(getGuiX() + WIDTH/2 + playerOffsetX, getGuiY() + HEIGHT/2 + playerOffsetZ, 0);
@@ -497,7 +507,7 @@ public class GuiAtlas extends GuiComponent {
 		// Draw buttons:
 		super.drawScreen(mouseX, mouseY, par3);
 		
-		// Draw the semi-transparent marker attached to the cursor:
+		// Draw the semi-transparent marker attached to the cursor when placing a new marker:
 		GL11.glEnable(GL11.GL_BLEND);
 		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 		if (isPlacingMarker) {
@@ -523,8 +533,9 @@ public class GuiAtlas extends GuiComponent {
 	
 	@Override
 	public void onGuiClosed() {
+		super.onGuiClosed();
 		isPlacingMarker = false;
-		markerFinalizer.close();
+		removeChild(markerFinalizer);
 		Keyboard.enableRepeatEvents(false);
 	}
 	
@@ -550,5 +561,11 @@ public class GuiAtlas extends GuiComponent {
 			isEnteringMarkerLabel = false;
 			setInterceptKeyboard(false);
 		}
+	}
+
+	/** Update all text labels to current localization. */
+	public void updateL18n() {
+		btnExportPng.setTitle(I18n.format("gui.antiqueatlas.exportImage"));
+		btnMarker.setTitle(I18n.format("gui.antiqueatlas.addMarker"));
 	}
 }

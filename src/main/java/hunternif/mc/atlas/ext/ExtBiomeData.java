@@ -34,6 +34,8 @@ public class ExtBiomeData extends WorldSavedData {
 	
 	private final Map<Integer /*dimension ID*/, Map<ShortVec2, Integer /*biome ID*/>> dimensionMap =
 			new ConcurrentHashMap<Integer, Map<ShortVec2, Integer /*biome ID*/>>();
+	
+	private final ShortVec2 tempCoords = new ShortVec2(0, 0);
 
 	@Override
 	public void readFromNBT(NBTTagCompound compound) {
@@ -87,14 +89,14 @@ public class ExtBiomeData extends WorldSavedData {
 	
 	/** If no custom tile is set at the specified coordinates, returns
 	 * {@link ChunkBiomeAnalyzer#NOT_FOUND}. */
-	public int getBiomeIdAt(int dimension, ShortVec2 coords) {
-		Integer biomeID = getBiomesInDimension(dimension).get(coords);
+	public int getBiomeIdAt(int dimension, int x, int y) {
+		Integer biomeID = getBiomesInDimension(dimension).get(tempCoords.set(x, y));
 		return biomeID == null ? ChunkBiomeAnalyzer.NOT_FOUND : biomeID;
 	}
 	
 	/** If setting biome on the server, a packet should be sent to all players. */
-	public void setBiomeIdAt(int dimension, int biomeID, ShortVec2 coords) {
-		getBiomesInDimension(dimension).put(coords, biomeID);
+	public void setBiomeIdAt(int dimension, int x, int y, int biomeID) {
+		getBiomesInDimension(dimension).put(new ShortVec2(x, y), biomeID);
 	}
 	
 	/** Send all data to player in several zipped packets. */
@@ -105,7 +107,7 @@ public class ExtBiomeData extends WorldSavedData {
 			TilesPacket packet = new TilesPacket(dimension);
 			Map<ShortVec2, Integer> biomes = getBiomesInDimension(dimension);
 			for (Entry<ShortVec2, Integer> entry : biomes.entrySet()) {
-				packet.addTile(entry.getKey(), entry.getValue());
+				packet.addTile(entry.getKey().x, entry.getKey().y, entry.getValue());
 				dataSizeBytes += TilesPacket.ENTRY_SIZE_BYTES;
 				if (dataSizeBytes >= ModPacket.MAX_SIZE_BYTES) {
 					AntiqueAtlasMod.packetPipeline.sendTo(packet, player);

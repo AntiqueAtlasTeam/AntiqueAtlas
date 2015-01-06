@@ -17,9 +17,14 @@ public class Textures {
 	public static final ResourceLocation BOOKMARKS = new ResourceLocation(GUI + "bookmarks.png");
 	public static final ResourceLocation PLAYER = new ResourceLocation(GUI + "player.png");
 	
-	public static final ResourceLocation SCALEBAR_05 = new ResourceLocation(GUI + "scalebar_05.png");
-	public static final ResourceLocation SCALEBAR_1 = new ResourceLocation(GUI + "scalebar_1.png");
-	public static final ResourceLocation SCALEBAR_2 = new ResourceLocation(GUI + "scalebar_2.png");
+	public static final ResourceLocation SCALEBAR_4 = new ResourceLocation(GUI + "scalebar_4.png");
+	public static final ResourceLocation SCALEBAR_8 = new ResourceLocation(GUI + "scalebar_8.png");
+	public static final ResourceLocation SCALEBAR_16 = new ResourceLocation(GUI + "scalebar_16.png");
+	public static final ResourceLocation SCALEBAR_32 = new ResourceLocation(GUI + "scalebar_32.png");
+	public static final ResourceLocation SCALEBAR_64 = new ResourceLocation(GUI + "scalebar_64.png");
+	public static final ResourceLocation SCALEBAR_128 = new ResourceLocation(GUI + "scalebar_128.png");
+	public static final ResourceLocation SCALEBAR_256 = new ResourceLocation(GUI + "scalebar_256.png");
+	public static final ResourceLocation SCALEBAR_512 = new ResourceLocation(GUI + "scalebar_512.png");
 	
 	public static final ResourceLocation ICON_EXPORT = new ResourceLocation(GUI + "icon_export.png");
 	public static final ResourceLocation ICON_MARKER = new ResourceLocation(GUI + "icon_marker.png");

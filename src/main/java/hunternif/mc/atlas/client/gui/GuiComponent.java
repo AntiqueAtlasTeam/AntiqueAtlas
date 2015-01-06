@@ -126,6 +126,7 @@ public class GuiComponent extends GuiScreen {
 			child.parent = null;
 			children.remove(child);
 			invalidateSize();
+			onChildClosed(child);
 		}
 		return child;
 	}
@@ -421,9 +422,9 @@ public class GuiComponent extends GuiScreen {
 	/** Remove itself from its parent component (if any), notifying it. */
 	public void close() {
 		if (parent != null) {
-			GuiComponent oldParent = parent;
-			parent.removeChild(this);
-			oldParent.onChildClosed(this);
+			parent.removeChild(this); // This sets parent to null
+		} else {
+			Minecraft.getMinecraft().displayGuiScreen(null);
 		}
 	}
 	

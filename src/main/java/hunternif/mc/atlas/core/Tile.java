@@ -1,34 +1,27 @@
 package hunternif.mc.atlas.core;
 
+import hunternif.mc.atlas.client.BiomeTextureMap;
+
 import java.util.Random;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-public class MapTile {
+/**
+ * Contains information about the biome and - on the client - the variation
+ * number of the biome's texture set.
+ * @author Hunternif
+ */
+public class Tile {
 	public final int biomeID;
 	
 	/** Used for randomizing textures. */
+	//TODO persist the variation as a float value so that it is independent of local 
+	// Do this in the next version of the save format.
+	// To save space, the float could be replaced with an integer from a sufficiently large set.
 	private transient byte variationNumber;
 	
-	// ========== Corner flags ==========
-	public static final byte CONVEX = 0;
-	public static final byte CONCAVE = 1;
-	public static final byte HORIZONTAL = 2;
-	public static final byte VERTICAL = 3;
-	public static final byte FULL = 4;
-	
-	public transient byte topLeft = CONVEX;
-	public transient byte topRight = CONVEX;
-	public transient byte bottomLeft = CONVEX;
-	public transient byte bottomRight = CONVEX;
-	
-	/** If all corners are convex, the texture must show a single object, e.g. one tree. */
-	public boolean isSingleObject() {
-		return topLeft == CONVEX && topRight == CONVEX && bottomLeft == CONVEX && bottomRight == CONVEX;
-	}
-	
-	public MapTile(int biomeID) {
+	public Tile(int biomeID) {
 		this.biomeID = biomeID;
 	}
 	

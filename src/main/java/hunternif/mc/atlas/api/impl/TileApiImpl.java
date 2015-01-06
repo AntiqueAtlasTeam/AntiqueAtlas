@@ -2,14 +2,13 @@ package hunternif.mc.atlas.api.impl;
 
 import hunternif.mc.atlas.AntiqueAtlasMod;
 import hunternif.mc.atlas.api.TileAPI;
+import hunternif.mc.atlas.client.BiomeTextureMap;
 import hunternif.mc.atlas.client.StandardTextureSet;
-import hunternif.mc.atlas.core.BiomeTextureMap;
 import hunternif.mc.atlas.core.ChunkBiomeAnalyzer;
 import hunternif.mc.atlas.ext.ExtBiomeData;
 import hunternif.mc.atlas.ext.ExtTileIdMap;
 import hunternif.mc.atlas.network.TileNameIDPacket;
 import hunternif.mc.atlas.network.TilesPacket;
-import hunternif.mc.atlas.util.ShortVec2;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -77,8 +76,7 @@ public class TileApiImpl implements TileAPI {
 		boolean isIdRegistered = ExtTileIdMap.instance().getPseudoBiomeID(tileName) != ChunkBiomeAnalyzer.NOT_FOUND;
 		int biomeID = ExtTileIdMap.instance().getOrCreatePseudoBiomeID(tileName);
 		ExtBiomeData data = AntiqueAtlasMod.extBiomeData.getData();
-		ShortVec2 coords = new ShortVec2(chunkX, chunkZ);
-		data.setBiomeIdAt(dimension, biomeID, coords);
+		data.setBiomeIdAt(dimension, chunkX, chunkZ, biomeID);
 		if (!world.isRemote) {
 			data.markDirty();
 			// Send name-ID packet:
@@ -89,7 +87,7 @@ public class TileApiImpl implements TileAPI {
 			}
 			// Send tile packet:
 			TilesPacket packet = new TilesPacket(dimension);
-			packet.addTile(coords, biomeID);
+			packet.addTile(chunkX, chunkZ, biomeID);
 			AntiqueAtlasMod.packetPipeline.sendToWorld(packet, world);
 		}
 	}

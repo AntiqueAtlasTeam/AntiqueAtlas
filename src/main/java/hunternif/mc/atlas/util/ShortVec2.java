@@ -32,6 +32,13 @@ public class ShortVec2 {
 		return this;
 	}
 	
+	/** Modifies and returns self. */
+	public ShortVec2 set(int x, int y) {
+		this.x = (short)x;
+		this.y = (short)y;
+		return this;
+	}
+	
 	@Override
 	public String toString() {
 		return "(" + x + ", " + y + ")";

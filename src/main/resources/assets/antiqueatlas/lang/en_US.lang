@@ -5,6 +5,7 @@ gui.antiqueatlas.atlasTitle=Antique Atlas
 gui.antiqueatlas.scalebar=Blocks
 gui.antiqueatlas.enterLabel=Enter label:
 gui.antiqueatlas.addMarker=Add marker
+gui.antiqueatlas.resetPos=Reset position
 gui.antiqueatlas.exportImage=Export image
 gui.antiqueatlas.export.opening=Opening file system dialog...
 gui.antiqueatlas.export.selectFile=Select PNG file to save to

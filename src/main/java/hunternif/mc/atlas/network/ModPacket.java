@@ -1,12 +1,12 @@
 package hunternif.mc.atlas.network;
 
 import io.netty.buffer.ByteBuf;
-import io.netty.channel.ChannelHandlerContext;
 import net.minecraft.entity.player.EntityPlayer;
 
 /**
- * Parent for all mod packets.
- * @author credits to sirgingalot
+ * Base class for all mod packets.
+ * @author sirgingalot
+ * @author Hunternif
  */
 public abstract class ModPacket {
 	/** This isn't a strict limitation, there is quite a bit of margin left. */
@@ -18,32 +18,22 @@ public abstract class ModPacket {
 	}
 	
 	/**
-	 * Encode the packet data into the ByteBuf stream. Complex data sets may need specific data handlers (See @link{cpw.mods.fml.common.network.ByteBuffUtils})
-	 *
-	 * @param ctx    channel context
+	 * Encode the packet data into the ByteBuf stream.
 	 * @param buffer the buffer to encode into
 	 */
-	public abstract void encodeInto(ChannelHandlerContext ctx, ByteBuf buffer);
+	public abstract void encodeInto(ByteBuf buffer);
 
 	/**
-	 * Decode the packet data from the ByteBuf stream. Complex data sets may need specific data handlers (See @link{cpw.mods.fml.common.network.ByteBuffUtils})
-	 *
-	 * @param ctx    channel context
+	 * Decode and handle a packet on the client side.
+	 * @param player the player reference
+	 * @param buffer the buffer to encode into
+	 */
+	public abstract void handleClientSide(EntityPlayer player, ByteBuf buffer);
+
+	/**
+	 * Decode and handle a packet on the server side.
+	 * @param player the player reference
 	 * @param buffer the buffer to decode from
 	 */
-	public abstract void decodeInto(ChannelHandlerContext ctx, ByteBuf buffer);
-
-	/**
-	 * Handle a packet on the client side. Note this occurs after decoding has completed.
-	 *
-	 * @param player the player reference
-	 */
-	public abstract void handleClientSide(EntityPlayer player);
-
-	/**
-	 * Handle a packet on the server side. Note this occurs after decoding has completed.
-	 *
-	 * @param player the player reference
-	 */
-	public abstract void handleServerSide(EntityPlayer player);
+	public abstract void handleServerSide(EntityPlayer player, ByteBuf buffer);
 }

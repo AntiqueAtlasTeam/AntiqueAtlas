@@ -4,7 +4,6 @@ import hunternif.mc.atlas.AntiqueAtlasMod;
 import hunternif.mc.atlas.marker.Marker;
 import hunternif.mc.atlas.marker.MarkersData;
 import io.netty.buffer.ByteBuf;
-import io.netty.channel.ChannelHandlerContext;
 
 import java.util.List;
 import java.util.Set;
@@ -20,7 +19,7 @@ import cpw.mods.fml.common.network.ByteBufUtils;
  * markers from client to server. Only one dimension per packet.
  * @author Hunternif
  */
-public class MarkersPacket extends ModPacket {
+public class MarkersPacket extends ModExecPacket {
 	protected int atlasID;
 	protected int dimension;
 	protected final ListMultimap<String, Marker> markersByType = ArrayListMultimap.create();
@@ -41,7 +40,7 @@ public class MarkersPacket extends ModPacket {
 	}
 
 	@Override
-	public void encodeInto(ChannelHandlerContext ctx, ByteBuf buffer) {
+	public void encodeInto(ByteBuf buffer) {
 		buffer.writeShort(atlasID);
 		buffer.writeShort(dimension);
 		Set<String> types = markersByType.keySet();
@@ -59,7 +58,7 @@ public class MarkersPacket extends ModPacket {
 	}
 
 	@Override
-	public void decodeInto(ChannelHandlerContext ctx, ByteBuf buffer) {
+	public void decodeFrom(ByteBuf buffer) {
 		atlasID = buffer.readShort();
 		dimension = buffer.readShort();
 		int typesLength = buffer.readShort();

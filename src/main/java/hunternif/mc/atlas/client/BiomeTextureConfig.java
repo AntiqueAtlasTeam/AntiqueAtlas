@@ -1,8 +1,7 @@
-package hunternif.mc.atlas.core;
+package hunternif.mc.atlas.client;
 
 import hunternif.mc.atlas.AntiqueAtlasMod;
-import hunternif.mc.atlas.client.StandardTextureSet;
-import hunternif.mc.atlas.core.BiomeTextureMap.BiomeTextureEntry;
+import hunternif.mc.atlas.client.BiomeTextureMap.BiomeTextureEntry;
 import hunternif.mc.atlas.util.FileUtil;
 
 import java.io.File;

@@ -2,8 +2,8 @@ package hunternif.mc.atlas.api.impl;
 
 import hunternif.mc.atlas.AntiqueAtlasMod;
 import hunternif.mc.atlas.api.BiomeAPI;
+import hunternif.mc.atlas.client.BiomeTextureMap;
 import hunternif.mc.atlas.client.StandardTextureSet;
-import hunternif.mc.atlas.core.BiomeTextureMap;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.biome.BiomeGenBase;
 

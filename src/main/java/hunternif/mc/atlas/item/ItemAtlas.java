@@ -1,16 +1,12 @@
 package hunternif.mc.atlas.item;
 
 import hunternif.mc.atlas.AntiqueAtlasMod;
-import hunternif.mc.atlas.client.MapTileStitcher;
 import hunternif.mc.atlas.core.AtlasData;
 import hunternif.mc.atlas.core.ChunkBiomeAnalyzer;
-import hunternif.mc.atlas.core.MapTile;
+import hunternif.mc.atlas.core.ITileStorage;
+import hunternif.mc.atlas.core.Tile;
 import hunternif.mc.atlas.marker.MarkersData;
 import hunternif.mc.atlas.util.ByteUtil;
-import hunternif.mc.atlas.util.ShortVec2;
-
-import java.util.Map;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.Entity;
@@ -82,33 +78,32 @@ public class ItemAtlas extends Item {
 		
 		int playerX = MathHelper.floor_double(player.posX) >> 4;
 		int playerZ = MathHelper.floor_double(player.posZ) >> 4;
-		Map<ShortVec2, MapTile> seenChunks = data.getSeenChunksInDimension(player.dimension);
+		ITileStorage seenChunks = data.getDimensionData(player.dimension);
 		
 		// Look at chunks around in a circular area:
-		ShortVec2 coords = new ShortVec2(0, 0);
 		for (double dx = -LOOK_RADIUS; dx <= LOOK_RADIUS; dx++) {
 			for (double dz = -LOOK_RADIUS; dz <= LOOK_RADIUS; dz++) {
 				if (dx*dx + dz*dz > LOOK_RADIUS*LOOK_RADIUS) {
 					continue; // Outside the circle
 				}
-				coords.x = (short)(playerX + dx);
-				coords.y = (short)(playerZ + dz);
+				int x = (int)(playerX + dx);
+				int y = (int)(playerZ + dz);
 				
 				// Check if there's a custom tile at the location:
-				int biomeId = AntiqueAtlasMod.extBiomeData.getData().getBiomeIdAt(player.dimension, coords);
+				int biomeId = AntiqueAtlasMod.extBiomeData.getData().getBiomeIdAt(player.dimension, x, y);
 				// Custom tiles overwrite even the chunks already seen.
 				
 				// If there's no custom tile, check the actual chunk:
 				if (biomeId == ChunkBiomeAnalyzer.NOT_FOUND) {
 					// Check if the chunk has been seen already:
-					if (seenChunks.containsKey(coords)) continue;
+					if (seenChunks.hasTileAt(x, y)) continue;
 					
 					// Check if the chunk has been loaded:
-					if (!player.worldObj.blockExists((int)coords.x << 4, 0, (int)coords.y << 4)) {
+					if (!player.worldObj.blockExists(x << 4, 0, y << 4)) {
 						continue;
 					}
 					// Retrieve mean chunk biome and store it in AtlasData:
-					Chunk chunk = player.worldObj.getChunkFromChunkCoords(coords.x, coords.y);
+					Chunk chunk = player.worldObj.getChunkFromChunkCoords(x, y);
 					if (!chunk.isChunkLoaded) {
 						biomeId = ChunkBiomeAnalyzer.NOT_FOUND;
 					} else {
@@ -117,24 +112,24 @@ public class ItemAtlas extends Item {
 					}
 					// Finally, put the tile in place:
 					if (biomeId != ChunkBiomeAnalyzer.NOT_FOUND) {
-						MapTile tile = new MapTile(biomeId);
+						Tile tile = new Tile(biomeId);
 						if (world.isRemote) {
 							tile.randomizeTexture();
 						}
-						data.putTile(player.dimension, coords.clone(), tile);
+						data.setTile(player.dimension, x, y, tile);
 						if (!world.isRemote) {
 							data.markDirty();
 						}
 					}
 				} else {
 					// Only update the custom tile if it doesn't rewrite itself:
-					MapTile oldTile = seenChunks.get(coords);
+					Tile oldTile = seenChunks.getTile(x, y);
 					if (oldTile == null || oldTile.biomeID != biomeId) {
-						MapTile tile = new MapTile(biomeId);
+						Tile tile = new Tile(biomeId);
 						if (world.isRemote) {
 							tile.randomizeTexture();
 						}
-						data.putTile(player.dimension, coords.clone(), tile);
+						data.setTile(player.dimension, x, y, tile);
 						if (!world.isRemote) {
 							data.markDirty();
 						}
@@ -156,9 +151,6 @@ public class ItemAtlas extends Item {
 			key = getAtlasDataKey(stack);
 			data = new AtlasData(key);
 			world.setItemData(key, data);
-			if (world.isRemote) {
-				data.setTileStitcher(MapTileStitcher.instance);
-			}
 		}
 		return data;
 	}
@@ -171,7 +163,6 @@ public class ItemAtlas extends Item {
 		AtlasData data = (AtlasData) world.loadItemData(AtlasData.class, key);
 		if (data == null) {
 			data = new AtlasData(key);
-			data.setTileStitcher(MapTileStitcher.instance);
 			world.setItemData(key, data);
 		}
 		return data;

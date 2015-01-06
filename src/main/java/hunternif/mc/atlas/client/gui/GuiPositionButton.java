@@ -7,6 +7,7 @@ import java.util.Arrays;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderHelper;
+import net.minecraft.client.resources.I18n;
 
 import org.lwjgl.opengl.GL11;
 
@@ -38,7 +39,7 @@ public class GuiPositionButton extends GuiComponentButton {
 			GL11.glDisable(GL11.GL_BLEND);
 			
 			if (isMouseOver) {
-				drawTopLevelHoveringText(Arrays.asList("Reset position"), mouseX, mouseY, Minecraft.getMinecraft().fontRenderer);
+				drawTopLevelHoveringText(Arrays.asList(I18n.format("gui.antiqueatlas.resetPos")), mouseX, mouseY, Minecraft.getMinecraft().fontRenderer);
 			}
 		}
 	}

@@ -30,7 +30,8 @@ import cpw.mods.fml.relauncher.SideOnly;
 /**
  * Packet pipeline class. Directs all registered packet data to be handled by the packets themselves.
  * @author sirgingalot
- * some code from: cpw
+ * @author cpw
+ * @author Hunternif
  */
 @ChannelHandler.Sharable
 public class PacketPipeline extends MessageToMessageCodec<FMLProxyPacket, ModPacket> {
@@ -82,13 +83,13 @@ public class PacketPipeline extends MessageToMessageCodec<FMLProxyPacket, ModPac
 		// Compressing:
 		if (msg.isCompressed()) {
 			ByteBuf tempBuf = Unpooled.buffer();
-			msg.encodeInto(ctx, tempBuf);
+			msg.encodeInto(tempBuf);
 			byte[] data = new byte[tempBuf.readableBytes()];
 			tempBuf.readBytes(data);
 			byte[] zipData = ZipUtil.compressByteArray(data);
 			buffer.writeBytes(zipData);
 		} else {
-			msg.encodeInto(ctx, buffer);
+			msg.encodeInto(buffer);
 		}
 		
 		FMLProxyPacket proxyPacket = new FMLProxyPacket(buffer.copy(), ctx.channel().attr(NetworkRegistry.FML_CHANNEL).get());
@@ -104,29 +105,26 @@ public class PacketPipeline extends MessageToMessageCodec<FMLProxyPacket, ModPac
 		if (clazz == null) {
 			throw new NullPointerException("No packet registered for discriminator: " + discriminator);
 		}
-
 		ModPacket pkt = clazz.newInstance();
+
+		ByteBuf tempBuf = payload.slice();
 		if (pkt.isCompressed()) {
-			ByteBuf tempBuf = payload.slice();
 			byte[] zipData = new byte[tempBuf.readableBytes()];
 			tempBuf.readBytes(zipData);
 			tempBuf = Unpooled.wrappedBuffer(ZipUtil.decompressByteArray(zipData));
-			pkt.decodeInto(ctx, tempBuf);
-		} else {
-			pkt.decodeInto(ctx, payload.slice());
 		}
 
 		EntityPlayer player;
 		switch (FMLCommonHandler.instance().getEffectiveSide()) {
 			case CLIENT:
 				player = this.getClientPlayer();
-				pkt.handleClientSide(player);
+				pkt.handleClientSide(player, tempBuf);
 				break;
 
 			case SERVER:
 				INetHandler netHandler = ctx.channel().attr(NetworkRegistry.NET_HANDLER).get();
 				player = ((NetHandlerPlayServer) netHandler).playerEntity;
-				pkt.handleServerSide(player);
+				pkt.handleServerSide(player, tempBuf);
 				break;
 
 			default:

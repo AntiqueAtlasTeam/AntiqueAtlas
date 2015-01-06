@@ -1,7 +1,6 @@
 package hunternif.mc.atlas.core;
 
 import hunternif.mc.atlas.AntiqueAtlasMod;
-import hunternif.mc.atlas.client.MapTileStitcher;
 import hunternif.mc.atlas.network.MapDataPacket;
 import hunternif.mc.atlas.network.ModPacket;
 import hunternif.mc.atlas.util.ShortVec2;
@@ -32,17 +31,11 @@ public class AtlasData extends WorldSavedData {
 	private Map<Integer /*dimension ID*/, DimensionData> dimensionMap =
 			new ConcurrentHashMap<Integer, DimensionData>();
 	
-	private MapTileStitcher tileStitcher;
-	
 	/** Set of players this Atlas data has been sent to. */
 	private final Set<EntityPlayer> playersSentTo = new HashSet<EntityPlayer>();
 
 	public AtlasData(String key) {
 		super(key);
-	}
-	
-	public void setTileStitcher(MapTileStitcher tileStitcher) {
-		this.tileStitcher = tileStitcher;
 	}
 
 	@Override
@@ -58,8 +51,7 @@ public class AtlasData extends WorldSavedData {
 			int dimensionID = tag.getInteger(TAG_DIMENSION_ID);
 			int[] intArray = tag.getIntArray(TAG_VISITED_CHUNKS);
 			for (int i = 0; i < intArray.length; i += 3) {
-				ShortVec2 coords = new ShortVec2(intArray[i], intArray[i+1]);
-				putTile(dimensionID, coords, new MapTile(intArray[i+2]));
+				setTile(dimensionID, intArray[i], intArray[i+1], new Tile(intArray[i+2]));
 			}
 		}
 	}
@@ -71,10 +63,10 @@ public class AtlasData extends WorldSavedData {
 		for (Entry<Integer, DimensionData> dimensionEntry : dimensionMap.entrySet()) {
 			NBTTagCompound tag = new NBTTagCompound();
 			tag.setInteger(TAG_DIMENSION_ID, dimensionEntry.getKey().intValue());
-			Map<ShortVec2, MapTile> seenChunks = dimensionEntry.getValue().getSeenChunks();
+			Map<ShortVec2, Tile> seenChunks = dimensionEntry.getValue().getSeenChunks();
 			int[] intArray = new int[seenChunks.size()*3];
 			int i = 0;
-			for (Entry<ShortVec2, MapTile> entry : seenChunks.entrySet()) {
+			for (Entry<ShortVec2, Tile> entry : seenChunks.entrySet()) {
 				intArray[i++] = entry.getKey().x;
 				intArray[i++] = entry.getKey().y;
 				intArray[i++] = entry.getValue().biomeID;
@@ -87,12 +79,9 @@ public class AtlasData extends WorldSavedData {
 	
 	/** Puts a given tile into given map at specified coordinates and,
 	 * if tileStitcher is present, sets appropriate sectors on adjacent tiles. */
-	public void putTile(int dimension, ShortVec2 tileCoords, MapTile tile) {
+	public void setTile(int dimension, int x, int y, Tile tile) {
 		DimensionData dimData = getDimensionData(dimension);
-		dimData.putTile(tileCoords, tile);
-		if (tileStitcher != null) {
-			tileStitcher.stitchAdjacentTiles(dimData.getSeenChunks(), new ShortVec2(tileCoords), tile);
-		}
+		dimData.setTile(x, y, tile);
 	}
 	
 	public Set<Integer> getVisitedDimensions() {
@@ -107,7 +96,7 @@ public class AtlasData extends WorldSavedData {
 		}
 		return dimData;
 	}
-	public Map<ShortVec2, MapTile> getSeenChunksInDimension(int dimension) {
+	public Map<ShortVec2, Tile> getSeenChunksInDimension(int dimension) {
 		return getDimensionData(dimension).getSeenChunks();
 	}
 	
@@ -120,10 +109,10 @@ public class AtlasData extends WorldSavedData {
 	public void syncOnPlayer(int atlasID, EntityPlayer player) {
 		int pieces = 0;
 		int dataSizeBytes = 0;
-		Map<ShortVec2, MapTile> data = new HashMap<ShortVec2, MapTile>();
+		Map<ShortVec2, Tile> data = new HashMap<ShortVec2, Tile>();
 		for (Integer dimension : getVisitedDimensions()) {
-			Map<ShortVec2, MapTile> seenChunks = getSeenChunksInDimension(dimension.intValue());
-			for (Entry<ShortVec2, MapTile> entry : seenChunks.entrySet()) {
+			Map<ShortVec2, Tile> seenChunks = getSeenChunksInDimension(dimension.intValue());
+			for (Entry<ShortVec2, Tile> entry : seenChunks.entrySet()) {
 				data.put(entry.getKey(), entry.getValue());
 				dataSizeBytes += MapDataPacket.ENTRY_SIZE_BYTES;
 				if (dataSizeBytes >= ModPacket.MAX_SIZE_BYTES) {
