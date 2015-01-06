@@ -4,7 +4,7 @@ import static hunternif.mc.atlas.client.Textures.*;
 import net.minecraft.util.ResourceLocation;
 
 public enum StandardTextureSet {
-	WATER		(TILE_WATER),
+	WATER		(TILE_WATER, TILE_WATER2),
 	FROZEN_WATER(TILE_FROZEN_WATER),
 	BEACH		(TILE_BEACH),
 	SAND		(TILE_SAND, TILE_SAND2),

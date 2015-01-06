@@ -37,6 +37,7 @@ public class Textures {
 	public static final ResourceLocation TILE_MOUNTAINS = new ResourceLocation(GUI_TILES + "mountains.png");
 	public static final ResourceLocation TILE_MOUNTAINS2 = new ResourceLocation(GUI_TILES + "mountains2.png");
 	public static final ResourceLocation TILE_WATER = new ResourceLocation(GUI_TILES + "water.png");
+	public static final ResourceLocation TILE_WATER2 = new ResourceLocation(GUI_TILES + "water2.png");
 	public static final ResourceLocation TILE_FROZEN_WATER = new ResourceLocation(GUI_TILES + "frozen_water.png");
 	public static final ResourceLocation TILE_FOREST = new ResourceLocation(GUI_TILES + "forest.png");
 	public static final ResourceLocation TILE_FOREST2 = new ResourceLocation(GUI_TILES + "forest2.png");
