@@ -61,6 +61,7 @@ public class RecipeAtlasCloning implements IRecipe {
 			ItemStack newAtlas = new ItemStack(AntiqueAtlasMod.itemAtlas, i + 1, filledAtlas.getItemDamage());
 
 			if (filledAtlas.hasDisplayName()) {
+				newAtlas.setStackDisplayName(filledAtlas.getDisplayName());
 			}
 
 			return newAtlas;
