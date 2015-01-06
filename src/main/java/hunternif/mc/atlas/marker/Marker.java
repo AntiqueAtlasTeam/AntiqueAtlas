@@ -12,6 +12,7 @@ public class Marker implements Comparable<Marker> {
 	private final String type;
 	private final String label;
 	private final int x, y;
+	//TODO: Marker should know its dimension
 	
 	public Marker(String type, String label, int x, int y) {
 		this.type = type;

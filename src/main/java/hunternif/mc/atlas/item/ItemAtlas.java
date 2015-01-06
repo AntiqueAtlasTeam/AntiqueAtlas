@@ -47,7 +47,7 @@ public class ItemAtlas extends Item {
 	
 	@Override
 	public String getItemStackDisplayName(ItemStack stack) {
-		return String.format(super.getItemStackDisplayName(stack), stack.getItemDamage());
+		return super.getItemStackDisplayName(stack) + " #" + stack.getItemDamage();
 	}
 	
 	@Override
@@ -121,9 +121,7 @@ public class ItemAtlas extends Item {
 							tile.randomizeTexture();
 						}
 						data.setTile(player.dimension, x, y, tile);
-						if (!world.isRemote) {
-							data.markDirty();
-						}
+						data.markDirty();
 					}
 				} else {
 					// Only update the custom tile if it doesn't rewrite itself:
@@ -134,9 +132,7 @@ public class ItemAtlas extends Item {
 							tile.randomizeTexture();
 						}
 						data.setTile(player.dimension, x, y, tile);
-						if (!world.isRemote) {
-							data.markDirty();
-						}
+						data.markDirty();
 					}
 				}
 				

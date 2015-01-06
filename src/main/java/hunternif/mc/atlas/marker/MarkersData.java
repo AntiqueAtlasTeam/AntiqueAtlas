@@ -60,10 +60,11 @@ public class MarkersData extends WorldSavedData {
 	 * markers must be sorted by their y coordinate. ConcurrentHashMap, because
 	 * it is concurrently updated by executing MarkerPacket.
 	 * The sorted sets inside the multimap allow concurrent iteration.
+	 * Set of markers is mapped to chunk coordinates and then to dimension ID.
 	 * 
 	 * TODO: I'm not actually using this sorted multimap nonsense.
 	 */
-	private final Map<Integer /*dimension ID*/, SortedSetMultimap<ShortVec2, Marker>> dimensionMap =
+	private final Map<Integer /*dimension ID*/, SortedSetMultimap<ShortVec2 /*chunk*/, Marker>> dimensionMap =
 			new ConcurrentHashMap<Integer, SortedSetMultimap<ShortVec2, Marker>>();
 	
 	private final ShortVec2 tempCoords = new ShortVec2(0, 0);
@@ -79,7 +80,7 @@ public class MarkersData extends WorldSavedData {
 		for (int d = 0; d < dimensionMapList.tagCount(); d++) {
 			NBTTagCompound tag = dimensionMapList.getCompoundTagAt(d);
 			int dimensionID = tag.getInteger(TAG_DIMENSION_ID);
-			SortedSetMultimap<ShortVec2, Marker> markers = getMarkersInDimension(dimensionID);
+			SortedSetMultimap<ShortVec2, Marker> markers = getMarkersDataInDimension(dimensionID);
 			NBTTagList tagList = tag.getTagList(TAG_MARKERS, Constants.NBT.TAG_COMPOUND);
 			for (int i = 0; i < tagList.tagCount(); i++) {
 				NBTTagCompound markerTag = tagList.getCompoundTagAt(i);
@@ -100,7 +101,7 @@ public class MarkersData extends WorldSavedData {
 		for (Integer dimension : dimensionMap.keySet()) {
 			NBTTagCompound tag = new NBTTagCompound();
 			tag.setInteger(TAG_DIMENSION_ID, dimension);
-			SortedSetMultimap<ShortVec2, Marker> markers = getMarkersInDimension(dimension);
+			SortedSetMultimap<ShortVec2, Marker> markers = getMarkersDataInDimension(dimension);
 			NBTTagList tagList = new NBTTagList();
 			for (Marker marker : markers.values()) {
 				NBTTagCompound markerTag = new NBTTagCompound();
@@ -116,8 +117,12 @@ public class MarkersData extends WorldSavedData {
 		compound.setTag(TAG_DIMENSION_MAP_LIST, dimensionMapList);
 	}
 	
+	public Set<Integer> getVisitedDimensions() {
+		return dimensionMap.keySet();
+	}
+	
 	/** Creates a new multimap, if needed. */
-	private SortedSetMultimap<ShortVec2, Marker> getMarkersInDimension(int dimension) {
+	public SortedSetMultimap<ShortVec2, Marker> getMarkersDataInDimension(int dimension) {
 		SortedSetMultimap<ShortVec2, Marker> map = dimensionMap.get(Integer.valueOf(dimension));
 		if (map == null) {
 			map = Multimaps.synchronizedSortedSetMultimap(Multimaps.newSortedSetMultimap(
@@ -127,17 +132,17 @@ public class MarkersData extends WorldSavedData {
 		return map;
 	}
 	
-	public Collection<Marker> getAllMarkersInDimension(int dimension) {
-		return getMarkersInDimension(dimension).values();
+	public Collection<Marker> getMarkersInDimension(int dimension) {
+		return getMarkersDataInDimension(dimension).values();
 	}
 	
 	public SortedSet<Marker> getMarkersAtChunk(int dimension, int x, int y) {
-		return getMarkersInDimension(dimension).get(tempCoords.set(x, y));
+		return getMarkersDataInDimension(dimension).get(tempCoords.set(x, y));
 	}
 	
 	/** Use the {@link MarkerAPI} to put markers! */
 	public void putMarker(int dimension, Marker marker) {
-		getMarkersInDimension(dimension).put(marker.getChunkCoords(), marker);
+		getMarkersDataInDimension(dimension).put(marker.getChunkCoords(), marker);
 	}
 	
 	public boolean isSyncedOnPlayer(EntityPlayer player) {
@@ -151,7 +156,7 @@ public class MarkersData extends WorldSavedData {
 		int dataSizeBytes = 0;
 		for (Integer dimension : dimensionMap.keySet()) {
 			MarkersPacket packet = newMarkersPacket(atlasID, dimension);
-			SortedSetMultimap<ShortVec2, Marker> markers = getMarkersInDimension(dimension);
+			SortedSetMultimap<ShortVec2, Marker> markers = getMarkersDataInDimension(dimension);
 			for (Marker marker : markers.values()) {
 				packet.putMarker(marker);
 				dataSizeBytes += 4 + 4 + (marker.getLabel().length() + marker.getType().length())*2;
