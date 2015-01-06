@@ -14,6 +14,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+@Deprecated
 public class TestMapTiles {
 	private static class BlindStitcher extends MapTileStitcher {
 		@Override
