@@ -44,8 +44,8 @@ public class GuiAtlas extends GuiComponent {
 	private static final int PLAYER_ICON_WIDTH = 7;
 	private static final int PLAYER_ICON_HEIGHT = 8;
 	
-	private static final int MARKER_ICON_WIDTH = 16;
-	private static final int MARKER_ICON_HEIGHT = 16;
+	private static final int MARKER_ICON_WIDTH = 32;
+	private static final int MARKER_ICON_HEIGHT = 32;
 	/** The radius of the area in which the marker will display hovering label. */
 	private static final int MARKER_RADIUS = 4;
 	
@@ -467,6 +467,7 @@ public class GuiAtlas extends GuiComponent {
 		}
 		
 		// Draw markers:
+		GL11.glColor4f(1, 1, 1, isPlacingMarker ? 0.5f : 1);
 		for (Marker marker : visibleMarkers) {
 			double markerX = worldXToScreenX(marker.getX());
 			double markerY = worldZToScreenY(marker.getY());

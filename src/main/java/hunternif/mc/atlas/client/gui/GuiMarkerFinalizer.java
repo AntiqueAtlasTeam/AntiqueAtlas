@@ -16,7 +16,7 @@ import net.minecraft.world.World;
  * @author Hunternif
  */
 public class GuiMarkerFinalizer extends GuiComponent {
-	public static final String defaultMarker = "red_x_large";
+	public static final String defaultMarker = "red_x_small";
 	
 	private World world;
 	private int atlasID, dimension, x, z;
