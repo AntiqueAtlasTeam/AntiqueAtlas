@@ -47,6 +47,11 @@ public class ItemAtlas extends Item {
 	}
 	
 	@Override
+	public String getItemStackDisplayName(ItemStack stack) {
+		return String.format(super.getItemStackDisplayName(stack), stack.getItemDamage());
+	}
+	
+	@Override
 	public ItemStack onItemRightClick(ItemStack stack, World world, EntityPlayer player) {
 		if (world.isRemote) {
 			AntiqueAtlasMod.proxy.openAtlasGUI(stack);

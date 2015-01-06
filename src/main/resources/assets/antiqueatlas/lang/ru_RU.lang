@@ -1,7 +1,6 @@
-item.antiqueAtlas.name=Старинный атлас
+item.antiqueAtlas.name=Старинный атлас #%s
 item.emptyAntiqueAtlas.name=Пустой старинный атлас
 
-gui.antiqueatlas.atlasTitle=Старинный атлас
 gui.antiqueatlas.scalebar=Блоков
 gui.antiqueatlas.enterLabel=Текст метки:
 gui.antiqueatlas.addMarker=Добавить метку
