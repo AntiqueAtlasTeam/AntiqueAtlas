@@ -5,6 +5,7 @@ import hunternif.mc.atlas.ext.ExtBiomeDataHandler;
 import hunternif.mc.atlas.ext.VillageWatcher;
 import hunternif.mc.atlas.item.ItemAtlas;
 import hunternif.mc.atlas.item.ItemEmptyAtlas;
+import hunternif.mc.atlas.item.RecipeAtlasCloning;
 import hunternif.mc.atlas.marker.GlobalMarkersDataHandler;
 import hunternif.mc.atlas.network.GlobalMarkersPacket;
 import hunternif.mc.atlas.network.MapDataPacket;
@@ -65,6 +66,7 @@ public class AntiqueAtlasMod {
 		
 		GameRegistry.registerItem(itemAtlas, "antiqueAtlas");
 		GameRegistry.registerItem(itemEmptyAtlas, "emptyAntiqueAtlas");
+		GameRegistry.addRecipe(new RecipeAtlasCloning());
 	}
 	
 	@EventHandler

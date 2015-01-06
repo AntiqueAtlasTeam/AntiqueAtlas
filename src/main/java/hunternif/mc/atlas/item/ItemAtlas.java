@@ -33,7 +33,6 @@ public class ItemAtlas extends Item {
 
 	public ItemAtlas() {
 		setHasSubtypes(true);
-		setMaxStackSize(1);
 	}
 	
 	public void setBiomeAnalyzer(ChunkBiomeAnalyzer biomeAnalyzer) {
