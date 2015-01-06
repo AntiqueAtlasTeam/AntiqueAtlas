@@ -83,7 +83,6 @@ public class ExportImageUtil {
 	
 	/** Renders the map into file as PNG image. */
 	public static void exportPngImage(DimensionData data, File file, ExportUpdateListener listener) {
-		data = data.clone(); // This seems to fix the random holes in the image.
 		float totalTiles = data.getSeenChunks().size();
 		int drawnTiles = 0;
 		
