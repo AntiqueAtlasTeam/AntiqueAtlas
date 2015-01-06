@@ -6,6 +6,7 @@ import hunternif.mc.atlas.ext.VillageWatcher;
 import hunternif.mc.atlas.item.ItemAtlas;
 import hunternif.mc.atlas.item.ItemEmptyAtlas;
 import hunternif.mc.atlas.item.RecipeAtlasCloning;
+import hunternif.mc.atlas.item.RecipeAtlasCombining;
 import hunternif.mc.atlas.marker.GlobalMarkersDataHandler;
 import hunternif.mc.atlas.network.GlobalMarkersPacket;
 import hunternif.mc.atlas.network.MapDataPacket;
@@ -47,6 +48,8 @@ public class AntiqueAtlasMod {
 	
 	public static final PacketPipeline packetPipeline = new PacketPipeline();
 	
+	public static final RecipeAtlasCombining recipeCombining = new RecipeAtlasCombining();
+	
 	public static final ExtBiomeDataHandler extBiomeData = new ExtBiomeDataHandler();
 	public static final GlobalMarkersDataHandler globalMarkersData = new GlobalMarkersDataHandler();
 	
@@ -66,7 +69,6 @@ public class AntiqueAtlasMod {
 		
 		GameRegistry.registerItem(itemAtlas, "antiqueAtlas");
 		GameRegistry.registerItem(itemEmptyAtlas, "emptyAntiqueAtlas");
-		GameRegistry.addRecipe(new RecipeAtlasCloning());
 	}
 	
 	@EventHandler
@@ -80,6 +82,9 @@ public class AntiqueAtlasMod {
 		proxy.init(event);
 		
 		GameRegistry.addShapelessRecipe(new ItemStack(itemEmptyAtlas), Items.book, Items.compass);
+		GameRegistry.addRecipe(new RecipeAtlasCloning());
+		GameRegistry.addRecipe(recipeCombining);
+		FMLCommonHandler.instance().bus().register(recipeCombining);
 		
 		MinecraftForge.EVENT_BUS.register(extBiomeData);
 		FMLCommonHandler.instance().bus().register(extBiomeData);

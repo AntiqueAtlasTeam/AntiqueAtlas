@@ -364,9 +364,9 @@ public class GuiAtlas extends GuiComponent {
 		GlobalMarkersData globalMarkers = AntiqueAtlasMod.globalMarkersData.getData();
 		MarkersData localMarkers = AntiqueAtlasMod.itemAtlas.getMarkersData(stack, player.worldObj);
 		visibleMarkers.clear();
-		visibleMarkers.addAll(globalMarkers.getAllMarkersInDimension(player.dimension));
+		visibleMarkers.addAll(globalMarkers.getMarkersInDimension(player.dimension));
 		if (localMarkers != null) {
-			visibleMarkers.addAll(localMarkers.getAllMarkersInDimension(player.dimension));
+			visibleMarkers.addAll(localMarkers.getMarkersInDimension(player.dimension));
 		}
 	}
 	
