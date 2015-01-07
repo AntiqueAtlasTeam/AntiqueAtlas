@@ -28,7 +28,6 @@ public class TileRenderIterator implements Iterator<SubTileQuartet> {
 			this.step = step;
 		}
 	}
-	//TODO perhaps prioritize certain tiles or use a majority poll to determine the tile when scaling down. See #step.
 	
 	/** The scope of iteration. */
 	private final Rect scope = new Rect();

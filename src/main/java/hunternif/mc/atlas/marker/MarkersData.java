@@ -62,8 +62,6 @@ public class MarkersData extends WorldSavedData {
 	 * it is concurrently updated by executing MarkerPacket.
 	 * The sorted sets inside the multimap allow concurrent iteration.
 	 * Set of markers is mapped to chunk coordinates and then to dimension ID.
-	 * 
-	 * TODO: I'm not actually using this sorted multimap nonsense.
 	 */
 	private final Map<Integer /*dimension ID*/, SortedSetMultimap<ShortVec2 /*chunk*/, Marker>> dimensionMap =
 			new ConcurrentHashMap<Integer, SortedSetMultimap<ShortVec2, Marker>>();
