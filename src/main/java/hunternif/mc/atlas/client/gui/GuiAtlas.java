@@ -220,7 +220,8 @@ public class GuiAtlas extends GuiComponent {
 	public GuiAtlas setAtlasItemStack(ItemStack stack) {
 		this.player = Minecraft.getMinecraft().thePlayer;
 		this.stack = stack;
-		updateContent();
+		updateAtlasData();
+		updateMarkerData();
 		return this;
 	}
 	
@@ -278,7 +279,7 @@ public class GuiAtlas extends GuiComponent {
 			AntiqueAtlasMod.logger.info("Exporting image from Atlas #" +
 					stack.getItemDamage() +	" to file " + file.getAbsolutePath());
 			AtlasData data = AntiqueAtlasMod.itemAtlas.getAtlasData(stack, player.worldObj);
-			ExportImageUtil.exportPngImage(data.getDimensionData(player.dimension), file, progressBar);
+			ExportImageUtil.exportPngImage(data.getDimensionData(player.dimension), visibleMarkers, file, progressBar);
 			AntiqueAtlasMod.logger.info("Finished exporting image");
 		}
 		isExporting = false;
@@ -356,11 +357,13 @@ public class GuiAtlas extends GuiComponent {
 		if (player.worldObj.getTotalWorldTime() > timeButtonPressed + BUTTON_PAUSE) {
 			navigateByButton(selectedButton);
 		}
-		updateContent();
+		updateAtlasData();
 	}
 	
-	private void updateContent() {
+	private void updateAtlasData() {
 		data = AntiqueAtlasMod.itemAtlas.getAtlasData(stack, player.worldObj);
+	}
+	public void updateMarkerData() {
 		GlobalMarkersData globalMarkers = AntiqueAtlasMod.globalMarkersData.getData();
 		MarkersData localMarkers = AntiqueAtlasMod.itemAtlas.getMarkersData(stack, player.worldObj);
 		visibleMarkers.clear();

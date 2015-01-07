@@ -1,6 +1,7 @@
 package hunternif.mc.atlas.network;
 
 import hunternif.mc.atlas.AntiqueAtlasMod;
+import hunternif.mc.atlas.client.gui.GuiAtlas;
 import hunternif.mc.atlas.marker.Marker;
 import hunternif.mc.atlas.marker.MarkersData;
 import io.netty.buffer.ByteBuf;
@@ -8,6 +9,7 @@ import io.netty.buffer.ByteBuf;
 import java.util.List;
 import java.util.Set;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 
 import com.google.common.collect.ArrayListMultimap;
@@ -78,6 +80,9 @@ public class MarkersPacket extends ModExecPacket {
 		MarkersData markersData = AntiqueAtlasMod.itemAtlas.getClientMarkersData(atlasID);
 		for (Marker marker : markersByType.values()) {
 			markersData.putMarker(dimension, marker);
+		}
+		if (Minecraft.getMinecraft().currentScreen instanceof GuiAtlas) {
+			((GuiAtlas) Minecraft.getMinecraft().currentScreen).updateMarkerData();
 		}
 	}
 	

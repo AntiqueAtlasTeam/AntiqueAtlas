@@ -8,6 +8,8 @@ import hunternif.mc.atlas.client.Textures;
 import hunternif.mc.atlas.client.TileRenderIterator;
 import hunternif.mc.atlas.client.gui.ExportUpdateListener;
 import hunternif.mc.atlas.core.DimensionData;
+import hunternif.mc.atlas.marker.Marker;
+import hunternif.mc.atlas.marker.MarkerTextureMap;
 
 import java.awt.Frame;
 import java.awt.Graphics2D;
@@ -15,9 +17,11 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.SortedSet;
 
 import javax.imageio.ImageIO;
 import javax.swing.JFileChooser;
@@ -33,6 +37,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 @SideOnly(Side.CLIENT)
 public class ExportImageUtil {
 	public static final int TILE_SIZE = 16;
+	public static final int MARKER_SIZE = 32;
 	
 	/** Beware that the background texture doesn't follow the Autotile format. */
 	public static final int BG_TILE_SIZE = 22;
@@ -82,9 +87,9 @@ public class ExportImageUtil {
 	}
 	
 	/** Renders the map into file as PNG image. */
-	public static void exportPngImage(DimensionData data, File file, ExportUpdateListener listener) {
-		float totalTiles = data.getSeenChunks().size();
-		int drawnTiles = 0;
+	public static void exportPngImage(DimensionData data, SortedSet<Marker> markers, File file, ExportUpdateListener listener) {
+		float updateUnitsTotal = data.getSeenChunks().size() + markers.size();
+		int updateUnits = 0;
 		
 		// Prepare output image
 		// Leave padding of one row of map tiles on each side
@@ -101,9 +106,10 @@ public class ExportImageUtil {
 		int bgTilesX = Math.round((float)outWidth / (float)BG_TILE_SIZE / (float)scale);
 		int bgTilesY = Math.round((float)outHeight / (float)BG_TILE_SIZE / (float)scale);
 		// Count background tiles too:
-		totalTiles += (bgTilesX + 1) * (bgTilesY + 1);
+		updateUnitsTotal += (bgTilesX + 1) * (bgTilesY + 1);
 		
 		// Preload all textures (they should be small enough)
+		// Count loaded textures as update units too.
 		listener.setStatusString("Loading textures...");
 		BufferedImage bg = null;
 		Map<ResourceLocation, BufferedImage> textureImageMap = new HashMap<ResourceLocation, BufferedImage>();
@@ -112,40 +118,42 @@ public class ExportImageUtil {
 			bg = ImageIO.read(is);
 			is.close();
 			
-			// Count loaded textures as drawn tiles too:
-			List<ResourceLocation> allTextures = BiomeTextureMap.INSTANCE.getAllTextures();
-			totalTiles += allTextures.size();
+			// Biome & Marker textures:
+			List<ResourceLocation> allTextures = new ArrayList<>(64);
+			allTextures.addAll(BiomeTextureMap.INSTANCE.getAllTextures());
+			allTextures.addAll(MarkerTextureMap.INSTANCE.getAllTextures());
+			updateUnitsTotal += allTextures.size();
 			for (ResourceLocation texture : allTextures) {
 				is = Minecraft.getMinecraft().getResourceManager().getResource(texture).getInputStream();
 				BufferedImage tileImage = ImageIO.read(is);
 				is.close();
 				textureImageMap.put(texture, tileImage);
-				drawnTiles++;
+				updateUnits++;
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		listener.update((float)drawnTiles / (float) totalTiles);
+		listener.update((float)updateUnits / (float) updateUnitsTotal);
 		
 		//================ Draw map background ================
 		listener.setStatusString(I18n.format("gui.antiqueatlas.export.rendering"));
 		// Top left corner:
 		graphics.drawImage(bg, 0, 0, BG_TILE_SIZE * scale, BG_TILE_SIZE * scale,
 				0, 0, BG_TILE_SIZE, BG_TILE_SIZE, null);
-		drawnTiles++;
+		updateUnits++;
 		// Topmost row:
 		for (int x = 1; x < bgTilesX; x++) {
 			graphics.drawImage(bg, x*BG_TILE_SIZE*scale, 0, (x + 1)*BG_TILE_SIZE*scale, BG_TILE_SIZE*scale,
 					BG_TILE_SIZE, 0, BG_TILE_SIZE*2, BG_TILE_SIZE, null);
-			drawnTiles++;
+			updateUnits++;
 		}
 		// Leftmost column:
 		for (int y = 1; y < bgTilesY; y++) {
 			graphics.drawImage(bg, 0, y*BG_TILE_SIZE*scale, BG_TILE_SIZE*scale, (y + 1)*BG_TILE_SIZE*scale,
 					0, BG_TILE_SIZE, BG_TILE_SIZE, BG_TILE_SIZE*2, null);
-			drawnTiles++;
+			updateUnits++;
 		}
-		listener.update((float)drawnTiles / (float) totalTiles);
+		listener.update((float)updateUnits / (float) updateUnitsTotal);
 		// Middle:
 		for (int x = 1; x < bgTilesX; x++) {
 			for (int y = 1; y < bgTilesY; y++) {
@@ -153,40 +161,40 @@ public class ExportImageUtil {
 						x*BG_TILE_SIZE*scale, y*BG_TILE_SIZE*scale,
 						(x + 1)*BG_TILE_SIZE*scale, (y + 1)*BG_TILE_SIZE*scale,
 						BG_TILE_SIZE, BG_TILE_SIZE, BG_TILE_SIZE*2, BG_TILE_SIZE*2, null);
-				drawnTiles++;
+				updateUnits++;
 			}
 		}
-		listener.update((float)drawnTiles / (float) totalTiles);
+		listener.update((float)updateUnits / (float) updateUnitsTotal);
 		// Top right corner:
 		graphics.drawImage(bg, outWidth - BG_TILE_SIZE*scale, 0,
 				outWidth, BG_TILE_SIZE * scale,
 				BG_TILE_SIZE*2, 0, BG_TILE_SIZE*3, BG_TILE_SIZE, null);
-		drawnTiles++;
+		updateUnits++;
 		// Rightmost column:
 		for (int y = 1; y < bgTilesY; y++) {
 			graphics.drawImage(bg,
 					outWidth - BG_TILE_SIZE*scale, y*BG_TILE_SIZE*scale,
 					outWidth, (y + 1)*BG_TILE_SIZE*scale,
 					BG_TILE_SIZE*2, BG_TILE_SIZE, BG_TILE_SIZE*3, BG_TILE_SIZE*2, null);
-			drawnTiles++;
+			updateUnits++;
 		}
 		// Bottom left corner:
 		graphics.drawImage(bg, 0, outHeight - BG_TILE_SIZE*scale,
 				BG_TILE_SIZE*scale, outHeight,
 				0, BG_TILE_SIZE*2, BG_TILE_SIZE, BG_TILE_SIZE*3, null);
-		drawnTiles++;
+		updateUnits++;
 		// Bottommost row:
 		for (int x = 1; x < bgTilesX; x++) {
 			graphics.drawImage(bg, x*BG_TILE_SIZE*scale, outHeight - BG_TILE_SIZE*scale,
 					(x + 1)*BG_TILE_SIZE*scale, outHeight,
 					BG_TILE_SIZE, BG_TILE_SIZE*2, BG_TILE_SIZE*2, BG_TILE_SIZE*3, null);
-			drawnTiles++;
+			updateUnits++;
 		}
 		// Bottom right corner:
 		graphics.drawImage(bg, outWidth - BG_TILE_SIZE*scale, outHeight - BG_TILE_SIZE*scale,
 				outWidth, outHeight, BG_TILE_SIZE*2, BG_TILE_SIZE*2, BG_TILE_SIZE*3, BG_TILE_SIZE*3, null);
-		drawnTiles++;
-		listener.update((float)drawnTiles / (float) totalTiles);
+		updateUnits++;
+		listener.update((float)updateUnits / (float) updateUnitsTotal);
 	
 		//============= Draw actual map tiles ==============
 		TileRenderIterator iter = new TileRenderIterator(data);
@@ -216,14 +224,37 @@ public class ExportImageUtil {
 						
 						null);
 			}
-			drawnTiles++;
-			if (drawnTiles % 10 == 0) { // Update every 10 tiles
-				listener.update((float)drawnTiles / (float) totalTiles);
+			updateUnits++;
+			if (updateUnits % 10 == 0) { // Update every 10 tiles
+				listener.update((float)updateUnits / (float) updateUnitsTotal);
 			}
 		}
 		
-		//TODO: draw markers on the PNG image
+		// Draw markers
+		for (Marker marker : markers) {
+			updateUnits++;
+			if (!marker.isVisibleAhead() && !data.hasTileAt(marker.getX() >> 4, marker.getY() >> 4)) {
+				continue;
+			}
 			
+			// Load marker texture
+			ResourceLocation texture = MarkerTextureMap.instance().getTexture(marker.getType());
+			BufferedImage markerImage = textureImageMap.get(texture);
+			if (markerImage == null) continue;
+			
+			int markerX = marker.getX() - minX;
+			int markerY = marker.getY() - minY;
+			graphics.drawImage(markerImage,
+					markerX - MARKER_SIZE/2, markerY - MARKER_SIZE/2,
+					markerX + MARKER_SIZE/2, markerY + MARKER_SIZE/2,
+					0, 0, MARKER_SIZE, MARKER_SIZE,
+					null);
+			
+			if (updateUnits % 10 == 0) { // Update every 10 tiles
+				listener.update((float)updateUnits / (float) updateUnitsTotal);
+			}
+		}
+		
 		try {
 			listener.setStatusString(I18n.format("gui.antiqueatlas.export.writing"));
 			ImageIO.write(outImage, "PNG", file);

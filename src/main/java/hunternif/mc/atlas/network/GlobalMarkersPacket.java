@@ -1,7 +1,9 @@
 package hunternif.mc.atlas.network;
 
 import hunternif.mc.atlas.AntiqueAtlasMod;
+import hunternif.mc.atlas.client.gui.GuiAtlas;
 import hunternif.mc.atlas.marker.Marker;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 
 /**
@@ -19,6 +21,9 @@ public class GlobalMarkersPacket extends MarkersPacket {
 	public void handleClientSide(EntityPlayer player) {
 		for (Marker marker : markersByType.values()) {
 			AntiqueAtlasMod.globalMarkersData.getData().putMarker(dimension, marker);
+		}
+		if (Minecraft.getMinecraft().currentScreen instanceof GuiAtlas) {
+			((GuiAtlas) Minecraft.getMinecraft().currentScreen).updateMarkerData();
 		}
 	}
 	

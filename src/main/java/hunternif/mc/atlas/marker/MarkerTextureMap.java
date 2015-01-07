@@ -2,13 +2,13 @@ package hunternif.mc.atlas.marker;
 
 import hunternif.mc.atlas.client.Textures;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+import net.minecraft.util.ResourceLocation;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-
-import net.minecraft.util.ResourceLocation;
 
 /**
  * Maps marker type to texture. <i>Not thread-safe!</i>
@@ -44,5 +44,9 @@ public enum MarkerTextureMap {
 	
 	Map<String, ResourceLocation> getMap() {
 		return map;
+	}
+	
+	public Collection<ResourceLocation> getAllTextures() {
+		return map.values();
 	}
 }
