@@ -1,6 +1,7 @@
 package hunternif.mc.atlas.client.gui;
 
 import java.util.List;
+import java.util.ListIterator;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import net.minecraft.client.Minecraft;
@@ -28,14 +29,27 @@ public class GuiComponent extends GuiScreen {
 	
 	/** The component's own size. */
 	protected int properWidth, properHeight;
+	/** The component's total calculated size, including itself and its children. */
 	protected int contentWidth, contentHeight;
 	/** If true, content size will be validated on the next update. */
 	private boolean sizeIsInvalid = false;
 	/** If true, this GUI will not be rendered. */
 	private boolean isClipped = false;
+	/** This flag is updated on every mouse event. */
+	protected boolean isMouseOver = false;
 	
+	/** If true, mouse actions will only affect this GUI and its children,
+	 * else they will only affect the in-game controller. */
 	private boolean interceptsMouse = true;
-	private boolean interceptsKeyboard = true;	
+	/** If true, pressing keyboard keys will affect this GUI, it's children,
+	 * and the in-game controller. */
+	private boolean interceptsKeyboard = true;
+	/** These flags are set temporarily when this GUI has finished handling
+	 * input and won't let the parent handle it, after which they are reset.
+	 * This won't prevent the sibling children of this GUI from handling input.*/
+	private boolean hasHandledKeyboard = false, hasHandledMouse = false;
+	/** If true, no input is handled by the parent or any sibling GUIs. */
+	private boolean blocksScreen = false;
 	
 	/** guiX and guiY are absolute coordinates on the screen. */
 	private int guiX = 0, guiY = 0;
@@ -115,7 +129,7 @@ public class GuiComponent extends GuiScreen {
 	
 	/** Adds the child component to this GUI's content and initializes it.
 	 * The child is placed at the top left corner of this component.
-	 * @return the child component. */
+	 * @return the child added. */
 	public GuiComponent addChild(GuiComponent child) {
 		if (child != null && !children.contains(child) && parent != child) {
 			children.add(child);
@@ -128,7 +142,7 @@ public class GuiComponent extends GuiScreen {
 		}
 		return child;
 	}
-	/** @return the child component. */
+	/** @return the child removed. */
 	public GuiComponent removeChild(GuiComponent child) {
 		if (child != null && children.contains(child)) {
 			child.parent = null;
@@ -150,14 +164,14 @@ public class GuiComponent extends GuiScreen {
 		return children;
 	}
 	
-	/** If true, mouse actions will only affect this GUI, else they will only
-	 * affect the in-game controller. */
+	/** If true, mouse actions will only affect this GUI and its children,
+	 * else they will only affect the in-game controller. */
 	public void setInterceptMouse(boolean value) {
 		this.interceptsMouse = value;
 		this.allowUserInput = !interceptsMouse | !interceptsKeyboard;
 	}
-	/** If true, pressing keyboard keys will only affect this GUI, else they
-	 * will only affect the in-game controller. Or both? */
+	/** If true, pressing keyboard keys will affect this GUI, it's children,
+	 * and the in-game controller. */
 	public void setInterceptKeyboard(boolean value) {
 		this.interceptsKeyboard = value;
 		this.allowUserInput = !interceptsMouse | !interceptsKeyboard;
@@ -165,6 +179,17 @@ public class GuiComponent extends GuiScreen {
 
 	@Override
 	public void handleInput() {
+		// Traverse children backwards, because the topmost child should be the
+		// first to process input:
+		ListIterator<GuiComponent> iter = children.listIterator(children.size());
+		while(iter.hasPrevious()) {
+			GuiComponent child = iter.previous();
+			if (child.blocksScreen) {
+				child.handleInput();
+				isMouseOver = false;
+				return;
+			}
+		}
 		if (interceptsMouse) {
 			while (Mouse.next()) {
 				this.handleMouseInput();
@@ -177,22 +202,64 @@ public class GuiComponent extends GuiScreen {
 		}
 	}
 	
+	/** Call this method from within {@link #handleMouseInput()} if the input
+	 * has been handled by this GUI and shouldn't be handled by its parents.
+	 * This won't prevent the sibling children of this GUI from handling input. */
+	protected void mouseHasBeenHandled() {
+		this.hasHandledMouse = true;
+	}
+	/** Call this method from within {@link #handleKeyboardInput()} if the input
+	 * has been handled by this GUI and shouldn't be handled by its parents.
+	 * This won't prevent the sibling children of this GUI from handling input. */
+	protected void keyboardHasBeenHandled() {
+		this.hasHandledKeyboard = true;
+	}
+	/** If true, no input is handled by the parent or any sibling GUIs. */
+	protected void setBlocksScreen(boolean value) {
+		this.blocksScreen = value;
+	}
+	
 	/** Handle mouse input for this GUI and its children. */
 	@Override
 	public void handleMouseInput() {
-		for (GuiComponent child : children) {
+		boolean handled = false;
+		isMouseOver = false;
+		// Traverse children backwards, because the topmost child should be the
+		// first to process input:
+		ListIterator<GuiComponent> iter = children.listIterator(children.size());
+		while(iter.hasPrevious()) {
+			GuiComponent child = iter.previous();
 			child.handleMouseInput();
+			if (child.hasHandledMouse) {
+				child.hasHandledMouse = false;
+				handled = true;
+			}
 		}
-		super.handleMouseInput();
+		if (!handled) {
+			isMouseOver = isMouseOver(Mouse.getX() * width / mc.displayWidth,
+					height - Mouse.getY() * height / mc.displayHeight - 1);
+			super.handleMouseInput();
+		}
 	}
 	
 	/** Handle keyboard input for this GUI and its children. */
 	@Override
 	public void handleKeyboardInput() {
-		for (GuiComponent child : children) {
+		boolean handled = false;
+		// Traverse children backwards, because the topmost child should be the
+		// first to process input:
+		ListIterator<GuiComponent> iter = children.listIterator(children.size());
+		while(iter.hasPrevious()) {
+			GuiComponent child = iter.previous();
 			child.handleKeyboardInput();
+			if (child.hasHandledKeyboard) {
+				child.hasHandledKeyboard = false;
+				handled = true;
+			}
 		}
-		super.handleKeyboardInput();
+		if (!handled) {
+			super.handleKeyboardInput();
+		}
 	}
 	
 	/** Render this GUI and its children. */
@@ -248,12 +315,12 @@ public class GuiComponent extends GuiScreen {
 	/** Width of the GUI or its contents. This method may be called often so it
 	 * should be fast. */
 	public int getWidth() {
-		return contentWidth;
+		return children.isEmpty() ? properWidth : contentWidth;
 	}
 	/** Height of the GUI or its contents. This method may be called often so it
 	 * should be fast. */
 	public int getHeight() {
-		return contentHeight;
+		return children.isEmpty() ? properHeight : contentHeight;
 	}
 	
 	/** If set to true, the parent of this GUI will not render it. */
@@ -384,7 +451,7 @@ public class GuiComponent extends GuiScreen {
 	}
 	
 	/** Returns true, if the mouse cursor is over this GUI. */
-	public boolean isMouseOver(int mouseX, int mouseY) {
+	private boolean isMouseOver(int mouseX, int mouseY) {
 		return mouseX >= guiX && mouseY >= guiY && mouseX < guiX + getWidth() && mouseY < guiY + getHeight();
 	}
 	

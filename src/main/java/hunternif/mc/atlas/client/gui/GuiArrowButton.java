@@ -48,7 +48,6 @@ public class GuiArrowButton extends GuiComponentButton {
 		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 		
 		int x = getGuiX(), y = getGuiY();
-		boolean isMouseOver = isMouseOver(mouseX, mouseY);
 		if (isMouseOver) {
 			GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 		} else {

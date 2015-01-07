@@ -48,7 +48,6 @@ public class GuiBookmarkButton extends GuiComponentButton {
 		RenderHelper.disableStandardItemLighting();
 		
 		// Render background:
-		boolean isMouseOver = isMouseOver(mouseX, mouseY);
 		int u = colorIndex * WIDTH;
 		int v = isMouseOver ? 0 : HEIGHT;
 		AtlasRenderHelper.drawTexturedRect(Textures.BOOKMARKS, getGuiX(), getGuiY(), u, v, WIDTH, HEIGHT, IMAGE_WIDTH, IMAGE_HEIGHT);

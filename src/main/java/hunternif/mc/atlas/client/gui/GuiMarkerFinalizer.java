@@ -3,7 +3,6 @@ package hunternif.mc.atlas.client.gui;
 import hunternif.mc.atlas.AntiqueAtlasMod;
 import hunternif.mc.atlas.api.AtlasAPI;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.resources.I18n;
@@ -28,15 +27,13 @@ public class GuiMarkerFinalizer extends GuiComponent {
 	private GuiButton btnCancel;
 	private GuiTextField textField;
 	
-	private FontRenderer font;
-	
 	public void setMarkerData(World world, int atlasID, int dimension, int markerX, int markerZ) {
 		this.world = world;
 		this.atlasID = atlasID;
 		this.dimension = dimension;
 		this.x = markerX;
 		this.z = markerZ;
-		font = Minecraft.getMinecraft().fontRenderer;
+		setBlocksScreen(true);
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -44,7 +41,7 @@ public class GuiMarkerFinalizer extends GuiComponent {
 	public void initGui() {
 		buttonList.add(btnDone = new GuiButton(0, this.width/2 - BUTTON_WIDTH - BUTTON_SPACING/2, this.height / 4 + 120, BUTTON_WIDTH, 20, I18n.format("gui.done")));
 		buttonList.add(btnCancel = new GuiButton(0, this.width/2 + BUTTON_SPACING/2, this.height / 4 + 120, BUTTON_WIDTH, 20, I18n.format("gui.cancel")));
-		textField = new GuiTextField(font, (this.width - 200)/2, this.height/2 - 40, 200, 20);
+		textField = new GuiTextField(Minecraft.getMinecraft().fontRenderer, (this.width - 200)/2, this.height/2 - 40, 200, 20);
 		textField.setFocused(true);
 		textField.setText("");
 	}

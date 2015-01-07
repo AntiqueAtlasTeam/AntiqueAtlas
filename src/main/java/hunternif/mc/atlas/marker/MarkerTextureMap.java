@@ -46,6 +46,10 @@ public enum MarkerTextureMap {
 		return map;
 	}
 	
+	public Collection<String> getAllTypes() {
+		return map.keySet();
+	}
+	
 	public Collection<ResourceLocation> getAllTextures() {
 		return map.values();
 	}

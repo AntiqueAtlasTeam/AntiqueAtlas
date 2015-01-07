@@ -10,8 +10,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.ResourceLocation;
 
-import org.lwjgl.opengl.GL11;
-
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
 
@@ -20,7 +18,7 @@ import com.google.common.collect.ImmutableMap.Builder;
  * Atlas style it is rendered at half-scale.
  */
 public class GuiScaleBar extends GuiComponent {
-	public static final int WIDTH = 40, HEIGHT = 16;
+	public static final int WIDTH = 20, HEIGHT = 8;
 	
 	private static Map<Double, ResourceLocation> textureMap;
 	{
@@ -61,15 +59,11 @@ public class GuiScaleBar extends GuiComponent {
 	public void drawScreen(int mouseX, int mouseY, float partialTick) {
 		ResourceLocation texture = getTexture();
 		if (texture == null) return;
-		GL11.glPushMatrix();
-		GL11.glScaled(0.5, 0.5, 1);
 		
-		AtlasRenderHelper.drawFullTexture(texture, getGuiX()*2, getGuiY()*2, WIDTH, HEIGHT);
+		AtlasRenderHelper.drawFullTexture(texture, getGuiX(), getGuiY(), WIDTH, HEIGHT);
 		
-		if (isMouseOver(mouseX, mouseY)) {
+		if (isMouseOver) {
 			drawTopLevelHoveringText(Arrays.asList(I18n.format("gui.antiqueatlas.scalebar")), mouseX, mouseY, Minecraft.getMinecraft().fontRenderer);
 		}
-		
-		GL11.glPopMatrix();
 	}
 }

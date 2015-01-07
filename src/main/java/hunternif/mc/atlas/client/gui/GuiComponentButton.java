@@ -34,7 +34,7 @@ public class GuiComponentButton extends GuiComponent {
 	@Override
 	protected void mouseClicked(int x, int y, int mouseButton) {
 		super.mouseClicked(x, y, mouseButton);
-		if (mouseButton == 0 /*left-click*/ && enabled && isMouseOver(x, y)) {
+		if (mouseButton == 0 /*left-click*/ && enabled && isMouseOver) {
 			onClick();
 		}
 	}

@@ -7,7 +7,7 @@ import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
 
 public class AtlasRenderHelper {
-	public static void drawTexturedRect(ResourceLocation texture, double x, double y, int u, int v, int width, int height, int imageWidth, int imageHeight, double scale) {
+	public static void drawTexturedRect(ResourceLocation texture, double x, double y, int u, int v, int width, int height, int imageWidth, int imageHeight, double scaleX, double scaleY) {
 		Minecraft.getMinecraft().renderEngine.bindTexture(texture);
 		double minU = (double)u / (double)imageWidth;
 		double maxU = (double)(u + width) / (double)imageWidth;
@@ -15,23 +15,23 @@ public class AtlasRenderHelper {
 		double maxV = (double)(v + height) / (double)imageHeight;
 		Tessellator tessellator = Tessellator.instance;
 		tessellator.startDrawingQuads();
-		tessellator.addVertexWithUV(x + scale*(double)width, y + scale*(double)height, 0, maxU, maxV);
-		tessellator.addVertexWithUV(x + scale*(double)width, y, 0, maxU, minV);
+		tessellator.addVertexWithUV(x + scaleX*(double)width, y + scaleY*(double)height, 0, maxU, maxV);
+		tessellator.addVertexWithUV(x + scaleX*(double)width, y, 0, maxU, minV);
 		tessellator.addVertexWithUV(x, y, 0, minU, minV);
-		tessellator.addVertexWithUV(x, y + scale*(double)height, 0, minU, maxV);
+		tessellator.addVertexWithUV(x, y + scaleY*(double)height, 0, minU, maxV);
 		tessellator.draw();
 	}
 	
 	public static void drawTexturedRect(ResourceLocation texture, double x, double y, int u, int v, int width, int height, int imageWidth, int imageHeight) {
-		drawTexturedRect(texture, x, y, u, v, width, height, imageWidth, imageHeight, 1);
+		drawTexturedRect(texture, x, y, u, v, width, height, imageWidth, imageHeight, 1, 1);
 	}
 	
-	public static void drawFullTexture(ResourceLocation texture, double x, double y, int width, int height, double scale) {
-		drawTexturedRect(texture, x, y, 0, 0, width, height, width, height, scale);
+	public static void drawFullTexture(ResourceLocation texture, double x, double y, int width, int height, double scaleX, double scaleY) {
+		drawTexturedRect(texture, x, y, 0, 0, width, height, width, height, scaleX, scaleY);
 	}
 	
 	public static void drawFullTexture(ResourceLocation texture, double x, double y, int width, int height) {
-		drawFullTexture(texture, x, y, width, height, 1);
+		drawFullTexture(texture, x, y, width, height, 1, 1);
 	}
 	
 	public static void drawAutotileCorner(ResourceLocation texture, int x, int y, int u, int v, int tileHalfSize) {
