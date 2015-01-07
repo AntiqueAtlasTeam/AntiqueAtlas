@@ -1,7 +1,7 @@
 item.antiqueAtlas.name=Старинный атлас
 item.emptyAntiqueAtlas.name=Пустой старинный атлас
 
-gui.antiqueatlas.scalebar=Блоков
+gui.antiqueatlas.scalebar=Масштаб в блоках
 gui.antiqueatlas.enterLabel=Текст метки:
 gui.antiqueatlas.addMarker=Добавить метку
 gui.antiqueatlas.followPlayer=Привязать к игроку
@@ -10,3 +10,4 @@ gui.antiqueatlas.export.opening=Открывается диалоговое ок
 gui.antiqueatlas.export.selectFile=Укажите PNG файл, куда сохранять изображение карты
 gui.antiqueatlas.export.rendering=Отрисовка...
 gui.antiqueatlas.export.writing=Запись в файл...
+gui.antiqueatlas.village=Деревня

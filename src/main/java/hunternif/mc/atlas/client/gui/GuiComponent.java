@@ -26,8 +26,9 @@ public class GuiComponent extends GuiScreen {
 	private GuiComponent parent = null;
 	private final List<GuiComponent> children = new CopyOnWriteArrayList<GuiComponent>();
 	
-	protected int contentWidth;
-	protected int contentHeight;
+	/** The component's own size. */
+	protected int properWidth, properHeight;
+	protected int contentWidth, contentHeight;
 	/** If true, content size will be validated on the next update. */
 	private boolean sizeIsInvalid = false;
 	/** If true, this GUI will not be rendered. */
@@ -103,6 +104,13 @@ public class GuiComponent extends GuiScreen {
 	/** Y coordinate relative to the parent's top left corner. */
 	public int getRelativeY() {
 		return parent == null ? guiY : (guiY - parent.guiY);
+	}
+	
+	/** Set this component's own size. This shouldn't affect the size or position of the children. */
+	public void setSize(int width, int height) {
+		this.properWidth = width;
+		this.properHeight = height;
+		invalidateSize();
 	}
 	
 	/** Adds the child component to this GUI's content and initializes it.
@@ -285,8 +293,8 @@ public class GuiComponent extends GuiScreen {
 				bottommost = y + childHeight;
 			}
 		}
-		contentWidth = Math.max(0, rightmost - leftmost);
-		contentHeight = Math.max(0, bottommost - topmost);
+		contentWidth = Math.max(properWidth, rightmost - leftmost);
+		contentHeight = Math.max(properHeight, bottommost - topmost);
 		sizeIsInvalid = false;
 	}
 	

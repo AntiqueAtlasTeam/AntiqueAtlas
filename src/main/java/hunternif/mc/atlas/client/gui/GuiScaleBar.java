@@ -1,9 +1,12 @@
 package hunternif.mc.atlas.client.gui;
 
-import java.util.Map;
-
 import hunternif.mc.atlas.client.Textures;
 import hunternif.mc.atlas.util.AtlasRenderHelper;
+
+import java.util.Arrays;
+import java.util.Map;
+
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.ResourceLocation;
 
@@ -17,7 +20,7 @@ import com.google.common.collect.ImmutableMap.Builder;
  * Atlas style it is rendered at half-scale.
  */
 public class GuiScaleBar extends GuiComponent {
-	public static final int WIDTH = 40, HEIGHT = 24;
+	public static final int WIDTH = 40, HEIGHT = 16;
 	
 	private static Map<Double, ResourceLocation> textureMap;
 	{
@@ -35,6 +38,10 @@ public class GuiScaleBar extends GuiComponent {
 	
 	/** Pixel-to-block ratio. */
 	private double mapScale = 1;
+	
+	public GuiScaleBar() {
+		setSize(WIDTH, HEIGHT);
+	}
 	
 	public void setMapScale(double scale) {
 		this.mapScale = scale;
@@ -56,15 +63,13 @@ public class GuiScaleBar extends GuiComponent {
 		if (texture == null) return;
 		GL11.glPushMatrix();
 		GL11.glScaled(0.5, 0.5, 1);
+		
 		AtlasRenderHelper.drawFullTexture(texture, getGuiX()*2, getGuiY()*2, WIDTH, HEIGHT);
-		if (fontRendererObj.getUnicodeFlag()) {
-			// If the font is "small", don't downscale it:
-			GL11.glPopMatrix();
-			fontRendererObj.drawString(I18n.format("gui.antiqueatlas.scalebar"), getGuiX() - 1, getGuiY() - 1, 0x000000);
-			//TODO: it doesn't actually fit!
-		} else {
-			fontRendererObj.drawString(I18n.format("gui.antiqueatlas.scalebar"), getGuiX()*2 + 3, getGuiY()*2 + 3, 0x000000);
-			GL11.glPopMatrix();
+		
+		if (isMouseOver(mouseX, mouseY)) {
+			drawTopLevelHoveringText(Arrays.asList(I18n.format("gui.antiqueatlas.scalebar")), mouseX, mouseY, Minecraft.getMinecraft().fontRenderer);
 		}
+		
+		GL11.glPopMatrix();
 	}
 }

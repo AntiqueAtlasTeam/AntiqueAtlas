@@ -213,7 +213,7 @@ public class GuiAtlas extends GuiComponent {
 			}
 		});
 		
-		addChild(scaleBar).offsetGuiCoords(20, 190);
+		addChild(scaleBar).offsetGuiCoords(20, 198);
 		scaleBar.setMapScale(1);
 	}
 	

@@ -8,6 +8,7 @@ public class Textures {
 	public static final String GUI = MOD_PREFIX + "textures/gui/";
 	public static final String GUI_TILES = GUI + "tiles/";
 	public static final String GUI_MARKERS = GUI + "markers/";
+	public static final String GUI_SCALEBAR = GUI + "scalebar/";
 	
 	public static final ResourceLocation BOOK = new ResourceLocation(GUI + "book.png");
 	public static final ResourceLocation EXPORTED_BG = new ResourceLocation(GUI + "exportedBG.png");
@@ -17,14 +18,14 @@ public class Textures {
 	public static final ResourceLocation BOOKMARKS = new ResourceLocation(GUI + "bookmarks.png");
 	public static final ResourceLocation PLAYER = new ResourceLocation(GUI + "player.png");
 	
-	public static final ResourceLocation SCALEBAR_4 = new ResourceLocation(GUI + "scalebar_4.png");
-	public static final ResourceLocation SCALEBAR_8 = new ResourceLocation(GUI + "scalebar_8.png");
-	public static final ResourceLocation SCALEBAR_16 = new ResourceLocation(GUI + "scalebar_16.png");
-	public static final ResourceLocation SCALEBAR_32 = new ResourceLocation(GUI + "scalebar_32.png");
-	public static final ResourceLocation SCALEBAR_64 = new ResourceLocation(GUI + "scalebar_64.png");
-	public static final ResourceLocation SCALEBAR_128 = new ResourceLocation(GUI + "scalebar_128.png");
-	public static final ResourceLocation SCALEBAR_256 = new ResourceLocation(GUI + "scalebar_256.png");
-	public static final ResourceLocation SCALEBAR_512 = new ResourceLocation(GUI + "scalebar_512.png");
+	public static final ResourceLocation SCALEBAR_4 = new ResourceLocation(GUI_SCALEBAR + "scalebar_4.png");
+	public static final ResourceLocation SCALEBAR_8 = new ResourceLocation(GUI_SCALEBAR + "scalebar_8.png");
+	public static final ResourceLocation SCALEBAR_16 = new ResourceLocation(GUI_SCALEBAR + "scalebar_16.png");
+	public static final ResourceLocation SCALEBAR_32 = new ResourceLocation(GUI_SCALEBAR + "scalebar_32.png");
+	public static final ResourceLocation SCALEBAR_64 = new ResourceLocation(GUI_SCALEBAR + "scalebar_64.png");
+	public static final ResourceLocation SCALEBAR_128 = new ResourceLocation(GUI_SCALEBAR + "scalebar_128.png");
+	public static final ResourceLocation SCALEBAR_256 = new ResourceLocation(GUI_SCALEBAR + "scalebar_256.png");
+	public static final ResourceLocation SCALEBAR_512 = new ResourceLocation(GUI_SCALEBAR + "scalebar_512.png");
 	
 	public static final ResourceLocation ICON_EXPORT = new ResourceLocation(GUI + "icon_export.png");
 	public static final ResourceLocation ICON_MARKER = new ResourceLocation(GUI + "icon_marker.png");

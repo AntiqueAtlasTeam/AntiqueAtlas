@@ -15,7 +15,6 @@ public class GuiComponentButton extends GuiComponent {
 	
 	private boolean enabled = true;
 	private ResourceLocation clickSound = DEFAULT_CLICK_SOUND;
-	protected int buttonWidth, buttonHeight;
 	
 	public void setEnabled(boolean value) {
 		enabled = value;
@@ -56,26 +55,5 @@ public class GuiComponentButton extends GuiComponent {
 	}
 	public void removeListener(IButtonListener listener) {
 		listeners.remove(listener);
-	}
-	
-	public void setSize(int width, int height) {
-		setWidth(width);
-		setHeight(height);
-	}
-	
-	public void setWidth(int value) {
-		this.buttonWidth = value;
-	}
-	@Override
-	public int getWidth() {
-		return buttonWidth;
-	}
-	
-	public void setHeight(int value) {
-		this.buttonHeight = value;
-	}
-	@Override
-	public int getHeight() {
-		return buttonHeight;
 	}
 }
