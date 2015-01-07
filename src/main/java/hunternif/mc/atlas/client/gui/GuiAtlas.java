@@ -475,6 +475,10 @@ public class GuiAtlas extends GuiComponent {
 				markerY < getGuiY() || markerY > getGuiY() + HEIGHT) {
 				continue;
 			}
+			if (!marker.isVisibleAhead() && !data.getDimensionData(player.dimension)
+					.hasTileAt(marker.getX() >> 4, marker.getY() >> 4)) {
+				continue;
+			}
 			AtlasRenderHelper.drawFullTexture(
 					MarkerTextureMap.instance().getTexture(marker.getType()),
 					markerX - (double)MARKER_ICON_WIDTH/2,

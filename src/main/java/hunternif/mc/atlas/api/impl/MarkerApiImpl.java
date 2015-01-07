@@ -28,8 +28,8 @@ public class MarkerApiImpl implements MarkerAPI {
 	}
 	
 	@Override
-	public void putMarker(World world, int dimension, int atlasID, String markerType, String label, int x, int z) {
-		Marker marker = new Marker(markerType, label, x, z);
+	public void putMarker(World world, int dimension, boolean visibleAhead, int atlasID, String markerType, String label, int x, int z) {
+		Marker marker = new Marker(markerType, label, x, z, visibleAhead);
 		MarkersPacket packet = new MarkersPacket(atlasID, dimension, marker);
 		if (!world.isRemote) {
 			MarkersData data = AntiqueAtlasMod.itemAtlas.getMarkersData(atlasID, world);
@@ -46,8 +46,8 @@ public class MarkerApiImpl implements MarkerAPI {
 	}
 
 	@Override
-	public void putGlobalMarker(World world, int dimension, String markerType, String label, int x, int z) {
-		Marker marker = new Marker(markerType, label, x, z);
+	public void putGlobalMarker(World world, int dimension, boolean visibleAhead, String markerType, String label, int x, int z) {
+		Marker marker = new Marker(markerType, label, x, z, visibleAhead);
 		GlobalMarkersPacket packet = new GlobalMarkersPacket(dimension, marker);
 		if (!world.isRemote) {
 			MarkersData data = AntiqueAtlasMod.globalMarkersData.getData();

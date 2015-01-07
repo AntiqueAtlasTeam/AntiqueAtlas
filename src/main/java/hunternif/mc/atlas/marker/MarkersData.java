@@ -31,7 +31,7 @@ import com.google.common.collect.SortedSetMultimap;
  * @author Hunternif
  */
 public class MarkersData extends WorldSavedData {
-	private static final int VERSION = 1;
+	private static final int VERSION = 2;
 	private static final String TAG_VERSION = "aaVersion";
 	private static final String TAG_DIMENSION_MAP_LIST = "dimMap";
 	private static final String TAG_DIMENSION_ID = "dimID";
@@ -40,6 +40,7 @@ public class MarkersData extends WorldSavedData {
 	private static final String TAG_MARKER_LABEL = "label";
 	private static final String TAG_MARKER_X = "x";
 	private static final String TAG_MARKER_Y = "y";
+	private static final String TAG_MARKER_VISIBLE_AHEAD = "visAh";
 	
 	private static final Supplier<SortedSet<Marker>> concurrentSortedSetSupplier = new Supplier<SortedSet<Marker>>() {
 		@Override
@@ -73,7 +74,7 @@ public class MarkersData extends WorldSavedData {
 	public void readFromNBT(NBTTagCompound compound) {
 		int version = compound.getInteger(TAG_VERSION);
 		if (version < VERSION) {
-			AntiqueAtlasMod.logger.warn("Outdated atlas data format!");
+			AntiqueAtlasMod.logger.warn("Outdated atlas data format! Was %d but current is %d", version, VERSION);
 			this.markDirty();
 		}
 		NBTTagList dimensionMapList = compound.getTagList(TAG_DIMENSION_MAP_LIST, Constants.NBT.TAG_COMPOUND);
@@ -84,11 +85,18 @@ public class MarkersData extends WorldSavedData {
 			NBTTagList tagList = tag.getTagList(TAG_MARKERS, Constants.NBT.TAG_COMPOUND);
 			for (int i = 0; i < tagList.tagCount(); i++) {
 				NBTTagCompound markerTag = tagList.getCompoundTagAt(i);
+				boolean visibleAhead = true;
+				if (version < 2) {
+					AntiqueAtlasMod.logger.warn("Marker is visible ahead by default");
+				} else {
+					visibleAhead = markerTag.getBoolean(TAG_MARKER_VISIBLE_AHEAD);
+				}
 				Marker marker = new Marker(
 						markerTag.getString(TAG_MARKER_TYPE),
 						markerTag.getString(TAG_MARKER_LABEL),
 						markerTag.getInteger(TAG_MARKER_X),
-						markerTag.getInteger(TAG_MARKER_Y));
+						markerTag.getInteger(TAG_MARKER_Y),
+						visibleAhead);
 				markers.put(marker.getChunkCoords(), marker);
 			}
 		}
@@ -109,6 +117,7 @@ public class MarkersData extends WorldSavedData {
 				markerTag.setString(TAG_MARKER_LABEL, marker.getLabel());
 				markerTag.setInteger(TAG_MARKER_X, marker.getX());
 				markerTag.setInteger(TAG_MARKER_Y, marker.getY());
+				markerTag.setBoolean(TAG_MARKER_VISIBLE_AHEAD, marker.isVisibleAhead());
 				tagList.appendTag(markerTag);
 			}
 			tag.setTag(TAG_MARKERS, tagList);

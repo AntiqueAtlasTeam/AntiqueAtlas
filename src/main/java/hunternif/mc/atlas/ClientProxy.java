@@ -114,6 +114,7 @@ public class ClientProxy extends CommonProxy {
 		changed |= api.setTextureIfNone("google", Textures.MARKER_GOOGLE_MARKER);
 		changed |= api.setTextureIfNone("red_x_large", Textures.MARKER_RED_X_LARGE);
 		changed |= api.setTextureIfNone("red_x_small", Textures.MARKER_RED_X_SMALL);
+		changed |= api.setTextureIfNone("village", Textures.MARKER_VILLAGE);
 		return changed;
 	}
 	

@@ -33,6 +33,8 @@ public interface MarkerAPI {
 	 * on the client.
 	 * @param world
 	 * @param dimension
+	 * @param visibleAhead	whether the marker should appear visible even if
+	 * 						the player hasn't yet discovered that area.
 	 * @param atlasID		the ID of the atlas you want to put marker in. Equal
 	 * 						to ItemStack damage for ItemAtlas.
 	 * @param markerType	name of your custom marker type.
@@ -40,11 +42,21 @@ public interface MarkerAPI {
 	 * @param x				block coordinate
 	 * @param z				block coordinate
 	 */
-	void putMarker(World world, int dimension, int atlasID, String markerType, String label, int x, int z);
+	void putMarker(World world, int dimension, boolean visibleAhead,
+			int atlasID, String markerType, String label, int x, int z);
 	
 	/**
-	 * Works similarly to {@link #putMarker(World, int, String, String, int, int)},
-	 * but puts the marker into all atlases in the specified world.
+	 * Put a marker in all atlases in the world at specified block coordinates.
+	 * Call this method per one marker either on the server or on the client.
+	 * @param world
+	 * @param dimension
+	 * @param visibleAhead	whether the marker should appear visible even if
+	 * 						the player hasn't yet discovered that area.
+	 * @param markerType	name of your custom marker type.
+	 * @param label			text label to be displayed on mouseover.
+	 * @param x				block coordinate
+	 * @param z				block coordinate
 	 */
-	void putGlobalMarker(World world, int dimension, String markerType, String label, int x, int z);
+	void putGlobalMarker(World world, int dimension, boolean visibleAhead,
+			String markerType, String label, int x, int z);
 }

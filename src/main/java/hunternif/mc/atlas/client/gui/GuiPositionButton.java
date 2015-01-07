@@ -39,7 +39,7 @@ public class GuiPositionButton extends GuiComponentButton {
 			GL11.glDisable(GL11.GL_BLEND);
 			
 			if (isMouseOver) {
-				drawTopLevelHoveringText(Arrays.asList(I18n.format("gui.antiqueatlas.resetPos")), mouseX, mouseY, Minecraft.getMinecraft().fontRenderer);
+				drawTopLevelHoveringText(Arrays.asList(I18n.format("gui.antiqueatlas.followPlayer")), mouseX, mouseY, Minecraft.getMinecraft().fontRenderer);
 			}
 		}
 	}

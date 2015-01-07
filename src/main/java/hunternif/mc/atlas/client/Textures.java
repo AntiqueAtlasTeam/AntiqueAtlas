@@ -32,6 +32,7 @@ public class Textures {
 	public static final ResourceLocation MARKER_GOOGLE_MARKER = new ResourceLocation(GUI_MARKERS + "google_marker.png");
 	public static final ResourceLocation MARKER_RED_X_LARGE = new ResourceLocation(GUI_MARKERS + "red_x_large.png");
 	public static final ResourceLocation MARKER_RED_X_SMALL = new ResourceLocation(GUI_MARKERS + "red_x_small.png");
+	public static final ResourceLocation MARKER_VILLAGE = new ResourceLocation(GUI_MARKERS + "village.png");
 	
 	public static final ResourceLocation TILE_TEST = new ResourceLocation(GUI_TILES + "test.png");
 	public static final ResourceLocation TILE_MOUNTAINS = new ResourceLocation(GUI_TILES + "mountains.png");

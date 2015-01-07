@@ -63,7 +63,7 @@ public class GuiMarkerFinalizer extends GuiComponent {
 	
 	protected void actionPerformed(GuiButton button) {
 		if (button == btnDone) {
-			AtlasAPI.getMarkerAPI().putMarker(world, dimension, atlasID, defaultMarker, textField.getText(), x, z);
+			AtlasAPI.getMarkerAPI().putMarker(world, dimension, true, atlasID, defaultMarker, textField.getText(), x, z);
 			AntiqueAtlasMod.logger.info("Put marker in Atlas #" + atlasID + " \"" + textField.getText() + "\" at (" + x + ", " + z + ")");
 			close();
 		} else if (button == btnCancel) {

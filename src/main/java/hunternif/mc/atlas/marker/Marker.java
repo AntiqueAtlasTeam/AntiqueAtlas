@@ -12,13 +12,15 @@ public class Marker implements Comparable<Marker> {
 	private final String type;
 	private final String label;
 	private final int x, y;
+	private final boolean visibleAhead;
 	//TODO: Marker should know its dimension
 	
-	public Marker(String type, String label, int x, int y) {
+	public Marker(String type, String label, int x, int y, boolean visibleAhead) {
 		this.type = type;
 		this.label = label == null ? "" : label;
 		this.x = x;
 		this.y = y;
+		this.visibleAhead = visibleAhead;
 	}
 
 	public String getType() {
@@ -46,6 +48,11 @@ public class Marker implements Comparable<Marker> {
 	public int getInChunkY() {
 		return y & 0xf;
 	}
+	
+	/** Whether the marker is visible regardless of the player having seen the location. */
+	public boolean isVisibleAhead() {
+		return visibleAhead;
+	}
 
 	@Override
 	public int compareTo(Marker marker) {
@@ -56,7 +63,7 @@ public class Marker implements Comparable<Marker> {
 	public boolean equals(Object obj) {
 		if (!(obj instanceof Marker)) return false;
 		Marker marker = (Marker) obj;
-		return type.equals(marker.type) && label.equals(marker.label) && x == marker.x && y == marker.y;
+		return type.equals(marker.type) && label.equals(marker.label) && x == marker.x && y == marker.y && visibleAhead == marker.visibleAhead;
 	}
 	
 	/** Returns the coordinates of the chunk this marker is located in. */

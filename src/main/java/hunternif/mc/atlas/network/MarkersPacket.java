@@ -53,6 +53,7 @@ public class MarkersPacket extends ModExecPacket {
 				ByteBufUtils.writeUTF8String(buffer, marker.getLabel());
 				buffer.writeInt(marker.getX());
 				buffer.writeInt(marker.getY());
+				buffer.writeBoolean(marker.isVisibleAhead());
 			}
 		}
 	}
@@ -66,7 +67,7 @@ public class MarkersPacket extends ModExecPacket {
 			String type = ByteBufUtils.readUTF8String(buffer);
 			int markersLength = buffer.readShort();
 			for (int j = 0; j < markersLength; j++) {
-				Marker marker = new Marker(type, ByteBufUtils.readUTF8String(buffer), buffer.readInt(), buffer.readInt());
+				Marker marker = new Marker(type, ByteBufUtils.readUTF8String(buffer), buffer.readInt(), buffer.readInt(), buffer.readBoolean());
 				markersByType.put(type, marker);
 			}
 		}

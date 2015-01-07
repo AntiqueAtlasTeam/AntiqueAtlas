@@ -6,9 +6,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import net.minecraft.util.StatCollector;
 import net.minecraft.village.Village;
 import net.minecraft.village.VillageCollection;
-import net.minecraft.village.VillageDoorInfo;
 import net.minecraft.world.World;
 import net.minecraftforge.event.terraingen.PopulateChunkEvent;
 import net.minecraftforge.event.world.WorldEvent;
@@ -49,7 +49,13 @@ public class VillageWatcher {
 	}
 	
 	public void visitVillage(World world, Village village) {
-		// Cover village territory:
+		// Using markers proved to look better than custom tiles, and you don't lose them to scaling.
+		AtlasAPI.getMarkerAPI().putGlobalMarker(world, 0, false, "village",
+				StatCollector.translateToLocal("gui.antiqueatlas.village"),
+				village.getCenter().posX, village.getCenter().posZ);
+		// Old code, using custom pseudo-biome tiles.
+		/*
+		 * // Cover village territory:
 		for (int dx = -village.getVillageRadius(); dx <= village.getVillageRadius(); dx += 16) {
 			for (int dz = -village.getVillageRadius(); dz <= village.getVillageRadius(); dz += 16) {
 				// Fill only the inside of the circle:
@@ -65,7 +71,8 @@ public class VillageWatcher {
 		for (Object doorInfo : village.getVillageDoorInfoList()) {
 			VillageDoorInfo door = (VillageDoorInfo) doorInfo;
 			AtlasAPI.getTileAPI().putCustomTile(world, 0, ExtTileIdMap.TILE_VILLAGE_HOUSE, door.posX >> 4, door.posZ >> 4);
-			visited.add(village);
 		}
+		*/
+		visited.add(village);
 	}
 }

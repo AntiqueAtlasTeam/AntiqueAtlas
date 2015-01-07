@@ -42,7 +42,7 @@ public class AtlasData extends WorldSavedData {
 	public void readFromNBT(NBTTagCompound compound) {
 		int version = compound.getInteger(TAG_VERSION);
 		if (version < VERSION) {
-			AntiqueAtlasMod.logger.warn("Outdated atlas data format!");
+			AntiqueAtlasMod.logger.warn("Outdated atlas data format! Was %d but current is %d", version, VERSION);
 			this.markDirty();
 		}
 		NBTTagList dimensionMapList = compound.getTagList(TAG_DIMENSION_MAP_LIST, Constants.NBT.TAG_COMPOUND);
