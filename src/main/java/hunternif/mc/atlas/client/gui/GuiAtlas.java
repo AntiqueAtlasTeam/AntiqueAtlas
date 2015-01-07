@@ -47,7 +47,7 @@ public class GuiAtlas extends GuiComponent {
 	private static final int MARKER_ICON_WIDTH = 32;
 	private static final int MARKER_ICON_HEIGHT = 32;
 	/** The radius of the area in which the marker will display hovering label. */
-	private static final int MARKER_RADIUS = 4;
+	private static final int MARKER_RADIUS = 7;
 	
 	private static final double MAX_SCALE = 4;
 	private static final double MIN_SCALE = 1.0 / 32.0;
@@ -496,6 +496,7 @@ public class GuiAtlas extends GuiComponent {
 		GL11.glDisable(GL11.GL_SCISSOR_TEST);
 		
 		// Overlay the frame so that edges of the map are smooth:
+		GL11.glColor4f(1, 1, 1, 1);
 		AtlasRenderHelper.drawFullTexture(Textures.BOOK_FRAME, getGuiX(), getGuiY(), WIDTH, HEIGHT);
 		
 		// Draw player icon:
