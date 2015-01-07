@@ -141,8 +141,8 @@ public class MarkersData extends WorldSavedData {
 	}
 	
 	/** Use the {@link MarkerAPI} to put markers! */
-	public void putMarker(int dimension, Marker marker) {
-		getMarkersDataInDimension(dimension).put(marker.getChunkCoords(), marker);
+	public boolean putMarker(int dimension, Marker marker) {
+		return getMarkersDataInDimension(dimension).put(marker.getChunkCoords(), marker);
 	}
 	
 	public boolean isSyncedOnPlayer(EntityPlayer player) {

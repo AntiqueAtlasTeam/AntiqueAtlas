@@ -1,6 +1,7 @@
 package hunternif.mc.atlas.marker;
 
 import net.minecraftforge.event.world.WorldEvent;
+import cpw.mods.fml.common.eventhandler.EventPriority;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
 
@@ -13,7 +14,7 @@ public class GlobalMarkersDataHandler {
 	
 	private GlobalMarkersData data;
 	
-	@SubscribeEvent
+	@SubscribeEvent(priority=EventPriority.HIGHEST)
 	public void onWorldLoad(WorldEvent.Load event) {
 		if (!event.world.isRemote) {
 			data = (GlobalMarkersData) event.world.loadItemData(GlobalMarkersData.class, DATA_KEY);

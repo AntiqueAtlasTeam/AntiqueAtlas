@@ -47,8 +47,12 @@ public class MarkerApiImpl implements MarkerAPI {
 
 	@Override
 	public void putGlobalMarker(World world, int dimension, String markerType, String label, int x, int z) {
-		GlobalMarkersPacket packet = new GlobalMarkersPacket(dimension, new Marker(markerType, label, x, z));
+		Marker marker = new Marker(markerType, label, x, z);
+		GlobalMarkersPacket packet = new GlobalMarkersPacket(dimension, marker);
 		if (!world.isRemote) {
+			MarkersData data = AntiqueAtlasMod.globalMarkersData.getData();
+			data.putMarker(dimension, marker);
+			data.markDirty();
 			AntiqueAtlasMod.packetPipeline.sendToWorld(packet, world);
 		} else {
 			AntiqueAtlasMod.packetPipeline.sendToServer(packet);
