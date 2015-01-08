@@ -138,16 +138,48 @@ public class GuiComponent extends GuiScreen {
 	 * The child is placed at the top left corner of this component.
 	 * @return the child added. */
 	public GuiComponent addChild(GuiComponent child) {
-		if (child != null && !children.contains(child) && parent != child) {
-			children.add(child);
-			child.parent = this;
-			child.setGuiCoords(guiX, guiY);
-			if (mc != null) {
-				child.setWorldAndResolution(mc, width, height);
-			}
-			invalidateSize();
-		}
+		doAddChild(null, child, null);
 		return child;
+	}
+	/** Adds the child component to this GUI's content and initializes it.
+	 * The child is placed in the list immediately after the specified child,
+	 * which is equivalent to putting it in front of that child in Z-order.
+	 * The child is placed at the top left corner of this component.
+	 * @return the child added. */
+	public GuiComponent addChildInfrontOf(GuiComponent inFrontOf, GuiComponent child) {
+		doAddChild(inFrontOf, child, null);
+		return child;
+	}
+	/** Adds the child component to this GUI's content and initializes it.
+	 * The child is placed in the list immediately before the specified child,
+	 * which is equivalent to putting it behind that child in Z-order.
+	 * The child is placed at the top left corner of this component.
+	 * @return the child added. */
+	public GuiComponent addChildBehind(GuiComponent behind, GuiComponent child) {
+		doAddChild(null, child, behind);
+		return child;
+	}
+	private void doAddChild(GuiComponent inFrontOf, GuiComponent child, GuiComponent behind) {
+		if (child == null || children.contains(child) || parent == child) {
+			return;
+		}
+		int i = children.indexOf(inFrontOf);
+		if (i == -1) {
+			int j = children.indexOf(behind);
+			if (j == -1) {
+				children.add(child);
+			} else {
+				children.add(j, child);
+			}
+		} else {
+			children.add(i + 1, child);
+		}
+		child.parent = this;
+		child.setGuiCoords(guiX, guiY);
+		if (mc != null) {
+			child.setWorldAndResolution(mc, width, height);
+		}
+		invalidateSize();
 	}
 	/** @return the child removed. */
 	public GuiComponent removeChild(GuiComponent child) {

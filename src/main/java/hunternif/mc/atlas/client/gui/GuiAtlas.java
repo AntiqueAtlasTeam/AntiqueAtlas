@@ -44,8 +44,7 @@ public class GuiAtlas extends GuiComponent {
 	private static final int PLAYER_ICON_WIDTH = 7;
 	private static final int PLAYER_ICON_HEIGHT = 8;
 	
-	private static final int MARKER_ICON_WIDTH = 32;
-	private static final int MARKER_ICON_HEIGHT = 32;
+	public static final int MARKER_SIZE = 32;
 	/** The radius of the area in which the marker will display hovering label. */
 	private static final int MARKER_RADIUS = 7;
 	
@@ -138,6 +137,8 @@ public class GuiAtlas extends GuiComponent {
 	private boolean isEnteringMarkerLabel = false;
 	
 	private GuiMarkerFinalizer markerFinalizer = new GuiMarkerFinalizer();
+	/** Displayed where the marker is about to be placed when the Finalizer GUI is on. */
+	private GuiBlinkingMarker blinkingIcon = new GuiBlinkingMarker();
 	
 	// Misc stuff ==============================================================
 	
@@ -216,6 +217,8 @@ public class GuiAtlas extends GuiComponent {
 		
 		addChild(scaleBar).offsetGuiCoords(20, 198);
 		scaleBar.setMapScale(1);
+		
+		markerFinalizer.addListener(blinkingIcon);
 	}
 	
 	public GuiAtlas setAtlasItemStack(ItemStack stack) {
@@ -254,6 +257,14 @@ public class GuiAtlas extends GuiComponent {
 							stack.getItemDamage(), player.dimension,
 							screenXToWorldX(mouseX), screenYToWorldZ(mouseY));
 					addChild(markerFinalizer);
+					
+					blinkingIcon.setTexture(MarkerTextureMap.INSTANCE
+							.getTexture(markerFinalizer.selectedType),
+							MARKER_SIZE, MARKER_SIZE);
+					addChildBehind(markerFinalizer, blinkingIcon)
+						.setRelativeCoords(mouseX - getGuiX() - MARKER_SIZE/2,
+										   mouseY - getGuiY() - MARKER_SIZE/2);
+					
 					// Need to intercept keyboard events to type in the label:
 					//TODO: BUG: player walks infinitely in the same direction,
 					// if he was moving when he placed the marker. 
@@ -485,9 +496,9 @@ public class GuiAtlas extends GuiComponent {
 			}
 			AtlasRenderHelper.drawFullTexture(
 					MarkerTextureMap.instance().getTexture(marker.getType()),
-					markerX - (double)MARKER_ICON_WIDTH/2,
-					markerY - (double)MARKER_ICON_HEIGHT/2,
-					MARKER_ICON_WIDTH, MARKER_ICON_HEIGHT);
+					markerX - (double)MARKER_SIZE/2,
+					markerY - (double)MARKER_SIZE/2,
+					MARKER_SIZE, MARKER_SIZE);
 			if (isMouseOver && isPointInRadius((int)markerX, (int)markerY, MARKER_RADIUS, mouseX, mouseY)
 					&& marker.getLabel().length() > 0) {
 				drawTopLevelHoveringText(Arrays.asList(marker.getLocalizedLabel()), mouseX, mouseY, Minecraft.getMinecraft().fontRenderer);
@@ -528,9 +539,9 @@ public class GuiAtlas extends GuiComponent {
 		if (isPlacingMarker) {
 			GL11.glColor4f(1, 1, 1, 0.5f);
 			AtlasRenderHelper.drawFullTexture(
-					MarkerTextureMap.instance().getTexture(GuiMarkerFinalizer.defaultMarker),
-					mouseX - MARKER_ICON_WIDTH/2, mouseY - MARKER_ICON_HEIGHT/2,
-					MARKER_ICON_WIDTH, MARKER_ICON_HEIGHT);
+					MarkerTextureMap.instance().getTexture(markerFinalizer.selectedType),
+					mouseX - MARKER_SIZE/2, mouseY - MARKER_SIZE/2,
+					MARKER_SIZE, MARKER_SIZE);
 			GL11.glColor4f(1, 1, 1, 1);
 		}
 		
@@ -551,6 +562,7 @@ public class GuiAtlas extends GuiComponent {
 		super.onGuiClosed();
 		isPlacingMarker = false;
 		removeChild(markerFinalizer);
+		removeChild(blinkingIcon);
 		Keyboard.enableRepeatEvents(false);
 	}
 	
@@ -575,6 +587,7 @@ public class GuiAtlas extends GuiComponent {
 		if (child.equals(markerFinalizer)) {
 			isEnteringMarkerLabel = false;
 			setInterceptKeyboard(false);
+			removeChild(blinkingIcon);
 		}
 	}
 

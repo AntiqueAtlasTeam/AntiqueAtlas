@@ -8,7 +8,6 @@ import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
 
 public class GuiMarkerInList extends GuiRadioButton {
-	public static final int MARKER_SIZE = 32;
 	public static final int FRAME_SIZE = 34;
 	
 	private final String markerType;
@@ -31,7 +30,7 @@ public class GuiMarkerInList extends GuiRadioButton {
 		
 		ResourceLocation texture = MarkerTextureMap.INSTANCE.getTexture(markerType);
 		if (texture != null) {
-			AtlasRenderHelper.drawFullTexture(texture, getGuiX() + 1, getGuiY() + 1, MARKER_SIZE, MARKER_SIZE);
+			AtlasRenderHelper.drawFullTexture(texture, getGuiX() + 1, getGuiY() + 1, GuiAtlas.MARKER_SIZE, GuiAtlas.MARKER_SIZE);
 		}
 		super.drawScreen(mouseX, mouseY, partialTick);
 	}

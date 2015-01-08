@@ -1,5 +1,8 @@
 package hunternif.mc.atlas.client.gui;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import hunternif.mc.atlas.AntiqueAtlasMod;
 import hunternif.mc.atlas.api.AtlasAPI;
 import hunternif.mc.atlas.marker.MarkerTextureMap;
@@ -20,9 +23,8 @@ public class GuiMarkerFinalizer extends GuiComponent {
 	
 	private World world;
 	protected int atlasID, dimension, x, z;
-	protected String markerType;
 	
-	private String selectedType = defaultMarker;
+	protected String selectedType = defaultMarker;
 	
 	private static final int BUTTON_WIDTH = 100;
 	private static final int BUTTON_SPACING = 4;
@@ -35,6 +37,8 @@ public class GuiMarkerFinalizer extends GuiComponent {
 	private GuiTextField textField;
 	private final GuiScrollingContainer scroller;
 	private RadioGroup<GuiMarkerInList> typeRadioGroup;
+	
+	private final List<IMarkerTypeSelectListener> listeners = new ArrayList<>();
 	
 	public GuiMarkerFinalizer() {
 		scroller = new GuiScrollingContainer();
@@ -49,6 +53,16 @@ public class GuiMarkerFinalizer extends GuiComponent {
 		this.x = markerX;
 		this.z = markerZ;
 		setBlocksScreen(true);
+	}
+	
+	public void addListener(IMarkerTypeSelectListener listener) {
+		listeners.add(listener);
+	}
+	public void removeListener(IMarkerTypeSelectListener listener) {
+		listeners.remove(listener);
+	}
+	public void removeAllListeners() {
+		listeners.clear();
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -71,6 +85,9 @@ public class GuiMarkerFinalizer extends GuiComponent {
 			@Override
 			public void onSelect(GuiMarkerInList button) {
 				selectedType = button.getMarkerType();
+				for (IMarkerTypeSelectListener listener : listeners) {
+					listener.onSelectMarkerType(selectedType);
+				}
 			}
 		});
 		int contentX = 0;
@@ -120,5 +137,9 @@ public class GuiMarkerFinalizer extends GuiComponent {
 				scroller.getGuiY() + scroller.getHeight() + TYPE_BG_FRAME,
 				0x88101010, 0x99101010);
 		super.drawScreen(mouseX, mouseY, partialTick);
+	}
+	
+	protected static interface IMarkerTypeSelectListener {
+		void onSelectMarkerType(String markerType);
 	}
 }
