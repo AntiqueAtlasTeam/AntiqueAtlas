@@ -7,8 +7,9 @@ import hunternif.mc.atlas.client.StandardTextureSet;
 import hunternif.mc.atlas.core.ChunkBiomeAnalyzer;
 import hunternif.mc.atlas.ext.ExtBiomeData;
 import hunternif.mc.atlas.ext.ExtTileIdMap;
-import hunternif.mc.atlas.network.TileNameIDPacket;
-import hunternif.mc.atlas.network.TilesPacket;
+import hunternif.mc.atlas.network.PacketDispatcher;
+import hunternif.mc.atlas.network.client.TileNameIDPacket;
+import hunternif.mc.atlas.network.client.TilesPacket;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -83,12 +84,12 @@ public class TileApiImpl implements TileAPI {
 			if (!isIdRegistered) {
 				TileNameIDPacket packet = new TileNameIDPacket();
 				packet.put(tileName, biomeID);
-				AntiqueAtlasMod.packetPipeline.sendToWorld(packet, world);
+				PacketDispatcher.sendToDimension(packet, world.provider.dimensionId);
 			}
 			// Send tile packet:
 			TilesPacket packet = new TilesPacket(dimension);
 			packet.addTile(chunkX, chunkZ, biomeID);
-			AntiqueAtlasMod.packetPipeline.sendToWorld(packet, world);
+			PacketDispatcher.sendToDimension(packet, world.provider.dimensionId);
 		}
 	}
 }

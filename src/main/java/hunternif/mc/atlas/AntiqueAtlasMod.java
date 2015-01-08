@@ -8,12 +8,7 @@ import hunternif.mc.atlas.item.ItemEmptyAtlas;
 import hunternif.mc.atlas.item.RecipeAtlasCloning;
 import hunternif.mc.atlas.item.RecipeAtlasCombining;
 import hunternif.mc.atlas.marker.GlobalMarkersDataHandler;
-import hunternif.mc.atlas.network.GlobalMarkersPacket;
-import hunternif.mc.atlas.network.MapDataPacket;
-import hunternif.mc.atlas.network.MarkersPacket;
-import hunternif.mc.atlas.network.PacketPipeline;
-import hunternif.mc.atlas.network.TileNameIDPacket;
-import hunternif.mc.atlas.network.TilesPacket;
+import hunternif.mc.atlas.network.PacketDispatcher;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
@@ -46,8 +41,6 @@ public class AntiqueAtlasMod {
 	@SidedProxy(clientSide="hunternif.mc.atlas.ClientProxy", serverSide="hunternif.mc.atlas.CommonProxy")
 	public static CommonProxy proxy;
 	
-	public static final PacketPipeline packetPipeline = new PacketPipeline();
-	
 	public static final RecipeAtlasCombining recipeCombining = new RecipeAtlasCombining();
 	
 	public static final ExtBiomeDataHandler extBiomeData = new ExtBiomeDataHandler();
@@ -73,12 +66,7 @@ public class AntiqueAtlasMod {
 	
 	@EventHandler
 	public void init(FMLInitializationEvent event){
-		packetPipeline.initialize();
-		packetPipeline.registerPacket(MapDataPacket.class);
-		packetPipeline.registerPacket(TilesPacket.class);
-		packetPipeline.registerPacket(TileNameIDPacket.class);
-		packetPipeline.registerPacket(MarkersPacket.class);
-		packetPipeline.registerPacket(GlobalMarkersPacket.class);
+		PacketDispatcher.registerPackets();
 		proxy.init(event);
 		
 		GameRegistry.addShapelessRecipe(new ItemStack(itemEmptyAtlas), Items.book, Items.compass);
@@ -97,7 +85,6 @@ public class AntiqueAtlasMod {
 	
 	@EventHandler
 	public void postInit(FMLPostInitializationEvent event) {
-		packetPipeline.postInitialize();
 		proxy.postInit(event);
 	}
 }

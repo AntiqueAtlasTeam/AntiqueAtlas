@@ -1,8 +1,8 @@
 package hunternif.mc.atlas.core;
 
 import hunternif.mc.atlas.AntiqueAtlasMod;
-import hunternif.mc.atlas.network.MapDataPacket;
-import hunternif.mc.atlas.network.ModPacket;
+import hunternif.mc.atlas.network.PacketDispatcher;
+import hunternif.mc.atlas.network.client.MapDataPacket;
 import hunternif.mc.atlas.util.ShortVec2;
 
 import java.util.HashMap;
@@ -13,6 +13,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.world.WorldSavedData;
@@ -115,9 +116,9 @@ public class AtlasData extends WorldSavedData {
 			for (Entry<ShortVec2, Tile> entry : seenChunks.entrySet()) {
 				data.put(entry.getKey(), entry.getValue());
 				dataSizeBytes += MapDataPacket.ENTRY_SIZE_BYTES;
-				if (dataSizeBytes >= ModPacket.MAX_SIZE_BYTES) {
+				if (dataSizeBytes >= PacketDispatcher.MAX_SIZE_BYTES) {
 					MapDataPacket packet = new MapDataPacket(atlasID, dimension.intValue(), data);
-					AntiqueAtlasMod.packetPipeline.sendTo(packet, player);
+					PacketDispatcher.sendTo(packet, (EntityPlayerMP) player);
 					pieces++;
 					dataSizeBytes = 0;
 					data.clear();
@@ -125,7 +126,7 @@ public class AtlasData extends WorldSavedData {
 			}
 			if (data.size() > 0) {
 				MapDataPacket packet = new MapDataPacket(atlasID, dimension.intValue(), data);
-				AntiqueAtlasMod.packetPipeline.sendTo(packet, player);
+				PacketDispatcher.sendTo(packet, (EntityPlayerMP) player);
 				pieces++;
 				dataSizeBytes = 0;
 				data.clear();
