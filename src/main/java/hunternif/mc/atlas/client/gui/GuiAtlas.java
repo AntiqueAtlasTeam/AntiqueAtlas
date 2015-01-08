@@ -150,6 +150,7 @@ public class GuiAtlas extends GuiComponent {
 	
 	@SuppressWarnings("rawtypes")
 	public GuiAtlas() {
+		setSize(WIDTH, HEIGHT);
 		followPlayer = true;
 		setInterceptKeyboard(false);
 		
@@ -230,7 +231,7 @@ public class GuiAtlas extends GuiComponent {
 		super.initGui();
 		Keyboard.enableRepeatEvents(true);
 		screenScale = new ScaledResolution(mc, mc.displayWidth, mc.displayHeight).getScaleFactor();
-		setGuiCoords((this.width - WIDTH) / 2, (this.height - HEIGHT) / 2);
+		setCentered();
 	}
 	
 	@Override
@@ -252,7 +253,7 @@ public class GuiAtlas extends GuiComponent {
 					markerFinalizer.setMarkerData(player.worldObj,
 							stack.getItemDamage(), player.dimension,
 							screenXToWorldX(mouseX), screenYToWorldZ(mouseY));
-					addChild(markerFinalizer).setCentered();
+					addChild(markerFinalizer);
 					// Need to intercept keyboard events to type in the label:
 					//TODO: BUG: player walks infinitely in the same direction,
 					// if he was moving when he placed the marker. 

@@ -18,10 +18,33 @@ public class RadioGroup<B extends GuiRadioButton> implements Iterable<B> {
 		clickListener = this.new ClickListener();
 	}
 	
-	public void addButton(B button) {
-		buttons.add(button);
-		button.addListener(clickListener);
-		button.setRadioGroup(this);
+	public boolean addButton(B button) {
+		if (!buttons.contains(button)) {
+			buttons.add(button);
+			button.addListener(clickListener);
+			button.setRadioGroup(this);
+			return true;
+		} else {
+			return false;
+		}
+	}
+	public boolean removeButton(B button) {
+		if (buttons.remove(button)) {
+			button.removeListener(clickListener);
+			button.setRadioGroup(null);
+			return true;
+		} else {
+			return false;
+		}
+	}
+	public void removeAllButtons() {
+		Iterator<B> iter = buttons.iterator();
+		while (iter.hasNext()) {
+			B button = iter.next();
+			button.removeListener(clickListener);
+			button.setRadioGroup(null);
+			iter.remove();
+		}
 	}
 	
 	/** Returns the RadioButton that is selected at the moment, or null if none is. */

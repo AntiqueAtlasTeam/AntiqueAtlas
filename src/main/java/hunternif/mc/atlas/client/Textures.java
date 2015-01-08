@@ -19,6 +19,8 @@ public class Textures {
 	public static final ResourceLocation PLAYER = new ResourceLocation(GUI + "player.png");
 	public static final ResourceLocation SCROLLBAR_HOR = new ResourceLocation(GUI + "scrollbar_hor.png");
 	public static final ResourceLocation SCROLLBAR_VER = new ResourceLocation(GUI + "scrollbar_ver.png");
+	public static final ResourceLocation MARKER_FRAME_ON = new ResourceLocation(GUI + "marker_frame_on.png");
+	public static final ResourceLocation MARKER_FRAME_OFF = new ResourceLocation(GUI + "marker_frame_off.png");
 	
 	public static final ResourceLocation SCALEBAR_4 = new ResourceLocation(GUI_SCALEBAR + "scalebar_4.png");
 	public static final ResourceLocation SCALEBAR_8 = new ResourceLocation(GUI_SCALEBAR + "scalebar_8.png");

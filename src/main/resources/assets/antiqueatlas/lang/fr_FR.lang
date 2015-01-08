@@ -2,12 +2,15 @@ item.antiqueAtlas.name=Atlas Antique #%s
 item.emptyAntiqueAtlas.name=Atlas Antique vide
 
 gui.antiqueatlas.scalebar=Échelle en blocs
-gui.antiqueatlas.enterLabel=Entrez un libellé :
 gui.antiqueatlas.addMarker=Ajouter une marque
 gui.antiqueatlas.followPlayer=Suivre le joueur
 gui.antiqueatlas.exportImage=Exporter une image
+
+gui.antiqueatlas.marker.label=Libellé:
+gui.antiqueatlas.marker.type=Type:
+gui.antiqueatlas.marker.village=Village
+
 gui.antiqueatlas.export.opening=Ouverture du dialogue de fichier...
 gui.antiqueatlas.export.selectFile=Selectionnez un fichier PNG file sur lequel vous sauvegardez
 gui.antiqueatlas.export.rendering=Rendu...
 gui.antiqueatlas.export.writing=Ecriture au fichier...
-gui.antiqueatlas.village=Village

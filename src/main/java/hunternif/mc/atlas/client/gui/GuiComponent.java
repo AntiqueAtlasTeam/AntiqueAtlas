@@ -101,7 +101,12 @@ public class GuiComponent extends GuiScreen {
 	}
 	/** Position this component in the center of its parent. */
 	public final void setCentered() {
-		setRelativeCoords((parent.getWidth() - getWidth())/2, (parent.getHeight() - getHeight())/2);
+		validateSize();
+		if (parent == null) {
+			setGuiCoords((this.width - getWidth()) / 2, (this.height - getHeight()) / 2);
+		} else {
+			setRelativeCoords((parent.getWidth() - getWidth())/2, (parent.getHeight() - getHeight())/2);
+		}
 	}
 	/** Absolute X coordinate on the screen. */
 	public int getGuiX() {
@@ -124,6 +129,8 @@ public class GuiComponent extends GuiScreen {
 	public void setSize(int width, int height) {
 		this.properWidth = width;
 		this.properHeight = height;
+		this.contentWidth = width;
+		this.contentHeight = height;
 		invalidateSize();
 	}
 	
@@ -306,21 +313,21 @@ public class GuiComponent extends GuiScreen {
 	
 	@Override
 	public void setWorldAndResolution(Minecraft mc, int width, int height) {
+		super.setWorldAndResolution(mc, width, height);
 		for (GuiComponent child : children) {
 			child.setWorldAndResolution(mc, width, height);
 		}
-		super.setWorldAndResolution(mc, width, height);
 	}
 	
 	/** Width of the GUI or its contents. This method may be called often so it
 	 * should be fast. */
 	public int getWidth() {
-		return children.isEmpty() ? properWidth : contentWidth;
+		return contentWidth;
 	}
 	/** Height of the GUI or its contents. This method may be called often so it
 	 * should be fast. */
 	public int getHeight() {
-		return children.isEmpty() ? properHeight : contentHeight;
+		return contentHeight;
 	}
 	
 	/** If set to true, the parent of this GUI will not render it. */

@@ -15,7 +15,7 @@ public abstract class AGuiScrollbar extends GuiComponent {
 	/** In pixels. */
 	private static int scrollStep = 18;
 	
-	private boolean visible = true;
+	protected boolean visible = false;
 	/** True if the anchor is being dragged */
 	private boolean isDragged = false;
 	/** True if the left mouse button was held down last time drawScreen was called. */
@@ -128,8 +128,10 @@ public abstract class AGuiScrollbar extends GuiComponent {
 		
 		// Check if dragging the anchor:
 		boolean mouseDown = Mouse.isButtonDown(0);
-		if (!wasClicking && mouseDown && isMouseOver) {
-			isDragged = true;
+		if (!wasClicking && mouseDown) {
+			if (isMouseOver) {
+				isDragged = true;
+			}
 		}
 		if (!mouseDown) {
 			isDragged = false;

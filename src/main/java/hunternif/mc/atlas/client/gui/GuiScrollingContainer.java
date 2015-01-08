@@ -66,4 +66,14 @@ public class GuiScrollingContainer extends GuiComponent {
 		scrollbarHor.setScrollPos(x);
 		scrollbarVer.setScrollPos(y);
 	}
+	
+	@Override
+	public int getWidth() {
+		return super.getWidth() - (scrollbarVer.visible ? 0 : scrollbarVer.getWidth());
+	}
+	
+	@Override
+	public int getHeight() {
+		return super.getHeight() - (scrollbarHor.visible ? 0 : scrollbarHor.getHeight());
+	}
 }

@@ -3,8 +3,9 @@ package hunternif.mc.atlas.marker;
 import hunternif.mc.atlas.client.Textures;
 
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 import net.minecraft.util.ResourceLocation;
 import cpw.mods.fml.relauncher.Side;
@@ -21,7 +22,8 @@ public enum MarkerTextureMap {
 		return INSTANCE;
 	}
 	
-	private final Map<String, ResourceLocation> map = new HashMap<String, ResourceLocation>();
+	/** Marker types are sorted by their name. */
+	private final SortedMap<String, ResourceLocation> map = new TreeMap<String, ResourceLocation>();
 	private final ResourceLocation defaultTexture = Textures.MARKER_RED_X_SMALL;
 	
 	public void setTexture(String markerType, ResourceLocation texture) {
