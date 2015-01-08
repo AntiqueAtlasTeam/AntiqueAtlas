@@ -119,7 +119,7 @@ public class ExportImageUtil {
 			is.close();
 			
 			// Biome & Marker textures:
-			List<ResourceLocation> allTextures = new ArrayList<>(64);
+			List<ResourceLocation> allTextures = new ArrayList<ResourceLocation>(64);
 			allTextures.addAll(BiomeTextureMap.INSTANCE.getAllTextures());
 			allTextures.addAll(MarkerTextureMap.INSTANCE.getAllTextures());
 			updateUnitsTotal += allTextures.size();

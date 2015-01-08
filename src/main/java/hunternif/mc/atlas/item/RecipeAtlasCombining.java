@@ -43,7 +43,7 @@ public class RecipeAtlasCombining implements IRecipe {
 	@Override
 	public ItemStack getCraftingResult(InventoryCrafting inv) {
 		ItemStack firstAtlas = null;
-		List<Integer> atlasIds = new ArrayList<>(2);
+		List<Integer> atlasIds = new ArrayList<Integer>(2);
 		for (int i = 0; i < inv.getSizeInventory(); ++i) {
 			ItemStack stack = inv.getStackInSlot(i);
 			if (stack != null) {

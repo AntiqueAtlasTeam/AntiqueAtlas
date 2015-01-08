@@ -2,8 +2,8 @@ package hunternif.mc.atlas.marker;
 
 import hunternif.mc.atlas.AntiqueAtlasMod;
 import hunternif.mc.atlas.api.MarkerAPI;
-import hunternif.mc.atlas.network.MarkersPacket;
-import hunternif.mc.atlas.network.ModPacket;
+import hunternif.mc.atlas.network.PacketDispatcher;
+import hunternif.mc.atlas.network.bidirectional.MarkersPacket;
 import hunternif.mc.atlas.util.ShortVec2;
 
 import java.util.Collection;
@@ -15,6 +15,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentSkipListSet;
 
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.world.WorldSavedData;
@@ -167,15 +168,15 @@ public class MarkersData extends WorldSavedData {
 			for (Marker marker : markers.values()) {
 				packet.putMarker(marker);
 				dataSizeBytes += 4 + 4 + (marker.getLabel().length() + marker.getType().length())*2;
-				if (dataSizeBytes >= ModPacket.MAX_SIZE_BYTES) {
-					AntiqueAtlasMod.packetPipeline.sendTo(packet, player);
+				if (dataSizeBytes >= PacketDispatcher.MAX_SIZE_BYTES) {
+					PacketDispatcher.sendTo(packet, (EntityPlayerMP) player);
 					pieces++;
 					dataSizeBytes = 0;
 					packet = newMarkersPacket(atlasID, dimension);
 				}
 			}
 			if (!packet.isEmpty()) {
-				AntiqueAtlasMod.packetPipeline.sendTo(packet, player);
+				PacketDispatcher.sendTo(packet, (EntityPlayerMP) player);
 				pieces++;
 				dataSizeBytes = 0;
 			}

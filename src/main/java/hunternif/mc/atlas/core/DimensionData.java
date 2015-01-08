@@ -15,7 +15,7 @@ public class DimensionData implements ITileStorage{
 	private final Map<ShortVec2, Tile> tiles = new ConcurrentHashMap<ShortVec2, Tile>();
 	
 	/** Maps threads to the temporary key for thread-safe access to the tile map. */
-	private final Map<Thread, ShortVec2> thread2KeyMap = new ConcurrentHashMap<>(2, 0.75f, 2);
+	private final Map<Thread, ShortVec2> thread2KeyMap = new ConcurrentHashMap<Thread, ShortVec2>(2, 0.75f, 2);
 	//private final ShortVec2 tempCoords = new ShortVec2(0, 0);
 	
 	/** Limits of explored area, in chunks. */
