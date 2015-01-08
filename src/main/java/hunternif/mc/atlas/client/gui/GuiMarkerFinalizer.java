@@ -5,6 +5,10 @@ import java.util.List;
 
 import hunternif.mc.atlas.AntiqueAtlasMod;
 import hunternif.mc.atlas.api.AtlasAPI;
+import hunternif.mc.atlas.client.gui.core.GuiComponent;
+import hunternif.mc.atlas.client.gui.core.GuiScrollingContainer;
+import hunternif.mc.atlas.client.gui.core.ISelectListener;
+import hunternif.mc.atlas.client.gui.core.RadioGroup;
 import hunternif.mc.atlas.marker.MarkerTextureMap;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;

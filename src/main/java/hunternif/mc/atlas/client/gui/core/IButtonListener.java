@@ -1,4 +1,4 @@
-package hunternif.mc.atlas.client.gui;
+package hunternif.mc.atlas.client.gui.core;
 
 /** Listener for left click on a button. */
 public interface IButtonListener<B extends GuiComponentButton> {

@@ -1,6 +1,7 @@
 package hunternif.mc.atlas.client.gui;
 
 import hunternif.mc.atlas.client.Textures;
+import hunternif.mc.atlas.client.gui.core.GuiRadioButton;
 import hunternif.mc.atlas.marker.MarkerTextureMap;
 import hunternif.mc.atlas.util.AtlasRenderHelper;
 import net.minecraft.util.ResourceLocation;

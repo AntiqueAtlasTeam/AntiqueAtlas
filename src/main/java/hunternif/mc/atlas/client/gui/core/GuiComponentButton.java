@@ -1,4 +1,4 @@
-package hunternif.mc.atlas.client.gui;
+package hunternif.mc.atlas.client.gui.core;
 
 import java.util.ArrayList;
 import java.util.List;

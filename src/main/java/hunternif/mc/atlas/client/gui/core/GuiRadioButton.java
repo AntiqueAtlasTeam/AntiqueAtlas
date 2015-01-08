@@ -1,4 +1,4 @@
-package hunternif.mc.atlas.client.gui;
+package hunternif.mc.atlas.client.gui.core;
 
 /** A button that can be toggled on, and only toggled off by selecting
  * a different RadioButton. */
