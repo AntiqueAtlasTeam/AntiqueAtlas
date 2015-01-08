@@ -1,7 +1,7 @@
 package hunternif.mc.atlas.marker;
 
-import hunternif.mc.atlas.network.GlobalMarkersPacket;
-import hunternif.mc.atlas.network.MarkersPacket;
+import hunternif.mc.atlas.network.bidirectional.GlobalMarkersPacket;
+import hunternif.mc.atlas.network.bidirectional.MarkersPacket;
 import net.minecraft.entity.player.EntityPlayer;
 
 /** Holds global markers, i.e. ones that appear in all atlases. */

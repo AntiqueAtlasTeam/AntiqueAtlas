@@ -2,11 +2,13 @@ package hunternif.mc.atlas.ext;
 
 import hunternif.mc.atlas.AntiqueAtlasMod;
 import hunternif.mc.atlas.core.ChunkBiomeAnalyzer;
-import hunternif.mc.atlas.network.TileNameIDPacket;
+import hunternif.mc.atlas.network.PacketDispatcher;
+import hunternif.mc.atlas.network.client.TileNameIDPacket;
 
 import java.util.Map;
 
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
@@ -68,6 +70,6 @@ public enum ExtTileIdMap {
 	
 	/** Send all name-biomeID pairs to the player. */
 	public void syncOnPlayer(EntityPlayer player) {
-		AntiqueAtlasMod.packetPipeline.sendTo(new TileNameIDPacket(nameToIdMap), player);
+		PacketDispatcher.sendTo(new TileNameIDPacket(nameToIdMap), (EntityPlayerMP) player);
 	}
 }
