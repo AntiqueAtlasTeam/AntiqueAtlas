@@ -81,8 +81,9 @@ public class GuiMarkerFinalizer extends GuiComponent {
 		scroller.removeAllContent();
 		int allTypesWidth = MarkerTextureMap.INSTANCE.getAllTypes().size() *
 				(GuiMarkerInList.FRAME_SIZE + TYPE_SPACING) - TYPE_SPACING;
-		scroller.setViewportSize(Math.min(allTypesWidth, 240), GuiMarkerInList.FRAME_SIZE);
-		scroller.setGuiCoords((this.width - scroller.viewport.getWidth())/2, this.height/2 - 25);
+		int scrollerWidth = Math.min(allTypesWidth, 240);
+		scroller.setViewportSize(scrollerWidth, GuiMarkerInList.FRAME_SIZE);
+		scroller.setGuiCoords((this.width - scrollerWidth)/2, this.height/2 - 25);
 		
 		typeRadioGroup = new RadioGroup<GuiMarkerInList>();
 		typeRadioGroup.addListener(new ISelectListener<GuiMarkerInList>() {
