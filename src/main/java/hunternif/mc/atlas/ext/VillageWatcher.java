@@ -6,7 +6,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import net.minecraft.util.StatCollector;
 import net.minecraft.village.Village;
 import net.minecraft.village.VillageCollection;
 import net.minecraft.world.World;
@@ -51,7 +50,7 @@ public class VillageWatcher {
 	public void visitVillage(World world, Village village) {
 		// Using markers proved to look better than custom tiles, and you don't lose them to scaling.
 		AtlasAPI.getMarkerAPI().putGlobalMarker(world, 0, false, "village",
-				StatCollector.translateToLocal("gui.antiqueatlas.village"),
+				"gui.antiqueatlas.marker.village", // This format indicates that the name must be translated
 				village.getCenter().posX, village.getCenter().posZ);
 		// Old code, using custom pseudo-biome tiles.
 		/*

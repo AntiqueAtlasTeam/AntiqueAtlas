@@ -1,5 +1,6 @@
 package hunternif.mc.atlas.marker;
 
+import net.minecraft.util.StatCollector;
 import hunternif.mc.atlas.util.ShortVec2;
 
 /**
@@ -26,8 +27,15 @@ public class Marker implements Comparable<Marker> {
 		return type;
 	}
 
+	/** The label "as is", it might be a placeholder in the format
+	 * "gui.antiqueatlas.marker.*" that has to be translated.
+	 * @return
+	 */
 	public String getLabel() {
 		return label;
+	}
+	public String getLocalizedLabel() {
+		return StatCollector.translateToLocal(label);
 	}
 	
 	public int getX() {

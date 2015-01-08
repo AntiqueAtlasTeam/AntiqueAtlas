@@ -490,7 +490,7 @@ public class GuiAtlas extends GuiComponent {
 					MARKER_ICON_WIDTH, MARKER_ICON_HEIGHT);
 			if (isMouseOver && isPointInRadius((int)markerX, (int)markerY, MARKER_RADIUS, mouseX, mouseY)
 					&& marker.getLabel().length() > 0) {
-				drawTopLevelHoveringText(Arrays.asList(marker.getLabel()), mouseX, mouseY, Minecraft.getMinecraft().fontRenderer);
+				drawTopLevelHoveringText(Arrays.asList(marker.getLocalizedLabel()), mouseX, mouseY, Minecraft.getMinecraft().fontRenderer);
 			}
 		}
 		
