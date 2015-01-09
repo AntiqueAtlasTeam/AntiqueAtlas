@@ -1,6 +1,7 @@
 package hunternif.mc.atlas.client.gui;
 
 import hunternif.mc.atlas.AntiqueAtlasMod;
+import hunternif.mc.atlas.api.AtlasAPI;
 import hunternif.mc.atlas.client.BiomeTextureMap;
 import hunternif.mc.atlas.client.SubTile;
 import hunternif.mc.atlas.client.SubTileQuartet;
@@ -343,8 +344,9 @@ public class GuiAtlas extends GuiComponent {
 				// if he was moving when he placed the marker. 
 				setInterceptKeyboard(true);
 			} else if (state.is(DELETING_MARKER) // If clicked on a marker, delete it:
-					&& isMouseOverMap && mouseState == 0 /* left click */) {
-				//TODO: delete marker
+					&& toDelete != null && isMouseOverMap && mouseState == 0) {
+				AtlasAPI.getMarkerAPI().deleteMarker(player.worldObj,
+						stack.getItemDamage(), toDelete.getId());
 			}
 			state.switchTo(NORMAL);
 		} else if (state.is(NORMAL) && isMouseOverMap && selectedButton == null) {
@@ -559,13 +561,13 @@ public class GuiAtlas extends GuiComponent {
 		// Draw markers:
 		for (Marker marker : visibleMarkers) {
 			double markerX = worldXToScreenX(marker.getX());
-			double markerY = worldZToScreenY(marker.getY());
+			double markerY = worldZToScreenY(marker.getZ());
 			if (markerX < getGuiX() || markerX > getGuiX() + WIDTH ||
 				markerY < getGuiY() || markerY > getGuiY() + HEIGHT) {
 				continue;
 			}
 			if (!marker.isVisibleAhead() && !data.getDimensionData(player.dimension)
-					.hasTileAt(marker.getX() >> 4, marker.getY() >> 4)) {
+					.hasTileAt(marker.getInChunkX(), marker.getInChunkZ())) {
 				continue;
 			}
 			boolean mouseIsOverMarker = isMouseInRadius((int)markerX, (int)markerY, MARKER_RADIUS);

@@ -57,4 +57,19 @@ public interface MarkerAPI {
 	 */
 	void putGlobalMarker(World world, boolean visibleAhead,
 			String markerType, String label, int x, int z);
+	
+	/**
+	 * Delete a marker from an atlas.
+	 * @param world
+	 * @param atlasID
+	 * @param markerID
+	 */
+	void deleteMarker(World world, int atlasID, int markerID);
+	
+	/**
+	 * Delete a global marker from all atlases.
+	 * @param world
+	 * @param markerID
+	 */
+	void deleteGlobalMarker(World world, int markerID);
 }

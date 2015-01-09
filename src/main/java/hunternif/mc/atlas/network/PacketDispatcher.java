@@ -1,11 +1,12 @@
 package hunternif.mc.atlas.network;
 
 import hunternif.mc.atlas.AntiqueAtlasMod;
-import hunternif.mc.atlas.network.bidirectional.GlobalMarkersPacket;
-import hunternif.mc.atlas.network.bidirectional.MarkersPacket;
+import hunternif.mc.atlas.network.bidirectional.DeleteMarkerPacket;
 import hunternif.mc.atlas.network.client.MapDataPacket;
+import hunternif.mc.atlas.network.client.MarkersPacket;
 import hunternif.mc.atlas.network.client.TileNameIDPacket;
 import hunternif.mc.atlas.network.client.TilesPacket;
+import hunternif.mc.atlas.network.server.AddMarkerPacket;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
@@ -37,15 +38,16 @@ public class PacketDispatcher
 	 */
 	public static void registerPackets() {
 		// Bi-directional messages
-		registerBiMessage(MarkersPacket.Handler.class, MarkersPacket.class);
-		registerBiMessage(GlobalMarkersPacket.Handler.class, GlobalMarkersPacket.class);
+		registerBiMessage(DeleteMarkerPacket.Handler.class, DeleteMarkerPacket.class);
 		
 		// Messages sent to CLIENT
 		registerMessage(MapDataPacket.Handler.class, MapDataPacket.class, Side.CLIENT);
 		registerMessage(TileNameIDPacket.Handler.class, TileNameIDPacket.class, Side.CLIENT);
 		registerMessage(TilesPacket.Handler.class, TilesPacket.class, Side.CLIENT);
+		registerBiMessage(MarkersPacket.Handler.class, MarkersPacket.class);
 		
 		// Messages sent to SERVER
+		registerBiMessage(AddMarkerPacket.Handler.class, AddMarkerPacket.class);
 	}
 
 	/**

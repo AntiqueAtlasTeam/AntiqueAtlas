@@ -10,17 +10,25 @@ import hunternif.mc.atlas.util.ShortVec2;
  * @author Hunternif
  */
 public class Marker implements Comparable<Marker> {
+	/** Unique id per every global marker and every local marker in every atlas. */
+	private final int id;
 	private final String type;
 	private final String label;
-	private final int x, y;
+	private final int dim, x, z;
 	private final boolean visibleAhead;
 	
-	public Marker(String type, String label, int x, int y, boolean visibleAhead) {
+	public Marker(int id, String type, String label, int dimension, int x, int z, boolean visibleAhead) {
+		this.id = id;
 		this.type = type;
 		this.label = label == null ? "" : label;
+		this.dim = dimension;
 		this.x = x;
-		this.y = y;
+		this.z = z;
 		this.visibleAhead = visibleAhead;
+	}
+	
+	public int getId() {
+		return id;
 	}
 
 	public String getType() {
@@ -38,12 +46,26 @@ public class Marker implements Comparable<Marker> {
 		return StatCollector.translateToLocal(label);
 	}
 	
+	public int getDimension() {
+		return dim;
+	}
+	
 	public int getX() {
 		return x;
 	}
 	
-	public int getY() {
-		return y;
+	public int getZ() {
+		return z;
+	}
+	
+	/** X coordinate of the chunk. */
+	public int getChunkX() {
+		return x >> 4;
+	}
+	
+	/** Z coordinate of the chunk. */
+	public int getChunkZ() {
+		return z >> 4;
 	}
 	
 	/** X coordinate within the chunk. */
@@ -51,9 +73,9 @@ public class Marker implements Comparable<Marker> {
 		return x & 0xf;
 	}
 	
-	/** Y coordinate within the chunk. */
-	public int getInChunkY() {
-		return y & 0xf;
+	/** Z coordinate within the chunk. */
+	public int getInChunkZ() {
+		return z & 0xf;
 	}
 	
 	/** Whether the marker is visible regardless of the player having seen the location. */
@@ -63,23 +85,23 @@ public class Marker implements Comparable<Marker> {
 
 	@Override
 	public int compareTo(Marker marker) {
-		return this.y - marker.y;
+		return this.z - marker.z;
 	}
 	
 	@Override
 	public boolean equals(Object obj) {
 		if (!(obj instanceof Marker)) return false;
 		Marker marker = (Marker) obj;
-		return type.equals(marker.type) && label.equals(marker.label) && x == marker.x && y == marker.y && visibleAhead == marker.visibleAhead;
+		return this.id == marker.id;
 	}
 	
 	/** Returns the coordinates of the chunk this marker is located in. */
 	public ShortVec2 getChunkCoords() {
-		return new ShortVec2(x >> 4, y >> 4);
+		return new ShortVec2(x >> 4, z >> 4);
 	}
 	
 	@Override
 	public String toString() {
-		return "\"" + label + "\"" + "@(" + x + ", " + y + ")";
+		return "#" + id + "\"" + label + "\"" + "@(" + x + ", " + z + ")";
 	}
 }

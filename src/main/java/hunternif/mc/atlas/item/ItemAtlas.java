@@ -198,6 +198,7 @@ public class ItemAtlas extends Item {
 	/** Used to update data from the server. */
 	@SideOnly(Side.CLIENT)
 	public MarkersData getClientMarkersData(int atlasID) {
+		//TODO: this is probably not needed
 		String key = getMarkersDataKey(atlasID);
 		World world = Minecraft.getMinecraft().theWorld;
 		MarkersData data = (MarkersData) world.loadItemData(MarkersData.class, key);

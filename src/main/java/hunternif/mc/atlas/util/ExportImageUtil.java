@@ -233,7 +233,7 @@ public class ExportImageUtil {
 		// Draw markers
 		for (Marker marker : markers) {
 			updateUnits++;
-			if (!marker.isVisibleAhead() && !data.hasTileAt(marker.getX() >> 4, marker.getY() >> 4)) {
+			if (!marker.isVisibleAhead() && !data.hasTileAt(marker.getInChunkX(), marker.getInChunkZ())) {
 				continue;
 			}
 			
@@ -243,7 +243,7 @@ public class ExportImageUtil {
 			if (markerImage == null) continue;
 			
 			int markerX = marker.getX() - minX;
-			int markerY = marker.getY() - minY;
+			int markerY = marker.getZ() - minY;
 			graphics.drawImage(markerImage,
 					markerX - MARKER_SIZE/2, markerY - MARKER_SIZE/2,
 					markerX + MARKER_SIZE/2, markerY + MARKER_SIZE/2,
