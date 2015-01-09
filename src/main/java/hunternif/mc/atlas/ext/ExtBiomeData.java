@@ -34,7 +34,7 @@ public class ExtBiomeData extends WorldSavedData {
 	}
 	
 	private final Map<Integer /*dimension ID*/, Map<ShortVec2, Integer /*biome ID*/>> dimensionMap =
-			new ConcurrentHashMap<Integer, Map<ShortVec2, Integer /*biome ID*/>>();
+			new ConcurrentHashMap<Integer, Map<ShortVec2, Integer /*biome ID*/>>(2, 0.75f, 2);
 	
 	private final ShortVec2 tempCoords = new ShortVec2(0, 0);
 
@@ -82,7 +82,7 @@ public class ExtBiomeData extends WorldSavedData {
 	private Map<ShortVec2, Integer> getBiomesInDimension(int dimension) {
 		Map<ShortVec2, Integer> map = dimensionMap.get(Integer.valueOf(dimension));
 		if (map == null) {
-			map = new ConcurrentHashMap<ShortVec2, Integer>();
+			map = new ConcurrentHashMap<ShortVec2, Integer>(2, 0.75f, 2);
 			dimensionMap.put(Integer.valueOf(dimension), map);
 		}
 		return map;

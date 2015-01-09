@@ -12,11 +12,10 @@ public class DimensionData implements ITileStorage{
 	
 	/** a map of chunks the player has seen. This map is thread-safe.
 	 * CAREFUL! Don't modify chunk coordinates that are already put in the map! */
-	private final Map<ShortVec2, Tile> tiles = new ConcurrentHashMap<ShortVec2, Tile>();
+	private final Map<ShortVec2, Tile> tiles = new ConcurrentHashMap<ShortVec2, Tile>(2, 0.75f, 2);
 	
 	/** Maps threads to the temporary key for thread-safe access to the tile map. */
 	private final Map<Thread, ShortVec2> thread2KeyMap = new ConcurrentHashMap<Thread, ShortVec2>(2, 0.75f, 2);
-	//private final ShortVec2 tempCoords = new ShortVec2(0, 0);
 	
 	/** Limits of explored area, in chunks. */
 	private final Rect scope = new Rect();

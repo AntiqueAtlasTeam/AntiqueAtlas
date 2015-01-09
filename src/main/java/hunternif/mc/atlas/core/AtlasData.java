@@ -30,7 +30,7 @@ public class AtlasData extends WorldSavedData {
 	 * has seen. This map is thread-safe.
 	 * CAREFUL! Don't modify chunk coordinates that are already put in the map! */
 	private Map<Integer /*dimension ID*/, DimensionData> dimensionMap =
-			new ConcurrentHashMap<Integer, DimensionData>();
+			new ConcurrentHashMap<Integer, DimensionData>(2, 0.75f, 2);
 	
 	/** Set of players this Atlas data has been sent to. */
 	private final Set<EntityPlayer> playersSentTo = new HashSet<EntityPlayer>();
