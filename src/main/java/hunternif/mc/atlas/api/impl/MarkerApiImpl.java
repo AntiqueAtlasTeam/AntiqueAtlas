@@ -29,32 +29,32 @@ public class MarkerApiImpl implements MarkerAPI {
 	}
 	
 	@Override
-	public void putMarker(World world, int dimension, boolean visibleAhead, int atlasID, String markerType, String label, int x, int z) {
+	public void putMarker(World world, boolean visibleAhead, int atlasID, String markerType, String label, int x, int z) {
 		Marker marker = new Marker(markerType, label, x, z, visibleAhead);
-		MarkersPacket packet = new MarkersPacket(atlasID, dimension, marker);
+		MarkersPacket packet = new MarkersPacket(atlasID, world.provider.dimensionId, marker);
 		if (!world.isRemote) {
 			MarkersData data = AntiqueAtlasMod.itemAtlas.getMarkersData(atlasID, world);
 			if (data == null) {
 				AntiqueAtlasMod.logger.warn("Tried to put marker into non-existent Atlas ID: " + atlasID);
 				return;
 			}
-			data.putMarker(dimension, marker);
+			data.putMarker(world.provider.dimensionId, marker);
 			data.markDirty();
-			PacketDispatcher.sendToDimension(packet, world.provider.dimensionId);
+			PacketDispatcher.sendToAll(packet);
 		} else {
 			PacketDispatcher.sendToServer(packet);
 		}
 	}
 
 	@Override
-	public void putGlobalMarker(World world, int dimension, boolean visibleAhead, String markerType, String label, int x, int z) {
+	public void putGlobalMarker(World world, boolean visibleAhead, String markerType, String label, int x, int z) {
 		Marker marker = new Marker(markerType, label, x, z, visibleAhead);
-		GlobalMarkersPacket packet = new GlobalMarkersPacket(dimension, marker);
+		GlobalMarkersPacket packet = new GlobalMarkersPacket(world.provider.dimensionId, marker);
 		if (!world.isRemote) {
 			MarkersData data = AntiqueAtlasMod.globalMarkersData.getData();
-			data.putMarker(dimension, marker);
+			data.putMarker(world.provider.dimensionId, marker);
 			data.markDirty();
-			PacketDispatcher.sendToDimension(packet, world.provider.dimensionId);
+			PacketDispatcher.sendToAll(packet);
 		} else {
 			PacketDispatcher.sendToServer(packet);
 		}

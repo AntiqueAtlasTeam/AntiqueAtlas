@@ -109,7 +109,7 @@ public class MarkersPacket implements IMessage {
 			// If these are a manually set markers sent from the client, forward
 			// them to other players. Including the original sender, because he
 			// waits on the server to verify his marker.
-			PacketDispatcher.sendToDimension(msg, player.worldObj.provider.dimensionId);
+			PacketDispatcher.sendToAll(msg);
 			return null;
 		}
 	}

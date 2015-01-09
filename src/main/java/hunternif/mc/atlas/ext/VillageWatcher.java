@@ -49,7 +49,7 @@ public class VillageWatcher {
 	
 	public void visitVillage(World world, Village village) {
 		// Using markers proved to look better than custom tiles, and you don't lose them to scaling.
-		AtlasAPI.getMarkerAPI().putGlobalMarker(world, 0, false, "village",
+		AtlasAPI.getMarkerAPI().putGlobalMarker(world, false, "village",
 				"gui.antiqueatlas.marker.village", // This format indicates that the name must be translated
 				village.getCenter().posX, village.getCenter().posZ);
 		// Old code, using custom pseudo-biome tiles.

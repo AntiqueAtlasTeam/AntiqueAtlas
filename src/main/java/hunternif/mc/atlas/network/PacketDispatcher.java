@@ -67,6 +67,14 @@ public class PacketDispatcher
 	}
 
 	/**
+	 * Send this message to everyone.
+	 * See {@link SimpleNetworkWrapper#sendToAll(IMessage)}
+	 */
+	public static void sendToAll(IMessage message) {
+		PacketDispatcher.dispatcher.sendToAll(message);
+	}
+	
+	/**
 	 * Send this message to the specified player.
 	 * See {@link SimpleNetworkWrapper#sendTo(IMessage, EntityPlayerMP)}
 	 */
