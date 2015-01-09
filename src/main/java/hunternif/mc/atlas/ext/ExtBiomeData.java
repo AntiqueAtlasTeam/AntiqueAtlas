@@ -2,8 +2,8 @@ package hunternif.mc.atlas.ext;
 
 import hunternif.mc.atlas.AntiqueAtlasMod;
 import hunternif.mc.atlas.core.ChunkBiomeAnalyzer;
-import hunternif.mc.atlas.network.ModPacket;
-import hunternif.mc.atlas.network.TilesPacket;
+import hunternif.mc.atlas.network.PacketDispatcher;
+import hunternif.mc.atlas.network.client.TilesPacket;
 import hunternif.mc.atlas.util.ShortVec2;
 
 import java.util.Map;
@@ -11,6 +11,7 @@ import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.world.WorldSavedData;
@@ -109,15 +110,15 @@ public class ExtBiomeData extends WorldSavedData {
 			for (Entry<ShortVec2, Integer> entry : biomes.entrySet()) {
 				packet.addTile(entry.getKey().x, entry.getKey().y, entry.getValue());
 				dataSizeBytes += TilesPacket.ENTRY_SIZE_BYTES;
-				if (dataSizeBytes >= ModPacket.MAX_SIZE_BYTES) {
-					AntiqueAtlasMod.packetPipeline.sendTo(packet, player);
+				if (dataSizeBytes >= PacketDispatcher.MAX_SIZE_BYTES) {
+					PacketDispatcher.sendTo(packet, (EntityPlayerMP) player);
 					pieces++;
 					dataSizeBytes = 0;
 					packet = new TilesPacket(dimension);
 				}
 			}
 			if (!packet.isEmpty()) {
-				AntiqueAtlasMod.packetPipeline.sendTo(packet, player);
+				PacketDispatcher.sendTo(packet, (EntityPlayerMP) player);
 				pieces++;
 				dataSizeBytes = 0;
 			}

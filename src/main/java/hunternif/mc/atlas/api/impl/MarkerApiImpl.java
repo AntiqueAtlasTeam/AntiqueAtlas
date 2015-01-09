@@ -5,8 +5,9 @@ import hunternif.mc.atlas.api.MarkerAPI;
 import hunternif.mc.atlas.marker.Marker;
 import hunternif.mc.atlas.marker.MarkerTextureMap;
 import hunternif.mc.atlas.marker.MarkersData;
-import hunternif.mc.atlas.network.GlobalMarkersPacket;
-import hunternif.mc.atlas.network.MarkersPacket;
+import hunternif.mc.atlas.network.PacketDispatcher;
+import hunternif.mc.atlas.network.bidirectional.GlobalMarkersPacket;
+import hunternif.mc.atlas.network.bidirectional.MarkersPacket;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 
@@ -39,9 +40,9 @@ public class MarkerApiImpl implements MarkerAPI {
 			}
 			data.putMarker(dimension, marker);
 			data.markDirty();
-			AntiqueAtlasMod.packetPipeline.sendToWorld(packet, world);
+			PacketDispatcher.sendToDimension(packet, world.provider.dimensionId);
 		} else {
-			AntiqueAtlasMod.packetPipeline.sendToServer(packet);
+			PacketDispatcher.sendToServer(packet);
 		}
 	}
 
@@ -53,9 +54,9 @@ public class MarkerApiImpl implements MarkerAPI {
 			MarkersData data = AntiqueAtlasMod.globalMarkersData.getData();
 			data.putMarker(dimension, marker);
 			data.markDirty();
-			AntiqueAtlasMod.packetPipeline.sendToWorld(packet, world);
+			PacketDispatcher.sendToDimension(packet, world.provider.dimensionId);
 		} else {
-			AntiqueAtlasMod.packetPipeline.sendToServer(packet);
+			PacketDispatcher.sendToServer(packet);
 		}
 	}
 
