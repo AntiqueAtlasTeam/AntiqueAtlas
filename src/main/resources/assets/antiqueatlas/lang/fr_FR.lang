@@ -3,6 +3,7 @@ item.emptyAntiqueAtlas.name=Atlas Antique vide
 
 gui.antiqueatlas.scalebar=Échelle en blocs
 gui.antiqueatlas.addMarker=Ajouter une marque
+gui.antiqueatlas.delMarker=Supprimer une marque
 gui.antiqueatlas.followPlayer=Suivre le joueur
 gui.antiqueatlas.exportImage=Exporter une image
 

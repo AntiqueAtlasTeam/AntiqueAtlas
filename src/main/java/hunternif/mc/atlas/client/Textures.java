@@ -21,6 +21,7 @@ public class Textures {
 	public static final ResourceLocation SCROLLBAR_VER = new ResourceLocation(GUI + "scrollbar_ver.png");
 	public static final ResourceLocation MARKER_FRAME_ON = new ResourceLocation(GUI + "marker_frame_on.png");
 	public static final ResourceLocation MARKER_FRAME_OFF = new ResourceLocation(GUI + "marker_frame_off.png");
+	public static final ResourceLocation ERASER = new ResourceLocation(GUI + "eraser.png");
 	
 	public static final ResourceLocation SCALEBAR_4 = new ResourceLocation(GUI_SCALEBAR + "scalebar_4.png");
 	public static final ResourceLocation SCALEBAR_8 = new ResourceLocation(GUI_SCALEBAR + "scalebar_8.png");
@@ -33,6 +34,7 @@ public class Textures {
 	
 	public static final ResourceLocation ICON_EXPORT = new ResourceLocation(GUI + "icon_export.png");
 	public static final ResourceLocation ICON_MARKER = new ResourceLocation(GUI + "icon_marker.png");
+	public static final ResourceLocation ICON_DELETE_MARKER = new ResourceLocation(GUI + "icon_del_marker.png");
 	
 	public static final ResourceLocation MARKER_GOOGLE_MARKER = new ResourceLocation(GUI_MARKERS + "google_marker.png");
 	public static final ResourceLocation MARKER_RED_X_LARGE = new ResourceLocation(GUI_MARKERS + "red_x_large.png");

@@ -36,6 +36,7 @@ public class GuiComponentButton extends GuiComponent {
 		super.mouseClicked(x, y, mouseButton);
 		if (mouseButton == 0 /*left-click*/ && enabled && isMouseOver) {
 			onClick();
+			mouseHasBeenHandled();
 		}
 	}
 	

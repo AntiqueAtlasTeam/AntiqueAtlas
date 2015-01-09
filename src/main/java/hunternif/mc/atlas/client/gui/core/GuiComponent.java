@@ -241,8 +241,9 @@ public class GuiComponent extends GuiScreen {
 		}
 	}
 	
-	/** Call this method from within {@link #handleMouseInput()} if the input
-	 * has been handled by this GUI and shouldn't be handled by its parents.
+	/** Call this method from within {@link #handleMouseInput()} (or other
+	 * mouse-processing methods) if the input has been handled by this GUI
+	 * andshouldn't be handled by its parents.
 	 * This won't prevent the sibling children of this GUI from handling input. */
 	protected void mouseHasBeenHandled() {
 		this.hasHandledMouse = true;
@@ -275,8 +276,7 @@ public class GuiComponent extends GuiScreen {
 			}
 		}
 		if (!handled) {
-			isMouseOver = isMouseOver(Mouse.getX() * width / mc.displayWidth,
-					height - Mouse.getY() * height / mc.displayHeight - 1);
+			isMouseOver = isMouseInRegion(getGuiX(), getGuiY(), getWidth(), getHeight());
 			super.handleMouseInput();
 		}
 	}
@@ -405,12 +405,11 @@ public class GuiComponent extends GuiScreen {
 	}
 	
 	/** Returns true, if the mouse cursor is within the specified bounds.
-	 * Note: left, top are local to Gui; mouseX, mouseY are local to screen. */
-	protected boolean isPointInRegion(int left, int top, int width, int height, int mouseX, int mouseY) {
-		mouseX -= getGuiX();
-		mouseY -= getGuiY();
-		return mouseX >= left - 1 && mouseX < left + width + 1 && mouseY >= top - 1
-				&& mouseY < top + height + 1;
+	 * Note: left and top are absolute. */
+	protected boolean isMouseInRegion(int left, int top, int width, int height) {
+		int mouseX = getMouseX();
+		int mouseY = getMouseY();
+		return mouseX >= left && mouseX < left + width && mouseY >= top && mouseY < top + height;
 	}
 	/**
 	 * Returns true if the mouse cursor is within a rectangular box of the specified
@@ -418,10 +417,10 @@ public class GuiComponent extends GuiScreen {
 	 * @param x center of the box, absolute
 	 * @param y center of the box, absolute
 	 * @param radius half the side of the box
-	 * @param mouseX absolute
-	 * @param mouseY absolute
 	 */
-	protected boolean isPointInRadius(int x, int y, int radius, int mouseX, int mouseY) {
+	protected boolean isMouseInRadius(int x, int y, int radius) {
+		int mouseX = getMouseX();
+		int mouseY = getMouseY();
 		return mouseX >= x - radius && mouseX < x + radius && mouseY >= y - radius && mouseY < y + radius;
 	}
 	
@@ -489,11 +488,6 @@ public class GuiComponent extends GuiScreen {
 		}
 	}
 	
-	/** Returns true, if the mouse cursor is over this GUI. */
-	private boolean isMouseOver(int mouseX, int mouseY) {
-		return mouseX >= guiX && mouseY >= guiY && mouseX < guiX + getWidth() && mouseY < guiY + getHeight();
-	}
-	
 	/** Returns the top level parent of this component, or itself if it has no
 	 * parent. Useful for correctly drawing hovering text. */
 	public GuiComponent getTopLevelParent() {
@@ -549,5 +543,12 @@ public class GuiComponent extends GuiScreen {
 	protected void drawCenteredString(String text, int y, int color, boolean dropShadow) {
 		int length = fontRendererObj.getStringWidth(text);
 		fontRendererObj.drawString(text, (this.width - length)/2, y, color, dropShadow);
+	}
+	
+	protected int getMouseX() {
+		return Mouse.getX() * width / mc.displayWidth;
+	}
+	protected int getMouseY() {
+		return height - Mouse.getY() * height / mc.displayHeight - 1;
 	}
 }

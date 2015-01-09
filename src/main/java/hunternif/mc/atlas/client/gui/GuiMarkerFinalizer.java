@@ -8,7 +8,7 @@ import hunternif.mc.atlas.api.AtlasAPI;
 import hunternif.mc.atlas.client.gui.core.GuiComponent;
 import hunternif.mc.atlas.client.gui.core.GuiScrollingContainer;
 import hunternif.mc.atlas.client.gui.core.ISelectListener;
-import hunternif.mc.atlas.client.gui.core.RadioGroup;
+import hunternif.mc.atlas.client.gui.core.ToggleGroup;
 import hunternif.mc.atlas.marker.MarkerTextureMap;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
@@ -40,7 +40,7 @@ public class GuiMarkerFinalizer extends GuiComponent {
 	private GuiButton btnCancel;
 	private GuiTextField textField;
 	private final GuiScrollingContainer scroller;
-	private RadioGroup<GuiMarkerInList> typeRadioGroup;
+	private ToggleGroup<GuiMarkerInList> typeRadioGroup;
 	
 	private final List<IMarkerTypeSelectListener> listeners = new ArrayList<>();
 	
@@ -85,7 +85,7 @@ public class GuiMarkerFinalizer extends GuiComponent {
 		scroller.setViewportSize(scrollerWidth, GuiMarkerInList.FRAME_SIZE);
 		scroller.setGuiCoords((this.width - scrollerWidth)/2, this.height/2 - 25);
 		
-		typeRadioGroup = new RadioGroup<GuiMarkerInList>();
+		typeRadioGroup = new ToggleGroup<GuiMarkerInList>();
 		typeRadioGroup.addListener(new ISelectListener<GuiMarkerInList>() {
 			@Override
 			public void onSelect(GuiMarkerInList button) {

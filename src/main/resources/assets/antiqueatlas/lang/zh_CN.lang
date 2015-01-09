@@ -3,6 +3,7 @@ item.emptyAntiqueAtlas.name=空白古式地图
 
 gui.antiqueatlas.scalebar=以方块缩放
 gui.antiqueatlas.addMarker=增加标记
+gui.antiqueatlas.delMarker=删除标记
 gui.antiqueatlas.followPlayer=跟随该玩家
 gui.antiqueatlas.exportImage=导出图像
 

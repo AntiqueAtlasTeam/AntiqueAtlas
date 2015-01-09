@@ -1,14 +1,14 @@
 package hunternif.mc.atlas.client.gui;
 
 import hunternif.mc.atlas.client.Textures;
-import hunternif.mc.atlas.client.gui.core.GuiRadioButton;
+import hunternif.mc.atlas.client.gui.core.GuiToggleButton;
 import hunternif.mc.atlas.marker.MarkerTextureMap;
 import hunternif.mc.atlas.util.AtlasRenderHelper;
 import net.minecraft.util.ResourceLocation;
 
 import org.lwjgl.opengl.GL11;
 
-public class GuiMarkerInList extends GuiRadioButton {
+public class GuiMarkerInList extends GuiToggleButton {
 	public static final int FRAME_SIZE = 34;
 	
 	private final String markerType;

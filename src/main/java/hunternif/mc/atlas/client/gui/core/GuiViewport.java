@@ -2,7 +2,6 @@ package hunternif.mc.atlas.client.gui.core;
 
 import net.minecraft.client.gui.ScaledResolution;
 
-import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
 /**
@@ -55,9 +54,7 @@ public class GuiViewport extends GuiComponent {
 	
 	@Override
 	public void handleMouseInput() {
-		if (isPointInRegion(0, 0, properWidth, properHeight,
-				Mouse.getX() * width / mc.displayWidth,
-				height - Mouse.getY() * height / mc.displayHeight - 1)) {
+		if (isMouseInRegion(getGuiX(), getGuiY(), properWidth, properHeight)) {
 			super.handleMouseInput();
 		}
 	}

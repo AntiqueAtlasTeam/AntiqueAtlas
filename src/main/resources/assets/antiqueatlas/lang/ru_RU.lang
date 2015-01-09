@@ -3,6 +3,8 @@ item.emptyAntiqueAtlas.name=Пустой старинный атлас
 
 gui.antiqueatlas.scalebar=Масштаб в блоках
 gui.antiqueatlas.addMarker=Добавить метку
+gui.antiqueatlas.delMarker=Удалить метку
+gui.antiqueatlas.delMarker=Удалить метку
 gui.antiqueatlas.followPlayer=Привязать к игроку
 gui.antiqueatlas.exportImage=Сохранить изображение
 
