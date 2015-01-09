@@ -16,6 +16,7 @@ public class Marker implements Comparable<Marker> {
 	private final String label;
 	private final int dim, x, z;
 	private final boolean visibleAhead;
+	private boolean isGlobal = false;
 	
 	public Marker(int id, String type, String label, int dimension, int x, int z, boolean visibleAhead) {
 		this.id = id;
@@ -81,6 +82,14 @@ public class Marker implements Comparable<Marker> {
 	/** Whether the marker is visible regardless of the player having seen the location. */
 	public boolean isVisibleAhead() {
 		return visibleAhead;
+	}
+	
+	public boolean isGlobal() {
+		return isGlobal;
+	}
+	protected Marker setGlobal(boolean value) {
+		this.isGlobal = value;
+		return this;
 	}
 
 	@Override

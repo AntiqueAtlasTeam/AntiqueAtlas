@@ -201,8 +201,12 @@ public class MarkersData extends WorldSavedData {
 		return marker;
 	}
 	
-	/** For internal use, when markers are loaded from NBT or sent from the server. */
-	public void loadMarker(Marker marker) {
+	/**
+	 * For internal use, when markers are loaded from NBT or sent from the server.
+	 * @return the marker instance that was added. It may be different from the
+	 * 		   one supplied in case of id conflict.
+	 */
+	public Marker loadMarker(Marker marker) {
 		int id = marker.getId();
 		// If this ID is already taken on the server - which could happen when
 		// loading an old save format - get a new one. This might then break any
@@ -222,6 +226,7 @@ public class MarkersData extends WorldSavedData {
 		}
 		idMap.put(id, marker);
 		getMarkersDataInDimension(marker.getDimension()).put(marker.getChunkCoords(), marker);
+		return marker;
 	}
 	
 	public boolean isSyncedOnPlayer(EntityPlayer player) {

@@ -526,6 +526,10 @@ public class GuiAtlas extends GuiComponent {
 		
 		if (stack == null || data == null) return;
 		
+		
+		if (state.is(DELETING_MARKER)) {
+			GL11.glColor4f(1, 1, 1, 0.5f);
+		}
 		GL11.glEnable(GL11.GL_SCISSOR_TEST);
 		GL11.glScissor((getGuiX() + CONTENT_X)*screenScale,
 				mc.displayHeight - (getGuiY() + CONTENT_Y + MAP_HEIGHT)*screenScale,
@@ -573,9 +577,20 @@ public class GuiAtlas extends GuiComponent {
 			boolean mouseIsOverMarker = isMouseInRadius((int)markerX, (int)markerY, MARKER_RADIUS);
 			if (state.is(PLACING_MARKER)) {
 				GL11.glColor4f(1, 1, 1, 0.5f);
-			} else if (state.is(DELETING_MARKER) && mouseIsOverMarker) {
-				GL11.glColor4f(0.5f, 0.5f, 0.5f, 1);
-				toDelete = marker;
+			} else if (state.is(DELETING_MARKER)) {
+				if (marker.isGlobal()) {
+					GL11.glColor4f(1, 1, 1, 0.5f);
+				} else {
+					if (mouseIsOverMarker) {
+						GL11.glColor4f(0.5f, 0.5f, 0.5f, 1);
+						toDelete = marker;
+					} else {
+						GL11.glColor4f(1, 1, 1, 1);
+						if (toDelete == marker) {
+							toDelete = null;
+						}
+					}
+				}
 			} else {
 				GL11.glColor4f(1, 1, 1, 1);
 			}

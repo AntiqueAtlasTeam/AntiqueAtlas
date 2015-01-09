@@ -10,6 +10,16 @@ public class GlobalMarkersData extends MarkersData {
 		super(key);
 	}
 	
+	@Override
+	public Marker addMarker(String type, String label, int dimension, int x, int y, boolean visibleAhead) {
+		return super.addMarker(type, label, dimension, x, y, visibleAhead).setGlobal(true);
+	}
+	
+	@Override
+	public Marker loadMarker(Marker marker) {
+		return super.loadMarker(marker).setGlobal(true);
+	}
+	
 	/** Send all data to the player in several packets. */
 	protected void syncOnPlayer(EntityPlayer player) {
 		syncOnPlayer(-1, player);
