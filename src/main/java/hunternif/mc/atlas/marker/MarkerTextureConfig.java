@@ -29,7 +29,8 @@ public class MarkerTextureConfig {
 	public void load() {
 		JsonElement root = FileUtil.readJson(file);
 		if (root == null) {
-			AntiqueAtlasMod.logger.info("Marker textures config not found");
+			AntiqueAtlasMod.logger.info("Marker textures config not found; creating new");
+			save();
 			return;
 		}
 		if (!root.isJsonObject()) {

@@ -23,7 +23,8 @@ public class ExtTileConfig {
 	public void load() {
 		JsonElement root = FileUtil.readJson(file);
 		if (root == null) {
-			AntiqueAtlasMod.logger.info("tileIDs config not found");
+			AntiqueAtlasMod.logger.info("tileIDs config not found; creating new");
+			save();
 			return;
 		}
 		if (!root.isJsonObject()) {
