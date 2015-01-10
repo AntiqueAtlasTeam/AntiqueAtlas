@@ -1,5 +1,6 @@
 package hunternif.mc.atlas;
 
+import static net.minecraftforge.oredict.RecipeSorter.Category.SHAPELESS;
 import hunternif.mc.atlas.core.ChunkBiomeAnalyzer;
 import hunternif.mc.atlas.ext.ExtBiomeDataHandler;
 import hunternif.mc.atlas.ext.VillageWatcher;
@@ -13,6 +14,7 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.oredict.RecipeSorter;
 
 import org.apache.logging.log4j.Logger;
 
@@ -41,8 +43,6 @@ public class AntiqueAtlasMod {
 	@SidedProxy(clientSide="hunternif.mc.atlas.ClientProxy", serverSide="hunternif.mc.atlas.CommonProxy")
 	public static CommonProxy proxy;
 	
-	public static final RecipeAtlasCombining recipeCombining = new RecipeAtlasCombining();
-	
 	public static final ExtBiomeDataHandler extBiomeData = new ExtBiomeDataHandler();
 	public static final GlobalMarkersDataHandler globalMarkersData = new GlobalMarkersDataHandler();
 	
@@ -70,7 +70,12 @@ public class AntiqueAtlasMod {
 		proxy.init(event);
 		
 		GameRegistry.addShapelessRecipe(new ItemStack(itemEmptyAtlas), Items.book, Items.compass);
+		
+		RecipeSorter.register("antiqueatlas:atlascloning",   RecipeAtlasCloning.class,   SHAPELESS, "after:minecraft:shapeless");
 		GameRegistry.addRecipe(new RecipeAtlasCloning());
+		
+		RecipeSorter.register("antiqueatlas:atlascombining",   RecipeAtlasCombining.class,   SHAPELESS, "after:minecraft:shapeless");
+		RecipeAtlasCombining recipeCombining = new RecipeAtlasCombining();
 		GameRegistry.addRecipe(recipeCombining);
 		FMLCommonHandler.instance().bus().register(recipeCombining);
 		
