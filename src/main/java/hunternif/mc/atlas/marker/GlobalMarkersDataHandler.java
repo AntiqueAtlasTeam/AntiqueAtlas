@@ -26,6 +26,11 @@ public class GlobalMarkersDataHandler {
 		}
 	}
 	
+	@SubscribeEvent
+	public void onWorldUnload(WorldEvent.Unload event) {
+		data = null;
+	}
+	
 	public GlobalMarkersData getData() {
 		if (data == null) { // This will happen on the client
 			data = new GlobalMarkersData(DATA_KEY);
