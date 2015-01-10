@@ -1,6 +1,9 @@
 package hunternif.mc.atlas.ext;
 
+import hunternif.mc.atlas.AntiqueAtlasMod;
 import hunternif.mc.atlas.api.AtlasAPI;
+import hunternif.mc.atlas.marker.Marker;
+import hunternif.mc.atlas.marker.MarkersData;
 
 import java.util.HashSet;
 import java.util.List;
@@ -8,6 +11,7 @@ import java.util.Set;
 
 import net.minecraft.village.Village;
 import net.minecraft.village.VillageCollection;
+import net.minecraft.village.VillageDoorInfo;
 import net.minecraft.world.World;
 import net.minecraftforge.event.terraingen.PopulateChunkEvent;
 import net.minecraftforge.event.world.WorldEvent;
@@ -48,30 +52,53 @@ public class VillageWatcher {
 	}
 	
 	public void visitVillage(World world, Village village) {
-		// Using markers proved to look better than custom tiles, and you don't lose them to scaling.
-		AtlasAPI.getMarkerAPI().putGlobalMarker(world, false, "village",
-				"gui.antiqueatlas.marker.village", // This format indicates that the name must be translated
-				village.getCenter().posX, village.getCenter().posZ);
-		// Old code, using custom pseudo-biome tiles.
-		/*
-		 * // Cover village territory:
+		int dim = world.provider.dimensionId;
+		// Using markers so that villages are visible at any scale.
+		// Village center can move, so first check that there is no village
+		// marker within the radius.
+		MarkersData markersData = AntiqueAtlasMod.globalMarkersData.getData();
+		boolean foundMarker = false;
+		int centerX = village.getCenter().posX;
+		int centerZ = village.getCenter().posZ;
+		// Using custom pseudo-biome tiles to cover actual territory.
+		// Cover village territory:
 		for (int dx = -village.getVillageRadius(); dx <= village.getVillageRadius(); dx += 16) {
 			for (int dz = -village.getVillageRadius(); dz <= village.getVillageRadius(); dz += 16) {
 				// Fill only the inside of the circle:
 				if (dx*dx + dz*dz > village.getVillageRadius()*village.getVillageRadius()) {
 					continue;
 				}
-				AtlasAPI.getTileAPI().putCustomTile(world, 0, ExtTileIdMap.TILE_VILLAGE_TERRITORY,
-						(village.getCenter().posX + dx) >> 4,
-						(village.getCenter().posZ + dz) >> 4);
+				int chunkX = (centerX + dx) >> 4;
+				int chunkZ = (centerZ + dz) >> 4;
+				// Villages tend to lose doors eventually, so let's not replace
+				// the old ones with territory:
+				int biomeID = AntiqueAtlasMod.extBiomeData.getData().getBiomeIdAt(dim, chunkX, chunkZ);
+				if (biomeID != ExtTileIdMap.instance().getPseudoBiomeID(ExtTileIdMap.TILE_VILLAGE_HOUSE)) {
+					AtlasAPI.getTileAPI().putCustomGlobalTile(world,
+							ExtTileIdMap.TILE_VILLAGE_TERRITORY, chunkX, chunkZ);
+				}
+				
+				Set<Marker> markers = markersData.getMarkersAtChunk(dim, chunkX, chunkZ);
+				if (markers != null) {
+					for (Marker marker : markers) {
+						if (marker.getType().equals("village")) {
+							foundMarker = true;
+							break;
+						}
+					}
+				}
 			}
 		}
-		// Cover doors with houses:
+		if (!foundMarker) {
+			AtlasAPI.getMarkerAPI().putGlobalMarker(world, false, "village",
+					"gui.antiqueatlas.marker.village", // This label will be translated
+					centerX, centerZ);
+		}
+		// Cover doors locations with houses:
 		for (Object doorInfo : village.getVillageDoorInfoList()) {
 			VillageDoorInfo door = (VillageDoorInfo) doorInfo;
-			AtlasAPI.getTileAPI().putCustomTile(world, 0, ExtTileIdMap.TILE_VILLAGE_HOUSE, door.posX >> 4, door.posZ >> 4);
+			AtlasAPI.getTileAPI().putCustomGlobalTile(world, ExtTileIdMap.TILE_VILLAGE_HOUSE, door.posX >> 4, door.posZ >> 4);
 		}
-		*/
 		visited.add(village);
 	}
 }
