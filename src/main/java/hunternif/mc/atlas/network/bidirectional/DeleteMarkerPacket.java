@@ -56,7 +56,7 @@ public class DeleteMarkerPacket implements IMessage {
 		public IMessage handleClientMessage(EntityPlayer player, DeleteMarkerPacket msg, MessageContext ctx) {
 			MarkersData data = msg.atlasID == GLOBAL ?
 					AntiqueAtlasMod.globalMarkersData.getData() :
-					AntiqueAtlasMod.itemAtlas.getClientMarkersData(msg.atlasID);
+					AntiqueAtlasMod.itemAtlas.getMarkersData(msg.atlasID, player.worldObj);
 			data.removeMarker(msg.markerID);
 			if (Minecraft.getMinecraft().currentScreen instanceof GuiAtlas) {
 				((GuiAtlas) Minecraft.getMinecraft().currentScreen).updateMarkerData();

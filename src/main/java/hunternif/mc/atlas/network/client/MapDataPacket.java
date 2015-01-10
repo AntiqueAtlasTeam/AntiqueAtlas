@@ -70,7 +70,7 @@ public class MapDataPacket implements IMessage {
 		@Override
 		@SideOnly(Side.CLIENT)
 		public IMessage handleClientMessage(EntityPlayer player, MapDataPacket msg, MessageContext ctx) {
-			AtlasData atlasData = AntiqueAtlasMod.itemAtlas.getClientAtlasData(msg.atlasID);
+			AtlasData atlasData = AntiqueAtlasMod.itemAtlas.getAtlasData(msg.atlasID, player.worldObj);
 			for (Entry<ShortVec2, Tile> entry : msg.data.entrySet()) {
 				ShortVec2 v = entry.getKey();
 				atlasData.setTile(msg.dimension, v.x, v.y, entry.getValue());

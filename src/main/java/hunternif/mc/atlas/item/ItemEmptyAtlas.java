@@ -27,15 +27,20 @@ public class ItemEmptyAtlas extends Item {
 		if (world.isRemote) return stack;
 		
 		int atlasID = world.getUniqueDataId(ItemAtlas.WORLD_ATLAS_DATA_ID);
+		System.out.println("New atlas ID: " + atlasID + " on the " + (world.isRemote ? "client" : "server"));
 		ItemStack atlasStack = new ItemStack(AntiqueAtlasMod.itemAtlas, 1, atlasID);
 		
-		String atlasKey = AntiqueAtlasMod.itemAtlas.getAtlasDataKey(atlasID);
-		AtlasData atlasData = new AtlasData(atlasKey);
-		world.setItemData(atlasKey, atlasData);
+//		String atlasKey = AntiqueAtlasMod.itemAtlas.getAtlasDataKey(atlasID);
+//		AtlasData atlasData = new AtlasData(atlasKey);
+//		world.setItemData(atlasKey, atlasData);
+		AtlasData atlasData = AntiqueAtlasMod.itemAtlas.getAtlasData(atlasID, world);
+		atlasData.markDirty();
 		
-		String markersKey = AntiqueAtlasMod.itemAtlas.getMarkersDataKey(atlasID);
-		MarkersData markersData = new MarkersData(markersKey);
-		world.setItemData(markersKey, markersData);
+//		String markersKey = AntiqueAtlasMod.itemAtlas.getMarkersDataKey(atlasID);
+//		MarkersData markersData = new MarkersData(markersKey);
+//		world.setItemData(markersKey, markersData);
+		MarkersData markersData = AntiqueAtlasMod.itemAtlas.getMarkersData(atlasID, world);
+		markersData.markDirty();
 		
 		stack.stackSize--;
 		if (stack.stackSize <= 0) {

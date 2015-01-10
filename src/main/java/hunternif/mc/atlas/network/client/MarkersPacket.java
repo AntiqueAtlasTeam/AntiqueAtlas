@@ -101,7 +101,7 @@ public class MarkersPacket implements IMessage {
 		@Override
 		@SideOnly(Side.CLIENT)
 		public IMessage handleClientMessage(EntityPlayer player, MarkersPacket msg, MessageContext ctx) {
-			MarkersData markersData = AntiqueAtlasMod.itemAtlas.getClientMarkersData(msg.atlasID);
+			MarkersData markersData = AntiqueAtlasMod.itemAtlas.getMarkersData(msg.atlasID, player.worldObj);
 			for (Marker marker : msg.markersByType.values()) {
 				markersData.loadMarker(marker);
 			}
