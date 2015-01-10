@@ -18,6 +18,13 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 
 public class TileApiImpl implements TileAPI {
+	private static final int VERSION = 2;
+	
+	@Override
+	public int getVersion() {
+		return VERSION;
+	}
+	
 	/**
 	 * Because pseudo-biome IDs have to be synced with the server, they may not
 	 * have been initialized when the texture registration methods are called on
@@ -73,7 +80,7 @@ public class TileApiImpl implements TileAPI {
 	}
 	
 	@Override
-	public void putCustomTile(World world, String tileName, int chunkX, int chunkZ) {
+	public void putCustomGlobalTile(World world, String tileName, int chunkX, int chunkZ) {
 		boolean isIdRegistered = ExtTileIdMap.instance().getPseudoBiomeID(tileName) != ChunkBiomeAnalyzer.NOT_FOUND;
 		int biomeID = ExtTileIdMap.instance().getOrCreatePseudoBiomeID(tileName);
 		ExtBiomeData data = AntiqueAtlasMod.extBiomeData.getData();

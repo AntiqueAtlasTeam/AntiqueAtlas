@@ -8,6 +8,13 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.biome.BiomeGenBase;
 
 public class BiomeApiImpl implements BiomeAPI {
+	private static final int VERSION = 2;
+	
+	@Override
+	public int getVersion() {
+		return VERSION;
+	}
+	
 	@Override
 	public void setTexture(int biomeID, ResourceLocation ... textures) {
 		BiomeTextureMap.instance().setTexture(biomeID, textures);

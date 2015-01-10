@@ -13,6 +13,9 @@ import cpw.mods.fml.relauncher.SideOnly;
  * constitute the set. Only in case of the set only its name is written to the
  * config; otherwise a complete list of texture files is written.</p> */
 public interface TileAPI {
+	/** Version of Tile API, meaning this particular class. */
+	int getVersion();
+	
 	/** Assign texture to tile. The textures will be added as variations. */
 	@SideOnly(Side.CLIENT)
 	void setTexture(String uniqueTileName, ResourceLocation ... textures);
@@ -43,5 +46,6 @@ public interface TileAPI {
 	 * @param chunkX	x chunk coordinate. (block coordinate >> 4)
 	 * @param chunkZ	z chunk coordinate. (block coordinate >> 4)
 	 */
-	void putCustomTile(World world, String tileName, int chunkX, int chunkZ);
+	@SideOnly(Side.SERVER)
+	void putCustomGlobalTile(World world, String tileName, int chunkX, int chunkZ);
 }

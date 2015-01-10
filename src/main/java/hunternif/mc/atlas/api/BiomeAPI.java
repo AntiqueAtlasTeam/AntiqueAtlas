@@ -13,6 +13,9 @@ import cpw.mods.fml.relauncher.SideOnly;
  * constitute the set. Only in case of the set only its name is written to the
  * config; otherwise a complete list of texture files is written.</p> */
 public interface BiomeAPI {
+	/** Version of Biome API, meaning this particular class. */
+	int getVersion();
+	
 	/** Assign texture to biome ID. The textures will be added as variations. */
 	@SideOnly(Side.CLIENT)
 	void setTexture(int biomeID, ResourceLocation ... textures);

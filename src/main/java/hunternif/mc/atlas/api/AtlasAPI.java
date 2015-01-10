@@ -9,9 +9,16 @@ import hunternif.mc.atlas.api.impl.TileApiImpl;
  * @author Hunternif
  */
 public class AtlasAPI {
+	private static final int VERSION = 2;
 	private static final BiomeAPI biomeApi = new BiomeApiImpl();
 	private static final TileAPI tileApi = new TileApiImpl();
 	private static final MarkerAPI markerApi = new MarkerApiImpl();
+	
+	/** Version of the API, meaning only this particular class. You might
+	 * want to check getVersion() on other specific API classes as well. */
+	public static int getVersion() {
+		return VERSION;
+	}
 	
 	/** API for custom biomes. Methods only for the client side. */
 	public static BiomeAPI getBiomeAPI() {

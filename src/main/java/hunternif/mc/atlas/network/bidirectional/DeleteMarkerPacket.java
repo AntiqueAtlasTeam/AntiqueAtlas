@@ -8,6 +8,7 @@ import hunternif.mc.atlas.network.PacketDispatcher;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import cpw.mods.fml.common.network.simpleimpl.MessageContext;
 import cpw.mods.fml.relauncher.Side;
@@ -66,6 +67,12 @@ public class DeleteMarkerPacket implements IMessage {
 		
 		@Override
 		public IMessage handleServerMessage(EntityPlayer player, DeleteMarkerPacket msg, MessageContext ctx) {
+			// Make sure it's this player's atlas :^)
+			if (!player.inventory.hasItemStack(new ItemStack(AntiqueAtlasMod.itemAtlas, 1, msg.atlasID))) {
+				AntiqueAtlasMod.logger.warn(String.format("Player %s attempted to delete marker from someone else's Atlas #%d",
+						player.getGameProfile().getName(), msg.atlasID));
+				return null;
+			}
 			MarkersData data = msg.atlasID == GLOBAL ?
 					AntiqueAtlasMod.globalMarkersData.getData() :
 					AntiqueAtlasMod.itemAtlas.getMarkersData(msg.atlasID, player.worldObj);

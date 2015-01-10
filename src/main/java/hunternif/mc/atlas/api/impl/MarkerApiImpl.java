@@ -11,8 +11,15 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 
 public class MarkerApiImpl implements MarkerAPI {
+	private static final int VERSION = 2;
+	
 	/** Used in place of atlasID to signify that the marker is global. */
 	private static final int GLOBAL = -1;
+	
+	@Override
+	public int getVersion() {
+		return VERSION;
+	}
 
 	@Override
 	public void setTexture(String markerType, ResourceLocation texture) {
@@ -61,19 +68,16 @@ public class MarkerApiImpl implements MarkerAPI {
 		doDeleteMarker(world, GLOBAL, markerID);
 	}
 	private void doDeleteMarker(World world, int atlasID, int markerID) {
+		DeleteMarkerPacket packet = atlasID == GLOBAL ?
+				new DeleteMarkerPacket(markerID) :
+				new DeleteMarkerPacket(atlasID, markerID);
 		if (world.isRemote) {
-			DeleteMarkerPacket packet = atlasID == GLOBAL ?
-					new DeleteMarkerPacket(markerID) :
-					new DeleteMarkerPacket(atlasID, markerID);
 			PacketDispatcher.sendToServer(packet);
 		} else {
 			MarkersData data = atlasID == GLOBAL ?
 					AntiqueAtlasMod.globalMarkersData.getData() :
 					AntiqueAtlasMod.itemAtlas.getMarkersData(atlasID, world);
 			data.removeMarker(markerID);
-			DeleteMarkerPacket packet = atlasID == GLOBAL ?
-					new DeleteMarkerPacket(markerID) :
-					new DeleteMarkerPacket(atlasID, markerID);
 			PacketDispatcher.sendToAll(packet);
 		}
 	}

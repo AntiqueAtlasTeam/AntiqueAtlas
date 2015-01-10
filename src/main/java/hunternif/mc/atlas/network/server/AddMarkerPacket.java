@@ -8,6 +8,7 @@ import hunternif.mc.atlas.network.PacketDispatcher;
 import hunternif.mc.atlas.network.client.MarkersPacket;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import cpw.mods.fml.common.network.ByteBufUtils;
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import cpw.mods.fml.common.network.simpleimpl.MessageContext;
@@ -76,6 +77,12 @@ public class AddMarkerPacket implements IMessage {
 		
 		@Override
 		public IMessage handleServerMessage(EntityPlayer player, AddMarkerPacket msg, MessageContext ctx) {
+			// Make sure it's this player's atlas :^)
+			if (!player.inventory.hasItemStack(new ItemStack(AntiqueAtlasMod.itemAtlas, 1, msg.atlasID))) {
+				AntiqueAtlasMod.logger.warn(String.format("Player %s attempted to put marker into someone else's Atlas #%d",
+						player.getGameProfile().getName(), msg.atlasID));
+				return null;
+			}
 			MarkersData markersData = msg.atlasID == GLOBAL ?
 					AntiqueAtlasMod.globalMarkersData.getData() :
 					AntiqueAtlasMod.itemAtlas.getMarkersData(msg.atlasID, player.worldObj);

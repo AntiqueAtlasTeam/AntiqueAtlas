@@ -12,6 +12,9 @@ import cpw.mods.fml.relauncher.SideOnly;
  * @author Hunternif
  */
 public interface MarkerAPI {
+	/** Version of Marker API, meaning this particular class. */
+	int getVersion();
+	
 	/** Assign texture to a marker type. */
 	@SideOnly(Side.CLIENT)
 	void setTexture(String markerType, ResourceLocation texture);
@@ -46,7 +49,7 @@ public interface MarkerAPI {
 	
 	/**
 	 * Put a marker in all atlases in the world at specified block coordinates.
-	 * Call this method per one marker either on the server or on the client.
+	 * Call this method per one marker, on the server only!
 	 * @param world
 	 * @param visibleAhead	whether the marker should appear visible even if
 	 * 						the player hasn't yet discovered that area.
@@ -55,6 +58,7 @@ public interface MarkerAPI {
 	 * @param x				block coordinate
 	 * @param z				block coordinate
 	 */
+	@SideOnly(Side.SERVER)
 	void putGlobalMarker(World world, boolean visibleAhead,
 			String markerType, String label, int x, int z);
 	
@@ -67,9 +71,10 @@ public interface MarkerAPI {
 	void deleteMarker(World world, int atlasID, int markerID);
 	
 	/**
-	 * Delete a global marker from all atlases.
+	 * Delete a global marker from all atlases. Only the server can permit this.
 	 * @param world
 	 * @param markerID
 	 */
+	@SideOnly(Side.SERVER)
 	void deleteGlobalMarker(World world, int markerID);
 }
