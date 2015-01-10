@@ -571,7 +571,7 @@ public class GuiAtlas extends GuiComponent {
 				continue;
 			}
 			if (!marker.isVisibleAhead() && !data.getDimensionData(player.dimension)
-					.hasTileAt(marker.getInChunkX(), marker.getInChunkZ())) {
+					.hasTileAt(marker.getChunkX(), marker.getChunkZ())) {
 				continue;
 			}
 			boolean mouseIsOverMarker = isMouseInRadius((int)markerX, (int)markerY, MARKER_RADIUS);

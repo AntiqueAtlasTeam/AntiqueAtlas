@@ -233,7 +233,7 @@ public class ExportImageUtil {
 		// Draw markers
 		for (Marker marker : markers) {
 			updateUnits++;
-			if (!marker.isVisibleAhead() && !data.hasTileAt(marker.getInChunkX(), marker.getInChunkZ())) {
+			if (!marker.isVisibleAhead() && !data.hasTileAt(marker.getChunkX(), marker.getChunkZ())) {
 				continue;
 			}
 			
