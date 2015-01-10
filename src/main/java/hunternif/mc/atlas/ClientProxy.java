@@ -38,25 +38,25 @@ public class ClientProxy extends CommonProxy {
 		markerTextureConfig.load();
 	}
 	
+	//TODO save all config files automatically if anything was changed.
+	
 	@Override
 	public void init(FMLInitializationEvent event) {
 		super.init(event);
 		guiAtlas = new GuiAtlas();
-		if (registerVillageTiles()) {
-			updateBiomeTextureConfig();
-		}
+		registerVillageTiles();
+		
+		updateBiomeTextureConfig();
 	}
 	
 	@Override
 	public void postInit(FMLPostInitializationEvent event) {
 		super.postInit(event);
-		if (assignVanillaTextures()) {
-			// Only rewrite config, if new textures were automatically assigned.
-			updateBiomeTextureConfig();
-		}
-		if (setDefaultMarker()) {
-			updateMarkerTextureConfig();
-		}
+		assignVanillaTextures();
+		registerDefaultMarker();
+		
+		updateBiomeTextureConfig();
+		updateMarkerTextureConfig();
 	}
 	
 	@Override
@@ -78,54 +78,46 @@ public class ClientProxy extends CommonProxy {
 		}
 	}
 	
-	/** Assign default textures to vanilla biomes. Returns true if any texture
-	 * was changed. */
-	private boolean assignVanillaTextures() {
-		boolean changed = false;
+	/** Assign default textures to vanilla biomes. */
+	private void assignVanillaTextures() {
 		BiomeAPI api = AtlasAPI.getBiomeAPI();
-		changed |= api.setTextureIfNone(ocean,			WATER);
-		changed |= api.setTextureIfNone(river,			WATER);
-		changed |= api.setTextureIfNone(frozenOcean,	FROZEN_WATER);
-		changed |= api.setTextureIfNone(frozenRiver,	FROZEN_WATER);
-		changed |= api.setTextureIfNone(beach,			BEACH);
-		changed |= api.setTextureIfNone(desert,		SAND);
-		changed |= api.setTextureIfNone(plains,		PLAINS);
-		changed |= api.setTextureIfNone(icePlains,	SNOW);
-		changed |= api.setTextureIfNone(jungleHills,	JUNGLE_HILLS);
-		changed |= api.setTextureIfNone(forestHills,	FOREST_HILLS);
-		changed |= api.setTextureIfNone(desertHills,	HILLS);
-		changed |= api.setTextureIfNone(extremeHills,	MOUNTAINS);
-		changed |= api.setTextureIfNone(extremeHillsEdge, MOUNTAINS);
-		changed |= api.setTextureIfNone(iceMountains,	MOUNTAINS);
-		changed |= api.setTextureIfNone(forest,		FOREST);
-		changed |= api.setTextureIfNone(jungle,		JUNGLE);
-		changed |= api.setTextureIfNone(taiga,			PINES);
-		changed |= api.setTextureIfNone(taigaHills,	PINES_HILLS);
-		changed |= api.setTextureIfNone(swampland,		SWAMP);
-		changed |= api.setTextureIfNone(sky,			BEACH);
-		//changed |= api.addTextureIfNone(hell,		NETHER);
-		changed |= api.setTextureIfNone(mushroomIsland, MUSHROOM);
-		changed |= api.setTextureIfNone(mushroomIslandShore, BEACH);
-		
-		return changed;
+		api.setTexture(ocean,			WATER);
+		api.setTexture(river,			WATER);
+		api.setTexture(frozenOcean,	FROZEN_WATER);
+		api.setTexture(frozenRiver,	FROZEN_WATER);
+		api.setTexture(beach,			BEACH);
+		api.setTexture(desert,		SAND);
+		api.setTexture(plains,		PLAINS);
+		api.setTexture(icePlains,	SNOW);
+		api.setTexture(jungleHills,	JUNGLE_HILLS);
+		api.setTexture(forestHills,	FOREST_HILLS);
+		api.setTexture(desertHills,	HILLS);
+		api.setTexture(extremeHills,	MOUNTAINS);
+		api.setTexture(extremeHillsEdge, MOUNTAINS);
+		api.setTexture(iceMountains,	MOUNTAINS);
+		api.setTexture(forest,		FOREST);
+		api.setTexture(jungle,		JUNGLE);
+		api.setTexture(taiga,			PINES);
+		api.setTexture(taigaHills,	PINES_HILLS);
+		api.setTexture(swampland,		SWAMP);
+		api.setTexture(sky,			BEACH);
+		//api.addTexture(hell,		NETHER);
+		api.setTexture(mushroomIsland, MUSHROOM);
+		api.setTexture(mushroomIslandShore, BEACH);
 	}
 	
-	private boolean setDefaultMarker() {
-		boolean changed = false;
+	private void registerDefaultMarker() {;
 		MarkerAPI api = AtlasAPI.getMarkerAPI();
-		changed |= api.setTextureIfNone("google", Textures.MARKER_GOOGLE_MARKER);
-		changed |= api.setTextureIfNone("red_x_large", Textures.MARKER_RED_X_LARGE);
-		changed |= api.setTextureIfNone("red_x_small", Textures.MARKER_RED_X_SMALL);
-		changed |= api.setTextureIfNone("village", Textures.MARKER_VILLAGE);
-		return changed;
+		api.setTexture("google", Textures.MARKER_GOOGLE_MARKER);
+		api.setTexture("red_x_large", Textures.MARKER_RED_X_LARGE);
+		api.setTexture("red_x_small", Textures.MARKER_RED_X_SMALL);
+		api.setTexture("village", Textures.MARKER_VILLAGE);
 	}
 	
-	private boolean registerVillageTiles() {
-		boolean changed = false;
+	private void registerVillageTiles() {
 		TileAPI api = AtlasAPI.getTileAPI();
-		changed |= api.setTextureIfNone(ExtTileIdMap.TILE_VILLAGE_HOUSE, StandardTextureSet.HOUSE);
-		changed |= api.setTextureIfNone(ExtTileIdMap.TILE_VILLAGE_TERRITORY, StandardTextureSet.FENCE);
-		return changed;
+		api.setTexture(ExtTileIdMap.TILE_VILLAGE_HOUSE, StandardTextureSet.HOUSE);
+		api.setTexture(ExtTileIdMap.TILE_VILLAGE_TERRITORY, StandardTextureSet.FENCE);
 	}
 
 	@Override

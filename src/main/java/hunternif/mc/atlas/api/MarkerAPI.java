@@ -7,33 +7,27 @@ import cpw.mods.fml.relauncher.SideOnly;
 
 /**
  * API for putting custom markers to the atlases. Set the textures on the
- * client side, put markers into atlases on the server side. Marker texture
- * has to be square; the center of the texture will point to the marked spot.
+ * client side, put markers into atlases on the server side.
  * @author Hunternif
  */
 public interface MarkerAPI {
-	/** Version of Marker API, meaning this particular class. */
-	int getVersion();
+	/** Version of Marker API, meaning this particular interface. */
+	public static final int VERSION = 3;
 	
-	/** Assign texture to a marker type. */
+	/** Assign texture to a marker type. Marker texture has to be square;
+	 * the center of the texture will point to the marked spot.
+	 * Client-side only! */
 	@SideOnly(Side.CLIENT)
 	void setTexture(String markerType, ResourceLocation texture);
-	
-	/** Assign texture to a marker type, if no texture has been assigned to it.
-	 * Returns true if the texture was changed for this marker type. */
-	@SideOnly(Side.CLIENT)
-	boolean setTextureIfNone(String markerType, ResourceLocation texture);
-	
-	/** Save marker texture config file. You might want to avoid saving if no
-	 * texture has actually been changed, so that the config file is not
-	 * overwritten too often (that makes it easier to modify manually). */
-	@SideOnly(Side.CLIENT)
-	void save();
 	
 	/**
 	 * Put a marker in the specified Atlas instance at specified block
 	 * coordinates. Call this method per one marker either on the server or
 	 * on the client.
+	 * <p>
+	 * If calling this method on the client, the player must carry the atlas
+	 * in his inventory, to prevent griefing!
+	 * </p>
 	 * @param world
 	 * @param visibleAhead	whether the marker should appear visible even if
 	 * 						the player hasn't yet discovered that area.
@@ -49,7 +43,7 @@ public interface MarkerAPI {
 	
 	/**
 	 * Put a marker in all atlases in the world at specified block coordinates.
-	 * Call this method per one marker, on the server only!
+	 * Server side only!
 	 * @param world
 	 * @param visibleAhead	whether the marker should appear visible even if
 	 * 						the player hasn't yet discovered that area.
@@ -58,12 +52,15 @@ public interface MarkerAPI {
 	 * @param x				block coordinate
 	 * @param z				block coordinate
 	 */
-	@SideOnly(Side.SERVER)
 	void putGlobalMarker(World world, boolean visibleAhead,
 			String markerType, String label, int x, int z);
 	
 	/**
 	 * Delete a marker from an atlas.
+	 * <p>
+	 * If calling this method on the client,
+	 * the player must carry the atlas in his inventory, to prevent griefing!
+	 * </p>
 	 * @param world
 	 * @param atlasID
 	 * @param markerID
@@ -71,10 +68,10 @@ public interface MarkerAPI {
 	void deleteMarker(World world, int atlasID, int markerID);
 	
 	/**
-	 * Delete a global marker from all atlases. Only the server can permit this.
+	 * Delete a global marker from all atlases. Server side only!
 	 * @param world
 	 * @param markerID
 	 */
-	@SideOnly(Side.SERVER)
+
 	void deleteGlobalMarker(World world, int markerID);
 }

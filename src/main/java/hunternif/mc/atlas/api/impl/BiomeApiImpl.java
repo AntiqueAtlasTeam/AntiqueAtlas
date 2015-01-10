@@ -1,20 +1,13 @@
 package hunternif.mc.atlas.api.impl;
 
-import hunternif.mc.atlas.AntiqueAtlasMod;
 import hunternif.mc.atlas.api.BiomeAPI;
 import hunternif.mc.atlas.client.BiomeTextureMap;
 import hunternif.mc.atlas.client.StandardTextureSet;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
 
 public class BiomeApiImpl implements BiomeAPI {
-	private static final int VERSION = 2;
-	
-	@Override
-	public int getVersion() {
-		return VERSION;
-	}
-	
 	@Override
 	public void setTexture(int biomeID, ResourceLocation ... textures) {
 		BiomeTextureMap.instance().setTexture(biomeID, textures);
@@ -36,27 +29,12 @@ public class BiomeApiImpl implements BiomeAPI {
 	}
 	
 	@Override
-	public boolean setTextureIfNone(int biomeID, ResourceLocation ... textures) {
-		return BiomeTextureMap.instance().setTextureIfNone(biomeID, textures);
+	public void setBiome(World world, int atlasID, int biomeID, int chunkX, int chunkZ) {
+		//TODO set biomes in an atlas
 	}
 	
 	@Override
-	public boolean setTextureIfNone(BiomeGenBase biome, ResourceLocation ... textures) {
-		return setTextureIfNone(biome.biomeID, textures);
-	}
-	
-	@Override
-	public boolean setTextureIfNone(int biomeID, StandardTextureSet textureSet) {
-		return BiomeTextureMap.instance().setTextureIfNone(biomeID, textureSet);
-	}
-	
-	@Override
-	public boolean setTextureIfNone(BiomeGenBase biome, StandardTextureSet textureSet) {
-		return setTextureIfNone(biome.biomeID, textureSet);
-	}
-	
-	@Override
-	public void save() {
-		AntiqueAtlasMod.proxy.updateBiomeTextureConfig();
+	public void setBiome(World world, int atlasID, BiomeGenBase biome, int chunkX, int chunkZ) {
+		setBiome(world, atlasID, biome.biomeID, chunkX, chunkZ);
 	}
 }

@@ -4,9 +4,6 @@ import hunternif.mc.atlas.client.BiomeTextureMap;
 
 import java.util.Random;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-
 /**
  * Contains information about the biome and - on the client - the variation
  * number of the biome's texture set.
@@ -27,14 +24,12 @@ public class Tile {
 	
 	/** Chooses a random texture from the set of texture variations registered
 	 * for this biome ID. */
-	@SideOnly(Side.CLIENT)
 	public void randomizeTexture() {
 		int maxVariations = BiomeTextureMap.instance().getVariations(biomeID);
 		if (maxVariations <= 0) variationNumber = 0;
 		else variationNumber = (byte)(new Random().nextInt(maxVariations));
 	}
 	
-	@SideOnly(Side.CLIENT)
 	public int getVariationNumber() {
 		return variationNumber;
 	}

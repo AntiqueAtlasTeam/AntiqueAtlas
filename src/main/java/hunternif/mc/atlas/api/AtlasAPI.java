@@ -15,7 +15,7 @@ public class AtlasAPI {
 	private static final MarkerAPI markerApi = new MarkerApiImpl();
 	
 	/** Version of the API, meaning only this particular class. You might
-	 * want to check getVersion() on other specific API classes as well. */
+	 * want to check static field VERSION in the specific API interfaces. */
 	public static int getVersion() {
 		return VERSION;
 	}

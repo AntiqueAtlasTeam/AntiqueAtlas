@@ -11,29 +11,12 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 
 public class MarkerApiImpl implements MarkerAPI {
-	private static final int VERSION = 2;
-	
 	/** Used in place of atlasID to signify that the marker is global. */
 	private static final int GLOBAL = -1;
-	
-	@Override
-	public int getVersion() {
-		return VERSION;
-	}
 
 	@Override
 	public void setTexture(String markerType, ResourceLocation texture) {
 		MarkerTextureMap.instance().setTexture(markerType, texture);
-	}
-
-	@Override
-	public boolean setTextureIfNone(String markerType, ResourceLocation texture) {
-		return MarkerTextureMap.instance().setTextureIfNone(markerType, texture);
-	}
-
-	@Override
-	public void save() {
-		AntiqueAtlasMod.proxy.updateMarkerTextureConfig();
 	}
 	
 	@Override
@@ -42,6 +25,10 @@ public class MarkerApiImpl implements MarkerAPI {
 	}
 	@Override
 	public void putGlobalMarker(World world, boolean visibleAhead, String markerType, String label, int x, int z) {
+		if (world.isRemote) {
+			AntiqueAtlasMod.logger.warn("Client tried to add global marker!");
+			return;
+		}
 		doPutMarker(world, visibleAhead, GLOBAL, markerType, label, x, z);
 	}
 	private void doPutMarker(World world, boolean visibleAhead, int atlasID, String markerType, String label, int x, int z) {
@@ -65,6 +52,10 @@ public class MarkerApiImpl implements MarkerAPI {
 	}
 	@Override
 	public void deleteGlobalMarker(World world, int markerID) {
+		if (world.isRemote) {
+			AntiqueAtlasMod.logger.warn("Client tried to delete global marker!");
+			return;
+		}
 		doDeleteMarker(world, GLOBAL, markerID);
 	}
 	private void doDeleteMarker(World world, int atlasID, int markerID) {

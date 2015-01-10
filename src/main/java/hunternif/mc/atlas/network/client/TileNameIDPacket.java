@@ -84,21 +84,9 @@ public class TileNameIDPacket implements IMessage
 					} else if (pending instanceof ResourceLocation[]){
 						BiomeTextureMap.instance().setTexture(biomeID, (ResourceLocation[])pending);
 					}
-					AntiqueAtlasMod.proxy.updateBiomeTextureConfig();
-				}
-				if (api.pendingTexturesIfNone.containsKey(name)) {
-					Object pending = api.pendingTexturesIfNone.remove(name);
-					boolean textureChanged = false;
-					if (pending instanceof StandardTextureSet) {
-						textureChanged = BiomeTextureMap.instance().setTextureIfNone(biomeID, (StandardTextureSet)pending);
-					} else if (pending instanceof ResourceLocation[]){
-						textureChanged = BiomeTextureMap.instance().setTextureIfNone(biomeID, (ResourceLocation[])pending);
-					}
-					if (textureChanged) {
-						AntiqueAtlasMod.proxy.updateBiomeTextureConfig();
-					}
 				}
 			}
+			AntiqueAtlasMod.proxy.updateBiomeTextureConfig();
 			return null;
 		}
 

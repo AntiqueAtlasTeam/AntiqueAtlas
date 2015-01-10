@@ -98,6 +98,7 @@ public class ExtBiomeData extends WorldSavedData {
 	/** If setting biome on the server, a packet should be sent to all players. */
 	public void setBiomeIdAt(int dimension, int x, int y, int biomeID) {
 		getBiomesInDimension(dimension).put(new ShortVec2(x, y), biomeID);
+		markDirty();
 	}
 	
 	/** Send all data to player in several zipped packets. */

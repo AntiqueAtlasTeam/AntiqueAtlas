@@ -17,14 +17,7 @@ import java.util.Map;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 
-public class TileApiImpl implements TileAPI {
-	private static final int VERSION = 2;
-	
-	@Override
-	public int getVersion() {
-		return VERSION;
-	}
-	
+public class TileApiImpl implements TileAPI {	
 	/**
 	 * Because pseudo-biome IDs have to be synced with the server, they may not
 	 * have been initialized when the texture registration methods are called on
@@ -34,8 +27,7 @@ public class TileApiImpl implements TileAPI {
 	 * <p>This map maps unique tile name to a StandardTextureSet or an array of
 	 * ResourceLocations of textures.</p>
 	 */
-	public final Map<String, Object> pendingTextures = new HashMap<String, Object>(),
-			pendingTexturesIfNone = new HashMap<String, Object>();
+	public final Map<String, Object> pendingTextures = new HashMap<String, Object>();
 	
 	@Override
 	public void setTexture(String uniqueTileName, ResourceLocation ... textures) {
@@ -58,25 +50,8 @@ public class TileApiImpl implements TileAPI {
 	}
 	
 	@Override
-	public boolean setTextureIfNone(String uniqueTileName, ResourceLocation ... textures) {
-		int id = ExtTileIdMap.instance().getPseudoBiomeID(uniqueTileName);
-		if (id != ChunkBiomeAnalyzer.NOT_FOUND) {
-			return BiomeTextureMap.instance().setTextureIfNone(id, textures);
-		} else {
-			pendingTexturesIfNone.put(uniqueTileName, textures);
-			return false;
-		}
-	}
-	
-	@Override
-	public boolean setTextureIfNone(String uniqueTileName, StandardTextureSet textureSet) {
-		int id = ExtTileIdMap.instance().getPseudoBiomeID(uniqueTileName);
-		if (id != ChunkBiomeAnalyzer.NOT_FOUND) {
-			return BiomeTextureMap.instance().setTextureIfNone(id, textureSet);
-		} else {
-			pendingTexturesIfNone.put(uniqueTileName, textureSet);
-			return false;
-		}
+	public void putCustomTile(World world, int atlasID, String tileName, int chunkX, int chunkZ) {
+		//TODO put custom tiles in atlas
 	}
 	
 	@Override
@@ -86,7 +61,6 @@ public class TileApiImpl implements TileAPI {
 		ExtBiomeData data = AntiqueAtlasMod.extBiomeData.getData();
 		data.setBiomeIdAt(world.provider.dimensionId, chunkX, chunkZ, biomeID);
 		if (!world.isRemote) {
-			data.markDirty();
 			// Send name-ID packet:
 			if (!isIdRegistered) {
 				TileNameIDPacket packet = new TileNameIDPacket();

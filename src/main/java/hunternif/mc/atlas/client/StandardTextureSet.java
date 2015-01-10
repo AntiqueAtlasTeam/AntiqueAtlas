@@ -4,6 +4,9 @@ import static hunternif.mc.atlas.client.Textures.*;
 import net.minecraft.util.ResourceLocation;
 
 public enum StandardTextureSet {
+	// TODO Make it possible to register custom texture sets.
+	// That would probably be part of the solution to GitHub issue #16.
+	
 	WATER		(TILE_WATER, TILE_WATER2),
 	FROZEN_WATER(TILE_FROZEN_WATER),
 	BEACH		(TILE_BEACH),
