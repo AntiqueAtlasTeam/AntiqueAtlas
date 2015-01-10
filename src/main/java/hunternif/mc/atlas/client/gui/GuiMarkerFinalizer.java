@@ -42,7 +42,7 @@ public class GuiMarkerFinalizer extends GuiComponent {
 	private final GuiScrollingContainer scroller;
 	private ToggleGroup<GuiMarkerInList> typeRadioGroup;
 	
-	private final List<IMarkerTypeSelectListener> listeners = new ArrayList<>();
+	private final List<IMarkerTypeSelectListener> listeners = new ArrayList<IMarkerTypeSelectListener>();
 	
 	public GuiMarkerFinalizer() {
 		scroller = new GuiScrollingContainer();
