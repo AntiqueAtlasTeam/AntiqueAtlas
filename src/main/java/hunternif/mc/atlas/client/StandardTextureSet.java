@@ -13,7 +13,7 @@ public enum StandardTextureSet {
 	// That would probably be part of the solution to GitHub issue #16.
 	
 	WATER		(TILE_WATER, TILE_WATER2),
-	FROZEN_WATER(TILE_FROZEN_WATER),
+	FROZEN_WATER(TILE_ICE_NOBORDER),
 	BEACH		(TILE_BEACH),
 	SAND		(TILE_SAND, TILE_SAND2),
 	PLAINS		(TILE_GRASS, TILE_GRASS2, TILE_GRASS3, TILE_GRASS4),
