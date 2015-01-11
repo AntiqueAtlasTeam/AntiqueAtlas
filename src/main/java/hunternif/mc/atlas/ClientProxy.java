@@ -117,7 +117,7 @@ public class ClientProxy extends CommonProxy {
 	private void registerVillageTiles() {
 		TileAPI api = AtlasAPI.getTileAPI();
 		api.setTexture(ExtTileIdMap.TILE_VILLAGE_HOUSE, StandardTextureSet.HOUSE);
-		api.setTexture(ExtTileIdMap.TILE_VILLAGE_TERRITORY, StandardTextureSet.FENCE);
+		api.setTexture(ExtTileIdMap.TILE_VILLAGE_TERRITORY, StandardTextureSet.VILLAGE_FENCE);
 	}
 
 	@Override

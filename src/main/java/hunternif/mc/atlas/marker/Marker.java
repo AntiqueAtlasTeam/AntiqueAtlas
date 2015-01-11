@@ -18,6 +18,8 @@ public class Marker implements Comparable<Marker> {
 	private final boolean visibleAhead;
 	private boolean isGlobal = false;
 	
+	//TODO make an option for the marker to disappear at a certain scale.
+	
 	public Marker(int id, String type, String label, int dimension, int x, int z, boolean visibleAhead) {
 		this.id = id;
 		this.type = type;

@@ -35,16 +35,16 @@ public enum BiomeTextureMap {
 		public final int biomeID;
 		public StandardTextureSet textureSet;
 		public final List<ResourceLocation> textures;
-		public BiomeTextureEntry(int biomeID, ResourceLocation ... textures) {
+		public BiomeTextureEntry(int biomeID, ResourceLocation[] textures) {
 			this(biomeID, null, textures);
 		}
 		public BiomeTextureEntry(int biomeID, StandardTextureSet textureSet) {
 			this(biomeID, textureSet, textureSet.textures);
 		}
-		public BiomeTextureEntry(int biomeID, StandardTextureSet textureSet, ResourceLocation ... textures) {
+		public BiomeTextureEntry(int biomeID, StandardTextureSet textureSet, ResourceLocation[] textures) {
 			this.biomeID = biomeID;
 			this.textureSet = textureSet;
-			this.textures = new ArrayList<ResourceLocation>();
+			this.textures = new ArrayList<ResourceLocation>(textures.length);
 			for (ResourceLocation texture : textures) {
 				this.textures.add(texture);
 			}
@@ -93,10 +93,7 @@ public enum BiomeTextureMap {
 			entry = new BiomeTextureEntry(biomeID, textureSet);
 			textureMap.put(biomeID, entry);
 		} else {
-			if (!entry.textureSet.equals(textureSet)) {
-				// Adding textures from multiple sets breaks the "standard-ness" of a set
-				entry.textureSet = null;
-			}
+			entry.textureSet = textureSet;
 			if (!entry.textures.isEmpty()) {
 				AntiqueAtlasMod.logger.warn("Overwriting textures for biome " + biomeID);
 			}
@@ -106,6 +103,7 @@ public enum BiomeTextureMap {
 			}
 		}
 	}
+	
 	/** Assigns texture to biome. */
 	public void setTexture(int biomeID, ResourceLocation ... textures) {
 		BiomeTextureEntry entry = textureMap.get(biomeID);
@@ -213,31 +211,29 @@ public enum BiomeTextureMap {
 		return entry.textures.get(tile.getVariationNumber());
 	}
 	
-	public boolean haveSameTexture(int ... biomeIDs) {
-		List<ResourceLocation> textures = null;
-		for (int biomeID : biomeIDs) {
-			checkRegistration(biomeID);
-			if (textures == null) {
-				textureMap.get(biomeID);
-				textures = new ArrayList<ResourceLocation>(textureMap.get(biomeID).textures);
-			} else {
-				textures.retainAll(textureMap.get(biomeID).textures);
+	/** Whether the first tile should be stitched to the 2nd
+	 * (but the opposite is not always true!) */
+	public boolean shouldStitchTo(int biomeID, int toBiomeID) {
+		checkRegistration(biomeID);
+		checkRegistration(toBiomeID);
+		BiomeTextureEntry entry = textureMap.get(biomeID);
+		BiomeTextureEntry toEntry = textureMap.get(toBiomeID);
+		if (entry.textureSet != null) {
+			for (StandardTextureSet texSet : entry.textureSet.stitchTo) {
+				if (texSet.equals(toEntry.textureSet)) {
+					return true;
+				}
 			}
+			return false;
+		} else {
+			List<ResourceLocation> list = new ArrayList<ResourceLocation>(textureMap.get(biomeID).textures);
+			list.retainAll(textureMap.get(toBiomeID).textures);
+			return !list.isEmpty();
 		}
-		return !textures.isEmpty();
-	}
-	
-	public static boolean areBiomesEqual(BiomeGenBase ... biomes) {
-		for (int i = 1; i < biomes.length; i++) {
-			if (biomes[0] != biomes[i]) {
-				return false;
-			}
-		}
-		return true;
 	}
 	
 	public List<ResourceLocation> getAllTextures() {
-		List<ResourceLocation> list = new ArrayList<ResourceLocation>();
+		List<ResourceLocation> list = new ArrayList<ResourceLocation>(textureMap.size());
 		for (Entry<Integer, BiomeTextureEntry> entry : textureMap.entrySet()) {
 			list.addAll(entry.getValue().textures);
 		}

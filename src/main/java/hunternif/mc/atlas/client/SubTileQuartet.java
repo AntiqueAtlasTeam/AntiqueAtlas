@@ -20,8 +20,15 @@ public class SubTileQuartet implements Iterable<SubTile> {
 	 * 0 1
 	 * 2 3
 	 */
-	private SubTile[] array = {new SubTile(Part.BOTTOM_RIGHT), new SubTile(Part.BOTTOM_LEFT),
-							   new SubTile(Part.TOP_RIGHT), new SubTile(Part.TOP_LEFT)};
+	private final SubTile[] array;
+	
+	public SubTileQuartet() {
+		this(new SubTile(Part.BOTTOM_RIGHT), new SubTile(Part.BOTTOM_LEFT),
+				   new SubTile(Part.TOP_RIGHT), new SubTile(Part.TOP_LEFT));
+	}
+	public SubTileQuartet(SubTile a, SubTile b, SubTile c, SubTile d) {
+		array = new SubTile[]{a, b, c, d};
+	}
 	
 	public SubTile get(int i) {
 		return array[i];

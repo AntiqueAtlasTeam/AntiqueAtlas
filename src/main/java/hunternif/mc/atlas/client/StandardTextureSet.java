@@ -1,6 +1,11 @@
 package hunternif.mc.atlas.client;
 
 import static hunternif.mc.atlas.client.Textures.*;
+
+import java.util.Set;
+
+import com.google.common.collect.ImmutableSet;
+
 import net.minecraft.util.ResourceLocation;
 
 public enum StandardTextureSet {
@@ -24,12 +29,27 @@ public enum StandardTextureSet {
 	SWAMP		(TILE_SWAMP, TILE_SWAMP, TILE_SWAMP, TILE_SWAMP2, TILE_SWAMP3, TILE_SWAMP4, TILE_SWAMP5, TILE_SWAMP6),
 	MUSHROOM	(TILE_MUSHROOM, TILE_MUSHROOM2),
 	HOUSE		(TILE_HOUSE),
-	FENCE		(TILE_FENCE);
+	FENCE		(TILE_FENCE),
+	VILLAGE_FENCE(FENCE, HOUSE);
 	
 	public final ResourceLocation[] textures;
 	
+	public final Set<StandardTextureSet> stitchTo;
+	
+	/** Creates a texture set that also can be stitched to another set. */
+	StandardTextureSet(StandardTextureSet original, StandardTextureSet ... stitchTo) {
+		//TODO make this constructor not dependable on the "original" texture set.
+		this.textures = original.textures;
+		ImmutableSet.Builder<StandardTextureSet> builder = ImmutableSet.builder();
+		builder.add(this);
+		builder.add(original);
+		builder.add(stitchTo);
+		this.stitchTo = builder.build();
+	}
+	
 	StandardTextureSet(ResourceLocation ... textures) {
 		this.textures = textures;
+		this.stitchTo = ImmutableSet.of(this);
 	}
 	
 	public static boolean contains(String name) {

@@ -1,5 +1,6 @@
 package hunternif.mc.atlas.client;
 
+import hunternif.mc.atlas.client.SubTile.Part;
 import hunternif.mc.atlas.client.SubTile.Shape;
 import hunternif.mc.atlas.core.ITileStorage;
 import hunternif.mc.atlas.core.Tile;
@@ -55,7 +56,12 @@ public class TileRenderIterator implements Iterator<SubTileQuartet> {
 	 */
 	private Tile a, b, c, d, e, f, g, h, i, j, k, l;
 	
-	private final SubTileQuartet quartet = new SubTileQuartet();
+	/** Shortcuts for the quartet. */
+	private final SubTile _d = new SubTile(Part.BOTTOM_RIGHT),
+						  _e = new SubTile(Part.BOTTOM_LEFT),
+						  _h = new SubTile(Part.TOP_RIGHT),
+						  _i = new SubTile(Part.TOP_LEFT);
+	private final SubTileQuartet quartet = new SubTileQuartet(_d, _e, _h, _i);
 	
 	/** Current index into the tile storage, which presumably has every tile spanning exactly 1 chunk. */
 	private int chunkX, chunkY;
@@ -89,55 +95,68 @@ public class TileRenderIterator implements Iterator<SubTileQuartet> {
 		l = tiles.getTile(chunkX, chunkY + step);
 		
 		quartet.setCoords(subtileX, subtileY);
-		quartet.get(0).tile = d;
-		quartet.get(1).tile = e;
-		quartet.get(2).tile = h;
-		quartet.get(3).tile = i;
+		_d.tile = d;
+		_e.tile = e;
+		_h.tile = h;
+		_i.tile = i;
 		
-		if (shouldStitch(d, e, h, i)) {
-			// Full
-			for (SubTile subtile : quartet) {
-				subtile.shape = Shape.FULL;
+		// At first assume all convex:
+		for (SubTile subtile : quartet) {
+			subtile.shape = Shape.CONVEX;
+		}
+		
+		// Connect horizontally:
+		if (shouldStitchTo(d, e)) {
+			stitchHorizontally(_d);
+		}
+		if (shouldStitchTo(e, d)) {
+			stitchHorizontally(_e);
+		}
+		if (shouldStitchTo(h, i)) {
+			stitchHorizontally(_h);
+		}
+		if (shouldStitchTo(i, h)) {
+			stitchHorizontally(_i);
+		}
+		
+		// Connect vertically:
+		if (shouldStitchTo(d, h)) {
+			stitchVertically(_d);
+			if (_d.shape == Shape.CONCAVE && shouldStitchTo(d, i)) {
+				_d.shape = Shape.FULL;
 			}
-		} else {
-			// At first assume all convex:
-			for (SubTile subtile : quartet) {
-				subtile.shape = Shape.CONVEX;
+		}
+		if (shouldStitchTo(h, d)) {
+			stitchVertically(_h);
+			if (_h.shape == Shape.CONCAVE && shouldStitchTo(h, e)) {
+				_h.shape = Shape.FULL;
 			}
-			
-			// Connect horizontally:
-			if (shouldStitch(d, e)) {
-				stitchHorizontally(quartet.get(0));
-				stitchHorizontally(quartet.get(1));
+		}
+		if (shouldStitchTo(e, i)) {
+			stitchVertically(_e);
+			if (_e.shape == Shape.CONCAVE && shouldStitchTo(e, h)) {
+				_e.shape = Shape.FULL;
 			}
-			if (shouldStitch(h, i)) {
-				stitchHorizontally(quartet.get(2));
-				stitchHorizontally(quartet.get(3));
+		}
+		if (shouldStitchTo(i, e)) {
+			stitchVertically(_i);
+			if (_i.shape == Shape.CONCAVE && shouldStitchTo(i, d)) {
+				_i.shape = Shape.FULL;
 			}
-			
-			// Connect vertically:
-			if (shouldStitch(d, h)) {
-				stitchVertically(quartet.get(0));
-				stitchVertically(quartet.get(2));
-			}
-			if (shouldStitch(e, i)) {
-				stitchVertically(quartet.get(1));
-				stitchVertically(quartet.get(3));
-			}
-			
-			// For any convex subtile check for single-object:
-			if (quartet.get(0).shape == Shape.CONVEX && !shouldStitch(d, a) && !shouldStitch(d, c)) {
-				quartet.get(0).shape = Shape.SINGLE_OBJECT;
-			}
-			if (quartet.get(1).shape == Shape.CONVEX && !shouldStitch(e, b) && !shouldStitch(e, f)) {
-				quartet.get(1).shape = Shape.SINGLE_OBJECT;
-			}
-			if (quartet.get(2).shape == Shape.CONVEX && !shouldStitch(h, g) && !shouldStitch(h, k)) {
-				quartet.get(2).shape = Shape.SINGLE_OBJECT;
-			}
-			if (quartet.get(3).shape == Shape.CONVEX && !shouldStitch(i, k) && !shouldStitch(i, l)) {
-				quartet.get(3).shape = Shape.SINGLE_OBJECT;
-			}
+		}
+		
+		// For any convex subtile check for single-object:
+		if (_d.shape == Shape.CONVEX && !shouldStitchTo(d, a) && !shouldStitchTo(d, c)) {
+			_d.shape = Shape.SINGLE_OBJECT;
+		}
+		if (_e.shape == Shape.CONVEX && !shouldStitchTo(e, b) && !shouldStitchTo(e, f)) {
+			_e.shape = Shape.SINGLE_OBJECT;
+		}
+		if (_h.shape == Shape.CONVEX && !shouldStitchTo(h, g) && !shouldStitchTo(h, k)) {
+			_h.shape = Shape.SINGLE_OBJECT;
+		}
+		if (_i.shape == Shape.CONVEX && !shouldStitchTo(i, k) && !shouldStitchTo(i, l)) {
+			_i.shape = Shape.SINGLE_OBJECT;
 		}
 		
 		chunkX += step;
@@ -163,13 +182,11 @@ public class TileRenderIterator implements Iterator<SubTileQuartet> {
 		return quartet;
 	}
 	
-	private static boolean shouldStitch(Tile ... tiles) {
-		int[] biomeIDs = new int[tiles.length];
-		for (int i = 0; i < tiles.length; i++) {
-			if (tiles[i] == null) return false;
-			else biomeIDs[i] = tiles[i].biomeID;
-		}
-		return BiomeTextureMap.instance().haveSameTexture(biomeIDs);
+	/** Whether the first tile should be stitched to the 2nd
+	 * (but the opposite is not always true!) */
+	private static boolean shouldStitchTo(Tile tile, Tile to) {
+		if (tile == null || to == null) return false;
+		return BiomeTextureMap.instance().shouldStitchTo(tile.biomeID, to.biomeID);
 	}
 	
 	/** Change the shape of the subtile in order to stitch it vertically
