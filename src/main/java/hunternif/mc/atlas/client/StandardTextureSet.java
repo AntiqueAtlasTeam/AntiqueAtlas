@@ -32,8 +32,11 @@ public enum StandardTextureSet {
 	FENCE		(TILE_FENCE),
 	VILLAGE_FENCE(FENCE, HOUSE);
 	
+	/** The actual textures in this set. */
 	public final ResourceLocation[] textures;
 	
+	/** Texture sets that a tile rendered with this set can be stitched to,
+	 * including itself (usually). */
 	public final Set<StandardTextureSet> stitchTo;
 	
 	/** Creates a texture set that also can be stitched to another set. */

@@ -340,9 +340,11 @@ public class GuiAtlas extends GuiComponent {
 									   mouseY - getGuiY() - MARKER_SIZE/2);
 				
 				// Need to intercept keyboard events to type in the label:
-				//TODO: BUG: player walks infinitely in the same direction,
-				// if he was moving when he placed the marker. 
 				setInterceptKeyboard(true);
+				
+				// Un-press all keys to prevent player from walking infinitely: 
+				KeyBinding.unPressAllKeys();
+				
 			} else if (state.is(DELETING_MARKER) // If clicked on a marker, delete it:
 					&& toDelete != null && isMouseOverMap && mouseState == 0) {
 				AtlasAPI.getMarkerAPI().deleteMarker(player.worldObj,
