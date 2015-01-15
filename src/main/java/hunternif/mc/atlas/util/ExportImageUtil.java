@@ -21,7 +21,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.SortedSet;
 
 import javax.imageio.ImageIO;
 import javax.swing.JFileChooser;
@@ -87,7 +86,7 @@ public class ExportImageUtil {
 	}
 	
 	/** Renders the map into file as PNG image. */
-	public static void exportPngImage(DimensionData data, SortedSet<Marker> markers, File file, ExportUpdateListener listener) {
+	public static void exportPngImage(DimensionData data, List<Marker> markers, File file, ExportUpdateListener listener) {
 		float updateUnitsTotal = data.getSeenChunks().size() + markers.size();
 		int updateUnits = 0;
 		

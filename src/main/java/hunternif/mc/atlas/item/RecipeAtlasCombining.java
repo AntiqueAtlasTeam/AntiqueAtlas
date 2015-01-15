@@ -2,6 +2,7 @@ package hunternif.mc.atlas.item;
 
 import hunternif.mc.atlas.AntiqueAtlasMod;
 import hunternif.mc.atlas.core.AtlasData;
+import hunternif.mc.atlas.marker.Marker;
 import hunternif.mc.atlas.marker.MarkersData;
 
 import java.util.ArrayList;
@@ -92,7 +93,9 @@ public class RecipeAtlasCombining implements IRecipe {
 			MarkersData srcMarkers = AntiqueAtlasMod.itemAtlas.getMarkersData(stack, world);
 			if (destMarkers != null && srcMarkers != null && destMarkers != srcMarkers) {
 				for (int dim : srcMarkers.getVisitedDimensions()) {
-					destMarkers.getMarkersDataInDimension(dim).putAll(srcMarkers.getMarkersDataInDimension(dim));
+					for (Marker marker : srcMarkers.getMarkersDataInDimension(dim).getAllMarkers()) {
+						destMarkers.getMarkersDataInDimension(dim).insertMarker(marker);
+					}
 				}
 				destMarkers.markDirty();
 			}

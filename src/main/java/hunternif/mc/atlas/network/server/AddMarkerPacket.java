@@ -16,12 +16,11 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
 /**
- * A request from a client to create a new marker.
+ * A request from a client to create a new marker. In order to prevent griefing,
+ * the marker has to be local.
  * @author Hunternif
  */
 public class AddMarkerPacket implements IMessage {
-	/** Used in place of atlasID to signify that the marker is global. */
-	private static final int GLOBAL = -1;
 	private int atlasID;
 	private int dimension;
 	private String type;
@@ -40,10 +39,6 @@ public class AddMarkerPacket implements IMessage {
 		this.x = x;
 		this.y = y;
 		this.visibleAhead = visibleAhead;
-	}
-	/** Use this constructor when creating a <b>global</b> marker. */
-	public AddMarkerPacket(int dimension, String type, String label, int x, int y, boolean visibleAhead) {
-		this(GLOBAL, dimension, type, label, x, y, visibleAhead);
 	}
 	
 	@Override
@@ -83,16 +78,12 @@ public class AddMarkerPacket implements IMessage {
 						player.getGameProfile().getName(), msg.atlasID));
 				return null;
 			}
-			MarkersData markersData = msg.atlasID == GLOBAL ?
-					AntiqueAtlasMod.globalMarkersData.getData() :
-					AntiqueAtlasMod.itemAtlas.getMarkersData(msg.atlasID, player.worldObj);
-			Marker marker = markersData.addMarker(msg.type, msg.label, msg.dimension, msg.x, msg.y, msg.visibleAhead);
+			MarkersData markersData = AntiqueAtlasMod.itemAtlas.getMarkersData(msg.atlasID, player.worldObj);
+			Marker marker = markersData.createAndSaveMarker(msg.type, msg.label, msg.dimension, msg.x, msg.y, msg.visibleAhead);
 			// If these are a manually set markers sent from the client, forward
 			// them to other players. Including the original sender, because he
 			// waits on the server to verify his marker.
-			MarkersPacket packetForClients = msg.atlasID == GLOBAL ?
-					new MarkersPacket(msg.dimension, marker) :
-					new MarkersPacket(msg.atlasID, msg.dimension, marker);
+			MarkersPacket packetForClients = new MarkersPacket(msg.atlasID, msg.dimension, marker);
 			PacketDispatcher.sendToAll(packetForClients);
 			return null;
 		}

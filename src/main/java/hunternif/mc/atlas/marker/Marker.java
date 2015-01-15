@@ -1,22 +1,21 @@
 package hunternif.mc.atlas.marker;
 
-import net.minecraft.util.StatCollector;
 import hunternif.mc.atlas.util.ShortVec2;
+import net.minecraft.util.StatCollector;
 
 /**
- * Marker on the map in an atlas. Has a type and a text label. Naturally ordered
- * by the y coordinate, so that markers placed closer to the south will appear
- * in front of those placed closer to the north.
+ * Marker on the map in an atlas. Has a type and a text label.
  * @author Hunternif
  */
-public class Marker implements Comparable<Marker> {
-	/** Unique id per every global marker and every local marker in every atlas. */
+public class Marker {
+	/** Id is unique only within a MarkersData instance, i.e. within one atlas
+	 * or among global markers in a world. */
 	private final int id;
 	private final String type;
 	private final String label;
 	private final int dim, x, z;
 	private final boolean visibleAhead;
-	private boolean isGlobal = false;
+	private boolean isGlobal;
 	
 	//TODO make an option for the marker to disappear at a certain scale.
 	
@@ -92,11 +91,6 @@ public class Marker implements Comparable<Marker> {
 	protected Marker setGlobal(boolean value) {
 		this.isGlobal = value;
 		return this;
-	}
-
-	@Override
-	public int compareTo(Marker marker) {
-		return this.z - marker.z;
 	}
 	
 	@Override

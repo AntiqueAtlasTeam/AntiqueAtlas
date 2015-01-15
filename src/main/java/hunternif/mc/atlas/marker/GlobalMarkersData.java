@@ -11,8 +11,8 @@ public class GlobalMarkersData extends MarkersData {
 	}
 	
 	@Override
-	public Marker addMarker(String type, String label, int dimension, int x, int y, boolean visibleAhead) {
-		return super.addMarker(type, label, dimension, x, y, visibleAhead).setGlobal(true);
+	public Marker createAndSaveMarker(String type, String label, int dimension, int x, int y, boolean visibleAhead) {
+		return super.createAndSaveMarker(type, label, dimension, x, y, visibleAhead).setGlobal(true);
 	}
 	
 	@Override

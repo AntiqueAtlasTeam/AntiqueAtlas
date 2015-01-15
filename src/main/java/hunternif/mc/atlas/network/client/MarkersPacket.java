@@ -25,6 +25,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 /**
  * Sends markers set via API from server to client.
  * Only one dimension per packet.
+ * The markers in one packet are either all global or all local.
  * @author Hunternif
  */
 public class MarkersPacket implements IMessage {
@@ -57,6 +58,10 @@ public class MarkersPacket implements IMessage {
 
 	public boolean isEmpty() {
 		return markersByType.isEmpty();
+	}
+	
+	public boolean isGlobal() {
+		return atlasID == GLOBAL;
 	}
 	
 	@Override
@@ -101,7 +106,7 @@ public class MarkersPacket implements IMessage {
 		@Override
 		@SideOnly(Side.CLIENT)
 		public IMessage handleClientMessage(EntityPlayer player, MarkersPacket msg, MessageContext ctx) {
-			MarkersData markersData = msg.atlasID == GLOBAL ?
+			MarkersData markersData = msg.isGlobal() ?
 					AntiqueAtlasMod.globalMarkersData.getData() :
 					AntiqueAtlasMod.itemAtlas.getMarkersData(msg.atlasID, player.worldObj);
 			for (Marker marker : msg.markersByType.values()) {

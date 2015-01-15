@@ -78,7 +78,7 @@ public class VillageWatcher {
 							ExtTileIdMap.TILE_VILLAGE_TERRITORY, chunkX, chunkZ);
 				}
 				
-				Set<Marker> markers = markersData.getMarkersAtChunk(dim, chunkX, chunkZ);
+				List<Marker> markers = markersData.getMarkersAtChunk(dim, chunkX, chunkZ);
 				if (markers != null) {
 					for (Marker marker : markers) {
 						if (marker.getType().equals("village")) {

@@ -4,15 +4,13 @@ import hunternif.mc.atlas.AntiqueAtlasMod;
 import hunternif.mc.atlas.api.MarkerAPI;
 import hunternif.mc.atlas.network.PacketDispatcher;
 import hunternif.mc.atlas.network.client.MarkersPacket;
-import hunternif.mc.atlas.util.ShortVec2;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.SortedSet;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import net.minecraft.entity.player.EntityPlayer;
@@ -21,17 +19,15 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.world.WorldSavedData;
 import net.minecraftforge.common.util.Constants;
-
-import com.google.common.base.Supplier;
-import com.google.common.collect.Multimaps;
-import com.google.common.collect.SortedSetMultimap;
-
 import cpw.mods.fml.common.FMLCommonHandler;
 
 /**
  * Contains markers, mapped to dimensions, and then to their chunk coordinates.
- * Used by Atlases for local markers, and a single instance is used for global
- * markers.
+ * <p>
+ * On the server a separate instance of MarkersData contains all the global
+ * markers, which are also copied to atlases, but not saved with them.
+ * At runtime clients have both types of markers in the same collection..
+ * </p>
  * @author Hunternif
  */
 public class MarkersData extends WorldSavedData {
@@ -47,49 +43,33 @@ public class MarkersData extends WorldSavedData {
 	private static final String TAG_MARKER_Y = "y";
 	private static final String TAG_MARKER_VISIBLE_AHEAD = "visAh";
 	
-	/** Maps threads to the temporary key for thread-safe access to the tile map. */
-	private final Map<Thread, ShortVec2> thread2KeyMap = new ConcurrentHashMap<Thread, ShortVec2>(2, 0.75f, 2);
-	
-	/** Temporary key for thread-safe access to the tile map. */
-	private ShortVec2 getKey() {
-		ShortVec2 key = thread2KeyMap.get(Thread.currentThread());
-		if (key == null) {
-			key = new ShortVec2(0, 0);
-			thread2KeyMap.put(Thread.currentThread(), key);
-		}
-		return key;
-	}
-	
-	private static final Supplier<SortedSet<Marker>> concurrentSortedSetSupplier = new Supplier<SortedSet<Marker>>() {
-		@Override
-		public SortedSet<Marker> get() {
-			return new ConcurrentSkipListSet<Marker>();
-		}
-	};
-	
-	/** Set of players this data has been sent to. */
+	/** Set of players this data has been sent to, only once after they connect.
+	 * TODO: determine when the loaded data can be sent to a player once. */
 	private final Set<EntityPlayer> playersSentTo = new HashSet<EntityPlayer>();
 	
-	public MarkersData(String key) {
-		super(key);
-	}
+	private final AtomicInteger largestID = new AtomicInteger(0);
 	
-	protected static final AtomicInteger largestID = new AtomicInteger(0);
-	
-	protected static int getNewID() {
+	protected int getNewID() {
 		return largestID.incrementAndGet();
 	}
 	
 	private final Map<Integer /*marker ID*/, Marker> idMap = new ConcurrentHashMap<Integer, Marker>(2, 0.75f, 2);
 	/**
-	 * SetMultimap, because markers shouldn't be duplicated. SortedSet, because
-	 * markers must be sorted by their y coordinate. ConcurrentHashMap, because
-	 * it is concurrently updated by executing MarkerPacket.
-	 * The sorted sets inside the multimap allow concurrent iteration.
-	 * Set of markers is mapped to chunk coordinates and then to dimension ID.
+	 * Maps a list of markers in a chunk to the chunk coordinates, then to
+	 * dimension ID. It exists in case someone needs to quickly find markers
+	 * located in a chunk.
+	 * Within the list markers are ordered by the Z coordinate, so that markers
+	 * placed closer to the south will appear in front of those placed closer to
+	 * the north.
+	 * TODO: consider using Quad-tree.
 	 */
-	private final Map<Integer /*dimension ID*/, SortedSetMultimap<ShortVec2 /*chunk*/, Marker>> dimensionMap =
-			new ConcurrentHashMap<Integer, SortedSetMultimap<ShortVec2, Marker>>(2, 0.75f, 2);
+	private final Map<Integer /*dimension ID*/, DimensionMarkersData> dimensionMap =
+			new ConcurrentHashMap<Integer, DimensionMarkersData>(2, 0.75f, 2);
+	
+	public MarkersData(String key) {
+		super(key);
+	}
+
 
 	@Override
 	public void readFromNBT(NBTTagCompound compound) {
@@ -137,9 +117,9 @@ public class MarkersData extends WorldSavedData {
 		for (Integer dimension : dimensionMap.keySet()) {
 			NBTTagCompound tag = new NBTTagCompound();
 			tag.setInteger(TAG_DIMENSION_ID, dimension);
-			SortedSetMultimap<ShortVec2, Marker> markers = getMarkersDataInDimension(dimension);
+			DimensionMarkersData data = getMarkersDataInDimension(dimension);
 			NBTTagList tagList = new NBTTagList();
-			for (Marker marker : markers.values()) {
+			for (Marker marker : data.getAllMarkers()) {
 				NBTTagCompound markerTag = new NBTTagCompound();
 				markerTag.setInteger(TAG_MARKER_ID, marker.getId());
 				markerTag.setString(TAG_MARKER_TYPE, marker.getType());
@@ -159,23 +139,24 @@ public class MarkersData extends WorldSavedData {
 		return dimensionMap.keySet();
 	}
 	
-	/** Creates a new multimap, if needed. */
-	public SortedSetMultimap<ShortVec2, Marker> getMarkersDataInDimension(int dimension) {
-		SortedSetMultimap<ShortVec2, Marker> map = dimensionMap.get(Integer.valueOf(dimension));
-		if (map == null) {
-			map = Multimaps.synchronizedSortedSetMultimap(Multimaps.newSortedSetMultimap(
-					new ConcurrentHashMap<ShortVec2, Collection<Marker>>(), concurrentSortedSetSupplier));
-			dimensionMap.put(Integer.valueOf(dimension), map);
-		}
-		return map;
-	}
-	
+	/** This method is rather inefficient, use it sparingly. */
 	public Collection<Marker> getMarkersInDimension(int dimension) {
-		return getMarkersDataInDimension(dimension).values();
+		return getMarkersDataInDimension(dimension).getAllMarkers();
 	}
 	
-	public SortedSet<Marker> getMarkersAtChunk(int dimension, int x, int y) {
-		return getMarkersDataInDimension(dimension).get(getKey().set(x, y));
+	/** Creates a new instance of {@link DimensionMarkersData}, if needed. */
+	public DimensionMarkersData getMarkersDataInDimension(int dimension) {
+		DimensionMarkersData data = dimensionMap.get(dimension);
+		if (data == null) {
+			data = new DimensionMarkersData(dimension);
+			dimensionMap.put(dimension, data);
+		}
+		return data;
+	}
+	
+	/** May return null. */
+	public List<Marker> getMarkersAtChunk(int dimension, int x, int z) {
+		return getMarkersDataInDimension(dimension).getMarkersAt(x, z);
 	}
 	
 	public Marker getMarkerByID(int id) {
@@ -184,25 +165,27 @@ public class MarkersData extends WorldSavedData {
 	public Marker removeMarker(int id) {
 		Marker marker = getMarkerByID(id);
 		if (marker == null) return null;
-		idMap.remove(marker);
-		getMarkersAtChunk(marker.getDimension(),
-				marker.getChunkX(), marker.getChunkZ()).remove(marker);
-		markDirty();
+		if (idMap.remove(id) != null) {
+			getMarkersDataInDimension(marker.getDimension()).removeMarker(marker);
+			markDirty();
+		}
 		return marker;
 	}
 	
 	/** For internal use. Use the {@link MarkerAPI} to put markers! This method
-	 * creates a new marker from the given data, saves and returns it.*/
-	public Marker addMarker(String type, String label, int dimension, int x, int y, boolean visibleAhead) {
-		Marker marker = new Marker(getNewID(), type, label, dimension, x, y, visibleAhead);
+	 * creates a new marker from the given data, saves and returns it.
+	 * Server side only! */
+	public Marker createAndSaveMarker(String type, String label, int dimension, int x, int z, boolean visibleAhead) {
+		Marker marker = new Marker(getNewID(), type, label, dimension, x, z, visibleAhead);
 		idMap.put(marker.getId(), marker);
-		getMarkersDataInDimension(dimension).put(marker.getChunkCoords(), marker);
+		getMarkersDataInDimension(marker.getDimension()).insertMarker(marker);
 		markDirty();
 		return marker;
 	}
 	
 	/**
 	 * For internal use, when markers are loaded from NBT or sent from the server.
+	 * Has to be called from a single thread only!
 	 * @return the marker instance that was added. It may be different from the
 	 * 		   one supplied in case of id conflict.
 	 */
@@ -222,10 +205,14 @@ public class MarkersData extends WorldSavedData {
 				marker = new Marker(id, marker.getType(), marker.getLabel(),
 						marker.getDimension(), marker.getX(), marker.getZ(),
 						marker.isVisibleAhead());
+				
 			}
 		}
+		if (id > largestID.get()) {
+			largestID.set(id);
+		}
 		idMap.put(id, marker);
-		getMarkersDataInDimension(marker.getDimension()).put(marker.getChunkCoords(), marker);
+		getMarkersDataInDimension(marker.getDimension()).insertMarker(marker);
 		return marker;
 	}
 	
@@ -240,8 +227,8 @@ public class MarkersData extends WorldSavedData {
 		int dataSizeBytes = 0;
 		for (Integer dimension : dimensionMap.keySet()) {
 			MarkersPacket packet = newMarkersPacket(atlasID, dimension);
-			SortedSetMultimap<ShortVec2, Marker> markers = getMarkersDataInDimension(dimension);
-			for (Marker marker : markers.values()) {
+			DimensionMarkersData data = getMarkersDataInDimension(dimension);
+			for (Marker marker : data.getAllMarkers()) {
 				packet.putMarker(marker);
 				dataSizeBytes += 4 + 4 + (marker.getLabel().length() + marker.getType().length())*2;
 				if (dataSizeBytes >= PacketDispatcher.MAX_SIZE_BYTES) {
@@ -267,7 +254,7 @@ public class MarkersData extends WorldSavedData {
 	}
 	
 	public boolean isEmpty() {
-		return dimensionMap.isEmpty();
+		return idMap.isEmpty();
 	}
 	
 }

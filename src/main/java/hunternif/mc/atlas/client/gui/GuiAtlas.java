@@ -15,7 +15,6 @@ import hunternif.mc.atlas.client.gui.core.GuiStates.IState;
 import hunternif.mc.atlas.client.gui.core.GuiStates.SimpleState;
 import hunternif.mc.atlas.client.gui.core.IButtonListener;
 import hunternif.mc.atlas.core.AtlasData;
-import hunternif.mc.atlas.marker.GlobalMarkersData;
 import hunternif.mc.atlas.marker.Marker;
 import hunternif.mc.atlas.marker.MarkerTextureMap;
 import hunternif.mc.atlas.marker.MarkersData;
@@ -25,9 +24,12 @@ import hunternif.mc.atlas.util.MathUtil;
 import hunternif.mc.atlas.util.Rect;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.SortedSet;
-import java.util.TreeSet;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScaledResolution;
@@ -180,7 +182,7 @@ public class GuiAtlas extends GuiComponent {
 	// Markers =================================================================
 	
 	/** Temporary set for loading markers currently visible on the map. */
-	private final SortedSet<Marker> visibleMarkers = new TreeSet<Marker>();
+	private List<Marker> visibleMarkers;
 	/** The marker highlighted by the eraser. Even though multiple markers may
 	 * be highlighted at the same time, only one of them will be deleted. */
 	private Marker toDelete;
@@ -454,14 +456,25 @@ public class GuiAtlas extends GuiComponent {
 	private void updateAtlasData() {
 		data = AntiqueAtlasMod.itemAtlas.getAtlasData(stack, player.worldObj);
 	}
+	/** This method finds all global and local markers in the current dimension
+	 * and saves it to a local list. This operation is rather expensive and
+	 * should only be performed when necessary.
+	 * TODO: consider adding or removing markers one by one as the packets arrive. */
 	public void updateMarkerData() {
-		GlobalMarkersData globalMarkers = AntiqueAtlasMod.globalMarkersData.getData();
-		MarkersData localMarkers = AntiqueAtlasMod.itemAtlas.getMarkersData(stack, player.worldObj);
-		visibleMarkers.clear();
-		visibleMarkers.addAll(globalMarkers.getMarkersInDimension(player.dimension));
-		if (localMarkers != null) {
-			visibleMarkers.addAll(localMarkers.getMarkersInDimension(player.dimension));
+		Collection<Marker> globalMarkers = AntiqueAtlasMod.globalMarkersData
+				.getData().getMarkersInDimension(player.dimension);
+		MarkersData localMarkersData = AntiqueAtlasMod.itemAtlas
+				.getMarkersData(stack, player.worldObj);
+		Collection<Marker> localMarkers;
+		if (localMarkersData == null) {
+			localMarkers = Collections.emptyList();
+		} else {
+			localMarkers = localMarkersData.getMarkersInDimension(player.dimension);
 		}
+		visibleMarkers = new ArrayList<Marker>(localMarkers.size() + globalMarkers.size());
+		visibleMarkers.addAll(globalMarkers);
+		visibleMarkers.addAll(localMarkers);
+		Collections.sort(visibleMarkers, markerZComparator);
 	}
 	
 	/** Offset the map view depending on which button was pressed. */
@@ -695,4 +708,11 @@ public class GuiAtlas extends GuiComponent {
 		btnExportPng.setTitle(I18n.format("gui.antiqueatlas.exportImage"));
 		btnMarker.setTitle(I18n.format("gui.antiqueatlas.addMarker"));
 	}
+	
+	private static Comparator<Marker> markerZComparator = new Comparator<Marker>() {
+		@Override
+		public int compare(Marker m1, Marker m2) {
+			return m1.getZ() - m2.getZ();
+		}
+	};
 }
