@@ -43,8 +43,7 @@ public class MarkersData extends WorldSavedData {
 	private static final String TAG_MARKER_Y = "y";
 	private static final String TAG_MARKER_VISIBLE_AHEAD = "visAh";
 	
-	/** Set of players this data has been sent to, only once after they connect.
-	 * TODO: determine when the loaded data can be sent to a player once. */
+	/** Set of players this data has been sent to, only once after they connect. */
 	private final Set<EntityPlayer> playersSentTo = new HashSet<EntityPlayer>();
 	
 	private final AtomicInteger largestID = new AtomicInteger(0);

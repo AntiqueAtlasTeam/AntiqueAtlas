@@ -50,12 +50,16 @@ public class DeleteMarkerPacket implements IMessage {
 		buffer.writeShort(atlasID);
 		buffer.writeShort(markerID);
 	}
+	
+	public boolean isGlobal() {
+		return atlasID == GLOBAL;
+	}
 
 	public static class Handler extends AbstractMessageHandler<DeleteMarkerPacket> {
 		@Override
 		@SideOnly(Side.CLIENT)
 		public IMessage handleClientMessage(EntityPlayer player, DeleteMarkerPacket msg, MessageContext ctx) {
-			MarkersData data = msg.atlasID == GLOBAL ?
+			MarkersData data = msg.isGlobal() ?
 					AntiqueAtlasMod.globalMarkersData.getData() :
 					AntiqueAtlasMod.itemAtlas.getMarkersData(msg.atlasID, player.worldObj);
 			data.removeMarker(msg.markerID);
@@ -73,7 +77,7 @@ public class DeleteMarkerPacket implements IMessage {
 						player.getGameProfile().getName(), msg.atlasID));
 				return null;
 			}
-			MarkersData data = msg.atlasID == GLOBAL ?
+			MarkersData data = msg.isGlobal() ?
 					AntiqueAtlasMod.globalMarkersData.getData() :
 					AntiqueAtlasMod.itemAtlas.getMarkersData(msg.atlasID, player.worldObj);
 			data.removeMarker(msg.markerID);
