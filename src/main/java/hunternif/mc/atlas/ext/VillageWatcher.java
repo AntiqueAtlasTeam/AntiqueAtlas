@@ -70,13 +70,8 @@ public class VillageWatcher {
 				}
 				int chunkX = (centerX + dx) >> 4;
 				int chunkZ = (centerZ + dz) >> 4;
-				// Villages tend to lose doors eventually, so let's not replace
-				// the old ones with territory:
-				int biomeID = AntiqueAtlasMod.extBiomeData.getData().getBiomeIdAt(dim, chunkX, chunkZ);
-				if (biomeID != ExtTileIdMap.instance().getPseudoBiomeID(ExtTileIdMap.TILE_VILLAGE_HOUSE)) {
 					AtlasAPI.getTileAPI().putCustomGlobalTile(world,
 							ExtTileIdMap.TILE_VILLAGE_TERRITORY, chunkX, chunkZ);
-				}
 				
 				List<Marker> markers = markersData.getMarkersAtChunk(dim, chunkX, chunkZ);
 				if (markers != null) {
