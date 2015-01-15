@@ -123,16 +123,13 @@ public class ItemAtlas extends Item {
 						data.markDirty();
 					}
 				} else {
-					// Only update the custom tile if it doesn't rewrite itself:
-					Tile oldTile = seenChunks.getTile(x, y);
-					if (oldTile == null || oldTile.biomeID != biomeId) {
-						Tile tile = new Tile(biomeId);
-						if (world.isRemote) {
-							tile.randomizeTexture();
-						}
-						data.setTile(player.dimension, x, y, tile);
-						data.markDirty();
+					// Always update custom tiles
+					Tile tile = new Tile(biomeId);
+					if (world.isRemote) {
+						tile.randomizeTexture();
 					}
+					data.setTile(player.dimension, x, y, tile);
+					data.markDirty();
 				}
 				
 			}
