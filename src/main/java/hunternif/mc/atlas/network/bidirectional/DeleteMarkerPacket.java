@@ -1,12 +1,10 @@
 package hunternif.mc.atlas.network.bidirectional;
 
 import hunternif.mc.atlas.AntiqueAtlasMod;
-import hunternif.mc.atlas.client.gui.GuiAtlas;
 import hunternif.mc.atlas.marker.MarkersData;
 import hunternif.mc.atlas.network.AbstractMessageHandler;
 import hunternif.mc.atlas.network.PacketDispatcher;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
@@ -63,9 +61,6 @@ public class DeleteMarkerPacket implements IMessage {
 					AntiqueAtlasMod.globalMarkersData.getData() :
 					AntiqueAtlasMod.itemAtlas.getMarkersData(msg.atlasID, player.worldObj);
 			data.removeMarker(msg.markerID);
-			if (Minecraft.getMinecraft().currentScreen instanceof GuiAtlas) {
-				((GuiAtlas) Minecraft.getMinecraft().currentScreen).updateMarkerData();
-			}
 			return null;
 		}
 		

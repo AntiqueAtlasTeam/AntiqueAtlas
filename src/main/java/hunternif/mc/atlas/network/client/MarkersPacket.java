@@ -1,7 +1,6 @@
 package hunternif.mc.atlas.network.client;
 
 import hunternif.mc.atlas.AntiqueAtlasMod;
-import hunternif.mc.atlas.client.gui.GuiAtlas;
 import hunternif.mc.atlas.marker.Marker;
 import hunternif.mc.atlas.marker.MarkersData;
 import hunternif.mc.atlas.network.AbstractMessageHandler;
@@ -10,7 +9,6 @@ import io.netty.buffer.ByteBuf;
 import java.util.List;
 import java.util.Set;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 
 import com.google.common.collect.ArrayListMultimap;
@@ -111,9 +109,6 @@ public class MarkersPacket implements IMessage {
 					AntiqueAtlasMod.itemAtlas.getMarkersData(msg.atlasID, player.worldObj);
 			for (Marker marker : msg.markersByType.values()) {
 				markersData.loadMarker(marker);
-			}
-			if (Minecraft.getMinecraft().currentScreen instanceof GuiAtlas) {
-				((GuiAtlas) Minecraft.getMinecraft().currentScreen).updateMarkerData();
 			}
 			return null;
 		}

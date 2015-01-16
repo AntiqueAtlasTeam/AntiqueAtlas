@@ -8,6 +8,7 @@ import hunternif.mc.atlas.client.Textures;
 import hunternif.mc.atlas.client.TileRenderIterator;
 import hunternif.mc.atlas.client.gui.ExportUpdateListener;
 import hunternif.mc.atlas.core.DimensionData;
+import hunternif.mc.atlas.marker.DimensionMarkersData;
 import hunternif.mc.atlas.marker.Marker;
 import hunternif.mc.atlas.marker.MarkerTextureMap;
 
@@ -86,16 +87,21 @@ public class ExportImageUtil {
 	}
 	
 	/** Renders the map into file as PNG image. */
-	public static void exportPngImage(DimensionData data, List<Marker> markers, File file, ExportUpdateListener listener) {
-		float updateUnitsTotal = data.getSeenChunks().size() + markers.size();
+	public static void exportPngImage(DimensionData biomeData, DimensionMarkersData globalMarkers,
+			DimensionMarkersData localMarkers, File file, ExportUpdateListener listener) {
+		float updateUnitsTotal = biomeData.getSeenChunks().size()
+				+ globalMarkers.getAllMarkers().size();
+		if (localMarkers != null) {
+			updateUnitsTotal += localMarkers.getAllMarkers().size();
+		}
 		int updateUnits = 0;
 		
 		// Prepare output image
 		// Leave padding of one row of map tiles on each side
-		int minX = (data.getScope().minX - 1) * TILE_SIZE;
-		int minY = (data.getScope().minY - 1) * TILE_SIZE;
-		int outWidth = (data.getScope().maxX + 2) * TILE_SIZE - minX;
-		int outHeight = (data.getScope().maxY + 2) * TILE_SIZE - minY;
+		int minX = (biomeData.getScope().minX - 1) * TILE_SIZE;
+		int minY = (biomeData.getScope().minY - 1) * TILE_SIZE;
+		int outWidth = (biomeData.getScope().maxX + 2) * TILE_SIZE - minX;
+		int outHeight = (biomeData.getScope().maxY + 2) * TILE_SIZE - minY;
 		AntiqueAtlasMod.logger.info("Image size: " + outWidth + "*" + outHeight);
 		BufferedImage outImage = new BufferedImage(outWidth, outHeight, BufferedImage.TYPE_INT_ARGB);
 		Graphics2D graphics = outImage.createGraphics();
@@ -196,7 +202,7 @@ public class ExportImageUtil {
 		listener.update((float)updateUnits / (float) updateUnitsTotal);
 	
 		//============= Draw actual map tiles ==============
-		TileRenderIterator iter = new TileRenderIterator(data);
+		TileRenderIterator iter = new TileRenderIterator(biomeData);
 		while(iter.hasNext()) {
 			SubTileQuartet subtiles = iter.next();
 			for (SubTile subtile : subtiles) {
@@ -229,30 +235,51 @@ public class ExportImageUtil {
 			}
 		}
 		
-		// Draw markers
-		for (Marker marker : markers) {
-			updateUnits++;
-			if (!marker.isVisibleAhead() && !data.hasTileAt(marker.getChunkX(), marker.getChunkZ())) {
-				continue;
-			}
-			
-			// Load marker texture
-			ResourceLocation texture = MarkerTextureMap.instance().getTexture(marker.getType());
-			BufferedImage markerImage = textureImageMap.get(texture);
-			if (markerImage == null) continue;
-			
-			int markerX = marker.getX() - minX;
-			int markerY = marker.getZ() - minY;
-			graphics.drawImage(markerImage,
-					markerX - MARKER_SIZE/2, markerY - MARKER_SIZE/2,
-					markerX + MARKER_SIZE/2, markerY + MARKER_SIZE/2,
-					0, 0, MARKER_SIZE, MARKER_SIZE,
-					null);
-			
-			if (updateUnits % 10 == 0) { // Update every 10 tiles
-				listener.update((float)updateUnits / (float) updateUnitsTotal);
+		//============== Draw markers ================
+		// Draw local markers on top of global markers
+		List<Marker> markers = new ArrayList<Marker>();
+		for (int x = biomeData.getScope().minX; x <= biomeData.getScope().maxX; x++) {
+			for (int z = biomeData.getScope().minY; z <= biomeData.getScope().maxY; z++) {
+				
+				markers.clear();
+				List<Marker> globalMarkersAt = globalMarkers.getMarkersAt(x, z);
+				if (globalMarkersAt != null) {
+					markers.addAll(globalMarkers.getMarkersAt(x, z));
+				}
+				if (localMarkers != null) {
+					List<Marker> localMarkersAt = localMarkers.getMarkersAt(x, z);
+					if (localMarkersAt != null) {
+						markers.addAll(localMarkersAt);
+					}
+				}
+				
+				for (Marker marker : markers) {
+					updateUnits++;
+					if (!marker.isVisibleAhead() &&
+							!biomeData.hasTileAt(marker.getChunkX(), marker.getChunkZ())) {
+						continue;
+					}
+					
+					// Load marker texture
+					ResourceLocation texture = MarkerTextureMap.instance().getTexture(marker.getType());
+					BufferedImage markerImage = textureImageMap.get(texture);
+					if (markerImage == null) continue;
+					
+					int markerX = marker.getX() - minX;
+					int markerY = marker.getZ() - minY;
+					graphics.drawImage(markerImage,
+							markerX - MARKER_SIZE/2, markerY - MARKER_SIZE/2,
+							markerX + MARKER_SIZE/2, markerY + MARKER_SIZE/2,
+							0, 0, MARKER_SIZE, MARKER_SIZE,
+							null);
+					
+					if (updateUnits % 10 == 0) { // Update every 10 tiles
+						listener.update((float)updateUnits / (float) updateUnitsTotal);
+					}
+				}
 			}
 		}
+		
 		
 		try {
 			listener.setStatusString(I18n.format("gui.antiqueatlas.export.writing"));

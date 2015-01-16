@@ -151,7 +151,7 @@ public class MarkersData extends WorldSavedData {
 		return getMarkersDataInDimension(dimension).getAllMarkers();
 	}
 	
-	/** Creates a new instance of {@link DimensionMarkersData}, if needed. */
+	/** Creates a new instance of {@link DimensionMarkersData}, if necessary. */
 	public DimensionMarkersData getMarkersDataInDimension(int dimension) {
 		DimensionMarkersData data = dimensionMap.get(dimension);
 		if (data == null) {

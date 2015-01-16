@@ -14,7 +14,8 @@ import hunternif.mc.atlas.client.gui.core.GuiStates;
 import hunternif.mc.atlas.client.gui.core.GuiStates.IState;
 import hunternif.mc.atlas.client.gui.core.GuiStates.SimpleState;
 import hunternif.mc.atlas.client.gui.core.IButtonListener;
-import hunternif.mc.atlas.core.AtlasData;
+import hunternif.mc.atlas.core.DimensionData;
+import hunternif.mc.atlas.marker.DimensionMarkersData;
 import hunternif.mc.atlas.marker.Marker;
 import hunternif.mc.atlas.marker.MarkerTextureMap;
 import hunternif.mc.atlas.marker.MarkersData;
@@ -24,11 +25,7 @@ import hunternif.mc.atlas.util.MathUtil;
 import hunternif.mc.atlas.util.Rect;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 import net.minecraft.client.Minecraft;
@@ -64,7 +61,7 @@ public class GuiAtlas extends GuiComponent {
 	 * visually, but will instead span greater area. */
 	private static final double MIN_SCALE_THRESHOLD = 0.5;
 	
-	private boolean DEBUG_RENDERING = false;
+	private boolean DEBUG_RENDERING = true;
 	private long[] renderTimes = new long[30];
 	private int renderTimesIndex = 0;
 	
@@ -181,8 +178,10 @@ public class GuiAtlas extends GuiComponent {
 	
 	// Markers =================================================================
 	
-	/** Temporary set for loading markers currently visible on the map. */
-	private List<Marker> visibleMarkers;
+	/** Local markers in the current dimension */
+	private DimensionMarkersData localMarkersData;
+	/** Global markers in the current dimension */
+	private DimensionMarkersData globalMarkersData;
 	/** The marker highlighted by the eraser. Even though multiple markers may
 	 * be highlighted at the same time, only one of them will be deleted. */
 	private Marker toDelete;
@@ -196,7 +195,7 @@ public class GuiAtlas extends GuiComponent {
 	
 	private EntityPlayer player;
 	private ItemStack stack;
-	private AtlasData data;
+	private DimensionData biomeData;
 	
 	/** Coordinate scale factor relative to the actual screen size. */
 	private int screenScale;
@@ -304,7 +303,6 @@ public class GuiAtlas extends GuiComponent {
 		this.player = Minecraft.getMinecraft().thePlayer;
 		this.stack = stack;
 		updateAtlasData();
-		updateMarkerData();
 		return this;
 	}
 	
@@ -371,8 +369,7 @@ public class GuiAtlas extends GuiComponent {
 		if (file != null) {
 			AntiqueAtlasMod.logger.info("Exporting image from Atlas #" +
 					stack.getItemDamage() +	" to file " + file.getAbsolutePath());
-			AtlasData data = AntiqueAtlasMod.itemAtlas.getAtlasData(stack, player.worldObj);
-			ExportImageUtil.exportPngImage(data.getDimensionData(player.dimension), visibleMarkers, file, progressBar);
+			ExportImageUtil.exportPngImage(biomeData, globalMarkersData, localMarkersData, file, progressBar);
 			AntiqueAtlasMod.logger.info("Finished exporting image");
 		}
 		state.switchTo(NORMAL);
@@ -453,28 +450,22 @@ public class GuiAtlas extends GuiComponent {
 		updateAtlasData();
 	}
 	
+	/** Update {@link #biomeData}, {@link #localMarkersData},
+	 * {@link #globalMarkersData} */
 	private void updateAtlasData() {
-		data = AntiqueAtlasMod.itemAtlas.getAtlasData(stack, player.worldObj);
-	}
-	/** This method finds all global and local markers in the current dimension
-	 * and saves it to a local list. This operation is rather expensive and
-	 * should only be performed when necessary.
-	 * TODO: consider adding or removing markers one by one as the packets arrive. */
-	public void updateMarkerData() {
-		Collection<Marker> globalMarkers = AntiqueAtlasMod.globalMarkersData
-				.getData().getMarkersInDimension(player.dimension);
-		MarkersData localMarkersData = AntiqueAtlasMod.itemAtlas
+		biomeData = AntiqueAtlasMod.itemAtlas
+				.getAtlasData(stack, player.worldObj)
+				.getDimensionData(player.dimension);
+		globalMarkersData = AntiqueAtlasMod.globalMarkersData.getData()
+				.getMarkersDataInDimension(player.dimension);
+		MarkersData markersData = AntiqueAtlasMod.itemAtlas
 				.getMarkersData(stack, player.worldObj);
-		Collection<Marker> localMarkers;
-		if (localMarkersData == null) {
-			localMarkers = Collections.emptyList();
+		if (markersData != null) {
+			localMarkersData = markersData
+					.getMarkersDataInDimension(player.dimension);
 		} else {
-			localMarkers = localMarkersData.getMarkersInDimension(player.dimension);
+			localMarkersData = null;
 		}
-		visibleMarkers = new ArrayList<Marker>(localMarkers.size() + globalMarkers.size());
-		visibleMarkers.addAll(globalMarkers);
-		visibleMarkers.addAll(localMarkers);
-		Collections.sort(visibleMarkers, markerZComparator);
 	}
 	
 	/** Offset the map view depending on which button was pressed. */
@@ -539,7 +530,7 @@ public class GuiAtlas extends GuiComponent {
 		GL11.glColor4f(1, 1, 1, 1);
 		AtlasRenderHelper.drawFullTexture(Textures.BOOK, getGuiX(), getGuiY(), WIDTH, HEIGHT);
 		
-		if (stack == null || data == null) return;
+		if (stack == null || biomeData == null) return;
 		
 		
 		if (state.is(DELETING_MARKER)) {
@@ -561,7 +552,7 @@ public class GuiAtlas extends GuiComponent {
 		int mapStartScreenX = getGuiX() + WIDTH/2 + (int)((mapStartX << 4) * mapScale) + mapOffsetX;
 		int mapStartScreenY = getGuiY() + HEIGHT/2 + (int)((mapStartZ << 4) * mapScale) + mapOffsetY;
 		
-		TileRenderIterator iter = new TileRenderIterator(data.getDimensionData(player.dimension));
+		TileRenderIterator iter = new TileRenderIterator(biomeData);
 		iter.setScope(new Rect().setOrigin(mapStartX, mapStartZ)
 								.setSize(mapWidthInChunks + 2, mapHeightInChunks + 2));
 		iter.setStep(tile2ChunkScale);
@@ -577,45 +568,27 @@ public class GuiAtlas extends GuiComponent {
 			}
 		}
 		
-		// Draw markers:
-		for (Marker marker : visibleMarkers) {
-			double markerX = worldXToScreenX(marker.getX());
-			double markerY = worldZToScreenY(marker.getZ());
-			if (markerX < getGuiX() || markerX > getGuiX() + WIDTH ||
-				markerY < getGuiY() || markerY > getGuiY() + HEIGHT) {
-				continue;
+		// Draw global markers:
+		for (int x = mapStartX; x < mapStartX + mapWidthInChunks + 2; x++) {
+			for (int z = mapStartZ; z < mapStartZ + mapHeightInChunks + 2; z++) {
+				List<Marker> markers = globalMarkersData.getMarkersAt(x, z);
+				if (markers == null) continue;
+				for (Marker marker : markers) {
+					renderMarker(marker);
+				}
 			}
-			if (!marker.isVisibleAhead() && !data.getDimensionData(player.dimension)
-					.hasTileAt(marker.getChunkX(), marker.getChunkZ())) {
-				continue;
-			}
-			boolean mouseIsOverMarker = isMouseInRadius((int)markerX, (int)markerY, MARKER_RADIUS);
-			if (state.is(PLACING_MARKER)) {
-				GL11.glColor4f(1, 1, 1, 0.5f);
-			} else if (state.is(DELETING_MARKER)) {
-				if (marker.isGlobal()) {
-					GL11.glColor4f(1, 1, 1, 0.5f);
-				} else {
-					if (mouseIsOverMarker) {
-						GL11.glColor4f(0.5f, 0.5f, 0.5f, 1);
-						toDelete = marker;
-					} else {
-						GL11.glColor4f(1, 1, 1, 1);
-						if (toDelete == marker) {
-							toDelete = null;
-						}
+		}
+		
+		// Draw local markers:
+		if (localMarkersData != null) {
+			for (int x = mapStartX; x < mapStartX + mapWidthInChunks + 2; x++) {
+				for (int z = mapStartZ; z < mapStartZ + mapHeightInChunks + 2; z++) {
+					List<Marker> markers = localMarkersData.getMarkersAt(x, z);
+					if (markers == null) continue;
+					for (Marker marker : markers) {
+						renderMarker(marker);
 					}
 				}
-			} else {
-				GL11.glColor4f(1, 1, 1, 1);
-			}
-			AtlasRenderHelper.drawFullTexture(
-					MarkerTextureMap.instance().getTexture(marker.getType()),
-					markerX - (double)MARKER_SIZE/2,
-					markerY - (double)MARKER_SIZE/2,
-					MARKER_SIZE, MARKER_SIZE);
-			if (isMouseOver && mouseIsOverMarker && marker.getLabel().length() > 0) {
-				drawTopLevelHoveringText(Arrays.asList(marker.getLocalizedLabel()), mouseX, mouseY, Minecraft.getMinecraft().fontRenderer);
 			}
 		}
 		
@@ -666,6 +639,43 @@ public class GuiAtlas extends GuiComponent {
 		}
 	}
 	
+	private void renderMarker(Marker marker) {
+		int markerX = worldXToScreenX(marker.getX());
+		int markerY = worldZToScreenY(marker.getZ());
+		if (!marker.isVisibleAhead() &&
+				!biomeData.hasTileAt(marker.getChunkX(), marker.getChunkZ())) {
+			return;
+		}
+		boolean mouseIsOverMarker = isMouseInRadius(markerX, markerY, MARKER_RADIUS);
+		if (state.is(PLACING_MARKER)) {
+			GL11.glColor4f(1, 1, 1, 0.5f);
+		} else if (state.is(DELETING_MARKER)) {
+			if (marker.isGlobal()) {
+				GL11.glColor4f(1, 1, 1, 0.5f);
+			} else {
+				if (mouseIsOverMarker) {
+					GL11.glColor4f(0.5f, 0.5f, 0.5f, 1);
+					toDelete = marker;
+				} else {
+					GL11.glColor4f(1, 1, 1, 1);
+					if (toDelete == marker) {
+						toDelete = null;
+					}
+				}
+			}
+		} else {
+			GL11.glColor4f(1, 1, 1, 1);
+		}
+		AtlasRenderHelper.drawFullTexture(
+				MarkerTextureMap.instance().getTexture(marker.getType()),
+				markerX - (double)MARKER_SIZE/2,
+				markerY - (double)MARKER_SIZE/2,
+				MARKER_SIZE, MARKER_SIZE);
+		if (isMouseOver && mouseIsOverMarker && marker.getLabel().length() > 0) {
+			drawTooltip(Arrays.asList(marker.getLocalizedLabel()), Minecraft.getMinecraft().fontRenderer);
+		}
+	}
+	
 	@Override
 	public boolean doesGuiPauseGame() {
 		return false;
@@ -708,11 +718,4 @@ public class GuiAtlas extends GuiComponent {
 		btnExportPng.setTitle(I18n.format("gui.antiqueatlas.exportImage"));
 		btnMarker.setTitle(I18n.format("gui.antiqueatlas.addMarker"));
 	}
-	
-	private static Comparator<Marker> markerZComparator = new Comparator<Marker>() {
-		@Override
-		public int compare(Marker m1, Marker m2) {
-			return m1.getZ() - m2.getZ();
-		}
-	};
 }

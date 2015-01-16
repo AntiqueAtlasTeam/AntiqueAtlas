@@ -312,12 +312,8 @@ public class GuiComponent extends GuiScreen {
 		}
 		// Draw any hovering text requested by child components:
 		if (hoveringTextInfo.shouldDraw) {
-			// Disable unicode flag by default:
-			boolean unicode = hoveringTextInfo.font.getUnicodeFlag();
-			hoveringTextInfo.font.setUnicodeFlag(false);
 			drawHoveringText2(hoveringTextInfo.lines, hoveringTextInfo.x, hoveringTextInfo.y, hoveringTextInfo.font);
 			hoveringTextInfo.shouldDraw = false;
-			hoveringTextInfo.font.setUnicodeFlag(unicode);
 		}
 	}
 	
@@ -498,18 +494,24 @@ public class GuiComponent extends GuiScreen {
 		return component;
 	}
 	
-	/** <p>Same as {@link #drawHoveringText(List, int, int, FontRenderer2)}, but
+	/**
+	 * Draws a text tooltip at mouse coordinates.
+	 * <p>
+	 * Same as {@link #drawHoveringText(List, int, int, FontRenderer2)}, but
 	 * the text is drawn on the top level parent component, after all its child
 	 * components have finished drawing. This allows the hovering text to be
-	 * unobscured by other components.</p>
-	 * <p>Only one instance of hovering text can be drawn via this method, i.e.
-	 * from several components which occupy the same position on the screen.</p>
-	 * <p>Unicode flag is disabled on the font during rendering.</p>*/
-	protected void drawTopLevelHoveringText(List<String> lines, int x, int y, FontRenderer font) {
+	 * unobscured by other components.
+	 * </p>
+	 * <p>
+	 * Only one instance of hovering text can be drawn via this method, i.e.
+	 * from several components which occupy the same position on the screen.
+	 * </p>
+	 * */
+	protected void drawTooltip(List<String> lines, FontRenderer font) {
 		GuiComponent topLevel = getTopLevelParent();
 		topLevel.hoveringTextInfo.lines = lines;
-		topLevel.hoveringTextInfo.x = x;
-		topLevel.hoveringTextInfo.y = y;
+		topLevel.hoveringTextInfo.x = getMouseX();
+		topLevel.hoveringTextInfo.y = getMouseY();
 		topLevel.hoveringTextInfo.font = font;
 		topLevel.hoveringTextInfo.shouldDraw = true;
 	}
