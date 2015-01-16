@@ -58,6 +58,7 @@ public class GlobalMarkersDataHandler {
 		return data;
 	}
 	
+	/** Synchronizes global markers with the connecting client. */
 	@SubscribeEvent
 	public void onPlayerLogin(PlayerLoggedInEvent event) {
 		data.syncOnPlayer(event.player);

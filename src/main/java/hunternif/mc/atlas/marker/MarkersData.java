@@ -19,7 +19,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.world.WorldSavedData;
 import net.minecraftforge.common.util.Constants;
-import cpw.mods.fml.common.FMLCommonHandler;
 
 /**
  * Contains markers, mapped to dimensions, and then to their chunk coordinates.
@@ -95,6 +94,15 @@ public class MarkersData extends WorldSavedData {
 					id = getNewID();
 				} else {
 					id = markerTag.getInteger(TAG_MARKER_ID);
+					if (getMarkerByID(id) != null) {
+						AntiqueAtlasMod.logger.warn("Loading marker with duplicate id: "
+								+ id + ". Getting new id.");
+						id = getNewID();
+					}
+					this.markDirty();
+				}
+				if (largestID.intValue() < id) {
+					largestID.set(id);
 				}
 				Marker marker = new Marker(
 						id,
@@ -183,35 +191,15 @@ public class MarkersData extends WorldSavedData {
 	}
 	
 	/**
-	 * For internal use, when markers are loaded from NBT or sent from the server.
-	 * Has to be called from a single thread only!
-	 * @return the marker instance that was added. It may be different from the
-	 * 		   one supplied in case of id conflict.
+	 * For internal use, when markers are loaded from NBT or sent from the
+	 * server. IF a marker's id is conflicting, the marker is not loaded!
+	 * @return the marker instance that was added.
 	 */
 	public Marker loadMarker(Marker marker) {
-		int id = marker.getId();
-		// If this ID is already taken on the server - which could happen when
-		// loading an old save format - get a new one. This might then break any
-		// logical connections a client may have with the old id, but that's
-		// better than losing markers.
-		if (FMLCommonHandler.instance().getEffectiveSide().isServer()) {
-			while (getMarkerByID(id) != null) {
-				id = getNewID();
-			}
-			if (id != marker.getId()) {
-				AntiqueAtlasMod.logger.warn(String.format("Marker ID conflict! "
-						+ "Changed from %d to %d", marker.getId(), id));
-				marker = new Marker(id, marker.getType(), marker.getLabel(),
-						marker.getDimension(), marker.getX(), marker.getZ(),
-						marker.isVisibleAhead());
-				
-			}
+		if (!idMap.containsKey(marker.getId())) {
+			idMap.put(marker.getId(), marker);
+			getMarkersDataInDimension(marker.getDimension()).insertMarker(marker);
 		}
-		if (id > largestID.get()) {
-			largestID.set(id);
-		}
-		idMap.put(id, marker);
-		getMarkersDataInDimension(marker.getDimension()).insertMarker(marker);
 		return marker;
 	}
 	
