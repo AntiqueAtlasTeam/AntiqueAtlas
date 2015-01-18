@@ -61,7 +61,7 @@ public class GuiAtlas extends GuiComponent {
 	 * visually, but will instead span greater area. */
 	private static final double MIN_SCALE_THRESHOLD = 0.5;
 	
-	private boolean DEBUG_RENDERING = true;
+	private boolean DEBUG_RENDERING = false;
 	private long[] renderTimes = new long[30];
 	private int renderTimesIndex = 0;
 	
@@ -332,7 +332,7 @@ public class GuiAtlas extends GuiComponent {
 						screenXToWorldX(mouseX), screenYToWorldZ(mouseY));
 				addChild(markerFinalizer);
 				
-				blinkingIcon.setTexture(MarkerTextureMap.INSTANCE
+				blinkingIcon.setTexture(MarkerTextureMap.instance()
 						.getTexture(markerFinalizer.selectedType),
 						MARKER_SIZE, MARKER_SIZE);
 				addChildBehind(markerFinalizer, blinkingIcon)

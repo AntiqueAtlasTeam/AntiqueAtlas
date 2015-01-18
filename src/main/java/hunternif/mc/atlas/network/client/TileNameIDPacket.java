@@ -86,7 +86,6 @@ public class TileNameIDPacket implements IMessage
 					}
 				}
 			}
-			AntiqueAtlasMod.proxy.updateBiomeTextureConfig();
 			return null;
 		}
 

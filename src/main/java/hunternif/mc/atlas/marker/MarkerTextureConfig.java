@@ -1,6 +1,7 @@
 package hunternif.mc.atlas.marker;
 
 import hunternif.mc.atlas.AntiqueAtlasMod;
+import hunternif.mc.atlas.util.Config;
 import hunternif.mc.atlas.util.FileUtil;
 
 import java.io.File;
@@ -19,18 +20,18 @@ import cpw.mods.fml.relauncher.SideOnly;
  * @author Hunternif
  */
 @SideOnly(Side.CLIENT)
-public class MarkerTextureConfig {
+public class MarkerTextureConfig implements Config<MarkerTextureMap> {
 	private final File file;
 
 	public MarkerTextureConfig(File file) {
 		this.file = file;
 	}
 
-	public void load() {
+	public void load(MarkerTextureMap data) {
 		JsonElement root = FileUtil.readJson(file);
 		if (root == null) {
 			AntiqueAtlasMod.logger.info("Marker textures config not found; creating new");
-			save();
+			save(data);
 			return;
 		}
 		if (!root.isJsonObject()) {
@@ -45,13 +46,13 @@ public class MarkerTextureConfig {
 				break;
 			}
 			ResourceLocation texture = new ResourceLocation(entry.getValue().getAsString());
-			MarkerTextureMap.instance().setTexture(markerType, texture);
+			data.setTexture(markerType, texture);
 		}
 	}
 
-	public void save() {
+	public void save(MarkerTextureMap data) {
 		JsonObject root = new JsonObject();
-		for (Entry<String, ResourceLocation> entry : MarkerTextureMap.instance().getMap().entrySet()) {
+		for (Entry<String, ResourceLocation> entry : data.getMap().entrySet()) {
 			root.addProperty(entry.getKey(), entry.getValue().toString());
 		}
 		FileUtil.writeJson(root, file);

@@ -1,9 +1,9 @@
 package hunternif.mc.atlas.ext;
 
-import hunternif.mc.atlas.AntiqueAtlasMod;
 import hunternif.mc.atlas.core.ChunkBiomeAnalyzer;
 import hunternif.mc.atlas.network.PacketDispatcher;
 import hunternif.mc.atlas.network.client.TileNameIDPacket;
+import hunternif.mc.atlas.util.SaveData;
 
 import java.util.Map;
 
@@ -18,8 +18,8 @@ import com.google.common.collect.HashBiMap;
  * then sent to the clients. <i>Not thread-safe!</i>
  * @author Hunternif
  */
-public enum ExtTileIdMap {
-	INSTANCE;
+public class ExtTileIdMap extends SaveData {
+	private static final ExtTileIdMap INSTANCE = new ExtTileIdMap();
 	public static ExtTileIdMap instance() {
 		return INSTANCE;
 	}
@@ -39,7 +39,7 @@ public enum ExtTileIdMap {
 		if (id == null) {
 			id = Integer.valueOf(findNewID());
 			nameToIdMap.put(uniqueName, id);
-			AntiqueAtlasMod.proxy.updateExtTileConfig();
+			markDirty();
 		}
 		return id.intValue();
 	}

@@ -2,6 +2,7 @@ package hunternif.mc.atlas.client;
 
 import hunternif.mc.atlas.AntiqueAtlasMod;
 import hunternif.mc.atlas.client.BiomeTextureMap.BiomeTextureEntry;
+import hunternif.mc.atlas.util.Config;
 import hunternif.mc.atlas.util.FileUtil;
 
 import java.io.File;
@@ -22,18 +23,18 @@ import cpw.mods.fml.relauncher.SideOnly;
  * @author Hunternif
  */
 @SideOnly(Side.CLIENT)
-public class BiomeTextureConfig {
+public class BiomeTextureConfig implements Config<BiomeTextureMap> {
 	private final File file;
 
 	public BiomeTextureConfig(File file) {
 		this.file = file;
 	}
 
-	public void load() {
+	public void load(BiomeTextureMap data) {
 		JsonElement root = FileUtil.readJson(file);
 		if (root == null) {
 			AntiqueAtlasMod.logger.info("Biome texture config not found; creating new");
-			save();
+			save(data);
 			return;
 		}
 		if (!root.isJsonObject()) {
@@ -52,7 +53,7 @@ public class BiomeTextureConfig {
 							break;
 						}
 						ResourceLocation texture = new ResourceLocation(path.getAsString());
-						BiomeTextureMap.instance().setTexture(biomeID, texture);
+						data.setTexture(biomeID, texture);
 					}
 					AntiqueAtlasMod.logger.info("Registered custom texture for biome " + biomeID);
 				} else {
@@ -63,7 +64,7 @@ public class BiomeTextureConfig {
 					}
 					String textureSetName = entry.getValue().getAsString();
 					if (StandardTextureSet.contains(textureSetName)) {
-						BiomeTextureMap.instance().setTexture(biomeID, StandardTextureSet.valueOf(textureSetName));
+						data.setTexture(biomeID, StandardTextureSet.valueOf(textureSetName));
 					}
 					AntiqueAtlasMod.logger.info("Registered standard texture set for biome " + biomeID);
 				}
@@ -74,9 +75,9 @@ public class BiomeTextureConfig {
 		}
 	}
 
-	public void save() {
+	public void save(BiomeTextureMap data) {
 		JsonObject root = new JsonObject();
-		for (BiomeTextureEntry entry : BiomeTextureMap.instance().textureMap.values()) {
+		for (BiomeTextureEntry entry : data.textureMap.values()) {
 			if (entry.isStandardSet()) {
 				root.addProperty(String.valueOf(entry.biomeID), entry.textureSet.name());
 			} else {

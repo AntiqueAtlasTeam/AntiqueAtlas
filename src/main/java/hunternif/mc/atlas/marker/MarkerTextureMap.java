@@ -1,6 +1,7 @@
 package hunternif.mc.atlas.marker;
 
 import hunternif.mc.atlas.client.Textures;
+import hunternif.mc.atlas.util.SaveData;
 
 import java.util.Collection;
 import java.util.Map;
@@ -16,8 +17,8 @@ import cpw.mods.fml.relauncher.SideOnly;
  * @author Hunternif
  */
 @SideOnly(Side.CLIENT)
-public enum MarkerTextureMap {
-	INSTANCE;
+public class MarkerTextureMap extends SaveData {
+	private static final MarkerTextureMap INSTANCE = new MarkerTextureMap();
 	public static MarkerTextureMap instance() {
 		return INSTANCE;
 	}
@@ -27,15 +28,11 @@ public enum MarkerTextureMap {
 	private final ResourceLocation defaultTexture = Textures.MARKER_RED_X_SMALL;
 	
 	public void setTexture(String markerType, ResourceLocation texture) {
-		map.put(markerType, texture);
-	}
-	
-	public boolean setTextureIfNone(String markerType, ResourceLocation texture) {
-		if (map.containsKey(markerType)) {
-			return false;
+		ResourceLocation oldTexture = getTexture(markerType);
+		if (!texture.equals(oldTexture)) {
+			map.put(markerType, texture);
+			markDirty();
 		}
-		map.put(markerType, texture);
-		return true;
 	}
 	
 	/** If no texture has been registered, returns default texture. */

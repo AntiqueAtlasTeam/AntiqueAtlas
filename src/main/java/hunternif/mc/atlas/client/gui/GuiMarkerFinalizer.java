@@ -79,7 +79,7 @@ public class GuiMarkerFinalizer extends GuiComponent {
 		textField.setText("");
 		
 		scroller.removeAllContent();
-		int allTypesWidth = MarkerTextureMap.INSTANCE.getAllTypes().size() *
+		int allTypesWidth = MarkerTextureMap.instance().getAllTypes().size() *
 				(GuiMarkerInList.FRAME_SIZE + TYPE_SPACING) - TYPE_SPACING;
 		int scrollerWidth = Math.min(allTypesWidth, 240);
 		scroller.setViewportSize(scrollerWidth, GuiMarkerInList.FRAME_SIZE);
@@ -96,7 +96,7 @@ public class GuiMarkerFinalizer extends GuiComponent {
 			}
 		});
 		int contentX = 0;
-		for (String markerType : MarkerTextureMap.INSTANCE.getAllTypes()) {
+		for (String markerType : MarkerTextureMap.instance().getAllTypes()) {
 			GuiMarkerInList markerGui = new GuiMarkerInList(markerType);
 			typeRadioGroup.addButton(markerGui);
 			if (selectedType.equals(markerType)) {

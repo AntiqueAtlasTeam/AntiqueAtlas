@@ -29,7 +29,7 @@ public class GuiMarkerInList extends GuiToggleButton {
 				isSelected() ? Textures.MARKER_FRAME_ON : Textures.MARKER_FRAME_OFF,
 				getGuiX(), getGuiY(), FRAME_SIZE, FRAME_SIZE);
 		
-		ResourceLocation texture = MarkerTextureMap.INSTANCE.getTexture(markerType);
+		ResourceLocation texture = MarkerTextureMap.instance().getTexture(markerType);
 		if (texture != null) {
 			AtlasRenderHelper.drawFullTexture(texture, getGuiX() + 1, getGuiY() + 1, GuiAtlas.MARKER_SIZE, GuiAtlas.MARKER_SIZE);
 		}

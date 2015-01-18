@@ -125,8 +125,8 @@ public class ExportImageUtil {
 			
 			// Biome & Marker textures:
 			List<ResourceLocation> allTextures = new ArrayList<ResourceLocation>(64);
-			allTextures.addAll(BiomeTextureMap.INSTANCE.getAllTextures());
-			allTextures.addAll(MarkerTextureMap.INSTANCE.getAllTextures());
+			allTextures.addAll(BiomeTextureMap.instance().getAllTextures());
+			allTextures.addAll(MarkerTextureMap.instance().getAllTextures());
 			updateUnitsTotal += allTextures.size();
 			for (ResourceLocation texture : allTextures) {
 				is = Minecraft.getMinecraft().getResourceManager().getResource(texture).getInputStream();

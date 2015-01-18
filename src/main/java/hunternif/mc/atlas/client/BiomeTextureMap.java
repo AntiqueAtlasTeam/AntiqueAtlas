@@ -3,6 +3,7 @@ package hunternif.mc.atlas.client;
 import static hunternif.mc.atlas.client.StandardTextureSet.*;
 import hunternif.mc.atlas.AntiqueAtlasMod;
 import hunternif.mc.atlas.core.Tile;
+import hunternif.mc.atlas.util.SaveData;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -25,8 +26,8 @@ import cpw.mods.fml.relauncher.SideOnly;
  * @author Hunternif
  */
 @SideOnly(Side.CLIENT)
-public enum BiomeTextureMap {
-	INSTANCE;
+public class BiomeTextureMap extends SaveData {
+	private static final BiomeTextureMap INSTANCE = new BiomeTextureMap();
 	public static BiomeTextureMap instance() {
 		return INSTANCE;
 	}
@@ -68,39 +69,21 @@ public enum BiomeTextureMap {
 	
 	public static final StandardTextureSet defaultTexture = PLAINS;
 	
-	/** Assigns texture to biome, if this biome has no texture assigned.
-	 * Returns true if a new texture was assigned. */
-	public boolean setTextureIfNone(int biomeID, StandardTextureSet textureSet) {
-		if (!isRegistered(biomeID)) {
-			setTexture(biomeID, textureSet);
-			return true;
-		}
-		return false;
-	}
-	/** Assigns texture to biome, if this biome has no texture assigned.
-	 * Returns true if a new texture was assigned. */
-	public boolean setTextureIfNone(int biomeID, ResourceLocation ... textures) {
-		if (!isRegistered(biomeID)) {
-			setTexture(biomeID, textures);
-			return true;
-		}
-		return false;
-	}
 	/** Assigns texture to biome. */
 	public void setTexture(int biomeID, StandardTextureSet textureSet) {
 		BiomeTextureEntry entry = textureMap.get(biomeID);
 		if (entry == null) {
 			entry = new BiomeTextureEntry(biomeID, textureSet);
 			textureMap.put(biomeID, entry);
-		} else {
+			markDirty();
+		} else if (entry.textureSet != textureSet) {
+			AntiqueAtlasMod.logger.warn("Overwriting texture set for biome " + biomeID);
 			entry.textureSet = textureSet;
-			if (!entry.textures.isEmpty()) {
-				AntiqueAtlasMod.logger.warn("Overwriting textures for biome " + biomeID);
-			}
 			entry.textures.clear();
 			for (ResourceLocation texture : textureSet.textures) {
 				entry.textures.add(texture);
 			}
+			markDirty();
 		}
 	}
 	
@@ -110,14 +93,15 @@ public enum BiomeTextureMap {
 		if (entry == null) {
 			entry = new BiomeTextureEntry(biomeID, textures);
 			textureMap.put(biomeID, entry);
-		} else {
-			if (!entry.textures.isEmpty()) {
-				AntiqueAtlasMod.logger.warn("Overwriting textures for biome " + biomeID);
-			}
+			markDirty();
+		} else if (!Arrays.equals(textures, entry.textures.toArray())) {
+			//TODO: get rid of single textures in favor of texture packs
+			AntiqueAtlasMod.logger.warn("Overwriting textures for biome " + biomeID);
 			entry.textures.clear();
 			for (ResourceLocation texture : textures) {
 				entry.textures.add(texture);
 			}
+			markDirty();
 		}
 	}
 	
@@ -191,7 +175,7 @@ public enum BiomeTextureMap {
 	public void checkRegistration(int biomeID) {
 		if (!isRegistered(biomeID)) {
 			autoRegister(biomeID);
-			AntiqueAtlasMod.proxy.updateBiomeTextureConfig();
+			markDirty();
 		}
 	}
 	
