@@ -167,13 +167,11 @@ public class GuiAtlas extends GuiComponent {
 	
 	private GuiScaleBar scaleBar = new GuiScaleBar();
 	/** Pixel-to-block ratio. */
-	private double mapScale = 0.5;
+	private double mapScale;
 	/** The visual size of a tile in pixels. */
-	private int tileHalfSize = 4;
+	private int tileHalfSize;
 	/** The number of chunks a tile spans. */
-	private int tile2ChunkScale = 1;
-	private int mapWidthInChunks = (int)Math.round(MAP_WIDTH / 8 / mapScale);
-	private int mapHeightInChunks = (int)Math.round(MAP_HEIGHT / 8 / mapScale);
+	private int tile2ChunkScale;
 	
 	
 	// Markers =================================================================
@@ -207,6 +205,7 @@ public class GuiAtlas extends GuiComponent {
 	@SuppressWarnings("rawtypes")
 	public GuiAtlas() {
 		setSize(WIDTH, HEIGHT);
+		setMapScale(0.5);
 		followPlayer = true;
 		setInterceptKeyboard(false);
 		
@@ -503,8 +502,6 @@ public class GuiAtlas extends GuiComponent {
 			tileHalfSize = (int)Math.round(8 * MIN_SCALE_THRESHOLD);
 			tile2ChunkScale = (int)Math.round(MIN_SCALE_THRESHOLD / mapScale);
 		}
-		mapWidthInChunks = MAP_WIDTH / tileHalfSize / 2 * tile2ChunkScale;
-		mapHeightInChunks = MAP_HEIGHT / tileHalfSize / 2 * tile2ChunkScale;
 		// Times 2 because the contents of the Atlas are rendered at resolution 2 times larger:
 		scaleBar.setMapScale(mapScale*2);
 		mapOffsetX *= mapScale / oldScale;
@@ -545,16 +542,18 @@ public class GuiAtlas extends GuiComponent {
 		// Find chunk coordinates of the top left corner of the map.
 		// The 'roundToBase' is required so that when the map scales below the
 		// threshold the tiles don't change when map position changes slightly.
-		// The -2 and -1 at the end provide margin so that tiles at the edges of
+		// The +-2 at the end provide margin so that tiles at the edges of
 		// the page have their stitched texture correct.
-		int mapStartX = MathUtil.roundToBase((int)(Math.round(-((double)MAP_WIDTH/2d + mapOffsetX) / mapScale) >> 4), tile2ChunkScale) - 2;
-		int mapStartZ = MathUtil.roundToBase((int)(Math.round(-((double)MAP_HEIGHT/2d + mapOffsetY) / mapScale) >> 4), tile2ChunkScale) - 1;
+		int mapStartX = MathUtil.roundToBase((int)Math.floor(-((double)MAP_WIDTH/2d + mapOffsetX + 2*tileHalfSize) / mapScale / 16d), tile2ChunkScale);
+		int mapStartZ = MathUtil.roundToBase((int)Math.floor(-((double)MAP_HEIGHT/2d + mapOffsetY + 2*tileHalfSize) / mapScale / 16d), tile2ChunkScale);
+		int mapEndX = MathUtil.roundToBase((int)Math.ceil(((double)MAP_WIDTH/2d - mapOffsetX + 2*tileHalfSize) / mapScale / 16d), tile2ChunkScale);
+		int mapEndZ = MathUtil.roundToBase((int)Math.ceil(((double)MAP_HEIGHT/2d - mapOffsetY + 2*tileHalfSize) / mapScale / 16d), tile2ChunkScale);
 		int mapStartScreenX = getGuiX() + WIDTH/2 + (int)((mapStartX << 4) * mapScale) + mapOffsetX;
 		int mapStartScreenY = getGuiY() + HEIGHT/2 + (int)((mapStartZ << 4) * mapScale) + mapOffsetY;
 		
 		TileRenderIterator iter = new TileRenderIterator(biomeData);
-		iter.setScope(new Rect().setOrigin(mapStartX, mapStartZ)
-								.setSize(mapWidthInChunks + 2, mapHeightInChunks + 2));
+		iter.setScope(new Rect().setOrigin(mapStartX, mapStartZ).
+				set(mapStartX, mapStartZ, mapEndX, mapEndZ));
 		iter.setStep(tile2ChunkScale);
 		while (iter.hasNext()) {
 			SubTileQuartet subtiles = iter.next();
@@ -568,9 +567,14 @@ public class GuiAtlas extends GuiComponent {
 			}
 		}
 		
+		int markersStartX = MathUtil.roundToBase(mapStartX, MarkersData.CHUNK_STEP) / MarkersData.CHUNK_STEP - 1;
+		int markersStartZ = MathUtil.roundToBase(mapStartZ, MarkersData.CHUNK_STEP) / MarkersData.CHUNK_STEP - 1;
+		int markersEndX = MathUtil.roundToBase(mapEndX, MarkersData.CHUNK_STEP) / MarkersData.CHUNK_STEP + 1;
+		int markersEndZ = MathUtil.roundToBase(mapEndZ, MarkersData.CHUNK_STEP) / MarkersData.CHUNK_STEP + 1;
+		
 		// Draw global markers:
-		for (int x = mapStartX; x < mapStartX + mapWidthInChunks + 2; x++) {
-			for (int z = mapStartZ; z < mapStartZ + mapHeightInChunks + 2; z++) {
+		for (int x = markersStartX; x <= markersEndX; x++) {
+			for (int z = markersStartZ; z <= markersEndZ; z++) {
 				List<Marker> markers = globalMarkersData.getMarkersAt(x, z);
 				if (markers == null) continue;
 				for (Marker marker : markers) {
@@ -581,8 +585,8 @@ public class GuiAtlas extends GuiComponent {
 		
 		// Draw local markers:
 		if (localMarkersData != null) {
-			for (int x = mapStartX; x < mapStartX + mapWidthInChunks + 2; x++) {
-				for (int z = mapStartZ; z < mapStartZ + mapHeightInChunks + 2; z++) {
+			for (int x = markersStartX; x <= markersEndX; x++) {
+				for (int z = markersStartZ; z <= markersEndZ; z++) {
 					List<Marker> markers = localMarkersData.getMarkersAt(x, z);
 					if (markers == null) continue;
 					for (Marker marker : markers) {

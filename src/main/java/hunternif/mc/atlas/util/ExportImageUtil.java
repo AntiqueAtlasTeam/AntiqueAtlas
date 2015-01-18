@@ -11,6 +11,7 @@ import hunternif.mc.atlas.core.DimensionData;
 import hunternif.mc.atlas.marker.DimensionMarkersData;
 import hunternif.mc.atlas.marker.Marker;
 import hunternif.mc.atlas.marker.MarkerTextureMap;
+import hunternif.mc.atlas.marker.MarkersData;
 
 import java.awt.Frame;
 import java.awt.Graphics2D;
@@ -238,8 +239,10 @@ public class ExportImageUtil {
 		//============== Draw markers ================
 		// Draw local markers on top of global markers
 		List<Marker> markers = new ArrayList<Marker>();
-		for (int x = biomeData.getScope().minX; x <= biomeData.getScope().maxX; x++) {
-			for (int z = biomeData.getScope().minY; z <= biomeData.getScope().maxY; z++) {
+		for (int x = biomeData.getScope().minX / MarkersData.CHUNK_STEP;
+				x <= biomeData.getScope().maxX / MarkersData.CHUNK_STEP; x++) {
+			for (int z = biomeData.getScope().minY / MarkersData.CHUNK_STEP;
+					z <= biomeData.getScope().maxY / MarkersData.CHUNK_STEP; z++) {
 				
 				markers.clear();
 				List<Marker> globalMarkersAt = globalMarkers.getMarkersAt(x, z);

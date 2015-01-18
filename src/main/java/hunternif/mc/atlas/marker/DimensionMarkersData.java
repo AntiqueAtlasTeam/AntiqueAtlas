@@ -48,7 +48,9 @@ public class DimensionMarkersData {
 	/** Insert marker into a list at chunk coordinates, maintaining the ordering
 	 * of the list by Z coordinate. */
 	public void insertMarker(Marker marker) {
-		ShortVec2 key = getKey().set(marker.getChunkX(), marker.getChunkZ());
+		ShortVec2 key = getKey().set(
+				marker.getChunkX() / MarkersData.CHUNK_STEP,
+				marker.getChunkZ() / MarkersData.CHUNK_STEP);
 		List<Marker> list = chunkMap.get(key);
 		if (list == null) {
 			list = new CopyOnWriteArrayList<Marker>();
@@ -68,7 +70,9 @@ public class DimensionMarkersData {
 	}
 	
 	public boolean removeMarker(Marker marker) {
-		return getMarkersAt(marker.getChunkX(), marker.getChunkZ()).remove(marker);
+		return getMarkersAt(
+				marker.getChunkX() / MarkersData.CHUNK_STEP,
+				marker.getChunkZ() / MarkersData.CHUNK_STEP).remove(marker);
 	}
 	
 	/** The returned view is immutable, i.e. remove() won't work. */

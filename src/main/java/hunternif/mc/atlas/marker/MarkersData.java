@@ -42,6 +42,10 @@ public class MarkersData extends WorldSavedData {
 	private static final String TAG_MARKER_Y = "y";
 	private static final String TAG_MARKER_VISIBLE_AHEAD = "visAh";
 	
+	/** Markers are stored in lists within square areas this many MC chunks
+	 * across. */
+	public static final int CHUNK_STEP = 4;
+	
 	/** Set of players this data has been sent to, only once after they connect. */
 	private final Set<EntityPlayer> playersSentTo = new HashSet<EntityPlayer>();
 	
@@ -53,9 +57,9 @@ public class MarkersData extends WorldSavedData {
 	
 	private final Map<Integer /*marker ID*/, Marker> idMap = new ConcurrentHashMap<Integer, Marker>(2, 0.75f, 2);
 	/**
-	 * Maps a list of markers in a chunk to the chunk coordinates, then to
+	 * Maps a list of markers in a square to the square's coordinates, then to
 	 * dimension ID. It exists in case someone needs to quickly find markers
-	 * located in a chunk.
+	 * located in a square.
 	 * Within the list markers are ordered by the Z coordinate, so that markers
 	 * placed closer to the south will appear in front of those placed closer to
 	 * the north.

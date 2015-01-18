@@ -73,7 +73,7 @@ public class VillageWatcher {
 					AtlasAPI.getTileAPI().putCustomGlobalTile(world,
 							ExtTileIdMap.TILE_VILLAGE_TERRITORY, chunkX, chunkZ);
 				
-				List<Marker> markers = markersData.getMarkersAtChunk(dim, chunkX, chunkZ);
+				List<Marker> markers = markersData.getMarkersAtChunk(dim, chunkX / MarkersData.CHUNK_STEP, chunkZ / MarkersData.CHUNK_STEP);
 				if (markers != null) {
 					for (Marker marker : markers) {
 						if (marker.getType().equals("village")) {

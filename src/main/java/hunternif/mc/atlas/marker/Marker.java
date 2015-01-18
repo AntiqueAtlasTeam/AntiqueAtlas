@@ -70,16 +70,6 @@ public class Marker {
 		return z >> 4;
 	}
 	
-	/** X coordinate within the chunk. */
-	public int getInChunkX() {
-		return x & 0xf;
-	}
-	
-	/** Z coordinate within the chunk. */
-	public int getInChunkZ() {
-		return z & 0xf;
-	}
-	
 	/** Whether the marker is visible regardless of the player having seen the location. */
 	public boolean isVisibleAhead() {
 		return visibleAhead;
