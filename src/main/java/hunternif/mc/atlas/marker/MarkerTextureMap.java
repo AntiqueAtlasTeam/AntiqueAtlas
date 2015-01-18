@@ -28,7 +28,7 @@ public class MarkerTextureMap extends SaveData {
 	private final ResourceLocation defaultTexture = Textures.MARKER_RED_X_SMALL;
 	
 	public void setTexture(String markerType, ResourceLocation texture) {
-		ResourceLocation oldTexture = getTexture(markerType);
+		ResourceLocation oldTexture = map.get(markerType);
 		if (!texture.equals(oldTexture)) {
 			map.put(markerType, texture);
 			markDirty();
