@@ -49,6 +49,9 @@ public interface BiomeAPI {
 	 * the tile will be persisted with the world and loaded when the server
 	 * starts up.
 	 * <p>
+	 * Note that global custom tiles will override biome IDs at shared chunks.
+	 * </p>
+	 * <p>
 	 * If calling this method on the client, the player must carry the atlas
 	 * in his inventory, to prevent griefing!
 	 * </p>
@@ -72,6 +75,9 @@ public interface BiomeAPI {
 	 * You only need to call this method once for every chunk, after that
 	 * the tile will be persisted with the world and loaded when the server
 	 * starts up.
+	 * <p>
+	 * Note that global custom tiles will override biome IDs at shared chunks.
+	 * </p>
 	 * <p>
 	 * If calling this method on the client, the player must carry the atlas
 	 * in his inventory, to prevent griefing!
