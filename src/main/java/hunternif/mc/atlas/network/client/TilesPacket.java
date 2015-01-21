@@ -2,20 +2,21 @@ package hunternif.mc.atlas.network.client;
 
 import hunternif.mc.atlas.AntiqueAtlasMod;
 import hunternif.mc.atlas.ext.ExtBiomeData;
-import hunternif.mc.atlas.network.AbstractMessageHandler;
+import hunternif.mc.atlas.network.AbstractMessage.AbstractClientMessage;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
+
+import java.io.IOException;
+
 import net.minecraft.entity.player.EntityPlayer;
-import cpw.mods.fml.common.network.simpleimpl.IMessage;
-import cpw.mods.fml.common.network.simpleimpl.MessageContext;
+import net.minecraft.network.PacketBuffer;
 import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 
 /**
  * Used to sync custom tiles from server to client.
  * @author Hunternif
  */
-public class TilesPacket implements IMessage {
+public class TilesPacket extends AbstractClientMessage {
 	/** Size of one entry in the map in bytes. */
 	public static final int ENTRY_SIZE_BYTES = 2 + 2 + 2;
 
@@ -38,39 +39,30 @@ public class TilesPacket implements IMessage {
 		tileCount++;
 		return this;
 	}
-	
+
 	public boolean isEmpty() {
 		return tileCount == 0;
 	}
 
 	@Override
-	public void fromBytes(ByteBuf buffer) {
+	public void read(PacketBuffer buffer) throws IOException {
 		dimension = buffer.readShort();
 		tileCount = buffer.readShort();
 		tileData = buffer.readBytes(tileCount * ENTRY_SIZE_BYTES);
 	}
 
 	@Override
-	public void toBytes(ByteBuf buffer) {
+	public void write(PacketBuffer buffer) throws IOException {
 		buffer.writeShort(dimension);
 		buffer.writeShort(tileCount);
 		buffer.writeBytes(tileData);
 	}
 
-	public static class Handler extends AbstractMessageHandler<TilesPacket> {
-		@Override
-		@SideOnly(Side.CLIENT)
-		public IMessage handleClientMessage(EntityPlayer player, TilesPacket msg, MessageContext ctx) {
-			ExtBiomeData data = AntiqueAtlasMod.extBiomeData.getData();
-			for (int i = 0; i < msg.tileCount; i++) {
-				data.setBiomeIdAt(msg.dimension, msg.tileData.readShort(), msg.tileData.readShort(), msg.tileData.readShort());
-			}
-			return null;
-		}
-
-		@Override
-		public IMessage handleServerMessage(EntityPlayer player, TilesPacket msg, MessageContext ctx) {
-			return null;
+	@Override
+	protected void process(EntityPlayer player, Side side) {
+		ExtBiomeData data = AntiqueAtlasMod.extBiomeData.getData();
+		for (int i = 0; i < tileCount; i++) {
+			data.setBiomeIdAt(dimension, tileData.readShort(), tileData.readShort(), tileData.readShort());
 		}
 	}
 }

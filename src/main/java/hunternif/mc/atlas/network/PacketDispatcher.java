@@ -38,34 +38,30 @@ public class PacketDispatcher
 	 */
 	public static void registerPackets() {
 		// Bi-directional messages
-		registerBiMessage(DeleteMarkerPacket.Handler.class, DeleteMarkerPacket.class);
-		
+		registerMessage(DeleteMarkerPacket.class);
+
 		// Messages sent to CLIENT
-		registerMessage(MapDataPacket.Handler.class, MapDataPacket.class, Side.CLIENT);
-		registerMessage(TileNameIDPacket.Handler.class, TileNameIDPacket.class, Side.CLIENT);
-		registerMessage(TilesPacket.Handler.class, TilesPacket.class, Side.CLIENT);
-		registerBiMessage(MarkersPacket.Handler.class, MarkersPacket.class);
-		
+		registerMessage(MapDataPacket.class);
+		registerMessage(TileNameIDPacket.class);
+		registerMessage(TilesPacket.class);
+		registerMessage(MarkersPacket.class);
+
 		// Messages sent to SERVER
-		registerBiMessage(AddMarkerPacket.Handler.class, AddMarkerPacket.class);
+		registerMessage(AddMarkerPacket.class);
 	}
 
 	/**
-	 * Registers a message and message handler on the designated side;
-	 * used for standard IMessage + IMessageHandler implementations
+	 * Registers an {@link AbstractMessage} to the appropriate side(s)
 	 */
-	private static final <REQ extends IMessage, REPLY extends IMessage> void registerMessage(Class<? extends IMessageHandler<REQ, REPLY>> handlerClass, Class<REQ> messageClass, Side side) {
-		PacketDispatcher.dispatcher.registerMessage(handlerClass, messageClass, packetId++, side);
-	}
-
-	/**
-	 * Registers a message and message handler on both sides; used mainly
-	 * for standard IMessage + IMessageHandler implementations
-	 */
-	private static final <REQ extends IMessage, REPLY extends IMessage> void registerBiMessage(Class<? extends IMessageHandler<REQ, REPLY>> handlerClass, Class<REQ> messageClass) {
-		// use same packetId for registration to both sides to avoid waste
-		PacketDispatcher.dispatcher.registerMessage(handlerClass, messageClass, packetId, Side.CLIENT);
-		PacketDispatcher.dispatcher.registerMessage(handlerClass, messageClass, packetId++, Side.SERVER);
+	private static final <T extends AbstractMessage<T> & IMessageHandler<T, IMessage>> void registerMessage(Class<T> clazz) {
+		if (AbstractMessage.AbstractClientMessage.class.isAssignableFrom(clazz)) {
+			PacketDispatcher.dispatcher.registerMessage(clazz, clazz, packetId++, Side.CLIENT);
+		} else if (AbstractMessage.AbstractServerMessage.class.isAssignableFrom(clazz)) {
+			PacketDispatcher.dispatcher.registerMessage(clazz, clazz, packetId++, Side.SERVER);
+		} else {
+			PacketDispatcher.dispatcher.registerMessage(clazz, clazz, packetId, Side.CLIENT);
+			PacketDispatcher.dispatcher.registerMessage(clazz, clazz, packetId++, Side.SERVER);
+		}
 	}
 
 	/**
@@ -75,7 +71,7 @@ public class PacketDispatcher
 	public static void sendToAll(IMessage message) {
 		PacketDispatcher.dispatcher.sendToAll(message);
 	}
-	
+
 	/**
 	 * Send this message to the specified player.
 	 * See {@link SimpleNetworkWrapper#sendTo(IMessage, EntityPlayerMP)}
@@ -86,7 +82,7 @@ public class PacketDispatcher
 
 	/**
 	 * Send this message to everyone within a certain range of a point.
-	 * See {@link SimpleNetworkWrapper#sendToDimension(IMessage, NetworkRegistry.TargetPoint)}
+	 * See {@link SimpleNetworkWrapper#sendToAllAround(IMessage, NetworkRegistry.TargetPoint)}
 	 */
 	public static final void sendToAllAround(IMessage message, NetworkRegistry.TargetPoint point) {
 		PacketDispatcher.dispatcher.sendToAllAround(message, point);

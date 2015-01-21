@@ -3,22 +3,20 @@ package hunternif.mc.atlas.network.client;
 import hunternif.mc.atlas.AntiqueAtlasMod;
 import hunternif.mc.atlas.marker.Marker;
 import hunternif.mc.atlas.marker.MarkersData;
-import hunternif.mc.atlas.network.AbstractMessageHandler;
-import io.netty.buffer.ByteBuf;
+import hunternif.mc.atlas.network.AbstractMessage.AbstractClientMessage;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Set;
 
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.network.PacketBuffer;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
 
 import cpw.mods.fml.common.network.ByteBufUtils;
-import cpw.mods.fml.common.network.simpleimpl.IMessage;
-import cpw.mods.fml.common.network.simpleimpl.MessageContext;
 import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 
 /**
  * Sends markers set via API from server to client.
@@ -26,15 +24,15 @@ import cpw.mods.fml.relauncher.SideOnly;
  * The markers in one packet are either all global or all local.
  * @author Hunternif
  */
-public class MarkersPacket implements IMessage {
+public class MarkersPacket extends AbstractClientMessage {
 	/** Used in place of atlasID to signify that the marker is global. */
 	private static final int GLOBAL = -1;
 	protected int atlasID;
 	protected int dimension;
 	protected final ListMultimap<String, Marker> markersByType = ArrayListMultimap.create();
-	
+
 	public MarkersPacket() {}
-	
+
 	/** Use this constructor when creating a <b>local</b> marker. */
 	public MarkersPacket(int atlasID, int dimension, Marker... markers) {
 		this.atlasID = atlasID;
@@ -43,12 +41,12 @@ public class MarkersPacket implements IMessage {
 			markersByType.put(marker.getType(), marker);
 		}
 	}
-	
+
 	/** Use this constructor when creating a <b>global</b> marker. */
 	public MarkersPacket(int dimension, Marker... markers) {
 		this(GLOBAL, dimension, markers);
 	}
-	
+
 	public MarkersPacket putMarker(Marker marker) {
 		markersByType.put(marker.getType(), marker);
 		return this;
@@ -57,13 +55,13 @@ public class MarkersPacket implements IMessage {
 	public boolean isEmpty() {
 		return markersByType.isEmpty();
 	}
-	
+
 	public boolean isGlobal() {
 		return atlasID == GLOBAL;
 	}
-	
+
 	@Override
-	public void fromBytes(ByteBuf buffer) {
+	public void read(PacketBuffer buffer) throws IOException {
 		atlasID = buffer.readShort();
 		dimension = buffer.readShort();
 		int typesLength = buffer.readShort();
@@ -81,7 +79,7 @@ public class MarkersPacket implements IMessage {
 	}
 
 	@Override
-	public void toBytes(ByteBuf buffer) {
+	public void write(PacketBuffer buffer) throws IOException {
 		buffer.writeShort(atlasID);
 		buffer.writeShort(dimension);
 		Set<String> types = markersByType.keySet();
@@ -100,22 +98,13 @@ public class MarkersPacket implements IMessage {
 		}
 	}
 
-	public static class Handler extends AbstractMessageHandler<MarkersPacket> {
-		@Override
-		@SideOnly(Side.CLIENT)
-		public IMessage handleClientMessage(EntityPlayer player, MarkersPacket msg, MessageContext ctx) {
-			MarkersData markersData = msg.isGlobal() ?
-					AntiqueAtlasMod.globalMarkersData.getData() :
-					AntiqueAtlasMod.itemAtlas.getMarkersData(msg.atlasID, player.worldObj);
-			for (Marker marker : msg.markersByType.values()) {
-				markersData.loadMarker(marker);
-			}
-			return null;
-		}
-		
-		@Override
-		public IMessage handleServerMessage(EntityPlayer player, MarkersPacket msg, MessageContext ctx) {
-			return null;
+	@Override
+	protected void process(EntityPlayer player, Side side) {
+		MarkersData markersData = isGlobal() ?
+				AntiqueAtlasMod.globalMarkersData.getData() :
+					AntiqueAtlasMod.itemAtlas.getMarkersData(atlasID, player.worldObj);
+		for (Marker marker : markersByType.values()) {
+			markersData.loadMarker(marker);
 		}
 	}
 }

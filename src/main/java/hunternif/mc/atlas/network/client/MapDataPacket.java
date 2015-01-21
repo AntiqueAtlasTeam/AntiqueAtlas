@@ -3,25 +3,23 @@ package hunternif.mc.atlas.network.client;
 import hunternif.mc.atlas.AntiqueAtlasMod;
 import hunternif.mc.atlas.core.AtlasData;
 import hunternif.mc.atlas.core.Tile;
-import hunternif.mc.atlas.network.AbstractMessageHandler;
+import hunternif.mc.atlas.network.AbstractMessage.AbstractClientMessage;
 import hunternif.mc.atlas.util.ShortVec2;
-import io.netty.buffer.ByteBuf;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
 import net.minecraft.entity.player.EntityPlayer;
-import cpw.mods.fml.common.network.simpleimpl.IMessage;
-import cpw.mods.fml.common.network.simpleimpl.MessageContext;
+import net.minecraft.network.PacketBuffer;
 import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 
 /**
  * Used to sync atlas data from server to client.
  * @author Hunternif
  */
-public class MapDataPacket implements IMessage {
+public class MapDataPacket extends AbstractClientMessage {
 	/** Size of one entry in the map in bytes. */
 	public static final int ENTRY_SIZE_BYTES = 2 + 2 + 2;
 
@@ -40,7 +38,7 @@ public class MapDataPacket implements IMessage {
 	}
 
 	@Override
-	public void fromBytes(ByteBuf buffer) {
+	public void read(PacketBuffer buffer) throws IOException {
 		atlasID = buffer.readShort();
 		dimension = buffer.readShort();
 		int length = buffer.readShort();
@@ -55,7 +53,7 @@ public class MapDataPacket implements IMessage {
 	}
 
 	@Override
-	public void toBytes(ByteBuf buffer) {
+	public void write(PacketBuffer buffer) throws IOException {
 		buffer.writeShort(atlasID);
 		buffer.writeShort(dimension);
 		buffer.writeShort(data.size());
@@ -66,21 +64,12 @@ public class MapDataPacket implements IMessage {
 		}
 	}
 
-	public static class Handler extends AbstractMessageHandler<MapDataPacket> {
-		@Override
-		@SideOnly(Side.CLIENT)
-		public IMessage handleClientMessage(EntityPlayer player, MapDataPacket msg, MessageContext ctx) {
-			AtlasData atlasData = AntiqueAtlasMod.itemAtlas.getAtlasData(msg.atlasID, player.worldObj);
-			for (Entry<ShortVec2, Tile> entry : msg.data.entrySet()) {
-				ShortVec2 v = entry.getKey();
-				atlasData.setTile(msg.dimension, v.x, v.y, entry.getValue());
-			}
-			return null;
-		}
-
-		@Override
-		public IMessage handleServerMessage(EntityPlayer player, MapDataPacket msg, MessageContext ctx) {
-			return null;
+	@Override
+	protected void process(EntityPlayer player, Side side) {
+		AtlasData atlasData = AntiqueAtlasMod.itemAtlas.getAtlasData(atlasID, player.worldObj);
+		for (Entry<ShortVec2, Tile> entry : data.entrySet()) {
+			ShortVec2 v = entry.getKey();
+			atlasData.setTile(dimension, v.x, v.y, entry.getValue());
 		}
 	}
 }
