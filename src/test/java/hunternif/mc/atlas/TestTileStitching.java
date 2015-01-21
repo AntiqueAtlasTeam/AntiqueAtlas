@@ -20,7 +20,7 @@ public class TestTileStitching {
 	
 	@BeforeClass
 	public static void setup() {
-		BiomeTextureMap.instance().setTexture(-1);
+		//BiomeTextureMap.instance().setTexture(-1);
 	}
 	
 	@Before

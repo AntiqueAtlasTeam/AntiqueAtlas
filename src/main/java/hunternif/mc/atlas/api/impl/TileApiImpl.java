@@ -3,7 +3,8 @@ package hunternif.mc.atlas.api.impl;
 import hunternif.mc.atlas.AntiqueAtlasMod;
 import hunternif.mc.atlas.api.TileAPI;
 import hunternif.mc.atlas.client.BiomeTextureMap;
-import hunternif.mc.atlas.client.StandardTextureSet;
+import hunternif.mc.atlas.client.TextureSet;
+import hunternif.mc.atlas.client.TextureSetMap;
 import hunternif.mc.atlas.core.ChunkBiomeAnalyzer;
 import hunternif.mc.atlas.ext.ExtBiomeData;
 import hunternif.mc.atlas.ext.ExtTileIdMap;
@@ -24,23 +25,19 @@ public class TileApiImpl implements TileAPI {
 	 * the client. In that case the textures are put in this map to be later
 	 * registered when the server sends the packet with pseudo-biome ID for the
 	 * corresponding unique name.
-	 * <p>This map maps unique tile name to a StandardTextureSet or an array of
-	 * ResourceLocations of textures.</p>
+	 * <p>This map maps unique tile name to a TextureSet.</p>
 	 */
-	public final Map<String, Object> pendingTextures = new HashMap<String, Object>();
+	public final Map<String, TextureSet> pendingTextures = new HashMap<String, TextureSet>();
 	
 	@Override
 	public void setTexture(String uniqueTileName, ResourceLocation ... textures) {
-		int id = ExtTileIdMap.instance().getPseudoBiomeID(uniqueTileName);
-		if (id != ChunkBiomeAnalyzer.NOT_FOUND) {
-			BiomeTextureMap.instance().setTexture(id, textures);
-		} else {
-			pendingTextures.put(uniqueTileName, textures);
-		}
+		TextureSet set = new TextureSet(uniqueTileName, textures);
+		TextureSetMap.instance().register(set);
+		setTexture(uniqueTileName, set);
 	}
 	
 	@Override
-	public void setTexture(String uniqueTileName, StandardTextureSet textureSet) {
+	public void setTexture(String uniqueTileName, TextureSet textureSet) {
 		int id = ExtTileIdMap.instance().getPseudoBiomeID(uniqueTileName);
 		if (id != ChunkBiomeAnalyzer.NOT_FOUND) {
 			BiomeTextureMap.instance().setTexture(id, textureSet);

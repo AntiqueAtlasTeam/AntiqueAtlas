@@ -1,6 +1,6 @@
 package hunternif.mc.atlas.api;
 
-import hunternif.mc.atlas.client.StandardTextureSet;
+import hunternif.mc.atlas.client.TextureSet;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
@@ -17,29 +17,33 @@ public interface BiomeAPI {
 	/** Version of Biome API, meaning this particular interface. */
 	public static final int VERSION = 3;
 	
-	/** Assign one or more texture to biome ID.
-	 * The different textures in the array will be added as variations, and each
-	 * individual texture name will be saved in the config file. */
+	/** Assign one or more texture to biome ID, implicitly creating a new
+	 * texture set. The different textures in the array will be added as
+	 * variations, and each individual texture name will be saved in the
+	 * config file. */
+	@Deprecated
 	@SideOnly(Side.CLIENT)
 	void setTexture(int biomeID, ResourceLocation ... textures);
 	
-	/** Assign one or more texture to biome.
-	 * The different textures in the array will be added as variations, and each
-	 * individual texture name will be saved in the config file. */
+	/**
+	 * Assign one or more texture to biome, implicitly creating a new texture
+	 * set. The different textures in the array will be added as variations,
+	 * and each individual texture name will be saved in the config file. */
 	@SideOnly(Side.CLIENT)
+	@Deprecated
 	void setTexture(BiomeGenBase biome, ResourceLocation ... textures);
 	
-	/** Assign one of the standard texture sets to biome ID.
+	/** Assign a texture set to biome ID.
 	 * The different textures in the set will be added as variations, and only
 	 * the name of the texture set will be saved in the config file. */
 	@SideOnly(Side.CLIENT)
-	void setTexture(int biomeID, StandardTextureSet textureSet);
+	void setTexture(int biomeID, TextureSet textureSet);
 	
-	/** Assign one of the standard texture sets to biome.
+	/** Assign a texture set to biome.
 	 * The different textures in the set will be added as variations, and only
 	 * the name of the texture set will be saved in the config file. */
 	@SideOnly(Side.CLIENT)
-	void setTexture(BiomeGenBase biome, StandardTextureSet textureSet);
+	void setTexture(BiomeGenBase biome, TextureSet textureSet);
 	
 	/**
 	 * <p><b>Not yet implemented.</b></p>

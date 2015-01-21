@@ -1,6 +1,6 @@
 package hunternif.mc.atlas.client;
 
-import static hunternif.mc.atlas.client.StandardTextureSet.*;
+import static hunternif.mc.atlas.client.TextureSet.*;
 import hunternif.mc.atlas.AntiqueAtlasMod;
 import hunternif.mc.atlas.core.Tile;
 import hunternif.mc.atlas.util.SaveData;
@@ -32,75 +32,22 @@ public class BiomeTextureMap extends SaveData {
 		return INSTANCE;
 	}
 	
-	static class BiomeTextureEntry {
-		public final int biomeID;
-		public StandardTextureSet textureSet;
-		public final List<ResourceLocation> textures;
-		public BiomeTextureEntry(int biomeID, ResourceLocation[] textures) {
-			this(biomeID, null, textures);
-		}
-		public BiomeTextureEntry(int biomeID, StandardTextureSet textureSet) {
-			this(biomeID, textureSet, textureSet.textures);
-		}
-		public BiomeTextureEntry(int biomeID, StandardTextureSet textureSet, ResourceLocation[] textures) {
-			this.biomeID = biomeID;
-			this.textureSet = textureSet;
-			this.textures = new ArrayList<ResourceLocation>(textures.length);
-			for (ResourceLocation texture : textures) {
-				this.textures.add(texture);
-			}
-		}
-		public boolean isStandardSet() {
-			return textureSet != null;
-		}
-		@Override
-		public String toString() {
-			if (isStandardSet()) {
-				return textureSet.name();
-			} else {
-				return textures.toString();
-			}
-		}
-	}
-	
 	/** This map allows keys other than the 256 biome IDs to use for special tiles. */
-	final Map<Integer, BiomeTextureEntry> textureMap =
-			new HashMap<Integer, BiomeTextureMap.BiomeTextureEntry>();
+	final Map<Integer, TextureSet> textureMap = new HashMap<Integer, TextureSet>();
 	
-	public static final StandardTextureSet defaultTexture = PLAINS;
+	public static final TextureSet defaultTexture = PLAINS;
 	
-	/** Assigns texture to biome. */
-	public void setTexture(int biomeID, StandardTextureSet textureSet) {
-		BiomeTextureEntry entry = textureMap.get(biomeID);
-		if (entry == null) {
-			entry = new BiomeTextureEntry(biomeID, textureSet);
-			textureMap.put(biomeID, entry);
+	/** Assign texture set to biome. */
+	public void setTexture(int biomeID, TextureSet textureSet) {
+		TextureSet previous = textureMap.put(biomeID, textureSet);
+		if (previous == null) {
 			markDirty();
-		} else if (entry.textureSet != textureSet) {
+		} else if (previous != textureSet) {
 			AntiqueAtlasMod.logger.warn("Overwriting texture set for biome " + biomeID);
-			entry.textureSet = textureSet;
-			entry.textures.clear();
-			for (ResourceLocation texture : textureSet.textures) {
-				entry.textures.add(texture);
-			}
 			markDirty();
 		}
-	}
-	
-	/** Assigns texture to biome. */
-	public void setTexture(int biomeID, ResourceLocation ... textures) {
-		BiomeTextureEntry entry = textureMap.get(biomeID);
-		if (entry == null) {
-			entry = new BiomeTextureEntry(biomeID, textures);
-			textureMap.put(biomeID, entry);
-			markDirty();
-		} else if (!Arrays.equals(textures, entry.textures.toArray())) {
-			//TODO: get rid of single textures in favor of texture packs
-			AntiqueAtlasMod.logger.warn("Overwriting textures for biome " + biomeID);
-			entry.textures.clear();
-			for (ResourceLocation texture : textures) {
-				entry.textures.add(texture);
-			}
+		if (previous == null) {
+			textureMap.put(biomeID, textureSet);
 			markDirty();
 		}
 	}
@@ -129,7 +76,7 @@ public class BiomeTextureMap extends SaveData {
 			if (types.contains(Type.FOREST) || types.contains(Type.JUNGLE) || types.contains(Type.SWAMP)) {
 				setTexture(biomeID, SWAMP);
 			} else if (types.contains(Type.SNOWY)){
-				setTexture(biomeID, FROZEN_WATER);
+				setTexture(biomeID, ICE);
 			} else {
 				setTexture(biomeID, WATER);
 			}
@@ -185,14 +132,14 @@ public class BiomeTextureMap extends SaveData {
 
 	public int getVariations(int biomeID) {
 		checkRegistration(biomeID);
-		BiomeTextureEntry entry = textureMap.get(biomeID);
-		return entry.textures.size();
+		TextureSet set = textureMap.get(biomeID);
+		return set.textures.length;
 	}
 
 	public ResourceLocation getTexture(Tile tile) {
 		checkRegistration(tile.biomeID);
-		BiomeTextureEntry entry = textureMap.get(tile.biomeID);
-		return entry.textures.get(tile.getVariationNumber());
+		TextureSet set = textureMap.get(tile.biomeID);
+		return set.textures[tile.getVariationNumber()];
 	}
 	
 	/** Whether the first tile should be stitched to the 2nd
@@ -200,26 +147,15 @@ public class BiomeTextureMap extends SaveData {
 	public boolean shouldStitchTo(int biomeID, int toBiomeID) {
 		checkRegistration(biomeID);
 		checkRegistration(toBiomeID);
-		BiomeTextureEntry entry = textureMap.get(biomeID);
-		BiomeTextureEntry toEntry = textureMap.get(toBiomeID);
-		if (entry.textureSet != null) {
-			for (StandardTextureSet texSet : entry.textureSet.stitchTo) {
-				if (texSet.equals(toEntry.textureSet)) {
-					return true;
-				}
-			}
-			return false;
-		} else {
-			List<ResourceLocation> list = new ArrayList<ResourceLocation>(textureMap.get(biomeID).textures);
-			list.retainAll(textureMap.get(toBiomeID).textures);
-			return !list.isEmpty();
-		}
+		TextureSet entry = textureMap.get(biomeID);
+		TextureSet toEntry = textureMap.get(toBiomeID);
+		return entry.shouldStichTo(toEntry);
 	}
 	
 	public List<ResourceLocation> getAllTextures() {
 		List<ResourceLocation> list = new ArrayList<ResourceLocation>(textureMap.size());
-		for (Entry<Integer, BiomeTextureEntry> entry : textureMap.entrySet()) {
-			list.addAll(entry.getValue().textures);
+		for (Entry<Integer, TextureSet> entry : textureMap.entrySet()) {
+			list.addAll(Arrays.asList(entry.getValue().textures));
 		}
 		return list;
 	}

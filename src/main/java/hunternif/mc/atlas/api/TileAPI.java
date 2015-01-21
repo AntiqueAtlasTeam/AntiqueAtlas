@@ -1,6 +1,6 @@
 package hunternif.mc.atlas.api;
 
-import hunternif.mc.atlas.client.StandardTextureSet;
+import hunternif.mc.atlas.client.TextureSet;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import cpw.mods.fml.relauncher.Side;
@@ -15,19 +15,20 @@ public interface TileAPI {
 	/** Version of Tile API, meaning this particular interface. */
 	public static final int VERSION = 3;
 	
-	/** Assign one or more textures to a unique tile name.
+	/** Assign one or more textures to a unique tile name, implicitly creating
+	 * a new texture set using the same unique name.
 	 * The different textures in the array will be added as variations, and each
 	 * individual texture name will be saved in the config file.
 	 * Client-side only! */
 	@SideOnly(Side.CLIENT)
 	void setTexture(String uniqueTileName, ResourceLocation ... textures);
 	
-	/** Assign one of the standard texture sets to tile.
+	/** Assign a texture set to a unique tile name.
 	 * The different textures in the set will be added as variations, and only
 	 * the name of the texture set will be saved in the config file.
 	 * Client-side only! */
 	@SideOnly(Side.CLIENT)
-	void setTexture(String uniqueTileName, StandardTextureSet textureSet);
+	void setTexture(String uniqueTileName, TextureSet textureSet);
 	
 	/**
 	 * <p><b>Not yet implemented.</b></p>

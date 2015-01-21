@@ -4,7 +4,7 @@ import hunternif.mc.atlas.AntiqueAtlasMod;
 import hunternif.mc.atlas.api.AtlasAPI;
 import hunternif.mc.atlas.api.impl.TileApiImpl;
 import hunternif.mc.atlas.client.BiomeTextureMap;
-import hunternif.mc.atlas.client.StandardTextureSet;
+import hunternif.mc.atlas.client.TextureSet;
 import hunternif.mc.atlas.ext.ExtTileIdMap;
 import hunternif.mc.atlas.network.AbstractMessageHandler;
 import io.netty.buffer.ByteBuf;
@@ -14,7 +14,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.ResourceLocation;
 import cpw.mods.fml.common.network.ByteBufUtils;
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import cpw.mods.fml.common.network.simpleimpl.MessageContext;
@@ -77,13 +76,9 @@ public class TileNameIDPacket implements IMessage
 				biomeID = entry.getValue();
 				ExtTileIdMap.instance().setPseudoBiomeID(name, biomeID);
 				// Register pending textures:
-				if (api.pendingTextures.containsKey(name)) {
-					Object pending = api.pendingTextures.remove(name);
-					if (pending instanceof StandardTextureSet) {
-						BiomeTextureMap.instance().setTexture(biomeID, (StandardTextureSet)pending);
-					} else if (pending instanceof ResourceLocation[]){
-						BiomeTextureMap.instance().setTexture(biomeID, (ResourceLocation[])pending);
-					}
+				TextureSet pending = api.pendingTextures.remove(name);
+				if (pending != null) {
+					BiomeTextureMap.instance().setTexture(biomeID, pending);
 				}
 			}
 			return null;
