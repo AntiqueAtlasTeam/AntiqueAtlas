@@ -5,6 +5,8 @@ import hunternif.mc.atlas.network.PacketDispatcher;
 import hunternif.mc.atlas.network.client.MapDataPacket;
 import hunternif.mc.atlas.util.ShortVec2;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -83,6 +85,7 @@ public class AtlasData extends WorldSavedData {
 	public void setTile(int dimension, int x, int y, Tile tile) {
 		DimensionData dimData = getDimensionData(dimension);
 		dimData.setTile(x, y, tile);
+		this.markDirty();
 	}
 	
 	public Set<Integer> getVisitedDimensions() {
@@ -101,6 +104,11 @@ public class AtlasData extends WorldSavedData {
 		return getDimensionData(dimension).getSeenChunks();
 	}
 	
+	/** The set of players this AtlasData has already been sent to. */
+	public Collection<EntityPlayer> getSyncedPlayers() {
+		return Collections.unmodifiableCollection(playersSentTo);
+	}
+	/** Whether this AtlasData has already been sent to the specified player. */
 	public boolean isSyncedOnPlayer(EntityPlayer player) {
 		return playersSentTo.contains(player);
 	}

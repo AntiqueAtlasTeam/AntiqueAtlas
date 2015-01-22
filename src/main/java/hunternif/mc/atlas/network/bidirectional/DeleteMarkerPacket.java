@@ -1,9 +1,9 @@
 package hunternif.mc.atlas.network.bidirectional;
 
 import hunternif.mc.atlas.AntiqueAtlasMod;
+import hunternif.mc.atlas.api.AtlasAPI;
 import hunternif.mc.atlas.marker.MarkersData;
 import hunternif.mc.atlas.network.AbstractMessage;
-import hunternif.mc.atlas.network.PacketDispatcher;
 
 import java.io.IOException;
 
@@ -55,22 +55,23 @@ public class DeleteMarkerPacket extends AbstractMessage<DeleteMarkerPacket> {
 
 	@Override
 	protected void process(EntityPlayer player, Side side) {
-		// On the server, make sure it's this player's atlas :^)
-		if (side.isServer() && !player.inventory.hasItemStack(new ItemStack(AntiqueAtlasMod.itemAtlas, 1, atlasID))) {
-			AntiqueAtlasMod.logger.warn(String.format("Player %s attempted to delete marker from someone else's Atlas #%d",
-					player.getGameProfile().getName(), atlasID));
-			return;
-		}
-		// This code is the same on both sides:
-		MarkersData data = isGlobal() ?
-				AntiqueAtlasMod.globalMarkersData.getData() :
-					AntiqueAtlasMod.itemAtlas.getMarkersData(atlasID, player.worldObj);
-		data.removeMarker(markerID);
 		if (side.isServer()) {
-			// If these are a manually set markers sent from the client, forward
-			// them to other players. Including the original sender, because he
-			// waits on the server to verify his marker.
-			PacketDispatcher.sendToAll(this);
+			// Make sure it's this player's atlas :^)
+			if (side.isServer() && !player.inventory.hasItemStack(new ItemStack(AntiqueAtlasMod.itemAtlas, 1, atlasID))) {
+				AntiqueAtlasMod.logger.warn(String.format("Player %s attempted to delete marker from someone else's Atlas #%d",
+						player.getGameProfile().getName(), atlasID));
+				return;
+			}
+			if (isGlobal()) {
+				AtlasAPI.getMarkerAPI().deleteGlobalMarker(player.worldObj, markerID);
+			} else {
+				AtlasAPI.getMarkerAPI().deleteMarker(player.worldObj, atlasID, markerID);
+			}
+		} else {
+			MarkersData data = isGlobal() ?
+					AntiqueAtlasMod.globalMarkersData.getData() :
+					AntiqueAtlasMod.itemAtlas.getMarkersData(atlasID, player.worldObj);
+					data.removeMarker(markerID);
 		}
 	}
 }

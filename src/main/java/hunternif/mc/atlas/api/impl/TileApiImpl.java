@@ -53,21 +53,23 @@ public class TileApiImpl implements TileAPI {
 	
 	@Override
 	public void putCustomGlobalTile(World world, String tileName, int chunkX, int chunkZ) {
+		if (world.isRemote) {
+			AntiqueAtlasMod.logger.warn("Client tried to put global tile");
+			return;
+		}
 		boolean isIdRegistered = ExtTileIdMap.instance().getPseudoBiomeID(tileName) != ChunkBiomeAnalyzer.NOT_FOUND;
 		int biomeID = ExtTileIdMap.instance().getOrCreatePseudoBiomeID(tileName);
 		ExtBiomeData data = AntiqueAtlasMod.extBiomeData.getData();
 		data.setBiomeIdAt(world.provider.dimensionId, chunkX, chunkZ, biomeID);
-		if (!world.isRemote) {
-			// Send name-ID packet:
-			if (!isIdRegistered) {
-				TileNameIDPacket packet = new TileNameIDPacket();
-				packet.put(tileName, biomeID);
-				PacketDispatcher.sendToAll(packet);
-			}
-			// Send tile packet:
-			TilesPacket packet = new TilesPacket(world.provider.dimensionId);
-			packet.addTile(chunkX, chunkZ, biomeID);
+		// Send name-ID packet:
+		if (!isIdRegistered) {
+			TileNameIDPacket packet = new TileNameIDPacket();
+			packet.put(tileName, biomeID);
 			PacketDispatcher.sendToAll(packet);
 		}
+		// Send tile packet:
+		TilesPacket packet = new TilesPacket(world.provider.dimensionId);
+		packet.addTile(chunkX, chunkZ, biomeID);
+		PacketDispatcher.sendToAll(packet);
 	}
 }

@@ -120,7 +120,6 @@ public class ItemAtlas extends Item {
 							tile.randomizeTexture();
 						}
 						data.setTile(player.dimension, x, y, tile);
-						data.markDirty();
 					}
 				} else {
 					// Always update custom tiles
@@ -129,7 +128,6 @@ public class ItemAtlas extends Item {
 						tile.randomizeTexture();
 					}
 					data.setTile(player.dimension, x, y, tile);
-					data.markDirty();
 				}
 				
 			}

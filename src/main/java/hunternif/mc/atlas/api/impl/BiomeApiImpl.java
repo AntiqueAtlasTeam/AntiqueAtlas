@@ -1,9 +1,16 @@
 package hunternif.mc.atlas.api.impl;
 
+import hunternif.mc.atlas.AntiqueAtlasMod;
 import hunternif.mc.atlas.api.BiomeAPI;
 import hunternif.mc.atlas.client.BiomeTextureMap;
 import hunternif.mc.atlas.client.TextureSet;
 import hunternif.mc.atlas.client.TextureSetMap;
+import hunternif.mc.atlas.core.AtlasData;
+import hunternif.mc.atlas.core.Tile;
+import hunternif.mc.atlas.network.PacketDispatcher;
+import hunternif.mc.atlas.network.bidirectional.PutBiomeTilePacket;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
@@ -32,7 +39,18 @@ public class BiomeApiImpl implements BiomeAPI {
 	
 	@Override
 	public void setBiome(World world, int atlasID, int biomeID, int chunkX, int chunkZ) {
-		//TODO set biomes in an atlas
+		int dimension = world.provider.dimensionId;
+		PutBiomeTilePacket packet = new PutBiomeTilePacket(atlasID, dimension, chunkX, chunkZ, biomeID);
+		if (world.isRemote) {
+			PacketDispatcher.sendToServer(packet);
+		} else {
+			AtlasData data = AntiqueAtlasMod.itemAtlas.getAtlasData(atlasID, world);
+			Tile tile = new Tile(biomeID);
+			data.setTile(dimension, chunkX, chunkZ, tile);
+			for (EntityPlayer syncedPlayer : data.getSyncedPlayers()) {
+				PacketDispatcher.sendTo(new PutBiomeTilePacket(atlasID, dimension, chunkX, chunkZ, biomeID), (EntityPlayerMP)syncedPlayer);
+			}
+		}
 	}
 	
 	@Override

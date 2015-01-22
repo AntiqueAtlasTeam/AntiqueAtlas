@@ -46,8 +46,6 @@ public interface BiomeAPI {
 	void setTexture(BiomeGenBase biome, TextureSet textureSet);
 	
 	/**
-	 * <p><b>Not yet implemented.</b></p>
-	 * 
 	 * Edit the biome ID at the specified chunk in the specified atlas. 
 	 * You only need to call this method once for every chunk, after that
 	 * the tile will be persisted with the world and loaded when the server
@@ -73,8 +71,6 @@ public interface BiomeAPI {
 	void setBiome(World world, int atlasID, int biomeID, int chunkX, int chunkZ);
 	
 	/**
-	 * <p><b>Not yet implemented.</b></p>
-	 * 
 	 * Edit the biome at the specified chunk in the specified atlas. 
 	 * You only need to call this method once for every chunk, after that
 	 * the tile will be persisted with the world and loaded when the server
