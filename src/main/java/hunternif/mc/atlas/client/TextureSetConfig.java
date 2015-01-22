@@ -31,12 +31,8 @@ public class TextureSetConfig extends AbstractJSONConfig<TextureSetMap> {
 			JsonArray array = entry.getValue().getAsJsonArray();
 			ResourceLocation[] textures = new ResourceLocation[array.size()];
 			for (int i = 0; i < array.size(); i++) {
-				JsonElement path = array.get(i);
-				if (!path.isJsonPrimitive()) {
-					AntiqueAtlasMod.logger.error("Malformed texture set path: " + path.toString());
-					break;
-				}
-				textures[i] = new ResourceLocation(path.getAsString());
+				String path = array.get(i).getAsString();
+				textures[i] = new ResourceLocation(path);
 			}
 			data.register(new TextureSet(name, textures));
 			AntiqueAtlasMod.logger.info("Loaded texture set \"" + name
