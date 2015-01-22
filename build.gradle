@@ -24,9 +24,9 @@ archivesBaseName = "antiqueatlas"
 minecraft {
     version = "1.7.10-10.13.2.1230"
     if (file('../run').exists()) {
-		assetDir = "../run/assets"
+		runDir = "../run"
 	} else {
-		assetDir = "eclipse/assets"
+		runDir = "eclipse"
 	}
 }
 
