@@ -1,8 +1,6 @@
 package hunternif.mc.atlas.marker;
 
-import hunternif.mc.atlas.AntiqueAtlasMod;
-import hunternif.mc.atlas.util.Config;
-import hunternif.mc.atlas.util.FileUtil;
+import hunternif.mc.atlas.util.AbstractJSONConfig;
 
 import java.io.File;
 import java.util.Map.Entry;
@@ -20,41 +18,31 @@ import cpw.mods.fml.relauncher.SideOnly;
  * @author Hunternif
  */
 @SideOnly(Side.CLIENT)
-public class MarkerTextureConfig implements Config<MarkerTextureMap> {
-	private final File file;
+public class MarkerTextureConfig extends AbstractJSONConfig<MarkerTextureMap> {
+	private static final int VERSION = 1;
 
 	public MarkerTextureConfig(File file) {
-		this.file = file;
+		super(file);
 	}
-
-	public void load(MarkerTextureMap data) {
-		JsonElement root = FileUtil.readJson(file);
-		if (root == null) {
-			AntiqueAtlasMod.logger.info("Marker textures config not found; creating new");
-			save(data);
-			return;
-		}
-		if (!root.isJsonObject()) {
-			AntiqueAtlasMod.logger.error("Malformed marker textures config");
-			return;
-		}
-		
-		for (Entry<String, JsonElement> entry : root.getAsJsonObject().entrySet()) {
+	
+	@Override
+	public int currentVersion() {
+		return VERSION;
+	}
+	
+	@Override
+	protected void loadData(JsonObject json, MarkerTextureMap data, int version) {
+		for (Entry<String, JsonElement> entry : json.entrySet()) {
 			String markerType = entry.getKey();
-			if (!entry.getValue().isJsonPrimitive()) {
-				AntiqueAtlasMod.logger.error("Malformed marker textures config entry: " + markerType);
-				break;
-			}
 			ResourceLocation texture = new ResourceLocation(entry.getValue().getAsString());
 			data.setTexture(markerType, texture);
 		}
 	}
 
-	public void save(MarkerTextureMap data) {
-		JsonObject root = new JsonObject();
+	@Override
+	protected void saveData(JsonObject json, MarkerTextureMap data) {
 		for (Entry<String, ResourceLocation> entry : data.getMap().entrySet()) {
-			root.addProperty(entry.getKey(), entry.getValue().toString());
+			json.addProperty(entry.getKey(), entry.getValue().toString());
 		}
-		FileUtil.writeJson(root, file);
 	}
 }
