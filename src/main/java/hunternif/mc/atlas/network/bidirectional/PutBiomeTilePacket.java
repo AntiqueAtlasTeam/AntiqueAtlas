@@ -61,9 +61,7 @@ public class PutBiomeTilePacket extends AbstractMessage<PutBiomeTilePacket> {
 			AtlasAPI.getBiomeAPI().setBiome(player.worldObj, atlasID, biomeID, x, z);
 		} else {
 			AtlasData data = AntiqueAtlasMod.itemAtlas.getAtlasData(atlasID, player.worldObj);
-			Tile tile = new Tile(biomeID);
-			tile.randomizeTexture();
-			data.setTile(dimension, x, z, tile);
+			data.setTile(dimension, x, z, new Tile(biomeID));
 		}
 	}
 

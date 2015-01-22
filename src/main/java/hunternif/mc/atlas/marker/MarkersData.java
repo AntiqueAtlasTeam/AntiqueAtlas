@@ -214,28 +214,15 @@ public class MarkersData extends WorldSavedData {
 	/** Send all data to the player in several packets. Called once during the
 	 * first run of ItemAtals.onUpdate(). */
 	public void syncOnPlayer(int atlasID, EntityPlayer player) {
-		int pieces = 0;
-		int dataSizeBytes = 0;
 		for (Integer dimension : dimensionMap.keySet()) {
 			MarkersPacket packet = newMarkersPacket(atlasID, dimension);
 			DimensionMarkersData data = getMarkersDataInDimension(dimension);
 			for (Marker marker : data.getAllMarkers()) {
 				packet.putMarker(marker);
-				dataSizeBytes += 4 + 4 + (marker.getLabel().length() + marker.getType().length())*2;
-				if (dataSizeBytes >= PacketDispatcher.MAX_SIZE_BYTES) {
-					PacketDispatcher.sendTo(packet, (EntityPlayerMP) player);
-					pieces++;
-					dataSizeBytes = 0;
-					packet = newMarkersPacket(atlasID, dimension);
-				}
 			}
-			if (!packet.isEmpty()) {
-				PacketDispatcher.sendTo(packet, (EntityPlayerMP) player);
-				pieces++;
-				dataSizeBytes = 0;
-			}
+			PacketDispatcher.sendTo(packet, (EntityPlayerMP) player);
 		}
-		AntiqueAtlasMod.logger.info("Sent markers data to player " + player.getCommandSenderName() + " in " + pieces + " pieces.");
+		AntiqueAtlasMod.logger.info("Sent markers data to player " + player.getCommandSenderName());
 		playersSentTo.add(player);
 	}
 	

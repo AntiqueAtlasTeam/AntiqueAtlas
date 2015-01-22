@@ -7,7 +7,6 @@ import hunternif.mc.atlas.util.ShortVec2;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -36,6 +35,8 @@ public class AtlasData extends WorldSavedData {
 	
 	/** Set of players this Atlas data has been sent to. */
 	private final Set<EntityPlayer> playersSentTo = new HashSet<EntityPlayer>();
+	
+	private NBTTagCompound nbt;
 
 	public AtlasData(String key) {
 		super(key);
@@ -43,6 +44,7 @@ public class AtlasData extends WorldSavedData {
 
 	@Override
 	public void readFromNBT(NBTTagCompound compound) {
+		this.nbt = compound;
 		int version = compound.getInteger(TAG_VERSION);
 		if (version < VERSION) {
 			AntiqueAtlasMod.logger.warn(String.format("Outdated atlas data format! Was %d but current is %d", version, VERSION));
@@ -116,31 +118,8 @@ public class AtlasData extends WorldSavedData {
 	/** Send all data to the player in several zipped packets. Called once
 	 * during the first run of ItemAtals.onUpdate(). */
 	public void syncOnPlayer(int atlasID, EntityPlayer player) {
-		int pieces = 0;
-		int dataSizeBytes = 0;
-		Map<ShortVec2, Tile> data = new HashMap<ShortVec2, Tile>();
-		for (Integer dimension : getVisitedDimensions()) {
-			Map<ShortVec2, Tile> seenChunks = getSeenChunksInDimension(dimension.intValue());
-			for (Entry<ShortVec2, Tile> entry : seenChunks.entrySet()) {
-				data.put(entry.getKey(), entry.getValue());
-				dataSizeBytes += MapDataPacket.ENTRY_SIZE_BYTES;
-				if (dataSizeBytes >= PacketDispatcher.MAX_SIZE_BYTES) {
-					MapDataPacket packet = new MapDataPacket(atlasID, dimension.intValue(), data);
-					PacketDispatcher.sendTo(packet, (EntityPlayerMP) player);
-					pieces++;
-					dataSizeBytes = 0;
-					data.clear();
-				}
-			}
-			if (data.size() > 0) {
-				MapDataPacket packet = new MapDataPacket(atlasID, dimension.intValue(), data);
-				PacketDispatcher.sendTo(packet, (EntityPlayerMP) player);
-				pieces++;
-				dataSizeBytes = 0;
-				data.clear();
-			}
-		}
-		AntiqueAtlasMod.logger.info("Sent Atlas #" + atlasID + " data to player " + player.getCommandSenderName() + " in " + pieces + " pieces.");
+		PacketDispatcher.sendTo(new MapDataPacket(atlasID, nbt), (EntityPlayerMP) player);
+		AntiqueAtlasMod.logger.info("Sent Atlas #" + atlasID + " data to player " + player.getCommandSenderName());
 		playersSentTo.add(player);
 	}
 

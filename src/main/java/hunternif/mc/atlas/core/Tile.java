@@ -1,8 +1,6 @@
 package hunternif.mc.atlas.core;
 
-import hunternif.mc.atlas.client.BiomeTextureMap;
-
-import java.util.Random;
+import org.apache.commons.lang3.RandomUtils;
 
 /**
  * Contains information about the biome and - on the client - the variation
@@ -13,24 +11,23 @@ public class Tile {
 	public final int biomeID;
 	
 	/** Used for randomizing textures. */
-	//TODO persist the variation as a float value so that it is independent of local 
-	// Do this in the next version of the save format.
-	// To save space, the float could be replaced with an integer from a sufficiently large set.
 	private transient byte variationNumber;
 	
 	public Tile(int biomeID) {
+		this(biomeID, (byte)0);
+		randomizeTexture();
+	}
+	public Tile(int biomeID, byte variationNumber) {
 		this.biomeID = biomeID;
+		this.variationNumber = variationNumber;
 	}
 	
-	/** Chooses a random texture from the set of texture variations registered
-	 * for this biome ID. */
+	/** Set variation number to a random byte. */
 	public void randomizeTexture() {
-		int maxVariations = BiomeTextureMap.instance().getVariations(biomeID);
-		if (maxVariations <= 0) variationNumber = 0;
-		else variationNumber = (byte)(new Random().nextInt(maxVariations));
+		this.variationNumber = (byte)(RandomUtils.nextInt(0, 256) - 128);
 	}
 	
-	public int getVariationNumber() {
+	public byte getVariationNumber() {
 		return variationNumber;
 	}
 	

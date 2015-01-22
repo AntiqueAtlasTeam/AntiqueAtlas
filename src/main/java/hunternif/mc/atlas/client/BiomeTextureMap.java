@@ -12,6 +12,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import com.google.common.primitives.UnsignedBytes;
+
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraftforge.common.BiomeDictionary;
@@ -139,7 +141,9 @@ public class BiomeTextureMap extends SaveData {
 	public ResourceLocation getTexture(Tile tile) {
 		checkRegistration(tile.biomeID);
 		TextureSet set = textureMap.get(tile.biomeID);
-		return set.textures[tile.getVariationNumber()];
+		int i = Math.round((float)(UnsignedBytes.toInt(tile.getVariationNumber()))
+				/ 256f * (float)(set.textures.length - 1));
+		return set.textures[i];
 	}
 	
 	/** Whether the first tile should be stitched to the 2nd

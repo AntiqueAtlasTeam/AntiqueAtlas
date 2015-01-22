@@ -25,9 +25,6 @@ import cpw.mods.fml.relauncher.Side;
  */
 public class PacketDispatcher
 {
-	/** This isn't a strict limitation, there is quite a bit of margin left. */
-	public static final int MAX_SIZE_BYTES = 32000;
-
 	private static byte packetId = 0;
 
 	private static final SimpleNetworkWrapper dispatcher = NetworkRegistry.INSTANCE.newSimpleChannel(AntiqueAtlasMod.CHANNEL);

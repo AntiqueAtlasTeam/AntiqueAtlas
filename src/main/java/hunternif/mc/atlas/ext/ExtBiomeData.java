@@ -103,28 +103,15 @@ public class ExtBiomeData extends WorldSavedData {
 	
 	/** Send all data to player in several zipped packets. */
 	public void syncOnPlayer(EntityPlayer player) {
-		int pieces = 0;
-		int dataSizeBytes = 0;
 		for (Integer dimension : dimensionMap.keySet()) {
 			TilesPacket packet = new TilesPacket(dimension);
 			Map<ShortVec2, Integer> biomes = getBiomesInDimension(dimension);
 			for (Entry<ShortVec2, Integer> entry : biomes.entrySet()) {
 				packet.addTile(entry.getKey().x, entry.getKey().y, entry.getValue());
-				dataSizeBytes += TilesPacket.ENTRY_SIZE_BYTES;
-				if (dataSizeBytes >= PacketDispatcher.MAX_SIZE_BYTES) {
-					PacketDispatcher.sendTo(packet, (EntityPlayerMP) player);
-					pieces++;
-					dataSizeBytes = 0;
-					packet = new TilesPacket(dimension);
-				}
 			}
-			if (!packet.isEmpty()) {
-				PacketDispatcher.sendTo(packet, (EntityPlayerMP) player);
-				pieces++;
-				dataSizeBytes = 0;
-			}
+			PacketDispatcher.sendTo(packet, (EntityPlayerMP) player);
 		}
-		AntiqueAtlasMod.logger.info("Sent custom biome data to player " + player.getCommandSenderName() + " in " + pieces + " pieces.");
+		AntiqueAtlasMod.logger.info("Sent custom biome data to player " + player.getCommandSenderName());
 	}
 
 }

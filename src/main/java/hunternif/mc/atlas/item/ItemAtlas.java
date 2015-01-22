@@ -116,9 +116,6 @@ public class ItemAtlas extends Item {
 					// Finally, put the tile in place:
 					if (biomeId != ChunkBiomeAnalyzer.NOT_FOUND) {
 						Tile tile = new Tile(biomeId);
-						if (world.isRemote) {
-							tile.randomizeTexture();
-						}
 						data.setTile(player.dimension, x, y, tile);
 					}
 				} else {

@@ -23,6 +23,9 @@ import io.netty.buffer.ByteBuf;
 import java.io.IOException;
 
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.nbt.CompressedStreamTools;
+import net.minecraft.nbt.NBTSizeTracker;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 
 import com.google.common.base.Throwables;
@@ -112,6 +115,27 @@ public abstract class AbstractMessage<T extends AbstractMessage<T>> implements I
 		@Override
 		protected final boolean isValidOnSide(Side side) {
 			return side.isServer();
+		}
+	}
+	
+	public static void writeNBT(ByteBuf buffer, NBTTagCompound tag) throws IOException {
+		if (tag == null) {
+			buffer.writeInt(-1);
+		} else {
+			byte[] compressed = CompressedStreamTools.compress(tag);
+			buffer.writeInt(compressed.length);
+			buffer.writeBytes(compressed);
+		}
+	}
+	//TODO make sure that very large atlases can be loaded, synced and rendered.
+	public static NBTTagCompound readNBT(ByteBuf buffer) throws IOException {
+		int length = buffer.readInt();
+		if (length < 0) {
+			return null;
+		} else {
+			byte[] compressed = new byte[length];
+			buffer.readBytes(compressed);
+			return CompressedStreamTools.func_152457_a(compressed, new NBTSizeTracker(Integer.MAX_VALUE));
 		}
 	}
 }
