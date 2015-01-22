@@ -45,7 +45,7 @@ public class MapDataPacket extends AbstractClientMessage<MapDataPacket> {
 		for (int i = 0; i < length; i++) {
 			int x = buffer.readShort();
 			int y = buffer.readShort();
-			int biomeID = buffer.readVarIntFromBuffer();
+			int biomeID = buffer.readShort();
 			Tile tile = new Tile(biomeID);
 			tile.randomizeTexture();
 			data.put(new ShortVec2(x, y), tile);
@@ -60,7 +60,7 @@ public class MapDataPacket extends AbstractClientMessage<MapDataPacket> {
 		for (Entry<ShortVec2, Tile> entry : data.entrySet()) {
 			buffer.writeShort(entry.getKey().x);
 			buffer.writeShort(entry.getKey().y);
-			buffer.writeVarIntToBuffer(entry.getValue().biomeID);
+			buffer.writeShort(entry.getValue().biomeID);
 		}
 	}
 
