@@ -19,7 +19,7 @@ import cpw.mods.fml.relauncher.Side;
  * Used to sync atlas data from server to client.
  * @author Hunternif
  */
-public class MapDataPacket extends AbstractClientMessage {
+public class MapDataPacket extends AbstractClientMessage<MapDataPacket> {
 	/** Size of one entry in the map in bytes. */
 	public static final int ENTRY_SIZE_BYTES = 2 + 2 + 2;
 

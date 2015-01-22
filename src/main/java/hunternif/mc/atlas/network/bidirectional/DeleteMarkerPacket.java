@@ -18,7 +18,7 @@ import cpw.mods.fml.relauncher.Side;
  * original sender.
  * @author Hunternif
  */
-public class DeleteMarkerPacket extends AbstractMessage {
+public class DeleteMarkerPacket extends AbstractMessage<DeleteMarkerPacket> {
 	/** Used in place of atlasID to signify that the marker is global. */
 	private static final int GLOBAL = -1;
 	private int atlasID;

@@ -20,7 +20,7 @@ import cpw.mods.fml.relauncher.Side;
  * the marker has to be local.
  * @author Hunternif
  */
-public class AddMarkerPacket extends AbstractServerMessage {
+public class AddMarkerPacket extends AbstractServerMessage<AddMarkerPacket> {
 	private int atlasID;
 	private int dimension;
 	private String type;

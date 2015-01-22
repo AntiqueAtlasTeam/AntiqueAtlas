@@ -1,6 +1,5 @@
 package hunternif.mc.atlas.network.client;
 
-import hunternif.mc.atlas.AntiqueAtlasMod;
 import hunternif.mc.atlas.api.AtlasAPI;
 import hunternif.mc.atlas.api.impl.TileApiImpl;
 import hunternif.mc.atlas.client.BiomeTextureMap;
@@ -23,12 +22,13 @@ import cpw.mods.fml.relauncher.Side;
  * to clients.
  * @author Hunternif
  */
-public class TileNameIDPacket extends AbstractClientMessage
+public class TileNameIDPacket extends AbstractClientMessage<TileNameIDPacket>
 {
-	// Initialize here so it cannot be null when received (such as when empty)
-	private Map<String, Integer> nameToIdMap = new HashMap<String, Integer>();
+	private Map<String, Integer> nameToIdMap;
 
-	public TileNameIDPacket() {}
+	public TileNameIDPacket() {
+		nameToIdMap = new HashMap<String, Integer>();
+	}
 
 	public TileNameIDPacket(Map<String, Integer> nameToIdMap) {
 		this.nameToIdMap = nameToIdMap;
@@ -60,10 +60,6 @@ public class TileNameIDPacket extends AbstractClientMessage
 
 	@Override
 	protected void process(EntityPlayer player, Side side) {
-		if (nameToIdMap == null) {
-			AntiqueAtlasMod.logger.error("Exception handling TileNameIDPacket: nameToIdMap was NULL");
-			return;
-		}
 		TileApiImpl api = (TileApiImpl) AtlasAPI.getTileAPI();
 		String name;
 		int biomeID;

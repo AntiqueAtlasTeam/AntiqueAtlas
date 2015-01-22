@@ -24,7 +24,7 @@ import cpw.mods.fml.relauncher.Side;
  * The markers in one packet are either all global or all local.
  * @author Hunternif
  */
-public class MarkersPacket extends AbstractClientMessage {
+public class MarkersPacket extends AbstractClientMessage<MarkersPacket> {
 	/** Used in place of atlasID to signify that the marker is global. */
 	private static final int GLOBAL = -1;
 	protected int atlasID;

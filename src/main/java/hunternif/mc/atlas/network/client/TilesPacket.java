@@ -16,7 +16,7 @@ import cpw.mods.fml.relauncher.Side;
  * Used to sync custom tiles from server to client.
  * @author Hunternif
  */
-public class TilesPacket extends AbstractClientMessage {
+public class TilesPacket extends AbstractClientMessage<TilesPacket> {
 	/** Size of one entry in the map in bytes. */
 	public static final int ENTRY_SIZE_BYTES = 2 + 2 + 2;
 
