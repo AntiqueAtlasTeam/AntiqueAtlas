@@ -31,13 +31,15 @@ public interface TileAPI {
 	void setTexture(String uniqueTileName, TextureSet textureSet);
 	
 	/**
-	 * <p><b>Not yet implemented.</b></p>
-	 * 
 	 * Put the specified custom tile at the specified chunk coordinates
 	 * in the specified atlas.
 	 * You only need to call this method once for every chunk, after that
 	 * the tile will be persisted with the world and loaded when the server
 	 * starts up.
+	 * <p>
+	 * Note that global custom tiles, such as village territory, will override
+	 * tiles local to atlas at shared chunks.
+	 * </p>
 	 * <p>
 	 * If calling this method on the client, the player must carry the atlas
 	 * in his inventory, to prevent griefing!

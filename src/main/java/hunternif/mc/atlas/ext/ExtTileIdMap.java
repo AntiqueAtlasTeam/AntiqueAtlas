@@ -1,6 +1,5 @@
 package hunternif.mc.atlas.ext;
 
-import hunternif.mc.atlas.core.ChunkBiomeAnalyzer;
 import hunternif.mc.atlas.network.PacketDispatcher;
 import hunternif.mc.atlas.network.client.TileNameIDPacket;
 import hunternif.mc.atlas.util.SaveData;
@@ -27,9 +26,11 @@ public class ExtTileIdMap extends SaveData {
 	public static final String TILE_VILLAGE_HOUSE = "npcVillageDoor";
 	public static final String TILE_VILLAGE_TERRITORY = "npcVillageTerritory";
 	
+	public static final int NOT_FOUND = -1;
+	
 	/** Set initially to -1 because that is reserved for when no biome is found
 	 * or the chunk is not loaded. New IDs are obtained by decrementing lastID. */
-	private int lastID = ChunkBiomeAnalyzer.NOT_FOUND;
+	private int lastID = NOT_FOUND;
 	private final BiMap<String, Integer> nameToIdMap = HashBiMap.create();
 	
 	/** Server should call this method when setting tiles.
@@ -44,10 +45,10 @@ public class ExtTileIdMap extends SaveData {
 		return id.intValue();
 	}
 	
-	/** If the name is not registered, returns -1. */
+	/** If the name is not registered, returns {@link #NOT_FOUND} ({@value #NOT_FOUND}). */
 	public int getPseudoBiomeID(String uniqueName) {
 		Integer id = nameToIdMap.get(uniqueName);
-		return id == null ? ChunkBiomeAnalyzer.NOT_FOUND : id.intValue();
+		return id == null ? NOT_FOUND : id.intValue();
 	}
 	
 	private int findNewID() {

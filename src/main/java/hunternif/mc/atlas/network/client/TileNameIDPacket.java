@@ -1,10 +1,7 @@
 package hunternif.mc.atlas.network.client;
 
-import hunternif.mc.atlas.api.AtlasAPI;
-import hunternif.mc.atlas.api.impl.TileApiImpl;
-import hunternif.mc.atlas.client.BiomeTextureMap;
-import hunternif.mc.atlas.client.TextureSet;
 import hunternif.mc.atlas.ext.ExtTileIdMap;
+import hunternif.mc.atlas.ext.TileIdRegisteredEvent;
 import hunternif.mc.atlas.network.AbstractMessage.AbstractClientMessage;
 
 import java.io.IOException;
@@ -14,6 +11,7 @@ import java.util.Map.Entry;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.network.PacketBuffer;
+import net.minecraftforge.common.MinecraftForge;
 import cpw.mods.fml.common.network.ByteBufUtils;
 import cpw.mods.fml.relauncher.Side;
 
@@ -64,18 +62,9 @@ public class TileNameIDPacket extends AbstractClientMessage<TileNameIDPacket>
 
 	@Override
 	protected void process(EntityPlayer player, Side side) {
-		TileApiImpl api = (TileApiImpl) AtlasAPI.getTileAPI();
-		String name;
-		int biomeID;
 		for (Entry<String, Integer> entry : nameToIdMap.entrySet()) {
-			name = entry.getKey();
-			biomeID = entry.getValue();
-			ExtTileIdMap.instance().setPseudoBiomeID(name, biomeID);
-			// Register pending textures:
-			TextureSet pending = api.pendingTextures.remove(name);
-			if (pending != null) {
-				BiomeTextureMap.instance().setTexture(biomeID, pending);
-			}
+			ExtTileIdMap.instance().setPseudoBiomeID(entry.getKey(), entry.getValue());
 		}
+		MinecraftForge.EVENT_BUS.post(new TileIdRegisteredEvent(nameToIdMap));
 	}
 }
