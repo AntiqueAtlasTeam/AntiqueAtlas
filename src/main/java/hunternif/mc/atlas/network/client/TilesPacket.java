@@ -46,15 +46,15 @@ public class TilesPacket extends AbstractClientMessage<TilesPacket> {
 
 	@Override
 	public void read(PacketBuffer buffer) throws IOException {
-		dimension = buffer.readShort();
-		tileCount = buffer.readShort();
+		dimension = buffer.readVarIntFromBuffer();
+		tileCount = buffer.readVarIntFromBuffer();
 		tileData = buffer.readBytes(tileCount * ENTRY_SIZE_BYTES);
 	}
 
 	@Override
 	public void write(PacketBuffer buffer) throws IOException {
-		buffer.writeShort(dimension);
-		buffer.writeShort(tileCount);
+		buffer.writeVarIntToBuffer(dimension);
+		buffer.writeVarIntToBuffer(tileCount);
 		buffer.writeBytes(tileData);
 	}
 

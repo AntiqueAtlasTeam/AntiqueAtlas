@@ -39,14 +39,14 @@ public class DeleteMarkerPacket extends AbstractMessage<DeleteMarkerPacket> {
 
 	@Override
 	public void read(PacketBuffer buffer) throws IOException {
-		atlasID = buffer.readShort();
-		markerID = buffer.readShort();
+		atlasID = buffer.readVarIntFromBuffer();
+		markerID = buffer.readVarIntFromBuffer();
 	}
 
 	@Override
 	public void write(PacketBuffer buffer) throws IOException {
-		buffer.writeShort(atlasID);
-		buffer.writeShort(markerID);
+		buffer.writeVarIntToBuffer(atlasID);;
+		buffer.writeVarIntToBuffer(markerID);
 	}
 
 	public boolean isGlobal() {

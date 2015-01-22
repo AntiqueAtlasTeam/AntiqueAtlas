@@ -39,13 +39,13 @@ public class MapDataPacket extends AbstractClientMessage<MapDataPacket> {
 
 	@Override
 	public void read(PacketBuffer buffer) throws IOException {
-		atlasID = buffer.readShort();
-		dimension = buffer.readShort();
-		int length = buffer.readShort();
+		atlasID = buffer.readVarIntFromBuffer();
+		dimension = buffer.readVarIntFromBuffer();
+		int length = buffer.readVarIntFromBuffer();
 		for (int i = 0; i < length; i++) {
 			int x = buffer.readShort();
 			int y = buffer.readShort();
-			int biomeID = buffer.readShort();
+			int biomeID = buffer.readVarIntFromBuffer();
 			Tile tile = new Tile(biomeID);
 			tile.randomizeTexture();
 			data.put(new ShortVec2(x, y), tile);
@@ -54,13 +54,13 @@ public class MapDataPacket extends AbstractClientMessage<MapDataPacket> {
 
 	@Override
 	public void write(PacketBuffer buffer) throws IOException {
-		buffer.writeShort(atlasID);
-		buffer.writeShort(dimension);
-		buffer.writeShort(data.size());
+		buffer.writeVarIntToBuffer(atlasID);
+		buffer.writeVarIntToBuffer(dimension);
+		buffer.writeVarIntToBuffer(data.size());
 		for (Entry<ShortVec2, Tile> entry : data.entrySet()) {
 			buffer.writeShort(entry.getKey().x);
 			buffer.writeShort(entry.getKey().y);
-			buffer.writeShort(entry.getValue().biomeID);
+			buffer.writeVarIntToBuffer(entry.getValue().biomeID);
 		}
 	}
 

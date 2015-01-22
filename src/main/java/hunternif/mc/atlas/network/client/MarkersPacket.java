@@ -62,14 +62,14 @@ public class MarkersPacket extends AbstractClientMessage<MarkersPacket> {
 
 	@Override
 	public void read(PacketBuffer buffer) throws IOException {
-		atlasID = buffer.readShort();
-		dimension = buffer.readShort();
-		int typesLength = buffer.readShort();
+		atlasID = buffer.readVarIntFromBuffer();
+		dimension = buffer.readVarIntFromBuffer();
+		int typesLength = buffer.readVarIntFromBuffer();
 		for (int i = 0; i < typesLength; i++) {
 			String type = ByteBufUtils.readUTF8String(buffer);
-			int markersLength = buffer.readShort();
+			int markersLength = buffer.readVarIntFromBuffer();
 			for (int j = 0; j < markersLength; j++) {
-				Marker marker = new Marker(buffer.readInt(),
+				Marker marker = new Marker(buffer.readVarIntFromBuffer(),
 						type, ByteBufUtils.readUTF8String(buffer),
 						dimension, buffer.readInt(), buffer.readInt(),
 						buffer.readBoolean());
@@ -80,16 +80,16 @@ public class MarkersPacket extends AbstractClientMessage<MarkersPacket> {
 
 	@Override
 	public void write(PacketBuffer buffer) throws IOException {
-		buffer.writeShort(atlasID);
-		buffer.writeShort(dimension);
+		buffer.writeVarIntToBuffer(atlasID);
+		buffer.writeVarIntToBuffer(dimension);
 		Set<String> types = markersByType.keySet();
-		buffer.writeShort(types.size());
+		buffer.writeVarIntToBuffer(types.size());
 		for (String type : types) {
 			ByteBufUtils.writeUTF8String(buffer, type);
 			List<Marker> markers = markersByType.get(type);
-			buffer.writeShort(markers.size());
+			buffer.writeVarIntToBuffer(markers.size());
 			for (Marker marker : markers) {
-				buffer.writeInt(marker.getId());
+				buffer.writeVarIntToBuffer(marker.getId());
 				ByteBufUtils.writeUTF8String(buffer, marker.getLabel());
 				buffer.writeInt(marker.getX());
 				buffer.writeInt(marker.getZ());

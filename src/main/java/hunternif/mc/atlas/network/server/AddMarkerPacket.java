@@ -43,8 +43,8 @@ public class AddMarkerPacket extends AbstractServerMessage<AddMarkerPacket> {
 
 	@Override
 	public void read(PacketBuffer buffer) throws IOException {
-		atlasID = buffer.readShort();
-		dimension = buffer.readShort();
+		atlasID = buffer.readVarIntFromBuffer();
+		dimension = buffer.readVarIntFromBuffer();
 		type = ByteBufUtils.readUTF8String(buffer);
 		label = ByteBufUtils.readUTF8String(buffer);
 		x = buffer.readInt();
@@ -54,8 +54,8 @@ public class AddMarkerPacket extends AbstractServerMessage<AddMarkerPacket> {
 
 	@Override
 	public void write(PacketBuffer buffer) throws IOException {
-		buffer.writeShort(atlasID);
-		buffer.writeShort(dimension);
+		buffer.writeVarIntToBuffer(atlasID);
+		buffer.writeVarIntToBuffer(dimension);
 		ByteBufUtils.writeUTF8String(buffer, type);
 		ByteBufUtils.writeUTF8String(buffer, label);
 		buffer.writeInt(x);
