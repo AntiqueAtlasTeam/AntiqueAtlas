@@ -1,14 +1,51 @@
 package hunternif.mc.atlas;
 
-import static hunternif.mc.atlas.client.TextureSet.*;
-import static net.minecraft.world.biome.BiomeGenBase.*;
+import static hunternif.mc.atlas.client.TextureSet.BEACH;
+import static hunternif.mc.atlas.client.TextureSet.FENCE;
+import static hunternif.mc.atlas.client.TextureSet.FOREST;
+import static hunternif.mc.atlas.client.TextureSet.FOREST_HILLS;
+import static hunternif.mc.atlas.client.TextureSet.HILLS;
+import static hunternif.mc.atlas.client.TextureSet.HOUSE;
+import static hunternif.mc.atlas.client.TextureSet.ICE;
+import static hunternif.mc.atlas.client.TextureSet.JUNGLE;
+import static hunternif.mc.atlas.client.TextureSet.JUNGLE_HILLS;
+import static hunternif.mc.atlas.client.TextureSet.MOUNTAINS;
+import static hunternif.mc.atlas.client.TextureSet.MUSHROOM;
+import static hunternif.mc.atlas.client.TextureSet.PINES;
+import static hunternif.mc.atlas.client.TextureSet.PINES_HILLS;
+import static hunternif.mc.atlas.client.TextureSet.PLAINS;
+import static hunternif.mc.atlas.client.TextureSet.SAND;
+import static hunternif.mc.atlas.client.TextureSet.SNOW;
+import static hunternif.mc.atlas.client.TextureSet.SWAMP;
+import static hunternif.mc.atlas.client.TextureSet.TEST;
+import static hunternif.mc.atlas.client.TextureSet.WATER;
+import static net.minecraft.world.biome.BiomeGenBase.beach;
+import static net.minecraft.world.biome.BiomeGenBase.desert;
+import static net.minecraft.world.biome.BiomeGenBase.desertHills;
+import static net.minecraft.world.biome.BiomeGenBase.extremeHills;
+import static net.minecraft.world.biome.BiomeGenBase.extremeHillsEdge;
+import static net.minecraft.world.biome.BiomeGenBase.forest;
+import static net.minecraft.world.biome.BiomeGenBase.forestHills;
+import static net.minecraft.world.biome.BiomeGenBase.frozenOcean;
+import static net.minecraft.world.biome.BiomeGenBase.frozenRiver;
+import static net.minecraft.world.biome.BiomeGenBase.iceMountains;
+import static net.minecraft.world.biome.BiomeGenBase.icePlains;
+import static net.minecraft.world.biome.BiomeGenBase.jungle;
+import static net.minecraft.world.biome.BiomeGenBase.jungleHills;
+import static net.minecraft.world.biome.BiomeGenBase.mushroomIsland;
+import static net.minecraft.world.biome.BiomeGenBase.mushroomIslandShore;
+import static net.minecraft.world.biome.BiomeGenBase.ocean;
+import static net.minecraft.world.biome.BiomeGenBase.plains;
+import static net.minecraft.world.biome.BiomeGenBase.river;
+import static net.minecraft.world.biome.BiomeGenBase.sky;
+import static net.minecraft.world.biome.BiomeGenBase.swampland;
+import static net.minecraft.world.biome.BiomeGenBase.taiga;
+import static net.minecraft.world.biome.BiomeGenBase.taigaHills;
 import hunternif.mc.atlas.api.AtlasAPI;
-import hunternif.mc.atlas.api.BiomeAPI;
 import hunternif.mc.atlas.api.MarkerAPI;
 import hunternif.mc.atlas.api.TileAPI;
 import hunternif.mc.atlas.client.BiomeTextureConfig;
 import hunternif.mc.atlas.client.BiomeTextureMap;
-import hunternif.mc.atlas.client.TextureSet;
 import hunternif.mc.atlas.client.TextureSetConfig;
 import hunternif.mc.atlas.client.TextureSetMap;
 import hunternif.mc.atlas.client.Textures;
@@ -54,7 +91,7 @@ public class ClientProxy extends CommonProxy {
 		biomeTextureMap = BiomeTextureMap.instance();
 		biomeTextureConfig = new BiomeTextureConfig(new File(configDir, "textures.json"), textureSetMap);
 		// Assign default values before the config file loads, possibly overwriting them:
-		assignVanillaTextures();
+		assignVanillaBiomeTextures();
 		registerVillageTiles();
 		biomeTextureConfig.load(biomeTextureMap);
 		// Prevent rewriting of the config while there haven't been any changes made:
@@ -92,6 +129,7 @@ public class ClientProxy extends CommonProxy {
 	}
 	
 	private void registerDefaultTextureSets(TextureSetMap map) {
+		map.register(TEST);
 		map.register(WATER);
 		map.register(ICE);
 		map.register(BEACH);
@@ -113,31 +151,31 @@ public class ClientProxy extends CommonProxy {
 	}
 	
 	/** Assign default textures to vanilla biomes. */
-	private void assignVanillaTextures() {
-		BiomeAPI api = AtlasAPI.getBiomeAPI();
-		api.setTexture(ocean,			WATER);
-		api.setTexture(river,			WATER);
-		api.setTexture(frozenOcean,	ICE);
-		api.setTexture(frozenRiver,	ICE);
-		api.setTexture(beach,			BEACH);
-		api.setTexture(desert,		SAND);
-		api.setTexture(plains,		PLAINS);
-		api.setTexture(icePlains,	SNOW);
-		api.setTexture(jungleHills,	JUNGLE_HILLS);
-		api.setTexture(forestHills,	FOREST_HILLS);
-		api.setTexture(desertHills,	HILLS);
-		api.setTexture(extremeHills,	MOUNTAINS);
-		api.setTexture(extremeHillsEdge, MOUNTAINS);
-		api.setTexture(iceMountains,	MOUNTAINS);
-		api.setTexture(forest,		FOREST);
-		api.setTexture(jungle,		JUNGLE);
-		api.setTexture(taiga,			PINES);
-		api.setTexture(taigaHills,	PINES_HILLS);
-		api.setTexture(swampland,		SWAMP);
-		api.setTexture(sky,			BEACH);
-		//api.addTexture(hell,		NETHER);
-		api.setTexture(mushroomIsland, MUSHROOM);
-		api.setTexture(mushroomIslandShore, BEACH);
+	private void assignVanillaBiomeTextures() {
+		TileAPI api = AtlasAPI.getTileAPI();
+		api.setBiomeTexture(ocean,			WATER);
+		api.setBiomeTexture(river,			WATER);
+		api.setBiomeTexture(frozenOcean,	ICE);
+		api.setBiomeTexture(frozenRiver,	ICE);
+		api.setBiomeTexture(beach,			BEACH);
+		api.setBiomeTexture(desert,			SAND);
+		api.setBiomeTexture(plains,			PLAINS);
+		api.setBiomeTexture(icePlains,		SNOW);
+		api.setBiomeTexture(jungleHills,	JUNGLE_HILLS);
+		api.setBiomeTexture(forestHills,	FOREST_HILLS);
+		api.setBiomeTexture(desertHills,	HILLS);
+		api.setBiomeTexture(extremeHills,	MOUNTAINS);
+		api.setBiomeTexture(extremeHillsEdge, MOUNTAINS);
+		api.setBiomeTexture(iceMountains,	MOUNTAINS);
+		api.setBiomeTexture(forest,			FOREST);
+		api.setBiomeTexture(jungle,			JUNGLE);
+		api.setBiomeTexture(taiga,			PINES);
+		api.setBiomeTexture(taigaHills,		PINES_HILLS);
+		api.setBiomeTexture(swampland,		SWAMP);
+		api.setBiomeTexture(sky,			BEACH);
+		//api.setBiomeTexture(hell,			NETHER);
+		api.setBiomeTexture(mushroomIsland, MUSHROOM);
+		api.setBiomeTexture(mushroomIslandShore, BEACH);
 	}
 	
 	/** Load default marker textures. */
@@ -153,8 +191,8 @@ public class ClientProxy extends CommonProxy {
 	 * and territory. */
 	private void registerVillageTiles() {
 		TileAPI api = AtlasAPI.getTileAPI();
-		api.setTexture(ExtTileIdMap.TILE_VILLAGE_HOUSE, TextureSet.HOUSE);
-		api.setTexture(ExtTileIdMap.TILE_VILLAGE_TERRITORY, TextureSet.FENCE);
+		api.setCustomTileTexture(ExtTileIdMap.TILE_VILLAGE_HOUSE, HOUSE);
+		api.setCustomTileTexture(ExtTileIdMap.TILE_VILLAGE_TERRITORY, FENCE);
 	}
 
 	@Override

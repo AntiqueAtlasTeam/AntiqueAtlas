@@ -41,17 +41,20 @@ public class BiomeTextureMap extends SaveData {
 	
 	/** Assign texture set to biome. */
 	public void setTexture(int biomeID, TextureSet textureSet) {
+		if (textureSet == null) {
+			AntiqueAtlasMod.logger.error("Texture set is null!");
+			return;
+		}
 		TextureSet previous = textureMap.put(biomeID, textureSet);
 		if (previous == null) {
 			markDirty();
-		} else if (previous != textureSet) {
+		} else if (!previous.equals(textureSet)) {
 			AntiqueAtlasMod.logger.warn("Overwriting texture set for biome " + biomeID);
 			markDirty();
 		}
-		if (previous == null) {
-			textureMap.put(biomeID, textureSet);
-			markDirty();
-		}
+		// If the old texture set is equal to the new one (i.e. has equal name
+		// and equal texture files), then there's no need to update the config.
+		textureMap.put(biomeID, textureSet);
 	}
 	
 	/** Find the most appropriate standard texture set depending on

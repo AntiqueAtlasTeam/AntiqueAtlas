@@ -23,8 +23,12 @@ public class TextureSetMap extends SaveData {
 	private final Map<String, TextureSet> map = new HashMap<String, TextureSet>();
 	
 	public void register(TextureSet set) {
-		map.put(set.name, set);
-		markDirty();
+		TextureSet old = map.put(set.name, set);
+		// If the old texture set is equal to the new one (i.e. has equal name
+		// and equal texture files), then there's no need to update the config.
+		if (!set.equals(old)) {
+			markDirty();
+		}
 	}
 	
 	/** Legacy support. Creates a new texture set with a UUID-based name. */
@@ -36,6 +40,12 @@ public class TextureSetMap extends SaveData {
 	
 	public TextureSet getByName(String name) {
 		return map.get(name);
+	}
+	
+	/** If the specified name is not registered, returns a "TEST" texture set. */
+	public TextureSet getByNameNonNull(String name) {
+		TextureSet set = getByName(name);
+		return set == null ? TextureSet.TEST : set;
 	}
 	
 	public boolean isRegistered(String name) {

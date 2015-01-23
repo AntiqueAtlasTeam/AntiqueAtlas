@@ -3,32 +3,134 @@ package hunternif.mc.atlas.api;
 import hunternif.mc.atlas.client.TextureSet;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
+import net.minecraft.world.biome.BiomeGenBase;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
 /**
- * API for custom tiles, i.e. dungeons, towns etc. Texture methods are strictly
- * for the client side.
+ * API for biome tiles and custom tiles (i.e. dungeons, towns etc.)
+ * Texture methods are client side only. Consider registering your own
+ * texture set with a unique name: see {@link #registerTextureSet()}
  * @author Hunternf
  */
 public interface TileAPI {
 	/** Version of Tile API, meaning this particular interface. */
-	public static final int VERSION = 3;
+	public static final int VERSION = 4;
 	
-	/** Assign one or more textures to a unique tile name, implicitly creating
-	 * a new texture set using the same unique name.
-	 * The different textures in the array will be added as variations, and each
-	 * individual texture name will be saved in the config file.
-	 * Client-side only! */
-	@SideOnly(Side.CLIENT)
-	void setTexture(String uniqueTileName, ResourceLocation ... textures);
-	
-	/** Assign a texture set to a unique tile name.
+	/**
+	 * Register a texture set with the specified unique name and texture files.
 	 * The different textures in the set will be added as variations, and only
-	 * the name of the texture set will be saved in the config file.
-	 * Client-side only! */
+	 * the name of the texture set will be saved in the biome/tile config file.
+	 * @param	name
+	 * @param	textures
+	 * @return	the registered texture set
+	 */
 	@SideOnly(Side.CLIENT)
-	void setTexture(String uniqueTileName, TextureSet textureSet);
+	TextureSet registerTextureSet(String name, ResourceLocation ... textures);
+	
+	
+	// Biome textures ==========================================================
+	
+	/**
+	 * Assign one or more texture to biome ID, creating a new texture set.
+	 * See {@link #registerTextureSet()}
+	 */
+	@SideOnly(Side.CLIENT)
+	void setBiomeTexture(int biomeID, String textureSetName, ResourceLocation ... textures);
+	
+	/**
+	 * Assign one or more texture to biome ID, creating a new texture set.
+	 * See {@link #registerTextureSet()}
+	 */
+	@SideOnly(Side.CLIENT)
+	void setBiomeTexture(BiomeGenBase biome, String textureSetName, ResourceLocation ... textures);
+	
+	/**
+	 * Assign one or more texture to biome ID, using an existing texture set.
+	 * See {@link #registerTextureSet()}
+	 */
+	@SideOnly(Side.CLIENT)
+	void setBiomeTexture(int biomeID, TextureSet textureSet);
+	
+	/**
+	 * Assign one or more texture to biome ID, using an existing texture set.
+	 * See {@link #registerTextureSet()}
+	 */
+	@SideOnly(Side.CLIENT)
+	void setBiomeTexture(BiomeGenBase biome, TextureSet textureSet);
+	
+	
+	// Custom tile textures ====================================================
+	
+	/**
+	 * Assign one or more textures to a unique tile name.
+	 * This creates a new texture set with the same name as the tile.
+	 * See {@link #registerTextureSet()}
+	 */
+	@SideOnly(Side.CLIENT)
+	void setCustomTileTexture(String uniqueTileName, ResourceLocation ... textures);
+	
+	/** Assign a texture set to a unique tile name. */
+	@SideOnly(Side.CLIENT)
+	void setCustomTileTexture(String uniqueTileName, TextureSet textureSet);
+	
+	
+	// Biome tiles =============================================================
+	
+	/**
+	 * Edit the biome ID at the specified chunk in the specified atlas. 
+	 * You only need to call this method once for every chunk, after that
+	 * the tile will be persisted with the world and loaded when the server
+	 * starts up.
+	 * <p>
+	 * Note that global custom tiles, such as village territory, will override
+	 * biome IDs at shared chunks.
+	 * </p>
+	 * <p>
+	 * If calling this method on the client, the player must carry the atlas
+	 * in his inventory, to prevent griefing!
+	 * </p>
+	 * <p>
+	 * For setting custom tiles that don't correspond to biomes, see
+	 * {@link #putCustomTile}
+	 * </p>
+	 * @param world		dimension the chunk is located in.
+	 * @param atlasID	the ID of the atlas you want to put marker in. Equal
+	 * 					to ItemStack damage for ItemAtlas.
+	 * @param biomeID	
+	 * @param chunkX	x chunk coordinate. (block coordinate >> 4)
+	 * @param chunkZ	z chunk coordinate. (block coordinate >> 4)
+	 */
+	void putBiomeTile(World world, int atlasID, int biomeID, int chunkX, int chunkZ);
+	
+	/**
+	 * Edit the biome at the specified chunk in the specified atlas. 
+	 * You only need to call this method once for every chunk, after that
+	 * the tile will be persisted with the world and loaded when the server
+	 * starts up.
+	 * <p>
+	 * Note that global custom tiles, such as village territory, will override
+	 * biome IDs at shared chunks.
+	 * </p>
+	 * <p>
+	 * If calling this method on the client, the player must carry the atlas
+	 * in his inventory, to prevent griefing!
+	 * </p>
+	 * <p>
+	 * For setting custom tiles that don't correspond to biomes, see
+	 * {@link #putCustomTile}
+	 * </p>
+	 * @param world		dimension the chunk is located in.
+	 * @param atlasID	the ID of the atlas you want to put marker in. Equal
+	 * 					to ItemStack damage for ItemAtlas.
+	 * @param biome	
+	 * @param chunkX	x chunk coordinate. (block coordinate >> 4)
+	 * @param chunkZ	z chunk coordinate. (block coordinate >> 4)
+	 */
+	void putBiomeTile(World world, int atlasID, BiomeGenBase biome, int chunkX, int chunkZ);
+	
+	
+	// Custom tiles ============================================================
 	
 	/**
 	 * Put the specified custom tile at the specified chunk coordinates
@@ -46,7 +148,7 @@ public interface TileAPI {
 	 * </p>
 	 * <p>
 	 * For custom biomes or for altering biomes at specific chunks, see
-	 * {@link BiomeAPI#setBiome}
+	 * {@link #putBiomeTile}
 	 * </p>
 	 * 
 	 * @param world		dimension the chunk is located in.

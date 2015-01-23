@@ -2,13 +2,17 @@ package hunternif.mc.atlas.client;
 
 import static hunternif.mc.atlas.client.Textures.*;
 
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
+
+
 
 
 import net.minecraft.util.ResourceLocation;
 
 public class TextureSet {
+	public static final TextureSet TEST			= standard("TEST", TILE_TEST);
 	public static final TextureSet WATER		= standard("WATER", TILE_WATER, TILE_WATER2);
 	public static final TextureSet ICE			= standard("ICE", TILE_ICE_NOBORDER); // previously FROZEN_WATER
 	public static final TextureSet BEACH		= standard("BEACH", TILE_BEACH);
@@ -68,5 +72,14 @@ public class TextureSet {
 	/** Whether this texture set should be stitched to the other specified set. */
 	public boolean shouldStichTo(TextureSet otherSet) {
 		return otherSet == this || stitchTo.contains(otherSet);
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null || !(obj instanceof TextureSet)) {
+			return false;
+		}
+		TextureSet set = (TextureSet) obj;
+		return this.name.equals(set.name) && Arrays.equals(this.textures, set.textures);
 	}
 }
