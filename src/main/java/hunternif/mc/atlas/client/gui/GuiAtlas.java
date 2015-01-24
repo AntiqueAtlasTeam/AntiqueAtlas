@@ -525,6 +525,7 @@ public class GuiAtlas extends GuiComponent {
 		}
 		
 		GL11.glColor4f(1, 1, 1, 1);
+		GL11.glAlphaFunc(GL11.GL_GREATER, 0); // So light detail on tiles is visible
 		AtlasRenderHelper.drawFullTexture(Textures.BOOK, getGuiX(), getGuiY(), WIDTH, HEIGHT);
 		
 		if (stack == null || biomeData == null) return;
