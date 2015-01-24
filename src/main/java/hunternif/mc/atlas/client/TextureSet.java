@@ -23,10 +23,14 @@ public class TextureSet {
 	public static final TextureSet SNOW			= standard("SNOW", TILE_SNOW, TILE_SNOW, TILE_SNOW, TILE_SNOW, TILE_SNOW,
 			TILE_SNOW1, TILE_SNOW1, TILE_SNOW1, TILE_SNOW2, TILE_SNOW2, TILE_SNOW2, TILE_SNOW3, TILE_SNOW4, TILE_SNOW5, TILE_SNOW6);
 	
+	// Mountain stuff
 	public static final TextureSet MOUNTAINS_NAKED = standard("MOUNTAINS_NAKED", TILE_MOUNTAINS, TILE_MOUNTAINS2);
 	public static final TextureSet MOUNTAINS = standard("MOUNTAINS", TILE_MOUNTAINS, TILE_MOUNTAINS,
 			TILE_MOUNTAINS2, TILE_MOUNTAINS2, TILE_MOUNTAINS3, TILE_MOUNTAINS4);
 	public static final TextureSet MOUNTAINS_SNOW_CAPS = standard("MOUNTAINS_SNOW_CAPS", TILE_MOUNTAINS, TILE_SNOW_CAPS);
+	public static final TextureSet MOUNTAINS_ALL = standard("MOUNTAINS_ALL", TILE_MOUNTAINS, TILE_MOUNTAINS2,
+			TILE_MOUNTAINS3, TILE_MOUNTAINS4, TILE_SNOW_CAPS, TILE_SNOW_CAPS);
+	
 	public static final TextureSet HILLS		= standard("HILLS", TILE_HILLS);
 	public static final TextureSet FOREST		= standard("FOREST", TILE_FOREST, TILE_FOREST2);
 	public static final TextureSet FOREST_HILLS	= standard("FOREST_HILLS", TILE_FOREST_HILLS, TILE_FOREST_HILLS2);
@@ -45,7 +49,7 @@ public class TextureSet {
 		WATER.stitchTo(SHORE, SWAMP);
 		SNOW.stitchTo(ICE_SPIKES, SNOW_HILLS, SNOW_PINES, SNOW_PINES_HILLS);
 		SNOW_PINES.stitchTo(SNOW, ICE_SPIKES, SNOW_HILLS, SNOW_PINES_HILLS);
-		stitchMutually(MOUNTAINS, MOUNTAINS_NAKED, MOUNTAINS_SNOW_CAPS);
+		stitchMutually(MOUNTAINS, MOUNTAINS_NAKED, MOUNTAINS_SNOW_CAPS, MOUNTAINS_ALL);
 	}
 	
 	/** Name of the texture pack to write in the config file. */
