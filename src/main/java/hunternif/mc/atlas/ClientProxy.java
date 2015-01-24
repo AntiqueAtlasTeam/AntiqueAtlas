@@ -91,12 +91,12 @@ public class ClientProxy extends CommonProxy {
 	
 	private void registerDefaultTextureSets(TextureSetMap map) {
 		map.register(TEST);
-		map.register(WATER);
 		map.register(ICE);
 		map.register(SHORE);
 		map.register(SAND);
 		map.register(PLAINS);
 		map.register(SNOW);
+		map.register(ICE_SPIKES);
 		map.register(MOUNTAINS);
 		map.register(HILLS);
 		map.register(FOREST);
@@ -107,6 +107,7 @@ public class ClientProxy extends CommonProxy {
 		map.register(PINES_HILLS);
 		map.register(SWAMP);
 		map.register(MUSHROOM);
+		map.register(WATER);
 		map.register(HOUSE);
 		map.register(FENCE);
 	}
@@ -122,6 +123,7 @@ public class ClientProxy extends CommonProxy {
 		api.setBiomeTexture(desert,			SAND);
 		api.setBiomeTexture(plains,			PLAINS);
 		api.setBiomeTexture(icePlains,		SNOW);
+		api.setBiomeTexture(icePlains.biomeID + 128, ICE_SPIKES); // this is a biome mutation
 		api.setBiomeTexture(jungleHills,	JUNGLE_HILLS);
 		api.setBiomeTexture(forestHills,	FOREST_HILLS);
 		api.setBiomeTexture(desertHills,	HILLS);

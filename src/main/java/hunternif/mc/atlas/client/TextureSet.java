@@ -14,8 +14,9 @@ public class TextureSet {
 	public static final TextureSet SHORE		= new TextureSetShore("SHORE", TILE_SHORE, TILE_SHORE2, TILE_SHORE3); // previously BEACH
 	public static final TextureSet SAND			= standard("SAND", TILE_SAND, TILE_SAND2);
 	public static final TextureSet PLAINS		= standard("PLAINS", TILE_GRASS, TILE_GRASS2, TILE_GRASS3, TILE_GRASS4);
+	public static final TextureSet ICE_SPIKES	= standard("ICE_SPIKES", TILE_ICE_SPIKES, TILE_ICE_SPIKES2);
 	public static final TextureSet SNOW			= standard("SNOW", TILE_SNOW, TILE_SNOW, TILE_SNOW, TILE_SNOW, TILE_SNOW,
-			TILE_SNOW1, TILE_SNOW1, TILE_SNOW2, TILE_SNOW2, TILE_SNOW3, TILE_SNOW4, TILE_SNOW5, TILE_SNOW6);
+			TILE_SNOW1, TILE_SNOW1, TILE_SNOW1, TILE_SNOW2, TILE_SNOW2, TILE_SNOW2, TILE_SNOW3, TILE_SNOW4, TILE_SNOW5, TILE_SNOW6).stitchTo(ICE_SPIKES);
 	public static final TextureSet MOUNTAINS	= standard("MOUNTAINS", TILE_MOUNTAINS, TILE_MOUNTAINS2);
 	public static final TextureSet HILLS		= standard("HILLS", TILE_HILLS);
 	public static final TextureSet FOREST		= standard("FOREST", TILE_FOREST, TILE_FOREST2);
@@ -63,6 +64,14 @@ public class TextureSet {
 	public TextureSet stitchTo(TextureSet ... textureSets) {
 		for (TextureSet textureSet : textureSets) {
 			stitchTo.add(textureSet);
+		}
+		return this;
+	}
+	/** Same as {@link #stitchTo()}, but symmetrical. */
+	public TextureSet stitchToMutual(TextureSet ... textureSets) {
+		for (TextureSet textureSet : textureSets) {
+			stitchTo.add(textureSet);
+			textureSet.stitchTo.add(this);
 		}
 		return this;
 	}
