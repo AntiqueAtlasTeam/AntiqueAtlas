@@ -62,6 +62,8 @@ public class Textures {
 	public static final ResourceLocation TILE_SAND = new ResourceLocation(GUI_TILES + "sand.png");
 	public static final ResourceLocation TILE_SAND2 = new ResourceLocation(GUI_TILES + "sand2.png");
 	public static final ResourceLocation TILE_SHORE = new ResourceLocation(GUI_TILES + "shore.png");
+	public static final ResourceLocation TILE_SHORE2 = new ResourceLocation(GUI_TILES + "shore2.png");
+	public static final ResourceLocation TILE_SHORE3 = new ResourceLocation(GUI_TILES + "shore3.png");
 	public static final ResourceLocation TILE_GRASS = new ResourceLocation(GUI_TILES + "grass.png");
 	public static final ResourceLocation TILE_GRASS2 = new ResourceLocation(GUI_TILES + "grass2.png");
 	public static final ResourceLocation TILE_GRASS3 = new ResourceLocation(GUI_TILES + "grass3.png");
