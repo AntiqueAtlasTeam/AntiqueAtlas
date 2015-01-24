@@ -78,6 +78,9 @@ public class Textures {
 	public static final ResourceLocation TILE_SNOW_PINES = new ResourceLocation(GUI_TILES + "snow_pines.png");
 	public static final ResourceLocation TILE_SNOW_PINES2 = new ResourceLocation(GUI_TILES + "snow_pines2.png");
 	public static final ResourceLocation TILE_SNOW_PINES3 = new ResourceLocation(GUI_TILES + "snow_pines3.png");
+	public static final ResourceLocation TILE_SNOW_PINES_HILLS = new ResourceLocation(GUI_TILES + "snow_pines_hills.png");
+	public static final ResourceLocation TILE_SNOW_PINES_HILLS2 = new ResourceLocation(GUI_TILES + "snow_pines_hills2.png");
+	public static final ResourceLocation TILE_SNOW_PINES_HILLS3 = new ResourceLocation(GUI_TILES + "snow_pines_hills3.png");
 	public static final ResourceLocation TILE_ICE_SPIKES = new ResourceLocation(GUI_TILES + "ice_spikes.png");
 	public static final ResourceLocation TILE_ICE_SPIKES2 = new ResourceLocation(GUI_TILES + "ice_spikes2.png");
 	public static final ResourceLocation TILE_SNOW_MOUNTAINS = new ResourceLocation(GUI_TILES + "snow_mountains.png");
