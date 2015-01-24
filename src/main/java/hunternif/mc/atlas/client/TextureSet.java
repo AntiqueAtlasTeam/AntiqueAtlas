@@ -14,12 +14,19 @@ public class TextureSet {
 	public static final TextureSet SHORE		= new TextureSetShore("SHORE", TILE_SHORE, TILE_SHORE2, TILE_SHORE3); // previously BEACH
 	public static final TextureSet SAND			= standard("SAND", TILE_SAND, TILE_SAND2);
 	public static final TextureSet PLAINS		= standard("PLAINS", TILE_GRASS, TILE_GRASS2, TILE_GRASS3, TILE_GRASS4);
+	
+	// Snowy stuff
 	public static final TextureSet ICE_SPIKES	= standard("ICE_SPIKES", TILE_ICE_SPIKES, TILE_ICE_SPIKES2);
+	public static final TextureSet SNOW_PINES	= standard("SNOW_PINES", TILE_SNOW_PINES, TILE_SNOW_PINES2, TILE_SNOW_PINES3);
+	public static final TextureSet SNOW_PINES_HILLS = standard("SNOW_PINES_HILLS", TILE_SNOW_PINES_HILLS, TILE_SNOW_PINES_HILLS2, TILE_SNOW_PINES_HILLS3);
+	public static final TextureSet SNOW_HILLS	= standard("SNOW_HILLS", TILE_SNOW_HILLS, TILE_SNOW_HILLS2);
 	public static final TextureSet SNOW			= standard("SNOW", TILE_SNOW, TILE_SNOW, TILE_SNOW, TILE_SNOW, TILE_SNOW,
-			TILE_SNOW1, TILE_SNOW1, TILE_SNOW1, TILE_SNOW2, TILE_SNOW2, TILE_SNOW2, TILE_SNOW3, TILE_SNOW4, TILE_SNOW5, TILE_SNOW6).stitchTo(ICE_SPIKES);
-	public static final TextureSet MOUNTAINS_FEW_TREES = standard("MOUNTAINS_FEW_TREES", TILE_MOUNTAINS, TILE_MOUNTAINS,
+			TILE_SNOW1, TILE_SNOW1, TILE_SNOW1, TILE_SNOW2, TILE_SNOW2, TILE_SNOW2, TILE_SNOW3, TILE_SNOW4, TILE_SNOW5, TILE_SNOW6);
+	
+	public static final TextureSet MOUNTAINS_NAKED = standard("MOUNTAINS_NAKED", TILE_MOUNTAINS, TILE_MOUNTAINS2);
+	public static final TextureSet MOUNTAINS = standard("MOUNTAINS", TILE_MOUNTAINS, TILE_MOUNTAINS,
 			TILE_MOUNTAINS2, TILE_MOUNTAINS2, TILE_MOUNTAINS3, TILE_MOUNTAINS4);
-	public static final TextureSet MOUNTAINS	= standard("MOUNTAINS", TILE_MOUNTAINS, TILE_MOUNTAINS2).stitchToMutual(MOUNTAINS_FEW_TREES);
+	public static final TextureSet MOUNTAINS_SNOW_CAPS = standard("MOUNTAINS_SNOW_CAPS", TILE_MOUNTAINS, TILE_SNOW_CAPS);
 	public static final TextureSet HILLS		= standard("HILLS", TILE_HILLS);
 	public static final TextureSet FOREST		= standard("FOREST", TILE_FOREST, TILE_FOREST2);
 	public static final TextureSet FOREST_HILLS	= standard("FOREST_HILLS", TILE_FOREST_HILLS, TILE_FOREST_HILLS2);
@@ -27,13 +34,19 @@ public class TextureSet {
 	public static final TextureSet JUNGLE_HILLS = standard("JUNGLE_HILLS", TILE_JUNGLE_HILLS, TILE_JUNGLE_HILLS2);
 	public static final TextureSet PINES		= standard("PINES", TILE_PINES, TILE_PINES2, TILE_PINES3);
 	public static final TextureSet PINES_HILLS	= standard("PINES_HILLS", TILE_PINES_HILLS, TILE_PINES_HILLS2, TILE_PINES_HILLS3);
-	public static final TextureSet SNOW_PINES	= standard("SNOW_PINES", TILE_SNOW_PINES, TILE_SNOW_PINES2, TILE_SNOW_PINES3).stitchToMutual(SNOW);
-	public static final TextureSet SNOW_PINES_HILLS = standard("SNOW_PINES_HILLS", TILE_SNOW_PINES_HILLS, TILE_SNOW_PINES_HILLS2, TILE_SNOW_PINES_HILLS3);
 	public static final TextureSet SWAMP		= standard("SWAMP", TILE_SWAMP, TILE_SWAMP, TILE_SWAMP, TILE_SWAMP2, TILE_SWAMP3, TILE_SWAMP4, TILE_SWAMP5, TILE_SWAMP6);
 	public static final TextureSet MUSHROOM		= standard("MUSHROOM", TILE_MUSHROOM, TILE_MUSHROOM2);
-	public static final TextureSet WATER		= standard("WATER", TILE_WATER, TILE_WATER2).stitchTo(SHORE, SWAMP);
+	public static final TextureSet WATER		= standard("WATER", TILE_WATER, TILE_WATER2);
 	public static final TextureSet HOUSE		= standard("HOUSE", TILE_HOUSE);
 	public static final TextureSet FENCE		= standard("FENCE", TILE_FENCE).stitchTo(HOUSE);
+	
+	// Sofisticated stitching stuff:
+	static {
+		WATER.stitchTo(SHORE, SWAMP);
+		SNOW.stitchTo(ICE_SPIKES, SNOW_HILLS, SNOW_PINES, SNOW_PINES_HILLS);
+		SNOW_PINES.stitchTo(SNOW, ICE_SPIKES, SNOW_HILLS, SNOW_PINES_HILLS);
+		stitchMutually(MOUNTAINS, MOUNTAINS_NAKED, MOUNTAINS_SNOW_CAPS);
+	}
 	
 	/** Name of the texture pack to write in the config file. */
 	public final String name; 
@@ -102,6 +115,15 @@ public class TextureSet {
 		@Override
 		public boolean shouldStichTo(TextureSet otherSet) {
 			return otherSet == this || !WATER.shouldStichTo(otherSet);
+		}
+	}
+	
+	/** Stitch manually each of the provided texture sets. */
+	public static final void stitchMutually(TextureSet ... sets) {
+		for (TextureSet set1 : sets) {
+			for (TextureSet set2 : sets) {
+				if (set1 != set2) set1.stitchTo.add(set2);
+			}
 		}
 	}
 }
