@@ -17,7 +17,9 @@ public class TextureSet {
 	public static final TextureSet ICE_SPIKES	= standard("ICE_SPIKES", TILE_ICE_SPIKES, TILE_ICE_SPIKES2);
 	public static final TextureSet SNOW			= standard("SNOW", TILE_SNOW, TILE_SNOW, TILE_SNOW, TILE_SNOW, TILE_SNOW,
 			TILE_SNOW1, TILE_SNOW1, TILE_SNOW1, TILE_SNOW2, TILE_SNOW2, TILE_SNOW2, TILE_SNOW3, TILE_SNOW4, TILE_SNOW5, TILE_SNOW6).stitchTo(ICE_SPIKES);
-	public static final TextureSet MOUNTAINS	= standard("MOUNTAINS", TILE_MOUNTAINS, TILE_MOUNTAINS2);
+	public static final TextureSet MOUNTAINS_FEW_TREES = standard("MOUNTAINS_FEW_TREES", TILE_MOUNTAINS, TILE_MOUNTAINS,
+			TILE_MOUNTAINS2, TILE_MOUNTAINS2, TILE_MOUNTAINS3, TILE_MOUNTAINS4);
+	public static final TextureSet MOUNTAINS	= standard("MOUNTAINS", TILE_MOUNTAINS, TILE_MOUNTAINS2).stitchToMutual(MOUNTAINS_FEW_TREES);
 	public static final TextureSet HILLS		= standard("HILLS", TILE_HILLS);
 	public static final TextureSet FOREST		= standard("FOREST", TILE_FOREST, TILE_FOREST2);
 	public static final TextureSet FOREST_HILLS	= standard("FOREST_HILLS", TILE_FOREST_HILLS, TILE_FOREST_HILLS2);
