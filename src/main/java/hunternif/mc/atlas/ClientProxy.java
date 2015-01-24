@@ -124,6 +124,7 @@ public class ClientProxy extends CommonProxy {
 		api.setBiomeTexture(plains,			PLAINS);
 		api.setBiomeTexture(icePlains,		SNOW);
 		api.setBiomeTexture(icePlains.biomeID + 128, ICE_SPIKES); // this is a biome mutation
+		api.setBiomeTexture(coldBeach,		SHORE);
 		api.setBiomeTexture(jungleHills,	JUNGLE_HILLS);
 		api.setBiomeTexture(forestHills,	FOREST_HILLS);
 		api.setBiomeTexture(desertHills,	HILLS);
