@@ -40,6 +40,7 @@ public class MapDataPacket extends AbstractClientMessage<MapDataPacket> {
 
 	@Override
 	protected void process(EntityPlayer player, Side side) {
+		if (data == null) return; // Atlas is empty
 		AtlasData atlasData = AntiqueAtlasMod.itemAtlas.getAtlasData(atlasID, player.worldObj);
 		atlasData.readFromNBT(data);
 	}
