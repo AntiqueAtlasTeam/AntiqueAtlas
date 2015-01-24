@@ -1,46 +1,7 @@
 package hunternif.mc.atlas;
 
-import static hunternif.mc.atlas.client.TextureSet.BEACH;
-import static hunternif.mc.atlas.client.TextureSet.FENCE;
-import static hunternif.mc.atlas.client.TextureSet.FOREST;
-import static hunternif.mc.atlas.client.TextureSet.FOREST_HILLS;
-import static hunternif.mc.atlas.client.TextureSet.HILLS;
-import static hunternif.mc.atlas.client.TextureSet.HOUSE;
-import static hunternif.mc.atlas.client.TextureSet.ICE;
-import static hunternif.mc.atlas.client.TextureSet.JUNGLE;
-import static hunternif.mc.atlas.client.TextureSet.JUNGLE_HILLS;
-import static hunternif.mc.atlas.client.TextureSet.MOUNTAINS;
-import static hunternif.mc.atlas.client.TextureSet.MUSHROOM;
-import static hunternif.mc.atlas.client.TextureSet.PINES;
-import static hunternif.mc.atlas.client.TextureSet.PINES_HILLS;
-import static hunternif.mc.atlas.client.TextureSet.PLAINS;
-import static hunternif.mc.atlas.client.TextureSet.SAND;
-import static hunternif.mc.atlas.client.TextureSet.SNOW;
-import static hunternif.mc.atlas.client.TextureSet.SWAMP;
-import static hunternif.mc.atlas.client.TextureSet.TEST;
-import static hunternif.mc.atlas.client.TextureSet.WATER;
-import static net.minecraft.world.biome.BiomeGenBase.beach;
-import static net.minecraft.world.biome.BiomeGenBase.desert;
-import static net.minecraft.world.biome.BiomeGenBase.desertHills;
-import static net.minecraft.world.biome.BiomeGenBase.extremeHills;
-import static net.minecraft.world.biome.BiomeGenBase.extremeHillsEdge;
-import static net.minecraft.world.biome.BiomeGenBase.forest;
-import static net.minecraft.world.biome.BiomeGenBase.forestHills;
-import static net.minecraft.world.biome.BiomeGenBase.frozenOcean;
-import static net.minecraft.world.biome.BiomeGenBase.frozenRiver;
-import static net.minecraft.world.biome.BiomeGenBase.iceMountains;
-import static net.minecraft.world.biome.BiomeGenBase.icePlains;
-import static net.minecraft.world.biome.BiomeGenBase.jungle;
-import static net.minecraft.world.biome.BiomeGenBase.jungleHills;
-import static net.minecraft.world.biome.BiomeGenBase.mushroomIsland;
-import static net.minecraft.world.biome.BiomeGenBase.mushroomIslandShore;
-import static net.minecraft.world.biome.BiomeGenBase.ocean;
-import static net.minecraft.world.biome.BiomeGenBase.plains;
-import static net.minecraft.world.biome.BiomeGenBase.river;
-import static net.minecraft.world.biome.BiomeGenBase.sky;
-import static net.minecraft.world.biome.BiomeGenBase.swampland;
-import static net.minecraft.world.biome.BiomeGenBase.taiga;
-import static net.minecraft.world.biome.BiomeGenBase.taigaHills;
+import static hunternif.mc.atlas.client.TextureSet.*;
+import static net.minecraft.world.biome.BiomeGenBase.*;
 import hunternif.mc.atlas.api.AtlasAPI;
 import hunternif.mc.atlas.api.MarkerAPI;
 import hunternif.mc.atlas.api.TileAPI;
@@ -132,7 +93,7 @@ public class ClientProxy extends CommonProxy {
 		map.register(TEST);
 		map.register(WATER);
 		map.register(ICE);
-		map.register(BEACH);
+		map.register(SHORE);
 		map.register(SAND);
 		map.register(PLAINS);
 		map.register(SNOW);
@@ -157,7 +118,7 @@ public class ClientProxy extends CommonProxy {
 		api.setBiomeTexture(river,			WATER);
 		api.setBiomeTexture(frozenOcean,	ICE);
 		api.setBiomeTexture(frozenRiver,	ICE);
-		api.setBiomeTexture(beach,			BEACH);
+		api.setBiomeTexture(beach,			SHORE);
 		api.setBiomeTexture(desert,			SAND);
 		api.setBiomeTexture(plains,			PLAINS);
 		api.setBiomeTexture(icePlains,		SNOW);
@@ -172,10 +133,10 @@ public class ClientProxy extends CommonProxy {
 		api.setBiomeTexture(taiga,			PINES);
 		api.setBiomeTexture(taigaHills,		PINES_HILLS);
 		api.setBiomeTexture(swampland,		SWAMP);
-		api.setBiomeTexture(sky,			BEACH);
+		api.setBiomeTexture(sky,			SHORE);
 		//api.setBiomeTexture(hell,			NETHER);
 		api.setBiomeTexture(mushroomIsland, MUSHROOM);
-		api.setBiomeTexture(mushroomIslandShore, BEACH);
+		api.setBiomeTexture(mushroomIslandShore, SHORE);
 	}
 	
 	/** Load default marker textures. */

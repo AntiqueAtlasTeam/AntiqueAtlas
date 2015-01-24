@@ -116,7 +116,7 @@ public class BiomeTextureMap extends SaveData {
 				setTexture(biomeID, SAND);
 			}
 		} else if (types.contains(Type.BEACH)){
-			setTexture(biomeID, BEACH);
+			setTexture(biomeID, SHORE);
 		} else {
 			setTexture(biomeID, defaultTexture);
 		}

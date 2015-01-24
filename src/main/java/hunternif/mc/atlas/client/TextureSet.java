@@ -6,16 +6,12 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-
-
-
 import net.minecraft.util.ResourceLocation;
 
 public class TextureSet {
 	public static final TextureSet TEST			= standard("TEST", TILE_TEST);
-	public static final TextureSet WATER		= standard("WATER", TILE_WATER, TILE_WATER2);
 	public static final TextureSet ICE			= standard("ICE", TILE_ICE_NOBORDER); // previously FROZEN_WATER
-	public static final TextureSet BEACH		= standard("BEACH", TILE_BEACH);
+	public static final TextureSet SHORE		= new TextureSetShore("SHORE", TILE_SHORE); // previously BEACH
 	public static final TextureSet SAND			= standard("SAND", TILE_SAND, TILE_SAND2);
 	public static final TextureSet PLAINS		= standard("PLAINS", TILE_GRASS, TILE_GRASS2, TILE_GRASS3, TILE_GRASS4);
 	public static final TextureSet SNOW			= standard("SNOW", TILE_SNOW, TILE_SNOW2);
@@ -29,6 +25,7 @@ public class TextureSet {
 	public static final TextureSet PINES_HILLS	= standard("PINES_HILLS", TILE_PINES_HILLS, TILE_PINES_HILLS2, TILE_PINES_HILLS3);
 	public static final TextureSet SWAMP		= standard("SWAMP", TILE_SWAMP, TILE_SWAMP, TILE_SWAMP, TILE_SWAMP2, TILE_SWAMP3, TILE_SWAMP4, TILE_SWAMP5, TILE_SWAMP6);
 	public static final TextureSet MUSHROOM		= standard("MUSHROOM", TILE_MUSHROOM, TILE_MUSHROOM2);
+	public static final TextureSet WATER		= standard("WATER", TILE_WATER, TILE_WATER2).stitchTo(SHORE, SWAMP);
 	public static final TextureSet HOUSE		= standard("HOUSE", TILE_HOUSE);
 	public static final TextureSet FENCE		= standard("FENCE", TILE_FENCE).stitchTo(HOUSE);
 	
@@ -81,5 +78,16 @@ public class TextureSet {
 		}
 		TextureSet set = (TextureSet) obj;
 		return this.name.equals(set.name) && Arrays.equals(this.textures, set.textures);
+	}
+	
+	/** A special texture set that is stitched to everything except water. */
+	private static class TextureSetShore extends TextureSet {
+		public TextureSetShore(String name, ResourceLocation ... textures) {
+			super(true, name, textures);
+		}
+		@Override
+		public boolean shouldStichTo(TextureSet otherSet) {
+			return otherSet == this || !WATER.shouldStichTo(otherSet);
+		}
 	}
 }
