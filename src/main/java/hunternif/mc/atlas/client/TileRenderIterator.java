@@ -155,7 +155,7 @@ public class TileRenderIterator implements Iterator<SubTileQuartet> {
 		if (_h.shape == Shape.CONVEX && !shouldStitchTo(h, g) && !shouldStitchTo(h, k)) {
 			_h.shape = Shape.SINGLE_OBJECT;
 		}
-		if (_i.shape == Shape.CONVEX && !shouldStitchTo(i, k) && !shouldStitchTo(i, l)) {
+		if (_i.shape == Shape.CONVEX && !shouldStitchTo(i, j) && !shouldStitchTo(i, l)) {
 			_i.shape = Shape.SINGLE_OBJECT;
 		}
 		
