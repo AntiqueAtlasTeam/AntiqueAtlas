@@ -133,7 +133,7 @@ public class ClientProxy extends CommonProxy {
 		api.setBiomeTexture(iceMountains,	MOUNTAINS);
 		api.setBiomeTexture(forest,			FOREST);
 		api.setBiomeTexture(jungle,			JUNGLE);
-		api.setBiomeTexture(taiga,			PINES);
+		api.setBiomeTexture(taiga,			SNOW_PINES);
 		api.setBiomeTexture(taigaHills,		PINES_HILLS);
 		api.setBiomeTexture(swampland,		SWAMP);
 		api.setBiomeTexture(sky,			SHORE);
