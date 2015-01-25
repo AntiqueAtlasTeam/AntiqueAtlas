@@ -40,13 +40,14 @@ public class TextureSet {
 	public static final TextureSet MEGA_SPRUCE	= standard("MEGA_SPRUCE", TILE_MEGA_SPRUCE, TILE_MEGA_SPRUCE2);
 	public static final TextureSet MEGA_TAIGA	= standard("MEGA_SPRUCE", TILE_MEGA_TAIGA, TILE_MEGA_TAIGA2);
 	public static final TextureSet PINES_HILLS	= standard("PINES_HILLS", TILE_PINES_HILLS, TILE_PINES_HILLS2, TILE_PINES_HILLS3);
+	public static final TextureSet MEGA_SPRUCE_HILLS = standard("MEGA_SPRUCE_HILLS", TILE_MEGA_SPRUCE_HILLS, TILE_MEGA_SPRUCE_HILLS2);
 	public static final TextureSet SWAMP		= standard("SWAMP", TILE_SWAMP, TILE_SWAMP, TILE_SWAMP, TILE_SWAMP2, TILE_SWAMP3, TILE_SWAMP4, TILE_SWAMP5, TILE_SWAMP6);
 	public static final TextureSet MUSHROOM		= standard("MUSHROOM", TILE_MUSHROOM, TILE_MUSHROOM2);
 	public static final TextureSet WATER		= standard("WATER", TILE_WATER, TILE_WATER2);
 	public static final TextureSet HOUSE		= standard("HOUSE", TILE_HOUSE);
 	public static final TextureSet FENCE		= standard("FENCE", TILE_FENCE).stitchTo(HOUSE);
 	
-	// Sofisticated stitching stuff:
+	// Sophisticated stitching stuff:
 	static {
 		WATER.stitchTo(SHORE, SWAMP);
 		SNOW.stitchTo(ICE_SPIKES, SNOW_HILLS, SNOW_PINES, SNOW_PINES_HILLS);
