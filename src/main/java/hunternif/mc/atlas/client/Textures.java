@@ -70,6 +70,8 @@ public class Textures {
 	public static final ResourceLocation TILE_MEGA_TAIGA2 = new ResourceLocation(GUI_TILES + "mega_taiga2.png");
 	public static final ResourceLocation TILE_MEGA_SPRUCE_HILLS = new ResourceLocation(GUI_TILES + "mega_spruce_hills.png");
 	public static final ResourceLocation TILE_MEGA_SPRUCE_HILLS2 = new ResourceLocation(GUI_TILES + "mega_spruce_hills2.png");
+	public static final ResourceLocation TILE_MEGA_TAIGA_HILLS = new ResourceLocation(GUI_TILES + "mega_taiga_hills.png");
+	public static final ResourceLocation TILE_MEGA_TAIGA_HILLS2 = new ResourceLocation(GUI_TILES + "mega_taiga_hills2.png");
 	public static final ResourceLocation TILE_SAND = new ResourceLocation(GUI_TILES + "sand.png");
 	public static final ResourceLocation TILE_SAND2 = new ResourceLocation(GUI_TILES + "sand2.png");
 	public static final ResourceLocation TILE_SHORE = new ResourceLocation(GUI_TILES + "shore.png");
