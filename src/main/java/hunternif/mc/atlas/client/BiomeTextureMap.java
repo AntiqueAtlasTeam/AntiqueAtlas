@@ -12,13 +12,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import net.minecraft.util.MathHelper;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.common.BiomeDictionary.Type;
-
-import com.google.common.primitives.UnsignedBytes;
-
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
@@ -143,8 +141,8 @@ public class BiomeTextureMap extends SaveData {
 	public ResourceLocation getTexture(Tile tile) {
 		checkRegistration(tile.biomeID);
 		TextureSet set = textureMap.get(tile.biomeID);
-		int i = Math.round((float)(UnsignedBytes.toInt(tile.getVariationNumber()))
-				/ 256f * (float)(set.textures.length - 1));
+		int i = MathHelper.floor_float((float)(tile.getVariationNumber())
+				/ (float)(Short.MAX_VALUE) * (float)(set.textures.length));
 		return set.textures[i];
 	}
 	

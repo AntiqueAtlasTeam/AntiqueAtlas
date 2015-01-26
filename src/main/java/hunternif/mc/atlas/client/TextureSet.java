@@ -53,8 +53,8 @@ public class TextureSet {
 	// Sophisticated stitching stuff:
 	static {
 		WATER.stitchTo(SHORE, SWAMP);
-		SNOW.stitchTo(ICE_SPIKES, SNOW_HILLS, SNOW_PINES, SNOW_PINES_HILLS);
-		SNOW_PINES.stitchTo(SNOW, ICE_SPIKES, SNOW_HILLS, SNOW_PINES_HILLS);
+		SNOW.stitchTo(SNOW_PINES, SNOW_HILLS, ICE_SPIKES, SNOW_PINES_HILLS);
+		SNOW_PINES.stitchTo(SNOW, SNOW_HILLS, ICE_SPIKES, SNOW_PINES_HILLS);
 		stitchMutually(MOUNTAINS, MOUNTAINS_NAKED, MOUNTAINS_SNOW_CAPS, MOUNTAINS_ALL);
 	}
 	
@@ -128,7 +128,7 @@ public class TextureSet {
 		}
 	}
 	
-	/** Stitch manually each of the provided texture sets. */
+	/** Stitch provided texture sets mutually between each other. */
 	public static final void stitchMutually(TextureSet ... sets) {
 		for (TextureSet set1 : sets) {
 			for (TextureSet set2 : sets) {

@@ -10,8 +10,9 @@ import org.apache.commons.lang3.RandomUtils;
 public class Tile {
 	public final int biomeID;
 	
-	/** Used for randomizing textures. */
-	private transient byte variationNumber;
+	/** Used for randomizing textures.
+	 * Takes on values from 0 to {@link Short#MAX_VALUE} - 1. */
+	private transient short variationNumber;
 	
 	public Tile(int biomeID) {
 		this(biomeID, (byte)0);
@@ -24,10 +25,10 @@ public class Tile {
 	
 	/** Set variation number to a random byte. */
 	public void randomizeTexture() {
-		this.variationNumber = (byte)(RandomUtils.nextInt(0, 256) - 128);
+		this.variationNumber = (short)RandomUtils.nextInt(0, Short.MAX_VALUE);
 	}
 	
-	public byte getVariationNumber() {
+	public short getVariationNumber() {
 		return variationNumber;
 	}
 	
