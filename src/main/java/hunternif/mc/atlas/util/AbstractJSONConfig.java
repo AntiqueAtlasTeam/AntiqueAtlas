@@ -6,7 +6,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 /**
- * Basic JSON config that supports versions, empty and malformed files.
+ * Basic JSON config that handles format versions and empty or malformed files.
  * @author Hunternif
  */
 public abstract class AbstractJSONConfig<T extends SaveData> implements Config<T> {

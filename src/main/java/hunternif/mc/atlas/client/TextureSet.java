@@ -25,9 +25,11 @@ public class TextureSet {
 	
 	// Mountain stuff
 	public static final TextureSet MOUNTAINS_NAKED = standard("MOUNTAINS_NAKED", TILE_MOUNTAINS, TILE_MOUNTAINS2);
+	/** Has a few trees on. */
 	public static final TextureSet MOUNTAINS = standard("MOUNTAINS", TILE_MOUNTAINS, TILE_MOUNTAINS,
 			TILE_MOUNTAINS2, TILE_MOUNTAINS2, TILE_MOUNTAINS3, TILE_MOUNTAINS4);
 	public static final TextureSet MOUNTAINS_SNOW_CAPS = standard("MOUNTAINS_SNOW_CAPS", TILE_MOUNTAINS, TILE_SNOW_CAPS);
+	/** Has naked mountains, a few trees, and snow caps. */
 	public static final TextureSet MOUNTAINS_ALL = standard("MOUNTAINS_ALL", TILE_MOUNTAINS, TILE_MOUNTAINS2,
 			TILE_MOUNTAINS3, TILE_MOUNTAINS4, TILE_SNOW_CAPS, TILE_SNOW_CAPS);
 	
