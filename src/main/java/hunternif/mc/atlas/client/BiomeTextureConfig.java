@@ -37,6 +37,11 @@ public class BiomeTextureConfig extends AbstractJSONConfig<BiomeTextureMap> {
 
 	@Override
 	protected void loadData(JsonObject json, BiomeTextureMap data, int version) {
+		if (version == 0) {
+			Log.warn("Too many biome textures changed since config version 0,"
+					+ " disregarding this config entirely");
+			return;
+		}
 		for (Entry<String, JsonElement> entry : json.entrySet()) {
 			int biomeID = Integer.parseInt(entry.getKey());
 			if (entry.getValue().isJsonArray()) {
