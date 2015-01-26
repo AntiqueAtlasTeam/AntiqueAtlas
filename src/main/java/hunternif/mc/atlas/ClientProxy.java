@@ -96,9 +96,18 @@ public class ClientProxy extends CommonProxy {
 		map.register(SHORE);
 		map.register(SAND);
 		map.register(PLAINS);
-		map.register(SNOW);
+		
 		map.register(ICE_SPIKES);
+		map.register(SNOW_PINES);
+		map.register(SNOW_PINES_HILLS);
+		map.register(SNOW_HILLS);
+		map.register(SNOW);
+		
+		map.register(MOUNTAINS_NAKED);
 		map.register(MOUNTAINS);
+		map.register(MOUNTAINS_SNOW_CAPS);
+		map.register(MOUNTAINS_ALL);
+		
 		map.register(HILLS);
 		map.register(FOREST);
 		map.register(FOREST_HILLS);
@@ -106,6 +115,12 @@ public class ClientProxy extends CommonProxy {
 		map.register(JUNGLE_HILLS);
 		map.register(PINES);
 		map.register(PINES_HILLS);
+		
+		map.register(MEGA_SPRUCE);
+		map.register(MEGA_SPRUCE_HILLS);
+		map.register(MEGA_TAIGA);
+		map.register(MEGA_TAIGA_HILLS);
+		
 		map.register(SWAMP);
 		map.register(MUSHROOM);
 		map.register(WATER);
