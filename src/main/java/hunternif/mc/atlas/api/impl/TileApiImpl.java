@@ -15,6 +15,7 @@ import hunternif.mc.atlas.network.bidirectional.PutBiomeTilePacket;
 import hunternif.mc.atlas.network.client.TileNameIDPacket;
 import hunternif.mc.atlas.network.client.TilesPacket;
 import hunternif.mc.atlas.network.server.RegisterTileIdPacket;
+import hunternif.mc.atlas.util.Log;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -161,7 +162,7 @@ public class TileApiImpl implements TileAPI {
 	@Override
 	public void putCustomGlobalTile(World world, String tileName, int chunkX, int chunkZ) {
 		if (world.isRemote) {
-			AntiqueAtlasMod.logger.warn("Client tried to put global tile");
+			Log.warn("Client tried to put global tile");
 			return;
 		}
 		boolean isIdRegistered = ExtTileIdMap.instance().getPseudoBiomeID(tileName) != ExtTileIdMap.NOT_FOUND;

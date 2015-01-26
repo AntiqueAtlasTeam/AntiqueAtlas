@@ -1,7 +1,5 @@
 package hunternif.mc.atlas.util;
 
-import hunternif.mc.atlas.AntiqueAtlasMod;
-
 import java.io.File;
 
 import com.google.gson.JsonElement;
@@ -22,7 +20,7 @@ public abstract class AbstractJSONConfig<T extends SaveData> implements Config<T
 	public void load(T data) {
 		JsonElement root = FileUtil.readJson(file);
 		if (root == null) {
-			AntiqueAtlasMod.logger.info("Config " + file.getName() + " not found; creating new");
+			Log.info("Config %s not found; creating new", file.getName());
 			save(data);
 			return;
 		}
@@ -32,7 +30,7 @@ public abstract class AbstractJSONConfig<T extends SaveData> implements Config<T
 			int version;
 			boolean outdated = false;
 			if (versionElem == null) {
-				AntiqueAtlasMod.logger.warn("Outdated config " + file.getName());
+				Log.warn("Outdated config %s", file.getName());
 				version = 0;
 				// Non-existent version means the whole file is just data:
 				jsonData = root.getAsJsonObject();
@@ -40,13 +38,13 @@ public abstract class AbstractJSONConfig<T extends SaveData> implements Config<T
 			} else {
 				version = versionElem.getAsInt();
 				if (currentVersion() > version) {
-					AntiqueAtlasMod.logger.warn("Outdated config " + file.getName()
-							+ ": version was " + version + ", but current is " + currentVersion());
+					Log.warn("Outdated config %s: version was %d, but current is %d",
+							file.getName(), version, currentVersion());
 					outdated = true;
 				}
 				JsonElement jsonElem = root.getAsJsonObject().get("data");
 				if (jsonElem == null) {
-					AntiqueAtlasMod.logger.error("Malformed config " + file.getName());
+					Log.error("Malformed config " + file.getName());
 					return;
 				}
 				jsonData = jsonElem.getAsJsonObject();
@@ -58,9 +56,9 @@ public abstract class AbstractJSONConfig<T extends SaveData> implements Config<T
 				save(data);
 			}
 		} catch (IllegalStateException e) {
-			AntiqueAtlasMod.logger.error("Malformed config " + file.getName() + ": " + e.getMessage());
+			Log.error(e, "Malformed config %s", file.getName());
 		} catch (NumberFormatException e) {
-			AntiqueAtlasMod.logger.error("Malformed config " + file.getName() + ": " + e.getMessage());
+			Log.error(e, "Malformed config %s", file.getName());
 		}
 	}
 	

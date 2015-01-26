@@ -21,6 +21,7 @@ import hunternif.mc.atlas.marker.MarkerTextureMap;
 import hunternif.mc.atlas.marker.MarkersData;
 import hunternif.mc.atlas.util.AtlasRenderHelper;
 import hunternif.mc.atlas.util.ExportImageUtil;
+import hunternif.mc.atlas.util.Log;
 import hunternif.mc.atlas.util.MathUtil;
 import hunternif.mc.atlas.util.Rect;
 
@@ -366,10 +367,9 @@ public class GuiAtlas extends GuiComponent {
 		// Default file name is "Atlas <N>.png"
 		File file = ExportImageUtil.selectPngFileToSave("Atlas " + stack.getItemDamage(), progressBar);
 		if (file != null) {
-			AntiqueAtlasMod.logger.info("Exporting image from Atlas #" +
-					stack.getItemDamage() +	" to file " + file.getAbsolutePath());
+			Log.info("Exporting image from Atlas #%d to file %s", stack.getItemDamage(), file.getAbsolutePath());
 			ExportImageUtil.exportPngImage(biomeData, globalMarkersData, localMarkersData, file, progressBar);
-			AntiqueAtlasMod.logger.info("Finished exporting image");
+			Log.info("Finished exporting image");
 		}
 		state.switchTo(NORMAL);
 	}

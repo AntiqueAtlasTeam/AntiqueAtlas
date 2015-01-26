@@ -1,8 +1,8 @@
 package hunternif.mc.atlas.core;
 
-import hunternif.mc.atlas.AntiqueAtlasMod;
 import hunternif.mc.atlas.network.PacketDispatcher;
 import hunternif.mc.atlas.network.client.MapDataPacket;
+import hunternif.mc.atlas.util.Log;
 import hunternif.mc.atlas.util.ShortVec2;
 
 import java.util.Collection;
@@ -47,7 +47,7 @@ public class AtlasData extends WorldSavedData {
 		this.nbt = compound;
 		int version = compound.getInteger(TAG_VERSION);
 		if (version < VERSION) {
-			AntiqueAtlasMod.logger.warn(String.format("Outdated atlas data format! Was %d but current is %d", version, VERSION));
+			Log.warn("Outdated atlas data format! Was %d but current is %d", version, VERSION);
 			this.markDirty();
 		}
 		NBTTagList dimensionMapList = compound.getTagList(TAG_DIMENSION_MAP_LIST, Constants.NBT.TAG_COMPOUND);
@@ -119,7 +119,7 @@ public class AtlasData extends WorldSavedData {
 	 * during the first run of ItemAtals.onUpdate(). */
 	public void syncOnPlayer(int atlasID, EntityPlayer player) {
 		PacketDispatcher.sendTo(new MapDataPacket(atlasID, nbt), (EntityPlayerMP) player);
-		AntiqueAtlasMod.logger.info("Sent Atlas #" + atlasID + " data to player " + player.getCommandSenderName());
+		Log.info("Sent Atlas #%d data to player %s", atlasID, player.getCommandSenderName());
 		playersSentTo.add(player);
 	}
 

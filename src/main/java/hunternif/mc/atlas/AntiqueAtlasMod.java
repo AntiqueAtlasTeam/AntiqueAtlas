@@ -10,14 +10,12 @@ import hunternif.mc.atlas.item.RecipeAtlasCloning;
 import hunternif.mc.atlas.item.RecipeAtlasCombining;
 import hunternif.mc.atlas.marker.GlobalMarkersDataHandler;
 import hunternif.mc.atlas.network.PacketDispatcher;
+import hunternif.mc.atlas.util.Log;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.oredict.RecipeSorter;
-
-import org.apache.logging.log4j.Logger;
-
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
@@ -38,8 +36,6 @@ public class AntiqueAtlasMod {
 	@Instance(ID)
 	public static AntiqueAtlasMod instance;
 	
-	public static Logger logger;
-	
 	@SidedProxy(clientSide="hunternif.mc.atlas.ClientProxy", serverSide="hunternif.mc.atlas.CommonProxy")
 	public static CommonProxy proxy;
 	
@@ -51,7 +47,7 @@ public class AntiqueAtlasMod {
 
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent event) {
-		logger = event.getModLog();
+		Log.setModID(ID);
 		proxy.preInit(event);
 		
 		itemAtlas = (ItemAtlas) new ItemAtlas().setUnlocalizedName("antiqueAtlas");

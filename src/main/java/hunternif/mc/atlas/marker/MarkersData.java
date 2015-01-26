@@ -1,9 +1,9 @@
 package hunternif.mc.atlas.marker;
 
-import hunternif.mc.atlas.AntiqueAtlasMod;
 import hunternif.mc.atlas.api.MarkerAPI;
 import hunternif.mc.atlas.network.PacketDispatcher;
 import hunternif.mc.atlas.network.client.MarkersPacket;
+import hunternif.mc.atlas.util.Log;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -77,7 +77,7 @@ public class MarkersData extends WorldSavedData {
 	public void readFromNBT(NBTTagCompound compound) {
 		int version = compound.getInteger(TAG_VERSION);
 		if (version < VERSION) {
-			AntiqueAtlasMod.logger.warn(String.format("Outdated atlas data format! Was %d but current is %d", version, VERSION));
+			Log.warn("Outdated atlas data format! Was %d but current is %d", version, VERSION);
 			this.markDirty();
 		}
 		NBTTagList dimensionMapList = compound.getTagList(TAG_DIMENSION_MAP_LIST, Constants.NBT.TAG_COMPOUND);
@@ -89,7 +89,7 @@ public class MarkersData extends WorldSavedData {
 				NBTTagCompound markerTag = tagList.getCompoundTagAt(i);
 				boolean visibleAhead = true;
 				if (version < 2) {
-					AntiqueAtlasMod.logger.warn("Marker is visible ahead by default");
+					Log.warn("Marker is visible ahead by default");
 				} else {
 					visibleAhead = markerTag.getBoolean(TAG_MARKER_VISIBLE_AHEAD);
 				}
@@ -99,8 +99,7 @@ public class MarkersData extends WorldSavedData {
 				} else {
 					id = markerTag.getInteger(TAG_MARKER_ID);
 					if (getMarkerByID(id) != null) {
-						AntiqueAtlasMod.logger.warn("Loading marker with duplicate id: "
-								+ id + ". Getting new id.");
+						Log.warn("Loading marker with duplicate id %d. Getting new id", id);
 						id = getNewID();
 					}
 					this.markDirty();
@@ -222,7 +221,7 @@ public class MarkersData extends WorldSavedData {
 			}
 			PacketDispatcher.sendTo(packet, (EntityPlayerMP) player);
 		}
-		AntiqueAtlasMod.logger.info("Sent markers data to player " + player.getCommandSenderName());
+		Log.info("Sent markers data to player %s", player.getCommandSenderName());
 		playersSentTo.add(player);
 	}
 	

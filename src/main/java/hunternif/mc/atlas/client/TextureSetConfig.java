@@ -1,7 +1,7 @@
 package hunternif.mc.atlas.client;
 
-import hunternif.mc.atlas.AntiqueAtlasMod;
 import hunternif.mc.atlas.util.AbstractJSONConfig;
+import hunternif.mc.atlas.util.Log;
 
 import java.io.File;
 import java.util.Map.Entry;
@@ -35,8 +35,7 @@ public class TextureSetConfig extends AbstractJSONConfig<TextureSetMap> {
 				textures[i] = new ResourceLocation(path);
 			}
 			data.register(new TextureSet(name, textures));
-			AntiqueAtlasMod.logger.info("Loaded texture set \"" + name
-					+ "\" with " + textures.length + " custom texture(s).");
+			Log.info("Loaded texture set %s with %d custom texture(s)", name, textures.length);
 		}
 	}
 	

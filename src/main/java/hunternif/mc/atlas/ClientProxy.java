@@ -14,6 +14,7 @@ import hunternif.mc.atlas.client.gui.GuiAtlas;
 import hunternif.mc.atlas.ext.ExtTileIdMap;
 import hunternif.mc.atlas.marker.MarkerTextureConfig;
 import hunternif.mc.atlas.marker.MarkerTextureMap;
+import hunternif.mc.atlas.util.Log;
 
 import java.io.File;
 
@@ -177,17 +178,17 @@ public class ClientProxy extends CommonProxy {
 	@SubscribeEvent
 	public void onClientTick(ClientTickEvent event) {
 		if (textureSetMap.isDirty()) {
-			AntiqueAtlasMod.logger.info("Saving texture set config");
+			Log.info("Saving texture set config");
 			textureSetConfig.save(textureSetMap);
 			textureSetMap.setDirty(false);
 		}
 		if (biomeTextureMap.isDirty()) {
-			AntiqueAtlasMod.logger.info("Saving biome texture config");
+			Log.info("Saving biome texture config");
 			biomeTextureConfig.save(biomeTextureMap);
 			biomeTextureMap.setDirty(false);
 		}
 		if (markerTextureMap.isDirty()) {
-			AntiqueAtlasMod.logger.info("Saving marker texture config");
+			Log.info("Saving marker texture config");
 			markerTextureConfig.save(markerTextureMap);
 			markerTextureMap.setDirty(false);
 		}

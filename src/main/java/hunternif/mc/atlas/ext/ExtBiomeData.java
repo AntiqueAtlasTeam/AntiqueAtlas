@@ -1,9 +1,9 @@
 package hunternif.mc.atlas.ext;
 
-import hunternif.mc.atlas.AntiqueAtlasMod;
 import hunternif.mc.atlas.core.ChunkBiomeAnalyzer;
 import hunternif.mc.atlas.network.PacketDispatcher;
 import hunternif.mc.atlas.network.client.TilesPacket;
+import hunternif.mc.atlas.util.Log;
 import hunternif.mc.atlas.util.ShortVec2;
 
 import java.util.Map;
@@ -42,7 +42,7 @@ public class ExtBiomeData extends WorldSavedData {
 	public void readFromNBT(NBTTagCompound compound) {
 		int version = compound.getInteger(TAG_VERSION);
 		if (version < VERSION) {
-			AntiqueAtlasMod.logger.warn(String.format("Outdated atlas data format! Was %d but current is %d", version, VERSION));
+			Log.warn("Outdated atlas data format! Was %d but current is %d", version, VERSION);
 			this.markDirty();
 		}
 		NBTTagList dimensionMapList = compound.getTagList(TAG_DIMENSION_MAP_LIST, Constants.NBT.TAG_COMPOUND);
@@ -111,7 +111,7 @@ public class ExtBiomeData extends WorldSavedData {
 			}
 			PacketDispatcher.sendTo(packet, (EntityPlayerMP) player);
 		}
-		AntiqueAtlasMod.logger.info("Sent custom biome data to player " + player.getCommandSenderName());
+		Log.info("Sent custom biome data to player %s", player.getCommandSenderName());
 	}
 
 }

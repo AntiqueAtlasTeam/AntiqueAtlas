@@ -1,8 +1,8 @@
 package hunternif.mc.atlas.client;
 
 import static hunternif.mc.atlas.client.TextureSet.*;
-import hunternif.mc.atlas.AntiqueAtlasMod;
 import hunternif.mc.atlas.core.Tile;
+import hunternif.mc.atlas.util.Log;
 import hunternif.mc.atlas.util.SaveData;
 
 import java.util.ArrayList;
@@ -12,12 +12,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import com.google.common.primitives.UnsignedBytes;
-
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.common.BiomeDictionary.Type;
+
+import com.google.common.primitives.UnsignedBytes;
+
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
@@ -42,14 +43,14 @@ public class BiomeTextureMap extends SaveData {
 	/** Assign texture set to biome. */
 	public void setTexture(int biomeID, TextureSet textureSet) {
 		if (textureSet == null) {
-			AntiqueAtlasMod.logger.error("Texture set is null!");
+			Log.error("Texture set is null!");
 			return;
 		}
 		TextureSet previous = textureMap.put(biomeID, textureSet);
 		if (previous == null) {
 			markDirty();
 		} else if (!previous.equals(textureSet)) {
-			AntiqueAtlasMod.logger.warn("Overwriting texture set for biome " + biomeID);
+			Log.warn("Overwriting texture set for biome %d", biomeID);
 			markDirty();
 		}
 		// If the old texture set is equal to the new one (i.e. has equal name
@@ -61,15 +62,13 @@ public class BiomeTextureMap extends SaveData {
 	 * BiomeDictionary types. */
 	private void autoRegister(int biomeID) {
 		if (biomeID < 0 || biomeID >= 256) {
-			AntiqueAtlasMod.logger.warn("Biome ID " + biomeID + " is out of range. "
-					+ "Auto-registering default texture set");
+			Log.warn("Biome ID %d is out of range. Auto-registering default texture set", biomeID);
 			setTexture(biomeID, defaultTexture);
 			return;
 		}
 		BiomeGenBase biome = BiomeGenBase.getBiome(biomeID);
 		if (biome == null) {
-			AntiqueAtlasMod.logger.warn("Biome ID " + biomeID + " is null. "
-					+ "Auto-registering default texture set");
+			Log.warn("Biome ID %d is null. Auto-registering default texture set", biomeID);
 			setTexture(biomeID, defaultTexture);
 			return;
 		}
@@ -120,7 +119,7 @@ public class BiomeTextureMap extends SaveData {
 		} else {
 			setTexture(biomeID, defaultTexture);
 		}
-		AntiqueAtlasMod.logger.info("Auto-registered standard texture set for biome " + biomeID);
+		Log.info("Auto-registered standard texture set for biome %d", biomeID);
 	}
 	
 	/** Auto-registers the biome ID if it is not registered. */

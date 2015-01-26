@@ -5,6 +5,7 @@ import hunternif.mc.atlas.api.AtlasAPI;
 import hunternif.mc.atlas.core.AtlasData;
 import hunternif.mc.atlas.core.Tile;
 import hunternif.mc.atlas.network.AbstractMessage;
+import hunternif.mc.atlas.util.Log;
 
 import java.io.IOException;
 
@@ -54,8 +55,8 @@ public class PutBiomeTilePacket extends AbstractMessage<PutBiomeTilePacket> {
 		if (side.isServer()) {
 			// Make sure it's this player's atlas :^)
 			if (!player.inventory.hasItemStack(new ItemStack(AntiqueAtlasMod.itemAtlas, 1, atlasID))) {
-				AntiqueAtlasMod.logger.warn(String.format("Player %s attempted to modify someone else's Atlas #%d",
-						player.getGameProfile().getName(), atlasID));
+				Log.warn("Player %s attempted to modify someone else's Atlas #%d",
+						player.getGameProfile().getName(), atlasID);
 				return;
 			}
 			AtlasAPI.getTileAPI().putBiomeTile(player.worldObj, atlasID, biomeID, x, z);

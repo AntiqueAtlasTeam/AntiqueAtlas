@@ -2,6 +2,7 @@ package hunternif.mc.atlas;
 
 import hunternif.mc.atlas.ext.ExtTileConfig;
 import hunternif.mc.atlas.ext.ExtTileIdMap;
+import hunternif.mc.atlas.util.Log;
 
 import java.io.File;
 
@@ -50,7 +51,7 @@ public class CommonProxy {
 	@SubscribeEvent
 	public void onWorldSave(WorldEvent.Save event) {
 		if (extTileIdMap.isDirty()) {
-			AntiqueAtlasMod.logger.info("Saving ext tile id config");
+			Log.info("Saving ext tile id config");
 			extTileConfig.save(extTileIdMap);
 			extTileIdMap.setDirty(false);
 		}

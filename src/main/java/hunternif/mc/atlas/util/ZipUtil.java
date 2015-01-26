@@ -1,8 +1,8 @@
 package hunternif.mc.atlas.util;
 
-import hunternif.mc.atlas.AntiqueAtlasMod;
-
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.zip.DataFormatException;
 import java.util.zip.Deflater;
 import java.util.zip.Inflater;
 
@@ -18,14 +18,14 @@ public class ZipUtil {
 				int size = iflr.inflate(tmp);
 				baos.write(tmp, 0, size);
 			}
-		} catch (Exception ex) {
-			AntiqueAtlasMod.logger.error("Error unzipping bytes: " + ex.toString());
+		} catch (DataFormatException e) {
+			Log.error(e, "Error unzipping bytes");
 		} finally {
 			try {
 				if (baos != null)
 					baos.close();
-			} catch (Exception ex) {
-				AntiqueAtlasMod.logger.error("Error unzipping bytes: " + ex.toString());
+			} catch (IOException e) {
+				Log.error(e, "Error unzipping bytes");
 			}
 		}
 		return baos.toByteArray();
@@ -44,14 +44,12 @@ public class ZipUtil {
 				int size = dfl.deflate(tmp);
 				baos.write(tmp, 0, size);
 			}
-		} catch (Exception ex) {
-			AntiqueAtlasMod.logger.error("Error zipping bytes: " + ex.toString());
 		} finally {
 			try {
 				if (baos != null)
 					baos.close();
-			} catch (Exception ex) {
-				AntiqueAtlasMod.logger.error("Error zipping bytes: " + ex.toString());
+			} catch (IOException e) {
+				Log.error(e, "Error zipping bytes");
 			}
 		}
 		return baos.toByteArray();

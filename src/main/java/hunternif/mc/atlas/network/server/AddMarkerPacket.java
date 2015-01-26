@@ -6,6 +6,7 @@ import hunternif.mc.atlas.marker.MarkersData;
 import hunternif.mc.atlas.network.AbstractMessage.AbstractServerMessage;
 import hunternif.mc.atlas.network.PacketDispatcher;
 import hunternif.mc.atlas.network.client.MarkersPacket;
+import hunternif.mc.atlas.util.Log;
 
 import java.io.IOException;
 
@@ -67,8 +68,8 @@ public class AddMarkerPacket extends AbstractServerMessage<AddMarkerPacket> {
 	protected void process(EntityPlayer player, Side side) {
 		// Make sure it's this player's atlas :^)
 		if (!player.inventory.hasItemStack(new ItemStack(AntiqueAtlasMod.itemAtlas, 1, atlasID))) {
-			AntiqueAtlasMod.logger.warn(String.format("Player %s attempted to put marker into someone else's Atlas #%d",
-					player.getGameProfile().getName(), atlasID));
+			Log.warn("Player %s attempted to put marker into someone else's Atlas #%d",
+					player.getGameProfile().getName(), atlasID);
 		}
 		MarkersData markersData = AntiqueAtlasMod.itemAtlas.getMarkersData(atlasID, player.worldObj);
 		Marker marker = markersData.createAndSaveMarker(type, label, dimension, x, y, visibleAhead);

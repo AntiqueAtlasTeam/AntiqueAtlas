@@ -1,7 +1,7 @@
 package hunternif.mc.atlas.client;
 
-import hunternif.mc.atlas.AntiqueAtlasMod;
 import hunternif.mc.atlas.util.AbstractJSONConfig;
+import hunternif.mc.atlas.util.Log;
 
 import java.io.File;
 import java.util.Map.Entry;
@@ -48,16 +48,16 @@ public class BiomeTextureConfig extends AbstractJSONConfig<BiomeTextureMap> {
 					textures[i] = new ResourceLocation(path);
 				}
 				data.setTexture(biomeID, new TextureSet(null, textures));
-				AntiqueAtlasMod.logger.info("Registered " + textures.length
-						+ " custom texture(s) for biome " + biomeID);
+				Log.info("Registered %d custom texture(s) for biome %d",
+						textures.length, biomeID);
 			} else {
 				// Texture set:
 				String name = entry.getValue().getAsString();
 				if (textureSetMap.isRegistered(name)) {
 					data.setTexture(biomeID, textureSetMap.getByName(name));
-					AntiqueAtlasMod.logger.info("Registered texture set " + name + " for biome " + biomeID);
+					Log.info("Registered texture set %s for biome %d", name, biomeID);
 				} else {
-					AntiqueAtlasMod.logger.warn("Unknown texture set " + name + " for biome " + biomeID);
+					Log.warn("Unknown texture set %s for biome %d", name, biomeID);
 				}
 			}
 		}

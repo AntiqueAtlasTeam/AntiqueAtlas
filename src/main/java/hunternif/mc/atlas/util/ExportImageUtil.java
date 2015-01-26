@@ -1,6 +1,5 @@
 package hunternif.mc.atlas.util;
 
-import hunternif.mc.atlas.AntiqueAtlasMod;
 import hunternif.mc.atlas.client.BiomeTextureMap;
 import hunternif.mc.atlas.client.SubTile;
 import hunternif.mc.atlas.client.SubTileQuartet;
@@ -27,6 +26,7 @@ import java.util.Map;
 import javax.imageio.ImageIO;
 import javax.swing.JFileChooser;
 import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.filechooser.FileFilter;
 
 import net.minecraft.client.Minecraft;
@@ -48,8 +48,14 @@ public class ExportImageUtil {
 		listener.setStatusString(I18n.format("gui.antiqueatlas.export.opening"));
 		try {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-		} catch (Exception e) {
-			AntiqueAtlasMod.logger.warn("Setting system Look&Feel for JFileChooser", e);
+		} catch (ClassNotFoundException e) {
+			Log.error(e, "Setting system Look&Feel for JFileChooser");
+		} catch (InstantiationException e) {
+			Log.error(e, "Setting system Look&Feel for JFileChooser");
+		} catch (IllegalAccessException e) {
+			Log.error(e, "Setting system Look&Feel for JFileChooser");
+		} catch (UnsupportedLookAndFeelException e) {
+			Log.error(e, "Setting system Look&Feel for JFileChooser");
 		}
 		// Hack to bring the file chooser to front: 
 		Frame frame = new Frame();
@@ -103,7 +109,7 @@ public class ExportImageUtil {
 		int minY = (biomeData.getScope().minY - 1) * TILE_SIZE;
 		int outWidth = (biomeData.getScope().maxX + 2) * TILE_SIZE - minX;
 		int outHeight = (biomeData.getScope().maxY + 2) * TILE_SIZE - minY;
-		AntiqueAtlasMod.logger.info("Image size: " + outWidth + "*" + outHeight);
+		Log.info("Image size: %dx%d", outWidth, outHeight);
 		BufferedImage outImage = new BufferedImage(outWidth, outHeight, BufferedImage.TYPE_INT_ARGB);
 		Graphics2D graphics = outImage.createGraphics();
 		

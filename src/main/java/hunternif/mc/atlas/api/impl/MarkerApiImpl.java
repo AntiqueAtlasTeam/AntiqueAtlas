@@ -9,6 +9,7 @@ import hunternif.mc.atlas.network.PacketDispatcher;
 import hunternif.mc.atlas.network.bidirectional.DeleteMarkerPacket;
 import hunternif.mc.atlas.network.client.MarkersPacket;
 import hunternif.mc.atlas.network.server.AddMarkerPacket;
+import hunternif.mc.atlas.util.Log;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 
@@ -32,7 +33,7 @@ public class MarkerApiImpl implements MarkerAPI {
 	private void doPutMarker(World world, boolean visibleAhead, int atlasID, String markerType, String label, int x, int z) {
 		if (world.isRemote) {
 			if (atlasID == GLOBAL) {
-				AntiqueAtlasMod.logger.warn("Client tried to add a global marker!");
+				Log.warn("Client tried to add a global marker!");
 			} else {
 				PacketDispatcher.sendToServer(new AddMarkerPacket(atlasID,
 						world.provider.dimensionId, markerType, label, x, z, visibleAhead));
@@ -64,7 +65,7 @@ public class MarkerApiImpl implements MarkerAPI {
 				new DeleteMarkerPacket(atlasID, markerID);
 		if (world.isRemote) {
 			if (atlasID == GLOBAL) {
-				AntiqueAtlasMod.logger.warn("Client tried to delete a global marker!");
+				Log.warn("Client tried to delete a global marker!");
 			} else {
 				PacketDispatcher.sendToServer(packet);
 			}

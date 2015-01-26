@@ -1,15 +1,16 @@
 package hunternif.mc.atlas.client.gui;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import hunternif.mc.atlas.AntiqueAtlasMod;
 import hunternif.mc.atlas.api.AtlasAPI;
 import hunternif.mc.atlas.client.gui.core.GuiComponent;
 import hunternif.mc.atlas.client.gui.core.GuiScrollingContainer;
 import hunternif.mc.atlas.client.gui.core.ISelectListener;
 import hunternif.mc.atlas.client.gui.core.ToggleGroup;
 import hunternif.mc.atlas.marker.MarkerTextureMap;
+import hunternif.mc.atlas.util.Log;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiTextField;
@@ -122,7 +123,7 @@ public class GuiMarkerFinalizer extends GuiComponent {
 	protected void actionPerformed(GuiButton button) {
 		if (button == btnDone) {
 			AtlasAPI.getMarkerAPI().putMarker(world, true, atlasID, selectedType, textField.getText(), x, z);
-			AntiqueAtlasMod.logger.info("Put marker in Atlas #" + atlasID + " \"" + textField.getText() + "\" at (" + x + ", " + z + ")");
+			Log.info("Put marker in Atlas #%d \"%s\" at (%d, %d)", atlasID, textField.getText(), x, z);
 			close();
 		} else if (button == btnCancel) {
 			close();
