@@ -41,7 +41,7 @@ public class TextureSet {
 	
 	public static final TextureSet MEGA_SPRUCE	= standard("MEGA_SPRUCE", TILE_MEGA_SPRUCE, TILE_MEGA_SPRUCE2);
 	public static final TextureSet MEGA_SPRUCE_HILLS = standard("MEGA_SPRUCE_HILLS", TILE_MEGA_SPRUCE_HILLS, TILE_MEGA_SPRUCE_HILLS2);
-	public static final TextureSet MEGA_TAIGA	= standard("MEGA_SPRUCE", TILE_MEGA_TAIGA, TILE_MEGA_TAIGA2);
+	public static final TextureSet MEGA_TAIGA	= standard("MEGA_TAIGA", TILE_MEGA_TAIGA, TILE_MEGA_TAIGA2);
 	public static final TextureSet MEGA_TAIGA_HILLS = standard("MEGA_TAIGA_HILLS", TILE_MEGA_TAIGA_HILLS, TILE_MEGA_TAIGA_HILLS2);
 	
 	public static final TextureSet SWAMP		= standard("SWAMP", TILE_SWAMP, TILE_SWAMP, TILE_SWAMP, TILE_SWAMP2, TILE_SWAMP3, TILE_SWAMP4, TILE_SWAMP5, TILE_SWAMP6);
