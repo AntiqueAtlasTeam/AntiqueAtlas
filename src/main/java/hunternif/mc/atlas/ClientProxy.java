@@ -133,6 +133,7 @@ public class ClientProxy extends CommonProxy {
 	private void assignVanillaBiomeTextures() {
 		TileAPI api = AtlasAPI.getTileAPI();
 		api.setBiomeTexture(ocean,			WATER);
+		api.setBiomeTexture(deepOcean,		WATER);
 		api.setBiomeTexture(river,			WATER);
 		api.setBiomeTexture(frozenOcean,	ICE);
 		api.setBiomeTexture(frozenRiver,	ICE);
@@ -140,6 +141,7 @@ public class ClientProxy extends CommonProxy {
 		api.setBiomeTexture(stoneBeach,		ROCK_SHORE);
 		api.setBiomeTexture(desert,			SAND);
 		api.setBiomeTexture(plains,			PLAINS);
+		api.setBiomeTexture(plains.biomeID + 128, SUNFLOWERS);
 		api.setBiomeTexture(icePlains,		SNOW);
 		api.setBiomeTexture(icePlains.biomeID + 128, ICE_SPIKES); // this is a biome mutation
 		api.setBiomeTexture(coldBeach,		SHORE);

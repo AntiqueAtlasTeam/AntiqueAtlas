@@ -15,6 +15,7 @@ public class TextureSet {
 	public static final TextureSet ROCK_SHORE	= new TextureSetShore("ROCK_SHORE", TILE_ROCK_SHORE);
 	public static final TextureSet SAND			= standard("SAND", TILE_SAND, TILE_SAND2);
 	public static final TextureSet PLAINS		= standard("PLAINS", TILE_GRASS, TILE_GRASS2, TILE_GRASS3, TILE_GRASS4);
+	public static final TextureSet SUNFLOWERS	= standard("SUNFLOWERS", TILE_SUNFLOWERS, TILE_SUNFLOWERS2, TILE_GRASS3, TILE_GRASS4);
 	
 	// Snowy stuff
 	public static final TextureSet ICE_SPIKES	= standard("ICE_SPIKES", TILE_ICE_SPIKES, TILE_ICE_SPIKES2);
@@ -55,7 +56,8 @@ public class TextureSet {
 	
 	// Sophisticated stitching stuff:
 	static {
-		WATER.stitchTo(SHORE, SWAMP);
+		stitchMutually(PLAINS, SUNFLOWERS);
+		WATER.stitchTo(SHORE, ROCK_SHORE, SWAMP);
 		SNOW.stitchTo(SNOW_PINES, SNOW_HILLS, ICE_SPIKES, SNOW_PINES_HILLS);
 		SNOW_PINES.stitchTo(SNOW, SNOW_HILLS, ICE_SPIKES, SNOW_PINES_HILLS);
 		stitchMutually(MOUNTAINS, MOUNTAINS_NAKED, MOUNTAINS_SNOW_CAPS, MOUNTAINS_ALL);
