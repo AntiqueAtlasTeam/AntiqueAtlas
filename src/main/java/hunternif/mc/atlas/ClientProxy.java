@@ -94,6 +94,7 @@ public class ClientProxy extends CommonProxy {
 		map.register(TEST);
 		map.register(ICE);
 		map.register(SHORE);
+		map.register(ROCK_SHORE);
 		map.register(SAND);
 		map.register(PLAINS);
 		
@@ -136,6 +137,7 @@ public class ClientProxy extends CommonProxy {
 		api.setBiomeTexture(frozenOcean,	ICE);
 		api.setBiomeTexture(frozenRiver,	ICE);
 		api.setBiomeTexture(beach,			SHORE);
+		api.setBiomeTexture(stoneBeach,		ROCK_SHORE);
 		api.setBiomeTexture(desert,			SAND);
 		api.setBiomeTexture(plains,			PLAINS);
 		api.setBiomeTexture(icePlains,		SNOW);
