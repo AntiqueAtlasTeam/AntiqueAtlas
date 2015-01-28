@@ -10,8 +10,8 @@ import net.minecraft.util.ResourceLocation;
 
 public class TextureSet {
 	public static final TextureSet TEST			= standard("TEST", TILE_TEST);
-	public static final TextureSet ICE			= standard("ICE", TILE_ICE_NOBORDER); // previously FROZEN_WATER
-	public static final TextureSet SHORE		= new TextureSetShore("SHORE", TILE_SHORE, TILE_SHORE2, TILE_SHORE3); // previously BEACH
+	public static final TextureSet ICE			= standard("ICE", TILE_ICE_NOBORDER);
+	public static final TextureSet SHORE		= new TextureSetShore("SHORE", TILE_SHORE, TILE_SHORE2, TILE_SHORE3);
 	public static final TextureSet ROCK_SHORE	= new TextureSetShore("ROCK_SHORE", TILE_ROCK_SHORE);
 	public static final TextureSet SAND			= standard("SAND", TILE_SAND, TILE_SAND2);
 	public static final TextureSet PLAINS		= standard("PLAINS", TILE_GRASS, TILE_GRASS2, TILE_GRASS3, TILE_GRASS4);
@@ -36,8 +36,9 @@ public class TextureSet {
 			TILE_MOUNTAINS3, TILE_MOUNTAINS4, TILE_SNOW_CAPS, TILE_SNOW_CAPS);
 	
 	public static final TextureSet HILLS		= standard("HILLS", TILE_HILLS);
-	public static final TextureSet FOREST		= standard("FOREST", TILE_FOREST, TILE_FOREST2);
-	public static final TextureSet FOREST_HILLS	= standard("FOREST_HILLS", TILE_FOREST_HILLS, TILE_FOREST_HILLS2);
+	public static final TextureSet FOREST		= standard("FOREST", TILE_FOREST, TILE_FOREST2, TILE_FOREST3);
+	public static final TextureSet DENSE_FOREST		= standard("DENSE_FOREST", TILE_DENSE_FOREST, TILE_DENSE_FOREST2);
+	public static final TextureSet DENSE_FOREST_HILLS	= standard("DENSE_FOREST_HILLS", TILE_DENSE_FOREST_HILLS, TILE_DENSE_FOREST_HILLS2);
 	public static final TextureSet JUNGLE		= standard("JUNGLE", TILE_JUNGLE, TILE_JUNGLE2);
 	public static final TextureSet JUNGLE_HILLS = standard("JUNGLE_HILLS", TILE_JUNGLE_HILLS, TILE_JUNGLE_HILLS2);
 	public static final TextureSet PINES		= standard("PINES", TILE_PINES, TILE_PINES2, TILE_PINES3);

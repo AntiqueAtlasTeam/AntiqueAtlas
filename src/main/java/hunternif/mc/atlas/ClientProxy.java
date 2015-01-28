@@ -111,7 +111,8 @@ public class ClientProxy extends CommonProxy {
 		
 		map.register(HILLS);
 		map.register(FOREST);
-		map.register(FOREST_HILLS);
+		map.register(DENSE_FOREST);
+		map.register(DENSE_FOREST_HILLS);
 		map.register(JUNGLE);
 		map.register(JUNGLE_HILLS);
 		map.register(PINES);
@@ -132,41 +133,42 @@ public class ClientProxy extends CommonProxy {
 	/** Assign default textures to vanilla biomes. */
 	private void assignVanillaBiomeTextures() {
 		TileAPI api = AtlasAPI.getTileAPI();
-		api.setBiomeTexture(ocean,			WATER);
-		api.setBiomeTexture(deepOcean,		WATER);
-		api.setBiomeTexture(river,			WATER);
-		api.setBiomeTexture(frozenOcean,	ICE);
-		api.setBiomeTexture(frozenRiver,	ICE);
-		api.setBiomeTexture(beach,			SHORE);
-		api.setBiomeTexture(stoneBeach,		ROCK_SHORE);
-		api.setBiomeTexture(desert,			SAND);
-		api.setBiomeTexture(plains,			PLAINS);
+		api.setBiomeTexture(ocean, WATER);
+		api.setBiomeTexture(deepOcean, WATER);
+		api.setBiomeTexture(river, WATER);
+		api.setBiomeTexture(frozenOcean, ICE);
+		api.setBiomeTexture(frozenRiver, ICE);
+		api.setBiomeTexture(beach, SHORE);
+		api.setBiomeTexture(stoneBeach, ROCK_SHORE);
+		api.setBiomeTexture(desert, SAND);
+		api.setBiomeTexture(plains, PLAINS);
 		api.setBiomeTexture(plains.biomeID + 128, SUNFLOWERS);
-		api.setBiomeTexture(icePlains,		SNOW);
+		api.setBiomeTexture(icePlains, SNOW);
 		api.setBiomeTexture(icePlains.biomeID + 128, ICE_SPIKES); // this is a biome mutation
-		api.setBiomeTexture(coldBeach,		SHORE);
-		api.setBiomeTexture(jungleHills,	JUNGLE_HILLS);
-		api.setBiomeTexture(forestHills,	FOREST_HILLS);
-		api.setBiomeTexture(desertHills,	HILLS);
-		api.setBiomeTexture(extremeHills,	MOUNTAINS);
+		api.setBiomeTexture(coldBeach, SHORE);
+		api.setBiomeTexture(jungleHills, JUNGLE_HILLS);
+		api.setBiomeTexture(desertHills, HILLS);
+		api.setBiomeTexture(extremeHills, MOUNTAINS);
 		api.setBiomeTexture(extremeHillsEdge, MOUNTAINS);
 		api.setBiomeTexture(extremeHills.biomeID + 128, MOUNTAINS_SNOW_CAPS);
 		api.setBiomeTexture(extremeHillsPlus, MOUNTAINS_ALL);
 		api.setBiomeTexture(extremeHillsPlus.biomeID + 128, MOUNTAINS_SNOW_CAPS);
-		api.setBiomeTexture(iceMountains,	SNOW_HILLS);
-		api.setBiomeTexture(forest,			FOREST);
-		api.setBiomeTexture(jungle,			JUNGLE);
-		api.setBiomeTexture(taiga,			PINES);
-		api.setBiomeTexture(taigaHills,		PINES_HILLS);
-		api.setBiomeTexture(coldTaiga,		SNOW_PINES);
-		api.setBiomeTexture(coldTaigaHills,	SNOW_PINES_HILLS);
-		api.setBiomeTexture(megaTaiga,		MEGA_TAIGA);
+		api.setBiomeTexture(iceMountains, SNOW_HILLS);
+		api.setBiomeTexture(forest, FOREST);
+		api.setBiomeTexture(roofedForest, DENSE_FOREST);
+		api.setBiomeTexture(roofedForest.biomeID + 128, DENSE_FOREST_HILLS); //TODO roofed forest M has steeper cliffs
+		api.setBiomeTexture(jungle, JUNGLE);
+		api.setBiomeTexture(taiga, PINES);
+		api.setBiomeTexture(taigaHills, PINES_HILLS);
+		api.setBiomeTexture(coldTaiga, SNOW_PINES);
+		api.setBiomeTexture(coldTaigaHills, SNOW_PINES_HILLS);
+		api.setBiomeTexture(megaTaiga, MEGA_TAIGA);
 		api.setBiomeTexture(megaTaiga.biomeID + 128, MEGA_SPRUCE);
 		api.setBiomeTexture(megaTaigaHills, MEGA_TAIGA_HILLS);
 		api.setBiomeTexture(megaTaigaHills.biomeID + 128, MEGA_SPRUCE_HILLS);
-		api.setBiomeTexture(swampland,		SWAMP);
-		api.setBiomeTexture(sky,			SHORE);
-		//api.setBiomeTexture(hell,			NETHER);
+		api.setBiomeTexture(swampland, SWAMP);
+		api.setBiomeTexture(sky, SHORE);
+		//api.setBiomeTexture(hell, NETHER);
 		api.setBiomeTexture(mushroomIsland, MUSHROOM);
 		api.setBiomeTexture(mushroomIslandShore, SHORE);
 	}

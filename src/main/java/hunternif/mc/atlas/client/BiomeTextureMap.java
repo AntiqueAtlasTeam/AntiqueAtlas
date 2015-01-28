@@ -90,7 +90,7 @@ public class BiomeTextureMap extends SaveData {
 				if (types.contains(Type.SNOWY)) {
 					setTexture(biomeID, PINES_HILLS);
 				} else {
-					setTexture(biomeID, FOREST_HILLS);
+					setTexture(biomeID, DENSE_FOREST_HILLS);
 				}
 			} else if (types.contains(Type.JUNGLE)) {
 				setTexture(biomeID, JUNGLE_HILLS);
@@ -104,7 +104,7 @@ public class BiomeTextureMap extends SaveData {
 			if (types.contains(Type.SNOWY)) {
 				setTexture(biomeID, PINES);
 			} else {
-				setTexture(biomeID, FOREST);
+				setTexture(biomeID, DENSE_FOREST);
 			}
 		} else if (types.contains(Type.SANDY) || types.contains(Type.WASTELAND)) {
 			if (types.contains(Type.SNOWY)) {
