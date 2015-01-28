@@ -18,9 +18,10 @@ public class ChunkBiomeAnalyzer {
 					// Water is important to show connected rivers:
 					biomeOccurences[biomeId] += 4;
 				} else if (BiomeDictionary.isBiomeOfType(biomes[biomeId], Type.SWAMP)) {
-					// Swamps are often intermingled with water, but they look
-					// like water themselves, so they take precedence:
-					biomeOccurences[biomeId] += 6;
+					// Swamps are often intermingled with water
+					biomeOccurences[biomeId] += 3;
+				} else if (BiomeDictionary.isBiomeOfType(biomes[biomeId], Type.BEACH)){
+					biomeOccurences[biomeId] += 3;
 				} else {
 					biomeOccurences[biomeId] ++;
 				}
