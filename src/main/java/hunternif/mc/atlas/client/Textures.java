@@ -113,6 +113,11 @@ public class Textures {
 	public static final ResourceLocation TILE_SWAMP4 = new ResourceLocation(GUI_TILES + "swamp4.png");
 	public static final ResourceLocation TILE_SWAMP5 = new ResourceLocation(GUI_TILES + "swamp5.png");
 	public static final ResourceLocation TILE_SWAMP6 = new ResourceLocation(GUI_TILES + "swamp6.png");
+	public static final ResourceLocation TILE_SWAMP_HILLS = new ResourceLocation(GUI_TILES + "swamp_hills.png");
+	public static final ResourceLocation TILE_SWAMP_HILLS2 = new ResourceLocation(GUI_TILES + "swamp_hills2.png");
+	public static final ResourceLocation TILE_SWAMP_HILLS3 = new ResourceLocation(GUI_TILES + "swamp_hills3.png");
+	public static final ResourceLocation TILE_SWAMP_HILLS4 = new ResourceLocation(GUI_TILES + "swamp_hills4.png");
+	public static final ResourceLocation TILE_SWAMP_HILLS5 = new ResourceLocation(GUI_TILES + "swamp_hills5.png");
 	public static final ResourceLocation TILE_MUSHROOM = new ResourceLocation(GUI_TILES + "mushroom.png");
 	public static final ResourceLocation TILE_MUSHROOM2 = new ResourceLocation(GUI_TILES + "mushroom2.png");
 	public static final ResourceLocation TILE_JUNGLE = new ResourceLocation(GUI_TILES + "jungle.png");

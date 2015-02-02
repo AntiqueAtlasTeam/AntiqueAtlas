@@ -125,6 +125,7 @@ public class ClientProxy extends CommonProxy {
 		map.register(MEGA_TAIGA_HILLS);
 		
 		map.register(SWAMP);
+		map.register(SWAMP_HILLS);
 		map.register(MUSHROOM);
 		map.register(WATER);
 		map.register(HOUSE);
@@ -169,6 +170,7 @@ public class ClientProxy extends CommonProxy {
 		api.setBiomeTexture(megaTaigaHills, MEGA_TAIGA_HILLS);
 		api.setBiomeTexture(megaTaigaHills.biomeID + 128, MEGA_SPRUCE_HILLS);
 		api.setBiomeTexture(swampland, SWAMP);
+		api.setBiomeTexture(swampland.biomeID + 128, SWAMP_HILLS);
 		api.setBiomeTexture(sky, SHORE);
 		//api.setBiomeTexture(hell, NETHER);
 		api.setBiomeTexture(mushroomIsland, MUSHROOM);

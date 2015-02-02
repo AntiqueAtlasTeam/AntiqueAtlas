@@ -51,6 +51,7 @@ public class TextureSet {
 	public static final TextureSet MEGA_TAIGA_HILLS = standard("MEGA_TAIGA_HILLS", TILE_MEGA_TAIGA_HILLS, TILE_MEGA_TAIGA_HILLS2);
 	
 	public static final TextureSet SWAMP		= standard("SWAMP", TILE_SWAMP, TILE_SWAMP, TILE_SWAMP, TILE_SWAMP2, TILE_SWAMP3, TILE_SWAMP4, TILE_SWAMP5, TILE_SWAMP6);
+	public static final TextureSet SWAMP_HILLS	= standard("SWAMP_HILLS", TILE_SWAMP_HILLS, TILE_SWAMP_HILLS2, TILE_SWAMP_HILLS3, TILE_SWAMP_HILLS4, TILE_SWAMP_HILLS5);
 	public static final TextureSet MUSHROOM		= standard("MUSHROOM", TILE_MUSHROOM, TILE_MUSHROOM2);
 	public static final TextureSet WATER		= standard("WATER", TILE_WATER, TILE_WATER2);
 	public static final TextureSet HOUSE		= standard("HOUSE", TILE_HOUSE);
@@ -60,6 +61,7 @@ public class TextureSet {
 	static {
 		stitchMutually(PLAINS, SUNFLOWERS);
 		WATER.stitchTo(SHORE, ROCK_SHORE, SWAMP);
+		SWAMP.stitchTo(SWAMP_HILLS);
 		SNOW.stitchTo(SNOW_PINES, SNOW_HILLS, ICE_SPIKES, SNOW_PINES_HILLS);
 		SNOW_PINES.stitchTo(SNOW, SNOW_HILLS, ICE_SPIKES, SNOW_PINES_HILLS);
 		stitchMutually(MOUNTAINS, MOUNTAINS_NAKED, MOUNTAINS_SNOW_CAPS, MOUNTAINS_ALL);
