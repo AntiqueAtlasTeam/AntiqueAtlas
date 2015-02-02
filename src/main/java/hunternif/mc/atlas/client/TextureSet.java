@@ -13,7 +13,7 @@ public class TextureSet {
 	public static final TextureSet ICE			= standard("ICE", TILE_ICE_NOBORDER);
 	public static final TextureSet SHORE		= new TextureSetShore("SHORE", TILE_SHORE, TILE_SHORE2, TILE_SHORE3);
 	public static final TextureSet ROCK_SHORE	= new TextureSetShore("ROCK_SHORE", TILE_ROCK_SHORE);
-	public static final TextureSet SAND			= standard("SAND", TILE_SAND, TILE_SAND2);
+	public static final TextureSet SAND			= standard("SAND", TILE_SAND, TILE_SAND, TILE_SAND2, TILE_SAND2, TILE_SAND3, TILE_SAND3, TILE_SAND4);
 	public static final TextureSet PLAINS		= standard("PLAINS", TILE_GRASS, TILE_GRASS2, TILE_GRASS3, TILE_GRASS4);
 	public static final TextureSet SUNFLOWERS	= standard("SUNFLOWERS", TILE_SUNFLOWERS, TILE_SUNFLOWERS2, TILE_GRASS3, TILE_GRASS4);
 	
