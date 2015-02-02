@@ -64,6 +64,7 @@ public class Textures {
 	public static final ResourceLocation TILE_DENSE_FOREST_HILLS = new ResourceLocation(GUI_TILES + "dense_forest_hills.png");
 	public static final ResourceLocation TILE_DENSE_FOREST_HILLS2 = new ResourceLocation(GUI_TILES + "dense_forest_hills2.png");
 	public static final ResourceLocation TILE_HILLS = new ResourceLocation(GUI_TILES + "hills.png");
+	public static final ResourceLocation TILE_GRASS_HILLS = new ResourceLocation(GUI_TILES + "grass_hills.png");
 	public static final ResourceLocation TILE_PINES = new ResourceLocation(GUI_TILES + "pines.png");
 	public static final ResourceLocation TILE_PINES2 = new ResourceLocation(GUI_TILES + "pines2.png");
 	public static final ResourceLocation TILE_PINES3 = new ResourceLocation(GUI_TILES + "pines3.png");
@@ -124,6 +125,12 @@ public class Textures {
 	public static final ResourceLocation TILE_JUNGLE2 = new ResourceLocation(GUI_TILES + "jungle2.png");
 	public static final ResourceLocation TILE_JUNGLE_HILLS = new ResourceLocation(GUI_TILES + "jungle_hills.png");
 	public static final ResourceLocation TILE_JUNGLE_HILLS2 = new ResourceLocation(GUI_TILES + "jungle_hills2.png");
+	public static final ResourceLocation TILE_JUNGLE_EDGE = new ResourceLocation(GUI_TILES + "jungle_edge.png");
+	public static final ResourceLocation TILE_JUNGLE_EDGE2 = new ResourceLocation(GUI_TILES + "jungle_edge2.png");
+	public static final ResourceLocation TILE_JUNGLE_EDGE3 = new ResourceLocation(GUI_TILES + "jungle_edge3.png");
+	public static final ResourceLocation TILE_JUNGLE_EDGE_HILLS = new ResourceLocation(GUI_TILES + "jungle_edge_hills.png");
+	public static final ResourceLocation TILE_JUNGLE_EDGE_HILLS2 = new ResourceLocation(GUI_TILES + "jungle_edge_hills2.png");
+	public static final ResourceLocation TILE_JUNGLE_EDGE_HILLS3 = new ResourceLocation(GUI_TILES + "jungle_edge_hills3.png");
 	
 	// Village:
 	public static final ResourceLocation TILE_HOUSE = new ResourceLocation(GUI_TILES + "house.png");
