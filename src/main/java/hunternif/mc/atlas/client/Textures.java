@@ -63,6 +63,9 @@ public class Textures {
 	public static final ResourceLocation TILE_DENSE_FOREST2 = new ResourceLocation(GUI_TILES + "dense_forest2.png");
 	public static final ResourceLocation TILE_DENSE_FOREST_HILLS = new ResourceLocation(GUI_TILES + "dense_forest_hills.png");
 	public static final ResourceLocation TILE_DENSE_FOREST_HILLS2 = new ResourceLocation(GUI_TILES + "dense_forest_hills2.png");
+	public static final ResourceLocation TILE_BIRCH = new ResourceLocation(GUI_TILES + "birch.png");
+	public static final ResourceLocation TILE_BIRCH2 = new ResourceLocation(GUI_TILES + "birch2.png");
+	public static final ResourceLocation TILE_DENSE_BIRCH = new ResourceLocation(GUI_TILES + "dense_birch.png");
 	public static final ResourceLocation TILE_HILLS = new ResourceLocation(GUI_TILES + "hills.png");
 	public static final ResourceLocation TILE_GRASS_HILLS = new ResourceLocation(GUI_TILES + "grass_hills.png");
 	public static final ResourceLocation TILE_PINES = new ResourceLocation(GUI_TILES + "pines.png");
