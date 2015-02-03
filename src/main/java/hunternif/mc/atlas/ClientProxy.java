@@ -115,6 +115,7 @@ public class ClientProxy extends CommonProxy {
 		map.register(DENSE_FOREST);
 		map.register(DENSE_FOREST_HILLS);
 		map.register(BIRCH);
+		map.register(BIRCH_HILLS);
 		map.register(DENSE_BIRCH);
 		map.register(JUNGLE);
 		map.register(JUNGLE_HILLS);
@@ -165,6 +166,7 @@ public class ClientProxy extends CommonProxy {
 		api.setBiomeTexture(roofedForest, DENSE_FOREST);
 		api.setBiomeTexture(roofedForest.biomeID + 128, DENSE_FOREST_HILLS); //TODO roofed forest M has steeper cliffs
 		api.setBiomeTexture(birchForest, BIRCH);
+		api.setBiomeTexture(birchForestHills, BIRCH_HILLS);
 		api.setBiomeTexture(jungle, JUNGLE);
 		api.setBiomeTexture(jungle.biomeID + 128, JUNGLE_CLIFFS);
 		api.setBiomeTexture(jungleHills, JUNGLE_HILLS);

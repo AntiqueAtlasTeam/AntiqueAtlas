@@ -41,6 +41,7 @@ public class TextureSet {
 	public static final TextureSet DENSE_FOREST		= standard("DENSE_FOREST", TILE_DENSE_FOREST, TILE_DENSE_FOREST2);
 	public static final TextureSet DENSE_FOREST_HILLS	= standard("DENSE_FOREST_HILLS", TILE_DENSE_FOREST_HILLS, TILE_DENSE_FOREST_HILLS2);
 	public static final TextureSet BIRCH		= standard("BIRCH", TILE_BIRCH, TILE_BIRCH2);
+	public static final TextureSet BIRCH_HILLS	= standard("BIRCH_HILLS", TILE_BIRCH_HILLS, TILE_BIRCH_HILLS2);
 	public static final TextureSet DENSE_BIRCH	= standard("DENSE_BIRCH", TILE_DENSE_BIRCH);
 	public static final TextureSet JUNGLE		= standard("JUNGLE", TILE_JUNGLE, TILE_JUNGLE2);
 	public static final TextureSet JUNGLE_HILLS = standard("JUNGLE_HILLS", TILE_JUNGLE_HILLS, TILE_JUNGLE_HILLS2);
