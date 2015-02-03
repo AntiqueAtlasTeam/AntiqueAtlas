@@ -97,6 +97,8 @@ public class ClientProxy extends CommonProxy {
 		map.register(ROCK_SHORE);
 		map.register(SAND);
 		map.register(PLAINS);
+		map.register(HILLS);
+		map.register(SAND_HILLS);
 		
 		map.register(ICE_SPIKES);
 		map.register(SNOW_PINES);
@@ -109,7 +111,6 @@ public class ClientProxy extends CommonProxy {
 		map.register(MOUNTAINS_SNOW_CAPS);
 		map.register(MOUNTAINS_ALL);
 		
-		map.register(HILLS);
 		map.register(FOREST);
 		map.register(FOREST_HILLS);
 		map.register(FOREST_FLOWERS);
@@ -129,6 +130,7 @@ public class ClientProxy extends CommonProxy {
 		map.register(PINES_HILLS);
 		map.register(SAVANNA);
 		map.register(SAVANNA_CLIFFS);
+		map.register(MESA);
 		
 		map.register(MEGA_SPRUCE);
 		map.register(MEGA_SPRUCE_HILLS);
@@ -155,11 +157,12 @@ public class ClientProxy extends CommonProxy {
 		api.setBiomeTexture(coldBeach, SHORE);
 		api.setBiomeTexture(stoneBeach, ROCK_SHORE);
 		api.setBiomeTexture(desert, SAND);
+		api.setBiomeTexture(desert.biomeID + 128, SAND);
+		api.setBiomeTexture(desertHills, SAND_HILLS);
 		api.setBiomeTexture(plains, PLAINS);
 		api.setBiomeTexture(plains.biomeID + 128, SUNFLOWERS);
 		api.setBiomeTexture(icePlains, SNOW);
 		api.setBiomeTexture(icePlains.biomeID + 128, ICE_SPIKES); // this is a biome mutation
-		api.setBiomeTexture(desertHills, HILLS);
 		api.setBiomeTexture(extremeHills, MOUNTAINS);
 		api.setBiomeTexture(extremeHillsEdge, MOUNTAINS);
 		api.setBiomeTexture(extremeHills.biomeID + 128, MOUNTAINS_SNOW_CAPS);
@@ -196,6 +199,7 @@ public class ClientProxy extends CommonProxy {
 		api.setBiomeTexture(mushroomIslandShore, SHORE);
 		api.setBiomeTexture(savanna, SAVANNA);
 		api.setBiomeTexture(savanna.biomeID + 128, SAVANNA_CLIFFS);
+		api.setBiomeTexture(mesa, MESA);
 	}
 	
 	/** Load default marker textures. */

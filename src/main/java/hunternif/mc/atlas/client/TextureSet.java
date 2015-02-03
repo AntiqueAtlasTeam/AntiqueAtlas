@@ -13,7 +13,8 @@ public class TextureSet {
 	public static final TextureSet ICE			= standard("ICE", TILE_ICE_NOBORDER);
 	public static final TextureSet SHORE		= new TextureSetShore("SHORE", TILE_SHORE, TILE_SHORE2, TILE_SHORE3);
 	public static final TextureSet ROCK_SHORE	= new TextureSetShore("ROCK_SHORE", TILE_ROCK_SHORE);
-	public static final TextureSet SAND			= standard("SAND", TILE_SAND, TILE_SAND, TILE_SAND2, TILE_SAND2, TILE_SAND3, TILE_SAND3, TILE_SAND4);
+	public static final TextureSet SAND			= standard("SAND", TILE_SAND, TILE_SAND, TILE_SAND2, TILE_SAND2,
+			TILE_SAND3, TILE_SAND3, TILE_CACTI, TILE_SAND_BUSHES, TILE_SAND_BUSHES);
 	public static final TextureSet PLAINS		= standard("PLAINS", TILE_GRASS, TILE_GRASS2, TILE_GRASS3, TILE_GRASS4);
 	public static final TextureSet SUNFLOWERS	= standard("SUNFLOWERS", TILE_SUNFLOWERS, TILE_SUNFLOWERS2, TILE_GRASS3, TILE_GRASS4);
 	
@@ -36,6 +37,7 @@ public class TextureSet {
 			TILE_MOUNTAINS3, TILE_MOUNTAINS4, TILE_SNOW_CAPS, TILE_SNOW_CAPS);
 	
 	public static final TextureSet HILLS		= standard("HILLS", TILE_HILLS);
+	public static final TextureSet SAND_HILLS	= standard("SAND_HILLS", TILE_HILLS, TILE_HILLS, TILE_HILLS, TILE_HILLS_BUSHES, TILE_HILLS_CACTI);
 	public static final TextureSet FOREST		= standard("FOREST", TILE_FOREST, TILE_FOREST2, TILE_FOREST3);
 	public static final TextureSet FOREST_HILLS	= standard("FOREST_HILLS", TILE_FOREST_HILLS, TILE_FOREST_HILLS2, TILE_FOREST_HILLS3);
 	public static final TextureSet FOREST_FLOWERS	= standard("FOREST_FLOWERS", TILE_FOREST_FLOWERS, TILE_FOREST_FLOWERS2, TILE_FOREST_FLOWERS3);
@@ -51,7 +53,7 @@ public class TextureSet {
 	public static final TextureSet JUNGLE_CLIFFS = standard("JUNGLE_CLIFFS", TILE_BUSHES_CLIFFS, TILE_JUNGLE_CLIFFS, TILE_JUNGLE_CLIFFS2);
 	public static final TextureSet JUNGLE_EDGE	= standard("JUNGLE_EDGE", TILE_GRASS2, TILE_GRASS3, TILE_GRASS4,
 			TILE_JUNGLE_EDGE, TILE_JUNGLE_EDGE2, TILE_JUNGLE_EDGE3);
-	public static final TextureSet JUNGLE_EDGE_HILLS = standard("JUNGLE_EDGE_HILLS", TILE_GRASS_HILLS, TILE_GRASS_HILLS,
+	public static final TextureSet JUNGLE_EDGE_HILLS = standard("JUNGLE_EDGE_HILLS", TILE_HILLS_GRASS, TILE_HILLS_GRASS,
 			TILE_JUNGLE_EDGE_HILLS, TILE_JUNGLE_EDGE_HILLS2, TILE_JUNGLE_EDGE_HILLS3);
 	public static final TextureSet PINES		= standard("PINES", TILE_PINES, TILE_PINES2, TILE_PINES3);
 	public static final TextureSet PINES_HILLS	= standard("PINES_HILLS", TILE_PINES_HILLS, TILE_PINES_HILLS2, TILE_PINES_HILLS3);
@@ -59,6 +61,7 @@ public class TextureSet {
 			TILE_GRASS3, TILE_GRASS3, TILE_GRASS4, TILE_GRASS4, TILE_SAVANNA, TILE_SAVANNA2, TILE_SAVANNA3);
 	public static final TextureSet SAVANNA_CLIFFS = standard("SAVANNA_CLIFFS", TILE_CLIFFS,
 			TILE_SAVANNA_CLIFFS, TILE_SAVANNA_CLIFFS2, TILE_SAVANNA_CLIFFS3);
+	public static final TextureSet MESA			= standard("MESA", TILE_MESA, TILE_MESA2, TILE_MESA3, TILE_MESA4, TILE_SAND_BUSHES);
 	
 	public static final TextureSet MEGA_SPRUCE	= standard("MEGA_SPRUCE", TILE_MEGA_SPRUCE, TILE_MEGA_SPRUCE2);
 	public static final TextureSet MEGA_SPRUCE_HILLS = standard("MEGA_SPRUCE_HILLS", TILE_MEGA_SPRUCE_HILLS, TILE_MEGA_SPRUCE_HILLS2);

@@ -76,7 +76,9 @@ public class Textures {
 	public static final ResourceLocation TILE_TALL_BIRCH_HILLS2 = new ResourceLocation(GUI_TILES + "tall_birch_hills2.png");
 	public static final ResourceLocation TILE_DENSE_BIRCH = new ResourceLocation(GUI_TILES + "dense_birch.png");
 	public static final ResourceLocation TILE_HILLS = new ResourceLocation(GUI_TILES + "hills.png");
-	public static final ResourceLocation TILE_GRASS_HILLS = new ResourceLocation(GUI_TILES + "grass_hills.png");
+	public static final ResourceLocation TILE_HILLS_BUSHES = new ResourceLocation(GUI_TILES + "hills_bushes.png");
+	public static final ResourceLocation TILE_HILLS_CACTI = new ResourceLocation(GUI_TILES + "hills_cacti.png");
+	public static final ResourceLocation TILE_HILLS_GRASS = new ResourceLocation(GUI_TILES + "hills_grass.png");
 	public static final ResourceLocation TILE_PINES = new ResourceLocation(GUI_TILES + "pines.png");
 	public static final ResourceLocation TILE_PINES2 = new ResourceLocation(GUI_TILES + "pines2.png");
 	public static final ResourceLocation TILE_PINES3 = new ResourceLocation(GUI_TILES + "pines3.png");
@@ -94,7 +96,8 @@ public class Textures {
 	public static final ResourceLocation TILE_SAND = new ResourceLocation(GUI_TILES + "sand.png");
 	public static final ResourceLocation TILE_SAND2 = new ResourceLocation(GUI_TILES + "sand2.png");
 	public static final ResourceLocation TILE_SAND3 = new ResourceLocation(GUI_TILES + "sand3.png");
-	public static final ResourceLocation TILE_SAND4 = new ResourceLocation(GUI_TILES + "sand4.png");
+	public static final ResourceLocation TILE_CACTI = new ResourceLocation(GUI_TILES + "cacti.png");
+	public static final ResourceLocation TILE_SAND_BUSHES = new ResourceLocation(GUI_TILES + "sand_bushes.png");
 	public static final ResourceLocation TILE_SHORE = new ResourceLocation(GUI_TILES + "shore.png");
 	public static final ResourceLocation TILE_SHORE2 = new ResourceLocation(GUI_TILES + "shore2.png");
 	public static final ResourceLocation TILE_ROCK_SHORE = new ResourceLocation(GUI_TILES + "rock_shore.png");
@@ -155,6 +158,10 @@ public class Textures {
 	public static final ResourceLocation TILE_SAVANNA_CLIFFS = new ResourceLocation(GUI_TILES + "savanna_cliffs.png");
 	public static final ResourceLocation TILE_SAVANNA_CLIFFS2 = new ResourceLocation(GUI_TILES + "savanna_cliffs2.png");
 	public static final ResourceLocation TILE_SAVANNA_CLIFFS3 = new ResourceLocation(GUI_TILES + "savanna_cliffs3.png");
+	public static final ResourceLocation TILE_MESA = new ResourceLocation(GUI_TILES + "mesa.png");
+	public static final ResourceLocation TILE_MESA2 = new ResourceLocation(GUI_TILES + "mesa2.png");
+	public static final ResourceLocation TILE_MESA3 = new ResourceLocation(GUI_TILES + "mesa3.png");
+	public static final ResourceLocation TILE_MESA4 = new ResourceLocation(GUI_TILES + "mesa4.png");
 	
 	// Village:
 	public static final ResourceLocation TILE_HOUSE = new ResourceLocation(GUI_TILES + "house.png");
