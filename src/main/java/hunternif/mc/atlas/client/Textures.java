@@ -169,6 +169,12 @@ public class Textures {
 	public static final ResourceLocation TILE_PLATEAU_MESA = new ResourceLocation(GUI_TILES + "plateau_mesa.png");
 	public static final ResourceLocation TILE_PLATEAU_MESA2 = new ResourceLocation(GUI_TILES + "plateau_mesa2.png");
 	public static final ResourceLocation TILE_PLATEAU_TREES = new ResourceLocation(GUI_TILES + "plateau_trees.png");
+	public static final ResourceLocation TILE_PLATEAU_GRASS = new ResourceLocation(GUI_TILES + "plateau_grass.png");
+	public static final ResourceLocation TILE_PLATEAU_GRASS2 = new ResourceLocation(GUI_TILES + "plateau_grass2.png");
+	public static final ResourceLocation TILE_PLATEAU_GRASS3 = new ResourceLocation(GUI_TILES + "plateau_grass3.png");
+	public static final ResourceLocation TILE_PLATEAU_SAVANNA = new ResourceLocation(GUI_TILES + "plateau_savanna.png");
+	public static final ResourceLocation TILE_PLATEAU_SAVANNA2 = new ResourceLocation(GUI_TILES + "plateau_savanna2.png");
+	public static final ResourceLocation TILE_PLATEAU_SAVANNA3 = new ResourceLocation(GUI_TILES + "plateau_savanna3.png");
 	
 	// Village:
 	public static final ResourceLocation TILE_HOUSE = new ResourceLocation(GUI_TILES + "house.png");
