@@ -133,7 +133,9 @@ public class ClientProxy extends CommonProxy {
 		map.register(MESA);
 		map.register(BRYCE);
 		map.register(PLATEAU_MESA);
+		map.register(PLATEAU_MESA_LOW);
 		map.register(PLATEAU_MESA_TREES);
+		map.register(PLATEAU_MESA_TREES_LOW);
 		map.register(PLATEAU_SAVANNA);
 		
 		map.register(MEGA_SPRUCE);
@@ -208,6 +210,8 @@ public class ClientProxy extends CommonProxy {
 		api.setBiomeTexture(mesaPlateau, PLATEAU_MESA);
 		api.setBiomeTexture(mesaPlateau_F, PLATEAU_MESA_TREES);
 		api.setBiomeTexture(savannaPlateau, PLATEAU_SAVANNA);
+		api.setBiomeTexture(mesaPlateau.biomeID + 128, PLATEAU_MESA_LOW);
+		api.setBiomeTexture(mesaPlateau_F.biomeID + 128, PLATEAU_MESA_TREES_LOW);
 	}
 	
 	/** Load default marker textures. */

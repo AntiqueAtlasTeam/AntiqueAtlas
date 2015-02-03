@@ -168,7 +168,10 @@ public class Textures {
 	public static final ResourceLocation TILE_BRYCE4 = new ResourceLocation(GUI_TILES + "bryce4.png");
 	public static final ResourceLocation TILE_PLATEAU_MESA = new ResourceLocation(GUI_TILES + "plateau_mesa.png");
 	public static final ResourceLocation TILE_PLATEAU_MESA2 = new ResourceLocation(GUI_TILES + "plateau_mesa2.png");
+	public static final ResourceLocation TILE_PLATEAU_MESA_LOW = new ResourceLocation(GUI_TILES + "plateau_mesa_low.png");
+	public static final ResourceLocation TILE_PLATEAU_MESA_LOW2 = new ResourceLocation(GUI_TILES + "plateau_mesa_low2.png");
 	public static final ResourceLocation TILE_PLATEAU_TREES = new ResourceLocation(GUI_TILES + "plateau_trees.png");
+	public static final ResourceLocation TILE_PLATEAU_TREES_LOW = new ResourceLocation(GUI_TILES + "plateau_trees_low.png");
 	public static final ResourceLocation TILE_PLATEAU_GRASS = new ResourceLocation(GUI_TILES + "plateau_grass.png");
 	public static final ResourceLocation TILE_PLATEAU_GRASS2 = new ResourceLocation(GUI_TILES + "plateau_grass2.png");
 	public static final ResourceLocation TILE_PLATEAU_GRASS3 = new ResourceLocation(GUI_TILES + "plateau_grass3.png");
