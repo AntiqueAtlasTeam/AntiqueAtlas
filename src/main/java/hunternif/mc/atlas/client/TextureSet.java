@@ -64,6 +64,7 @@ public class TextureSet {
 	public static final TextureSet MESA			= standard("MESA", TILE_MESA, TILE_MESA2, TILE_MESA3, TILE_MESA4, TILE_SAND_BUSHES);
 	public static final TextureSet BRYCE		= standard("BRYCE", TILE_BRYCE, TILE_BRYCE2, TILE_BRYCE3, TILE_BRYCE4);
 	public static final TextureSet PLATEAU_MESA		= standard("PLATEAU_MESA", TILE_PLATEAU_MESA, TILE_PLATEAU_MESA2);
+	public static final TextureSet PLATEAU_MESA_TREES = standard("PLATEAU_MESA_TREES", TILE_PLATEAU_MESA, TILE_PLATEAU_MESA2, TILE_PLATEAU_TREES);
 	
 	public static final TextureSet MEGA_SPRUCE	= standard("MEGA_SPRUCE", TILE_MEGA_SPRUCE, TILE_MEGA_SPRUCE2);
 	public static final TextureSet MEGA_SPRUCE_HILLS = standard("MEGA_SPRUCE_HILLS", TILE_MEGA_SPRUCE_HILLS, TILE_MEGA_SPRUCE_HILLS2);

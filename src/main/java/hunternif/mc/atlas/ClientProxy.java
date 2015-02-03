@@ -133,6 +133,7 @@ public class ClientProxy extends CommonProxy {
 		map.register(MESA);
 		map.register(BRYCE);
 		map.register(PLATEAU_MESA);
+		map.register(PLATEAU_MESA_TREES);
 		
 		map.register(MEGA_SPRUCE);
 		map.register(MEGA_SPRUCE_HILLS);
@@ -204,6 +205,7 @@ public class ClientProxy extends CommonProxy {
 		api.setBiomeTexture(mesa, MESA);
 		api.setBiomeTexture(mesa.biomeID + 128, BRYCE);
 		api.setBiomeTexture(mesaPlateau, PLATEAU_MESA);
+		api.setBiomeTexture(mesaPlateau_F, PLATEAU_MESA_TREES);
 	}
 	
 	/** Load default marker textures. */
