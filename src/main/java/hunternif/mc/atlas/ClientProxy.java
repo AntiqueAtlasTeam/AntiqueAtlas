@@ -128,6 +128,7 @@ public class ClientProxy extends CommonProxy {
 		map.register(PINES);
 		map.register(PINES_HILLS);
 		map.register(SAVANNA);
+		map.register(SAVANNA_CLIFFS);
 		
 		map.register(MEGA_SPRUCE);
 		map.register(MEGA_SPRUCE_HILLS);
@@ -194,6 +195,7 @@ public class ClientProxy extends CommonProxy {
 		api.setBiomeTexture(mushroomIsland, MUSHROOM);
 		api.setBiomeTexture(mushroomIslandShore, SHORE);
 		api.setBiomeTexture(savanna, SAVANNA);
+		api.setBiomeTexture(savanna.biomeID + 128, SAVANNA_CLIFFS);
 	}
 	
 	/** Load default marker textures. */

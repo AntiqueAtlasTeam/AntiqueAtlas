@@ -148,9 +148,13 @@ public class Textures {
 	public static final ResourceLocation TILE_JUNGLE_CLIFFS = new ResourceLocation(GUI_TILES + "jungle_cliffs.png");
 	public static final ResourceLocation TILE_JUNGLE_CLIFFS2 = new ResourceLocation(GUI_TILES + "jungle_cliffs2.png");
 	public static final ResourceLocation TILE_BUSHES_CLIFFS = new ResourceLocation(GUI_TILES + "bushes_cliffs.png");
+	public static final ResourceLocation TILE_CLIFFS = new ResourceLocation(GUI_TILES + "cliffs.png");
 	public static final ResourceLocation TILE_SAVANNA = new ResourceLocation(GUI_TILES + "savanna.png");
 	public static final ResourceLocation TILE_SAVANNA2 = new ResourceLocation(GUI_TILES + "savanna2.png");
 	public static final ResourceLocation TILE_SAVANNA3 = new ResourceLocation(GUI_TILES + "savanna3.png");
+	public static final ResourceLocation TILE_SAVANNA_CLIFFS = new ResourceLocation(GUI_TILES + "savanna_cliffs.png");
+	public static final ResourceLocation TILE_SAVANNA_CLIFFS2 = new ResourceLocation(GUI_TILES + "savanna_cliffs2.png");
+	public static final ResourceLocation TILE_SAVANNA_CLIFFS3 = new ResourceLocation(GUI_TILES + "savanna_cliffs3.png");
 	
 	// Village:
 	public static final ResourceLocation TILE_HOUSE = new ResourceLocation(GUI_TILES + "house.png");
