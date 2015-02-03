@@ -162,6 +162,9 @@ public class Textures {
 	public static final ResourceLocation TILE_MESA2 = new ResourceLocation(GUI_TILES + "mesa2.png");
 	public static final ResourceLocation TILE_MESA3 = new ResourceLocation(GUI_TILES + "mesa3.png");
 	public static final ResourceLocation TILE_MESA4 = new ResourceLocation(GUI_TILES + "mesa4.png");
+	public static final ResourceLocation TILE_BRYCE = new ResourceLocation(GUI_TILES + "bryce.png");
+	public static final ResourceLocation TILE_BRYCE2 = new ResourceLocation(GUI_TILES + "bryce2.png");
+	public static final ResourceLocation TILE_BRYCE3 = new ResourceLocation(GUI_TILES + "bryce3.png");
 	
 	// Village:
 	public static final ResourceLocation TILE_HOUSE = new ResourceLocation(GUI_TILES + "house.png");
