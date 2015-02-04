@@ -1,6 +1,6 @@
 package hunternif.mc.atlas.core;
 
-import org.apache.commons.lang3.RandomUtils;
+import java.util.Random;
 
 /**
  * Contains information about the biome and - on the client - the variation
@@ -9,6 +9,8 @@ import org.apache.commons.lang3.RandomUtils;
  */
 public class Tile {
 	public final int biomeID;
+	
+	private static final Random RANDOM = new Random();
 	
 	/** Used for randomizing textures.
 	 * Takes on values from 0 to {@link Short#MAX_VALUE} - 1. */
@@ -25,7 +27,7 @@ public class Tile {
 	
 	/** Set variation number to a random byte. */
 	public void randomizeTexture() {
-		this.variationNumber = (short)RandomUtils.nextInt(0, Short.MAX_VALUE);
+		this.variationNumber = (short) RANDOM.nextInt(Short.MAX_VALUE);
 	}
 	
 	public short getVariationNumber() {
