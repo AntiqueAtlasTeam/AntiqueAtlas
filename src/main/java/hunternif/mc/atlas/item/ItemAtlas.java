@@ -6,7 +6,6 @@ import hunternif.mc.atlas.core.ChunkBiomeAnalyzer;
 import hunternif.mc.atlas.core.ITileStorage;
 import hunternif.mc.atlas.core.Tile;
 import hunternif.mc.atlas.marker.MarkersData;
-import hunternif.mc.atlas.util.ByteUtil;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
@@ -110,8 +109,7 @@ public class ItemAtlas extends Item {
 					if (!chunk.isChunkLoaded) {
 						biomeId = ChunkBiomeAnalyzer.NOT_FOUND;
 					} else {
-						biomeId = biomeAnalyzer.getMeanBiomeID(
-								ByteUtil.unsignedByteToIntArray(chunk.getBiomeArray()));
+						biomeId = biomeAnalyzer.getMeanBiomeID(chunk);
 					}
 					// Finally, put the tile in place:
 					if (biomeId != ChunkBiomeAnalyzer.NOT_FOUND) {
