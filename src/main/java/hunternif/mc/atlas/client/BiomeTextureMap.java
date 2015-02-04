@@ -71,49 +71,120 @@ public class BiomeTextureMap extends SaveData {
 			return;
 		}
 		List<Type> types = Arrays.asList(BiomeDictionary.getTypesForBiome(biome));
+		// 1. Swamp
 		if (types.contains(Type.SWAMP)) {
-			setTexture(biomeID, SWAMP);
-		} else if (types.contains(Type.WATER)) {
-			// Water + trees = swamp
-			if (types.contains(Type.FOREST) || types.contains(Type.JUNGLE) || types.contains(Type.SWAMP)) {
+			if (types.contains(Type.HILLS)) {
+				setTexture(biomeID, SWAMP_HILLS);
+			} else {
 				setTexture(biomeID, SWAMP);
+			}
+		}
+		// 2. Water
+		else if (types.contains(Type.WATER)) {
+			// Water + trees = swamp
+			if (types.contains(Type.FOREST) || types.contains(Type.JUNGLE)) {
+				if (types.contains(Type.HILLS)) {
+					setTexture(biomeID, SWAMP_HILLS);
+				} else {
+					setTexture(biomeID, SWAMP);
+				}
 			} else if (types.contains(Type.SNOWY)){
 				setTexture(biomeID, ICE);
 			} else {
 				setTexture(biomeID, WATER);
 			}
-		} else if (types.contains(Type.MOUNTAIN)) {
-			setTexture(biomeID, MOUNTAINS);
-		} else if (types.contains(Type.HILLS)) {
-			if (types.contains(Type.FOREST)) {
-				// Frozen forest automatically counts as pines:
-				if (types.contains(Type.SNOWY)) {
-					setTexture(biomeID, PINES_HILLS);
-				} else {
-					setTexture(biomeID, DENSE_FOREST_HILLS);
-				}
-			} else if (types.contains(Type.JUNGLE)) {
+		}
+		// 3. Shore
+		else if (types.contains(Type.BEACH)){
+			if (types.contains(Type.MOUNTAIN)) {
+				setTexture(biomeID, ROCK_SHORE);
+			} else {
+				setTexture(biomeID, SHORE);
+			}
+		} 
+		// 4. Jungle
+		else if (types.contains(Type.JUNGLE)) {
+			if (types.contains(Type.MOUNTAIN)) {
+				setTexture(biomeID, JUNGLE_CLIFFS);
+			} else if (types.contains(Type.HILLS)) {
 				setTexture(biomeID, JUNGLE_HILLS);
+			} else {
+				setTexture(biomeID, JUNGLE);
+			}
+		}
+		// 5. Savanna
+		else if (types.contains(Type.SAVANNA)) {
+			if (types.contains(Type.MOUNTAIN) || types.contains(Type.HILLS)) {
+				setTexture(biomeID, SAVANNA_CLIFFS);
+			} else {
+				setTexture(biomeID, SAVANNA);
+			}
+		}
+		// 6. Pines
+		else if (types.contains(Type.CONIFEROUS)) {
+			if (types.contains(Type.MOUNTAIN) || types.contains(Type.HILLS)) {
+				setTexture(biomeID, PINES_HILLS);
+			} else {
+				setTexture(biomeID, PINES);
+			}
+		}
+		// 7. Mesa
+		else if (types.contains(Type.MESA)) {
+			if (types.contains(Type.MOUNTAIN)) {
+				setTexture(biomeID, BRYCE);
+			} else {
+				setTexture(biomeID, MESA);
+			}
+		}
+		// 8. General forest
+		else if (types.contains(Type.FOREST)) {
+			// Frozen forest automatically counts as pines:
+			if (types.contains(Type.SNOWY)) {
+				if (types.contains(Type.HILLS)) {
+					setTexture(biomeID, SNOW_PINES_HILLS);
+				} else {
+					setTexture(biomeID, SNOW_PINES);
+				}
+			} else {
+				// All unknown forests are dense:
+				if (types.contains(Type.HILLS)) {
+					setTexture(biomeID, DENSE_FOREST_HILLS);
+				} else {
+					setTexture(biomeID, DENSE_FOREST);
+				}
+			}
+		}
+		// 9. Various plains
+		else if (types.contains(Type.PLAINS) || types.contains(Type.WASTELAND)) {
+			if (types.contains(Type.SNOWY) || types.contains(Type.COLD)) {
+				if (types.contains(Type.MOUNTAIN)) {
+					setTexture(biomeID, MOUNTAINS_SNOW_CAPS);
+				} else if (types.contains(Type.HILLS)) {
+					setTexture(biomeID, SNOW_HILLS);
+				} else {
+					setTexture(biomeID, SNOW);
+				}
+			} else {
+				if (types.contains(Type.HILLS) || types.contains(Type.MOUNTAIN)) {
+					setTexture(biomeID, DESERT_HILLS);
+				} else {
+					setTexture(biomeID, DESERT);
+				}
+			}
+		}
+		// 10. General mountains
+		else if (types.contains(Type.MOUNTAIN)) {
+			setTexture(biomeID, MOUNTAINS_NAKED);
+		}
+		// 11. General hills
+		else if (types.contains(Type.HILLS)) {
+			if (types.contains(Type.SNOWY) || types.contains(Type.COLD)) {
+				setTexture(biomeID, SNOW_HILLS);
+			} else if (types.contains(Type.SANDY)) {
+				setTexture(biomeID, DESERT_HILLS);
 			} else {
 				setTexture(biomeID, HILLS);
 			}
-		} else if (types.contains(Type.JUNGLE)) {
-			setTexture(biomeID, JUNGLE);
-		} else if (types.contains(Type.FOREST)) {
-			// Frozen forest automatically counts as pines:
-			if (types.contains(Type.SNOWY)) {
-				setTexture(biomeID, PINES);
-			} else {
-				setTexture(biomeID, DENSE_FOREST);
-			}
-		} else if (types.contains(Type.SANDY) || types.contains(Type.WASTELAND)) {
-			if (types.contains(Type.SNOWY)) {
-				setTexture(biomeID, SNOW);
-			} else {
-				setTexture(biomeID, SAND);
-			}
-		} else if (types.contains(Type.BEACH)){
-			setTexture(biomeID, SHORE);
 		} else {
 			setTexture(biomeID, defaultTexture);
 		}
