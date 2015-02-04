@@ -158,6 +158,10 @@ public class Textures {
 	public static final ResourceLocation TILE_SAVANNA_CLIFFS = new ResourceLocation(GUI_TILES + "savanna_cliffs.png");
 	public static final ResourceLocation TILE_SAVANNA_CLIFFS2 = new ResourceLocation(GUI_TILES + "savanna_cliffs2.png");
 	public static final ResourceLocation TILE_SAVANNA_CLIFFS3 = new ResourceLocation(GUI_TILES + "savanna_cliffs3.png");
+	public static final ResourceLocation TILE_CLIFFS_CLOUDS = new ResourceLocation(GUI_TILES + "cliffs_clouds.png");
+	public static final ResourceLocation TILE_SAVANNA_CLIFFS_CLOUDS = new ResourceLocation(GUI_TILES + "savanna_cliffs_clouds.png");
+	public static final ResourceLocation TILE_SAVANNA_CLIFFS_CLOUDS2 = new ResourceLocation(GUI_TILES + "savanna_cliffs_clouds2.png");
+	public static final ResourceLocation TILE_SAVANNA_CLIFFS_CLOUDS3 = new ResourceLocation(GUI_TILES + "savanna_cliffs_clouds3.png");
 	public static final ResourceLocation TILE_MESA = new ResourceLocation(GUI_TILES + "mesa.png");
 	public static final ResourceLocation TILE_MESA2 = new ResourceLocation(GUI_TILES + "mesa2.png");
 	public static final ResourceLocation TILE_MESA3 = new ResourceLocation(GUI_TILES + "mesa3.png");
