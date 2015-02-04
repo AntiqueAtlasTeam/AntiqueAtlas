@@ -297,7 +297,9 @@ public class GuiComponent extends GuiScreen {
 			}
 		}
 		if (!handled) {
-			super.handleKeyboardInput();
+			if (Keyboard.getEventKeyState()) {
+				this.keyTyped(Keyboard.getEventCharacter(), Keyboard.getEventKey());
+			}
 		}
 	}
 	

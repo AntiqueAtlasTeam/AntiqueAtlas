@@ -394,7 +394,7 @@ public class GuiAtlas extends GuiComponent {
 			}
 			// Close the GUI if a hotbar key is pressed
 			else {
-				KeyBinding[] hotbarKeys = Minecraft.getMinecraft().gameSettings.keyBindsHotbar;
+				KeyBinding[] hotbarKeys = mc.gameSettings.keyBindsHotbar;
 				for (KeyBinding bind : hotbarKeys) {
 					if (key == bind.getKeyCode()) {
 						close();
@@ -677,7 +677,7 @@ public class GuiAtlas extends GuiComponent {
 				markerY - (double)MARKER_SIZE/2,
 				MARKER_SIZE, MARKER_SIZE);
 		if (isMouseOver && mouseIsOverMarker && marker.getLabel().length() > 0) {
-			drawTooltip(Arrays.asList(marker.getLocalizedLabel()), Minecraft.getMinecraft().fontRenderer);
+			drawTooltip(Arrays.asList(marker.getLocalizedLabel()), mc.fontRenderer);
 		}
 	}
 	
