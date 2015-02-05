@@ -309,7 +309,7 @@ public class GuiAtlas extends GuiComponent {
 	@Override
 	public void initGui() {
 		super.initGui();
-		state.switchTo(NORMAL);
+		state.switchTo(NORMAL); //TODO: his causes the Export PNG progress bar to disappear when resizing game window
 		Keyboard.enableRepeatEvents(true);
 		screenScale = new ScaledResolution(mc, mc.displayWidth, mc.displayHeight).getScaleFactor();
 		setCentered();
@@ -318,6 +318,9 @@ public class GuiAtlas extends GuiComponent {
 	@Override
 	protected void mouseClicked(int mouseX, int mouseY, int mouseState) {
 		super.mouseClicked(mouseX, mouseY, mouseState);
+		if (state.is(EXPORTING_IMAGE)) {
+			return; // Don't remove the progress bar.
+		}
 		
 		// If clicked on the map, start dragging
 		int mapX = (width - MAP_WIDTH)/2;
@@ -367,9 +370,15 @@ public class GuiAtlas extends GuiComponent {
 		// Default file name is "Atlas <N>.png"
 		File file = ExportImageUtil.selectPngFileToSave("Atlas " + stack.getItemDamage(), progressBar);
 		if (file != null) {
-			Log.info("Exporting image from Atlas #%d to file %s", stack.getItemDamage(), file.getAbsolutePath());
-			ExportImageUtil.exportPngImage(biomeData, globalMarkersData, localMarkersData, file, progressBar);
-			Log.info("Finished exporting image");
+			try {
+				Log.info("Exporting image from Atlas #%d to file %s", stack.getItemDamage(), file.getAbsolutePath());
+				ExportImageUtil.exportPngImage(biomeData, globalMarkersData, localMarkersData, file, progressBar);
+				Log.info("Finished exporting image");
+			} catch (OutOfMemoryError e) {
+				Log.error(e, "Image is too large");
+				progressBar.setStatusString(I18n.format("gui.antiqueatlas.export.tooLarge"));
+				return; //Don't switch to normal state yet so that the error message can be read.
+			}
 		}
 		state.switchTo(NORMAL);
 	}

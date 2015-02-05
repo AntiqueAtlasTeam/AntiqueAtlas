@@ -85,7 +85,8 @@ public class ExportImageUtil {
 		if (chooser.showSaveDialog(frame) == JFileChooser.APPROVE_OPTION) {
 			File file = chooser.getSelectedFile();
 			// Check file extension:
-			if (!file.getName().substring(file.getName().length() - 4).equalsIgnoreCase(".png")) {
+			if (file.getName().length() < 4  || // No extension
+				!file.getName().substring(file.getName().length() - 4).equalsIgnoreCase(".png")) {
 				file = new File(file.getAbsolutePath() + ".png");
 			}
 			return file;

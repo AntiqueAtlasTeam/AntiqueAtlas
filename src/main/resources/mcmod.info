@@ -2,8 +2,7 @@
 {
   "modid": "antiqueatlas",
   "name": "Antique Atlas",
-  "description": "Adds item Antique Atlas. It's like a fancy antique-looking map, which saves all visited locations so you can browse them.
-  Maps are generated around the player based on chunk-average biome. All data is saved on the server.",
+  "description": "Antique Atlas is a book that acts like a map featuring infinite scrolling, zoom and custom labeled markers. The map is generated around the player by calculating the average biome in each 16x16 chunk.",
   "version": "${version}",
   "mcversion": "${mcversion}",
   "logoFile": "",
