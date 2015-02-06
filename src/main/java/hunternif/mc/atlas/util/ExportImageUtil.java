@@ -16,6 +16,7 @@ import java.awt.Frame;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -137,10 +138,15 @@ public class ExportImageUtil {
 			allTextures.addAll(MarkerTextureMap.instance().getAllTextures());
 			updateUnitsTotal += allTextures.size();
 			for (ResourceLocation texture : allTextures) {
-				is = Minecraft.getMinecraft().getResourceManager().getResource(texture).getInputStream();
-				BufferedImage tileImage = ImageIO.read(is);
-				is.close();
-				textureImageMap.put(texture, tileImage);
+				try {
+					is = Minecraft.getMinecraft().getResourceManager().getResource(texture).getInputStream();
+					BufferedImage tileImage = ImageIO.read(is);
+					is.close();
+					textureImageMap.put(texture, tileImage);
+				} catch (FileNotFoundException e) {
+					// This can happen, for example, when you remove a mod that has added custom textures
+					Log.warn("Texture %s not found!", texture.toString());
+				}
 				updateUnits++;
 			}
 		} catch (IOException e) {
