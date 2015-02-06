@@ -97,6 +97,7 @@ public class ClientProxy extends CommonProxy {
 		map.register(ROCK_SHORE);
 		map.register(DESERT);
 		map.register(PLAINS);
+		map.register(SUNFLOWERS);
 		map.register(HILLS);
 		map.register(DESERT_HILLS);
 		
