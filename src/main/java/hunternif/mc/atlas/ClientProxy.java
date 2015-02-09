@@ -14,6 +14,7 @@ import hunternif.mc.atlas.client.gui.GuiAtlas;
 import hunternif.mc.atlas.ext.ExtTileIdMap;
 import hunternif.mc.atlas.ext.ExtTileTextureConfig;
 import hunternif.mc.atlas.ext.ExtTileTextureMap;
+import hunternif.mc.atlas.ext.VillageWatcher;
 import hunternif.mc.atlas.marker.MarkerTextureConfig;
 import hunternif.mc.atlas.marker.MarkerTextureMap;
 import hunternif.mc.atlas.util.Log;
@@ -244,7 +245,7 @@ public class ClientProxy extends CommonProxy {
 		api.setTexture("google", Textures.MARKER_GOOGLE_MARKER);
 		api.setTexture("red_x_large", Textures.MARKER_RED_X_LARGE);
 		api.setTexture("red_x_small", Textures.MARKER_RED_X_SMALL);
-		api.setTexture("village", Textures.MARKER_VILLAGE);
+		api.setTexture(VillageWatcher.MARKER, Textures.MARKER_VILLAGE);
 	}
 	
 	/** Assign default textures to the pseudo-biomes used for vanilla Minecraft.

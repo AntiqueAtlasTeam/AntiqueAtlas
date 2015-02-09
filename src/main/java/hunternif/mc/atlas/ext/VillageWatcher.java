@@ -19,6 +19,12 @@ import cpw.mods.fml.common.eventhandler.EventPriority;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 
 public class VillageWatcher {
+	public static final String MARKER = "village";
+	
+	/** In case a village center has moved significantly, we need to look for
+	 * the old marker within a larger radius. */
+	private static final int markerScanRadius = 2;
+	
 	private final Set<Village> visited = new HashSet<Village>();
 	
 	/** Used to look for villages that have not been added to ExtBiomeData when
@@ -52,43 +58,49 @@ public class VillageWatcher {
 	}
 	
 	public void visitVillage(World world, Village village) {
-		int dim = world.provider.dimensionId;
 		// Using markers so that villages are visible at any scale.
-		// Village center can move, so first check that there is no village
-		// marker within the radius.
 		MarkersData markersData = AntiqueAtlasMod.globalMarkersData.getData();
-		boolean foundMarker = false;
+		int dim = world.provider.dimensionId;
 		int centerX = village.getCenter().posX;
 		int centerZ = village.getCenter().posZ;
-		// Using custom pseudo-biome tiles to cover actual territory.
-		// Cover village territory:
-		for (int dx = -village.getVillageRadius(); dx <= village.getVillageRadius(); dx += 16) {
-			for (int dz = -village.getVillageRadius(); dz <= village.getVillageRadius(); dz += 16) {
-				// Fill only the inside of the circle:
-				if (dx*dx + dz*dz > village.getVillageRadius()*village.getVillageRadius()) {
-					continue;
-				}
-				int chunkX = (centerX + dx) >> 4;
-				int chunkZ = (centerZ + dz) >> 4;
-					AtlasAPI.getTileAPI().putCustomGlobalTile(world,
-							ExtTileIdMap.TILE_VILLAGE_TERRITORY, chunkX, chunkZ);
-				
-				List<Marker> markers = markersData.getMarkersAtChunk(dim, chunkX / MarkersData.CHUNK_STEP, chunkZ / MarkersData.CHUNK_STEP);
+		
+		// Village center can move, so we will need to delete the old marker.
+		for (int dx = -village.getVillageRadius() - markerScanRadius;
+				dx <= village.getVillageRadius() + markerScanRadius;
+				dx += 16 * MarkersData.CHUNK_STEP) {
+			for (int dz = -village.getVillageRadius() - markerScanRadius;
+					dz <= village.getVillageRadius() + markerScanRadius;
+					dz += 16 * MarkersData.CHUNK_STEP) {
+				int chunkX = ((centerX + dx) >> 4) / MarkersData.CHUNK_STEP;
+				int chunkZ = ((centerZ + dz) >> 4) / MarkersData.CHUNK_STEP;
+				List<Marker> markers = markersData.getMarkersAtChunk(dim, chunkX, chunkZ);
 				if (markers != null) {
 					for (Marker marker : markers) {
-						if (marker.getType().equals("village")) {
-							foundMarker = true;
-							break;
+						if (marker.getType().equals(MARKER)) {
+							AtlasAPI.getMarkerAPI().deleteGlobalMarker(world, marker.getId());
 						}
 					}
 				}
 			}
 		}
-		if (!foundMarker) {
-			AtlasAPI.getMarkerAPI().putGlobalMarker(world, false, "village",
-					"gui.antiqueatlas.marker.village", // This label will be translated
-					centerX, centerZ);
+		
+		// Using custom pseudo-biome tiles to cover actual territory:
+		for (int dx = -village.getVillageRadius(); dx <= village.getVillageRadius(); dx += 16) {
+			for (int dz = -village.getVillageRadius(); dz <= village.getVillageRadius(); dz += 16) {
+				// Fill only the inside of the circle:
+				if (dx*dx + dz*dz <= village.getVillageRadius()*village.getVillageRadius()) {
+					int chunkX = (centerX + dx) >> 4;
+					int chunkZ = (centerZ + dz) >> 4;
+					AtlasAPI.getTileAPI().putCustomGlobalTile(world,
+							ExtTileIdMap.TILE_VILLAGE_TERRITORY, chunkX, chunkZ);
+				}
+			}
 		}
+		
+		AtlasAPI.getMarkerAPI().putGlobalMarker(world, false, MARKER,
+				"gui.antiqueatlas.marker.village", // This label will be translated
+				centerX, centerZ);
+		
 		// Cover doors locations with houses:
 		for (Object doorInfo : village.getVillageDoorInfoList()) {
 			VillageDoorInfo door = (VillageDoorInfo) doorInfo;
