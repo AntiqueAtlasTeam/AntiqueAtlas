@@ -47,8 +47,7 @@ public class ExtTileIdMap extends SaveData {
 		return id.intValue();
 	}
 	
-	/** If the name is not registered, returns {@link #NOT_FOUND} ({@value #NOT_FOUND}).
-	 * IDs set via this method should not be saved, or client config may become inconsistent!*/
+	/** If the name is not registered, returns {@link #NOT_FOUND} ({@value #NOT_FOUND}). */
 	public int getPseudoBiomeID(String uniqueName) {
 		Integer id = nameToIdMap.get(uniqueName);
 		return id == null ? NOT_FOUND : id.intValue();
@@ -62,7 +61,9 @@ public class ExtTileIdMap extends SaveData {
 	}
 	
 	/** This method must only be called when reading from the config file or
-	 *  when executing {@link TileNameIDPacket}. */
+	 *  when executing {@link TileNameIDPacket}.
+	 *  IDs set via this method should not be saved, or client config may become
+	 *  inconsistent! */
 	public void setPseudoBiomeID(String uniqueName, int id) {
 		nameToIdMap.forcePut(uniqueName, Integer.valueOf(id));
 	}
