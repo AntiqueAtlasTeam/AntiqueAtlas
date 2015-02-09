@@ -41,19 +41,25 @@ public class BiomeTextureMap extends SaveData {
 	/** Assign texture set to biome. */
 	public void setTexture(int biomeID, TextureSet textureSet) {
 		if (textureSet == null) {
-			Log.error("Texture set is null!");
+			Log.warn("Removing old texture for biome %s", biomeID);
+			textureMap.remove(biomeID);
+			if (biomeID >= 0 && biomeID < 256) {
+				markDirty();
+			}
 			return;
 		}
 		TextureSet previous = textureMap.put(biomeID, textureSet);
-		if (previous == null) {
-			markDirty();
-		} else if (!previous.equals(textureSet)) {
-			Log.warn("Overwriting texture set for biome %d", biomeID);
-			markDirty();
+		if (biomeID >= 0 && biomeID < 256) {
+			// The config only concerns itself with biomes 0-256.
+			// If the old texture set is equal to the new one (i.e. has equal name
+			// and equal texture files), then there's no need to update the config.
+			if (previous == null) {
+				markDirty();
+			} else if (!previous.equals(textureSet)) {
+				Log.warn("Overwriting texture set for biome %d", biomeID);
+				markDirty();
+			}
 		}
-		// If the old texture set is equal to the new one (i.e. has equal name
-		// and equal texture files), then there's no need to update the config.
-		textureMap.put(biomeID, textureSet);
 	}
 	
 	/** Find the most appropriate standard texture set depending on
@@ -201,12 +207,6 @@ public class BiomeTextureMap extends SaveData {
 	
 	public boolean isRegistered(int biomeID) {
 		return textureMap.containsKey(biomeID);
-	}
-
-	public int getVariations(int biomeID) {
-		checkRegistration(biomeID);
-		TextureSet set = textureMap.get(biomeID);
-		return set.textures.length;
 	}
 
 	public ResourceLocation getTexture(Tile tile) {

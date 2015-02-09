@@ -2,10 +2,16 @@ package hunternif.mc.atlas.item;
 
 import hunternif.mc.atlas.AntiqueAtlasMod;
 import hunternif.mc.atlas.core.AtlasData;
-import hunternif.mc.atlas.core.ChunkBiomeAnalyzer;
+import hunternif.mc.atlas.core.BiomeDetectorBase;
+import hunternif.mc.atlas.core.BiomeDetectorNether;
+import hunternif.mc.atlas.core.IBiomeDetector;
 import hunternif.mc.atlas.core.ITileStorage;
 import hunternif.mc.atlas.core.Tile;
 import hunternif.mc.atlas.marker.MarkersData;
+
+import java.util.HashMap;
+import java.util.Map;
+
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
@@ -27,14 +33,24 @@ public class ItemAtlas extends Item {
 	/** In [ticks] */
 	public static int UPDATE_INTERVAL = 20;
 	
-	private ChunkBiomeAnalyzer biomeAnalyzer;
+	/** Maps dimension ID to biomeAnalyzer. */
+	private final Map<Integer, IBiomeDetector> biomeAnalyzers = new HashMap<Integer, IBiomeDetector>();
+	private final IBiomeDetector biomeDetectorOverworld = new BiomeDetectorBase();
+	private final IBiomeDetector biomeDetectorNether = new BiomeDetectorNether();
 
 	public ItemAtlas() {
 		setHasSubtypes(true);
+		setBiomeDetectorForDimension(0, biomeDetectorOverworld);
+		setBiomeDetectorForDimension(-1, biomeDetectorNether);
 	}
 	
-	public void setBiomeAnalyzer(ChunkBiomeAnalyzer biomeAnalyzer) {
-		this.biomeAnalyzer = biomeAnalyzer;
+	public void setBiomeDetectorForDimension(int dimension, IBiomeDetector biomeAnalyzer) {
+		biomeAnalyzers.put(dimension, biomeAnalyzer);
+	}
+	/** If not found, returns the analyzer for overworld. */
+	private IBiomeDetector getBiomeDetectorForDimension(int dimension) {
+		IBiomeDetector biomeAnalyzer = biomeAnalyzers.get(dimension);
+		return biomeAnalyzer == null ? biomeDetectorOverworld : biomeAnalyzer;
 	}
 	
 	@Override
@@ -74,13 +90,14 @@ public class ItemAtlas extends Item {
 		}
 		
 		// Update the actual map only so often:
-		if (player.ticksExisted % UPDATE_INTERVAL != 0 || biomeAnalyzer == null) {
+		if (player.ticksExisted % UPDATE_INTERVAL != 0) {
 			return;
 		}
 		
 		int playerX = MathHelper.floor_double(player.posX) >> 4;
 		int playerZ = MathHelper.floor_double(player.posZ) >> 4;
 		ITileStorage seenChunks = data.getDimensionData(player.dimension);
+		IBiomeDetector biomeDetector = getBiomeDetectorForDimension(player.dimension);
 		
 		// Look at chunks around in a circular area:
 		for (double dx = -LOOK_RADIUS; dx <= LOOK_RADIUS; dx++) {
@@ -96,7 +113,7 @@ public class ItemAtlas extends Item {
 				// Custom tiles overwrite even the chunks already seen.
 				
 				// If there's no custom tile, check the actual chunk:
-				if (biomeId == ChunkBiomeAnalyzer.NOT_FOUND) {
+				if (biomeId == -1) {
 					// Check if the chunk has been seen already:
 					if (seenChunks.hasTileAt(x, y)) continue;
 					
@@ -107,12 +124,12 @@ public class ItemAtlas extends Item {
 					// Retrieve mean chunk biome and store it in AtlasData:
 					Chunk chunk = player.worldObj.getChunkFromChunkCoords(x, y);
 					if (!chunk.isChunkLoaded) {
-						biomeId = ChunkBiomeAnalyzer.NOT_FOUND;
+						biomeId = IBiomeDetector.NOT_FOUND;
 					} else {
-						biomeId = biomeAnalyzer.getMeanBiomeID(chunk);
+						biomeId = biomeDetector.getBiomeID(chunk);
 					}
 					// Finally, put the tile in place:
-					if (biomeId != ChunkBiomeAnalyzer.NOT_FOUND) {
+					if (biomeId != IBiomeDetector.NOT_FOUND) {
 						Tile tile = new Tile(biomeId);
 						data.setTile(player.dimension, x, y, tile);
 					}

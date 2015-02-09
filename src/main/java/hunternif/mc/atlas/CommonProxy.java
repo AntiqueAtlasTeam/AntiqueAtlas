@@ -28,6 +28,9 @@ public class CommonProxy {
 		extTileIdMap = ExtTileIdMap.instance();
 		extTileConfig = new ExtTileConfig(new File(configDir, "tileids.json"));
 		extTileConfig.load(extTileIdMap);
+		// Assign default values AFTER the config file loads, so that the old saved values are kept:
+		registerVanillaCustomTiles();
+		checkSaveConfig();
 	}
 	
 	public void init(FMLInitializationEvent event) {
@@ -36,8 +39,15 @@ public class CommonProxy {
 	
 	public void postInit(FMLPostInitializationEvent event) {}
 	
-	// Purely client stuff
-
+	/** Register IDs for the pseudo-biomes used for vanilla Minecraft.
+	 * The pseudo-biomes are: villages houses, village territory and lava. */
+	private void registerVanillaCustomTiles() {
+		extTileIdMap.getOrCreatePseudoBiomeID(ExtTileIdMap.TILE_VILLAGE_HOUSE);
+		extTileIdMap.getOrCreatePseudoBiomeID(ExtTileIdMap.TILE_VILLAGE_TERRITORY);
+		extTileIdMap.getOrCreatePseudoBiomeID(ExtTileIdMap.TILE_LAVA);
+		extTileIdMap.getOrCreatePseudoBiomeID(ExtTileIdMap.TILE_LAVA_SHORE);
+	}
+	
 	public void openAtlasGUI(ItemStack stack) {}
 
 	/**
@@ -50,6 +60,10 @@ public class CommonProxy {
 	/** When a world is saved, so is the custom tile id config. */
 	@SubscribeEvent
 	public void onWorldSave(WorldEvent.Save event) {
+		checkSaveConfig();
+	}
+	
+	private void checkSaveConfig() {
 		if (extTileIdMap.isDirty()) {
 			Log.info("Saving ext tile id config");
 			extTileConfig.save(extTileIdMap);

@@ -1,6 +1,9 @@
 package hunternif.mc.atlas.network.client;
 
+import hunternif.mc.atlas.client.BiomeTextureMap;
+import hunternif.mc.atlas.client.TextureSet;
 import hunternif.mc.atlas.ext.ExtTileIdMap;
+import hunternif.mc.atlas.ext.ExtTileTextureMap;
 import hunternif.mc.atlas.ext.TileIdRegisteredEvent;
 import hunternif.mc.atlas.network.AbstractMessage.AbstractClientMessage;
 
@@ -63,7 +66,17 @@ public class TileNameIDPacket extends AbstractClientMessage<TileNameIDPacket>
 	@Override
 	protected void process(EntityPlayer player, Side side) {
 		for (Entry<String, Integer> entry : nameToIdMap.entrySet()) {
-			ExtTileIdMap.instance().setPseudoBiomeID(entry.getKey(), entry.getValue());
+			String tileName = entry.getKey();
+			int id = entry.getValue();
+			// Remove old texture mapping
+			int oldID = ExtTileIdMap.instance().getPseudoBiomeID(tileName);
+			if (oldID != ExtTileIdMap.NOT_FOUND) {
+				BiomeTextureMap.instance().setTexture(oldID, null);
+			}
+			ExtTileIdMap.instance().setPseudoBiomeID(tileName, id);
+			// Register new texture mapping
+			TextureSet texture = ExtTileTextureMap.instance().getTexture(tileName);
+			BiomeTextureMap.instance().setTexture(id, texture);
 		}
 		MinecraftForge.EVENT_BUS.post(new TileIdRegisteredEvent(nameToIdMap));
 	}

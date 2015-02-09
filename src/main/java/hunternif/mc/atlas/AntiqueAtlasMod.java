@@ -1,7 +1,6 @@
 package hunternif.mc.atlas;
 
 import static net.minecraftforge.oredict.RecipeSorter.Category.SHAPELESS;
-import hunternif.mc.atlas.core.ChunkBiomeAnalyzer;
 import hunternif.mc.atlas.ext.ExtBiomeDataHandler;
 import hunternif.mc.atlas.ext.VillageWatcher;
 import hunternif.mc.atlas.item.ItemAtlas;
@@ -51,7 +50,6 @@ public class AntiqueAtlasMod {
 		proxy.preInit(event);
 		
 		itemAtlas = (ItemAtlas) new ItemAtlas().setUnlocalizedName("antiqueAtlas");
-		itemAtlas.setBiomeAnalyzer(new ChunkBiomeAnalyzer());
 		
 		itemEmptyAtlas = (ItemEmptyAtlas) new ItemEmptyAtlas()
 			.setUnlocalizedName("emptyAntiqueAtlas").setCreativeTab(CreativeTabs.tabTools);

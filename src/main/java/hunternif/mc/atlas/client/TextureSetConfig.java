@@ -13,6 +13,13 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+
+/**
+ * Saves texture set names with the lists of texture variations.
+ */
+@SideOnly(Side.CLIENT)
 public class TextureSetConfig extends AbstractJSONConfig<TextureSetMap> {
 	private static final int VERSION = 1;
 

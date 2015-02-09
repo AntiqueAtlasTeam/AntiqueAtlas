@@ -9,6 +9,7 @@ import hunternif.mc.atlas.core.AtlasData;
 import hunternif.mc.atlas.core.Tile;
 import hunternif.mc.atlas.ext.ExtBiomeData;
 import hunternif.mc.atlas.ext.ExtTileIdMap;
+import hunternif.mc.atlas.ext.ExtTileTextureMap;
 import hunternif.mc.atlas.ext.TileIdRegisteredEvent;
 import hunternif.mc.atlas.network.PacketDispatcher;
 import hunternif.mc.atlas.network.bidirectional.PutBiomeTilePacket;
@@ -29,18 +30,13 @@ import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraftforge.common.MinecraftForge;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 
-public class TileApiImpl implements TileAPI {	
+public class TileApiImpl implements TileAPI {
 	/**
-	 * Because pseudo-biome IDs have to be synced with the server, they may not
-	 * have been initialized when the texture registration methods are called on
-	 * the client. In that case the textures are put in this map to be later
-	 * registered when the server sends the packet with pseudo-biome ID for the
-	 * corresponding unique name.
-	 * <p>This map maps unique tile name to a TextureSet.</p>
+	 * When a tile is being put in an atlas on the client, the pseudo-biome ID
+	 * may have been unregistered yet at that moment. In that case the tile data
+	 * is put into this map to be later registered when the server sends the
+	 * packet with the pseudo-biome ID for the corresponding unique name.
 	 */
-	private final Map<String, TextureSet> pendingTextures = new HashMap<String, TextureSet>();
-	
-	/** Same as {@link #pendingTextures}, for putting tiles into atlases. */
 	private final Map<String, TileData> pendingTiles = new HashMap<String, TileData>();
 	private static class TileData {
 		World world;
@@ -101,13 +97,7 @@ public class TileApiImpl implements TileAPI {
 	
 	@Override
 	public void setCustomTileTexture(String uniqueTileName, TextureSet textureSet) {
-		int id = ExtTileIdMap.instance().getPseudoBiomeID(uniqueTileName);
-		if (id != ExtTileIdMap.NOT_FOUND) {
-			BiomeTextureMap.instance().setTexture(id, textureSet);
-		} else {
-			pendingTextures.put(uniqueTileName, textureSet);
-			PacketDispatcher.sendToServer(new RegisterTileIdPacket(uniqueTileName));
-		}
+		ExtTileTextureMap.instance().setTexture(uniqueTileName, textureSet);
 	}
 	
 	
@@ -184,11 +174,6 @@ public class TileApiImpl implements TileAPI {
 	@SubscribeEvent
 	public void onTileIdRegistered(TileIdRegisteredEvent event) {
 		for (Entry<String, Integer> entry : event.nameToIdMap.entrySet()) {
-			// Register pending textures:
-			TextureSet texture = pendingTextures.remove(entry.getKey());
-			if (texture != null) {
-				BiomeTextureMap.instance().setTexture(entry.getValue(), texture);
-			}
 			// Put pending tiles:
 			TileData tile = pendingTiles.remove(entry.getKey());
 			if (tile != null) {

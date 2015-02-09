@@ -11,8 +11,6 @@ import net.minecraft.util.ResourceLocation;
 public class TextureSet {
 	public static final TextureSet TEST			= standard("TEST", TILE_TEST);
 	public static final TextureSet ICE			= standard("ICE", TILE_ICE_NOBORDER);
-	public static final TextureSet SHORE		= new TextureSetShore("SHORE", TILE_SHORE, TILE_SHORE2, TILE_SHORE3);
-	public static final TextureSet ROCK_SHORE	= new TextureSetShore("ROCK_SHORE", TILE_ROCK_SHORE);
 	public static final TextureSet DESERT			= standard("DESERT", TILE_SAND, TILE_SAND, TILE_SAND2, TILE_SAND2,
 			TILE_SAND3, TILE_SAND3, TILE_CACTI, TILE_SAND_BUSHES, TILE_SAND_BUSHES);
 	public static final TextureSet PLAINS		= standard("PLAINS", TILE_GRASS, TILE_GRASS2, TILE_GRASS3, TILE_GRASS4);
@@ -82,7 +80,15 @@ public class TextureSet {
 	public static final TextureSet SWAMP		= standard("SWAMP", TILE_SWAMP, TILE_SWAMP, TILE_SWAMP, TILE_SWAMP2, TILE_SWAMP3, TILE_SWAMP4, TILE_SWAMP5, TILE_SWAMP6);
 	public static final TextureSet SWAMP_HILLS	= standard("SWAMP_HILLS", TILE_SWAMP_HILLS, TILE_SWAMP_HILLS2, TILE_SWAMP_HILLS3, TILE_SWAMP_HILLS4, TILE_SWAMP_HILLS5);
 	public static final TextureSet MUSHROOM		= standard("MUSHROOM", TILE_MUSHROOM, TILE_MUSHROOM2);
+	
 	public static final TextureSet WATER		= standard("WATER", TILE_WATER, TILE_WATER2);
+	public static final TextureSet SHORE		= new TextureSetShore("SHORE", WATER, TILE_SHORE, TILE_SHORE2, TILE_SHORE3);
+	public static final TextureSet ROCK_SHORE	= new TextureSetShore("ROCK_SHORE", WATER, TILE_ROCK_SHORE);
+	
+	public static final TextureSet LAVA			= standard("LAVA", TILE_LAVA, TILE_LAVA2);
+	public static final TextureSet LAVA_SHORE	= new TextureSetShore("LAVA_SHORE", LAVA, TILE_LAVA_SHORE, TILE_LAVA_SHORE2);
+	public static final TextureSet CAVE_WALLS	= standard("CAVE_WALLS", TILE_CAVE_WALLS);
+	
 	public static final TextureSet HOUSE		= standard("HOUSE", TILE_HOUSE);
 	public static final TextureSet FENCE		= standard("FENCE", TILE_FENCE).stitchTo(HOUSE);
 	
@@ -90,6 +96,7 @@ public class TextureSet {
 	static {
 		stitchMutually(PLAINS, SUNFLOWERS);
 		WATER.stitchTo(SHORE, ROCK_SHORE, SWAMP);
+		LAVA.stitchTo(SHORE, ROCK_SHORE, LAVA_SHORE);
 		SWAMP.stitchTo(SWAMP_HILLS);
 		SNOW.stitchTo(SNOW_PINES, SNOW_HILLS, ICE_SPIKES, SNOW_PINES_HILLS);
 		SNOW_PINES.stitchTo(SNOW, SNOW_HILLS, ICE_SPIKES, SNOW_PINES_HILLS);
@@ -160,12 +167,14 @@ public class TextureSet {
 	
 	/** A special texture set that is stitched to everything except water. */
 	private static class TextureSetShore extends TextureSet {
-		public TextureSetShore(String name, ResourceLocation ... textures) {
+		private final TextureSet water;
+		public TextureSetShore(String name, TextureSet water, ResourceLocation ... textures) {
 			super(true, name, textures);
+			this.water = water;
 		}
 		@Override
 		public boolean shouldStichTo(TextureSet otherSet) {
-			return otherSet == this || !WATER.shouldStichTo(otherSet);
+			return otherSet == this || !water.shouldStichTo(otherSet);
 		}
 	}
 	

@@ -12,6 +12,8 @@ import hunternif.mc.atlas.client.TextureSetMap;
 import hunternif.mc.atlas.client.Textures;
 import hunternif.mc.atlas.client.gui.GuiAtlas;
 import hunternif.mc.atlas.ext.ExtTileIdMap;
+import hunternif.mc.atlas.ext.ExtTileTextureConfig;
+import hunternif.mc.atlas.ext.ExtTileTextureMap;
 import hunternif.mc.atlas.marker.MarkerTextureConfig;
 import hunternif.mc.atlas.marker.MarkerTextureMap;
 import hunternif.mc.atlas.util.Log;
@@ -34,6 +36,8 @@ public class ClientProxy extends CommonProxy {
 	private TextureSetConfig textureSetConfig;
 	private BiomeTextureMap biomeTextureMap;
 	private BiomeTextureConfig biomeTextureConfig;
+	private ExtTileTextureMap tileTextureMap;
+	private ExtTileTextureConfig tileTextureConfig;
 	private MarkerTextureMap markerTextureMap;
 	private MarkerTextureConfig markerTextureConfig;
 	
@@ -42,6 +46,7 @@ public class ClientProxy extends CommonProxy {
 	@Override
 	public void preInit(FMLPreInitializationEvent event) {
 		super.preInit(event);
+		
 		textureSetMap = TextureSetMap.instance();
 		textureSetConfig = new TextureSetConfig(new File(configDir, "texture_sets.json"));
 		// Register default values before the config file loads, possibly overwriting the,:
@@ -49,15 +54,26 @@ public class ClientProxy extends CommonProxy {
 		textureSetConfig.load(textureSetMap);
 		// Prevent rewriting of the config while there haven't been any changes made:
 		textureSetMap.setDirty(false);
-		
+
+		// Legacy file name:
+		File biomeTextureConfigFile = new File(configDir, "textures.json");
+		if (biomeTextureConfigFile.exists()) {
+			biomeTextureConfigFile.renameTo(new File(configDir, "biome_textures.json"));
+		}
 		biomeTextureMap = BiomeTextureMap.instance();
-		biomeTextureConfig = new BiomeTextureConfig(new File(configDir, "textures.json"), textureSetMap);
+		biomeTextureConfig = new BiomeTextureConfig(new File(configDir, "biome_textures.json"), textureSetMap);
 		// Assign default values before the config file loads, possibly overwriting them:
 		assignVanillaBiomeTextures();
-		registerVillageTiles();
 		biomeTextureConfig.load(biomeTextureMap);
 		// Prevent rewriting of the config while there haven't been any changes made:
 		biomeTextureMap.setDirty(false);
+		
+		tileTextureMap = ExtTileTextureMap.instance();
+		tileTextureConfig = new ExtTileTextureConfig(new File(configDir, "tile_textures.json"), textureSetMap);
+		// Assign default values before the config file loads, possibly overwriting them:
+		registerVanillaCustomTileTextures();
+		tileTextureConfig.load(tileTextureMap);
+		tileTextureMap.setDirty(false);
 		
 		markerTextureMap = MarkerTextureMap.instance();
 		markerTextureConfig = new MarkerTextureConfig(new File(configDir, "marker_textures.json"));
@@ -149,6 +165,9 @@ public class ClientProxy extends CommonProxy {
 		map.register(SWAMP_HILLS);
 		map.register(MUSHROOM);
 		map.register(WATER);
+		map.register(LAVA);
+		map.register(LAVA_SHORE);
+		map.register(CAVE_WALLS);
 		map.register(HOUSE);
 		map.register(FENCE);
 	}
@@ -204,7 +223,7 @@ public class ClientProxy extends CommonProxy {
 		api.setBiomeTexture(swampland, SWAMP);
 		api.setBiomeTexture(swampland.biomeID + 128, SWAMP_HILLS);
 		api.setBiomeTexture(sky, SHORE);
-		//api.setBiomeTexture(hell, NETHER);
+		api.setBiomeTexture(hell, CAVE_WALLS);
 		api.setBiomeTexture(mushroomIsland, MUSHROOM);
 		api.setBiomeTexture(mushroomIslandShore, SHORE);
 		api.setBiomeTexture(savanna, SAVANNA);
@@ -228,12 +247,14 @@ public class ClientProxy extends CommonProxy {
 		api.setTexture("village", Textures.MARKER_VILLAGE);
 	}
 	
-	/** Assign default textures to the pseudo-biomes designating village houses
-	 * and territory. */
-	private void registerVillageTiles() {
+	/** Assign default textures to the pseudo-biomes used for vanilla Minecraft.
+	 * The pseudo-biomes are: villages houses, village territory and lava. */
+	private void registerVanillaCustomTileTextures() {
 		TileAPI api = AtlasAPI.getTileAPI();
 		api.setCustomTileTexture(ExtTileIdMap.TILE_VILLAGE_HOUSE, HOUSE);
 		api.setCustomTileTexture(ExtTileIdMap.TILE_VILLAGE_TERRITORY, FENCE);
+		api.setCustomTileTexture(ExtTileIdMap.TILE_LAVA, LAVA);
+		api.setCustomTileTexture(ExtTileIdMap.TILE_LAVA_SHORE, LAVA_SHORE);
 	}
 
 	@Override
@@ -253,6 +274,11 @@ public class ClientProxy extends CommonProxy {
 			Log.info("Saving biome texture config");
 			biomeTextureConfig.save(biomeTextureMap);
 			biomeTextureMap.setDirty(false);
+		}
+		if (tileTextureMap.isDirty()) {
+			Log.info("Saving tile texture config");
+			tileTextureConfig.save(tileTextureMap);
+			tileTextureMap.setDirty(false);
 		}
 		if (markerTextureMap.isDirty()) {
 			Log.info("Saving marker texture config");

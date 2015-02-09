@@ -16,7 +16,7 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
 /**
- * Client-only config mapping biome IDs (or pseudo-IDs) to texture sets.
+ * Client-only config mapping biome IDs to texture sets.
  * <p>Must be loaded after {@link TextureSetConfig}!</p>
  * @author Hunternif
  */
@@ -70,8 +70,13 @@ public class BiomeTextureConfig extends AbstractJSONConfig<BiomeTextureMap> {
 	
 	@Override
 	protected void saveData(JsonObject json, BiomeTextureMap data) {
-		for (Entry<Integer,TextureSet> entry : data.textureMap.entrySet()) {
-			json.addProperty(entry.getKey().toString(), entry.getValue().name);
+		for (Entry<Integer, TextureSet> entry : data.textureMap.entrySet()) {
+			int biomeID = entry.getKey().intValue();
+			// Only save biomes 0-256 in this config.
+			// The rest goes into ExtTileTextureConfig
+			if (biomeID > 0 && biomeID <= 256) {
+				json.addProperty(String.valueOf(biomeID), entry.getValue().name);
+			}
 		}
 	}
 }

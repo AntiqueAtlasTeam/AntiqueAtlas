@@ -1,6 +1,5 @@
 package hunternif.mc.atlas.ext;
 
-import hunternif.mc.atlas.core.ChunkBiomeAnalyzer;
 import hunternif.mc.atlas.network.PacketDispatcher;
 import hunternif.mc.atlas.network.client.TilesPacket;
 import hunternif.mc.atlas.util.Log;
@@ -88,11 +87,10 @@ public class ExtBiomeData extends WorldSavedData {
 		return map;
 	}
 	
-	/** If no custom tile is set at the specified coordinates, returns
-	 * {@link ChunkBiomeAnalyzer#NOT_FOUND}. */
+	/** If no custom tile is set at the specified coordinates, returns -1. */
 	public int getBiomeIdAt(int dimension, int x, int y) {
 		Integer biomeID = getBiomesInDimension(dimension).get(tempCoords.set(x, y));
-		return biomeID == null ? ChunkBiomeAnalyzer.NOT_FOUND : biomeID;
+		return biomeID == null ? -1 : biomeID;
 	}
 	
 	/** If setting biome on the server, a packet should be sent to all players. */

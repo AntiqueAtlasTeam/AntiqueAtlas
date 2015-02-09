@@ -10,6 +10,8 @@ import com.google.gson.JsonObject;
 
 /**
  * Maps unique names of external tiles to pseudo-biome IDs.
+ * This config is needed because the NBT data for atlases contains these IDs
+ * and not the names.
  * @author Hunternif
  */
 public class ExtTileConfig extends AbstractJSONConfig<ExtTileIdMap> {

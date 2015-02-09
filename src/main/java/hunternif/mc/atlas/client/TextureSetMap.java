@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.util.ResourceLocation;
 import hunternif.mc.atlas.util.SaveData;
 
@@ -14,6 +16,7 @@ import hunternif.mc.atlas.util.SaveData;
  * Maps texture sets to their names.
  * @author Hunternif
  */
+@SideOnly(Side.CLIENT)
 public class TextureSetMap extends SaveData {
 	private static final TextureSetMap INSTANCE = new TextureSetMap();
 	public static final TextureSetMap instance() {

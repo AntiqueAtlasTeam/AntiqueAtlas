@@ -25,6 +25,8 @@ public class ExtTileIdMap extends SaveData {
 	
 	public static final String TILE_VILLAGE_HOUSE = "npcVillageDoor";
 	public static final String TILE_VILLAGE_TERRITORY = "npcVillageTerritory";
+	public static final String TILE_LAVA = "lava";
+	public static final String TILE_LAVA_SHORE = "lavaShore";
 	
 	public static final int NOT_FOUND = -1;
 	
@@ -45,7 +47,8 @@ public class ExtTileIdMap extends SaveData {
 		return id.intValue();
 	}
 	
-	/** If the name is not registered, returns {@link #NOT_FOUND} ({@value #NOT_FOUND}). */
+	/** If the name is not registered, returns {@link #NOT_FOUND} ({@value #NOT_FOUND}).
+	 * IDs set via this method should not be saved, or client config may become inconsistent!*/
 	public int getPseudoBiomeID(String uniqueName) {
 		Integer id = nameToIdMap.get(uniqueName);
 		return id == null ? NOT_FOUND : id.intValue();
