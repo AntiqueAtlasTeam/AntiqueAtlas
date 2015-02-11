@@ -37,7 +37,7 @@ public class ExtTileTextureMap extends SaveData {
 		if (previous == null) {
 			markDirty();
 		} else if (!previous.equals(textureSet)) {
-			Log.warn("Overwriting texture set for tile \"%d\"", tileName);
+			Log.warn("Overwriting texture set for tile \"%s\"", tileName);
 			markDirty();
 		}
 	}
