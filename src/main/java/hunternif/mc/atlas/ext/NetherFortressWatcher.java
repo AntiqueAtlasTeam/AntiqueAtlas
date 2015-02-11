@@ -17,6 +17,7 @@ import net.minecraftforge.event.world.WorldEvent;
 import cpw.mods.fml.common.eventhandler.EventPriority;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 
+@SuppressWarnings("unused")
 public class NetherFortressWatcher {
 	/** Set of tag names for every fortress, in the format "[x, y]" */
 	private final Set<String> visited = new HashSet<String>();
@@ -38,9 +39,9 @@ public class NetherFortressWatcher {
 	private static final String BRIDGE = "NeBS"; // "19-block-long section of the bridge with columns, no roof. -done!
 	private static final String BRIDGE_END = "NeBEF"; // The ruined end of a bridge - done!
 	
-	private static final String ENTRANCE = "NeCE"; // "Entrance", a room with an iron-barred gate. Contains a well of lava in the center.
-	private static final String WART = "NeCSR"; // Room with the Nether Wart and a wide staircase leading to an open roof with a fence railing.
-	private static final String SPAWNER = "NeMT"; // Blaze spawner. No roof. A decorative wall of fence ("the throne"?)
+	private static final String ENTRANCE = "NeCE"; // "Entrance", a very large room with an iron-barred gate. Contains a well of lava in the center.
+	private static final String WART_STAIRS = "NeCSR"; // Room with the Nether Wart and a wide staircase leading to an open roof with a fence railing.
+	private static final String THRONE = "NeMT"; // Blaze spawner. No roof. A decorative wall of fence ("the throne"?)
 	private static final String TOWER = "NeSR"; // That room with tiny stairs going up to the roof along the wall -done!
 	
 	@SubscribeEvent(priority=EventPriority.LOWEST)
@@ -123,11 +124,23 @@ public class NetherFortressWatcher {
 				if (BRIDGE_GATE.equals(childID)) {
 					tileName = ExtTileIdMap.TILE_NETHER_BRIDGE_GATE;
 					AtlasAPI.getTileAPI().putCustomGlobalTile(world, tileName, chunkX, chunkZ);
+				} else if (BRIDGE_CROSS.equals(childID) || START.equals(childID)) {
+					tileName = ExtTileIdMap.TILE_NETHER_BRIDGE;
+					AtlasAPI.getTileAPI().putCustomGlobalTile(world, tileName, chunkX, chunkZ);
 				} else if (TOWER.equals(childID)) {
 					tileName = ExtTileIdMap.TILE_NETHER_TOWER;
 					AtlasAPI.getTileAPI().putCustomGlobalTile(world, tileName, chunkX, chunkZ);
+				} else if (ENTRANCE.equals(childID)) {
+					tileName = ExtTileIdMap.TILE_NETHER_HALL;
+					AtlasAPI.getTileAPI().putCustomGlobalTile(world, tileName, chunkX, chunkZ);
+				} else if (WART_STAIRS.equals(childID)) {
+					tileName = ExtTileIdMap.TILE_NETHER_FORT_STAIRS;
+					AtlasAPI.getTileAPI().putCustomGlobalTile(world, tileName, chunkX, chunkZ);
+				} else if (THRONE.equals(childID)) {
+					tileName = ExtTileIdMap.TILE_NETHER_THRONE;
+					AtlasAPI.getTileAPI().putCustomGlobalTile(world, tileName, chunkX, chunkZ);
 				} else {
-					tileName = ExtTileIdMap.TILE_NETHER_BRIDGE;
+					tileName = ExtTileIdMap.TILE_NETHER_WALL;
 					if (noTileAt(chunkX, chunkZ)) {
 						AtlasAPI.getTileAPI().putCustomGlobalTile(world, tileName, chunkX, chunkZ);
 					}
