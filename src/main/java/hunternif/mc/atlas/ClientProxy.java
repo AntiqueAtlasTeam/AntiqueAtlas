@@ -179,6 +179,7 @@ public class ClientProxy extends CommonProxy {
 		map.register(NETHER_BRIDGE_Z);
 		map.register(NETHER_BRIDGE_END_X);
 		map.register(NETHER_BRIDGE_END_Z);
+		map.register(NETHER_BRIDGE_GATE);
 	}
 	
 	/** Assign default textures to vanilla biomes. */
@@ -269,6 +270,7 @@ public class ClientProxy extends CommonProxy {
 		api.setCustomTileTexture(ExtTileIdMap.TILE_NETHER_BRIDGE_Z, NETHER_BRIDGE_Z);
 		api.setCustomTileTexture(ExtTileIdMap.TILE_NETHER_BRIDGE_END_X, NETHER_BRIDGE_END_X);
 		api.setCustomTileTexture(ExtTileIdMap.TILE_NETHER_BRIDGE_END_Z, NETHER_BRIDGE_END_Z);
+		api.setCustomTileTexture(ExtTileIdMap.TILE_NETHER_BRIDGE_GATE, NETHER_BRIDGE_GATE);
 	}
 
 	@Override

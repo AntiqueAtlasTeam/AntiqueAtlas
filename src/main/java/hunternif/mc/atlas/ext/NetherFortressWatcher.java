@@ -21,29 +21,27 @@ public class NetherFortressWatcher {
 	/** Set of tag names for every fortress, in the format "[x, y]" */
 	private final Set<String> visited = new HashSet<String>();
 	
-	/* ========= Parts of the fortress: ===========
 	// Corridors:
-	"NeSCLT" - Roofed corridor, solid wall down to the ground
-	"NeSCR" - Another roofed corridor? i guess
-	"NeCCS" - Roofed stairs, solid wall down to the ground
-	"NeCTB" - Really small roofed corridor
-	"NeSC" - ? Roofed? Covers most of the area of the Fortress. Solid wall down to the ground?
+	private static final String ROOFED = "NeSCLT"; // Roofed corridor, solid wall down to the ground
+	private static final String ROOFED2 = "NeSCR"; // Another roofed corridor? i guess
+	private static final String ROOFED_STAIRS = "NeCCS"; // Roofed stairs, solid wall down to the ground
+	private static final String ROOFED3 = "NeCTB"; // Really small roofed corridor
+	private static final String ROOFED4 = "NeSC"; // ? Roofed? Covers most of the area of the Fortress. Solid wall down to the ground?
 	
 	// Crossings:
-	"NeRC" - That room with no roof with gates facing each direction. One thick solid column going down to the ground. 
-	"NeSCSC" - Roofed corridor?
-	"NeBCr" - A crossing of open bridges. No roof, no column. Takes up 19x19 area because of the beginnings of bridges starting off in different directions.
-	"NeStart" - The same as "NeBCr"
+	private static final String BRIDGE_GATE = "NeRC"; // That room with no roof with gates facing each direction. One thick solid column going down to the ground. -done!
+	private static final String ROOFED_CROSS = "NeSCSC"; // Roofed corridor?
+	private static final String BRIDGE_CROSS = "NeBCr"; // A crossing of open bridges. No roof, no column. Takes up 19x19 area because of the beginnings of bridges starting off in different directions. - done!
+	private static final String START = "NeStart"; // The same as "NeBCr" - done!
 	
 	// Bridges:
-	"NeBS - "19-block-long section of the bridge with columns, no roof.
-	"NeBEF - "The ruined end of a bridge
+	private static final String BRIDGE = "NeBS"; // "19-block-long section of the bridge with columns, no roof. -done!
+	private static final String BRIDGE_END = "NeBEF"; // The ruined end of a bridge - done!
 	
-	"NeCE" - "Entrance", a room with an iron-barred gate. Contains a well of lava in the center.
-	"NeCSR" - Room with the Nether Wart and a wide staircase leading to an open roof with a fence railing.
-	"NeMT" - Blaze spawner. No roof. A decorative wall of fence ("the throne"?)
-	"NeSR" - That room with tiny stairs going up to the roof along the wall
-	*/
+	private static final String ENTRANCE = "NeCE"; // "Entrance", a room with an iron-barred gate. Contains a well of lava in the center.
+	private static final String WART = "NeCSR"; // Room with the Nether Wart and a wide staircase leading to an open roof with a fence railing.
+	private static final String SPAWNER = "NeMT"; // Blaze spawner. No roof. A decorative wall of fence ("the throne"?)
+	private static final String STAIRS = "NeSR"; // That room with tiny stairs going up to the roof along the wall
 	
 	@SubscribeEvent(priority=EventPriority.LOWEST)
 	public void onWorldLoad(WorldEvent.Load event) {
@@ -83,7 +81,7 @@ public class NetherFortressWatcher {
 			NBTTagCompound child = children.getCompoundTagAt(i);
 			String childID = child.getString("id");
 			StructureBoundingBox boundingBox = new StructureBoundingBox(child.getIntArray("BB"));
-			if ("NeBS".equals(childID)) { // Straight open bridge segment. Is allowed to span several chunks.
+			if (BRIDGE.equals(childID)) { // Straight open bridge segment. Is allowed to span several chunks.
 				if (boundingBox.getXSize() > 16) {
 					String tileName = ExtTileIdMap.TILE_NETHER_BRIDGE_X;
 					int chunkZ = boundingBox.getCenterZ() >> 4;
@@ -103,7 +101,7 @@ public class NetherFortressWatcher {
 						}
 					}
 				}
-			} else if ("NeBEF".equals(childID)) { // End of a straight open bridge segment
+			} else if (BRIDGE_END.equals(childID)) { // End of a straight open bridge segment
 				String tileName;
 				int chunkX, chunkZ;
 				if (boundingBox.getXSize() > boundingBox.getZSize()) {
@@ -119,10 +117,18 @@ public class NetherFortressWatcher {
 					AtlasAPI.getTileAPI().putCustomGlobalTile(world, tileName, chunkX, chunkZ);
 				}
 			} else {
-				String tileName = ExtTileIdMap.TILE_NETHER_BRIDGE; // TODO: handle other parts of the fortress
 				int chunkX = boundingBox.getCenterX() >> 4;
 				int chunkZ = boundingBox.getCenterZ() >> 4;
-				AtlasAPI.getTileAPI().putCustomGlobalTile(world, tileName, chunkX, chunkZ);
+				String tileName;
+				if (BRIDGE_GATE.equals(childID)) {
+					tileName = ExtTileIdMap.TILE_NETHER_BRIDGE_GATE;
+					AtlasAPI.getTileAPI().putCustomGlobalTile(world, tileName, chunkX, chunkZ);
+				} else {
+					tileName = ExtTileIdMap.TILE_NETHER_BRIDGE;
+					if (noTileAt(chunkX, chunkZ)) {
+						AtlasAPI.getTileAPI().putCustomGlobalTile(world, tileName, chunkX, chunkZ);
+					}
+				}
 			}
 		}
 	}

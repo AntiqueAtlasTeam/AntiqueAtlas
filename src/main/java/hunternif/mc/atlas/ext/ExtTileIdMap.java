@@ -32,6 +32,7 @@ public class ExtTileIdMap extends SaveData {
 	public static final String TILE_NETHER_BRIDGE_Z = "netherBridgeZ";
 	public static final String TILE_NETHER_BRIDGE_END_X = "netherBridgeEndX";
 	public static final String TILE_NETHER_BRIDGE_END_Z = "netherBridgeEndZ";
+	public static final String TILE_NETHER_BRIDGE_GATE = "netherBridgeGate";
 	
 	public static final int NOT_FOUND = -1;
 	

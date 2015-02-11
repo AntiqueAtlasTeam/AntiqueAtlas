@@ -169,15 +169,14 @@ public class TextureSet {
 	NETHER_BRIDGE_X = standard("NETHER_BRIDGE_X", TILE_NETHER_BRIDGE),
 	NETHER_BRIDGE_Z = standard("NETHER_BRIDGE_Z", TILE_NETHER_BRIDGE),
 	NETHER_BRIDGE_END_X = standard("NETHER_BRIDGE_END_X", TILE_NETHER_BRIDGE_END_X),
-	NETHER_BRIDGE_END_Z = standard("NETHER_BRIDGE_END_Z", TILE_NETHER_BRIDGE_END_Z);
+	NETHER_BRIDGE_END_Z = standard("NETHER_BRIDGE_END_Z", TILE_NETHER_BRIDGE_END_Z),
+	NETHER_BRIDGE_GATE = standard("NETHER_BRIDGE_GATE", TILE_NETHER_BRIDGE_GATE);
 	
 	// Sophisticated stitching stuff:
 	static {
 		stitchMutually(PLAINS, SUNFLOWERS);
 		WATER.stitchTo(SHORE, ROCK_SHORE, SWAMP);
-		LAVA.stitchTo(SHORE, ROCK_SHORE, LAVA_SHORE, NETHER_BRIDGE,
-				NETHER_BRIDGE_X, NETHER_BRIDGE_END_X,
-				NETHER_BRIDGE_Z, NETHER_BRIDGE_END_Z);
+		LAVA.stitchTo(SHORE, ROCK_SHORE, LAVA_SHORE);
 		SWAMP.stitchTo(SWAMP_HILLS);
 		SNOW.stitchTo(SNOW_PINES, SNOW_HILLS, ICE_SPIKES, SNOW_PINES_HILLS);
 		SNOW_PINES.stitchTo(SNOW, SNOW_HILLS, ICE_SPIKES, SNOW_PINES_HILLS);
@@ -187,12 +186,11 @@ public class TextureSet {
 		stitchMutually(PLATEAU_MESA_LOW, PLATEAU_MESA_TREES_LOW);
 		
 		// Nether Fortress stuff:
-		NETHER_BRIDGE.stitchToHorizontal(NETHER_BRIDGE_X, NETHER_BRIDGE_END_X);
-		NETHER_BRIDGE.stitchToVertical(NETHER_BRIDGE_Z, NETHER_BRIDGE_END_Z);
-		NETHER_BRIDGE_X.stitchToHorizontal(NETHER_BRIDGE, NETHER_BRIDGE_END_X);
-		NETHER_BRIDGE_END_X.stitchToHorizontal(NETHER_BRIDGE, NETHER_BRIDGE_X);
-		NETHER_BRIDGE_Z.stitchToVertical(NETHER_BRIDGE, NETHER_BRIDGE_END_Z);
-		NETHER_BRIDGE_END_Z.stitchToVertical(NETHER_BRIDGE, NETHER_BRIDGE_Z);
+		LAVA.stitchTo(NETHER_BRIDGE, NETHER_BRIDGE_GATE,
+				NETHER_BRIDGE_X, NETHER_BRIDGE_END_X,
+				NETHER_BRIDGE_Z, NETHER_BRIDGE_END_Z);
+		stitchMutuallyHorizontally(NETHER_BRIDGE, NETHER_BRIDGE_GATE, NETHER_BRIDGE_X, NETHER_BRIDGE_END_X);
+		stitchMutuallyVertically(NETHER_BRIDGE, NETHER_BRIDGE_GATE, NETHER_BRIDGE_Z, NETHER_BRIDGE_END_Z);
 	}
 	
 	/** Name of the texture pack to write in the config file. */
@@ -309,7 +307,21 @@ public class TextureSet {
 	public static final void stitchMutually(TextureSet ... sets) {
 		for (TextureSet set1 : sets) {
 			for (TextureSet set2 : sets) {
-				if (set1 != set2) set1.stitchTo.add(set2);
+				if (set1 != set2) set1.stitchTo(set2);
+			}
+		}
+	}
+	public static final void stitchMutuallyHorizontally(TextureSet ... sets) {
+		for (TextureSet set1 : sets) {
+			for (TextureSet set2 : sets) {
+				if (set1 != set2) set1.stitchToHorizontal(set2);
+			}
+		}
+	}
+	public static final void stitchMutuallyVertically(TextureSet ... sets) {
+		for (TextureSet set1 : sets) {
+			for (TextureSet set2 : sets) {
+				if (set1 != set2) set1.stitchToVertical(set2);
 			}
 		}
 	}
