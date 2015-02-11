@@ -155,22 +155,29 @@ public class TextureSet {
 	WATER       = standard("WATER", TILE_WATER, TILE_WATER2),
 	LAVA        = standard("LAVA", TILE_LAVA, TILE_LAVA2),
 	SHORE       = new TextureSetShore("SHORE", WATER, TILE_SHORE, TILE_SHORE2, TILE_SHORE3),
-	ROCK_SHORE  = new TextureSetShore("ROCK_SHORE", WATER, TILE_ROCK_SHORE),
-	LAVA_SHORE  = new TextureSetShore("LAVA_SHORE", LAVA, TILE_LAVA_SHORE, TILE_LAVA_SHORE2),
+	ROCK_SHORE  = new TextureSetShore("ROCK_SHORE", WATER, TILE_ROCK_SHORE).stitchesToNull(),
+	LAVA_SHORE  = new TextureSetShore("LAVA_SHORE", LAVA, TILE_LAVA_SHORE, TILE_LAVA_SHORE2).stitchesToNull(),
 	
 	// Misc. stuff:
 	MUSHROOM   = standard("MUSHROOM", TILE_MUSHROOM, TILE_MUSHROOM2),
 	CAVE_WALLS = standard("CAVE_WALLS", TILE_CAVE_WALLS),
 	
-	// Village stuff:
-	HOUSE = standard("HOUSE", TILE_HOUSE),
-	FENCE = standard("FENCE", TILE_FENCE).stitchTo(HOUSE);
+	// Structure stuff:
+	HOUSE         = standard("HOUSE", TILE_HOUSE),
+	FENCE         = standard("FENCE", TILE_FENCE).stitchTo(HOUSE),
+	NETHER_BRIDGE = standard("NETHER_BRIDGE", TILE_NETHER_BRIDGE),
+	NETHER_BRIDGE_X = standard("NETHER_BRIDGE_X", TILE_NETHER_BRIDGE),
+	NETHER_BRIDGE_Z = standard("NETHER_BRIDGE_Z", TILE_NETHER_BRIDGE),
+	NETHER_BRIDGE_END_X = standard("NETHER_BRIDGE_END_X", TILE_NETHER_BRIDGE),
+	NETHER_BRIDGE_END_Z = standard("NETHER_BRIDGE_END_Z", TILE_NETHER_BRIDGE);
 	
 	// Sophisticated stitching stuff:
 	static {
 		stitchMutually(PLAINS, SUNFLOWERS);
 		WATER.stitchTo(SHORE, ROCK_SHORE, SWAMP);
-		LAVA.stitchTo(SHORE, ROCK_SHORE, LAVA_SHORE);
+		LAVA.stitchTo(SHORE, ROCK_SHORE, LAVA_SHORE, NETHER_BRIDGE,
+				NETHER_BRIDGE_X, NETHER_BRIDGE_END_X,
+				NETHER_BRIDGE_Z, NETHER_BRIDGE_END_Z);
 		SWAMP.stitchTo(SWAMP_HILLS);
 		SNOW.stitchTo(SNOW_PINES, SNOW_HILLS, ICE_SPIKES, SNOW_PINES_HILLS);
 		SNOW_PINES.stitchTo(SNOW, SNOW_HILLS, ICE_SPIKES, SNOW_PINES_HILLS);
@@ -178,6 +185,14 @@ public class TextureSet {
 		DESERT.stitchTo(MESA, BRYCE);
 		stitchMutually(PLATEAU_MESA, PLATEAU_MESA_TREES, PLATEAU_SAVANNA, PLATEAU_SAVANNA_M);
 		stitchMutually(PLATEAU_MESA_LOW, PLATEAU_MESA_TREES_LOW);
+		
+		// Nether Fortress stuff:
+		NETHER_BRIDGE.stitchToHorizontal(NETHER_BRIDGE_X, NETHER_BRIDGE_END_X);
+		NETHER_BRIDGE.stitchToVertical(NETHER_BRIDGE_Z, NETHER_BRIDGE_END_Z);
+		NETHER_BRIDGE_X.stitchToHorizontal(NETHER_BRIDGE, NETHER_BRIDGE_END_X);
+		NETHER_BRIDGE_END_X.stitchToHorizontal(NETHER_BRIDGE, NETHER_BRIDGE_X);
+		NETHER_BRIDGE_Z.stitchToVertical(NETHER_BRIDGE, NETHER_BRIDGE_END_Z);
+		NETHER_BRIDGE_END_Z.stitchToVertical(NETHER_BRIDGE, NETHER_BRIDGE_Z);
 	}
 	
 	/** Name of the texture pack to write in the config file. */
@@ -189,10 +204,15 @@ public class TextureSet {
 	/** Texture sets that a tile rendered with this set can be stitched to,
 	 * excluding itself. */
 	private final Set<TextureSet> stitchTo = new HashSet<TextureSet>();
+	private final Set<TextureSet> stitchToHorizontal = new HashSet<TextureSet>();
+	private final Set<TextureSet> stitchToVertical = new HashSet<TextureSet>();
 	
 	/** Whether the texture set is part of the standard pack. Only true for
 	 * static constants in this class. */
 	final boolean isStandard;
+	
+	private boolean stitchesToNull = false;
+	private boolean anisotropicStitching = false;
 	
 	private static TextureSet standard(String name, ResourceLocation ... textures) {
 		return new TextureSet(true, name, textures);
@@ -203,9 +223,14 @@ public class TextureSet {
 		this.name = name;
 		this.textures = textures;
 	}
-	
 	public TextureSet(String name, ResourceLocation ... textures) {
 		this(false, name, textures);
+	}
+	
+	/** Allow this texture set to be stitched to empty space, i.e. edge of the map. */
+	public TextureSet stitchesToNull() {
+		this.stitchesToNull = true;
+		return this;
 	}
 	
 	/** Add other texture sets that this texture set will be stitched to
@@ -225,9 +250,34 @@ public class TextureSet {
 		return this;
 	}
 	
-	/** Whether this texture set should be stitched to the other specified set. */
-	public boolean shouldStichTo(TextureSet otherSet) {
-		return otherSet == this || stitchTo.contains(otherSet);
+	public TextureSet stitchToHorizontal(TextureSet ... textureSets) {
+		this.anisotropicStitching = true;
+		for (TextureSet textureSet : textureSets) {
+			stitchToHorizontal.add(textureSet);
+		}
+		return this;
+	}
+	public TextureSet stitchToVertical(TextureSet ... textureSets) {
+		this.anisotropicStitching = true;
+		for (TextureSet textureSet : textureSets) {
+			stitchToVertical.add(textureSet);
+		}
+		return this;
+	}
+	
+	/** Actually used when stitching along the diagonal. */
+	public boolean shouldStitchTo(TextureSet toSet) {
+		return toSet == this || stitchesToNull && toSet == null || stitchTo.contains(toSet);
+	}
+	public boolean shouldStitchToHorizontally(TextureSet toSet) {
+		if (toSet == this || stitchesToNull && toSet == null) return true;
+		if (anisotropicStitching) return stitchToHorizontal.contains(toSet);
+		else return stitchTo.contains(toSet);
+	}
+	public boolean shouldStitchToVertically(TextureSet toSet) {
+		if (toSet == this || stitchesToNull && toSet == null) return true;
+		if (anisotropicStitching) return stitchToVertical.contains(toSet);
+		else return stitchTo.contains(toSet);
 	}
 	
 	@Override
@@ -247,8 +297,11 @@ public class TextureSet {
 			this.water = water;
 		}
 		@Override
-		public boolean shouldStichTo(TextureSet otherSet) {
-			return otherSet == this || !water.shouldStichTo(otherSet);
+		public boolean shouldStitchToHorizontally(TextureSet otherSet) {
+			return otherSet == this || !water.shouldStitchToHorizontally(otherSet);
+		}
+		public boolean shouldStitchToVertically(TextureSet otherSet) {
+			return otherSet == this || !water.shouldStitchToVertically(otherSet);
 		}
 	}
 	

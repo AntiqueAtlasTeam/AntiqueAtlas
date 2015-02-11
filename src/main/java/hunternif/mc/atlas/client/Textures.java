@@ -189,9 +189,12 @@ public class Textures {
 	TILE_LAVA_SHORE = tile("lava_shore.png"),
 	TILE_LAVA_SHORE2 = tile("lava_shore2.png"),
 	
-	// Village:
+	// Structures:
 	TILE_HOUSE = tile("house.png"),
-	TILE_FENCE = tile("fence.png");
+	TILE_FENCE = tile("fence.png"),
+	TILE_NETHER_BRIDGE = tile("nether_bridge.png"),
+	TILE_NETHER_BRIDGE_X = tile("nether_bridge_X.png"),
+	TILE_NETHER_BRIDGE_Z = tile("nether_bridge_z.png");
 	
 	// Constructor helpers:
 	public static final ResourceLocation gui(String fileName) {

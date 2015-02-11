@@ -32,7 +32,7 @@ public class VillageWatcher {
 	 * mod. */
 	@SubscribeEvent(priority=EventPriority.LOWEST)
 	public void onWorldLoad(WorldEvent.Load event) {
-		if (!event.world.isRemote) {
+		if (!event.world.isRemote && event.world.provider.dimensionId == 0) {
 			visitAllUnvisitedVillages(event.world);
 		}
 	}
@@ -41,7 +41,7 @@ public class VillageWatcher {
 	// This is still buggy, a freshly-generated village might not show up on an Atlas.
 	@SubscribeEvent
 	public void onPopulateChunk(PopulateChunkEvent.Post event) {
-		if (!event.world.isRemote) {
+		if (!event.world.isRemote && event.world.provider.dimensionId == 0) {
 			visitAllUnvisitedVillages(event.world);
 		}
 	}
@@ -53,6 +53,7 @@ public class VillageWatcher {
 		for (Village village : (List<Village>) villageCollection.getVillageList()) {
 			if (!visited.contains(village)) {
 				visitVillage(world, village);
+				visited.add(village);
 			}
 		}
 	}
@@ -106,6 +107,5 @@ public class VillageWatcher {
 			VillageDoorInfo door = (VillageDoorInfo) doorInfo;
 			AtlasAPI.getTileAPI().putCustomGlobalTile(world, ExtTileIdMap.TILE_VILLAGE_HOUSE, door.posX >> 4, door.posZ >> 4);
 		}
-		visited.add(village);
 	}
 }

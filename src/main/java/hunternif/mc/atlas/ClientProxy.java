@@ -48,6 +48,8 @@ public class ClientProxy extends CommonProxy {
 	public void preInit(FMLPreInitializationEvent event) {
 		super.preInit(event);
 		
+		//TODO: new built-in entries in the config aren't saved!
+		
 		textureSetMap = TextureSetMap.instance();
 		textureSetConfig = new TextureSetConfig(new File(configDir, "texture_sets.json"));
 		// Register default values before the config file loads, possibly overwriting the,:
@@ -171,6 +173,12 @@ public class ClientProxy extends CommonProxy {
 		map.register(CAVE_WALLS);
 		map.register(HOUSE);
 		map.register(FENCE);
+		
+		map.register(NETHER_BRIDGE);
+		map.register(NETHER_BRIDGE_X);
+		map.register(NETHER_BRIDGE_Z);
+		map.register(NETHER_BRIDGE_END_X);
+		map.register(NETHER_BRIDGE_END_Z);
 	}
 	
 	/** Assign default textures to vanilla biomes. */
@@ -256,6 +264,11 @@ public class ClientProxy extends CommonProxy {
 		api.setCustomTileTexture(ExtTileIdMap.TILE_VILLAGE_TERRITORY, FENCE);
 		api.setCustomTileTexture(ExtTileIdMap.TILE_LAVA, LAVA);
 		api.setCustomTileTexture(ExtTileIdMap.TILE_LAVA_SHORE, LAVA_SHORE);
+		api.setCustomTileTexture(ExtTileIdMap.TILE_NETHER_BRIDGE, NETHER_BRIDGE);
+		api.setCustomTileTexture(ExtTileIdMap.TILE_NETHER_BRIDGE_X, NETHER_BRIDGE_X);
+		api.setCustomTileTexture(ExtTileIdMap.TILE_NETHER_BRIDGE_Z, NETHER_BRIDGE_Z);
+		api.setCustomTileTexture(ExtTileIdMap.TILE_NETHER_BRIDGE_END_X, NETHER_BRIDGE_END_X);
+		api.setCustomTileTexture(ExtTileIdMap.TILE_NETHER_BRIDGE_END_Z, NETHER_BRIDGE_END_Z);
 	}
 
 	@Override

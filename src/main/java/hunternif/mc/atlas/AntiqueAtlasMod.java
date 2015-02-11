@@ -2,6 +2,7 @@ package hunternif.mc.atlas;
 
 import static net.minecraftforge.oredict.RecipeSorter.Category.SHAPELESS;
 import hunternif.mc.atlas.ext.ExtBiomeDataHandler;
+import hunternif.mc.atlas.ext.NetherFortressWatcher;
 import hunternif.mc.atlas.ext.VillageWatcher;
 import hunternif.mc.atlas.item.ItemAtlas;
 import hunternif.mc.atlas.item.ItemEmptyAtlas;
@@ -80,6 +81,7 @@ public class AntiqueAtlasMod {
 		FMLCommonHandler.instance().bus().register(globalMarkersData);
 		
 		MinecraftForge.EVENT_BUS.register(new VillageWatcher());
+		MinecraftForge.EVENT_BUS.register(new NetherFortressWatcher());
 	}
 	
 	@EventHandler

@@ -208,6 +208,10 @@ public class BiomeTextureMap extends SaveData {
 	public boolean isRegistered(int biomeID) {
 		return textureMap.containsKey(biomeID);
 	}
+	
+	public TextureSet getTextureSet(Tile tile) {
+		return tile == null ? null : textureMap.get(tile.biomeID);
+	}
 
 	public ResourceLocation getTexture(Tile tile) {
 		checkRegistration(tile.biomeID);
@@ -215,16 +219,6 @@ public class BiomeTextureMap extends SaveData {
 		int i = MathHelper.floor_float((float)(tile.getVariationNumber())
 				/ (float)(Short.MAX_VALUE) * (float)(set.textures.length));
 		return set.textures[i];
-	}
-	
-	/** Whether the first tile should be stitched to the 2nd
-	 * (but the opposite is not always true!) */
-	public boolean shouldStitchTo(int biomeID, int toBiomeID) {
-		checkRegistration(biomeID);
-		checkRegistration(toBiomeID);
-		TextureSet entry = textureMap.get(biomeID);
-		TextureSet toEntry = textureMap.get(toBiomeID);
-		return entry.shouldStichTo(toEntry);
 	}
 	
 	public List<ResourceLocation> getAllTextures() {

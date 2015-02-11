@@ -27,6 +27,11 @@ public class ExtTileIdMap extends SaveData {
 	public static final String TILE_VILLAGE_TERRITORY = "npcVillageTerritory";
 	public static final String TILE_LAVA = "lava";
 	public static final String TILE_LAVA_SHORE = "lavaShore";
+	public static final String TILE_NETHER_BRIDGE = "netherBridge";
+	public static final String TILE_NETHER_BRIDGE_X = "netherBridgeX";
+	public static final String TILE_NETHER_BRIDGE_Z = "netherBridgeZ";
+	public static final String TILE_NETHER_BRIDGE_END_X = "netherBridgeEndX";
+	public static final String TILE_NETHER_BRIDGE_END_Z = "netherBridgeEndZ";
 	
 	public static final int NOT_FOUND = -1;
 	
@@ -51,6 +56,10 @@ public class ExtTileIdMap extends SaveData {
 	public int getPseudoBiomeID(String uniqueName) {
 		Integer id = nameToIdMap.get(uniqueName);
 		return id == null ? NOT_FOUND : id.intValue();
+	}
+	
+	public String getPseudoBiomeName(int id) {
+		return nameToIdMap.inverse().get(id);
 	}
 	
 	private int findNewID() {
