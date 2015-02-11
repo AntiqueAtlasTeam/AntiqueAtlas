@@ -193,8 +193,10 @@ public class Textures {
 	TILE_HOUSE = tile("house.png"),
 	TILE_FENCE = tile("fence.png"),
 	TILE_NETHER_BRIDGE = tile("nether_bridge.png"),
-	TILE_NETHER_BRIDGE_X = tile("nether_bridge_X.png"),
-	TILE_NETHER_BRIDGE_Z = tile("nether_bridge_z.png");
+	TILE_NETHER_BRIDGE_X = tile("nether_bridge_x.png"),
+	TILE_NETHER_BRIDGE_Z = tile("nether_bridge_z.png"),
+	TILE_NETHER_BRIDGE_END_X = tile("nether_bridge_end_x.png"),
+	TILE_NETHER_BRIDGE_END_Z = tile("nether_bridge_end_z.png");
 	
 	// Constructor helpers:
 	public static final ResourceLocation gui(String fileName) {
