@@ -41,7 +41,7 @@ public class NetherFortressWatcher {
 	private static final String ENTRANCE = "NeCE"; // "Entrance", a room with an iron-barred gate. Contains a well of lava in the center.
 	private static final String WART = "NeCSR"; // Room with the Nether Wart and a wide staircase leading to an open roof with a fence railing.
 	private static final String SPAWNER = "NeMT"; // Blaze spawner. No roof. A decorative wall of fence ("the throne"?)
-	private static final String STAIRS = "NeSR"; // That room with tiny stairs going up to the roof along the wall
+	private static final String TOWER = "NeSR"; // That room with tiny stairs going up to the roof along the wall -done!
 	
 	@SubscribeEvent(priority=EventPriority.LOWEST)
 	public void onWorldLoad(WorldEvent.Load event) {
@@ -122,6 +122,9 @@ public class NetherFortressWatcher {
 				String tileName;
 				if (BRIDGE_GATE.equals(childID)) {
 					tileName = ExtTileIdMap.TILE_NETHER_BRIDGE_GATE;
+					AtlasAPI.getTileAPI().putCustomGlobalTile(world, tileName, chunkX, chunkZ);
+				} else if (TOWER.equals(childID)) {
+					tileName = ExtTileIdMap.TILE_NETHER_TOWER;
 					AtlasAPI.getTileAPI().putCustomGlobalTile(world, tileName, chunkX, chunkZ);
 				} else {
 					tileName = ExtTileIdMap.TILE_NETHER_BRIDGE;
