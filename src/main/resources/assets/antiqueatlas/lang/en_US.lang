@@ -6,6 +6,8 @@ gui.antiqueatlas.addMarker=Add marker
 gui.antiqueatlas.delMarker=Delete marker
 gui.antiqueatlas.followPlayer=Follow player
 gui.antiqueatlas.exportImage=Export image
+gui.antiqueatlas.hideMarkers=Hide markers
+gui.antiqueatlas.showMarkers=Show markers
 
 gui.antiqueatlas.marker.label=Label:
 gui.antiqueatlas.marker.type=Type:
