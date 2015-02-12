@@ -6,6 +6,8 @@ gui.antiqueatlas.addMarker=Добавить метку
 gui.antiqueatlas.delMarker=Удалить метку
 gui.antiqueatlas.followPlayer=Привязать к игроку
 gui.antiqueatlas.exportImage=Сохранить изображение
+gui.antiqueatlas.hideMarkers=Скрыть метки
+gui.antiqueatlas.showMarkers=Показать метки
 
 gui.antiqueatlas.marker.label=Текст метки:
 gui.antiqueatlas.marker.type=Тип:

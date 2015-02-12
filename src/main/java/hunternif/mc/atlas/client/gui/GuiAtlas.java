@@ -73,6 +73,23 @@ public class GuiAtlas extends GuiComponent {
 	/** If on, navigate the map normally. */
 	private final IState NORMAL = new SimpleState();
 	
+	/** If on, all markers as well as the player icon are hidden. */
+	private final IState HIDING_MARKERS = new IState() {
+		@Override
+		public void onEnterState() {
+			// Set the button as not selected so that it can be clicked again:
+			btnShowMarkers.setSelected(false);
+			btnShowMarkers.setTitle(I18n.format("gui.antiqueatlas.showMarkers"));
+			btnShowMarkers.setIconTexture(Textures.ICON_SHOW_MARKERS);
+		}
+		@Override
+		public void onExitState() {
+			btnShowMarkers.setSelected(false);
+			btnShowMarkers.setTitle(I18n.format("gui.antiqueatlas.hideMarkers"));
+			btnShowMarkers.setIconTexture(Textures.ICON_HIDE_MARKERS);
+		}
+	};
+	
 	/** If on, a semi-transparent marker is attached to the cursor, and the
 	 * player's icon becomes semi-transparent as well. */
 	private final IState PLACING_MARKER = new IState() {
@@ -127,6 +144,9 @@ public class GuiAtlas extends GuiComponent {
 	
 	/** Button for deleting local markers. */
 	private final GuiBookmarkButton btnDelMarker;
+	
+	/** Button for showing/hiding all markers. */
+	private final GuiBookmarkButton btnShowMarkers;
 	
 	/** Button for restoring player's position at the center of the Atlas. */
 	private final GuiPositionButton btnPosition;
@@ -242,7 +262,7 @@ public class GuiAtlas extends GuiComponent {
 		btnPosition.addListener(positionListener);
 		
 		btnExportPng = new GuiBookmarkButton(1, Textures.ICON_EXPORT, I18n.format("gui.antiqueatlas.exportImage"));
-		addChild(btnExportPng).offsetGuiCoords(300, 56);
+		addChild(btnExportPng).offsetGuiCoords(300, 75);
 		btnExportPng.addListener(new IButtonListener<GuiBookmarkButton>() {
 			@Override
 			public void onClick(GuiBookmarkButton button) {
@@ -258,7 +278,7 @@ public class GuiAtlas extends GuiComponent {
 			}
 		});
 		
-		btnMarker = new GuiBookmarkButton(0, Textures.ICON_MARKER, I18n.format("gui.antiqueatlas.addMarker"));
+		btnMarker = new GuiBookmarkButton(0, Textures.ICON_ADD_MARKER, I18n.format("gui.antiqueatlas.addMarker"));
 		addChild(btnMarker).offsetGuiCoords(300, 14);
 		btnMarker.addListener(new IButtonListener() {
 			@Override
@@ -287,6 +307,17 @@ public class GuiAtlas extends GuiComponent {
 						selectedButton = button;
 						state.switchTo(DELETING_MARKER);
 					}
+				}
+			}
+		});
+		btnShowMarkers = new GuiBookmarkButton(3, Textures.ICON_HIDE_MARKERS, I18n.format("gui.antiqueatlas.hideMarkers"));
+		addChild(btnShowMarkers).offsetGuiCoords(300, 52);
+		btnShowMarkers.addListener(new IButtonListener() {
+			@Override
+			public void onClick(GuiComponentButton button) {
+				if (stack != null) {
+					selectedButton = null;
+					state.switchTo(state.is(HIDING_MARKERS) ? NORMAL : HIDING_MARKERS);
 				}
 			}
 		});
@@ -327,7 +358,7 @@ public class GuiAtlas extends GuiComponent {
 		int mapY = (height - MAP_HEIGHT)/2;
 		boolean isMouseOverMap = mouseX >= mapX && mouseX <= mapX + MAP_WIDTH &&
 				mouseY >= mapY && mouseY <= mapY + MAP_HEIGHT;
-		if (!state.is(NORMAL)) {
+		if (!state.is(NORMAL) && !state.is(HIDING_MARKERS)) {
 			if (state.is(PLACING_MARKER) // If clicked on the map, place marker:
 					&& isMouseOverMap && mouseState == 0 /* left click */) {
 				markerFinalizer.setMarkerData(player.worldObj,
@@ -354,7 +385,7 @@ public class GuiAtlas extends GuiComponent {
 						stack.getItemDamage(), toDelete.getId());
 			}
 			state.switchTo(NORMAL);
-		} else if (state.is(NORMAL) && isMouseOverMap && selectedButton == null) {
+		} else if (isMouseOverMap && selectedButton == null) {
 			isDragging = true;
 			dragMouseX = mouseX;
 			dragMouseY = mouseY;
@@ -577,30 +608,32 @@ public class GuiAtlas extends GuiComponent {
 			}
 		}
 		
-		int markersStartX = MathUtil.roundToBase(mapStartX, MarkersData.CHUNK_STEP) / MarkersData.CHUNK_STEP - 1;
-		int markersStartZ = MathUtil.roundToBase(mapStartZ, MarkersData.CHUNK_STEP) / MarkersData.CHUNK_STEP - 1;
-		int markersEndX = MathUtil.roundToBase(mapEndX, MarkersData.CHUNK_STEP) / MarkersData.CHUNK_STEP + 1;
-		int markersEndZ = MathUtil.roundToBase(mapEndZ, MarkersData.CHUNK_STEP) / MarkersData.CHUNK_STEP + 1;
-		
-		// Draw global markers:
-		for (int x = markersStartX; x <= markersEndX; x++) {
-			for (int z = markersStartZ; z <= markersEndZ; z++) {
-				List<Marker> markers = globalMarkersData.getMarkersAt(x, z);
-				if (markers == null) continue;
-				for (Marker marker : markers) {
-					renderMarker(marker);
-				}
-			}
-		}
-		
-		// Draw local markers:
-		if (localMarkersData != null) {
+		if (!state.is(HIDING_MARKERS)) {
+			int markersStartX = MathUtil.roundToBase(mapStartX, MarkersData.CHUNK_STEP) / MarkersData.CHUNK_STEP - 1;
+			int markersStartZ = MathUtil.roundToBase(mapStartZ, MarkersData.CHUNK_STEP) / MarkersData.CHUNK_STEP - 1;
+			int markersEndX = MathUtil.roundToBase(mapEndX, MarkersData.CHUNK_STEP) / MarkersData.CHUNK_STEP + 1;
+			int markersEndZ = MathUtil.roundToBase(mapEndZ, MarkersData.CHUNK_STEP) / MarkersData.CHUNK_STEP + 1;
+			
+			// Draw global markers:
 			for (int x = markersStartX; x <= markersEndX; x++) {
 				for (int z = markersStartZ; z <= markersEndZ; z++) {
-					List<Marker> markers = localMarkersData.getMarkersAt(x, z);
+					List<Marker> markers = globalMarkersData.getMarkersAt(x, z);
 					if (markers == null) continue;
 					for (Marker marker : markers) {
 						renderMarker(marker);
+					}
+				}
+			}
+			
+			// Draw local markers:
+			if (localMarkersData != null) {
+				for (int x = markersStartX; x <= markersEndX; x++) {
+					for (int z = markersStartZ; z <= markersEndZ; z++) {
+						List<Marker> markers = localMarkersData.getMarkersAt(x, z);
+						if (markers == null) continue;
+						for (Marker marker : markers) {
+							renderMarker(marker);
+						}
 					}
 				}
 			}
@@ -613,23 +646,25 @@ public class GuiAtlas extends GuiComponent {
 		AtlasRenderHelper.drawFullTexture(Textures.BOOK_FRAME, getGuiX(), getGuiY(), WIDTH, HEIGHT);
 		
 		// Draw player icon:
-		// How much the player has moved from the top left corner of the map, in pixels:
-		int playerOffsetX = (int)(player.posX * mapScale) + mapOffsetX;
-		int playerOffsetZ = (int)(player.posZ * mapScale) + mapOffsetY;
-		if (playerOffsetX < -MAP_WIDTH/2) playerOffsetX = -MAP_WIDTH/2;
-		if (playerOffsetX > MAP_WIDTH/2) playerOffsetX = MAP_WIDTH/2;
-		if (playerOffsetZ < -MAP_HEIGHT/2) playerOffsetZ = -MAP_HEIGHT/2;
-		if (playerOffsetZ > MAP_HEIGHT/2 - 2) playerOffsetZ = MAP_HEIGHT/2 - 2;
-		// Draw the icon:
-		GL11.glColor4f(1, 1, 1, state.is(PLACING_MARKER) ? 0.5f : 1);
-		GL11.glPushMatrix();
-		GL11.glTranslated(getGuiX() + WIDTH/2 + playerOffsetX, getGuiY() + HEIGHT/2 + playerOffsetZ, 0);
-		float playerRotation = (float) Math.round(player.rotationYaw / 360f * PLAYER_ROTATION_STEPS) / PLAYER_ROTATION_STEPS * 360f;
-		GL11.glRotatef(180 + playerRotation, 0, 0, 1);
-		GL11.glTranslatef(-(float)PLAYER_ICON_WIDTH/2f, -(float)PLAYER_ICON_HEIGHT/2f, 0);
-		AtlasRenderHelper.drawFullTexture(Textures.PLAYER, 0, 0, PLAYER_ICON_WIDTH, PLAYER_ICON_HEIGHT);
-		GL11.glPopMatrix();
-		GL11.glColor4f(1, 1, 1, 1);
+		if (!state.is(HIDING_MARKERS)) {
+			// How much the player has moved from the top left corner of the map, in pixels:
+			int playerOffsetX = (int)(player.posX * mapScale) + mapOffsetX;
+			int playerOffsetZ = (int)(player.posZ * mapScale) + mapOffsetY;
+			if (playerOffsetX < -MAP_WIDTH/2) playerOffsetX = -MAP_WIDTH/2;
+			if (playerOffsetX > MAP_WIDTH/2) playerOffsetX = MAP_WIDTH/2;
+			if (playerOffsetZ < -MAP_HEIGHT/2) playerOffsetZ = -MAP_HEIGHT/2;
+			if (playerOffsetZ > MAP_HEIGHT/2 - 2) playerOffsetZ = MAP_HEIGHT/2 - 2;
+			// Draw the icon:
+			GL11.glColor4f(1, 1, 1, state.is(PLACING_MARKER) ? 0.5f : 1);
+			GL11.glPushMatrix();
+			GL11.glTranslated(getGuiX() + WIDTH/2 + playerOffsetX, getGuiY() + HEIGHT/2 + playerOffsetZ, 0);
+			float playerRotation = (float) Math.round(player.rotationYaw / 360f * PLAYER_ROTATION_STEPS) / PLAYER_ROTATION_STEPS * 360f;
+			GL11.glRotatef(180 + playerRotation, 0, 0, 1);
+			GL11.glTranslatef(-(float)PLAYER_ICON_WIDTH/2f, -(float)PLAYER_ICON_HEIGHT/2f, 0);
+			AtlasRenderHelper.drawFullTexture(Textures.PLAYER, 0, 0, PLAYER_ICON_WIDTH, PLAYER_ICON_HEIGHT);
+			GL11.glPopMatrix();
+			GL11.glColor4f(1, 1, 1, 1);
+		}
 		
 		// Draw buttons:
 		super.drawScreen(mouseX, mouseY, par3);

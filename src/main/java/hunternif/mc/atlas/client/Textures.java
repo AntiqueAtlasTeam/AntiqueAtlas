@@ -6,6 +6,7 @@ import net.minecraft.util.ResourceLocation;
 public class Textures {
 	public static final String MOD_PREFIX = AntiqueAtlasMod.ID + ":";
 	public static final String GUI = MOD_PREFIX + "textures/gui/";
+	public static final String GUI_ICONS = GUI + "icons/";
 	public static final String GUI_TILES = GUI + "tiles/";
 	public static final String GUI_MARKERS = GUI + "markers/";
 	public static final String GUI_SCALEBAR = GUI + "scalebar/";
@@ -33,9 +34,11 @@ public class Textures {
 	SCALEBAR_256 = scaleBar("scalebar_256.png"),
 	SCALEBAR_512 = scaleBar("scalebar_512.png"),
 	
-	ICON_EXPORT = gui("icon_export.png"),
-	ICON_MARKER = gui("icon_marker.png"),
-	ICON_DELETE_MARKER = gui("icon_del_marker.png"),
+	ICON_ADD_MARKER = icon("add_marker.png"),
+	ICON_DELETE_MARKER = icon("del_marker.png"),
+	ICON_SHOW_MARKERS = icon("show_markers.png"),
+	ICON_HIDE_MARKERS = icon("hide_markers.png"),
+	ICON_EXPORT = icon("export.png"),
 	
 	MARKER_GOOGLE_MARKER = marker("google_marker.png"),
 	MARKER_RED_X_LARGE = marker("red_x_large.png"),
@@ -216,5 +219,8 @@ public class Textures {
 	}
 	public static final ResourceLocation tile(String fileName) {
 		return new ResourceLocation(GUI_TILES + fileName);
+	}
+	public static final ResourceLocation icon(String fileName) {
+		return new ResourceLocation(GUI_ICONS + fileName);
 	}
 }

@@ -27,10 +27,10 @@ public class GuiToggleButton extends GuiComponentButton {
 	@Override
 	protected void onClick() {
 		if (!isSelected()) {
-			super.onClick();
 			if (isEnabled()) {
 				setSelected(true);
 			}
+			super.onClick();
 		}
 	}
 }
