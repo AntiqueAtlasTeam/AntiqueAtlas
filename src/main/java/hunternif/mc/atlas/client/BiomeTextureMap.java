@@ -41,10 +41,11 @@ public class BiomeTextureMap extends SaveData {
 	/** Assign texture set to biome. */
 	public void setTexture(int biomeID, TextureSet textureSet) {
 		if (textureSet == null) {
-			Log.warn("Removing old texture for biome %s", biomeID);
-			textureMap.remove(biomeID);
-			if (biomeID >= 0 && biomeID < 256) {
-				markDirty();
+			if (textureMap.remove(biomeID) != null) {
+				Log.warn("Removing old texture for biome %s", biomeID);
+				if (biomeID >= 0 && biomeID < 256) {
+					markDirty();
+				}
 			}
 			return;
 		}
