@@ -23,21 +23,27 @@ public class ExtTileIdMap extends SaveData {
 		return INSTANCE;
 	}
 	
-	public static final String TILE_VILLAGE_HOUSE = "npcVillageDoor";
-	public static final String TILE_VILLAGE_TERRITORY = "npcVillageTerritory";
-	public static final String TILE_LAVA = "lava";
-	public static final String TILE_LAVA_SHORE = "lavaShore";
-	public static final String TILE_NETHER_BRIDGE = "netherBridge";
-	public static final String TILE_NETHER_BRIDGE_X = "netherBridgeX";
-	public static final String TILE_NETHER_BRIDGE_Z = "netherBridgeZ";
-	public static final String TILE_NETHER_BRIDGE_END_X = "netherBridgeEndX";
-	public static final String TILE_NETHER_BRIDGE_END_Z = "netherBridgeEndZ";
-	public static final String TILE_NETHER_BRIDGE_GATE = "netherBridgeGate";
-	public static final String TILE_NETHER_TOWER = "netherTower";
-	public static final String TILE_NETHER_WALL = "netherWall";
-	public static final String TILE_NETHER_HALL = "netherHall";
-	public static final String TILE_NETHER_FORT_STAIRS = "netherFortStairs";
-	public static final String TILE_NETHER_THRONE = "netherThrone";
+	public static final String
+	// Village:
+	TILE_VILLAGE_HOUSE = "npcVillageDoor",
+	TILE_VILLAGE_TERRITORY = "npcVillageTerritory",
+	TILE_VILLAGE_HOUSE1 = "npcVillageHouse1",
+	TILE_VILLAGE_HOUSE2 = "npcVillageHouse2",
+	
+	// Nether & Nether Fortress:
+	TILE_LAVA = "lava",
+	TILE_LAVA_SHORE = "lavaShore",
+	TILE_NETHER_BRIDGE = "netherBridge",
+	TILE_NETHER_BRIDGE_X = "netherBridgeX",
+	TILE_NETHER_BRIDGE_Z = "netherBridgeZ",
+	TILE_NETHER_BRIDGE_END_X = "netherBridgeEndX",
+	TILE_NETHER_BRIDGE_END_Z = "netherBridgeEndZ",
+	TILE_NETHER_BRIDGE_GATE = "netherBridgeGate",
+	TILE_NETHER_TOWER = "netherTower",
+	TILE_NETHER_WALL = "netherWall",
+	TILE_NETHER_HALL = "netherHall",
+	TILE_NETHER_FORT_STAIRS = "netherFortStairs",
+	TILE_NETHER_THRONE = "netherThrone";
 	
 	public static final int NOT_FOUND = -1;
 	

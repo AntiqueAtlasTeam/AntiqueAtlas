@@ -197,9 +197,13 @@ public class Textures {
 	TILE_LAVA_SHORE = tile("lava_shore.png"),
 	TILE_LAVA_SHORE2 = tile("lava_shore2.png"),
 	
-	// Structures:
+	// Village:
 	TILE_HOUSE = tile("house.png"),
+	TILE_HOUSE1 = tile("house1.png"),
+	TILE_HOUSE2 = tile("house2.png"),
 	TILE_FENCE = tile("fence.png"),
+	
+	// Nether Fortress:
 	TILE_NETHER_BRIDGE = tile("nether_bridge.png"),
 	TILE_NETHER_BRIDGE_X = tile("nether_bridge_x.png"),
 	TILE_NETHER_BRIDGE_Z = tile("nether_bridge_z.png"),

@@ -162,9 +162,13 @@ public class TextureSet {
 	MUSHROOM   = standard("MUSHROOM", TILE_MUSHROOM, TILE_MUSHROOM2),
 	CAVE_WALLS = standard("CAVE_WALLS", TILE_CAVE_WALLS),
 	
-	// Structure stuff:
-	HOUSE         = standard("HOUSE", TILE_HOUSE),
-	FENCE         = standard("FENCE", TILE_FENCE).stitchTo(HOUSE),
+	// Village:
+	HOUSE  = standard("HOUSE", TILE_HOUSE),
+	HOUSE1 = standard("HOUSE1", TILE_HOUSE1),
+	HOUSE2 = standard("HOUSE2", TILE_HOUSE2),
+	FENCE  = standard("FENCE", TILE_FENCE),//.stitchTo(HOUSE),
+	
+	// Nether Fortress:
 	NETHER_BRIDGE = standard("NETHER_BRIDGE", TILE_NETHER_BRIDGE),
 	NETHER_BRIDGE_X = standard("NETHER_BRIDGE_X", TILE_NETHER_BRIDGE_X),
 	NETHER_BRIDGE_Z = standard("NETHER_BRIDGE_Z", TILE_NETHER_BRIDGE_Z),

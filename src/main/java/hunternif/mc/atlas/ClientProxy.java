@@ -285,8 +285,13 @@ public class ClientProxy extends CommonProxy {
 	/** Assign default textures to the pseudo-biomes used for vanilla Minecraft.
 	 * The pseudo-biomes are: villages houses, village territory and lava. */
 	private void registerVanillaCustomTileTextures() {
+		// Village:
 		setCustomTileTextureIfNone(ExtTileIdMap.TILE_VILLAGE_HOUSE, HOUSE);
+		setCustomTileTextureIfNone(ExtTileIdMap.TILE_VILLAGE_HOUSE1, HOUSE1);
+		setCustomTileTextureIfNone(ExtTileIdMap.TILE_VILLAGE_HOUSE2, HOUSE2);
 		setCustomTileTextureIfNone(ExtTileIdMap.TILE_VILLAGE_TERRITORY, FENCE);
+		
+		// Nether & Nether Fortress:
 		setCustomTileTextureIfNone(ExtTileIdMap.TILE_LAVA, LAVA);
 		setCustomTileTextureIfNone(ExtTileIdMap.TILE_LAVA_SHORE, LAVA_SHORE);
 		setCustomTileTextureIfNone(ExtTileIdMap.TILE_NETHER_BRIDGE, NETHER_BRIDGE);
