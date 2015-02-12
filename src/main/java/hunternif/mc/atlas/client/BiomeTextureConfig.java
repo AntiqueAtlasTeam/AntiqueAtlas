@@ -5,6 +5,8 @@ import hunternif.mc.atlas.util.Log;
 
 import java.io.File;
 import java.util.Map.Entry;
+import java.util.PriorityQueue;
+import java.util.Queue;
 
 import net.minecraft.util.ResourceLocation;
 
@@ -70,12 +72,14 @@ public class BiomeTextureConfig extends AbstractJSONConfig<BiomeTextureMap> {
 	
 	@Override
 	protected void saveData(JsonObject json, BiomeTextureMap data) {
-		for (Entry<Integer, TextureSet> entry : data.textureMap.entrySet()) {
-			int biomeID = entry.getKey().intValue();
+		// Sort keys (biome IDs) numerically:
+		Queue<Integer> queue = new PriorityQueue<Integer>(data.textureMap.keySet());
+		while (!queue.isEmpty()) {
+			int biomeID = queue.poll();
 			// Only save biomes 0-256 in this config.
 			// The rest goes into ExtTileTextureConfig
-			if (biomeID > 0 && biomeID <= 256) {
-				json.addProperty(String.valueOf(biomeID), entry.getValue().name);
+			if (biomeID >= 0 && biomeID < 256) {
+				json.addProperty(String.valueOf(biomeID), data.textureMap.get(biomeID).name);
 			}
 		}
 	}

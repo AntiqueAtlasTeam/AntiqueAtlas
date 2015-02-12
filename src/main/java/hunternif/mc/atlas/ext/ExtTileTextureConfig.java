@@ -1,6 +1,5 @@
 package hunternif.mc.atlas.ext;
 
-import hunternif.mc.atlas.client.TextureSet;
 import hunternif.mc.atlas.client.TextureSetConfig;
 import hunternif.mc.atlas.client.TextureSetMap;
 import hunternif.mc.atlas.util.AbstractJSONConfig;
@@ -8,6 +7,8 @@ import hunternif.mc.atlas.util.Log;
 
 import java.io.File;
 import java.util.Map.Entry;
+import java.util.PriorityQueue;
+import java.util.Queue;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -51,8 +52,11 @@ public class ExtTileTextureConfig extends AbstractJSONConfig<ExtTileTextureMap> 
 	
 	@Override
 	protected void saveData(JsonObject json, ExtTileTextureMap data) {
-		for (Entry<String, TextureSet> entry : data.textureMap.entrySet()) {
-			json.addProperty(entry.getKey().toString(), entry.getValue().name);
+		// Sort keys alphabetically:
+		Queue<String> queue = new PriorityQueue<String>(data.textureMap.keySet());
+		while (!queue.isEmpty()) {
+			String tileName = queue.poll();
+			json.addProperty(tileName, data.textureMap.get(tileName).name);
 		}
 	}
 }

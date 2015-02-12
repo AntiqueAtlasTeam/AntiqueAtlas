@@ -2,11 +2,9 @@ package hunternif.mc.atlas;
 
 import static hunternif.mc.atlas.client.TextureSet.*;
 import static net.minecraft.world.biome.BiomeGenBase.*;
-import hunternif.mc.atlas.api.AtlasAPI;
-import hunternif.mc.atlas.api.MarkerAPI;
-import hunternif.mc.atlas.api.TileAPI;
 import hunternif.mc.atlas.client.BiomeTextureConfig;
 import hunternif.mc.atlas.client.BiomeTextureMap;
+import hunternif.mc.atlas.client.TextureSet;
 import hunternif.mc.atlas.client.TextureSetConfig;
 import hunternif.mc.atlas.client.TextureSetMap;
 import hunternif.mc.atlas.client.Textures;
@@ -25,6 +23,8 @@ import java.io.File;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.biome.BiomeGenBase;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
@@ -49,15 +49,15 @@ public class ClientProxy extends CommonProxy {
 	public void preInit(FMLPreInitializationEvent event) {
 		super.preInit(event);
 		
-		//TODO: new built-in entries in the config aren't saved!
-		
 		textureSetMap = TextureSetMap.instance();
 		textureSetConfig = new TextureSetConfig(new File(configDir, "texture_sets.json"));
 		// Register default values before the config file loads, possibly overwriting the,:
 		registerDefaultTextureSets(textureSetMap);
 		textureSetConfig.load(textureSetMap);
-		// Prevent rewriting of the config while there haven't been any changes made:
+		// Prevent rewriting of the config while no changes have been made:
 		textureSetMap.setDirty(false);
+		// Register a texture set so that it provides an example for the config:
+		textureSetMap.register(TEST);
 
 		// Legacy file name:
 		File biomeTextureConfigFile = new File(configDir, "textures.json");
@@ -66,26 +66,24 @@ public class ClientProxy extends CommonProxy {
 		}
 		biomeTextureMap = BiomeTextureMap.instance();
 		biomeTextureConfig = new BiomeTextureConfig(new File(configDir, "biome_textures.json"), textureSetMap);
-		// Assign default values before the config file loads, possibly overwriting them:
-		assignVanillaBiomeTextures();
 		biomeTextureConfig.load(biomeTextureMap);
-		// Prevent rewriting of the config while there haven't been any changes made:
+		// Prevent rewriting of the config while no changes have been made:
 		biomeTextureMap.setDirty(false);
+		assignVanillaBiomeTextures();
 		
 		tileTextureMap = ExtTileTextureMap.instance();
 		tileTextureConfig = new ExtTileTextureConfig(new File(configDir, "tile_textures.json"), textureSetMap);
-		// Assign default values before the config file loads, possibly overwriting them:
-		registerVanillaCustomTileTextures();
 		tileTextureConfig.load(tileTextureMap);
+		// Prevent rewriting of the config while no changes have been made:
 		tileTextureMap.setDirty(false);
+		registerVanillaCustomTileTextures();
 		
 		markerTextureMap = MarkerTextureMap.instance();
 		markerTextureConfig = new MarkerTextureConfig(new File(configDir, "marker_textures.json"));
-		// Assign default values before the config file loads, possibly overwriting them:
-		registerDefaultMarker();
 		markerTextureConfig.load(markerTextureMap);
-		// Prevent rewriting of the config while there haven't been any changes made:
+		// Prevent rewriting of the config while no changes have been made:
 		markerTextureMap.setDirty(false);
+		registerDefaultMarkers();
 	}
 	
 	@Override
@@ -111,7 +109,6 @@ public class ClientProxy extends CommonProxy {
 	}
 	
 	private void registerDefaultTextureSets(TextureSetMap map) {
-		map.register(TEST);
 		map.register(ICE);
 		map.register(SHORE);
 		map.register(ROCK_SHORE);
@@ -188,105 +185,128 @@ public class ClientProxy extends CommonProxy {
 		map.register(NETHER_THRONE);
 	}
 	
-	/** Assign default textures to vanilla biomes. */
+	/** Assign default textures to vanilla biomes. The textures are assigned
+	 * only if the biome was not in the config. This prevents unnecessary
+	 * overwriting, to aid people who manually modify the config. */
 	private void assignVanillaBiomeTextures() {
-		TileAPI api = AtlasAPI.getTileAPI();
-		api.setBiomeTexture(ocean, WATER);
-		api.setBiomeTexture(deepOcean, WATER);
-		api.setBiomeTexture(river, WATER);
-		api.setBiomeTexture(frozenOcean, ICE);
-		api.setBiomeTexture(frozenRiver, ICE);
-		api.setBiomeTexture(beach, SHORE);
-		api.setBiomeTexture(coldBeach, SHORE);
-		api.setBiomeTexture(stoneBeach, ROCK_SHORE);
-		api.setBiomeTexture(desert, DESERT);
-		api.setBiomeTexture(desert.biomeID + 128, DESERT);
-		api.setBiomeTexture(desertHills, DESERT_HILLS);
-		api.setBiomeTexture(plains, PLAINS);
-		api.setBiomeTexture(plains.biomeID + 128, SUNFLOWERS);
-		api.setBiomeTexture(icePlains, SNOW);
-		api.setBiomeTexture(icePlains.biomeID + 128, ICE_SPIKES); // this is a biome mutation
-		api.setBiomeTexture(iceMountains, SNOW_HILLS);
-		api.setBiomeTexture(extremeHills, MOUNTAINS);
-		api.setBiomeTexture(extremeHillsEdge, MOUNTAINS);
-		api.setBiomeTexture(extremeHills.biomeID + 128, MOUNTAINS_SNOW_CAPS);
-		api.setBiomeTexture(extremeHillsPlus, MOUNTAINS_ALL);
-		api.setBiomeTexture(extremeHillsPlus.biomeID + 128, MOUNTAINS_SNOW_CAPS);
-		api.setBiomeTexture(forest, FOREST);
-		api.setBiomeTexture(forest.biomeID + 128, FOREST_FLOWERS);
-		api.setBiomeTexture(forestHills, FOREST_HILLS);
-		api.setBiomeTexture(roofedForest, DENSE_FOREST);
-		api.setBiomeTexture(roofedForest.biomeID + 128, DENSE_FOREST_HILLS); //TODO roofed forest M has steeper cliffs
-		api.setBiomeTexture(birchForest, BIRCH);
-		api.setBiomeTexture(birchForest.biomeID + 128, TALL_BIRCH);
-		api.setBiomeTexture(birchForestHills, BIRCH_HILLS);
-		api.setBiomeTexture(birchForestHills.biomeID + 128, TALL_BIRCH_HILLS);
-		api.setBiomeTexture(jungle, JUNGLE);
-		api.setBiomeTexture(jungle.biomeID + 128, JUNGLE_CLIFFS);
-		api.setBiomeTexture(jungleHills, JUNGLE_HILLS);
-		api.setBiomeTexture(jungleEdge, JUNGLE_EDGE);
-		api.setBiomeTexture(jungleEdge.biomeID + 128, JUNGLE_EDGE_HILLS);
-		api.setBiomeTexture(taiga, PINES);
-		api.setBiomeTexture(taiga.biomeID + 128, PINES_HILLS);
-		api.setBiomeTexture(taigaHills, PINES_HILLS);
-		api.setBiomeTexture(coldTaiga, SNOW_PINES);
-		api.setBiomeTexture(coldTaiga.biomeID + 128, SNOW_PINES_HILLS);
-		api.setBiomeTexture(coldTaigaHills, SNOW_PINES_HILLS);
-		api.setBiomeTexture(megaTaiga, MEGA_TAIGA);
-		api.setBiomeTexture(megaTaiga.biomeID + 128, MEGA_SPRUCE);
-		api.setBiomeTexture(megaTaigaHills, MEGA_TAIGA_HILLS);
-		api.setBiomeTexture(megaTaigaHills.biomeID + 128, MEGA_SPRUCE_HILLS);
-		api.setBiomeTexture(swampland, SWAMP);
-		api.setBiomeTexture(swampland.biomeID + 128, SWAMP_HILLS);
-		api.setBiomeTexture(sky, SHORE);
-		api.setBiomeTexture(hell, CAVE_WALLS);
-		api.setBiomeTexture(mushroomIsland, MUSHROOM);
-		api.setBiomeTexture(mushroomIslandShore, SHORE);
-		api.setBiomeTexture(savanna, SAVANNA);
-		api.setBiomeTexture(savanna.biomeID + 128, SAVANNA_CLIFFS);
-		api.setBiomeTexture(mesa, MESA);
-		api.setBiomeTexture(mesa.biomeID + 128, BRYCE);
-		api.setBiomeTexture(mesaPlateau, PLATEAU_MESA);
-		api.setBiomeTexture(mesaPlateau_F, PLATEAU_MESA_TREES);
-		api.setBiomeTexture(mesaPlateau.biomeID + 128, PLATEAU_MESA_LOW);
-		api.setBiomeTexture(mesaPlateau_F.biomeID + 128, PLATEAU_MESA_TREES_LOW);
-		api.setBiomeTexture(savannaPlateau, PLATEAU_SAVANNA);
-		api.setBiomeTexture(savannaPlateau.biomeID + 128, PLATEAU_SAVANNA_M);
+		setBiomeTextureIfNone(ocean, WATER);
+		setBiomeTextureIfNone(deepOcean, WATER);
+		setBiomeTextureIfNone(river, WATER);
+		setBiomeTextureIfNone(frozenOcean, ICE);
+		setBiomeTextureIfNone(frozenRiver, ICE);
+		setBiomeTextureIfNone(beach, SHORE);
+		setBiomeTextureIfNone(coldBeach, SHORE);
+		setBiomeTextureIfNone(stoneBeach, ROCK_SHORE);
+		setBiomeTextureIfNone(desert, DESERT);
+		setBiomeTextureIfNone(desert.biomeID + 128, DESERT);
+		setBiomeTextureIfNone(desertHills, DESERT_HILLS);
+		setBiomeTextureIfNone(plains, PLAINS);
+		setBiomeTextureIfNone(plains.biomeID + 128, SUNFLOWERS);
+		setBiomeTextureIfNone(icePlains, SNOW);
+		setBiomeTextureIfNone(icePlains.biomeID + 128, ICE_SPIKES); // this is a biome mutation
+		setBiomeTextureIfNone(iceMountains, SNOW_HILLS);
+		setBiomeTextureIfNone(extremeHills, MOUNTAINS);
+		setBiomeTextureIfNone(extremeHillsEdge, MOUNTAINS);
+		setBiomeTextureIfNone(extremeHills.biomeID + 128, MOUNTAINS_SNOW_CAPS);
+		setBiomeTextureIfNone(extremeHillsPlus, MOUNTAINS_ALL);
+		setBiomeTextureIfNone(extremeHillsPlus.biomeID + 128, MOUNTAINS_SNOW_CAPS);
+		setBiomeTextureIfNone(forest, FOREST);
+		setBiomeTextureIfNone(forest.biomeID + 128, FOREST_FLOWERS);
+		setBiomeTextureIfNone(forestHills, FOREST_HILLS);
+		setBiomeTextureIfNone(roofedForest, DENSE_FOREST);
+		setBiomeTextureIfNone(roofedForest.biomeID + 128, DENSE_FOREST_HILLS); //TODO roofed forest M has steeper cliffs
+		setBiomeTextureIfNone(birchForest, BIRCH);
+		setBiomeTextureIfNone(birchForest.biomeID + 128, TALL_BIRCH);
+		setBiomeTextureIfNone(birchForestHills, BIRCH_HILLS);
+		setBiomeTextureIfNone(birchForestHills.biomeID + 128, TALL_BIRCH_HILLS);
+		setBiomeTextureIfNone(jungle, JUNGLE);
+		setBiomeTextureIfNone(jungle.biomeID + 128, JUNGLE_CLIFFS);
+		setBiomeTextureIfNone(jungleHills, JUNGLE_HILLS);
+		setBiomeTextureIfNone(jungleEdge, JUNGLE_EDGE);
+		setBiomeTextureIfNone(jungleEdge.biomeID + 128, JUNGLE_EDGE_HILLS);
+		setBiomeTextureIfNone(taiga, PINES);
+		setBiomeTextureIfNone(taiga.biomeID + 128, PINES_HILLS);
+		setBiomeTextureIfNone(taigaHills, PINES_HILLS);
+		setBiomeTextureIfNone(coldTaiga, SNOW_PINES);
+		setBiomeTextureIfNone(coldTaiga.biomeID + 128, SNOW_PINES_HILLS);
+		setBiomeTextureIfNone(coldTaigaHills, SNOW_PINES_HILLS);
+		setBiomeTextureIfNone(megaTaiga, MEGA_TAIGA);
+		setBiomeTextureIfNone(megaTaiga.biomeID + 128, MEGA_SPRUCE);
+		setBiomeTextureIfNone(megaTaigaHills, MEGA_TAIGA_HILLS);
+		setBiomeTextureIfNone(megaTaigaHills.biomeID + 128, MEGA_SPRUCE_HILLS);
+		setBiomeTextureIfNone(swampland, SWAMP);
+		setBiomeTextureIfNone(swampland.biomeID + 128, SWAMP_HILLS);
+		setBiomeTextureIfNone(sky, SHORE);
+		setBiomeTextureIfNone(hell, CAVE_WALLS);
+		setBiomeTextureIfNone(mushroomIsland, MUSHROOM);
+		setBiomeTextureIfNone(mushroomIslandShore, SHORE);
+		setBiomeTextureIfNone(savanna, SAVANNA);
+		setBiomeTextureIfNone(savanna.biomeID + 128, SAVANNA_CLIFFS);
+		setBiomeTextureIfNone(mesa, MESA);
+		setBiomeTextureIfNone(mesa.biomeID + 128, BRYCE);
+		setBiomeTextureIfNone(mesaPlateau, PLATEAU_MESA);
+		setBiomeTextureIfNone(mesaPlateau_F, PLATEAU_MESA_TREES);
+		setBiomeTextureIfNone(mesaPlateau.biomeID + 128, PLATEAU_MESA_LOW);
+		setBiomeTextureIfNone(mesaPlateau_F.biomeID + 128, PLATEAU_MESA_TREES_LOW);
+		setBiomeTextureIfNone(savannaPlateau, PLATEAU_SAVANNA);
+		setBiomeTextureIfNone(savannaPlateau.biomeID + 128, PLATEAU_SAVANNA_M);
+	}
+	/** Only applies the change if no texture is registered for this biome.
+	 * This prevents overwriting of the config when there is no real change. */
+	private void setBiomeTextureIfNone(int biomeID, TextureSet textureSet) {
+		if (!biomeTextureMap.isRegistered(biomeID)) {
+			biomeTextureMap.setTexture(biomeID, textureSet);
+		}
+	}
+	private void setBiomeTextureIfNone(BiomeGenBase biome, TextureSet textureSet) {
+		setBiomeTextureIfNone(biome.biomeID, textureSet);
 	}
 	
 	/** Load default marker textures. */
-	private void registerDefaultMarker() {;
-		MarkerAPI api = AtlasAPI.getMarkerAPI();
-		api.setTexture("google", Textures.MARKER_GOOGLE_MARKER);
-		api.setTexture("red_x_large", Textures.MARKER_RED_X_LARGE);
-		api.setTexture("red_x_small", Textures.MARKER_RED_X_SMALL);
-		api.setTexture(VillageWatcher.MARKER, Textures.MARKER_VILLAGE);
-		api.setTexture("diamond", Textures.MARKER_DIAMOND);
-		api.setTexture("bed", Textures.MARKER_BED);
-		api.setTexture("pickaxe", Textures.MARKER_PICKAXE);
-		api.setTexture("sword", Textures.MARKER_SWORD);
-		api.setTexture(NetherPortalWatcher.MARKER_PORTAL, Textures.MARKER_NETHER_PORTAL);
+	private void registerDefaultMarkers() {;
+		setMarkerTextureIfNone("google", Textures.MARKER_GOOGLE_MARKER);
+		setMarkerTextureIfNone("red_x_large", Textures.MARKER_RED_X_LARGE);
+		setMarkerTextureIfNone("red_x_small", Textures.MARKER_RED_X_SMALL);
+		setMarkerTextureIfNone(VillageWatcher.MARKER, Textures.MARKER_VILLAGE);
+		setMarkerTextureIfNone("diamond", Textures.MARKER_DIAMOND);
+		setMarkerTextureIfNone("bed", Textures.MARKER_BED);
+		setMarkerTextureIfNone("pickaxe", Textures.MARKER_PICKAXE);
+		setMarkerTextureIfNone("sword", Textures.MARKER_SWORD);
+		setMarkerTextureIfNone(NetherPortalWatcher.MARKER_PORTAL, Textures.MARKER_NETHER_PORTAL);
+	}
+	/** Only applies the change if no texture is registered for this marker type.
+	 * This prevents overwriting of the config when there is no real change. */
+	private void setMarkerTextureIfNone(String markerType, ResourceLocation texture) {
+		if (!markerTextureMap.isRegistered(markerType)) {
+			markerTextureMap.setTexture(markerType, texture);
+		}
 	}
 	
 	/** Assign default textures to the pseudo-biomes used for vanilla Minecraft.
 	 * The pseudo-biomes are: villages houses, village territory and lava. */
 	private void registerVanillaCustomTileTextures() {
-		TileAPI api = AtlasAPI.getTileAPI();
-		api.setCustomTileTexture(ExtTileIdMap.TILE_VILLAGE_HOUSE, HOUSE);
-		api.setCustomTileTexture(ExtTileIdMap.TILE_VILLAGE_TERRITORY, FENCE);
-		api.setCustomTileTexture(ExtTileIdMap.TILE_LAVA, LAVA);
-		api.setCustomTileTexture(ExtTileIdMap.TILE_LAVA_SHORE, LAVA_SHORE);
-		api.setCustomTileTexture(ExtTileIdMap.TILE_NETHER_BRIDGE, NETHER_BRIDGE);
-		api.setCustomTileTexture(ExtTileIdMap.TILE_NETHER_BRIDGE_X, NETHER_BRIDGE_X);
-		api.setCustomTileTexture(ExtTileIdMap.TILE_NETHER_BRIDGE_Z, NETHER_BRIDGE_Z);
-		api.setCustomTileTexture(ExtTileIdMap.TILE_NETHER_BRIDGE_END_X, NETHER_BRIDGE_END_X);
-		api.setCustomTileTexture(ExtTileIdMap.TILE_NETHER_BRIDGE_END_Z, NETHER_BRIDGE_END_Z);
-		api.setCustomTileTexture(ExtTileIdMap.TILE_NETHER_BRIDGE_GATE, NETHER_BRIDGE_GATE);
-		api.setCustomTileTexture(ExtTileIdMap.TILE_NETHER_TOWER, NETHER_TOWER);
-		api.setCustomTileTexture(ExtTileIdMap.TILE_NETHER_WALL, NETHER_WALL);
-		api.setCustomTileTexture(ExtTileIdMap.TILE_NETHER_HALL, NETHER_HALL);
-		api.setCustomTileTexture(ExtTileIdMap.TILE_NETHER_FORT_STAIRS, NETHER_FORT_STAIRS);
-		api.setCustomTileTexture(ExtTileIdMap.TILE_NETHER_THRONE, NETHER_THRONE);
+		setCustomTileTextureIfNone(ExtTileIdMap.TILE_VILLAGE_HOUSE, HOUSE);
+		setCustomTileTextureIfNone(ExtTileIdMap.TILE_VILLAGE_TERRITORY, FENCE);
+		setCustomTileTextureIfNone(ExtTileIdMap.TILE_LAVA, LAVA);
+		setCustomTileTextureIfNone(ExtTileIdMap.TILE_LAVA_SHORE, LAVA_SHORE);
+		setCustomTileTextureIfNone(ExtTileIdMap.TILE_NETHER_BRIDGE, NETHER_BRIDGE);
+		setCustomTileTextureIfNone(ExtTileIdMap.TILE_NETHER_BRIDGE_X, NETHER_BRIDGE_X);
+		setCustomTileTextureIfNone(ExtTileIdMap.TILE_NETHER_BRIDGE_Z, NETHER_BRIDGE_Z);
+		setCustomTileTextureIfNone(ExtTileIdMap.TILE_NETHER_BRIDGE_END_X, NETHER_BRIDGE_END_X);
+		setCustomTileTextureIfNone(ExtTileIdMap.TILE_NETHER_BRIDGE_END_Z, NETHER_BRIDGE_END_Z);
+		setCustomTileTextureIfNone(ExtTileIdMap.TILE_NETHER_BRIDGE_GATE, NETHER_BRIDGE_GATE);
+		setCustomTileTextureIfNone(ExtTileIdMap.TILE_NETHER_TOWER, NETHER_TOWER);
+		setCustomTileTextureIfNone(ExtTileIdMap.TILE_NETHER_WALL, NETHER_WALL);
+		setCustomTileTextureIfNone(ExtTileIdMap.TILE_NETHER_HALL, NETHER_HALL);
+		setCustomTileTextureIfNone(ExtTileIdMap.TILE_NETHER_FORT_STAIRS, NETHER_FORT_STAIRS);
+		setCustomTileTextureIfNone(ExtTileIdMap.TILE_NETHER_THRONE, NETHER_THRONE);
+	}
+	/** Only applies the change if no texture is registered for this tile name.
+	 * This prevents overwriting of the config when there is no real change. */
+	private void setCustomTileTextureIfNone(String tileName, TextureSet textureSet) {
+		if (!tileTextureMap.isRegistered(tileName)) {
+			tileTextureMap.setTexture(tileName, textureSet);
+		}
 	}
 
 	@Override

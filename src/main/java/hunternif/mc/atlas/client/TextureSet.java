@@ -2,7 +2,6 @@ package hunternif.mc.atlas.client;
 
 import static hunternif.mc.atlas.client.Textures.*;
 
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -10,7 +9,8 @@ import net.minecraft.util.ResourceLocation;
 
 public class TextureSet {
 	public static final TextureSet
-	TEST        = standard("TEST", TILE_TEST),
+	// This first texture set is meant to be an example for the cofig
+	TEST        = new TextureSet(false, "TEST", TILE_TEST, TILE_TEST),
 	
 	// Plains & wasteland stuff:
 	ICE         = standard("ICE", TILE_ICE_NOBORDER),
@@ -233,6 +233,7 @@ public class TextureSet {
 		this.name = name;
 		this.textures = textures;
 	}
+	/** Name has to be unique, it is used for equals() tests. */
 	public TextureSet(String name, ResourceLocation ... textures) {
 		this(false, name, textures);
 	}
@@ -296,7 +297,7 @@ public class TextureSet {
 			return false;
 		}
 		TextureSet set = (TextureSet) obj;
-		return this.name.equals(set.name) && Arrays.equals(this.textures, set.textures);
+		return this.name.equals(set.name);
 	}
 	
 	/** A special texture set that is stitched to everything except water. */

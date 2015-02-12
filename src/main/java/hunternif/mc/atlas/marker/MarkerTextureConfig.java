@@ -4,6 +4,8 @@ import hunternif.mc.atlas.util.AbstractJSONConfig;
 
 import java.io.File;
 import java.util.Map.Entry;
+import java.util.PriorityQueue;
+import java.util.Queue;
 
 import net.minecraft.util.ResourceLocation;
 
@@ -41,8 +43,11 @@ public class MarkerTextureConfig extends AbstractJSONConfig<MarkerTextureMap> {
 
 	@Override
 	protected void saveData(JsonObject json, MarkerTextureMap data) {
-		for (Entry<String, ResourceLocation> entry : data.getMap().entrySet()) {
-			json.addProperty(entry.getKey(), entry.getValue().toString());
+		// Sort keys alphabetically:
+		Queue<String> queue = new PriorityQueue<String>(data.textureMap.keySet());
+		while (!queue.isEmpty()) {
+			String markerType = queue.poll();
+			json.addProperty(markerType, data.textureMap.get(markerType).toString());
 		}
 	}
 }

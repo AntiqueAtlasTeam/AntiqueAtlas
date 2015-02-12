@@ -5,6 +5,8 @@ import hunternif.mc.atlas.util.Log;
 
 import java.io.File;
 import java.util.Map.Entry;
+import java.util.PriorityQueue;
+import java.util.Queue;
 
 import net.minecraft.util.ResourceLocation;
 
@@ -48,7 +50,10 @@ public class TextureSetConfig extends AbstractJSONConfig<TextureSetMap> {
 	
 	@Override
 	protected void saveData(JsonObject json, TextureSetMap data) {
-		for (TextureSet set : data.getAllNonStandardTextureSets()) {
+		// Sort keys alphabetically:
+		Queue<TextureSet> queue = new PriorityQueue<TextureSet>(data.getAllNonStandardTextureSets());
+		while (!queue.isEmpty()) {
+			TextureSet set = queue.poll();
 			JsonArray paths = new JsonArray();
 			for (ResourceLocation texture : set.textures) {
 				paths.add(new JsonPrimitive(texture.toString()));
