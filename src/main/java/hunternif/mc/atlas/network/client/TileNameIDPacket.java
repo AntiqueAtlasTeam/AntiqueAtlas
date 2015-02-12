@@ -70,7 +70,7 @@ public class TileNameIDPacket extends AbstractClientMessage<TileNameIDPacket>
 			int id = entry.getValue();
 			// Remove old texture mapping
 			int oldID = ExtTileIdMap.instance().getPseudoBiomeID(tileName);
-			if (oldID != ExtTileIdMap.NOT_FOUND) {
+			if (oldID != ExtTileIdMap.NOT_FOUND && oldID != id) {
 				BiomeTextureMap.instance().setTexture(oldID, null);
 			}
 			ExtTileIdMap.instance().setPseudoBiomeID(tileName, id);
