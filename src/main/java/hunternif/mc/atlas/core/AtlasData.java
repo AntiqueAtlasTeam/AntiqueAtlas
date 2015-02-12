@@ -97,7 +97,7 @@ public class AtlasData extends WorldSavedData {
 	public DimensionData getDimensionData(int dimension) {
 		DimensionData dimData = dimensionMap.get(Integer.valueOf(dimension));
 		if (dimData == null) {
-			dimData = new DimensionData(dimension);
+			dimData = new DimensionData(this, dimension);
 			dimensionMap.put(Integer.valueOf(dimension), dimData);
 		}
 		return dimData;

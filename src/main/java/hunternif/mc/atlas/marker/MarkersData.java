@@ -158,7 +158,7 @@ public class MarkersData extends WorldSavedData {
 	public DimensionMarkersData getMarkersDataInDimension(int dimension) {
 		DimensionMarkersData data = dimensionMap.get(dimension);
 		if (data == null) {
-			data = new DimensionMarkersData(dimension);
+			data = new DimensionMarkersData(this, dimension);
 			dimensionMap.put(dimension, data);
 		}
 		return data;

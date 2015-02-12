@@ -12,7 +12,9 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public class DimensionMarkersData {
-	private final int dimension;
+	public final MarkersData parent;
+	public final int dimension;
+	
 	private int size = 0;
 	
 	private final Map<ShortVec2 /*chunk coords*/, List<Marker>> chunkMap =
@@ -33,7 +35,8 @@ public class DimensionMarkersData {
 		return key;
 	}
 	
-	public DimensionMarkersData(int dimension) {
+	public DimensionMarkersData(MarkersData parent, int dimension) {
+		this.parent = parent;
 		this.dimension = dimension;
 	}
 	
@@ -67,6 +70,7 @@ public class DimensionMarkersData {
 		if (!inserted) {
 			list.add(marker);
 		}
+		parent.markDirty();
 	}
 	
 	public boolean removeMarker(Marker marker) {

@@ -8,6 +8,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 /** All tiles seen in dimension. Thread-safe (probably) */
 public class DimensionData implements ITileStorage{
+	public final AtlasData parent;
 	public final int dimension;
 	
 	/** a map of chunks the player has seen. This map is thread-safe.
@@ -20,7 +21,8 @@ public class DimensionData implements ITileStorage{
 	/** Limits of explored area, in chunks. */
 	private final Rect scope = new Rect();
 	
-	public DimensionData(int dimension) {
+	public DimensionData(AtlasData parent, int dimension) {
+		this.parent = parent;
 		this.dimension = dimension;
 	}
 	
@@ -42,6 +44,7 @@ public class DimensionData implements ITileStorage{
 	public void setTile(int x, int y, Tile tile) {
 		tiles.put(new ShortVec2(x, y), tile);
 		scope.extendTo(x, y);
+		parent.markDirty();
 	}
 
 	@Override
@@ -61,7 +64,7 @@ public class DimensionData implements ITileStorage{
 	
 	@Override
 	public DimensionData clone() {
-		DimensionData data = new DimensionData(dimension);
+		DimensionData data = new DimensionData(parent, dimension);
 		data.tiles.putAll(tiles);
 		data.scope.set(scope);
 		return data;
