@@ -48,6 +48,7 @@ public class Textures {
 	MARKER_BED = marker("bed.png"),
 	MARKER_PICKAXE = marker("pickaxe.png"),
 	MARKER_SWORD = marker("sword.png"),
+	MARKER_NETHER_PORTAL = marker("nether_portal.png"),
 	
 	TILE_TEST = tile("test.png"),
 	TILE_MOUNTAINS = tile("mountains.png"),

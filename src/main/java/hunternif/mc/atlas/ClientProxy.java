@@ -17,6 +17,7 @@ import hunternif.mc.atlas.ext.ExtTileTextureMap;
 import hunternif.mc.atlas.ext.VillageWatcher;
 import hunternif.mc.atlas.marker.MarkerTextureConfig;
 import hunternif.mc.atlas.marker.MarkerTextureMap;
+import hunternif.mc.atlas.marker.NetherPortalWatcher;
 import hunternif.mc.atlas.util.Log;
 
 import java.io.File;
@@ -264,6 +265,7 @@ public class ClientProxy extends CommonProxy {
 		api.setTexture("bed", Textures.MARKER_BED);
 		api.setTexture("pickaxe", Textures.MARKER_PICKAXE);
 		api.setTexture("sword", Textures.MARKER_SWORD);
+		api.setTexture(NetherPortalWatcher.MARKER_PORTAL, Textures.MARKER_NETHER_PORTAL);
 	}
 	
 	/** Assign default textures to the pseudo-biomes used for vanilla Minecraft.

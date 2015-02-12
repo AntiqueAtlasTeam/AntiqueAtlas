@@ -44,7 +44,9 @@ public class DimensionMarkersData {
 		return dimension;
 	}
 	
-	public List<Marker> getMarkersAt(int x, int z) {
+	/** The "chunk" here is {@link MarkersData#CHUNK_STEP} times larger than the
+	 * Minecraft 16x16 chunk! */
+	public List<Marker> getMarkersAtChunk(int x, int z) {
 		return chunkMap.get(getKey().set(x, z));
 	}
 	
@@ -74,7 +76,7 @@ public class DimensionMarkersData {
 	}
 	
 	public boolean removeMarker(Marker marker) {
-		return getMarkersAt(
+		return getMarkersAtChunk(
 				marker.getChunkX() / MarkersData.CHUNK_STEP,
 				marker.getChunkZ() / MarkersData.CHUNK_STEP).remove(marker);
 	}

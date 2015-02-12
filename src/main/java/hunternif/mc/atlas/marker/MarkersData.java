@@ -164,9 +164,10 @@ public class MarkersData extends WorldSavedData {
 		return data;
 	}
 	
-	/** May return null. */
+	/** The "chunk" here is {@link MarkersData#CHUNK_STEP} times larger than the
+	 * Minecraft 16x16 chunk! May return null. */
 	public List<Marker> getMarkersAtChunk(int dimension, int x, int z) {
-		return getMarkersDataInDimension(dimension).getMarkersAt(x, z);
+		return getMarkersDataInDimension(dimension).getMarkersAtChunk(x, z);
 	}
 	
 	public Marker getMarkerByID(int id) {

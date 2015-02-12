@@ -9,6 +9,7 @@ import hunternif.mc.atlas.item.ItemEmptyAtlas;
 import hunternif.mc.atlas.item.RecipeAtlasCloning;
 import hunternif.mc.atlas.item.RecipeAtlasCombining;
 import hunternif.mc.atlas.marker.GlobalMarkersDataHandler;
+import hunternif.mc.atlas.marker.NetherPortalWatcher;
 import hunternif.mc.atlas.network.PacketDispatcher;
 import hunternif.mc.atlas.util.Log;
 import net.minecraft.creativetab.CreativeTabs;
@@ -82,6 +83,7 @@ public class AntiqueAtlasMod {
 		
 		MinecraftForge.EVENT_BUS.register(new VillageWatcher());
 		MinecraftForge.EVENT_BUS.register(new NetherFortressWatcher());
+		MinecraftForge.EVENT_BUS.register(new NetherPortalWatcher());
 	}
 	
 	@EventHandler

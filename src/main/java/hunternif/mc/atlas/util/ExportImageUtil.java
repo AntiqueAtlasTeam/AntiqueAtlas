@@ -258,12 +258,12 @@ public class ExportImageUtil {
 					z <= biomeData.getScope().maxY / MarkersData.CHUNK_STEP; z++) {
 				
 				markers.clear();
-				List<Marker> globalMarkersAt = globalMarkers.getMarkersAt(x, z);
+				List<Marker> globalMarkersAt = globalMarkers.getMarkersAtChunk(x, z);
 				if (globalMarkersAt != null) {
-					markers.addAll(globalMarkers.getMarkersAt(x, z));
+					markers.addAll(globalMarkers.getMarkersAtChunk(x, z));
 				}
 				if (localMarkers != null) {
-					List<Marker> localMarkersAt = localMarkers.getMarkersAt(x, z);
+					List<Marker> localMarkersAt = localMarkers.getMarkersAtChunk(x, z);
 					if (localMarkersAt != null) {
 						markers.addAll(localMarkersAt);
 					}

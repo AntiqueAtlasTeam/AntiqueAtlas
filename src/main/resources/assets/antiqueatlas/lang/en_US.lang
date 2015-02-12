@@ -12,6 +12,7 @@ gui.antiqueatlas.showMarkers=Show markers
 gui.antiqueatlas.marker.label=Label:
 gui.antiqueatlas.marker.type=Type:
 gui.antiqueatlas.marker.village=Village
+gui.antiqueatlas.marker.netherPortal=Nether Portal
 
 gui.antiqueatlas.export.opening=Opening file system dialog...
 gui.antiqueatlas.export.selectFile=Select PNG file to save to

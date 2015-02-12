@@ -617,7 +617,7 @@ public class GuiAtlas extends GuiComponent {
 			// Draw global markers:
 			for (int x = markersStartX; x <= markersEndX; x++) {
 				for (int z = markersStartZ; z <= markersEndZ; z++) {
-					List<Marker> markers = globalMarkersData.getMarkersAt(x, z);
+					List<Marker> markers = globalMarkersData.getMarkersAtChunk(x, z);
 					if (markers == null) continue;
 					for (Marker marker : markers) {
 						renderMarker(marker);
@@ -629,7 +629,7 @@ public class GuiAtlas extends GuiComponent {
 			if (localMarkersData != null) {
 				for (int x = markersStartX; x <= markersEndX; x++) {
 					for (int z = markersStartZ; z <= markersEndZ; z++) {
-						List<Marker> markers = localMarkersData.getMarkersAt(x, z);
+						List<Marker> markers = localMarkersData.getMarkersAtChunk(x, z);
 						if (markers == null) continue;
 						for (Marker marker : markers) {
 							renderMarker(marker);
