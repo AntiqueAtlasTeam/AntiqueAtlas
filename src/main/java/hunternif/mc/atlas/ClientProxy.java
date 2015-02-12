@@ -260,6 +260,10 @@ public class ClientProxy extends CommonProxy {
 		api.setTexture("red_x_large", Textures.MARKER_RED_X_LARGE);
 		api.setTexture("red_x_small", Textures.MARKER_RED_X_SMALL);
 		api.setTexture(VillageWatcher.MARKER, Textures.MARKER_VILLAGE);
+		api.setTexture("diamond", Textures.MARKER_DIAMOND);
+		api.setTexture("bed", Textures.MARKER_BED);
+		api.setTexture("pickaxe", Textures.MARKER_PICKAXE);
+		api.setTexture("sword", Textures.MARKER_SWORD);
 	}
 	
 	/** Assign default textures to the pseudo-biomes used for vanilla Minecraft.

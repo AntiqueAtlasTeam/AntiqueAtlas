@@ -44,6 +44,10 @@ public class Textures {
 	MARKER_RED_X_LARGE = marker("red_x_large.png"),
 	MARKER_RED_X_SMALL = marker("red_x_small.png"),
 	MARKER_VILLAGE = marker("village.png"),
+	MARKER_DIAMOND = marker("diamond.png"),
+	MARKER_BED = marker("bed.png"),
+	MARKER_PICKAXE = marker("pickaxe.png"),
+	MARKER_SWORD = marker("sword.png"),
 	
 	TILE_TEST = tile("test.png"),
 	TILE_MOUNTAINS = tile("mountains.png"),
