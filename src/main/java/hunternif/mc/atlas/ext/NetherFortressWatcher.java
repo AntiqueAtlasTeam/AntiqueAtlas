@@ -2,6 +2,7 @@ package hunternif.mc.atlas.ext;
 
 import hunternif.mc.atlas.AntiqueAtlasMod;
 import hunternif.mc.atlas.api.AtlasAPI;
+import hunternif.mc.atlas.util.Log;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -77,6 +78,11 @@ public class NetherFortressWatcher {
 	
 	/** Put all child parts of the fortress on the map as global custom tiles. */
 	private void visitFortress(World world, NBTTagCompound tag) {
+		int startChunkX = tag.getInteger("ChunkX");
+		int startChunkZ = tag.getInteger("ChunkZ");
+		Log.info("Visiting Nether Fortress in dimension #%d \"%s\" at chunk (%d, %d) ~ blocks (%d, %d)",
+				world.provider.dimensionId, world.provider.getDimensionName(),
+				startChunkX, startChunkZ, startChunkX << 4, startChunkZ << 4);
 		NBTTagList children = tag.getTagList("Children", 10);
 		for (int i = 0; i < children.tagCount(); i++) {
 			NBTTagCompound child = children.getCompoundTagAt(i);
@@ -88,7 +94,7 @@ public class NetherFortressWatcher {
 					int chunkZ = boundingBox.getCenterZ() >> 4;
 					for (int x = boundingBox.minX; x < boundingBox.maxX; x += 16) {
 						int chunkX = x >> 4;
-						if (noTileAt(chunkX, chunkZ)) {
+						if (noTileAt(world, chunkX, chunkZ)) {
 							AtlasAPI.getTileAPI().putCustomGlobalTile(world, tileName, chunkX, chunkZ);
 						}
 					}
@@ -97,7 +103,7 @@ public class NetherFortressWatcher {
 					int chunkX = boundingBox.getCenterX() >> 4;
 					for (int z = boundingBox.minZ; z < boundingBox.maxZ; z += 16) {
 						int chunkZ = z >> 4;
-						if (noTileAt(chunkX, chunkZ)) {
+						if (noTileAt(world, chunkX, chunkZ)) {
 							AtlasAPI.getTileAPI().putCustomGlobalTile(world, tileName, chunkX, chunkZ);
 						}
 					}
@@ -114,7 +120,7 @@ public class NetherFortressWatcher {
 					chunkX = boundingBox.getCenterX() >> 4;
 					chunkZ = boundingBox.minZ >> 4;
 				}
-				if (noTileAt(chunkX, chunkZ)) {
+				if (noTileAt(world, chunkX, chunkZ)) {
 					AtlasAPI.getTileAPI().putCustomGlobalTile(world, tileName, chunkX, chunkZ);
 				}
 			} else {
@@ -141,7 +147,7 @@ public class NetherFortressWatcher {
 					AtlasAPI.getTileAPI().putCustomGlobalTile(world, tileName, chunkX, chunkZ);
 				} else {
 					tileName = ExtTileIdMap.TILE_NETHER_WALL;
-					if (noTileAt(chunkX, chunkZ)) {
+					if (noTileAt(world, chunkX, chunkZ)) {
 						AtlasAPI.getTileAPI().putCustomGlobalTile(world, tileName, chunkX, chunkZ);
 					}
 				}
@@ -149,7 +155,7 @@ public class NetherFortressWatcher {
 		}
 	}
 	
-	private static boolean noTileAt(int chunkX, int chunkZ) {
-		return AntiqueAtlasMod.extBiomeData.getData().getBiomeIdAt(-1, chunkX, chunkZ) == -1;
+	private static boolean noTileAt(World world, int chunkX, int chunkZ) {
+		return AntiqueAtlasMod.extBiomeData.getData().getBiomeIdAt(world.provider.dimensionId, chunkX, chunkZ) == -1;
 	}
 }

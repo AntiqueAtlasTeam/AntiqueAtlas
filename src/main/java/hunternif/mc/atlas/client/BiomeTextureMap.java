@@ -87,7 +87,7 @@ public class BiomeTextureMap extends SaveData {
 			}
 		}
 		// 2. Water
-		else if (types.contains(Type.WATER)) {
+		else if (types.contains(Type.WATER) || types.contains(Type.RIVER)) {
 			// Water + trees = swamp
 			if (types.contains(Type.FOREST) || types.contains(Type.JUNGLE)) {
 				if (types.contains(Type.HILLS)) {
@@ -153,11 +153,25 @@ public class BiomeTextureMap extends SaveData {
 					setTexture(biomeID, SNOW_PINES);
 				}
 			} else {
-				// All unknown forests are dense:
-				if (types.contains(Type.HILLS)) {
-					setTexture(biomeID, DENSE_FOREST_HILLS);
+				// Segregate by density:
+				if (types.contains(Type.SPARSE)) {
+					if (types.contains(Type.HILLS)) {
+						setTexture(biomeID, SPARSE_FOREST_HILLS);
+					} else {
+						setTexture(biomeID, SPARSE_FOREST);
+					}
+				} else if (types.contains(Type.DENSE)) {
+					if (types.contains(Type.HILLS)) {
+						setTexture(biomeID, DENSE_FOREST_HILLS);
+					} else {
+						setTexture(biomeID, DENSE_FOREST);
+					}
 				} else {
-					setTexture(biomeID, DENSE_FOREST);
+					if (types.contains(Type.HILLS)) {
+						setTexture(biomeID, FOREST_HILLS);
+					} else {
+						setTexture(biomeID, FOREST);
+					}
 				}
 			}
 		}
@@ -210,13 +224,15 @@ public class BiomeTextureMap extends SaveData {
 		return textureMap.containsKey(biomeID);
 	}
 	
+	/** If unknown biome, auto-registers a texture set. If null, returns default set. */
 	public TextureSet getTextureSet(Tile tile) {
-		return tile == null ? null : textureMap.get(tile.biomeID);
+		if (tile == null) return defaultTexture;
+		checkRegistration(tile.biomeID);
+		return textureMap.get(tile.biomeID);
 	}
 
 	public ResourceLocation getTexture(Tile tile) {
-		checkRegistration(tile.biomeID);
-		TextureSet set = textureMap.get(tile.biomeID);
+		TextureSet set = getTextureSet(tile);
 		int i = MathHelper.floor_float((float)(tile.getVariationNumber())
 				/ (float)(Short.MAX_VALUE) * (float)(set.textures.length));
 		return set.textures[i];

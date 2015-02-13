@@ -4,6 +4,8 @@ import hunternif.mc.atlas.util.AbstractJSONConfig;
 
 import java.io.File;
 import java.util.Map.Entry;
+import java.util.PriorityQueue;
+import java.util.Queue;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -37,8 +39,11 @@ public class ExtTileConfig extends AbstractJSONConfig<ExtTileIdMap> {
 	
 	@Override
 	protected void saveData(JsonObject json, ExtTileIdMap data) {
-		for (Entry<String, Integer> entry : data.getMap().entrySet()) {
-			json.addProperty(entry.getKey(), entry.getValue());
+		// Sort keys alphabetically
+		Queue<String> queue = new PriorityQueue<String>(data.getMap().keySet());
+		while (!queue.isEmpty()) {
+			String tileName = queue.poll();
+			json.addProperty(tileName, data.getMap().get(tileName).intValue());
 		}
 	}
 }

@@ -4,6 +4,7 @@ import hunternif.mc.atlas.AntiqueAtlasMod;
 import hunternif.mc.atlas.api.AtlasAPI;
 import hunternif.mc.atlas.marker.Marker;
 import hunternif.mc.atlas.marker.MarkersData;
+import hunternif.mc.atlas.util.Log;
 
 import java.util.HashSet;
 import java.util.List;
@@ -121,6 +122,11 @@ public class VillageWatcher {
 	
 	/** Put all child parts of the fortress on the map as global custom tiles. */
 	private void visitVillage(World world, NBTTagCompound tag) {
+		int startChunkX = tag.getInteger("ChunkX");
+		int startChunkZ = tag.getInteger("ChunkZ");
+		Log.info("Visiting NPC Village in dimension #%d \"%s\" at chunk (%d, %d) ~ blocks (%d, %d)",
+				world.provider.dimensionId, world.provider.getDimensionName(),
+				startChunkX, startChunkZ, startChunkX << 4, startChunkZ << 4);
 		NBTTagList children = tag.getTagList("Children", 10);
 		for (int i = 0; i < children.tagCount(); i++) {
 			NBTTagCompound child = children.getCompoundTagAt(i);
@@ -138,7 +144,7 @@ public class VillageWatcher {
 				for (int j = -1; j < 1; j++) {
 					for (int k = -1; k < 1; k++) {
 						List<Marker> markers = AntiqueAtlasMod.globalMarkersData.getData()
-								.getMarkersAtChunk(0, j + chunkX / MarkersData.CHUNK_STEP, k + chunkZ / MarkersData.CHUNK_STEP);
+								.getMarkersAtChunk(world.provider.dimensionId, j + chunkX / MarkersData.CHUNK_STEP, k + chunkZ / MarkersData.CHUNK_STEP);
 						if (markers != null) {
 							for (Marker marker : markers) {
 								if (marker.getType().equals(MARKER)) {
