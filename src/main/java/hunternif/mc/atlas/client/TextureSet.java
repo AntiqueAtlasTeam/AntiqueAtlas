@@ -7,7 +7,7 @@ import java.util.Set;
 
 import net.minecraft.util.ResourceLocation;
 
-public class TextureSet {
+public class TextureSet implements Comparable<TextureSet> {
 	public static final TextureSet
 	// This first texture set is meant to be an example for the cofig
 	TEST        = new TextureSet(false, "TEST", TILE_TEST, TILE_TEST),
@@ -355,5 +355,10 @@ public class TextureSet {
 				if (set1 != set2) set1.stitchToVertical(set2);
 			}
 		}
+	}
+
+	@Override
+	public int compareTo(TextureSet textureSet) {
+		return name.compareTo(textureSet.name);
 	}
 }
