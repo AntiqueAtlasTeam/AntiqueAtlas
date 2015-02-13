@@ -179,8 +179,8 @@ public class ClientProxy extends CommonProxy {
 		map.register(FARMLAND_SMALL);
 		map.register(WELL);
 		map.register(VILLAGE_TORCH);
-		map.register(VILLAGE_PATH_X);
-		map.register(VILLAGE_PATH_Z);
+//		map.register(VILLAGE_PATH_X);
+//		map.register(VILLAGE_PATH_Z);
 		map.register(HUT);
 		map.register(HOUSE_SMALL);
 		map.register(BUTCHERS_SHOP);
@@ -307,8 +307,8 @@ public class ClientProxy extends CommonProxy {
 		setCustomTileTextureIfNone(ExtTileIdMap.TILE_VILLAGE_FARMLAND_SMALL, FARMLAND_SMALL);
 		setCustomTileTextureIfNone(ExtTileIdMap.TILE_VILLAGE_WELL, WELL);
 		setCustomTileTextureIfNone(ExtTileIdMap.TILE_VILLAGE_TORCH, VILLAGE_TORCH);
-		setCustomTileTextureIfNone(ExtTileIdMap.TILE_VILLAGE_PATH_X, VILLAGE_PATH_X);
-		setCustomTileTextureIfNone(ExtTileIdMap.TILE_VILLAGE_PATH_Z, VILLAGE_PATH_Z);
+//		setCustomTileTextureIfNone(ExtTileIdMap.TILE_VILLAGE_PATH_X, VILLAGE_PATH_X);
+//		setCustomTileTextureIfNone(ExtTileIdMap.TILE_VILLAGE_PATH_Z, VILLAGE_PATH_Z);
 		setCustomTileTextureIfNone(ExtTileIdMap.TILE_VILLAGE_HUT, HUT);
 		setCustomTileTextureIfNone(ExtTileIdMap.TILE_VILLAGE_SMALL_HOUSE, HOUSE_SMALL);
 		setCustomTileTextureIfNone(ExtTileIdMap.TILE_VILLAGE_BUTCHERS_SHOP, BUTCHERS_SHOP);

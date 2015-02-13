@@ -172,8 +172,8 @@ public class TextureSet {
 	FARMLAND_SMALL = standard("FARMLAND_SMALL", TILE_FARMLAND_SMALL),
 	VILLAGE_TORCH  = standard("VILLAGE_TORCH", TILE_VILLAGE_TORCH),
 	WELL           = standard("WELL", TILE_WELL),
-	VILLAGE_PATH_X = standard("VILLAGE_PATH_X", TILE_VILLAGE_PATH_X),
-	VILLAGE_PATH_Z = standard("VILLAGE_PATH_Z", TILE_VILLAGE_PATH_Z),
+//	VILLAGE_PATH_X = standard("VILLAGE_PATH_X", TILE_VILLAGE_PATH_X),
+//	VILLAGE_PATH_Z = standard("VILLAGE_PATH_Z", TILE_VILLAGE_PATH_Z),
 	HUT            = standard("HUT", TILE_HUT),
 	HOUSE_SMALL    = standard("HOUSE_SMALL", TILE_HOUSE_SMALL),
 	BUTCHERS_SHOP  = standard("BUTCHERS_SHOP", TILE_BUTCHERS_SHOP),
@@ -206,7 +206,7 @@ public class TextureSet {
 		stitchMutually(PLATEAU_MESA_LOW, PLATEAU_MESA_TREES_LOW);
 		
 		// Village stuff:
-		stitchMutually(VILLAGE_PATH_X, VILLAGE_PATH_Z);
+//		stitchMutually(VILLAGE_PATH_X, VILLAGE_PATH_Z);
 		
 		// Nether Fortress stuff:
 		LAVA.stitchTo(NETHER_BRIDGE, NETHER_BRIDGE_GATE, NETHER_TOWER, NETHER_WALL,

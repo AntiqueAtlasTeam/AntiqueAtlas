@@ -38,6 +38,7 @@ public class VillageWatcher {
 	private static final String FARMLAND_LARGE = "ViDF"; // Large field, basically 2 times larger than FIELD2
 	private static final String FARMLAND_SMALL = "ViF"; // Smaller field.
 	
+	@SuppressWarnings("unused")
 	private static final String PATH = "ViSR"; // Usually too narrow to be seen between the houses...
 	private static final String TORCH = "ViL";
 	private static final String WELL = "ViW";
@@ -57,7 +58,7 @@ public class VillageWatcher {
 		builder.put(L_HOUSE, ExtTileIdMap.TILE_VILLAGE_L_HOUSE);
 		builder.put(FARMLAND_LARGE, ExtTileIdMap.TILE_VILLAGE_FARMLAND_LARGE);
 		builder.put(FARMLAND_SMALL, ExtTileIdMap.TILE_VILLAGE_FARMLAND_SMALL);
-		builder.put(PATH, ExtTileIdMap.TILE_VILLAGE_PATH_X); // Handled separately
+//		builder.put(PATH, ExtTileIdMap.TILE_VILLAGE_PATH_X); // Handled separately
 		builder.put(TORCH, ExtTileIdMap.TILE_VILLAGE_TORCH);
 		builder.put(WELL, ExtTileIdMap.TILE_VILLAGE_WELL);
 		builder.put(START, ExtTileIdMap.TILE_VILLAGE_WELL);
@@ -76,8 +77,8 @@ public class VillageWatcher {
 		builder.put(ExtTileIdMap.TILE_VILLAGE_L_HOUSE, 5);
 		builder.put(ExtTileIdMap.TILE_VILLAGE_FARMLAND_LARGE, 3);
 		builder.put(ExtTileIdMap.TILE_VILLAGE_FARMLAND_SMALL, 3);
-		builder.put(ExtTileIdMap.TILE_VILLAGE_PATH_X, 0);
-		builder.put(ExtTileIdMap.TILE_VILLAGE_PATH_Z, 0);
+//		builder.put(ExtTileIdMap.TILE_VILLAGE_PATH_X, 0);
+//		builder.put(ExtTileIdMap.TILE_VILLAGE_PATH_Z, 0);
 		builder.put(ExtTileIdMap.TILE_VILLAGE_TORCH, 1);
 		builder.put(ExtTileIdMap.TILE_VILLAGE_WELL, 7);
 		builder.put(ExtTileIdMap.TILE_VILLAGE_BUTCHERS_SHOP, 4);
@@ -147,18 +148,18 @@ public class VillageWatcher {
 					AtlasAPI.getMarkerAPI().putGlobalMarker(world, false, MARKER, "gui.antiqueatlas.marker.village", x, z);
 				}
 			}
-			String tileName = null;
-			if (PATH.equals(childID)) {
-				int orientation = child.getInteger("O");
-				switch (orientation) {
-				case 0:
-				case 2: tileName = ExtTileIdMap.TILE_VILLAGE_PATH_Z; break;
-				case 1:
-				case 3: tileName = ExtTileIdMap.TILE_VILLAGE_PATH_X; break;
-				}
-			} else {
-				tileName = partToTileMap.get(childID);
-			}
+//			String tileName = null;
+//			if (PATH.equals(childID)) {
+//				int orientation = child.getInteger("O");
+//				switch (orientation) {
+//				case 0:
+//				case 2: tileName = ExtTileIdMap.TILE_VILLAGE_PATH_Z; break;
+//				case 1:
+//				case 3: tileName = ExtTileIdMap.TILE_VILLAGE_PATH_X; break;
+//				}
+//			} else {
+//			}
+			String tileName = partToTileMap.get(childID);
 			if (tileName != null) {
 				Integer curTilePriority = tilePriority.get(tileName);
 				Integer prevTilePriority = tilePriority.get(tileAt(chunkX, chunkZ));
