@@ -135,12 +135,12 @@ public class BiomeTextureMap extends SaveData {
 				setTexture(biomeID, PINES);
 			}
 		}
-		// 7. Mesa
+		// 7. Mesa - I suspect that by using this type people usually mean "Plateau"
 		else if (types.contains(Type.MESA)) {
-			if (types.contains(Type.MOUNTAIN)) {
-				setTexture(biomeID, BRYCE);
+			if (types.contains(Type.FOREST)) {
+				setTexture(biomeID, PLATEAU_MESA_TREES);
 			} else {
-				setTexture(biomeID, MESA);
+				setTexture(biomeID, PLATEAU_MESA);
 			}
 		}
 		// 8. General forest
