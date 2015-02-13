@@ -49,6 +49,10 @@ public class ClientProxy extends CommonProxy {
 	public void preInit(FMLPreInitializationEvent event) {
 		super.preInit(event);
 		
+		//TODO Enforce texture config loading process as follows:
+		// 1. pre-init: Antique Atlas defaults are loaded, config files are read.
+		// 2. init: mods set their custom textures. Those loaded from the config must not be overwritten!
+		
 		textureSetMap = TextureSetMap.instance();
 		textureSetConfig = new TextureSetConfig(new File(configDir, "texture_sets.json"));
 		// Register default values before the config file loads, possibly overwriting the,:
@@ -287,6 +291,9 @@ public class ClientProxy extends CommonProxy {
 		setMarkerTextureIfNone("pickaxe", Textures.MARKER_PICKAXE);
 		setMarkerTextureIfNone("sword", Textures.MARKER_SWORD);
 		setMarkerTextureIfNone(NetherPortalWatcher.MARKER_PORTAL, Textures.MARKER_NETHER_PORTAL);
+		setMarkerTextureIfNone("skull", Textures.MARKER_SKULL);
+		setMarkerTextureIfNone("tower", Textures.MARKER_TOWER);
+		setMarkerTextureIfNone("scroll", Textures.MARKER_SCROLL);
 	}
 	/** Only applies the change if no texture is registered for this marker type.
 	 * This prevents overwriting of the config when there is no real change. */
