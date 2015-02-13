@@ -33,8 +33,8 @@ public class NetherPortalWatcher extends DummyWorldAccess {
 	 * When a player teleports, he is removed from the source dimension, where
 	 * portal detection works well, and his ID is placed in this set.
 	 * Then the player is spawned in the destination dimension, where portal
-	 * detection doesn't work for some reason. But we can detect the spawn by
-	 * checking if this set contains the player's ID!
+	 * detection doesn't work for some reason. But we can detect his arrival
+	 * by checking if this set contains the player's ID!
 	 */
 	private final Set<Integer> teleportingPlayerIDs = Collections.newSetFromMap(new ConcurrentHashMap<Integer, Boolean>());
 	
@@ -62,7 +62,7 @@ public class NetherPortalWatcher extends DummyWorldAccess {
 				int dimension = player.dimension;
 				Log.info("Player %s teleported to the %s", player.getGameProfile().getName(),
 						dimension == 0 ? "Overworld" : "Nether");
-				addPortalMarker(player, dimension);
+				addPortalMarkerIfNone(player, dimension);
 			}
 		}
 	}
@@ -78,14 +78,14 @@ public class NetherPortalWatcher extends DummyWorldAccess {
 				Log.info("Player %s left the %s", player.getGameProfile().getName(),
 						dimension == 0 ? "Overworld" : "Nether");
 				teleportingPlayerIDs.add(entity.getEntityId());
-				addPortalMarker(player, dimension);
+				addPortalMarkerIfNone(player, dimension);
 			}
 		}
 	}
 	
 	/** Put the Portal marker at the player's current coordinates into all
-	 * atlases that he is carrying. */
-	public void addPortalMarker(EntityPlayer player, int dimension) {
+	 * atlases that he is carrying, if the same marker is not already there. */
+	public void addPortalMarkerIfNone(EntityPlayer player, int dimension) {
 		// Due to switching dimensions this player entity's worldObj is lagging.
 		// We need the very specific dimension each time.
 		World world = MinecraftServer.getServer().worldServerForDimension(dimension);
