@@ -6,10 +6,13 @@ gui.antiqueatlas.addMarker=Aggiungi marcatore
 gui.antiqueatlas.delMarker=Elimina marcatore
 gui.antiqueatlas.followPlayer=Segui giocatore
 gui.antiqueatlas.exportImage=Esporta immagine
+gui.antiqueatlas.hideMarkers=Nascondi marcatori
+gui.antiqueatlas.showMarkers=Mostra marcatori
 
 gui.antiqueatlas.marker.label=Etichetta:
 gui.antiqueatlas.marker.type=Tipo:
 gui.antiqueatlas.marker.village=Villaggio
+gui.antiqueatlas.marker.netherPortal=Portale degli Inferi
 
 gui.antiqueatlas.export.opening=Aprendo la pagina di dialogo...
 gui.antiqueatlas.export.selectFile=Seleziona dove salvare il file PNG
