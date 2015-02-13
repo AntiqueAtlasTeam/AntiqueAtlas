@@ -6,10 +6,13 @@ gui.antiqueatlas.addMarker=增加标记
 gui.antiqueatlas.delMarker=删除标记
 gui.antiqueatlas.followPlayer=跟随该玩家
 gui.antiqueatlas.exportImage=导出图像
+gui.antiqueatlas.hideMarkers=隐藏标记
+gui.antiqueatlas.showMarkers=显示标记
 
 gui.antiqueatlas.marker.label=标签:
 gui.antiqueatlas.marker.type=类型:
 gui.antiqueatlas.marker.village=村庄
+gui.antiqueatlas.marker.netherPortal=下界传送门
 
 gui.antiqueatlas.export.opening=打开文件系统对话框...
 gui.antiqueatlas.export.selectFile=选择PNG格式图片并另存为
