@@ -397,13 +397,14 @@ public class GuiAtlas extends GuiComponent {
 	/** Opens a dialog window to select which file to save to, then performs
 	 * rendering of the map of current dimension into a PNG image. */
 	private void exportImage(ItemStack stack) {
+		boolean showMarkers = !state.is(HIDING_MARKERS);
 		state.switchTo(EXPORTING_IMAGE);
 		// Default file name is "Atlas <N>.png"
 		File file = ExportImageUtil.selectPngFileToSave("Atlas " + stack.getItemDamage(), progressBar);
 		if (file != null) {
 			try {
 				Log.info("Exporting image from Atlas #%d to file %s", stack.getItemDamage(), file.getAbsolutePath());
-				ExportImageUtil.exportPngImage(biomeData, globalMarkersData, localMarkersData, file, progressBar);
+				ExportImageUtil.exportPngImage(biomeData, globalMarkersData, localMarkersData, file, progressBar, showMarkers);
 				Log.info("Finished exporting image");
 			} catch (OutOfMemoryError e) {
 				Log.error(e, "Image is too large");
@@ -411,7 +412,7 @@ public class GuiAtlas extends GuiComponent {
 				return; //Don't switch to normal state yet so that the error message can be read.
 			}
 		}
-		state.switchTo(NORMAL);
+		state.switchTo(showMarkers ? NORMAL : HIDING_MARKERS);
 	}
 	
 	@Override

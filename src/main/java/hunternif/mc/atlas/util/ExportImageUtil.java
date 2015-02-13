@@ -97,11 +97,13 @@ public class ExportImageUtil {
 	
 	/** Renders the map into file as PNG image. */
 	public static void exportPngImage(DimensionData biomeData, DimensionMarkersData globalMarkers,
-			DimensionMarkersData localMarkers, File file, ExportUpdateListener listener) {
-		float updateUnitsTotal = biomeData.getSeenChunks().size()
-				+ globalMarkers.getAllMarkers().size();
-		if (localMarkers != null) {
-			updateUnitsTotal += localMarkers.getAllMarkers().size();
+			DimensionMarkersData localMarkers, File file, ExportUpdateListener listener, boolean showMarkers) {
+		float updateUnitsTotal = biomeData.getSeenChunks().size();
+		if (showMarkers) {
+			updateUnitsTotal += globalMarkers.getAllMarkers().size();
+			if (localMarkers != null) {
+				updateUnitsTotal += localMarkers.getAllMarkers().size();
+			}
 		}
 		int updateUnits = 0;
 		
@@ -135,7 +137,9 @@ public class ExportImageUtil {
 			// Biome & Marker textures:
 			List<ResourceLocation> allTextures = new ArrayList<ResourceLocation>(64);
 			allTextures.addAll(BiomeTextureMap.instance().getAllTextures());
-			allTextures.addAll(MarkerTextureMap.instance().getAllTextures());
+			if (showMarkers) {
+				allTextures.addAll(MarkerTextureMap.instance().getAllTextures());
+			}
 			updateUnitsTotal += allTextures.size();
 			for (ResourceLocation texture : allTextures) {
 				try {
@@ -251,46 +255,48 @@ public class ExportImageUtil {
 		
 		//============== Draw markers ================
 		// Draw local markers on top of global markers
-		List<Marker> markers = new ArrayList<Marker>();
-		for (int x = biomeData.getScope().minX / MarkersData.CHUNK_STEP;
-				x <= biomeData.getScope().maxX / MarkersData.CHUNK_STEP; x++) {
-			for (int z = biomeData.getScope().minY / MarkersData.CHUNK_STEP;
-					z <= biomeData.getScope().maxY / MarkersData.CHUNK_STEP; z++) {
-				
-				markers.clear();
-				List<Marker> globalMarkersAt = globalMarkers.getMarkersAtChunk(x, z);
-				if (globalMarkersAt != null) {
-					markers.addAll(globalMarkers.getMarkersAtChunk(x, z));
-				}
-				if (localMarkers != null) {
-					List<Marker> localMarkersAt = localMarkers.getMarkersAtChunk(x, z);
-					if (localMarkersAt != null) {
-						markers.addAll(localMarkersAt);
+		if (showMarkers) {
+			List<Marker> markers = new ArrayList<Marker>();
+			for (int x = biomeData.getScope().minX / MarkersData.CHUNK_STEP;
+					x <= biomeData.getScope().maxX / MarkersData.CHUNK_STEP; x++) {
+				for (int z = biomeData.getScope().minY / MarkersData.CHUNK_STEP;
+						z <= biomeData.getScope().maxY / MarkersData.CHUNK_STEP; z++) {
+					
+					markers.clear();
+					List<Marker> globalMarkersAt = globalMarkers.getMarkersAtChunk(x, z);
+					if (globalMarkersAt != null) {
+						markers.addAll(globalMarkers.getMarkersAtChunk(x, z));
 					}
-				}
-				
-				for (Marker marker : markers) {
-					updateUnits++;
-					if (!marker.isVisibleAhead() &&
-							!biomeData.hasTileAt(marker.getChunkX(), marker.getChunkZ())) {
-						continue;
+					if (localMarkers != null) {
+						List<Marker> localMarkersAt = localMarkers.getMarkersAtChunk(x, z);
+						if (localMarkersAt != null) {
+							markers.addAll(localMarkersAt);
+						}
 					}
 					
-					// Load marker texture
-					ResourceLocation texture = MarkerTextureMap.instance().getTexture(marker.getType());
-					BufferedImage markerImage = textureImageMap.get(texture);
-					if (markerImage == null) continue;
-					
-					int markerX = marker.getX() - minX;
-					int markerY = marker.getZ() - minY;
-					graphics.drawImage(markerImage,
-							markerX - MARKER_SIZE/2, markerY - MARKER_SIZE/2,
-							markerX + MARKER_SIZE/2, markerY + MARKER_SIZE/2,
-							0, 0, MARKER_SIZE, MARKER_SIZE,
-							null);
-					
-					if (updateUnits % 10 == 0) { // Update every 10 tiles
-						listener.update((float)updateUnits / (float) updateUnitsTotal);
+					for (Marker marker : markers) {
+						updateUnits++;
+						if (!marker.isVisibleAhead() &&
+								!biomeData.hasTileAt(marker.getChunkX(), marker.getChunkZ())) {
+							continue;
+						}
+						
+						// Load marker texture
+						ResourceLocation texture = MarkerTextureMap.instance().getTexture(marker.getType());
+						BufferedImage markerImage = textureImageMap.get(texture);
+						if (markerImage == null) continue;
+						
+						int markerX = marker.getX() - minX;
+						int markerY = marker.getZ() - minY;
+						graphics.drawImage(markerImage,
+								markerX - MARKER_SIZE/2, markerY - MARKER_SIZE/2,
+								markerX + MARKER_SIZE/2, markerY + MARKER_SIZE/2,
+								0, 0, MARKER_SIZE, MARKER_SIZE,
+								null);
+						
+						if (updateUnits % 10 == 0) { // Update every 10 tiles
+							listener.update((float)updateUnits / (float) updateUnitsTotal);
+						}
 					}
 				}
 			}
