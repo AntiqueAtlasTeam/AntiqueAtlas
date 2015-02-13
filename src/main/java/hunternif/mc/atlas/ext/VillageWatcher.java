@@ -31,41 +31,60 @@ public class VillageWatcher {
 	/** Set of tag names for every village, in the format "[x, y]" */
 	private final Set<String> visited = new HashSet<String>();
 	
-	private static final String HOUSE1 = "ViBH"; // Big-ish house with a high slanted roof, large windows; books and couches inside.
+	private static final String LIBRARY= "ViBH"; // Big-ish house with a high slanted roof, large windows; books and couches inside.
 	private static final String SMITHY = "ViS"; // The smithy.
-	private static final String HOUSE3 = "ViTRH"; // Medium-sized, L-shaped houses with slanted roof.
+	private static final String L_HOUSE = "ViTRH"; // Medium-sized, L-shaped houses with slanted roof.
 	
-	private static final String FIELD1 = "ViDF"; // Large field, basically 2 times larger than FIELD2
-	private static final String FIELD2 = "ViF"; // Smaller field.
+	private static final String FARMLAND_LARGE = "ViDF"; // Large field, basically 2 times larger than FIELD2
+	private static final String FARMLAND_SMALL = "ViF"; // Smaller field.
 	
 	private static final String PATH = "ViSR"; // Usually too narrow to be seen between the houses...
 	private static final String TORCH = "ViL";
 	private static final String WELL = "ViW";
 	private static final String START = "ViStart"; // Same as WELL
 	
-	private static final String HALL = "ViPH"; // Medium house with a low slanted roof and a dirt porch with a fence.
-	private static final String GARDEN = "ViSH"; // Slightly larger huts with fence railings on the roof and a ladder leading to it.
+	private static final String BUTCHERS = "ViPH"; // Medium house with a low slanted roof and a dirt porch with a fence.
 	private static final String HUT = "ViSmH"; // Tiniest hut with a flat roof.
+	private static final String HOUSE_SMALL = "ViSH"; // Slightly larger than huts, sometimes with a fenced balcony on the roof and a ladder.
 	private static final String CHURCH = "ViST"; // The church.
 	
 	
 	private static final Map<String, String> partToTileMap;
 	static {
 		ImmutableMap.Builder<String, String> builder = new Builder<String, String>();
-		builder.put(HOUSE1, ExtTileIdMap.TILE_VILLAGE_HOUSE1);
-		builder.put(SMITHY, ExtTileIdMap.TILE_NETHER_HALL);
-		builder.put(HOUSE3, ExtTileIdMap.TILE_VILLAGE_HOUSE2);
-		builder.put(FIELD1, ExtTileIdMap.TILE_VILLAGE_TERRITORY);
-		builder.put(FIELD2, ExtTileIdMap.TILE_VILLAGE_TERRITORY);
-		builder.put(PATH, ExtTileIdMap.TILE_VILLAGE_TERRITORY);
-		builder.put(TORCH, ExtTileIdMap.TILE_VILLAGE_TERRITORY);
-		builder.put(WELL, ExtTileIdMap.TILE_VILLAGE_TERRITORY);
-		builder.put(START, ExtTileIdMap.TILE_VILLAGE_TERRITORY);
-		builder.put(HALL, ExtTileIdMap.TILE_VILLAGE_HOUSE1);
-		builder.put(GARDEN, ExtTileIdMap.TILE_VILLAGE_HOUSE2);
-		builder.put(HUT, ExtTileIdMap.TILE_VILLAGE_HOUSE1);
-		builder.put(CHURCH, ExtTileIdMap.TILE_NETHER_TOWER);
+		builder.put(LIBRARY, ExtTileIdMap.TILE_VILLAGE_LIBRARY);
+		builder.put(SMITHY, ExtTileIdMap.TILE_VILLAGE_SMITHY);
+		builder.put(L_HOUSE, ExtTileIdMap.TILE_VILLAGE_L_HOUSE);
+		builder.put(FARMLAND_LARGE, ExtTileIdMap.TILE_VILLAGE_FARMLAND_LARGE);
+		builder.put(FARMLAND_SMALL, ExtTileIdMap.TILE_VILLAGE_FARMLAND_SMALL);
+		builder.put(PATH, ExtTileIdMap.TILE_VILLAGE_PATH_X); // Handled separately
+		builder.put(TORCH, ExtTileIdMap.TILE_VILLAGE_TORCH);
+		builder.put(WELL, ExtTileIdMap.TILE_VILLAGE_WELL);
+		builder.put(START, ExtTileIdMap.TILE_VILLAGE_WELL);
+		builder.put(BUTCHERS, ExtTileIdMap.TILE_VILLAGE_BUTCHERS_SHOP);
+		builder.put(HOUSE_SMALL, ExtTileIdMap.TILE_VILLAGE_SMALL_HOUSE);
+		builder.put(HUT, ExtTileIdMap.TILE_VILLAGE_HUT);
+		builder.put(CHURCH, ExtTileIdMap.TILE_VILLAGE_CHURCH);
 		partToTileMap = builder.build();
+	}
+	/** Tiles with the higher priority override tiles with lower priority at the same chunk. */
+	private static final Map<String, Integer> tilePriority;
+	static {
+		ImmutableMap.Builder<String, Integer> builder = new Builder<String, Integer>();
+		builder.put(ExtTileIdMap.TILE_VILLAGE_LIBRARY, 5);
+		builder.put(ExtTileIdMap.TILE_VILLAGE_SMITHY, 6);
+		builder.put(ExtTileIdMap.TILE_VILLAGE_L_HOUSE, 5);
+		builder.put(ExtTileIdMap.TILE_VILLAGE_FARMLAND_LARGE, 3);
+		builder.put(ExtTileIdMap.TILE_VILLAGE_FARMLAND_SMALL, 3);
+		builder.put(ExtTileIdMap.TILE_VILLAGE_PATH_X, 0);
+		builder.put(ExtTileIdMap.TILE_VILLAGE_PATH_Z, 0);
+		builder.put(ExtTileIdMap.TILE_VILLAGE_TORCH, 1);
+		builder.put(ExtTileIdMap.TILE_VILLAGE_WELL, 7);
+		builder.put(ExtTileIdMap.TILE_VILLAGE_BUTCHERS_SHOP, 4);
+		builder.put(ExtTileIdMap.TILE_VILLAGE_SMALL_HOUSE, 4);
+		builder.put(ExtTileIdMap.TILE_VILLAGE_HUT, 3);
+		builder.put(ExtTileIdMap.TILE_VILLAGE_CHURCH, 6);
+		tilePriority = builder.build();
 	}
 	
 	@SubscribeEvent(priority=EventPriority.LOWEST)
@@ -128,8 +147,34 @@ public class VillageWatcher {
 					AtlasAPI.getMarkerAPI().putGlobalMarker(world, false, MARKER, "gui.antiqueatlas.marker.village", x, z);
 				}
 			}
-			String tileName = partToTileMap.get(childID);
-			AtlasAPI.getTileAPI().putCustomGlobalTile(world, tileName, chunkX, chunkZ);
+			String tileName = null;
+			if (PATH.equals(childID)) {
+				int orientation = child.getInteger("O");
+				switch (orientation) {
+				case 0:
+				case 2: tileName = ExtTileIdMap.TILE_VILLAGE_PATH_Z; break;
+				case 1:
+				case 3: tileName = ExtTileIdMap.TILE_VILLAGE_PATH_X; break;
+				}
+			} else {
+				tileName = partToTileMap.get(childID);
+			}
+			if (tileName != null) {
+				Integer curTilePriority = tilePriority.get(tileName);
+				Integer prevTilePriority = tilePriority.get(tileAt(chunkX, chunkZ));
+				if (curTilePriority != null && prevTilePriority != null) {
+					if (curTilePriority >= prevTilePriority) {
+						AtlasAPI.getTileAPI().putCustomGlobalTile(world, tileName, chunkX, chunkZ);
+					}
+				} else {
+					AtlasAPI.getTileAPI().putCustomGlobalTile(world, tileName, chunkX, chunkZ);
+				}
+			}
 		}
+	}
+	
+	private static String tileAt(int chunkX, int chunkZ) {
+		int biomeID = AntiqueAtlasMod.extBiomeData.getData().getBiomeIdAt(0, chunkX, chunkZ);
+		return ExtTileIdMap.instance().getPseudoBiomeName(biomeID);
 	}
 }

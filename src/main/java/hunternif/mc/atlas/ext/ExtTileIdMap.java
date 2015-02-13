@@ -25,10 +25,19 @@ public class ExtTileIdMap extends SaveData {
 	
 	public static final String
 	// Village:
-	TILE_VILLAGE_HOUSE = "npcVillageDoor",
-	TILE_VILLAGE_TERRITORY = "npcVillageTerritory",
-	TILE_VILLAGE_HOUSE1 = "npcVillageHouse1",
-	TILE_VILLAGE_HOUSE2 = "npcVillageHouse2",
+	TILE_VILLAGE_LIBRARY = "npcVillageLibrary",
+	TILE_VILLAGE_SMITHY = "npcVillageSmithy",
+	TILE_VILLAGE_L_HOUSE = "npcVillageLHouse",
+	TILE_VILLAGE_FARMLAND_SMALL = "npcVillageFarmlandSmall",
+	TILE_VILLAGE_FARMLAND_LARGE = "npcVillageFarmlandLarge",
+	TILE_VILLAGE_WELL = "npcVillageWell",
+	TILE_VILLAGE_TORCH = "npcVillageTorch",
+	TILE_VILLAGE_PATH_X = "npcVillagePathX",
+	TILE_VILLAGE_PATH_Z = "npcVillagePathZ",
+	TILE_VILLAGE_HUT = "npcVillageHut",
+	TILE_VILLAGE_SMALL_HOUSE = "npcVillageSmallHouse",
+	TILE_VILLAGE_BUTCHERS_SHOP = "npcVillageButchersShop",
+	TILE_VILLAGE_CHURCH = "npcVillageChurch",
 	
 	// Nether & Nether Fortress:
 	TILE_LAVA = "lava",

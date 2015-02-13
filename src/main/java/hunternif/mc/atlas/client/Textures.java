@@ -199,9 +199,20 @@ public class Textures {
 	
 	// Village:
 	TILE_HOUSE = tile("house.png"),
-	TILE_HOUSE1 = tile("house1.png"),
-	TILE_HOUSE2 = tile("house2.png"),
 	TILE_FENCE = tile("fence.png"),
+	TILE_LIBRARY = tile("library.png"),
+	TILE_SMITHY = tile("smithy.png"),
+	TILE_L_HOUSE = tile("L-house.png"),
+	TILE_FARMLAND_SMALL = tile("farmland_S.png"),
+	TILE_FARMLAND_LARGE = tile("farmland_L.png"),
+	TILE_VILLAGE_TORCH = tile("village_torch.png"),
+	TILE_WELL = tile("well.png"),
+	TILE_VILLAGE_PATH_X = tile("village_path_x.png"),
+	TILE_VILLAGE_PATH_Z = tile("village_path_z.png"),
+	TILE_HUT = tile("hut.png"),
+	TILE_HOUSE_SMALL = tile("house_small.png"),
+	TILE_BUTCHERS_SHOP = tile("butchers_shop.png"),
+	TILE_CHURCH = tile("church.png"),
 	
 	// Nether Fortress:
 	TILE_NETHER_BRIDGE = tile("nether_bridge.png"),

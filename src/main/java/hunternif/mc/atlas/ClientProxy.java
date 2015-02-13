@@ -169,8 +169,22 @@ public class ClientProxy extends CommonProxy {
 		map.register(LAVA);
 		map.register(LAVA_SHORE);
 		map.register(CAVE_WALLS);
+		
 		map.register(HOUSE);
 		map.register(FENCE);
+		map.register(LIBRARY);
+		map.register(L_HOUSE);
+		map.register(SMITHY);
+		map.register(FARMLAND_LARGE);
+		map.register(FARMLAND_SMALL);
+		map.register(WELL);
+		map.register(VILLAGE_TORCH);
+		map.register(VILLAGE_PATH_X);
+		map.register(VILLAGE_PATH_Z);
+		map.register(HUT);
+		map.register(HOUSE_SMALL);
+		map.register(BUTCHERS_SHOP);
+		map.register(CHURCH);
 		
 		map.register(NETHER_BRIDGE);
 		map.register(NETHER_BRIDGE_X);
@@ -286,10 +300,19 @@ public class ClientProxy extends CommonProxy {
 	 * The pseudo-biomes are: villages houses, village territory and lava. */
 	private void registerVanillaCustomTileTextures() {
 		// Village:
-		setCustomTileTextureIfNone(ExtTileIdMap.TILE_VILLAGE_HOUSE, HOUSE);
-		setCustomTileTextureIfNone(ExtTileIdMap.TILE_VILLAGE_HOUSE1, HOUSE1);
-		setCustomTileTextureIfNone(ExtTileIdMap.TILE_VILLAGE_HOUSE2, HOUSE2);
-		setCustomTileTextureIfNone(ExtTileIdMap.TILE_VILLAGE_TERRITORY, FENCE);
+		setCustomTileTextureIfNone(ExtTileIdMap.TILE_VILLAGE_LIBRARY, LIBRARY);
+		setCustomTileTextureIfNone(ExtTileIdMap.TILE_VILLAGE_SMITHY, SMITHY);
+		setCustomTileTextureIfNone(ExtTileIdMap.TILE_VILLAGE_L_HOUSE, L_HOUSE);
+		setCustomTileTextureIfNone(ExtTileIdMap.TILE_VILLAGE_FARMLAND_LARGE, FARMLAND_LARGE);
+		setCustomTileTextureIfNone(ExtTileIdMap.TILE_VILLAGE_FARMLAND_SMALL, FARMLAND_SMALL);
+		setCustomTileTextureIfNone(ExtTileIdMap.TILE_VILLAGE_WELL, WELL);
+		setCustomTileTextureIfNone(ExtTileIdMap.TILE_VILLAGE_TORCH, VILLAGE_TORCH);
+		setCustomTileTextureIfNone(ExtTileIdMap.TILE_VILLAGE_PATH_X, VILLAGE_PATH_X);
+		setCustomTileTextureIfNone(ExtTileIdMap.TILE_VILLAGE_PATH_Z, VILLAGE_PATH_Z);
+		setCustomTileTextureIfNone(ExtTileIdMap.TILE_VILLAGE_HUT, HUT);
+		setCustomTileTextureIfNone(ExtTileIdMap.TILE_VILLAGE_SMALL_HOUSE, HOUSE_SMALL);
+		setCustomTileTextureIfNone(ExtTileIdMap.TILE_VILLAGE_BUTCHERS_SHOP, BUTCHERS_SHOP);
+		setCustomTileTextureIfNone(ExtTileIdMap.TILE_VILLAGE_CHURCH, CHURCH);
 		
 		// Nether & Nether Fortress:
 		setCustomTileTextureIfNone(ExtTileIdMap.TILE_LAVA, LAVA);
