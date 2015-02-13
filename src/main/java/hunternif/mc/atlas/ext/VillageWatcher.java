@@ -134,13 +134,18 @@ public class VillageWatcher {
 				// Put marker at Start.
 				// Check if the marker already exists:
 				boolean foundMarker = false;
-				List<Marker> markers = AntiqueAtlasMod.globalMarkersData.getData()
-						.getMarkersAtChunk(0, chunkX / MarkersData.CHUNK_STEP, chunkZ / MarkersData.CHUNK_STEP);
-				if (markers != null) {
-					for (Marker marker : markers) {
-						if (marker.getType().equals(MARKER)) {
-							foundMarker = true;
-							break;
+				// Legacy support: look for markers in an wider area.
+				for (int j = -1; j < 1; j++) {
+					for (int k = -1; k < 1; k++) {
+						List<Marker> markers = AntiqueAtlasMod.globalMarkersData.getData()
+								.getMarkersAtChunk(0, j + chunkX / MarkersData.CHUNK_STEP, k + chunkZ / MarkersData.CHUNK_STEP);
+						if (markers != null) {
+							for (Marker marker : markers) {
+								if (marker.getType().equals(MARKER)) {
+									foundMarker = true;
+									break;
+								}
+							}
 						}
 					}
 				}
