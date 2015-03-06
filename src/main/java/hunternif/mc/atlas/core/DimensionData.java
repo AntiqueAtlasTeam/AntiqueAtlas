@@ -7,7 +7,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /** All tiles seen in dimension. Thread-safe (probably) */
-public class DimensionData implements ITileStorage{
+public class DimensionData implements ITileStorage {
 	public final AtlasData parent;
 	public final int dimension;
 	
@@ -45,6 +45,13 @@ public class DimensionData implements ITileStorage{
 		tiles.put(new ShortVec2(x, y), tile);
 		scope.extendTo(x, y);
 		parent.markDirty();
+	}
+	
+	@Override
+	public Tile removeTile(int x, int y) {
+		Tile oldTile = tiles.remove(getKey().set(x, y));
+		if (oldTile != null) parent.markDirty();
+		return oldTile;
 	}
 
 	@Override

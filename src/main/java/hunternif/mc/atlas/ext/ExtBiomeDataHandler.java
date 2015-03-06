@@ -1,6 +1,7 @@
 package hunternif.mc.atlas.ext;
 
 import net.minecraftforge.event.world.WorldEvent;
+import cpw.mods.fml.common.eventhandler.EventPriority;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
 
@@ -9,7 +10,7 @@ public class ExtBiomeDataHandler {
 	
 	private ExtBiomeData data;
 	
-	@SubscribeEvent
+	@SubscribeEvent(priority=EventPriority.HIGHEST)
 	public void onWorldLoad(WorldEvent.Load event) {
 		if (!event.world.isRemote) {
 			data = (ExtBiomeData) event.world.loadItemData(ExtBiomeData.class, DATA_KEY);

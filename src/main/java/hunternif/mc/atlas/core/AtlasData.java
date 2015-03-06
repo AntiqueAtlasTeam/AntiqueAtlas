@@ -87,7 +87,12 @@ public class AtlasData extends WorldSavedData {
 	public void setTile(int dimension, int x, int y, Tile tile) {
 		DimensionData dimData = getDimensionData(dimension);
 		dimData.setTile(x, y, tile);
-		this.markDirty();
+	}
+	
+	/** Returns the Tile previously set at given coordinates. */
+	public Tile removeTile(int dimension, int x, int y) {
+		DimensionData dimData = getDimensionData(dimension);
+		return dimData.removeTile(x, y);
 	}
 	
 	public Set<Integer> getVisitedDimensions() {
@@ -118,12 +123,13 @@ public class AtlasData extends WorldSavedData {
 	/** Send all data to the player in several zipped packets. Called once
 	 * during the first run of ItemAtals.onUpdate(). */
 	public void syncOnPlayer(int atlasID, EntityPlayer player) {
-		if (nbt != null) {
-			// Before syncing make sure the changes are written to the nbt:
-			writeToNBT(nbt);
-			PacketDispatcher.sendTo(new MapDataPacket(atlasID, nbt), (EntityPlayerMP) player);
-			Log.info("Sent Atlas #%d data to player %s", atlasID, player.getCommandSenderName());
+		if (nbt == null) {
+			nbt = new NBTTagCompound();
 		}
+		// Before syncing make sure the changes are written to the nbt:
+		writeToNBT(nbt);
+		PacketDispatcher.sendTo(new MapDataPacket(atlasID, nbt), (EntityPlayerMP) player);
+		Log.info("Sent Atlas #%d data to player %s", atlasID, player.getCommandSenderName());
 		playersSentTo.add(player);
 	}
 

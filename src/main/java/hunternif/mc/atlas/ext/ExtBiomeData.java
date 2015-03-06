@@ -88,14 +88,19 @@ public class ExtBiomeData extends WorldSavedData {
 	}
 	
 	/** If no custom tile is set at the specified coordinates, returns -1. */
-	public int getBiomeIdAt(int dimension, int x, int y) {
-		Integer biomeID = getBiomesInDimension(dimension).get(tempCoords.set(x, y));
+	public int getBiomeIdAt(int dimension, int x, int z) {
+		Integer biomeID = getBiomesInDimension(dimension).get(tempCoords.set(x, z));
 		return biomeID == null ? -1 : biomeID;
 	}
 	
 	/** If setting biome on the server, a packet should be sent to all players. */
-	public void setBiomeIdAt(int dimension, int x, int y, int biomeID) {
-		getBiomesInDimension(dimension).put(new ShortVec2(x, y), biomeID);
+	public void setBiomeIdAt(int dimension, int x, int z, int biomeID) {
+		getBiomesInDimension(dimension).put(new ShortVec2(x, z), biomeID);
+		markDirty();
+	}
+	
+	public void removeBiomeAt(int dimension, int x, int z) {
+		getBiomesInDimension(dimension).remove(tempCoords.set(x, z));
 		markDirty();
 	}
 	

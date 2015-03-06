@@ -30,6 +30,8 @@ public class VillageWatcher {
 	public static final String MARKER = "village";
 	
 	/** Set of tag names for every village, in the format "[x, y]" */
+	//TODO: list of visited villages must be reset when changing worlds!
+	// And the same goes for Nether Fortress Watcher
 	private final Set<String> visited = new HashSet<String>();
 	
 	private static final String LIBRARY= "ViBH"; // Big-ish house with a high slanted roof, large windows; books and couches inside.
@@ -106,12 +108,12 @@ public class VillageWatcher {
 	public void visitAllUnvisitedVillages(World world) {
 		MapGenStructureData data = (MapGenStructureData)world.perWorldStorage.loadData(MapGenStructureData.class, "Village");
 		if (data == null) return;
-		NBTTagCompound fortressNBTData = data.func_143041_a();
+		NBTTagCompound villageNBTData = data.func_143041_a();
 		@SuppressWarnings("unchecked")
-		Set<String> tagSet = fortressNBTData.func_150296_c();
+		Set<String> tagSet = villageNBTData.func_150296_c();
 		for (String coords : tagSet) {
 			if (!visited.contains(coords)) {
-				NBTBase tag = fortressNBTData.getTag(coords);
+				NBTBase tag = villageNBTData.getTag(coords);
 				if (tag.getId() == 10) { // is NBTTagCompound
 					visitVillage(world, (NBTTagCompound) tag);
 					visited.add(coords);
@@ -122,6 +124,12 @@ public class VillageWatcher {
 	
 	/** Put all child parts of the fortress on the map as global custom tiles. */
 	private void visitVillage(World world, NBTTagCompound tag) {
+		if (!tag.getBoolean("Valid")) {
+			// The village was not actually generated and should not be mapped.
+			// Remove legacy marker and custom tile:
+			removeVillage(world, tag);
+			return;
+		}
 		int startChunkX = tag.getInteger("ChunkX");
 		int startChunkZ = tag.getInteger("ChunkZ");
 		Log.info("Visiting NPC Village in dimension #%d \"%s\" at chunk (%d, %d) ~ blocks (%d, %d)",
@@ -140,9 +148,9 @@ public class VillageWatcher {
 				// Put marker at Start.
 				// Check if the marker already exists:
 				boolean foundMarker = false;
-				// Legacy support: look for markers in an wider area.
-				for (int j = -1; j < 1; j++) {
-					for (int k = -1; k < 1; k++) {
+				// Legacy support: don't place new marker if there's already one in a wider area.
+				for (int j = -1; j <= 1; j++) {
+					for (int k = -1; k <= 1; k++) {
 						List<Marker> markers = AntiqueAtlasMod.globalMarkersData.getData()
 								.getMarkersAtChunk(world.provider.dimensionId, j + chunkX / MarkersData.CHUNK_STEP, k + chunkZ / MarkersData.CHUNK_STEP);
 						if (markers != null) {
@@ -188,5 +196,34 @@ public class VillageWatcher {
 	private static String tileAt(int chunkX, int chunkZ) {
 		int biomeID = AntiqueAtlasMod.extBiomeData.getData().getBiomeIdAt(0, chunkX, chunkZ);
 		return ExtTileIdMap.instance().getPseudoBiomeName(biomeID);
+	}
+	
+	/** Delete the marker and custom tile data about the village. */
+	private static void removeVillage(World world, NBTTagCompound tag) {
+		NBTTagList children = tag.getTagList("Children", 10);
+		for (int i = 0; i < children.tagCount(); i++) {
+			NBTTagCompound child = children.getCompoundTagAt(i);
+			String childID = child.getString("id");
+			StructureBoundingBox boundingBox = new StructureBoundingBox(child.getIntArray("BB"));
+			int x = boundingBox.getCenterX();
+			int z = boundingBox.getCenterZ();
+			int chunkX = x >> 4;
+			int chunkZ = z >> 4;
+			if (START.equals(childID)) {
+				List<Marker> markers = AntiqueAtlasMod.globalMarkersData.getData()
+						.getMarkersAtChunk(world.provider.dimensionId, chunkX / MarkersData.CHUNK_STEP, chunkZ / MarkersData.CHUNK_STEP);
+				if (markers != null) {
+					for (Marker marker : markers) {
+						if (marker.getType().equals(MARKER)) {
+							AtlasAPI.getMarkerAPI().deleteGlobalMarker(world, marker.getId());
+							Log.info("Removed faux village marker");
+							break;
+						}
+					}
+				}
+			}
+			AtlasAPI.getTileAPI().deleteCustomGlobalTile(world, chunkX, chunkZ);
+			Log.info("Removed faux village tile");
+		}
 	}
 }

@@ -13,6 +13,7 @@ import hunternif.mc.atlas.ext.ExtTileTextureMap;
 import hunternif.mc.atlas.ext.TileIdRegisteredEvent;
 import hunternif.mc.atlas.network.PacketDispatcher;
 import hunternif.mc.atlas.network.bidirectional.PutBiomeTilePacket;
+import hunternif.mc.atlas.network.client.DeleteCustomGlobalTilePacket;
 import hunternif.mc.atlas.network.client.TileNameIDPacket;
 import hunternif.mc.atlas.network.client.TilesPacket;
 import hunternif.mc.atlas.network.server.RegisterTileIdPacket;
@@ -129,6 +130,10 @@ public class TileApiImpl implements TileAPI {
 	
 	@Override
 	public void putCustomTile(World world, int atlasID, String tileName, int chunkX, int chunkZ) {
+		if (tileName == null) {
+			Log.error("Attempted to put custom tile with null name");
+			return;
+		}
 		if (world.isRemote) {
 			int biomeID = ExtTileIdMap.instance().getPseudoBiomeID(tileName);
 			if (biomeID != ExtTileIdMap.NOT_FOUND) {
@@ -151,8 +156,12 @@ public class TileApiImpl implements TileAPI {
 	
 	@Override
 	public void putCustomGlobalTile(World world, String tileName, int chunkX, int chunkZ) {
+		if (tileName == null) {
+			Log.error("Attempted to put custom global tile with null name");
+			return;
+		}
 		if (world.isRemote) {
-			Log.warn("Client tried to put global tile");
+			Log.warn("Client attempted to put global tile");
 			return;
 		}
 		boolean isIdRegistered = ExtTileIdMap.instance().getPseudoBiomeID(tileName) != ExtTileIdMap.NOT_FOUND;
@@ -179,6 +188,21 @@ public class TileApiImpl implements TileAPI {
 			if (tile != null) {
 				putBiomeTile(tile.world, tile.atlasID, entry.getValue(), tile.x, tile.z);
 			}
+		}
+	}
+
+
+	@Override
+	public void deleteCustomGlobalTile(World world, int chunkX, int chunkZ) {
+		if (world.isRemote) {
+			Log.warn("Client attempted to delete global tile");
+			return;
+		}
+		ExtBiomeData data = AntiqueAtlasMod.extBiomeData.getData();
+		int dimension = world.provider.dimensionId;
+		if (data.getBiomeIdAt(dimension, chunkX, chunkZ) != -1) {
+			data.removeBiomeAt(dimension, chunkX, chunkZ);
+			PacketDispatcher.sendToAll(new DeleteCustomGlobalTilePacket(dimension, chunkX, chunkZ));
 		}
 	}
 }

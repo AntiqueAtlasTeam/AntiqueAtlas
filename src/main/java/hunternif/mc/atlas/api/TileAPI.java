@@ -15,7 +15,7 @@ import cpw.mods.fml.relauncher.SideOnly;
  */
 public interface TileAPI {
 	/** Version of Tile API, meaning this particular interface. */
-	public static final int VERSION = 4;
+	public static final int VERSION = 5;
 	
 	/**
 	 * Register a texture set with the specified unique name and texture files.
@@ -176,4 +176,16 @@ public interface TileAPI {
 	 * @param chunkZ	z chunk coordinate. (block coordinate >> 4)
 	 */
 	void putCustomGlobalTile(World world, String tileName, int chunkX, int chunkZ);
+	
+	/**
+	 * Delete the global tile at the specified chunk coordinates if a tile has
+	 * been previously put there by {@link #putCustomGlobalTile()}.
+	 * This method has to be called on the <b>server</b> only!
+	 * 
+	 * @param world		dimension the chunk is located in.
+	 * @param chunkX	x chunk coordinate. (block coordinate >> 4)
+	 * @param chunkZ	z chunk coordinate. (block coordinate >> 4)
+	 */
+	void deleteCustomGlobalTile(World world, int chunkX, int chunkZ);
+	//TODO: make it possible to delete local custom tiles as well.
 }

@@ -106,42 +106,43 @@ public class ItemAtlas extends Item {
 					continue; // Outside the circle
 				}
 				int x = (int)(playerX + dx);
-				int y = (int)(playerZ + dz);
+				int z = (int)(playerZ + dz);
+				Tile oldTile = seenChunks.getTile(x, z);
 				
 				// Check if there's a custom tile at the location:
-				int biomeId = AntiqueAtlasMod.extBiomeData.getData().getBiomeIdAt(player.dimension, x, y);
+				int biomeId = AntiqueAtlasMod.extBiomeData.getData().getBiomeIdAt(player.dimension, x, z);
 				// Custom tiles overwrite even the chunks already seen.
 				
 				// If there's no custom tile, check the actual chunk:
 				if (biomeId == -1) {
-					// Check if the chunk has been seen already:
-					if (seenChunks.hasTileAt(x, y)) continue;
-					
 					// Check if the chunk has been loaded:
-					if (!player.worldObj.blockExists(x << 4, 0, y << 4)) {
+					if (!player.worldObj.blockExists(x << 4, 0, z << 4)) {
 						continue;
 					}
 					// Retrieve mean chunk biome and store it in AtlasData:
-					Chunk chunk = player.worldObj.getChunkFromChunkCoords(x, y);
+					Chunk chunk = player.worldObj.getChunkFromChunkCoords(x, z);
 					if (!chunk.isChunkLoaded) {
-						biomeId = IBiomeDetector.NOT_FOUND;
+						continue;
 					} else {
 						biomeId = biomeDetector.getBiomeID(chunk);
 					}
-					// Finally, put the tile in place:
-					if (biomeId != IBiomeDetector.NOT_FOUND) {
-						Tile tile = new Tile(biomeId);
-						data.setTile(player.dimension, x, y, tile);
+					if (oldTile != null) {
+						if (biomeId == IBiomeDetector.NOT_FOUND) {
+							// If the new tile is empty, remove the old one:
+							data.removeTile(player.dimension, x, z);
+						} else if (oldTile.biomeID != biomeId) {
+							// Only update if the old tile's biome ID doesn't match the new one:
+							data.setTile(player.dimension, x, z, new Tile(biomeId));
+						}
+					} else {
+						if (biomeId != IBiomeDetector.NOT_FOUND) {
+							data.setTile(player.dimension, x, z, new Tile(biomeId));
+						}
 					}
 				} else {
 					// Only update the custom tile if it doesn't rewrite itself:
-					Tile oldTile = seenChunks.getTile(x, y);
 					if (oldTile == null || oldTile.biomeID != biomeId) {
-						Tile tile = new Tile(biomeId);
-						if (world.isRemote) {
-							tile.randomizeTexture();
-						}
-						data.setTile(player.dimension, x, y, tile);
+						data.setTile(player.dimension, x, z, new Tile(biomeId));
 						data.markDirty();
 					}
 				}
