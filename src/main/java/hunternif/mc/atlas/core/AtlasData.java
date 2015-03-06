@@ -118,10 +118,12 @@ public class AtlasData extends WorldSavedData {
 	/** Send all data to the player in several zipped packets. Called once
 	 * during the first run of ItemAtals.onUpdate(). */
 	public void syncOnPlayer(int atlasID, EntityPlayer player) {
-		// Before syncing make sure the changes are written to the nbt:
-		writeToNBT(nbt);
-		PacketDispatcher.sendTo(new MapDataPacket(atlasID, nbt), (EntityPlayerMP) player);
-		Log.info("Sent Atlas #%d data to player %s", atlasID, player.getCommandSenderName());
+		if (nbt != null) {
+			// Before syncing make sure the changes are written to the nbt:
+			writeToNBT(nbt);
+			PacketDispatcher.sendTo(new MapDataPacket(atlasID, nbt), (EntityPlayerMP) player);
+			Log.info("Sent Atlas #%d data to player %s", atlasID, player.getCommandSenderName());
+		}
 		playersSentTo.add(player);
 	}
 
