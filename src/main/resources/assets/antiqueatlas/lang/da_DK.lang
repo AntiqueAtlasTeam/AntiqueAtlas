@@ -1,0 +1,21 @@
+item.antiqueAtlas.name=Antikt Atlas
+item.emptyAntiqueAtlas.name=Tomt Antikt Atlas
+
+gui.antiqueatlas.scalebar=Skala i blokke
+gui.antiqueatlas.addMarker=Tilføj markør
+gui.antiqueatlas.delMarker=Fjern markør
+gui.antiqueatlas.followPlayer=Følg spiller
+gui.antiqueatlas.exportImage=Eksporter billede
+gui.antiqueatlas.hideMarkers=Skjul markøre
+gui.antiqueatlas.showMarkers=Vis markøre
+
+gui.antiqueatlas.marker.label=Mærkat:
+gui.antiqueatlas.marker.type=Type:
+gui.antiqueatlas.marker.village=Landsby
+gui.antiqueatlas.marker.netherPortal=Nether Portal
+
+gui.antiqueatlas.export.opening=Åbner filsystemsdialog...
+gui.antiqueatlas.export.selectFile=Vælg PNG fil at gemme til
+gui.antiqueatlas.export.tooLarge=Undskyld! Billedet er for stort til at render, prøv at øge "java heap side".
+gui.antiqueatlas.export.rendering=Rendering...
+gui.antiqueatlas.export.writing=Skriver til fil...
