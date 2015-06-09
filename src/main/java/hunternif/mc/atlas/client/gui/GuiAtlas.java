@@ -614,6 +614,7 @@ public class GuiAtlas extends GuiComponent {
 			int markersStartZ = MathUtil.roundToBase(mapStartZ, MarkersData.CHUNK_STEP) / MarkersData.CHUNK_STEP - 1;
 			int markersEndX = MathUtil.roundToBase(mapEndX, MarkersData.CHUNK_STEP) / MarkersData.CHUNK_STEP + 1;
 			int markersEndZ = MathUtil.roundToBase(mapEndZ, MarkersData.CHUNK_STEP) / MarkersData.CHUNK_STEP + 1;
+			double iconScale = getIconScale();
 			
 			// Draw global markers:
 			for (int x = markersStartX; x <= markersEndX; x++) {
@@ -621,7 +622,7 @@ public class GuiAtlas extends GuiComponent {
 					List<Marker> markers = globalMarkersData.getMarkersAtChunk(x, z);
 					if (markers == null) continue;
 					for (Marker marker : markers) {
-						renderMarker(marker);
+						renderMarker(marker, iconScale);
 					}
 				}
 			}
@@ -633,7 +634,7 @@ public class GuiAtlas extends GuiComponent {
 						List<Marker> markers = localMarkersData.getMarkersAtChunk(x, z);
 						if (markers == null) continue;
 						for (Marker marker : markers) {
-							renderMarker(marker);
+							renderMarker(marker, iconScale);
 						}
 					}
 				}
@@ -645,6 +646,7 @@ public class GuiAtlas extends GuiComponent {
 		// Overlay the frame so that edges of the map are smooth:
 		GL11.glColor4f(1, 1, 1, 1);
 		AtlasRenderHelper.drawFullTexture(Textures.BOOK_FRAME, getGuiX(), getGuiY(), WIDTH, HEIGHT);
+		double iconScale = getIconScale();
 		
 		// Draw player icon:
 		if (!state.is(HIDING_MARKERS)) {
@@ -661,8 +663,9 @@ public class GuiAtlas extends GuiComponent {
 			GL11.glTranslated(getGuiX() + WIDTH/2 + playerOffsetX, getGuiY() + HEIGHT/2 + playerOffsetZ, 0);
 			float playerRotation = (float) Math.round(player.rotationYaw / 360f * PLAYER_ROTATION_STEPS) / PLAYER_ROTATION_STEPS * 360f;
 			GL11.glRotatef(180 + playerRotation, 0, 0, 1);
-			GL11.glTranslatef(-(float)PLAYER_ICON_WIDTH/2f, -(float)PLAYER_ICON_HEIGHT/2f, 0);
-			AtlasRenderHelper.drawFullTexture(Textures.PLAYER, 0, 0, PLAYER_ICON_WIDTH, PLAYER_ICON_HEIGHT);
+			GL11.glTranslated(-PLAYER_ICON_WIDTH/2*iconScale, -PLAYER_ICON_HEIGHT/2*iconScale, 0);
+			AtlasRenderHelper.drawFullTexture(Textures.PLAYER, 0, 0,
+					(int)Math.round(PLAYER_ICON_WIDTH*iconScale), (int)Math.round(PLAYER_ICON_HEIGHT*iconScale));
 			GL11.glPopMatrix();
 			GL11.glColor4f(1, 1, 1, 1);
 		}
@@ -677,8 +680,8 @@ public class GuiAtlas extends GuiComponent {
 			GL11.glColor4f(1, 1, 1, 0.5f);
 			AtlasRenderHelper.drawFullTexture(
 					MarkerTextureMap.instance().getTexture(markerFinalizer.selectedType),
-					mouseX - MARKER_SIZE/2, mouseY - MARKER_SIZE/2,
-					MARKER_SIZE, MARKER_SIZE);
+					mouseX - MARKER_SIZE/2*iconScale, mouseY - MARKER_SIZE/2*iconScale,
+					(int)Math.round(MARKER_SIZE*iconScale), (int)Math.round(MARKER_SIZE*iconScale));
 			GL11.glColor4f(1, 1, 1, 1);
 		}
 		
@@ -689,14 +692,14 @@ public class GuiAtlas extends GuiComponent {
 		}
 	}
 	
-	private void renderMarker(Marker marker) {
+	private void renderMarker(Marker marker, double scale) {
 		int markerX = worldXToScreenX(marker.getX());
 		int markerY = worldZToScreenY(marker.getZ());
 		if (!marker.isVisibleAhead() &&
 				!biomeData.hasTileAt(marker.getChunkX(), marker.getChunkZ())) {
 			return;
 		}
-		boolean mouseIsOverMarker = isMouseInRadius(markerX, markerY, MARKER_RADIUS);
+		boolean mouseIsOverMarker = isMouseInRadius(markerX, markerY, (int)Math.ceil(MARKER_RADIUS*scale));
 		if (state.is(PLACING_MARKER)) {
 			GL11.glColor4f(1, 1, 1, 0.5f);
 		} else if (state.is(DELETING_MARKER)) {
@@ -718,9 +721,9 @@ public class GuiAtlas extends GuiComponent {
 		}
 		AtlasRenderHelper.drawFullTexture(
 				MarkerTextureMap.instance().getTexture(marker.getType()),
-				markerX - (double)MARKER_SIZE/2,
-				markerY - (double)MARKER_SIZE/2,
-				MARKER_SIZE, MARKER_SIZE);
+				markerX - (double)MARKER_SIZE/2*scale,
+				markerY - (double)MARKER_SIZE/2*scale,
+				(int)Math.round(MARKER_SIZE*scale), (int)Math.round(MARKER_SIZE*scale));
 		if (isMouseOver && mouseIsOverMarker && marker.getLabel().length() > 0) {
 			drawTooltip(Arrays.asList(marker.getLocalizedLabel()), mc.fontRenderer);
 		}
@@ -767,5 +770,10 @@ public class GuiAtlas extends GuiComponent {
 	public void updateL18n() {
 		btnExportPng.setTitle(I18n.format("gui.antiqueatlas.exportImage"));
 		btnMarker.setTitle(I18n.format("gui.antiqueatlas.addMarker"));
+	}
+	
+	/** Returns the scale of markers and player icon at given mapScale. */
+	private double getIconScale() {
+		return AntiqueAtlasMod.settings.doScaleMarkers ? (mapScale < 0.5 ? 0.5 : mapScale > 1 ? 2 : 1) : 1;
 	}
 }
