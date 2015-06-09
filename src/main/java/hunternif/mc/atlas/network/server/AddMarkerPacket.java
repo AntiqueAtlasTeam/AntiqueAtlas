@@ -70,6 +70,7 @@ public class AddMarkerPacket extends AbstractServerMessage<AddMarkerPacket> {
 		if (!player.inventory.hasItemStack(new ItemStack(AntiqueAtlasMod.itemAtlas, 1, atlasID))) {
 			Log.warn("Player %s attempted to put marker into someone else's Atlas #%d",
 					player.getGameProfile().getName(), atlasID);
+			return;
 		}
 		MarkersData markersData = AntiqueAtlasMod.itemAtlas.getMarkersData(atlasID, player.worldObj);
 		Marker marker = markersData.createAndSaveMarker(type, label, dimension, x, y, visibleAhead);
