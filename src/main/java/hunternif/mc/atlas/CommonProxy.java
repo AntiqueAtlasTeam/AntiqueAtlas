@@ -1,5 +1,6 @@
 package hunternif.mc.atlas;
 
+import hunternif.mc.atlas.core.BiomeDetectorBase;
 import hunternif.mc.atlas.ext.ExtTileConfig;
 import hunternif.mc.atlas.ext.ExtTileIdMap;
 import hunternif.mc.atlas.util.Log;
@@ -37,7 +38,9 @@ public class CommonProxy {
 		MinecraftForge.EVENT_BUS.register(this);
 	}
 	
-	public void postInit(FMLPostInitializationEvent event) {}
+	public void postInit(FMLPostInitializationEvent event) {
+		BiomeDetectorBase.scanBiomeTypes();
+	}
 	
 	/** Register IDs for the pseudo-biomes used for vanilla Minecraft.
 	 * The pseudo-biomes are: villages houses, village territory and lava. */

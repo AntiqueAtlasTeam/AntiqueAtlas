@@ -122,6 +122,7 @@ public class MarkersData extends WorldSavedData {
 
 	@Override
 	public void writeToNBT(NBTTagCompound compound) {
+		Log.debug("Saving local markers data to NBT");
 		compound.setInteger(TAG_VERSION, VERSION);
 		NBTTagList dimensionMapList = new NBTTagList();
 		for (Integer dimension : dimensionMap.keySet()) {
@@ -130,6 +131,7 @@ public class MarkersData extends WorldSavedData {
 			DimensionMarkersData data = getMarkersDataInDimension(dimension);
 			NBTTagList tagList = new NBTTagList();
 			for (Marker marker : data.getAllMarkers()) {
+				Log.debug("Saving marker %s", marker.toString());
 				NBTTagCompound markerTag = new NBTTagCompound();
 				markerTag.setInteger(TAG_MARKER_ID, marker.getId());
 				markerTag.setString(TAG_MARKER_TYPE, marker.getType());
@@ -188,6 +190,7 @@ public class MarkersData extends WorldSavedData {
 	 * Server side only! */
 	public Marker createAndSaveMarker(String type, String label, int dimension, int x, int z, boolean visibleAhead) {
 		Marker marker = new Marker(getNewID(), type, label, dimension, x, z, visibleAhead);
+		Log.debug("Created new marker %s", marker.toString());
 		idMap.put(marker.getId(), marker);
 		getMarkersDataInDimension(marker.getDimension()).insertMarker(marker);
 		markDirty();

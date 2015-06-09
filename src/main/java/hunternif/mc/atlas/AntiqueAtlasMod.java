@@ -1,6 +1,9 @@
 package hunternif.mc.atlas;
 
 import static net.minecraftforge.oredict.RecipeSorter.Category.SHAPELESS;
+
+import java.io.File;
+
 import hunternif.mc.atlas.ext.ExtBiomeDataHandler;
 import hunternif.mc.atlas.ext.NetherFortressWatcher;
 import hunternif.mc.atlas.ext.VillageWatcher;
@@ -40,6 +43,8 @@ public class AntiqueAtlasMod {
 	@SidedProxy(clientSide="hunternif.mc.atlas.ClientProxy", serverSide="hunternif.mc.atlas.CommonProxy")
 	public static CommonProxy proxy;
 	
+	public static final SettingsConfig settings = new SettingsConfig();
+	
 	public static final ExtBiomeDataHandler extBiomeData = new ExtBiomeDataHandler();
 	public static final GlobalMarkersDataHandler globalMarkersData = new GlobalMarkersDataHandler();
 	
@@ -50,8 +55,9 @@ public class AntiqueAtlasMod {
 	public void preInit(FMLPreInitializationEvent event) {
 		Log.setModID(ID);
 		proxy.preInit(event);
+		settings.load(new File(proxy.configDir, "settings.cfg"));
 		
-		itemAtlas = (ItemAtlas) new ItemAtlas().setUnlocalizedName("antiqueAtlas");
+		itemAtlas = (ItemAtlas) new ItemAtlas(settings).setUnlocalizedName("antiqueAtlas");
 		
 		itemEmptyAtlas = (ItemEmptyAtlas) new ItemEmptyAtlas()
 			.setUnlocalizedName("emptyAntiqueAtlas").setCreativeTab(CreativeTabs.tabTools);

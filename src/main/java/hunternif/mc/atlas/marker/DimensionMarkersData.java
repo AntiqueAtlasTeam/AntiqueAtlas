@@ -22,10 +22,10 @@ public class DimensionMarkersData {
 	
 	private final Values values = new Values();
 	
-	/** Maps threads to the temporary key for thread-safe access to the tile map. */
+	/** Maps threads to the temporary key for thread-safe access to chunkMap. */
 	private final Map<Thread, ShortVec2> thread2KeyMap = new ConcurrentHashMap<Thread, ShortVec2>(2, 0.75f, 2);
 	
-	/** Temporary key for thread-safe access to the tile map. */
+	/** Temporary key for thread-safe access to chunkMap. */
 	private ShortVec2 getKey() {
 		ShortVec2 key = thread2KeyMap.get(Thread.currentThread());
 		if (key == null) {
@@ -72,10 +72,12 @@ public class DimensionMarkersData {
 		if (!inserted) {
 			list.add(marker);
 		}
+		size++;
 		parent.markDirty();
 	}
 	
 	public boolean removeMarker(Marker marker) {
+		size--;
 		return getMarkersAtChunk(
 				marker.getChunkX() / MarkersData.CHUNK_STEP,
 				marker.getChunkZ() / MarkersData.CHUNK_STEP).remove(marker);
@@ -91,7 +93,6 @@ public class DimensionMarkersData {
 		public Iterator<Marker> iterator() {
 			return new ListMapValueIterator<Marker>(chunkMap);
 		}
-		/** Don't call this method, it's very inefficient. */
 		@Override
 		public int size() {
 			return size;

@@ -1,6 +1,7 @@
 package hunternif.mc.atlas.item;
 
 import hunternif.mc.atlas.AntiqueAtlasMod;
+import hunternif.mc.atlas.SettingsConfig;
 import hunternif.mc.atlas.core.AtlasData;
 import hunternif.mc.atlas.core.BiomeDetectorBase;
 import hunternif.mc.atlas.core.BiomeDetectorNether;
@@ -28,20 +29,19 @@ public class ItemAtlas extends Item {
 	protected static final String WORLD_ATLAS_DATA_ID = "aAtlas";
 	protected static final String MARKERS_DATA_PREFIX = "aaMarkers_";
 	
-	/** In [chunks] */
-	public static double LOOK_RADIUS = 11;
-	/** In [ticks] */
-	public static int UPDATE_INTERVAL = 20;
-	
 	/** Maps dimension ID to biomeAnalyzer. */
 	private final Map<Integer, IBiomeDetector> biomeAnalyzers = new HashMap<Integer, IBiomeDetector>();
-	private final IBiomeDetector biomeDetectorOverworld = new BiomeDetectorBase();
-	private final IBiomeDetector biomeDetectorNether = new BiomeDetectorNether();
+	private final BiomeDetectorBase biomeDetectorOverworld = new BiomeDetectorBase();
+	private final BiomeDetectorNether biomeDetectorNether = new BiomeDetectorNether();
+	
+	private SettingsConfig settings;
 
-	public ItemAtlas() {
-		setHasSubtypes(true);
+	public ItemAtlas(SettingsConfig settings) {
+		this.settings = settings;
+		biomeDetectorOverworld.setScanPonds(settings.doScanPonds);
 		setBiomeDetectorForDimension(0, biomeDetectorOverworld);
 		setBiomeDetectorForDimension(-1, biomeDetectorNether);
+		setHasSubtypes(true);
 	}
 	
 	public void setBiomeDetectorForDimension(int dimension, IBiomeDetector biomeAnalyzer) {
@@ -88,9 +88,12 @@ public class ItemAtlas extends Item {
 		if (!world.isRemote && !markers.isSyncedOnPlayer(player) && !markers.isEmpty()) {
 			markers.syncOnPlayer(stack.getItemDamage(), player);
 		}
+		markers = null;
 		
 		// Update the actual map only so often:
-		if (player.ticksExisted % UPDATE_INTERVAL != 0) {
+		int newScanInterval = Math.round(settings.newScanInterval * 20);
+		int rescanInterval = newScanInterval * settings.rescanRate;
+		if (player.ticksExisted % newScanInterval != 0) {
 			return;
 		}
 		
@@ -98,11 +101,12 @@ public class ItemAtlas extends Item {
 		int playerZ = MathHelper.floor_double(player.posZ) >> 4;
 		ITileStorage seenChunks = data.getDimensionData(player.dimension);
 		IBiomeDetector biomeDetector = getBiomeDetectorForDimension(player.dimension);
+		int scanRadius = settings.scanRadius;
 		
 		// Look at chunks around in a circular area:
-		for (double dx = -LOOK_RADIUS; dx <= LOOK_RADIUS; dx++) {
-			for (double dz = -LOOK_RADIUS; dz <= LOOK_RADIUS; dz++) {
-				if (dx*dx + dz*dz > LOOK_RADIUS*LOOK_RADIUS) {
+		for (double dx = -scanRadius; dx <= scanRadius; dx++) {
+			for (double dz = -scanRadius; dz <= scanRadius; dz++) {
+				if (dx*dx + dz*dz > scanRadius*scanRadius) {
 					continue; // Outside the circle
 				}
 				int x = (int)(playerX + dx);
@@ -115,18 +119,22 @@ public class ItemAtlas extends Item {
 				
 				// If there's no custom tile, check the actual chunk:
 				if (biomeId == -1) {
-					// Check if the chunk has been loaded:
-					if (!player.worldObj.blockExists(x << 4, 0, z << 4)) {
-						continue;
-					}
-					// Retrieve mean chunk biome and store it in AtlasData:
 					Chunk chunk = player.worldObj.getChunkFromChunkCoords(x, z);
-					if (!chunk.isChunkLoaded) {
-						continue;
-					} else {
-						biomeId = biomeDetector.getBiomeID(chunk);
+					// Force loading of chunk, if required:
+					if (settings.forceChunkLoading && !chunk.isChunkLoaded) {
+						player.worldObj.getChunkProvider().loadChunk(x << 4, z << 4);
 					}
+					// Skip chunk if it hasn't loaded yet:
+					if (!chunk.isChunkLoaded) { 
+						continue;
+					}
+					
 					if (oldTile != null) {
+						// If the chunk has been scanned previously, only re-scan it so often:
+						if (!settings.doRescan || player.ticksExisted % rescanInterval != 0) {
+							continue;
+						}
+						biomeId = biomeDetector.getBiomeID(chunk);
 						if (biomeId == IBiomeDetector.NOT_FOUND) {
 							// If the new tile is empty, remove the old one:
 							data.removeTile(player.dimension, x, z);
@@ -135,6 +143,8 @@ public class ItemAtlas extends Item {
 							data.setTile(player.dimension, x, z, new Tile(biomeId));
 						}
 					} else {
+						// Scanning new chunk:
+						biomeId = biomeDetector.getBiomeID(chunk);
 						if (biomeId != IBiomeDetector.NOT_FOUND) {
 							data.setTile(player.dimension, x, z, new Tile(biomeId));
 						}

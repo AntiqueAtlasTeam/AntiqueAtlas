@@ -16,16 +16,39 @@ import net.minecraftforge.common.BiomeDictionary.Type;
  * @author Hunternif
  */
 public class BiomeDetectorBase implements IBiomeDetector {
+	private boolean doScanPonds = true;
+	
 	/** Biome used for occasional pools of water. */
 	private static final int waterPoolBiomeID = BiomeGenBase.river.biomeID;
 	/** Increment the counter for water biomes by this much during iteration.
 	 * This is done so that water pools are more visible. */
 	private static final int priorityWaterPool = 3, prioritylavaPool = 6;
 	
+	/** Set to true for biome IDs that return true for BiomeDictionary.isBiomeOfType(WATER) */
+	private static final boolean[] waterBiomes = new boolean[256];
+	/** Set to true for biome IDs that return true for BiomeDictionary.isBiomeOfType(BEACH) */
+	private static final boolean[] beachBiomes = new boolean[256];
+	
+	/** Scan all registered biomes to mark biomes of certain types that will be
+	 * given higher priority when identifying mean biome ID for a chunk.
+	 * (Currently WATER and BEACH) */
+	public static void scanBiomeTypes() {
+		for (BiomeGenBase biome : BiomeDictionary.getBiomesForType(Type.WATER)) {
+			waterBiomes[biome.biomeID] = true;
+		}
+		for (BiomeGenBase biome : BiomeDictionary.getBiomesForType(Type.BEACH)) {
+			beachBiomes[biome.biomeID] = true;
+		}
+	}
+	
+	public void setScanPonds(boolean value) {
+		this.doScanPonds = value;
+	}
+	
 	protected int priorityForBiome(BiomeGenBase biome) {
-		if (BiomeDictionary.isBiomeOfType(biome, Type.WATER)) {
+		if (waterBiomes[biome.biomeID]) {
 			return 4;
-		} else if (BiomeDictionary.isBiomeOfType(biome, Type.BEACH)) {
+		} else if (beachBiomes[biome.biomeID]) {
 			return 3;
 		} else {
 			return 1;
@@ -45,19 +68,21 @@ public class BiomeDetectorBase implements IBiomeDetector {
 		for (int x = 0; x < 16; x++) {
 			for (int z = 0; z < 16; z++) {
 				int biomeID = chunkBiomes[x << 4 | z];
-				int y = chunk.getHeightValue(x, z);
-				if (y > 0) {
-					Block topBlock = chunk.getBlock(x, y-1, z);
-					// For some reason lava doesn't count in height value
-					// TODO: check if 1.8 fixes this!
-					Block topBlock2 = chunk.getBlock(x, y, z);
-					// Check if there's surface of water at (x, z), but not swamp
-					if (topBlock == Blocks.water &&
-							biomeID != BiomeGenBase.swampland.biomeID &&
-							biomeID != BiomeGenBase.swampland.biomeID + 128) {
-						biomeOccurrences[waterPoolBiomeID] += priorityWaterPool;
-					} else if (topBlock2 == Blocks.lava) {
-						lavaOccurences += prioritylavaPool;
+				if (doScanPonds) {
+					int y = chunk.getHeightValue(x, z);
+					if (y > 0) {
+						Block topBlock = chunk.getBlock(x, y-1, z);
+						// For some reason lava doesn't count in height value
+						// TODO: check if 1.8 fixes this!
+						Block topBlock2 = chunk.getBlock(x, y, z);
+						// Check if there's surface of water at (x, z), but not swamp
+						if (topBlock == Blocks.water &&
+								biomeID != BiomeGenBase.swampland.biomeID &&
+								biomeID != BiomeGenBase.swampland.biomeID + 128) {
+							biomeOccurrences[waterPoolBiomeID] += priorityWaterPool;
+						} else if (topBlock2 == Blocks.lava) {
+							lavaOccurences += prioritylavaPool;
+						}
 					}
 				}
 				if (biomeID >= 0 && biomeID < biomes.length && biomes[biomeID] != null) {
