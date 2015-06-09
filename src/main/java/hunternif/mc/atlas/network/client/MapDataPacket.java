@@ -1,11 +1,13 @@
 package hunternif.mc.atlas.network.client;
 
 import hunternif.mc.atlas.AntiqueAtlasMod;
+import hunternif.mc.atlas.client.gui.GuiAtlas;
 import hunternif.mc.atlas.core.AtlasData;
 import hunternif.mc.atlas.network.AbstractMessage.AbstractClientMessage;
 
 import java.io.IOException;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
@@ -43,5 +45,10 @@ public class MapDataPacket extends AbstractClientMessage<MapDataPacket> {
 		if (data == null) return; // Atlas is empty
 		AtlasData atlasData = AntiqueAtlasMod.itemAtlas.getAtlasData(atlasID, player.worldObj);
 		atlasData.readFromNBT(data);
+		// GuiAtlas may already be opened at (0, 0) browsing position, force load saved position:
+		if (AntiqueAtlasMod.settings.doSaveBrowsingPos &&
+				Minecraft.getMinecraft().currentScreen instanceof GuiAtlas) {
+			((GuiAtlas)Minecraft.getMinecraft().currentScreen).loadSavedBrowsingPosition();
+		}
 	}
 }

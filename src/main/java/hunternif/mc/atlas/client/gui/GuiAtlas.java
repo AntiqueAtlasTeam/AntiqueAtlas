@@ -19,6 +19,8 @@ import hunternif.mc.atlas.marker.DimensionMarkersData;
 import hunternif.mc.atlas.marker.Marker;
 import hunternif.mc.atlas.marker.MarkerTextureMap;
 import hunternif.mc.atlas.marker.MarkersData;
+import hunternif.mc.atlas.network.PacketDispatcher;
+import hunternif.mc.atlas.network.server.BrowsingPositionPacket;
 import hunternif.mc.atlas.util.AtlasRenderHelper;
 import hunternif.mc.atlas.util.ExportImageUtil;
 import hunternif.mc.atlas.util.Log;
@@ -332,9 +334,26 @@ public class GuiAtlas extends GuiComponent {
 	
 	public GuiAtlas setAtlasItemStack(ItemStack stack) {
 		this.player = Minecraft.getMinecraft().thePlayer;
-		this.stack = stack;
+		if (this.stack != stack) {
+			this.stack = stack;
+			// Disable followPlayer for new atlases so that their last browsing position is loaded:
+			if (AntiqueAtlasMod.settings.doSaveBrowsingPos) {
+				followPlayer = false;
+				btnPosition.setEnabled(true);
+			}
+		}
 		updateAtlasData();
+		if (AntiqueAtlasMod.settings.doSaveBrowsingPos) {
+			loadSavedBrowsingPosition();
+		}
 		return this;
+	}
+	public void loadSavedBrowsingPosition() {
+		// Apply zoom first, because browsing position depends on it:
+		setMapScale(biomeData.getBrowsingZoom());
+		mapOffsetX = biomeData.getBrowsingX();
+		mapOffsetY = biomeData.getBrowsingY();
+		isDragging = false;
 	}
 	
 	@Override
@@ -543,7 +562,7 @@ public class GuiAtlas extends GuiComponent {
 			tileHalfSize = (int)Math.round(8 * MIN_SCALE_THRESHOLD);
 			tile2ChunkScale = (int)Math.round(MIN_SCALE_THRESHOLD / mapScale);
 		}
-		// Times 2 because the contents of the Atlas are rendered at resolution 2 times larger:
+		// Times 2 because the contents of the Atlas are rendered at resolution 2 times smaller:
 		scaleBar.setMapScale(mapScale*2);
 		mapOffsetX *= mapScale / oldScale;
 		mapOffsetY *= mapScale / oldScale;
@@ -561,7 +580,7 @@ public class GuiAtlas extends GuiComponent {
 				for (int i = 0; i < renderTimes.length - 1; i++) {
 					elapsed += renderTimes[i + 1] - renderTimes[i];
 				}
-				System.out.printf("AtlasGui avg. render time: %.3f\n", elapsed / renderTimes.length);
+				System.out.printf("GuiAtlas avg. render time: %.3f\n", elapsed / renderTimes.length);
 			}
 		}
 		
@@ -740,6 +759,8 @@ public class GuiAtlas extends GuiComponent {
 		removeChild(markerFinalizer);
 		removeChild(blinkingIcon);
 		Keyboard.enableRepeatEvents(false);
+		biomeData.setBrowsingPosition(mapOffsetX, mapOffsetY, mapScale);
+		PacketDispatcher.sendToServer(new BrowsingPositionPacket(stack.getItemDamage(), player.dimension, mapOffsetX, mapOffsetY, mapScale));
 	}
 	
 	/** Returns the Y coordinate that the cursor is pointing at. */

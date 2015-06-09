@@ -1,5 +1,6 @@
 package hunternif.mc.atlas.core;
 
+import hunternif.mc.atlas.util.Log;
 import hunternif.mc.atlas.util.Rect;
 import hunternif.mc.atlas.util.ShortVec2;
 
@@ -10,6 +11,9 @@ import java.util.concurrent.ConcurrentHashMap;
 public class DimensionData implements ITileStorage {
 	public final AtlasData parent;
 	public final int dimension;
+	
+	private int browsingX, browsingY;
+	private double browsingZoom = 0.5;
 	
 	/** a map of chunks the player has seen. This map is thread-safe.
 	 * CAREFUL! Don't modify chunk coordinates that are already put in the map! */
@@ -28,6 +32,27 @@ public class DimensionData implements ITileStorage {
 	
 	public Map<ShortVec2, Tile> getSeenChunks() {
 		return tiles;
+	}
+	
+	/** Set world coordinates that are in the center of the GUI. */
+	public void setBrowsingPosition(int x, int y, double zoom) {
+		this.browsingX = x;
+		this.browsingY = y;
+		this.browsingZoom = zoom;
+		if (browsingZoom <= 0) {
+			Log.warn("Setting map zoom to invalid value of %f", zoom);
+			browsingZoom = 0.5;
+		}
+		parent.markDirty();
+	}
+	public int getBrowsingX() {
+		return browsingX;
+	}
+	public int getBrowsingY() {
+		return browsingY;
+	}
+	public double getBrowsingZoom() {
+		return browsingZoom;
 	}
 	
 	/** Temporary key for thread-safe access to the tile map. */

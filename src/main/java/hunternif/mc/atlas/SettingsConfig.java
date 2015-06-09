@@ -15,8 +15,11 @@ public class SettingsConfig {
 	private File configFile;
 	private Configuration config;
 	
+	//============= Gameplay settings =============
+	public boolean doSaveBrowsingPos = true;
+	
 	//============ Interface settings =============
-	public boolean doScaleMarkers = true;
+	public boolean doScaleMarkers = false;
 	
 	//=========== Performance settings ============
 	public int scanRadius = 11;
@@ -37,7 +40,12 @@ public class SettingsConfig {
 				"These settings affect the algorithms for scanning the world, drawing the map etc. Changing them may\n"
 				+ "improve the game's overall stability and performance at the cost of Atlas' functionality.");
 		
-		doScaleMarkers = config.getBoolean("do_scale_markers", INTERFACE, true, "Whether to change markers size depending on zoom level.");
+		doSaveBrowsingPos = config.getBoolean("do_save_browsing_pos", GAMEPLAY, doSaveBrowsingPos,
+				"Whether to remember last open browsing position and zoom level for each dimension in every atlas.\n"
+				+ "If disabled, all dimensions and all atlases will be \"synchronized\" at the same coordinates and\n"
+				+ "zoom level.");
+		
+		doScaleMarkers = config.getBoolean("do_scale_markers", INTERFACE, doScaleMarkers, "Whether to change markers size depending on zoom level.");
 		
 		scanRadius = config.getInt("area_scan_radius", PERFORMANCE, scanRadius, 1, 256,
 				"The radius of the area around the player which is scanned by the Atlas at regular intervals.\n"

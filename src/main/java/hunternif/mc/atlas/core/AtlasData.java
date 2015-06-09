@@ -2,6 +2,7 @@ package hunternif.mc.atlas.core;
 
 import hunternif.mc.atlas.network.PacketDispatcher;
 import hunternif.mc.atlas.network.client.MapDataPacket;
+import hunternif.mc.atlas.network.server.BrowsingPositionPacket;
 import hunternif.mc.atlas.util.Log;
 import hunternif.mc.atlas.util.ShortVec2;
 
@@ -21,11 +22,16 @@ import net.minecraft.world.WorldSavedData;
 import net.minecraftforge.common.util.Constants;
 
 public class AtlasData extends WorldSavedData {
-	private static final int VERSION = 1;
+	private static final int VERSION = 2;
 	private static final String TAG_VERSION = "aaVersion";
 	private static final String TAG_DIMENSION_MAP_LIST = "qDimensionMap";
 	private static final String TAG_DIMENSION_ID = "qDimensionID";
 	private static final String TAG_VISITED_CHUNKS = "qVisitedChunks";
+	
+	// Navigation
+	private static final String TAG_BROWSING_X = "qBrowseX";
+	private static final String TAG_BROWSING_Y = "qBrowseY";
+	private static final String TAG_BROWSING_ZOOM = "qBrowseZoom";
 	
 	/** This map contains, for each dimension, a map of chunks the player
 	 * has seen. This map is thread-safe.
@@ -52,12 +58,17 @@ public class AtlasData extends WorldSavedData {
 		}
 		NBTTagList dimensionMapList = compound.getTagList(TAG_DIMENSION_MAP_LIST, Constants.NBT.TAG_COMPOUND);
 		for (int d = 0; d < dimensionMapList.tagCount(); d++) {
-			NBTTagCompound tag = dimensionMapList.getCompoundTagAt(d);
-			int dimensionID = tag.getInteger(TAG_DIMENSION_ID);
-			int[] intArray = tag.getIntArray(TAG_VISITED_CHUNKS);
+			NBTTagCompound dimTag = dimensionMapList.getCompoundTagAt(d);
+			int dimensionID = dimTag.getInteger(TAG_DIMENSION_ID);
+			int[] intArray = dimTag.getIntArray(TAG_VISITED_CHUNKS);
+			DimensionData dimData = getDimensionData(dimensionID);
 			for (int i = 0; i < intArray.length; i += 3) {
-				setTile(dimensionID, intArray[i], intArray[i+1], new Tile(intArray[i+2]));
+				dimData.setTile(intArray[i], intArray[i+1], new Tile(intArray[i+2]));
 			}
+			double zoom = (double)dimTag.getInteger(TAG_BROWSING_ZOOM) / BrowsingPositionPacket.ZOOM_SCALE_FACTOR;
+			if (zoom == 0) zoom = 0.5;
+			dimData.setBrowsingPosition(dimTag.getInteger(TAG_BROWSING_X),
+					dimTag.getInteger(TAG_BROWSING_Y), zoom);
 		}
 	}
 
@@ -66,9 +77,10 @@ public class AtlasData extends WorldSavedData {
 		compound.setInteger(TAG_VERSION, VERSION);
 		NBTTagList dimensionMapList = new NBTTagList();
 		for (Entry<Integer, DimensionData> dimensionEntry : dimensionMap.entrySet()) {
-			NBTTagCompound tag = new NBTTagCompound();
-			tag.setInteger(TAG_DIMENSION_ID, dimensionEntry.getKey().intValue());
-			Map<ShortVec2, Tile> seenChunks = dimensionEntry.getValue().getSeenChunks();
+			NBTTagCompound dimTag = new NBTTagCompound();
+			dimTag.setInteger(TAG_DIMENSION_ID, dimensionEntry.getKey().intValue());
+			DimensionData dimData = dimensionEntry.getValue();
+			Map<ShortVec2, Tile> seenChunks = dimData.getSeenChunks();
 			int[] intArray = new int[seenChunks.size()*3];
 			int i = 0;
 			for (Entry<ShortVec2, Tile> entry : seenChunks.entrySet()) {
@@ -76,8 +88,11 @@ public class AtlasData extends WorldSavedData {
 				intArray[i++] = entry.getKey().y;
 				intArray[i++] = entry.getValue().biomeID;
 			}
-			tag.setIntArray(TAG_VISITED_CHUNKS, intArray);
-			dimensionMapList.appendTag(tag);
+			dimTag.setIntArray(TAG_VISITED_CHUNKS, intArray);
+			dimTag.setInteger(TAG_BROWSING_X, dimData.getBrowsingX());
+			dimTag.setInteger(TAG_BROWSING_Y, dimData.getBrowsingY());
+			dimTag.setInteger(TAG_BROWSING_ZOOM, (int)Math.round(dimData.getBrowsingZoom() * BrowsingPositionPacket.ZOOM_SCALE_FACTOR));
+			dimensionMapList.appendTag(dimTag);
 		}
 		compound.setTag(TAG_DIMENSION_MAP_LIST, dimensionMapList);
 	}
