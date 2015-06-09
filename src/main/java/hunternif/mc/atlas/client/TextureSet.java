@@ -198,7 +198,7 @@ public class TextureSet implements Comparable<TextureSet> {
 	static {
 		stitchMutually(PLAINS, SUNFLOWERS);
 		WATER.stitchTo(SHORE, ROCK_SHORE, SWAMP);
-		LAVA.stitchTo(SHORE, ROCK_SHORE, LAVA_SHORE);
+		LAVA.stitchTo(LAVA_SHORE);
 		SWAMP.stitchTo(SWAMP_HILLS);
 		SNOW.stitchTo(SNOW_PINES, SNOW_HILLS, ICE_SPIKES, SNOW_PINES_HILLS);
 		SNOW_PINES.stitchTo(SNOW, SNOW_HILLS, ICE_SPIKES, SNOW_PINES_HILLS);
