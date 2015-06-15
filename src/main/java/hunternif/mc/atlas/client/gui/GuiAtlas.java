@@ -58,11 +58,11 @@ public class GuiAtlas extends GuiComponent {
 	/** The radius of the area in which the marker will display hovering label. */
 	private static final int MARKER_RADIUS = 7;
 	
-	private static final double MAX_SCALE = 4;
-	private static final double MIN_SCALE = 1.0 / 32.0;
+	public static final double MAX_SCALE = 4;
+	public static final double MIN_SCALE = 1.0 / 32.0;
 	/** If the map scale goes below this value, the tiles will not scale down
 	 * visually, but will instead span greater area. */
-	private static final double MIN_SCALE_THRESHOLD = 0.5;
+	public static final double MIN_SCALE_THRESHOLD = 0.5;
 	
 	private boolean DEBUG_RENDERING = false;
 	private long[] renderTimes = new long[30];

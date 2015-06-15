@@ -1,12 +1,14 @@
 package hunternif.mc.atlas;
 
+import hunternif.mc.atlas.client.gui.GuiAtlas;
+
 import java.io.File;
 
 import net.minecraftforge.common.config.Configuration;
 
 /** Config for various performance and interface settings. */
 public class SettingsConfig {
-	private static final int VERSION = 1;
+	private static final int VERSION = 3;
 	
 	private static final String GAMEPLAY = "Gameplay";
 	private static final String INTERFACE = "Interface";
@@ -15,11 +17,14 @@ public class SettingsConfig {
 	private File configFile;
 	private Configuration config;
 	
+	//TODO make these options configurable via an in-game GUI menu
+	
 	//============= Gameplay settings =============
 	public boolean doSaveBrowsingPos = true;
 	
 	//============ Interface settings =============
 	public boolean doScaleMarkers = false;
+	public float defaultScale = 0.5f;
 	
 	//=========== Performance settings ============
 	public int scanRadius = 11;
@@ -43,8 +48,11 @@ public class SettingsConfig {
 		doSaveBrowsingPos = config.getBoolean("do_save_browsing_pos", GAMEPLAY, doSaveBrowsingPos,
 				"Whether to remember last open browsing position and zoom level for each dimension in every atlas.\n"
 				+ "If disabled, all dimensions and all atlases will be \"synchronized\" at the same coordinates and\n"
-				+ "zoom level.");
+				+ "zoom level, and map will \"follow\" player by default.");
 		
+		defaultScale = config.getFloat("default_scale", INTERFACE, defaultScale, (float)GuiAtlas.MIN_SCALE, (float)GuiAtlas.MAX_SCALE,
+				"Default zoom level. The number corresponds to the size of a block on the map relative to the size of\n"
+				+ "a GUI pixel.");
 		doScaleMarkers = config.getBoolean("do_scale_markers", INTERFACE, doScaleMarkers, "Whether to change markers size depending on zoom level.");
 		
 		scanRadius = config.getInt("area_scan_radius", PERFORMANCE, scanRadius, 1, 256,

@@ -30,6 +30,10 @@ public class ItemEmptyAtlas extends Item {
 		ItemStack atlasStack = new ItemStack(AntiqueAtlasMod.itemAtlas, 1, atlasID);
 		
 		AtlasData atlasData = AntiqueAtlasMod.itemAtlas.getAtlasData(atlasID, world);
+		atlasData.getDimensionData(player.dimension).setBrowsingPosition(
+				(int)Math.round(-player.posX * AntiqueAtlasMod.settings.defaultScale),
+				(int)Math.round(-player.posZ * AntiqueAtlasMod.settings.defaultScale),
+				AntiqueAtlasMod.settings.defaultScale);
 		atlasData.markDirty();
 		
 		MarkersData markersData = AntiqueAtlasMod.itemAtlas.getMarkersData(atlasID, world);
