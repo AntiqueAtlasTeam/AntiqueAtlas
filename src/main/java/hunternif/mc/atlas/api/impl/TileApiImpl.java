@@ -29,7 +29,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraftforge.common.MinecraftForge;
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 public class TileApiImpl implements TileAPI {
 	/**
@@ -106,7 +106,7 @@ public class TileApiImpl implements TileAPI {
 	
 	@Override
 	public void putBiomeTile(World world, int atlasID, int biomeID, int chunkX, int chunkZ) {
-		int dimension = world.provider.dimensionId;
+		int dimension = world.provider.getDimensionId();
 		PutBiomeTilePacket packet = new PutBiomeTilePacket(atlasID, dimension, chunkX, chunkZ, biomeID);
 		if (world.isRemote) {
 			PacketDispatcher.sendToServer(packet);
@@ -167,7 +167,7 @@ public class TileApiImpl implements TileAPI {
 		boolean isIdRegistered = ExtTileIdMap.instance().getPseudoBiomeID(tileName) != ExtTileIdMap.NOT_FOUND;
 		int biomeID = ExtTileIdMap.instance().getOrCreatePseudoBiomeID(tileName);
 		ExtBiomeData data = AntiqueAtlasMod.extBiomeData.getData();
-		data.setBiomeIdAt(world.provider.dimensionId, chunkX, chunkZ, biomeID);
+		data.setBiomeIdAt(world.provider.getDimensionId(), chunkX, chunkZ, biomeID);
 		// Send name-ID packet:
 		if (!isIdRegistered) {
 			TileNameIDPacket packet = new TileNameIDPacket();
@@ -175,7 +175,7 @@ public class TileApiImpl implements TileAPI {
 			PacketDispatcher.sendToAll(packet);
 		}
 		// Send tile packet:
-		TilesPacket packet = new TilesPacket(world.provider.dimensionId);
+		TilesPacket packet = new TilesPacket(world.provider.getDimensionId());
 		packet.addTile(chunkX, chunkZ, biomeID);
 		PacketDispatcher.sendToAll(packet);
 	}
@@ -199,7 +199,7 @@ public class TileApiImpl implements TileAPI {
 			return;
 		}
 		ExtBiomeData data = AntiqueAtlasMod.extBiomeData.getData();
-		int dimension = world.provider.dimensionId;
+		int dimension = world.provider.getDimensionId();
 		if (data.getBiomeIdAt(dimension, chunkX, chunkZ) != -1) {
 			data.removeBiomeAt(dimension, chunkX, chunkZ);
 			PacketDispatcher.sendToAll(new DeleteCustomGlobalTilePacket(dimension, chunkX, chunkZ));

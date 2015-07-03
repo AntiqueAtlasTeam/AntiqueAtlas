@@ -1,5 +1,7 @@
 package hunternif.mc.atlas.client;
 
+import hunternif.mc.atlas.util.SaveData;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -7,10 +9,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.util.ResourceLocation;
-import hunternif.mc.atlas.util.SaveData;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 /**
  * Maps texture sets to their names.

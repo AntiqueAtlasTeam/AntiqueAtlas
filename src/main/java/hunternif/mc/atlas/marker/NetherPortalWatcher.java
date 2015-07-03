@@ -16,8 +16,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.World;
 import net.minecraftforge.event.world.WorldEvent;
-import cpw.mods.fml.common.ObfuscationReflectionHelper;
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 /**
  * Identifies when a player teleports in or out of the nether and puts a portal
@@ -53,7 +53,7 @@ public class NetherPortalWatcher extends DummyWorldAccess {
 	}
 	
 	@Override
-	public void onEntityCreate(Entity entity) {
+	public void onEntityAdded(Entity entity) {
 		if (entity instanceof EntityPlayer) {
 			EntityPlayer player = (EntityPlayer) entity;
 			if (teleportingPlayerIDs.remove(entity.getEntityId())) {
@@ -68,13 +68,13 @@ public class NetherPortalWatcher extends DummyWorldAccess {
 	}
 	
 	@Override
-	public void onEntityDestroy(Entity entity) {
+	public void onEntityRemoved(Entity entity) {
 		if (entity instanceof EntityPlayer) {
 			EntityPlayer player = (EntityPlayer) entity;
 			if (isEntityInPortal(entity)) {
 				Log.info("Exiting");
 				// player.worldObj.provider.dimensionId is the dimension of origin
-				int dimension = player.worldObj.provider.dimensionId;
+				int dimension = player.worldObj.provider.getDimensionId();
 				Log.info("Player %s left the %s", player.getGameProfile().getName(),
 						dimension == 0 ? "Overworld" : "Nether");
 				teleportingPlayerIDs.add(entity.getEntityId());

@@ -1,13 +1,14 @@
 package hunternif.mc.atlas.network.client;
 
+import hunternif.mc.atlas.AntiqueAtlasMod;
+import hunternif.mc.atlas.ext.ExtBiomeData;
+import hunternif.mc.atlas.network.AbstractMessage.AbstractClientMessage;
+
 import java.io.IOException;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.network.PacketBuffer;
-import cpw.mods.fml.relauncher.Side;
-import hunternif.mc.atlas.AntiqueAtlasMod;
-import hunternif.mc.atlas.ext.ExtBiomeData;
-import hunternif.mc.atlas.network.AbstractMessage.AbstractClientMessage;
+import net.minecraftforge.fml.relauncher.Side;
 
 /**
  * Sent from server to client to remove a custom global tile.

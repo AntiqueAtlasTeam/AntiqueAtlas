@@ -1,10 +1,10 @@
 package hunternif.mc.atlas.marker;
 
 import net.minecraftforge.event.world.WorldEvent;
-import cpw.mods.fml.common.eventhandler.EventPriority;
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import cpw.mods.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
-import cpw.mods.fml.common.network.FMLNetworkEvent.ClientConnectedToServerEvent;
+import net.minecraftforge.fml.common.eventhandler.EventPriority;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
+import net.minecraftforge.fml.common.network.FMLNetworkEvent.ClientConnectedToServerEvent;
 
 /**
  * Handles the world-saved data with global markers.
@@ -25,7 +25,7 @@ public class GlobalMarkersDataHandler {
 	
 	@SubscribeEvent(priority=EventPriority.HIGHEST)
 	public void onWorldLoad(WorldEvent.Load event) {
-		if (!event.world.isRemote && event.world.provider.dimensionId == 0) {
+		if (!event.world.isRemote && event.world.provider.getDimensionId() == 0) {
 			data = (GlobalMarkersData) event.world.loadItemData(GlobalMarkersData.class, DATA_KEY);
 			if (data == null) {
 				data = new GlobalMarkersData(DATA_KEY);

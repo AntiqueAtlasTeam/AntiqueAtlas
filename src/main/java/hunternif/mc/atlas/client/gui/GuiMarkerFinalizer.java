@@ -8,6 +8,7 @@ import hunternif.mc.atlas.client.gui.core.ToggleGroup;
 import hunternif.mc.atlas.marker.MarkerTextureMap;
 import hunternif.mc.atlas.util.Log;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -75,7 +76,7 @@ public class GuiMarkerFinalizer extends GuiComponent {
 	public void initGui() {
 		buttonList.add(btnDone = new GuiButton(0, this.width/2 - BUTTON_WIDTH - BUTTON_SPACING/2, this.height/2 + 40, BUTTON_WIDTH, 20, I18n.format("gui.done")));
 		buttonList.add(btnCancel = new GuiButton(0, this.width/2 + BUTTON_SPACING/2, this.height/2 + 40, BUTTON_WIDTH, 20, I18n.format("gui.cancel")));
-		textField = new GuiTextField(Minecraft.getMinecraft().fontRenderer, (this.width - 200)/2, this.height/2 - 81, 200, 20);
+		textField = new GuiTextField(0, Minecraft.getMinecraft().fontRendererObj, (this.width - 200)/2, this.height/2 - 81, 200, 20);
 		textField.setFocused(true);
 		textField.setText("");
 		
@@ -109,13 +110,13 @@ public class GuiMarkerFinalizer extends GuiComponent {
 	}
 	
 	@Override
-	protected void mouseClicked(int par1, int par2, int par3) {
+	protected void mouseClicked(int par1, int par2, int par3) throws IOException {
 		super.mouseClicked(par1, par2, par3);
 		textField.mouseClicked(par1, par2, par3);
 	}
 	
 	@Override
-	protected void keyTyped(char par1, int par2) {
+	protected void keyTyped(char par1, int par2) throws IOException {
 		super.keyTyped(par1, par2);
 		textField.textboxKeyTyped(par1, par2);
 	}

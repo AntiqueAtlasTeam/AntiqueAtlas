@@ -1,8 +1,8 @@
 package hunternif.mc.atlas.util;
 
-import org.apache.logging.log4j.Level;
+import net.minecraftforge.fml.common.FMLLog;
 
-import cpw.mods.fml.common.FMLLog;
+import org.apache.logging.log4j.Level;
 
 /**
  * A simple logging helper that is not directly dependent on any mod classes.

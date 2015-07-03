@@ -21,17 +21,20 @@ import hunternif.mc.atlas.util.Log;
 import java.io.File;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.ItemMeshDefinition;
+import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.IThreadListener;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.biome.BiomeGenBase;
-import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.common.event.FMLInitializationEvent;
-import cpw.mods.fml.common.event.FMLPostInitializationEvent;
-import cpw.mods.fml.common.event.FMLPreInitializationEvent;
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import cpw.mods.fml.common.gameevent.TickEvent.ClientTickEvent;
-import cpw.mods.fml.common.network.simpleimpl.MessageContext;
+import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.common.event.FMLInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.TickEvent.ClientTickEvent;
+import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
 public class ClientProxy extends CommonProxy {
 	private TextureSetMap textureSetMap;
@@ -94,7 +97,13 @@ public class ClientProxy extends CommonProxy {
 	public void init(FMLInitializationEvent event) {
 		super.init(event);
 		guiAtlas = new GuiAtlas();
-		
+		Minecraft.getMinecraft().getRenderItem().getItemModelMesher().register(AntiqueAtlasMod.itemAtlas, new ItemMeshDefinition() {
+			@Override
+			public ModelResourceLocation getModelLocation(ItemStack stack) {
+				return new ModelResourceLocation(AntiqueAtlasMod.ID + ":antiqueAtlas", "inventory");
+			}
+		});
+		Minecraft.getMinecraft().getRenderItem().getItemModelMesher().register(AntiqueAtlasMod.itemEmptyAtlas, 0, new ModelResourceLocation(AntiqueAtlasMod.ID + ":emptyAntiqueAtlas", "inventory"));
 		FMLCommonHandler.instance().bus().register(this);
 	}
 	
@@ -350,6 +359,11 @@ public class ClientProxy extends CommonProxy {
 		return (ctx.side.isClient() ? Minecraft.getMinecraft().thePlayer : super.getPlayerEntity(ctx));
 	}
 	
+	@Override
+	public IThreadListener getThreadFromContext(MessageContext ctx) {
+		return (ctx.side.isClient() ? Minecraft.getMinecraft() : super.getThreadFromContext(ctx));
+	}
+
 	/** Checks if any of the configs's data has been marked dirty and saves it. */
 	@SubscribeEvent
 	public void onClientTick(ClientTickEvent event) {

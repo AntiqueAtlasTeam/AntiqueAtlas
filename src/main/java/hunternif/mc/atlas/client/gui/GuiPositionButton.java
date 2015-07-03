@@ -39,7 +39,7 @@ public class GuiPositionButton extends GuiComponentButton {
 			GL11.glDisable(GL11.GL_BLEND);
 			
 			if (isMouseOver) {
-				drawTooltip(Arrays.asList(I18n.format("gui.antiqueatlas.followPlayer")), Minecraft.getMinecraft().fontRenderer);
+				drawTooltip(Arrays.asList(I18n.format("gui.antiqueatlas.followPlayer")), Minecraft.getMinecraft().fontRendererObj);
 			}
 		}
 	}
