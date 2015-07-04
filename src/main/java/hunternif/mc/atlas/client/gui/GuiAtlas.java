@@ -28,6 +28,7 @@ import hunternif.mc.atlas.util.MathUtil;
 import hunternif.mc.atlas.util.Rect;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
@@ -366,7 +367,7 @@ public class GuiAtlas extends GuiComponent {
 	}
 	
 	@Override
-	protected void mouseClicked(int mouseX, int mouseY, int mouseState) {
+	protected void mouseClicked(int mouseX, int mouseY, int mouseState) throws IOException {
 		super.mouseClicked(mouseX, mouseY, mouseState);
 		if (state.is(EXPORTING_IMAGE)) {
 			return; // Don't remove the progress bar.
@@ -435,7 +436,7 @@ public class GuiAtlas extends GuiComponent {
 	}
 	
 	@Override
-	public void handleKeyboardInput() {
+	public void handleKeyboardInput() throws IOException {
 		super.handleKeyboardInput();
 		if (Keyboard.getEventKeyState()) {
 			int key = Keyboard.getEventKey();
@@ -466,7 +467,7 @@ public class GuiAtlas extends GuiComponent {
 	}
 	
 	@Override
-	public void handleMouseInput() {
+	public void handleMouseInput() throws IOException {
 		super.handleMouseInput();
 		int wheelMove = Mouse.getEventDWheel();
 		if (wheelMove != 0) {
@@ -476,8 +477,8 @@ public class GuiAtlas extends GuiComponent {
 	}
 	
 	@Override
-	protected void mouseMovedOrUp(int mouseX, int mouseY, int mouseState) {
-		super.mouseMovedOrUp(mouseX, mouseY, mouseState);
+	protected void mouseReleased(int mouseX, int mouseY, int mouseState) {
+		super.mouseReleased(mouseX, mouseY, mouseState);
 		if (mouseState != -1) {
 			selectedButton = null;
 			isDragging = false;
@@ -744,7 +745,7 @@ public class GuiAtlas extends GuiComponent {
 				markerY - (double)MARKER_SIZE/2*scale,
 				(int)Math.round(MARKER_SIZE*scale), (int)Math.round(MARKER_SIZE*scale));
 		if (isMouseOver && mouseIsOverMarker && marker.getLabel().length() > 0) {
-			drawTooltip(Arrays.asList(marker.getLocalizedLabel()), mc.fontRenderer);
+			drawTooltip(Arrays.asList(marker.getLocalizedLabel()), mc.fontRendererObj);
 		}
 	}
 	

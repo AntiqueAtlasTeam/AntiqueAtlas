@@ -3,6 +3,7 @@ package hunternif.mc.atlas.client.gui;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.WorldRenderer;
 
 import org.lwjgl.opengl.GL11;
 
@@ -22,7 +23,7 @@ public class ProgressBarOverlay implements ExportUpdateListener {
 	public ProgressBarOverlay(int barWidth, int barHeight) {
 		this.barWidth = barWidth;
 		this.barHeight = barHeight;
-		font = Minecraft.getMinecraft().fontRenderer;
+		font = Minecraft.getMinecraft().fontRendererObj;
 	}
 	
 	@Override
@@ -42,22 +43,23 @@ public class ProgressBarOverlay implements ExportUpdateListener {
 		int statusWidth = font.getStringWidth(status);
 		font.drawStringWithShadow(status, x + (barWidth - statusWidth)/2, y, 0xffffff);
 		y += 14;
-		
-        GL11.glDisable(GL11.GL_TEXTURE_2D);
-        Tessellator tessellator = Tessellator.instance;
-        tessellator.startDrawingQuads();
-        tessellator.setColorOpaque_I(8421504);
-        tessellator.addVertex((double)x, (double)y, 0.0D);
-        tessellator.addVertex((double)x, (double)(y + barHeight), 0.0D);
-        tessellator.addVertex((double)(x + barWidth), (double)(y + barHeight), 0.0D);
-        tessellator.addVertex((double)(x + barWidth), (double)y, 0.0D);
-        tessellator.setColorOpaque_I(8454016);
-        tessellator.addVertex((double)x, (double)y, 0.0D);
-        tessellator.addVertex((double)x, (double)(y + barHeight), 0.0D);
-        tessellator.addVertex((double)(x + completedWidth), (double)(y + barHeight), 0.0D);
-        tessellator.addVertex((double)(x + completedWidth), (double)y, 0.0D);
-        tessellator.draw();
-        GL11.glEnable(GL11.GL_TEXTURE_2D);
+
+		GL11.glDisable(GL11.GL_TEXTURE_2D);
+		Tessellator tessellator = Tessellator.getInstance();
+		WorldRenderer renderer = tessellator.getWorldRenderer();
+		renderer.startDrawingQuads();
+		renderer.setColorOpaque_I(8421504);
+		renderer.addVertex((double)x, (double)y, 0.0D);
+		renderer.addVertex((double)x, (double)(y + barHeight), 0.0D);
+		renderer.addVertex((double)(x + barWidth), (double)(y + barHeight), 0.0D);
+		renderer.addVertex((double)(x + barWidth), (double)y, 0.0D);
+		renderer.setColorOpaque_I(8454016);
+		renderer.addVertex((double)x, (double)y, 0.0D);
+		renderer.addVertex((double)x, (double)(y + barHeight), 0.0D);
+		renderer.addVertex((double)(x + completedWidth), (double)(y + barHeight), 0.0D);
+		renderer.addVertex((double)(x + completedWidth), (double)y, 0.0D);
+		tessellator.draw();
+		GL11.glEnable(GL11.GL_TEXTURE_2D);
 	}
 
 	public void reset() {

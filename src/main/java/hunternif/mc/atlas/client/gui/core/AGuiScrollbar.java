@@ -1,5 +1,7 @@
 package hunternif.mc.atlas.client.gui.core;
 
+import java.io.IOException;
+
 import net.minecraft.util.ResourceLocation;
 
 import org.lwjgl.input.Mouse;
@@ -107,7 +109,7 @@ public abstract class AGuiScrollbar extends GuiComponent {
 	}
 	
 	@Override
-	public void handleMouseInput() {
+	public void handleMouseInput() throws IOException {
 		super.handleMouseInput();
 		if (usesWheel) {
 			int wheelMove = Mouse.getEventDWheel();

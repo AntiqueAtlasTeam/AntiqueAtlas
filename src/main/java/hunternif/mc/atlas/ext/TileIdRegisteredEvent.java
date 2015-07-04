@@ -1,9 +1,10 @@
 package hunternif.mc.atlas.ext;
 
+import hunternif.mc.atlas.network.client.TileNameIDPacket;
+
 import java.util.Map;
 
-import hunternif.mc.atlas.network.client.TileNameIDPacket;
-import cpw.mods.fml.common.eventhandler.Event;
+import net.minecraftforge.fml.common.eventhandler.Event;
 
 /**
  * This event is dispatched on the client when it receives a

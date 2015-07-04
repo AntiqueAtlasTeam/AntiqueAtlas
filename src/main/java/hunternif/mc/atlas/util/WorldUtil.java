@@ -2,7 +2,7 @@ package hunternif.mc.atlas.util;
 
 import java.util.List;
 
-import net.minecraft.util.ChunkCoordinates;
+import net.minecraft.util.BlockPos;
 import net.minecraft.village.Village;
 import net.minecraft.village.VillageDoorInfo;
 import net.minecraft.world.chunk.Chunk;
@@ -15,10 +15,10 @@ public class WorldUtil {
 		int centerX = (chunk.xPosition << 4) + 8;
 		int centerZ = (chunk.zPosition << 4) + 8;
 		@SuppressWarnings("unchecked")
-		List<Village> villages = chunk.worldObj.villageCollectionObj.getVillageList();
+		List<Village> villages = chunk.getWorld().villageCollectionObj.getVillageList();
 		for (Village village : villages) {
-			ChunkCoordinates coords = village.getCenter();
-			if ((centerX - coords.posX)*(centerX - coords.posX) + (centerZ - coords.posZ)*(centerZ - coords.posZ)
+			BlockPos coords = village.getCenter();
+			if ((centerX - coords.getX())*(centerX - coords.getX()) + (centerZ - coords.getZ())*(centerZ - coords.getZ())
 					<= village.getVillageRadius()*village.getVillageRadius()) {
 				return village;
 			}
@@ -36,8 +36,8 @@ public class WorldUtil {
 			return true;
 		}
 		for (Object doorInfo : village.getVillageDoorInfoList()) {
-			VillageDoorInfo door = (VillageDoorInfo) doorInfo;
-			if ((centerX - door.posX)*(centerX - door.posX) + (centerZ - door.posZ)*(centerZ - door.posZ)
+			BlockPos door = ((VillageDoorInfo) doorInfo).getDoorBlockPos();
+			if ((centerX - door.getX())*(centerX - door.getX()) + (centerZ - door.getZ())*(centerZ - door.getZ())
 					<= 10*10) {
 				return true;
 			}

@@ -11,7 +11,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
-import cpw.mods.fml.relauncher.Side;
+import net.minecraftforge.fml.common.network.ByteBufUtils;
+import net.minecraftforge.fml.relauncher.Side;
 
 /**
  * Used to sync bulk atlas data from server to client.
@@ -31,13 +32,13 @@ public class MapDataPacket extends AbstractClientMessage<MapDataPacket> {
 	@Override
 	public void read(PacketBuffer buffer) throws IOException {
 		atlasID = buffer.readVarIntFromBuffer();
-		data = readNBT(buffer);
+		data = ByteBufUtils.readTag(buffer);
 	}
 
 	@Override
 	public void write(PacketBuffer buffer) throws IOException {
 		buffer.writeVarIntToBuffer(atlasID);
-		writeNBT(buffer, data);
+		ByteBufUtils.writeTag(buffer, data);
 	}
 
 	@Override

@@ -13,7 +13,6 @@ import hunternif.mc.atlas.marker.MarkersData;
 import java.util.HashMap;
 import java.util.Map;
 
-import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -21,8 +20,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 
 public class ItemAtlas extends Item {
 	protected static final String ATLAS_DATA_PREFIX = "aAtlas_";
@@ -51,12 +48,6 @@ public class ItemAtlas extends Item {
 	private IBiomeDetector getBiomeDetectorForDimension(int dimension) {
 		IBiomeDetector biomeAnalyzer = biomeAnalyzers.get(dimension);
 		return biomeAnalyzer == null ? biomeDetectorOverworld : biomeAnalyzer;
-	}
-	
-	@Override
-	@SideOnly(Side.CLIENT)
-	public void registerIcons(IIconRegister iconRegister) {
-		this.itemIcon = iconRegister.registerIcon(AntiqueAtlasMod.ID + ":" + getUnlocalizedName().substring("item.".length()));
 	}
 	
 	@Override
@@ -121,11 +112,11 @@ public class ItemAtlas extends Item {
 				if (biomeId == -1) {
 					Chunk chunk = player.worldObj.getChunkFromChunkCoords(x, z);
 					// Force loading of chunk, if required:
-					if (settings.forceChunkLoading && !chunk.isChunkLoaded) {
-						player.worldObj.getChunkProvider().loadChunk(x << 4, z << 4);
+					if (settings.forceChunkLoading && !chunk.isLoaded()) {
+						player.worldObj.getChunkProvider().provideChunk(x << 4, z << 4);
 					}
 					// Skip chunk if it hasn't loaded yet:
-					if (!chunk.isChunkLoaded) { 
+					if (!chunk.isLoaded()) { 
 						continue;
 					}
 					

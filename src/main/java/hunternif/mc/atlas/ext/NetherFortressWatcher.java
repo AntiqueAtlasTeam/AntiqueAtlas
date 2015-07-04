@@ -15,8 +15,8 @@ import net.minecraft.world.gen.structure.MapGenStructureData;
 import net.minecraft.world.gen.structure.StructureBoundingBox;
 import net.minecraftforge.event.terraingen.PopulateChunkEvent;
 import net.minecraftforge.event.world.WorldEvent;
-import cpw.mods.fml.common.eventhandler.EventPriority;
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.eventhandler.EventPriority;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 @SuppressWarnings("unused")
 public class NetherFortressWatcher {
@@ -47,24 +47,24 @@ public class NetherFortressWatcher {
 	
 	@SubscribeEvent(priority=EventPriority.LOWEST)
 	public void onWorldLoad(WorldEvent.Load event) {
-		if (!event.world.isRemote && event.world.provider.dimensionId == -1) {
+		if (!event.world.isRemote && event.world.provider.getDimensionId() == -1) {
 			visitAllUnvisitedFortresses(event.world);
 		}
 	}
 	
 	@SubscribeEvent
 	public void onPopulateChunk(PopulateChunkEvent.Post event) {
-		if (!event.world.isRemote && event.world.provider.dimensionId == -1) {
+		if (!event.world.isRemote && event.world.provider.getDimensionId() == -1) {
 			visitAllUnvisitedFortresses(event.world);
 		}
 	}
 	
 	public void visitAllUnvisitedFortresses(World world) {
-		MapGenStructureData data = (MapGenStructureData)world.perWorldStorage.loadData(MapGenStructureData.class, "Fortress");
+		MapGenStructureData data = (MapGenStructureData)world.getPerWorldStorage().loadData(MapGenStructureData.class, "Fortress");
 		if (data == null) return;
 		NBTTagCompound fortressNBTData = data.func_143041_a();
 		@SuppressWarnings("unchecked")
-		Set<String> tagSet = fortressNBTData.func_150296_c();
+		Set<String> tagSet = fortressNBTData.getKeySet();
 		for (String coords : tagSet) {
 			if (!visited.contains(coords)) {
 				NBTBase tag = fortressNBTData.getTag(coords);
@@ -81,7 +81,7 @@ public class NetherFortressWatcher {
 		int startChunkX = tag.getInteger("ChunkX");
 		int startChunkZ = tag.getInteger("ChunkZ");
 		Log.info("Visiting Nether Fortress in dimension #%d \"%s\" at chunk (%d, %d) ~ blocks (%d, %d)",
-				world.provider.dimensionId, world.provider.getDimensionName(),
+				world.provider.getDimensionId(), world.provider.getDimensionName(),
 				startChunkX, startChunkZ, startChunkX << 4, startChunkZ << 4);
 		NBTTagList children = tag.getTagList("Children", 10);
 		for (int i = 0; i < children.tagCount(); i++) {
@@ -91,7 +91,7 @@ public class NetherFortressWatcher {
 			if (BRIDGE.equals(childID)) { // Straight open bridge segment. Is allowed to span several chunks.
 				if (boundingBox.getXSize() > 16) {
 					String tileName = ExtTileIdMap.TILE_NETHER_BRIDGE_X;
-					int chunkZ = boundingBox.getCenterZ() >> 4;
+					int chunkZ = boundingBox.getCenter().getZ() >> 4;
 					for (int x = boundingBox.minX; x < boundingBox.maxX; x += 16) {
 						int chunkX = x >> 4;
 						if (noTileAt(world, chunkX, chunkZ)) {
@@ -100,7 +100,7 @@ public class NetherFortressWatcher {
 					}
 				} else {//if (boundingBox.getZSize() > 16) {
 					String tileName = ExtTileIdMap.TILE_NETHER_BRIDGE_Z;
-					int chunkX = boundingBox.getCenterX() >> 4;
+					int chunkX = boundingBox.getCenter().getX() >> 4;
 					for (int z = boundingBox.minZ; z < boundingBox.maxZ; z += 16) {
 						int chunkZ = z >> 4;
 						if (noTileAt(world, chunkX, chunkZ)) {
@@ -114,18 +114,18 @@ public class NetherFortressWatcher {
 				if (boundingBox.getXSize() > boundingBox.getZSize()) {
 					tileName = ExtTileIdMap.TILE_NETHER_BRIDGE_END_X;
 					chunkX = boundingBox.minX >> 4;
-					chunkZ = boundingBox.getCenterZ() >> 4;
+					chunkZ = boundingBox.getCenter().getZ() >> 4;
 				} else {
 					tileName = ExtTileIdMap.TILE_NETHER_BRIDGE_END_Z;
-					chunkX = boundingBox.getCenterX() >> 4;
+					chunkX = boundingBox.getCenter().getX() >> 4;
 					chunkZ = boundingBox.minZ >> 4;
 				}
 				if (noTileAt(world, chunkX, chunkZ)) {
 					AtlasAPI.getTileAPI().putCustomGlobalTile(world, tileName, chunkX, chunkZ);
 				}
 			} else {
-				int chunkX = boundingBox.getCenterX() >> 4;
-				int chunkZ = boundingBox.getCenterZ() >> 4;
+				int chunkX = boundingBox.getCenter().getX() >> 4;
+				int chunkZ = boundingBox.getCenter().getZ() >> 4;
 				String tileName;
 				if (BRIDGE_GATE.equals(childID)) {
 					tileName = ExtTileIdMap.TILE_NETHER_BRIDGE_GATE;
@@ -156,6 +156,6 @@ public class NetherFortressWatcher {
 	}
 	
 	private static boolean noTileAt(World world, int chunkX, int chunkZ) {
-		return AntiqueAtlasMod.extBiomeData.getData().getBiomeIdAt(world.provider.dimensionId, chunkX, chunkZ) == -1;
+		return AntiqueAtlasMod.extBiomeData.getData().getBiomeIdAt(world.provider.getDimensionId(), chunkX, chunkZ) == -1;
 	}
 }

@@ -1,5 +1,6 @@
 package hunternif.mc.atlas.client.gui.core;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,7 +33,7 @@ public class GuiComponentButton extends GuiComponent {
 	}
 	
 	@Override
-	protected void mouseClicked(int x, int y, int mouseButton) {
+	protected void mouseClicked(int x, int y, int mouseButton) throws IOException {
 		super.mouseClicked(x, y, mouseButton);
 		if (mouseButton == 0 /*left-click*/ && enabled && isMouseOver) {
 			onClick();
@@ -44,7 +45,7 @@ public class GuiComponentButton extends GuiComponent {
 	@SuppressWarnings("unchecked")
 	protected void onClick() {
 		if (clickSound != null) {
-			mc.getSoundHandler().playSound(PositionedSoundRecord.func_147674_a(clickSound, 1.0F));
+			mc.getSoundHandler().playSound(PositionedSoundRecord.create(clickSound, 1.0F));
 		}
 		for (IButtonListener listener : listeners) {
 			listener.onClick(this);

@@ -8,8 +8,8 @@ import hunternif.mc.atlas.util.SaveData;
 import java.util.HashMap;
 import java.util.Map;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 /**
  * Maps unique tile name to texture set.

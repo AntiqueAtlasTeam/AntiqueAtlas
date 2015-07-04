@@ -1,16 +1,16 @@
 package hunternif.mc.atlas.network.server;
 
 import hunternif.mc.atlas.ext.ExtTileIdMap;
-import hunternif.mc.atlas.network.PacketDispatcher;
 import hunternif.mc.atlas.network.AbstractMessage.AbstractServerMessage;
+import hunternif.mc.atlas.network.PacketDispatcher;
 import hunternif.mc.atlas.network.client.TileNameIDPacket;
 
 import java.io.IOException;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.network.PacketBuffer;
-import cpw.mods.fml.common.network.ByteBufUtils;
-import cpw.mods.fml.relauncher.Side;
+import net.minecraftforge.fml.common.network.ByteBufUtils;
+import net.minecraftforge.fml.relauncher.Side;
 
 /**
  * Sent from client to server to register a new
