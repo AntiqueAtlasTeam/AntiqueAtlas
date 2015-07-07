@@ -17,12 +17,12 @@ buildscript {
 
 apply plugin: 'forge'
 
-version = "5.0"
+version = "4.2.4-1.8"
 group= "hunternif.mc.atlas" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
-archivesBaseName = "1.8-antiqueatlas"
+archivesBaseName = "antiqueatlas"
 
 minecraft {
-    version = "1.8-11.14.3.1486"
+    version = "1.8-11.14.3.1487"
     if (file('../run').exists()) {
 		runDir = "../run"
 	} else {

@@ -8,6 +8,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -483,6 +484,8 @@ public class GuiComponent extends GuiScreen {
 				j1 += 10;
 			}
 			if (stencilEnabled) GL11.glEnable(GL11.GL_STENCIL_TEST);
+			RenderHelper.enableStandardItemLighting();
+			GlStateManager.enableBlend();
 		}
 	}
 	
