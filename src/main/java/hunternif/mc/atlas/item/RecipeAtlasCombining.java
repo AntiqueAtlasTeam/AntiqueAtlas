@@ -104,6 +104,11 @@ public class RecipeAtlasCombining implements IRecipe {
 
 	@Override
 	public ItemStack[] getRemainingItems(InventoryCrafting inv) {
-		return null;
+		ItemStack[] aitemstack = new ItemStack[inv.getSizeInventory()];
+		for (int i = 0; i < aitemstack.length; ++i) {
+			ItemStack itemstack = inv.getStackInSlot(i);
+			aitemstack[i] = net.minecraftforge.common.ForgeHooks.getContainerItem(itemstack);
+		}
+		return aitemstack;
 	}
 }
