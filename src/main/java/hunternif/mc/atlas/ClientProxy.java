@@ -295,6 +295,7 @@ public class ClientProxy extends CommonProxy {
 		setMarkerTextureIfNone("skull", Textures.MARKER_SKULL);
 		setMarkerTextureIfNone("tower", Textures.MARKER_TOWER);
 		setMarkerTextureIfNone("scroll", Textures.MARKER_SCROLL);
+		setMarkerTextureIfNone("tomb", Textures.MARKER_TOMB);
 	}
 	/** Only applies the change if no texture is registered for this marker type.
 	 * This prevents overwriting of the config when there is no real change. */

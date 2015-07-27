@@ -52,6 +52,7 @@ public class Textures {
 	MARKER_SKULL = marker("skull.png"),
 	MARKER_TOWER = marker("tower.png"),
 	MARKER_SCROLL = marker("scroll.png"),
+	MARKER_TOMB = marker("tomb.png"),
 	
 	TILE_TEST = tile("test.png"),
 	TILE_MOUNTAINS = tile("mountains.png"),

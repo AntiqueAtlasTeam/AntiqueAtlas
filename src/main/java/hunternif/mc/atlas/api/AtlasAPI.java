@@ -1,5 +1,11 @@
 package hunternif.mc.atlas.api;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
+import hunternif.mc.atlas.AntiqueAtlasMod;
 import hunternif.mc.atlas.api.impl.MarkerApiImpl;
 import hunternif.mc.atlas.api.impl.TileApiImpl;
 
@@ -26,5 +32,17 @@ public class AtlasAPI {
 	/** API for custom markers. */
 	public static MarkerAPI getMarkerAPI() {
 		return markerApi;
+	}
+	
+	/** Convenience method that returns a list of atlas IDs for all atlas items
+	 * the player is currently carrying. **/
+	public static List<Integer> getPlayerAtlases(EntityPlayer player) {
+		List<Integer> list = new ArrayList<Integer>();
+		for (ItemStack stack : player.inventory.mainInventory) {
+			if (stack != null && stack.getItem() == AntiqueAtlasMod.itemAtlas) {
+				list.add(stack.getItemDamage());
+			}
+		}
+		return list;
 	}
 }

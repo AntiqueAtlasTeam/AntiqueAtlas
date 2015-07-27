@@ -45,7 +45,17 @@ public class Marker {
 		return label;
 	}
 	public String getLocalizedLabel() {
-		return StatCollector.translateToLocal(label);
+		// Assuming the beginning of the label string until a whitespace (or end)
+		// is a traslatable key. What comes after it is assumed to be a single
+		// string parameter, i.e. player's name.
+		int whitespaceIndex = label.indexOf(' ');
+		if (whitespaceIndex == -1) {
+			return StatCollector.translateToLocal(label);
+		} else {
+			String key = label.substring(0, whitespaceIndex);
+			String param = label.substring(whitespaceIndex + 1);
+			return String.format(StatCollector.translateToLocal(key), param);
+		}
 	}
 	
 	public int getDimension() {

@@ -13,6 +13,7 @@ gui.antiqueatlas.marker.label=Текст метки:
 gui.antiqueatlas.marker.type=Тип:
 gui.antiqueatlas.marker.village=Деревня
 gui.antiqueatlas.marker.netherPortal=Портал Нижнего мира
+gui.antiqueatlas.marker.tomb=Здесь покоится %s
 
 gui.antiqueatlas.export.opening=Открывается диалоговое окно...
 gui.antiqueatlas.export.selectFile=Укажите PNG файл, куда сохранять изображение карты
