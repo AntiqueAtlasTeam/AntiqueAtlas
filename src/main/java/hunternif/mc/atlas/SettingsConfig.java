@@ -21,6 +21,8 @@ public class SettingsConfig {
 	
 	//============= Gameplay settings =============
 	public boolean doSaveBrowsingPos = true;
+	public boolean autoDeathMarker = true;
+	public boolean autoVillageMarkers = true;
 	
 	//============ Interface settings =============
 	public boolean doScaleMarkers = false;
@@ -49,6 +51,10 @@ public class SettingsConfig {
 				"Whether to remember last open browsing position and zoom level for each dimension in every atlas.\n"
 				+ "If disabled, all dimensions and all atlases will be \"synchronized\" at the same coordinates and\n"
 				+ "zoom level, and map will \"follow\" player by default.");
+		autoDeathMarker = config.getBoolean("auto_death_marker", GAMEPLAY, autoDeathMarker,
+				"Whether to add local marker for the spot where the player died.");
+		autoVillageMarkers = config.getBoolean("auto_village_markers", GAMEPLAY, autoVillageMarkers,
+				"Whether to add global markers for NPC villages.");
 		
 		defaultScale = config.getFloat("default_scale", INTERFACE, defaultScale, (float)GuiAtlas.MIN_SCALE, (float)GuiAtlas.MAX_SCALE,
 				"Default zoom level. The number corresponds to the size of a block on the map relative to the size of\n"

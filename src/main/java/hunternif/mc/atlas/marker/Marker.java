@@ -54,7 +54,12 @@ public class Marker {
 		} else {
 			String key = label.substring(0, whitespaceIndex);
 			String param = label.substring(whitespaceIndex + 1);
-			return String.format(StatCollector.translateToLocal(key), param);
+			String translated = StatCollector.translateToLocal(key);
+			if (translated != key) { // Make sure translation succeeded
+				return String.format(StatCollector.translateToLocal(key), param);
+			} else {
+				return label;
+			}
 		}
 	}
 	
