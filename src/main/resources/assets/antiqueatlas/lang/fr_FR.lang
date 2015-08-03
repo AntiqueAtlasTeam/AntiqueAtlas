@@ -13,6 +13,7 @@ gui.antiqueatlas.marker.label=Libellé:
 gui.antiqueatlas.marker.type=Type:
 gui.antiqueatlas.marker.village=Village
 gui.antiqueatlas.marker.netherPortal=Portail du Nether
+gui.antiqueatlas.marker.tomb=Ci-gît %s
 
 gui.antiqueatlas.export.opening=Ouverture du dialogue de fichier...
 gui.antiqueatlas.export.selectFile=Selectionnez un fichier PNG file sur lequel vous sauvegardez
