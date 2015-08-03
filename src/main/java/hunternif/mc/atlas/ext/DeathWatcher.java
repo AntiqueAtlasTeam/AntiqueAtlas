@@ -1,6 +1,7 @@
 package hunternif.mc.atlas.ext;
 
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import hunternif.mc.atlas.AntiqueAtlasMod;
 import hunternif.mc.atlas.api.AtlasAPI;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
@@ -12,7 +13,7 @@ import net.minecraftforge.event.entity.living.LivingDeathEvent;
 public class DeathWatcher {
 	@SubscribeEvent
 	public void onPlayerDeath(LivingDeathEvent event) {
-		if (event.entity instanceof EntityPlayer) {
+		if (event.entity instanceof EntityPlayer && AntiqueAtlasMod.settings.autoDeathMarker) {
 			EntityPlayer player = (EntityPlayer) event.entity;
 			for (int atlasID : AtlasAPI.getPlayerAtlases(player)) {
 				AtlasAPI.getMarkerAPI().putMarker(player.worldObj, true, atlasID, "tomb",
