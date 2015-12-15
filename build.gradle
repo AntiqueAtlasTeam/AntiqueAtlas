@@ -23,6 +23,8 @@ plugins {
 
 ext.dirLang = './lang'
 
+ext.apiAntiqueAtlas = './api/antiqueatlas'
+
 version = mcversion + '-' + version_major + '.' + version_minor + '.' + version_patch
 group= "hunternif.mc.atlas" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "antiqueatlas"
@@ -48,6 +50,9 @@ minecraft {
 
 sourceSets {
 	main {
+		java {
+			srcDir project.apiAntiqueAtlas
+		}
 		resources {
 			srcDir project.dirLang
 		}

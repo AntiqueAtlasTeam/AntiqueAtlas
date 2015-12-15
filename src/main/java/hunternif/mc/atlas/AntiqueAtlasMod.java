@@ -1,6 +1,9 @@
 package hunternif.mc.atlas;
 
 import static net.minecraftforge.oredict.RecipeSorter.Category.SHAPELESS;
+import hunternif.mc.atlas.api.AtlasAPI;
+import hunternif.mc.atlas.api.impl.MarkerApiImpl;
+import hunternif.mc.atlas.api.impl.TileApiImpl;
 import hunternif.mc.atlas.ext.DeathWatcher;
 import hunternif.mc.atlas.ext.ExtBiomeDataHandler;
 import hunternif.mc.atlas.ext.NetherFortressWatcher;
@@ -51,6 +54,11 @@ public class AntiqueAtlasMod {
 	
 	public static ItemAtlas itemAtlas;
 	public static ItemEmptyAtlas itemEmptyAtlas;
+	
+	public AntiqueAtlasMod() {
+		AtlasAPI.markers = new MarkerApiImpl();
+		AtlasAPI.tiles = new TileApiImpl();
+	}
 
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent event) {

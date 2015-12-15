@@ -95,7 +95,7 @@ public class NetherFortressWatcher {
 					for (int x = boundingBox.minX; x < boundingBox.maxX; x += 16) {
 						int chunkX = x >> 4;
 						if (noTileAt(world, chunkX, chunkZ)) {
-							AtlasAPI.getTileAPI().putCustomGlobalTile(world, tileName, chunkX, chunkZ);
+							AtlasAPI.tiles.putCustomGlobalTile(world, tileName, chunkX, chunkZ);
 						}
 					}
 				} else {//if (boundingBox.getZSize() > 16) {
@@ -104,7 +104,7 @@ public class NetherFortressWatcher {
 					for (int z = boundingBox.minZ; z < boundingBox.maxZ; z += 16) {
 						int chunkZ = z >> 4;
 						if (noTileAt(world, chunkX, chunkZ)) {
-							AtlasAPI.getTileAPI().putCustomGlobalTile(world, tileName, chunkX, chunkZ);
+							AtlasAPI.tiles.putCustomGlobalTile(world, tileName, chunkX, chunkZ);
 						}
 					}
 				}
@@ -121,7 +121,7 @@ public class NetherFortressWatcher {
 					chunkZ = boundingBox.minZ >> 4;
 				}
 				if (noTileAt(world, chunkX, chunkZ)) {
-					AtlasAPI.getTileAPI().putCustomGlobalTile(world, tileName, chunkX, chunkZ);
+					AtlasAPI.tiles.putCustomGlobalTile(world, tileName, chunkX, chunkZ);
 				}
 			} else {
 				int chunkX = boundingBox.getCenter().getX() >> 4;
@@ -129,26 +129,26 @@ public class NetherFortressWatcher {
 				String tileName;
 				if (BRIDGE_GATE.equals(childID)) {
 					tileName = ExtTileIdMap.TILE_NETHER_BRIDGE_GATE;
-					AtlasAPI.getTileAPI().putCustomGlobalTile(world, tileName, chunkX, chunkZ);
+					AtlasAPI.tiles.putCustomGlobalTile(world, tileName, chunkX, chunkZ);
 				} else if (BRIDGE_CROSS.equals(childID) || START.equals(childID)) {
 					tileName = ExtTileIdMap.TILE_NETHER_BRIDGE;
-					AtlasAPI.getTileAPI().putCustomGlobalTile(world, tileName, chunkX, chunkZ);
+					AtlasAPI.tiles.putCustomGlobalTile(world, tileName, chunkX, chunkZ);
 				} else if (TOWER.equals(childID)) {
 					tileName = ExtTileIdMap.TILE_NETHER_TOWER;
-					AtlasAPI.getTileAPI().putCustomGlobalTile(world, tileName, chunkX, chunkZ);
+					AtlasAPI.tiles.putCustomGlobalTile(world, tileName, chunkX, chunkZ);
 				} else if (ENTRANCE.equals(childID)) {
 					tileName = ExtTileIdMap.TILE_NETHER_HALL;
-					AtlasAPI.getTileAPI().putCustomGlobalTile(world, tileName, chunkX, chunkZ);
+					AtlasAPI.tiles.putCustomGlobalTile(world, tileName, chunkX, chunkZ);
 				} else if (WART_STAIRS.equals(childID)) {
 					tileName = ExtTileIdMap.TILE_NETHER_FORT_STAIRS;
-					AtlasAPI.getTileAPI().putCustomGlobalTile(world, tileName, chunkX, chunkZ);
+					AtlasAPI.tiles.putCustomGlobalTile(world, tileName, chunkX, chunkZ);
 				} else if (THRONE.equals(childID)) {
 					tileName = ExtTileIdMap.TILE_NETHER_THRONE;
-					AtlasAPI.getTileAPI().putCustomGlobalTile(world, tileName, chunkX, chunkZ);
+					AtlasAPI.tiles.putCustomGlobalTile(world, tileName, chunkX, chunkZ);
 				} else {
 					tileName = ExtTileIdMap.TILE_NETHER_WALL;
 					if (noTileAt(world, chunkX, chunkZ)) {
-						AtlasAPI.getTileAPI().putCustomGlobalTile(world, tileName, chunkX, chunkZ);
+						AtlasAPI.tiles.putCustomGlobalTile(world, tileName, chunkX, chunkZ);
 					}
 				}
 			}
