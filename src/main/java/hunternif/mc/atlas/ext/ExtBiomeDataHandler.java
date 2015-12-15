@@ -1,9 +1,9 @@
 package hunternif.mc.atlas.ext;
 
 import net.minecraftforge.event.world.WorldEvent;
-import cpw.mods.fml.common.eventhandler.EventPriority;
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import cpw.mods.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
+import net.minecraftforge.fml.common.eventhandler.EventPriority;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
 
 public class ExtBiomeDataHandler {
 	private static final String DATA_KEY = "aAtlasExtTiles";

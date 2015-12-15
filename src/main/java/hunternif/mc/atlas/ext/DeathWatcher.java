@@ -1,10 +1,10 @@
 package hunternif.mc.atlas.ext;
 
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import hunternif.mc.atlas.AntiqueAtlasMod;
 import hunternif.mc.atlas.api.AtlasAPI;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 /**
  * Puts an skull marker to the player's death spot.

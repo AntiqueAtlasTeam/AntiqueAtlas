@@ -13,8 +13,8 @@ import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.world.World;
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import cpw.mods.fml.common.gameevent.PlayerEvent.ItemCraftedEvent;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.PlayerEvent.ItemCraftedEvent;
 
 /**
  * 2 or more atlases combine into one with all biome and marker data copied.
@@ -102,4 +102,13 @@ public class RecipeAtlasCombining implements IRecipe {
 		}
 	}
 
+	@Override
+	public ItemStack[] getRemainingItems(InventoryCrafting inv) {
+		ItemStack[] aitemstack = new ItemStack[inv.getSizeInventory()];
+		for (int i = 0; i < aitemstack.length; ++i) {
+			ItemStack itemstack = inv.getStackInSlot(i);
+			aitemstack[i] = net.minecraftforge.common.ForgeHooks.getContainerItem(itemstack);
+		}
+		return aitemstack;
+	}
 }

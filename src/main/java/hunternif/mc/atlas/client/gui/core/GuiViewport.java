@@ -1,5 +1,7 @@
 package hunternif.mc.atlas.client.gui.core;
 
+import java.io.IOException;
+
 import net.minecraft.client.gui.ScaledResolution;
 
 import org.lwjgl.opengl.GL11;
@@ -53,7 +55,7 @@ public class GuiViewport extends GuiComponent {
 	}
 	
 	@Override
-	public void handleMouseInput() {
+	public void handleMouseInput() throws IOException {
 		if (isMouseInRegion(getGuiX(), getGuiY(), properWidth, properHeight)) {
 			super.handleMouseInput();
 		}

@@ -19,12 +19,11 @@ import net.minecraft.world.gen.structure.MapGenStructureData;
 import net.minecraft.world.gen.structure.StructureBoundingBox;
 import net.minecraftforge.event.terraingen.PopulateChunkEvent;
 import net.minecraftforge.event.world.WorldEvent;
+import net.minecraftforge.fml.common.eventhandler.EventPriority;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
-
-import cpw.mods.fml.common.eventhandler.EventPriority;
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 
 public class VillageWatcher {
 	public static final String MARKER = "village";
@@ -51,7 +50,6 @@ public class VillageWatcher {
 	private static final String HUT = "ViSmH"; // Tiniest hut with a flat roof.
 	private static final String HOUSE_SMALL = "ViSH"; // Slightly larger than huts, sometimes with a fenced balcony on the roof and a ladder.
 	private static final String CHURCH = "ViST"; // The church.
-	
 	
 	private static final Map<String, String> partToTileMap;
 	static {
@@ -93,24 +91,24 @@ public class VillageWatcher {
 	
 	@SubscribeEvent(priority=EventPriority.LOWEST)
 	public void onWorldLoad(WorldEvent.Load event) {
-		if (!event.world.isRemote && event.world.provider.dimensionId == 0) {
+		if (!event.world.isRemote && event.world.provider.getDimensionId() == 0) {
 			visitAllUnvisitedVillages(event.world);
 		}
 	}
 	
 	@SubscribeEvent
 	public void onPopulateChunk(PopulateChunkEvent.Post event) {
-		if (!event.world.isRemote && event.world.provider.dimensionId == 0) {
+		if (!event.world.isRemote && event.world.provider.getDimensionId() == 0) {
 			visitAllUnvisitedVillages(event.world);
 		}
 	}
 	
 	public void visitAllUnvisitedVillages(World world) {
-		MapGenStructureData data = (MapGenStructureData)world.perWorldStorage.loadData(MapGenStructureData.class, "Village");
+		MapGenStructureData data = (MapGenStructureData)world.getPerWorldStorage().loadData(MapGenStructureData.class, "Village");
 		if (data == null) return;
 		NBTTagCompound villageNBTData = data.func_143041_a();
 		@SuppressWarnings("unchecked")
-		Set<String> tagSet = villageNBTData.func_150296_c();
+		Set<String> tagSet = villageNBTData.getKeySet();
 		for (String coords : tagSet) {
 			if (!visited.contains(coords)) {
 				NBTBase tag = villageNBTData.getTag(coords);
@@ -133,15 +131,15 @@ public class VillageWatcher {
 		int startChunkX = tag.getInteger("ChunkX");
 		int startChunkZ = tag.getInteger("ChunkZ");
 		Log.info("Visiting NPC Village in dimension #%d \"%s\" at chunk (%d, %d) ~ blocks (%d, %d)",
-				world.provider.dimensionId, world.provider.getDimensionName(),
+				world.provider.getDimensionId(), world.provider.getDimensionName(),
 				startChunkX, startChunkZ, startChunkX << 4, startChunkZ << 4);
 		NBTTagList children = tag.getTagList("Children", 10);
 		for (int i = 0; i < children.tagCount(); i++) {
 			NBTTagCompound child = children.getCompoundTagAt(i);
 			String childID = child.getString("id");
 			StructureBoundingBox boundingBox = new StructureBoundingBox(child.getIntArray("BB"));
-			int x = boundingBox.getCenterX();
-			int z = boundingBox.getCenterZ();
+			int x = boundingBox.getCenter().getX();
+			int z = boundingBox.getCenter().getZ();
 			int chunkX = x >> 4;
 			int chunkZ = z >> 4;
 			if (START.equals(childID)) {
@@ -152,7 +150,7 @@ public class VillageWatcher {
 				for (int j = -1; j <= 1; j++) {
 					for (int k = -1; k <= 1; k++) {
 						List<Marker> markers = AntiqueAtlasMod.globalMarkersData.getData()
-								.getMarkersAtChunk(world.provider.dimensionId, j + chunkX / MarkersData.CHUNK_STEP, k + chunkZ / MarkersData.CHUNK_STEP);
+								.getMarkersAtChunk(world.provider.getDimensionId(), j + chunkX / MarkersData.CHUNK_STEP, k + chunkZ / MarkersData.CHUNK_STEP);
 						if (markers != null) {
 							for (Marker marker : markers) {
 								if (marker.getType().equals(MARKER)) {
@@ -205,13 +203,13 @@ public class VillageWatcher {
 			NBTTagCompound child = children.getCompoundTagAt(i);
 			String childID = child.getString("id");
 			StructureBoundingBox boundingBox = new StructureBoundingBox(child.getIntArray("BB"));
-			int x = boundingBox.getCenterX();
-			int z = boundingBox.getCenterZ();
+			int x = boundingBox.getCenter().getX();
+			int z = boundingBox.getCenter().getZ();
 			int chunkX = x >> 4;
 			int chunkZ = z >> 4;
 			if (START.equals(childID)) {
 				List<Marker> markers = AntiqueAtlasMod.globalMarkersData.getData()
-						.getMarkersAtChunk(world.provider.dimensionId, chunkX / MarkersData.CHUNK_STEP, chunkZ / MarkersData.CHUNK_STEP);
+						.getMarkersAtChunk(world.provider.getDimensionId(), chunkX / MarkersData.CHUNK_STEP, chunkZ / MarkersData.CHUNK_STEP);
 				if (markers != null) {
 					for (Marker marker : markers) {
 						if (marker.getType().equals(MARKER)) {

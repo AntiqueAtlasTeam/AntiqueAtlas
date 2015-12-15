@@ -1,5 +1,6 @@
 package hunternif.mc.atlas.client.gui.core;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -7,14 +8,14 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
-
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 
 /**
  * Core visual component class, which facilitates hierarchy. You can add child
@@ -217,7 +218,7 @@ public class GuiComponent extends GuiScreen {
 	}
 
 	@Override
-	public void handleInput() {
+	public void handleInput() throws IOException {
 		// Traverse children backwards, because the topmost child should be the
 		// first to process input:
 		ListIterator<GuiComponent> iter = children.listIterator(children.size());
@@ -261,7 +262,7 @@ public class GuiComponent extends GuiScreen {
 	
 	/** Handle mouse input for this GUI and its children. */
 	@Override
-	public void handleMouseInput() {
+	public void handleMouseInput() throws IOException {
 		boolean handled = false;
 		isMouseOver = false;
 		// Traverse children backwards, because the topmost child should be the
@@ -283,7 +284,7 @@ public class GuiComponent extends GuiScreen {
 	
 	/** Handle keyboard input for this GUI and its children. */
 	@Override
-	public void handleKeyboardInput() {
+	public void handleKeyboardInput() throws IOException {
 		boolean handled = false;
 		// Traverse children backwards, because the topmost child should be the
 		// first to process input:
@@ -483,6 +484,8 @@ public class GuiComponent extends GuiScreen {
 				j1 += 10;
 			}
 			if (stencilEnabled) GL11.glEnable(GL11.GL_STENCIL_TEST);
+			RenderHelper.enableStandardItemLighting();
+			GlStateManager.enableBlend();
 		}
 	}
 	

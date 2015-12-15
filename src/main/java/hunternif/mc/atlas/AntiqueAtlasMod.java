@@ -1,9 +1,6 @@
 package hunternif.mc.atlas;
 
 import static net.minecraftforge.oredict.RecipeSorter.Category.SHAPELESS;
-
-import java.io.File;
-
 import hunternif.mc.atlas.ext.DeathWatcher;
 import hunternif.mc.atlas.ext.ExtBiomeDataHandler;
 import hunternif.mc.atlas.ext.NetherFortressWatcher;
@@ -16,20 +13,23 @@ import hunternif.mc.atlas.marker.GlobalMarkersDataHandler;
 import hunternif.mc.atlas.marker.NetherPortalWatcher;
 import hunternif.mc.atlas.network.PacketDispatcher;
 import hunternif.mc.atlas.util.Log;
+
+import java.io.File;
+
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.Mod.EventHandler;
+import net.minecraftforge.fml.common.Mod.Instance;
+import net.minecraftforge.fml.common.SidedProxy;
+import net.minecraftforge.fml.common.event.FMLInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.oredict.RecipeSorter;
-import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.common.Mod;
-import cpw.mods.fml.common.Mod.EventHandler;
-import cpw.mods.fml.common.Mod.Instance;
-import cpw.mods.fml.common.SidedProxy;
-import cpw.mods.fml.common.event.FMLInitializationEvent;
-import cpw.mods.fml.common.event.FMLPostInitializationEvent;
-import cpw.mods.fml.common.event.FMLPreInitializationEvent;
-import cpw.mods.fml.common.registry.GameRegistry;
 
 @Mod(modid=AntiqueAtlasMod.ID, name=AntiqueAtlasMod.NAME, version=AntiqueAtlasMod.VERSION)
 public class AntiqueAtlasMod {
@@ -37,7 +37,7 @@ public class AntiqueAtlasMod {
 	public static final String NAME = "Antique Atlas";
 	public static final String CHANNEL = ID;
 	public static final String MOD_VERSION = "4.2.7";
-	public static final String MC_VERSION = "1.7.10";
+	public static final String MC_VERSION = "1.8";
 	public static final String VERSION = MOD_VERSION + "-" + MC_VERSION;
 	
 	@Instance(ID)

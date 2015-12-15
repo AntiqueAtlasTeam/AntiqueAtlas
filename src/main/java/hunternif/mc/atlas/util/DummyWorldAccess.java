@@ -2,17 +2,16 @@ package hunternif.mc.atlas.util;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.IWorldAccess;
 
 public class DummyWorldAccess implements IWorldAccess {
 
 	@Override
-	public void markBlockForUpdate(int p_147586_1_, int p_147586_2_,
-			int p_147586_3_) {}
+	public void markBlockForUpdate(BlockPos pos) {}
 
 	@Override
-	public void markBlockForRenderUpdate(int p_147588_1_, int p_147588_2_,
-			int p_147588_3_) {}
+	public void notifyLightSet(BlockPos pos) {}
 
 	@Override
 	public void markBlockRangeForRenderUpdate(int p_147585_1_, int p_147585_2_,
@@ -29,33 +28,26 @@ public class DummyWorldAccess implements IWorldAccess {
 			double p_85102_7_, float p_85102_9_, float p_85102_10_) {}
 
 	@Override
-	public void spawnParticle(String p_72708_1_, double p_72708_2_,
-			double p_72708_4_, double p_72708_6_, double p_72708_8_,
-			double p_72708_10_, double p_72708_12_) {}
+	public void spawnParticle(int particleID, boolean ignoreRange, double xCoord,
+			double yCoord, double zCoord, double xOffset, double yOffset,
+			double zOffset, int ... p_180442_15_) {}
 
 	@Override
-	public void onEntityCreate(Entity p_72703_1_) {}
+	public void onEntityAdded(Entity entity) {}
 
 	@Override
-	public void onEntityDestroy(Entity p_72709_1_) {}
+	public void onEntityRemoved(Entity entity) {}
 
 	@Override
-	public void playRecord(String p_72702_1_, int p_72702_2_, int p_72702_3_,
-			int p_72702_4_) {}
+	public void playRecord(String p_72702_1_, BlockPos pos) {}
 
 	@Override
-	public void broadcastSound(int p_82746_1_, int p_82746_2_, int p_82746_3_,
-			int p_82746_4_, int p_82746_5_) {}
+	public void broadcastSound(int p_82746_1_, BlockPos pos, int p_82746_5_) {}
 
 	@Override
-	public void playAuxSFX(EntityPlayer p_72706_1_, int p_72706_2_,
-			int p_72706_3_, int p_72706_4_, int p_72706_5_, int p_72706_6_) {}
+	public void playAuxSFX(EntityPlayer player, int sfxType, BlockPos blockPosIn, int p_180439_4_) {}
 
 	@Override
-	public void destroyBlockPartially(int p_147587_1_, int p_147587_2_,
-			int p_147587_3_, int p_147587_4_, int p_147587_5_) {}
-
-	@Override
-	public void onStaticEntitiesChanged() {}
+	public void sendBlockBreakProgress(int breakerId, BlockPos pos, int progress) {}
 
 }

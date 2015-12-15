@@ -23,17 +23,14 @@ import io.netty.buffer.ByteBuf;
 import java.io.IOException;
 
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.nbt.CompressedStreamTools;
-import net.minecraft.nbt.NBTSizeTracker;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.IThreadListener;
+import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
+import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
+import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+import net.minecraftforge.fml.relauncher.Side;
 
 import com.google.common.base.Throwables;
-
-import cpw.mods.fml.common.network.simpleimpl.IMessage;
-import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
-import cpw.mods.fml.common.network.simpleimpl.MessageContext;
-import cpw.mods.fml.relauncher.Side;
 
 /**
  * 
@@ -71,6 +68,14 @@ public abstract class AbstractMessage<T extends AbstractMessage<T>> implements I
 		return true;
 	}
 
+	/**
+	 * Whether this message requires the main thread to be processed (i.e. it
+	 * requires that the world, player, and other objects are in a valid state).
+	 */
+	protected boolean requiresMainThread() {
+		return true;
+	}
+
 	@Override
 	public void fromBytes(ByteBuf buffer) {
 		try {
@@ -93,9 +98,26 @@ public abstract class AbstractMessage<T extends AbstractMessage<T>> implements I
 	public final IMessage onMessage(T msg, MessageContext ctx) {
 		if (!msg.isValidOnSide(ctx.side)) {
 			throw new RuntimeException("Invalid side " + ctx.side.name() + " for " + msg.getClass().getSimpleName());
+		} else if (msg.requiresMainThread()) {
+			checkThreadAndEnqueue(msg, ctx);
+		} else {
+			msg.process(AntiqueAtlasMod.proxy.getPlayerEntity(ctx), ctx.side);
 		}
-		msg.process(AntiqueAtlasMod.proxy.getPlayerEntity(ctx), ctx.side);
 		return null;
+	}
+
+	/**
+	 * Ensures that the message is being handled on the main thread
+	 */
+	private static final <T extends AbstractMessage<T>> void checkThreadAndEnqueue(final AbstractMessage<T> msg, final MessageContext ctx) {
+		IThreadListener thread = AntiqueAtlasMod.proxy.getThreadFromContext(ctx);
+		if (!thread.isCallingFromMinecraftThread()) {
+			thread.addScheduledTask(new Runnable() {
+				public void run() {
+					msg.process(AntiqueAtlasMod.proxy.getPlayerEntity(ctx), ctx.side);
+				}
+			});
+		}
 	}
 
 	/**
@@ -115,27 +137,6 @@ public abstract class AbstractMessage<T extends AbstractMessage<T>> implements I
 		@Override
 		protected final boolean isValidOnSide(Side side) {
 			return side.isServer();
-		}
-	}
-	
-	public static void writeNBT(ByteBuf buffer, NBTTagCompound tag) throws IOException {
-		if (tag == null) {
-			buffer.writeInt(-1);
-		} else {
-			byte[] compressed = CompressedStreamTools.compress(tag);
-			buffer.writeInt(compressed.length);
-			buffer.writeBytes(compressed);
-		}
-	}
-	//TODO make sure that very large atlases can be loaded, synced and rendered.
-	public static NBTTagCompound readNBT(ByteBuf buffer) throws IOException {
-		int length = buffer.readInt();
-		if (length < 0) {
-			return null;
-		} else {
-			byte[] compressed = new byte[length];
-			buffer.readBytes(compressed);
-			return CompressedStreamTools.func_152457_a(compressed, new NBTSizeTracker(Integer.MAX_VALUE));
 		}
 	}
 }

@@ -3,6 +3,7 @@ bin
 release
 dist
 build
+run
 
 # Gradle
 .gradle
@@ -10,15 +11,18 @@ build
 ## IDE
 
 # IntelliJ IDEA
+out
 *.iml
 *.ipr
 *.iws
 .idea
 
 # Eclipse
+*.launch
+.settings
+.metadata
 .classpath
 .project
-.settings
 eclipse
 
 # NetBeans
