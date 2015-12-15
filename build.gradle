@@ -20,7 +20,10 @@ plugins {
     id "net.minecraftforge.gradle.forge" version "2.0.2"
 }
 
-version = "4.2.7-1.8"
+
+ext.dirLang = './lang'
+
+version = mcversion + '-' + version_major + '.' + version_minor + '.' + version_patch
 group= "hunternif.mc.atlas" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "antiqueatlas"
 
@@ -39,6 +42,16 @@ minecraft {
     // simply re-run your setup task after changing the mappings to update your workspace.
     mappings = "snapshot_20150701"
     // makeObfSourceJar = false // an Srg named sources jar is made by default. uncomment this to disable.
+    
+    replace '@VERSION@', project.version
+}
+
+sourceSets {
+	main {
+		resources {
+			srcDir project.dirLang
+		}
+	}
 }
 
 dependencies {
