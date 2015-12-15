@@ -9,7 +9,7 @@ import com.google.common.collect.Maps;
 /**
  * Iterates over the values in a map of lists, similar to
  * {@link Maps#valueIterator}. This iterator will reflect changes made to the
- * map if maps.values() does.
+ * map if map.values() does.
  * @author Hunternif
  */
 public class ListMapValueIterator<E> implements Iterator<E> {
@@ -50,16 +50,14 @@ public class ListMapValueIterator<E> implements Iterator<E> {
 	}
 	
 	private E findNext() {
-		E next = null;
-		while (valuesIter.hasNext()) {
-			if (nextListIter == null || !nextListIter.hasNext()) {
+		while (nextListIter == null
+				|| !nextListIter.hasNext()) { // This condition allows to skip empty lists.
+			if (valuesIter.hasNext()) {
 				nextListIter = valuesIter.next().iterator();
-			}
-			if (nextListIter.hasNext()) {
-				next = nextListIter.next();
-				break;
+			} else {
+				return null;
 			}
 		}
-		return next;
+		return nextListIter.next();
 	}
 }
