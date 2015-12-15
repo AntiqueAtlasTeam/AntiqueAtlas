@@ -91,7 +91,7 @@ public class DimensionMarkersData {
 	protected class Values extends AbstractCollection<Marker> {
 		@Override
 		public Iterator<Marker> iterator() {
-			return new ListMapValueIterator<Marker>(chunkMap);
+			return new ListMapValueIterator<Marker>(chunkMap).setImmutable(true);
 		}
 		@Override
 		public int size() {

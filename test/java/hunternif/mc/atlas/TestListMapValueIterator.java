@@ -32,7 +32,7 @@ public class TestListMapValueIterator {
 	
 	@Test
 	public void testSize() {
-		assertIteration("lolwutomgwtfbbq");
+		assertIteration(map, "lolwutomgwtfbbq");
 		int i = 0;
 		for (Iterator<String> iter = new ListMapValueIterator<String>(map); iter.hasNext(); iter.next()) {
 			i++;
@@ -52,38 +52,58 @@ public class TestListMapValueIterator {
 				iter.next();
 			}
 			iter.remove();
-			assertIteration(answers[i]);
+			assertIteration(map, answers[i]);
 		}
 	}
 	
 	@Test
 	public void testInsert() {
 		map.get(0).add(0, "@");
-		assertIteration("@lolwutomgwtfbbq");
+		assertIteration(map, "@lolwutomgwtfbbq");
 		map.get(0).add(2, "@");
-		assertIteration("@lol@wutomgwtfbbq");
+		assertIteration(map, "@lol@wutomgwtfbbq");
 		map.get(0).add(4, "@");
-		assertIteration("@lol@wut@omgwtfbbq");
+		assertIteration(map, "@lol@wut@omgwtfbbq");
 		map.get(2).add(0, "@");
-		assertIteration("@lol@wut@@omgwtfbbq");
+		assertIteration(map, "@lol@wut@@omgwtfbbq");
 		map.get(2).add(2, "@");
-		assertIteration("@lol@wut@@omg@wtfbbq");
+		assertIteration(map, "@lol@wut@@omg@wtfbbq");
 		map.get(3).add(0, "@");
-		assertIteration("@lol@wut@@omg@@wtfbbq");
+		assertIteration(map, "@lol@wut@@omg@@wtfbbq");
 		map.get(5).add(0, "@");
-		assertIteration("@lol@wut@@omg@@@wtfbbq");
+		assertIteration(map, "@lol@wut@@omg@@@wtfbbq");
 		map.get(5).add(2, "@");
-		assertIteration("@lol@wut@@omg@@@wtf@bbq");
+		assertIteration(map, "@lol@wut@@omg@@@wtf@bbq");
 		map.get(5).add(4, "@");
-		assertIteration("@lol@wut@@omg@@@wtf@bbq@");
+		assertIteration(map, "@lol@wut@@omg@@@wtf@bbq@");
 		map.get(10).add(0, "@");
-		assertIteration("@lol@wut@@omg@@@wtf@bbq@@");
+		assertIteration(map, "@lol@wut@@omg@@@wtf@bbq@@");
+	}
+	
+	@Test
+	public void testSmallMap() {
+		Map<Integer, List<String>> map2 = new HashMap<Integer, List<String>>();
+		assertIteration(map2, "");
+		List<String> list = new ArrayList<String>(Arrays.asList("lol"));
+		map2.put(0, list);
+		assertIteration(map2, "lol");
+		// Add and remove one item:
+		list.add("wut");
+		assertIteration(map2, "lolwut");
+		list.remove("wut");
+		assertIteration(map2, "lol");
+		list.add("wut");
+		assertIteration(map2, "lolwut");
+		list.remove("lol");
+		assertIteration(map2, "wut");
+		list.remove("wut");
+		assertIteration(map2, "");
 	}
 	
 	/** Assert that iterating through the map while concatenating found values
 	 * to a string will produce the specified string. */
-	private void assertIteration(String result) {
-		Iterator<String> iter = new ListMapValueIterator<String>(map);
+	private static <E> void assertIteration(Map<?, List<E>> map, String result) {
+		Iterator<E> iter = new ListMapValueIterator<E>(map);
 		String output = "";
 		while (iter.hasNext()) {
 			output += iter.next();
