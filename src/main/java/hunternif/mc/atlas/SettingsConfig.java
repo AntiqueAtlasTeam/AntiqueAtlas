@@ -27,6 +27,7 @@ public class SettingsConfig {
 	//============ Interface settings =============
 	public boolean doScaleMarkers = false;
 	public float defaultScale = 0.5f;
+	public boolean doReverseWheelZoom = false;
 	
 	//=========== Performance settings ============
 	public int scanRadius = 11;
@@ -60,6 +61,8 @@ public class SettingsConfig {
 				"Default zoom level. The number corresponds to the size of a block on the map relative to the size of\n"
 				+ "a GUI pixel.");
 		doScaleMarkers = config.getBoolean("do_scale_markers", INTERFACE, doScaleMarkers, "Whether to change markers size depending on zoom level.");
+		doReverseWheelZoom = config.getBoolean("do_reverse_wheel_zoom", INTERFACE, doReverseWheelZoom,
+				"If false (by default), then mousewheel up is zoom in, mousewheel down is zoom out.\nIf true, then the direction is reversed.");
 		
 		scanRadius = config.getInt("area_scan_radius", PERFORMANCE, scanRadius, 1, 256,
 				"The radius of the area around the player which is scanned by the Atlas at regular intervals.\n"

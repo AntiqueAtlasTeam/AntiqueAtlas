@@ -464,7 +464,8 @@ public class GuiAtlas extends GuiComponent {
 		super.handleMouseInput();
 		int wheelMove = Mouse.getEventDWheel();
 		if (wheelMove != 0) {
-			wheelMove = wheelMove > 0 ? -1 : 1;
+			wheelMove = wheelMove > 0 ? 1 : -1;
+			if (AntiqueAtlasMod.settings.doReverseWheelZoom) wheelMove *= -1;
 			setMapScale(mapScale * Math.pow(2, wheelMove));
 		}
 	}
