@@ -14,6 +14,6 @@ You can edit the configs to set which biome uses what texture, or even assign yo
 API
 ===
 
-If you are a mod developer and you wish to interact with AntiqueAtlas, you will need the source code of the API. You can get it by including just the API sources in your project as a git submodule from here: https://github.com/Hunternif/AntiqueAtlasAPI (as it is done in AntiqueAtlas sources, see the `api` folder), or you can include the whole source code of AntiqueAtlas (see the `...-sources.jar` in [Releases](https://github.com/Hunternif/AntiqueAtlas/releases)) which allows you to test the  interaction when debugging your mod.
+If you are a mod developer and you wish to interact with AntiqueAtlas, you will need the source code of the API. You can include the whole source code of AntiqueAtlas (the `...-sources.jar` in [Releases](https://github.com/Hunternif/AntiqueAtlas/releases)) which allows you to test the  interaction when debugging your mod.
 
 Use the class `hunternif.mc.atlas.api.AtlasAPI` to obtain a reference to the API. There are 2 actual APIs: TileAPI and MarkerAPI. See javadocs/sources and the wiki for more: https://github.com/Hunternif/AntiqueAtlas/wiki/API
