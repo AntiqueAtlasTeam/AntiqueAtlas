@@ -400,7 +400,7 @@ public class GuiAtlas extends GuiComponent {
 				
 			} else if (state.is(DELETING_MARKER) // If clicked on a marker, delete it:
 					&& toDelete != null && isMouseOverMap && mouseState == 0) {
-				AtlasAPI.getMarkerAPI().deleteMarker(player.worldObj,
+				AtlasAPI.markers.deleteMarker(player.worldObj,
 						stack.getItemDamage(), toDelete.getId());
 			}
 			state.switchTo(NORMAL);

@@ -164,7 +164,7 @@ public class VillageWatcher {
 					}
 				}
 				if (!foundMarker && AntiqueAtlasMod.settings.autoVillageMarkers) {
-					AtlasAPI.getMarkerAPI().putGlobalMarker(world, false, MARKER, "gui.antiqueatlas.marker.village", x, z);
+					AtlasAPI.markers.putGlobalMarker(world, false, MARKER, "gui.antiqueatlas.marker.village", x, z);
 				}
 			}
 //			String tileName = null;
@@ -184,10 +184,10 @@ public class VillageWatcher {
 				Integer prevTilePriority = tilePriority.get(tileAt(chunkX, chunkZ));
 				if (curTilePriority != null && prevTilePriority != null) {
 					if (curTilePriority >= prevTilePriority) {
-						AtlasAPI.getTileAPI().putCustomGlobalTile(world, tileName, chunkX, chunkZ);
+						AtlasAPI.tiles.putCustomGlobalTile(world, tileName, chunkX, chunkZ);
 					}
 				} else {
-					AtlasAPI.getTileAPI().putCustomGlobalTile(world, tileName, chunkX, chunkZ);
+					AtlasAPI.tiles.putCustomGlobalTile(world, tileName, chunkX, chunkZ);
 				}
 			}
 		}
@@ -215,14 +215,14 @@ public class VillageWatcher {
 				if (markers != null) {
 					for (Marker marker : markers) {
 						if (marker.getType().equals(MARKER)) {
-							AtlasAPI.getMarkerAPI().deleteGlobalMarker(world, marker.getId());
+							AtlasAPI.markers.deleteGlobalMarker(world, marker.getId());
 							Log.info("Removed faux village marker");
 							break;
 						}
 					}
 				}
 			}
-			AtlasAPI.getTileAPI().deleteCustomGlobalTile(world, chunkX, chunkZ);
+			AtlasAPI.tiles.deleteCustomGlobalTile(world, chunkX, chunkZ);
 			Log.info("Removed faux village tile");
 		}
 	}

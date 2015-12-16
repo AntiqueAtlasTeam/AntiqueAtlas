@@ -1,10 +1,10 @@
 package hunternif.mc.atlas.ext;
 
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import hunternif.mc.atlas.AntiqueAtlasMod;
 import hunternif.mc.atlas.api.AtlasAPI;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 
 /**
  * Puts an skull marker to the player's death spot.
@@ -16,7 +16,7 @@ public class DeathWatcher {
 		if (event.entity instanceof EntityPlayer && AntiqueAtlasMod.settings.autoDeathMarker) {
 			EntityPlayer player = (EntityPlayer) event.entity;
 			for (int atlasID : AtlasAPI.getPlayerAtlases(player)) {
-				AtlasAPI.getMarkerAPI().putMarker(player.worldObj, true, atlasID, "tomb",
+				AtlasAPI.markers.putMarker(player.worldObj, true, atlasID, "tomb",
 						"gui.antiqueatlas.marker.tomb " + player.getCommandSenderName(),
 						(int)player.posX, (int)player.posZ);
 			}

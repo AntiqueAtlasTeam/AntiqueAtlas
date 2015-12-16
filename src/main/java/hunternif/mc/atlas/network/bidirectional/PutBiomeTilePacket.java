@@ -59,7 +59,7 @@ public class PutBiomeTilePacket extends AbstractMessage<PutBiomeTilePacket> {
 						player.getGameProfile().getName(), atlasID);
 				return;
 			}
-			AtlasAPI.getTileAPI().putBiomeTile(player.worldObj, atlasID, biomeID, x, z);
+			AtlasAPI.tiles.putBiomeTile(player.worldObj, atlasID, biomeID, x, z);
 		} else {
 			AtlasData data = AntiqueAtlasMod.itemAtlas.getAtlasData(atlasID, player.worldObj);
 			data.setTile(dimension, x, z, new Tile(biomeID));

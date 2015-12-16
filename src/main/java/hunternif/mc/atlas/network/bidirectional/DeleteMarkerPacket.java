@@ -64,9 +64,9 @@ public class DeleteMarkerPacket extends AbstractMessage<DeleteMarkerPacket> {
 				return;
 			}
 			if (isGlobal()) {
-				AtlasAPI.getMarkerAPI().deleteGlobalMarker(player.worldObj, markerID);
+				AtlasAPI.markers.deleteGlobalMarker(player.worldObj, markerID);
 			} else {
-				AtlasAPI.getMarkerAPI().deleteMarker(player.worldObj, atlasID, markerID);
+				AtlasAPI.markers.deleteMarker(player.worldObj, atlasID, markerID);
 			}
 		} else {
 			MarkersData data = isGlobal() ?

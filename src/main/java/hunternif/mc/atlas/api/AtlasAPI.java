@@ -15,8 +15,8 @@ import hunternif.mc.atlas.api.impl.TileApiImpl;
  */
 public class AtlasAPI {
 	private static final int VERSION = 3;
-	private static final TileAPI tileApi = new TileApiImpl();
-	private static final MarkerAPI markerApi = new MarkerApiImpl();
+	public static final TileAPI tiles = new TileApiImpl();
+	public static final MarkerAPI markers = new MarkerApiImpl();
 	
 	/** Version of the API, meaning only this particular class. You might
 	 * want to check static field VERSION in the specific API interfaces. */
@@ -26,12 +26,12 @@ public class AtlasAPI {
 	
 	/** API for biomes and custom tiles (i.e. dungeons, towns etc). */
 	public static TileAPI getTileAPI() {
-		return tileApi;
+		return tiles;
 	}
 	
 	/** API for custom markers. */
 	public static MarkerAPI getMarkerAPI() {
-		return markerApi;
+		return markers;
 	}
 	
 	/** Convenience method that returns a list of atlas IDs for all atlas items

@@ -17,17 +17,19 @@ buildscript {
 
 apply plugin: 'forge'
 
-version = "4.2.7-1.7.10"
+version = mcversion + '-' + version_major + '.' + version_minor + '.' + version_patch
 group= "hunternif.mc.atlas" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "antiqueatlas"
 
 minecraft {
-    version = "1.7.10-10.13.2.1230"
+    version = mcversion + '-' + forgeversion
     if (file('../run').exists()) {
 		runDir = "../run"
 	} else {
 		runDir = "eclipse"
 	}
+	
+	replace '@VERSION@', project.version
 }
 
 dependencies {
