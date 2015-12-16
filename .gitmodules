@@ -1,6 +1,0 @@
-[submodule "lang"]
-	path = lang
-	url = https://github.com/Hunternif/AntiqueAtlas-Localization.git
-[submodule "api/antiqueatlas"]
-	path = api/antiqueatlas
-	url = https://github.com/Hunternif/AntiqueAtlasAPI.git

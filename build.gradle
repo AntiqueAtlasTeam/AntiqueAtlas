@@ -20,17 +20,12 @@ plugins {
     id "net.minecraftforge.gradle.forge" version "2.0.2"
 }
 
-
-ext.dirLang = './lang'
-
-ext.apiAntiqueAtlas = './api/antiqueatlas'
-
 version = mcversion + '-' + version_major + '.' + version_minor + '.' + version_patch
 group= "hunternif.mc.atlas" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "antiqueatlas"
 
 minecraft {
-    version = "1.8-11.14.4.1563"
+    version = mcversion + '-' + forgeversion
     if (file('../run').exists()) {
 		runDir = "../run"
 	} else {
@@ -46,19 +41,6 @@ minecraft {
     // makeObfSourceJar = false // an Srg named sources jar is made by default. uncomment this to disable.
     
     replace '@VERSION@', project.version
-}
-
-sourceSets {
-	main {
-		java {
-			// Include the API with the mod
-			srcDir project.apiAntiqueAtlas
-		}
-		resources {
-			// Include localization assets
-			srcDir project.dirLang
-		}
-	}
 }
 
 dependencies {

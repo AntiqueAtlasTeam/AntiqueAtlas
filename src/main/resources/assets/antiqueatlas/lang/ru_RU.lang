@@ -1,0 +1,22 @@
+item.antiqueAtlas.name=Старинный атлас
+item.emptyAntiqueAtlas.name=Пустой старинный атлас
+
+gui.antiqueatlas.scalebar=Масштаб в блоках
+gui.antiqueatlas.addMarker=Добавить метку
+gui.antiqueatlas.delMarker=Удалить метку
+gui.antiqueatlas.followPlayer=Привязать к игроку
+gui.antiqueatlas.exportImage=Сохранить изображение
+gui.antiqueatlas.hideMarkers=Скрыть метки
+gui.antiqueatlas.showMarkers=Показать метки
+
+gui.antiqueatlas.marker.label=Текст метки:
+gui.antiqueatlas.marker.type=Тип:
+gui.antiqueatlas.marker.village=Деревня
+gui.antiqueatlas.marker.netherPortal=Портал Нижнего мира
+gui.antiqueatlas.marker.tomb=Здесь покоится %s
+
+gui.antiqueatlas.export.opening=Открывается диалоговое окно...
+gui.antiqueatlas.export.selectFile=Укажите PNG файл, куда сохранять изображение карты
+gui.antiqueatlas.export.tooLarge=Извините, картинка слишком большая. Попробуйте выделить больше памяти для Java.
+gui.antiqueatlas.export.rendering=Отрисовка...
+gui.antiqueatlas.export.writing=Запись в файл...
