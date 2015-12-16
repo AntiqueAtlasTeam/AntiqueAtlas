@@ -334,16 +334,9 @@ public class GuiAtlas extends GuiComponent {
 	
 	public GuiAtlas setAtlasItemStack(ItemStack stack) {
 		this.player = Minecraft.getMinecraft().thePlayer;
-		if (this.stack != stack) {
-			this.stack = stack;
-			// Disable followPlayer for new atlases so that their last browsing position is loaded:
-			if (AntiqueAtlasMod.settings.doSaveBrowsingPos) {
-				followPlayer = false;
-				btnPosition.setEnabled(true);
-			}
-		}
+		this.stack = stack;
 		updateAtlasData();
-		if (AntiqueAtlasMod.settings.doSaveBrowsingPos) {
+		if (!followPlayer && AntiqueAtlasMod.settings.doSaveBrowsingPos) {
 			loadSavedBrowsingPosition();
 		}
 		return this;
