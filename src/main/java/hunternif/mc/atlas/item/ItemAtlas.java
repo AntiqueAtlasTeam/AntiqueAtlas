@@ -10,9 +10,7 @@ import hunternif.mc.atlas.core.ITileStorage;
 import hunternif.mc.atlas.core.Tile;
 import hunternif.mc.atlas.marker.MarkersData;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import net.minecraft.entity.Entity;
@@ -205,20 +203,6 @@ public class ItemAtlas extends Item {
 	
 	protected String getMarkersDataKey(int atlasID) {
 		return MARKERS_DATA_PREFIX + atlasID;
-	}
-	
-	
-	
-	/** Convenience method that returns a list of atlas IDs for all atlas items
-	 * the player is currently carrying. **/
-	public static List<Integer> getPlayerAtlases(EntityPlayer player) {
-		List<Integer> list = new ArrayList<Integer>();
-		for (ItemStack stack : player.inventory.mainInventory) {
-			if (stack != null && stack.getItem() == AntiqueAtlasMod.itemAtlas) {
-				list.add(stack.getItemDamage());
-			}
-		}
-		return list;
 	}
 
 }
