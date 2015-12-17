@@ -111,7 +111,7 @@ public class TileApiImpl implements TileAPI {
 		if (world.isRemote) {
 			PacketDispatcher.sendToServer(packet);
 		} else {
-			AtlasData data = AntiqueAtlasMod.itemAtlas.getAtlasData(atlasID, world);
+			AtlasData data = AntiqueAtlasMod.atlasData.getAtlasData(atlasID, world);
 			Tile tile = new Tile(biomeID);
 			data.setTile(dimension, chunkX, chunkZ, tile);
 			for (EntityPlayer syncedPlayer : data.getSyncedPlayers()) {

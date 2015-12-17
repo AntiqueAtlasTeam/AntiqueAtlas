@@ -101,7 +101,7 @@ public class MarkersPacket extends AbstractClientMessage<MarkersPacket> {
 	protected void process(EntityPlayer player, Side side) {
 		MarkersData markersData = isGlobal() ?
 				AntiqueAtlasMod.globalMarkersData.getData() :
-					AntiqueAtlasMod.itemAtlas.getMarkersData(atlasID, player.worldObj);
+					AntiqueAtlasMod.markersData.getMarkersData(atlasID, player.worldObj);
 		for (Marker marker : markersByType.values()) {
 			markersData.loadMarker(marker);
 		}

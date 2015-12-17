@@ -44,7 +44,7 @@ public class MarkerApiImpl implements MarkerAPI {
 				Marker marker = data.createAndSaveMarker(markerType, label, world.provider.getDimensionId(), x, z, visibleAhead);
 				PacketDispatcher.sendToAll(new MarkersPacket(world.provider.getDimensionId(), marker));
 			} else {
-				MarkersData data = AntiqueAtlasMod.itemAtlas.getMarkersData(atlasID, world);
+				MarkersData data = AntiqueAtlasMod.markersData.getMarkersData(atlasID, world);
 				Marker marker = data.createAndSaveMarker(markerType, label, world.provider.getDimensionId(), x, z, visibleAhead);
 				PacketDispatcher.sendToAll(new MarkersPacket(atlasID, world.provider.getDimensionId(), marker));
 			}
@@ -72,7 +72,7 @@ public class MarkerApiImpl implements MarkerAPI {
 		} else {
 			MarkersData data = atlasID == GLOBAL ?
 					AntiqueAtlasMod.globalMarkersData.getData() :
-					AntiqueAtlasMod.itemAtlas.getMarkersData(atlasID, world);
+					AntiqueAtlasMod.markersData.getMarkersData(atlasID, world);
 			data.removeMarker(markerID);
 			PacketDispatcher.sendToAll(packet);
 		}

@@ -1,6 +1,7 @@
 package hunternif.mc.atlas;
 
 import static net.minecraftforge.oredict.RecipeSorter.Category.SHAPELESS;
+import hunternif.mc.atlas.core.AtlasDataHandler;
 import hunternif.mc.atlas.ext.DeathWatcher;
 import hunternif.mc.atlas.ext.ExtBiomeDataHandler;
 import hunternif.mc.atlas.ext.NetherFortressWatcher;
@@ -10,6 +11,7 @@ import hunternif.mc.atlas.item.ItemEmptyAtlas;
 import hunternif.mc.atlas.item.RecipeAtlasCloning;
 import hunternif.mc.atlas.item.RecipeAtlasCombining;
 import hunternif.mc.atlas.marker.GlobalMarkersDataHandler;
+import hunternif.mc.atlas.marker.MarkersDataHandler;
 import hunternif.mc.atlas.marker.NetherPortalWatcher;
 import hunternif.mc.atlas.network.PacketDispatcher;
 import hunternif.mc.atlas.util.Log;
@@ -46,6 +48,9 @@ public class AntiqueAtlasMod {
 	
 	public static final SettingsConfig settings = new SettingsConfig();
 	
+	public static final AtlasDataHandler atlasData = new AtlasDataHandler();
+	public static final MarkersDataHandler markersData = new MarkersDataHandler();
+	
 	public static final ExtBiomeDataHandler extBiomeData = new ExtBiomeDataHandler();
 	public static final GlobalMarkersDataHandler globalMarkersData = new GlobalMarkersDataHandler();
 	
@@ -81,6 +86,9 @@ public class AntiqueAtlasMod {
 		RecipeAtlasCombining recipeCombining = new RecipeAtlasCombining();
 		GameRegistry.addRecipe(recipeCombining);
 		FMLCommonHandler.instance().bus().register(recipeCombining);
+		
+		FMLCommonHandler.instance().bus().register(atlasData);
+		FMLCommonHandler.instance().bus().register(markersData);
 		
 		MinecraftForge.EVENT_BUS.register(extBiomeData);
 		FMLCommonHandler.instance().bus().register(extBiomeData);

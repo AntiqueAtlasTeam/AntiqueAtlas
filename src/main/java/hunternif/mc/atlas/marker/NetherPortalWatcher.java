@@ -92,7 +92,7 @@ public class NetherPortalWatcher extends DummyWorldAccess {
 		for (ItemStack stack : player.inventory.mainInventory) {
 			if (stack == null || stack.getItem() != AntiqueAtlasMod.itemAtlas) continue;
 			// Can't use entity.dimension here, because its value has already been updated!
-			DimensionMarkersData data = AntiqueAtlasMod.itemAtlas.getMarkersData(stack, world)
+			DimensionMarkersData data = AntiqueAtlasMod.markersData.getMarkersData(stack, world)
 					.getMarkersDataInDimension(dimension);
 			int x = (int)player.posX;
 			int z = (int)player.posZ;

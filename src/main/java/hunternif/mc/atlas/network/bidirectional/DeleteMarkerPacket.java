@@ -71,7 +71,7 @@ public class DeleteMarkerPacket extends AbstractMessage<DeleteMarkerPacket> {
 		} else {
 			MarkersData data = isGlobal() ?
 					AntiqueAtlasMod.globalMarkersData.getData() :
-					AntiqueAtlasMod.itemAtlas.getMarkersData(atlasID, player.worldObj);
+					AntiqueAtlasMod.markersData.getMarkersData(atlasID, player.worldObj);
 					data.removeMarker(markerID);
 		}
 	}

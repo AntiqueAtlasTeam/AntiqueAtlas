@@ -22,9 +22,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 
 public class ItemAtlas extends Item {
-	protected static final String ATLAS_DATA_PREFIX = "aAtlas_";
 	protected static final String WORLD_ATLAS_DATA_ID = "aAtlas";
-	protected static final String MARKERS_DATA_PREFIX = "aaMarkers_";
 	
 	/** Maps dimension ID to biomeAnalyzer. */
 	private final Map<Integer, IBiomeDetector> biomeAnalyzers = new HashMap<Integer, IBiomeDetector>();
@@ -65,7 +63,7 @@ public class ItemAtlas extends Item {
 	
 	@Override
 	public void onUpdate(ItemStack stack, World world, Entity entity, int slot, boolean isEquipped) {
-		AtlasData data = getAtlasData(stack, world);
+		AtlasData data = AntiqueAtlasMod.atlasData.getAtlasData(stack, world);
 		if (data == null || !(entity instanceof EntityPlayer)) return;
 		
 		// On the first run send the map from the server to the client:
@@ -75,7 +73,7 @@ public class ItemAtlas extends Item {
 		}
 		
 		// Same thing with the local markers:
-		MarkersData markers = getMarkersData(stack, world);
+		MarkersData markers = AntiqueAtlasMod.markersData.getMarkersData(stack, world);
 		if (!world.isRemote && !markers.isSyncedOnPlayer(player) && !markers.isEmpty()) {
 			markers.syncOnPlayer(stack.getItemDamage(), player);
 		}
@@ -150,59 +148,6 @@ public class ItemAtlas extends Item {
 				
 			}
 		}
-	}
-	
-	// ====================== Obtaining AtlasData ======================
-	
-	/** Loads data for the given atlas ID or creates a new one. */
-	public AtlasData getAtlasData(ItemStack stack, World world) {
-		if (stack.getItem() == AntiqueAtlasMod.itemAtlas) {
-			return getAtlasData(stack.getItemDamage(), world);
-		} else {
-			return null;
-		}
-	}
-	
-	/** Loads data for the given atlas or creates a new one. */
-	public AtlasData getAtlasData(int atlasID, World world) {
-		String key = getAtlasDataKey(atlasID);
-		AtlasData data = (AtlasData) world.loadItemData(AtlasData.class, key);
-		if (data == null) {
-			data = new AtlasData(key);
-			world.setItemData(key, data);
-		}
-		return data;
-	}
-	
-	protected String getAtlasDataKey(int atlasID) {
-		return ATLAS_DATA_PREFIX + atlasID;
-	}
-	
-	
-	// ====================== Obtaining MarkersData ======================
-	
-	/** Loads data for the given atlas or creates a new one. */
-	public MarkersData getMarkersData(ItemStack stack, World world) {
-		if (stack.getItem() == AntiqueAtlasMod.itemAtlas) {
-			return getMarkersData(stack.getItemDamage(), world);
-		} else {
-			return null;
-		}
-	}
-	
-	/** Loads data for the given atlas ID or creates a new one. */
-	public MarkersData getMarkersData(int atlasID, World world) {
-		String key = getMarkersDataKey(atlasID);
-		MarkersData data = (MarkersData) world.loadItemData(MarkersData.class, key);
-		if (data == null) {
-			data = new MarkersData(key);
-			world.setItemData(key, data);
-		}
-		return data;
-	}
-	
-	protected String getMarkersDataKey(int atlasID) {
-		return MARKERS_DATA_PREFIX + atlasID;
 	}
 
 }

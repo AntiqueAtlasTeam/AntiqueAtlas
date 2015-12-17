@@ -59,7 +59,7 @@ public class BrowsingPositionPacket extends AbstractServerMessage<BrowsingPositi
 					player.getGameProfile().getName(), atlasID);
 			return;
 		}
-		AntiqueAtlasMod.itemAtlas.getAtlasData(atlasID, player.worldObj)
+		AntiqueAtlasMod.atlasData.getAtlasData(atlasID, player.worldObj)
 			.getDimensionData(dimension).setBrowsingPosition(x, y, zoom);
 	}
 
