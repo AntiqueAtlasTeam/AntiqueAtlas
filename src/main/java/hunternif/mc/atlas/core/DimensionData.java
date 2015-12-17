@@ -1,5 +1,6 @@
 package hunternif.mc.atlas.core;
 
+import hunternif.mc.atlas.AntiqueAtlasMod;
 import hunternif.mc.atlas.util.Log;
 import hunternif.mc.atlas.util.Rect;
 import hunternif.mc.atlas.util.ShortVec2;
@@ -41,7 +42,7 @@ public class DimensionData implements ITileStorage {
 		this.browsingZoom = zoom;
 		if (browsingZoom <= 0) {
 			Log.warn("Setting map zoom to invalid value of %f", zoom);
-			browsingZoom = 0.5;
+			browsingZoom = AntiqueAtlasMod.settings.minScale;
 		}
 		parent.markDirty();
 	}

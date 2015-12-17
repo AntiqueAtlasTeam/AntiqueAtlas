@@ -1,7 +1,5 @@
 package hunternif.mc.atlas;
 
-import hunternif.mc.atlas.client.gui.GuiAtlas;
-
 import java.io.File;
 
 import net.minecraftforge.common.config.Configuration;
@@ -26,7 +24,9 @@ public class SettingsConfig {
 	
 	//============ Interface settings =============
 	public boolean doScaleMarkers = false;
-	public float defaultScale = 0.5f;
+	public double defaultScale = 0.5f;
+	public double minScale = 1.0 / 32.0;
+	public double maxScale = 4;
 	public boolean doReverseWheelZoom = false;
 	
 	//=========== Performance settings ============
@@ -57,9 +57,15 @@ public class SettingsConfig {
 		autoVillageMarkers = config.getBoolean("auto_village_markers", GAMEPLAY, autoVillageMarkers,
 				"Whether to add global markers for NPC villages.");
 		
-		defaultScale = config.getFloat("default_scale", INTERFACE, defaultScale, (float)GuiAtlas.MIN_SCALE, (float)GuiAtlas.MAX_SCALE,
+		defaultScale = config.getFloat("default_scale", INTERFACE, (float)defaultScale, 0.001953125f, 16,
 				"Default zoom level. The number corresponds to the size of a block on the map relative to the size of\n"
-				+ "a GUI pixel.");
+				+ "a GUI pixel. Preferrably a power of 2.");
+		minScale = config.getFloat("min_scale", INTERFACE, (float)minScale, 0.001953125f, 16,
+				"Minimum zoom level. The number corresponds to the size of a block on the map relative to the size of\n"
+				+ "a GUI pixel. Preferrably a power of 2. Smaller values may decrease performance!");
+		maxScale = config.getFloat("max_scale", INTERFACE, (float)maxScale, 0.001953125f, 16,
+				"Maximum zoom level. The number corresponds to the size of a block on the map relative to the size of\n"
+				+ "a GUI pixel. Preferrably a power of 2.");
 		doScaleMarkers = config.getBoolean("do_scale_markers", INTERFACE, doScaleMarkers, "Whether to change markers size depending on zoom level.");
 		doReverseWheelZoom = config.getBoolean("do_reverse_wheel_zoom", INTERFACE, doReverseWheelZoom,
 				"If false (by default), then mousewheel up is zoom in, mousewheel down is zoom out.\nIf true, then the direction is reversed.");

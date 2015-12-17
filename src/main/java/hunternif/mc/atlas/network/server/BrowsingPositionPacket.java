@@ -16,7 +16,7 @@ import cpw.mods.fml.relauncher.Side;
  * @author Hunternif
  */
 public class BrowsingPositionPacket extends AbstractServerMessage<BrowsingPositionPacket> {
-	public static final double ZOOM_SCALE_FACTOR = 128;
+	public static final double ZOOM_SCALE_FACTOR = 1024;
 	
 	private int atlasID;
 	private int dimension;

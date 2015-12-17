@@ -44,7 +44,7 @@ public class MarkersData extends WorldSavedData {
 	
 	/** Markers are stored in lists within square areas this many MC chunks
 	 * across. */
-	public static final int CHUNK_STEP = 4;
+	public static final int CHUNK_STEP = 8;
 	
 	/** Set of players this data has been sent to, only once after they connect. */
 	private final Set<EntityPlayer> playersSentTo = new HashSet<EntityPlayer>();
@@ -63,7 +63,8 @@ public class MarkersData extends WorldSavedData {
 	 * Within the list markers are ordered by the Z coordinate, so that markers
 	 * placed closer to the south will appear in front of those placed closer to
 	 * the north.
-	 * TODO: consider using Quad-tree.
+	 * TODO: consider using Quad-tree. At small zoom levels iterating through
+	 * chunks to render markers gets very slow.
 	 */
 	private final Map<Integer /*dimension ID*/, DimensionMarkersData> dimensionMap =
 			new ConcurrentHashMap<Integer, DimensionMarkersData>(2, 0.75f, 2);
