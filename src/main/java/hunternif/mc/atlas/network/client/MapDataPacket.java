@@ -43,7 +43,7 @@ public class MapDataPacket extends AbstractClientMessage<MapDataPacket> {
 	@Override
 	protected void process(EntityPlayer player, Side side) {
 		if (data == null) return; // Atlas is empty
-		AtlasData atlasData = AntiqueAtlasMod.itemAtlas.getAtlasData(atlasID, player.worldObj);
+		AtlasData atlasData = AntiqueAtlasMod.atlasData.getAtlasData(atlasID, player.worldObj);
 		atlasData.readFromNBT(data);
 		// GuiAtlas may already be opened at (0, 0) browsing position, force load saved position:
 		if (AntiqueAtlasMod.settings.doSaveBrowsingPos &&

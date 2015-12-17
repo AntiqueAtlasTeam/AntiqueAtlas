@@ -506,12 +506,12 @@ public class GuiAtlas extends GuiComponent {
 	/** Update {@link #biomeData}, {@link #localMarkersData},
 	 * {@link #globalMarkersData} */
 	private void updateAtlasData() {
-		biomeData = AntiqueAtlasMod.itemAtlas
+		biomeData = AntiqueAtlasMod.atlasData
 				.getAtlasData(stack, player.worldObj)
 				.getDimensionData(player.dimension);
 		globalMarkersData = AntiqueAtlasMod.globalMarkersData.getData()
 				.getMarkersDataInDimension(player.dimension);
-		MarkersData markersData = AntiqueAtlasMod.itemAtlas
+		MarkersData markersData = AntiqueAtlasMod.markersData
 				.getMarkersData(stack, player.worldObj);
 		if (markersData != null) {
 			localMarkersData = markersData

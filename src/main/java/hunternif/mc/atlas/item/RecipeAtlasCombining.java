@@ -82,20 +82,20 @@ public class RecipeAtlasCombining implements IRecipe {
 		// Until the first update, on the client the returned atlas ID is the same as the first Atlas on the crafting grid.
 		int atlasID = world.getUniqueDataId(ItemAtlas.WORLD_ATLAS_DATA_ID);
 		
-		AtlasData destBiomes = AntiqueAtlasMod.itemAtlas.getAtlasData(atlasID, world);
+		AtlasData destBiomes = AntiqueAtlasMod.atlasData.getAtlasData(atlasID, world);
 		destBiomes.markDirty();
-		MarkersData destMarkers = AntiqueAtlasMod.itemAtlas.getMarkersData(atlasID, world);
+		MarkersData destMarkers = AntiqueAtlasMod.markersData.getMarkersData(atlasID, world);
 		destMarkers.markDirty();
 		for (int i = 0; i < event.craftMatrix.getSizeInventory(); ++i) {
 			ItemStack stack = event.craftMatrix.getStackInSlot(i);
 			if (stack == null) continue;
-			AtlasData srcBiomes = AntiqueAtlasMod.itemAtlas.getAtlasData(stack, world);
+			AtlasData srcBiomes = AntiqueAtlasMod.atlasData.getAtlasData(stack, world);
 			if (destBiomes != null && srcBiomes != null && destBiomes != srcBiomes) {
 				for (int dim : srcBiomes.getVisitedDimensions()) {
 					destBiomes.getSeenChunksInDimension(dim).putAll(srcBiomes.getSeenChunksInDimension(dim));
 				}
 			}
-			MarkersData srcMarkers = AntiqueAtlasMod.itemAtlas.getMarkersData(stack, world);
+			MarkersData srcMarkers = AntiqueAtlasMod.markersData.getMarkersData(stack, world);
 			if (destMarkers != null && srcMarkers != null && destMarkers != srcMarkers) {
 				for (int dim : srcMarkers.getVisitedDimensions()) {
 					for (Marker marker : srcMarkers.getMarkersDataInDimension(dim).getAllMarkers()) {

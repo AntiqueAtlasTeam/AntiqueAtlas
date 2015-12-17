@@ -72,7 +72,7 @@ public class AddMarkerPacket extends AbstractServerMessage<AddMarkerPacket> {
 					player.getGameProfile().getName(), atlasID);
 			return;
 		}
-		MarkersData markersData = AntiqueAtlasMod.itemAtlas.getMarkersData(atlasID, player.worldObj);
+		MarkersData markersData = AntiqueAtlasMod.markersData.getMarkersData(atlasID, player.worldObj);
 		Marker marker = markersData.createAndSaveMarker(type, label, dimension, x, y, visibleAhead);
 		// If these are a manually set markers sent from the client, forward
 		// them to other players. Including the original sender, because he
