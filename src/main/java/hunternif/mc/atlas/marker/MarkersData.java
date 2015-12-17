@@ -225,7 +225,7 @@ public class MarkersData extends WorldSavedData {
 			}
 			PacketDispatcher.sendTo(packet, (EntityPlayerMP) player);
 		}
-		Log.info("Sent markers data to player %s", player.getCommandSenderName());
+		Log.info("Sent markers data #%d to player %s", atlasID, player.getCommandSenderName());
 		playersSentTo.add(player);
 	}
 	
