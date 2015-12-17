@@ -59,8 +59,6 @@ public class GuiAtlas extends GuiComponent {
 	/** The radius of the area in which the marker will display hovering label. */
 	private static final int MARKER_RADIUS = 7;
 	
-	public static final double MAX_SCALE = 4;
-	public static final double MIN_SCALE = 1.0 / 32.0;
 	/** If the map scale goes below this value, the tiles will not scale down
 	 * visually, but will instead span greater area. */
 	public static final double MIN_SCALE_THRESHOLD = 0.5;
@@ -548,8 +546,8 @@ public class GuiAtlas extends GuiComponent {
 	public void setMapScale(double scale) {
 		double oldScale = mapScale;
 		mapScale = scale;
-		if (mapScale < MIN_SCALE) mapScale = MIN_SCALE;
-		if (mapScale > MAX_SCALE) mapScale = MAX_SCALE;
+		if (mapScale < AntiqueAtlasMod.settings.minScale) mapScale = AntiqueAtlasMod.settings.minScale;
+		if (mapScale > AntiqueAtlasMod.settings.maxScale) mapScale = AntiqueAtlasMod.settings.maxScale;
 		if (mapScale >= MIN_SCALE_THRESHOLD) {
 			tileHalfSize = (int)Math.round(8 * mapScale);
 			tile2ChunkScale = 1;
