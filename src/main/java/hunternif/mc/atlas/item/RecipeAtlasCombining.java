@@ -18,7 +18,7 @@ import net.minecraftforge.fml.common.gameevent.PlayerEvent.ItemCraftedEvent;
 
 /**
  * 2 or more atlases combine into one with all biome and marker data copied.
- * All data is copied into the first atlas in the grid.
+ * All data is copied into a new atlas instance.
  * @author Hunternif
  */
 public class RecipeAtlasCombining implements IRecipe {
@@ -44,7 +44,7 @@ public class RecipeAtlasCombining implements IRecipe {
 	@Override
 	public ItemStack getCraftingResult(InventoryCrafting inv) {
 		ItemStack firstAtlas = null;
-		List<Integer> atlasIds = new ArrayList<Integer>(2);
+		List<Integer> atlasIds = new ArrayList<Integer>(9);
 		for (int i = 0; i < inv.getSizeInventory(); ++i) {
 			ItemStack stack = inv.getStackInSlot(i);
 			if (stack != null) {
@@ -78,8 +78,14 @@ public class RecipeAtlasCombining implements IRecipe {
 			return;
 		}
 		World world = event.player.worldObj;
-		AtlasData destBiomes = AntiqueAtlasMod.itemAtlas.getAtlasData(event.crafting, world);
-		MarkersData destMarkers = AntiqueAtlasMod.itemAtlas.getMarkersData(event.crafting, world);
+		if (world.isRemote) return;
+		// Until the first update, on the client the returned atlas ID is the same as the first Atlas on the crafting grid.
+		int atlasID = world.getUniqueDataId(ItemAtlas.WORLD_ATLAS_DATA_ID);
+		
+		AtlasData destBiomes = AntiqueAtlasMod.itemAtlas.getAtlasData(atlasID, world);
+		destBiomes.markDirty();
+		MarkersData destMarkers = AntiqueAtlasMod.itemAtlas.getMarkersData(atlasID, world);
+		destMarkers.markDirty();
 		for (int i = 0; i < event.craftMatrix.getSizeInventory(); ++i) {
 			ItemStack stack = event.craftMatrix.getStackInSlot(i);
 			if (stack == null) continue;
@@ -88,18 +94,21 @@ public class RecipeAtlasCombining implements IRecipe {
 				for (int dim : srcBiomes.getVisitedDimensions()) {
 					destBiomes.getSeenChunksInDimension(dim).putAll(srcBiomes.getSeenChunksInDimension(dim));
 				}
-				destBiomes.markDirty();
 			}
 			MarkersData srcMarkers = AntiqueAtlasMod.itemAtlas.getMarkersData(stack, world);
 			if (destMarkers != null && srcMarkers != null && destMarkers != srcMarkers) {
 				for (int dim : srcMarkers.getVisitedDimensions()) {
 					for (Marker marker : srcMarkers.getMarkersDataInDimension(dim).getAllMarkers()) {
-						destMarkers.getMarkersDataInDimension(dim).insertMarker(marker);
+						destMarkers.createAndSaveMarker(marker.getType(), marker.getLabel(),
+								dim, marker.getX(), marker.getZ(), marker.isVisibleAhead());
 					}
 				}
-				destMarkers.markDirty();
 			}
 		}
+		
+		// Set item damage last, because otherwise we wouldn't be able copy the
+		// data from the atlas which was used as a placeholder for the result.
+		event.crafting.setItemDamage(atlasID);
 	}
 
 	@Override
