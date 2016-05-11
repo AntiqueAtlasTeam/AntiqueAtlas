@@ -114,7 +114,7 @@ public class ExtBiomeData extends WorldSavedData {
 			}
 			PacketDispatcher.sendTo(packet, (EntityPlayerMP) player);
 		}
-		Log.info("Sent custom biome data to player %s", player.getCommandSenderName());
+		Log.info("Sent custom biome data to player %s", player.getCommandSenderEntity().getName());
 	}
 
 }
