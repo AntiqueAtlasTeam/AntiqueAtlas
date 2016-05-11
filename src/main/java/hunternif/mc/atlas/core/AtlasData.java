@@ -144,7 +144,7 @@ public class AtlasData extends WorldSavedData {
 		// Before syncing make sure the changes are written to the nbt:
 		writeToNBT(nbt);
 		PacketDispatcher.sendTo(new MapDataPacket(atlasID, nbt), (EntityPlayerMP) player);
-		Log.info("Sent Atlas #%d data to player %s", atlasID, player.getCommandSenderName());
+		Log.info("Sent Atlas #%d data to player %s", atlasID, player.getCommandSenderEntity().getName());
 		playersSentTo.add(player);
 	}
 

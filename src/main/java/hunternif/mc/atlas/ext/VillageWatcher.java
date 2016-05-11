@@ -106,8 +106,7 @@ public class VillageWatcher {
 	public void visitAllUnvisitedVillages(World world) {
 		MapGenStructureData data = (MapGenStructureData)world.getPerWorldStorage().loadData(MapGenStructureData.class, "Village");
 		if (data == null) return;
-		NBTTagCompound villageNBTData = data.func_143041_a();
-		@SuppressWarnings("unchecked")
+		NBTTagCompound villageNBTData = data.getTagCompound();
 		Set<String> tagSet = villageNBTData.getKeySet();
 		for (String coords : tagSet) {
 			if (!visited.contains(coords)) {

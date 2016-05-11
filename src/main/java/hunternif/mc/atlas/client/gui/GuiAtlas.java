@@ -353,7 +353,7 @@ public class GuiAtlas extends GuiComponent {
 		super.initGui();
 		state.switchTo(NORMAL); //TODO: his causes the Export PNG progress bar to disappear when resizing game window
 		Keyboard.enableRepeatEvents(true);
-		screenScale = new ScaledResolution(mc, mc.displayWidth, mc.displayHeight).getScaleFactor();
+		screenScale = new ScaledResolution(mc).getScaleFactor();
 		setCentered();
 	}
 	
