@@ -63,7 +63,9 @@ public class GuiAtlas extends GuiComponent {
 	 * visually, but will instead span greater area. */
 	public static final double MIN_SCALE_THRESHOLD = 0.5;
 	
-	private boolean DEBUG_RENDERING = false;
+	/**If true, time for rendering will be recorded*/
+	public static boolean DEBUG_RENDERING = false;
+	
 	private long[] renderTimes = new long[30];
 	private int renderTimesIndex = 0;
 	

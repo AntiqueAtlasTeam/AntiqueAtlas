@@ -1,9 +1,6 @@
 package hunternif.mc.atlas.util;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.WorldRenderer;
-import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.util.ResourceLocation;
 
 import org.lwjgl.opengl.GL11;
