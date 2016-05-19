@@ -71,7 +71,6 @@ public class GuiMarkerFinalizer extends GuiComponent {
 		listeners.clear();
 	}
 	
-	@SuppressWarnings("unchecked")
 	@Override
 	public void initGui() {
 		buttonList.add(btnDone = new GuiButton(0, this.width/2 - BUTTON_WIDTH - BUTTON_SPACING/2, this.height/2 + 40, BUTTON_WIDTH, 20, I18n.format("gui.done")));

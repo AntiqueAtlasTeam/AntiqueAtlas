@@ -15,13 +15,13 @@ buildscript {
 apply plugin: 'net.minecraftforge.gradle.forge'
 
 /*
-// for people who want stable - not yet functional for MC 1.8.8 - we require the forgegradle 2.1 snapshot
+// for people who want stable
 plugins {
     id "net.minecraftforge.gradle.forge" version "2.0.2"
 }
 */
 version = mcversion + '-' + version_major + '.' + version_minor + '.' + version_patch
-group= "chunternif.mc.atlas" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
+group= "hunternif.mc.atlas" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "antiqueatlas"
 
 minecraft {

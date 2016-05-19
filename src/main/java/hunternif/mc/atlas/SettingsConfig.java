@@ -37,6 +37,7 @@ public class SettingsConfig {
 	public boolean doRescan = true;
 	public int rescanRate = 4;
 	public boolean doScanPonds = true;
+	public boolean debugRender = false;
 	
 	public void load(File file) {
 		Configuration config = new Configuration(file, String.valueOf(VERSION));
@@ -89,7 +90,7 @@ public class SettingsConfig {
 		doScanPonds = config.getBoolean("do_scan_ponds", PERFORMANCE, doScanPonds,
 				"Whether to perform additional scanning to locate small ponds of water or lava.\nDisable for better performance.");
 		
-		GuiAtlas.DEBUG_RENDERING = config.getBoolean("debug_rendering", PERFORMANCE, GuiAtlas.DEBUG_RENDERING,
+		debugRender = config.getBoolean("debug_rendering", PERFORMANCE, debugRender,
 				"If true, map render time will be output.");
 		
 		

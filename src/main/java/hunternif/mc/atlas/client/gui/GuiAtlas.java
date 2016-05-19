@@ -64,9 +64,6 @@ public class GuiAtlas extends GuiComponent {
 	 * visually, but will instead span greater area. */
 	public static final double MIN_SCALE_THRESHOLD = 0.5;
 	
-	/**If true, time for rendering will be recorded*/
-	public static boolean DEBUG_RENDERING = false;
-	
 	private long[] renderTimes = new long[30];
 	private int renderTimesIndex = 0;
 	
@@ -568,7 +565,7 @@ public class GuiAtlas extends GuiComponent {
 	
 	@Override
 	public void drawScreen(int mouseX, int mouseY, float par3) {
-		if (DEBUG_RENDERING) {
+		if (AntiqueAtlasMod.settings.debugRender) {
 			renderTimes[renderTimesIndex++] = System.currentTimeMillis();
 			if (renderTimesIndex == renderTimes.length) {
 				renderTimesIndex = 0;
