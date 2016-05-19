@@ -4,6 +4,7 @@ import hunternif.mc.atlas.util.AtlasRenderHelper;
 
 import org.lwjgl.opengl.GL11;
 
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.ResourceLocation;
 
 /** Displays a texture that changes alpha at regular intervals.
@@ -50,9 +51,9 @@ public class GuiBlinkingImage extends GuiComponent {
 			lastTickTime = currentTime;
 			isVisible = !isVisible;
 		}
-		GL11.glColor4f(1, 1, 1, isVisible ? visibleAlpha : invisibleAlpha);
-		GL11.glEnable(GL11.GL_BLEND);
-		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+		GlStateManager.color(1, 1, 1, isVisible ? visibleAlpha : invisibleAlpha);
+		GlStateManager.enableBlend();
+		GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 		drawImage();
 	}
 	

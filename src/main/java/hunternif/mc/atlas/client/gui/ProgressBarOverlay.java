@@ -46,7 +46,7 @@ public class ProgressBarOverlay implements ExportUpdateListener {
 		font.drawStringWithShadow(status, x + (barWidth - statusWidth)/2, y, 0xffffff);
 		y += 14;
 
-		GL11.glDisable(GL11.GL_TEXTURE_2D);
+		GlStateManager.disableTexture2D();
 		
 		Tessellator tessellator = Tessellator.getInstance();
 		WorldRenderer renderer = tessellator.getWorldRenderer();
@@ -64,7 +64,7 @@ public class ProgressBarOverlay implements ExportUpdateListener {
 		renderer.pos(x + completedWidth, y + barHeight, 0).endVertex();
 		renderer.pos(x + completedWidth, y, 0).endVertex();
 		tessellator.draw();
-		GL11.glEnable(GL11.GL_TEXTURE_2D);
+		GlStateManager.enableTexture2D();
 	}
 
 	public void reset() {

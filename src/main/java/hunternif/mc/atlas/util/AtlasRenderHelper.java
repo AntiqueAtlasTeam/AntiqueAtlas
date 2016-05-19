@@ -1,6 +1,7 @@
 package hunternif.mc.atlas.util;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
@@ -59,6 +60,6 @@ public class AtlasRenderHelper {
 		float r = (float)(color >> 16 & 0xff)/256f;
 		float g = (float)(color >> 8 & 0xff)/256f;
 		float b = (float)(color & 0xff)/256f;
-		GL11.glColor4f(r, g, b, alpha);
+		GlStateManager.color(r, g, b, alpha);
 	}
 }

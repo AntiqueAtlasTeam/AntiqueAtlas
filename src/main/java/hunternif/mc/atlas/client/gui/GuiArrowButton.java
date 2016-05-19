@@ -3,6 +3,7 @@ package hunternif.mc.atlas.client.gui;
 import hunternif.mc.atlas.client.Textures;
 import hunternif.mc.atlas.client.gui.core.GuiComponentButton;
 import hunternif.mc.atlas.util.AtlasRenderHelper;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
 
 import org.lwjgl.opengl.GL11;
@@ -45,18 +46,18 @@ public class GuiArrowButton extends GuiComponentButton {
 	@Override
 	public void drawScreen(int mouseX, int mouseY, float partialTick) {
 		RenderHelper.disableStandardItemLighting();
-		GL11.glEnable(GL11.GL_BLEND);
-		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+		GlStateManager.enableBlend();
+		GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 		
 		int x = getGuiX(), y = getGuiY();
 		if (isMouseOver) {
-			GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+			GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
 		} else {
 			// Fade out when the mouse is far from them:
 			int distanceSq = (mouseX - x - getWidth()/2)*(mouseX - x - getWidth()/2) +
 					(mouseY - y - getHeight()/2)*(mouseY - y - getHeight()/2);
 			double alpha = distanceSq < 400 ? 0.5 : Math.pow((double)distanceSq, -0.28);
-			GL11.glColor4d(1, 1, 1, alpha);
+			GlStateManager.color(1, 1, 1, (float)alpha);
 		}
 		
 		int u = 0, v = 0;
@@ -68,6 +69,6 @@ public class GuiArrowButton extends GuiComponentButton {
 		}
 		AtlasRenderHelper.drawTexturedRect(Textures.BTN_ARROWS, x, y, u, v, WIDTH, HEIGHT, IMAGE_WIDTH, IMAGE_HEIGHT);
 		
-		GL11.glDisable(GL11.GL_BLEND);
+		GlStateManager.disableBlend();
 	}
 }

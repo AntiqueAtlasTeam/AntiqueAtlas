@@ -34,6 +34,7 @@ import java.util.List;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScaledResolution;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.entity.player.EntityPlayer;
@@ -579,22 +580,22 @@ public class GuiAtlas extends GuiComponent {
 			}
 		}
 		
-		GL11.glColor4f(1, 1, 1, 1);
-		GL11.glAlphaFunc(GL11.GL_GREATER, 0); // So light detail on tiles is visible
+		GlStateManager.color(1, 1, 1, 1);
+		GlStateManager.alphaFunc(GL11.GL_GREATER, 0); // So light detail on tiles is visible
 		AtlasRenderHelper.drawFullTexture(Textures.BOOK, getGuiX(), getGuiY(), WIDTH, HEIGHT);
 		
 		if (stack == null || biomeData == null) return;
 		
 		
 		if (state.is(DELETING_MARKER)) {
-			GL11.glColor4f(1, 1, 1, 0.5f);
+			GlStateManager.color(1, 1, 1, 0.5f);
 		}
 		GL11.glEnable(GL11.GL_SCISSOR_TEST);
 		GL11.glScissor((getGuiX() + CONTENT_X)*screenScale,
 				mc.displayHeight - (getGuiY() + CONTENT_Y + MAP_HEIGHT)*screenScale,
 				MAP_WIDTH*screenScale, MAP_HEIGHT*screenScale);
-		GL11.glEnable(GL11.GL_BLEND);
-		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+		GlStateManager.enableBlend();
+		GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 		// Find chunk coordinates of the top left corner of the map.
 		// The 'roundToBase' is required so that when the map scales below the
 		// threshold the tiles don't change when map position changes slightly.
@@ -658,7 +659,7 @@ public class GuiAtlas extends GuiComponent {
 		GL11.glDisable(GL11.GL_SCISSOR_TEST);
 		
 		// Overlay the frame so that edges of the map are smooth:
-		GL11.glColor4f(1, 1, 1, 1);
+		GlStateManager.color(1, 1, 1, 1);
 		AtlasRenderHelper.drawFullTexture(Textures.BOOK_FRAME, getGuiX(), getGuiY(), WIDTH, HEIGHT);
 		double iconScale = getIconScale();
 		
@@ -672,31 +673,31 @@ public class GuiAtlas extends GuiComponent {
 			if (playerOffsetZ < -MAP_HEIGHT/2) playerOffsetZ = -MAP_HEIGHT/2;
 			if (playerOffsetZ > MAP_HEIGHT/2 - 2) playerOffsetZ = MAP_HEIGHT/2 - 2;
 			// Draw the icon:
-			GL11.glColor4f(1, 1, 1, state.is(PLACING_MARKER) ? 0.5f : 1);
-			GL11.glPushMatrix();
-			GL11.glTranslated(getGuiX() + WIDTH/2 + playerOffsetX, getGuiY() + HEIGHT/2 + playerOffsetZ, 0);
+			GlStateManager.color(1, 1, 1, state.is(PLACING_MARKER) ? 0.5f : 1);
+			GlStateManager.pushMatrix();
+			GlStateManager.translate(getGuiX() + WIDTH/2 + playerOffsetX, getGuiY() + HEIGHT/2 + playerOffsetZ, 0);
 			float playerRotation = (float) Math.round(player.rotationYaw / 360f * PLAYER_ROTATION_STEPS) / PLAYER_ROTATION_STEPS * 360f;
-			GL11.glRotatef(180 + playerRotation, 0, 0, 1);
-			GL11.glTranslated(-PLAYER_ICON_WIDTH/2*iconScale, -PLAYER_ICON_HEIGHT/2*iconScale, 0);
+			GlStateManager.rotate(180 + playerRotation, 0, 0, 1);
+			GlStateManager.translate(-PLAYER_ICON_WIDTH/2*iconScale, -PLAYER_ICON_HEIGHT/2*iconScale, 0);
 			AtlasRenderHelper.drawFullTexture(Textures.PLAYER, 0, 0,
 					(int)Math.round(PLAYER_ICON_WIDTH*iconScale), (int)Math.round(PLAYER_ICON_HEIGHT*iconScale));
-			GL11.glPopMatrix();
-			GL11.glColor4f(1, 1, 1, 1);
+			GlStateManager.popMatrix();
+			GlStateManager.color(1, 1, 1, 1);
 		}
 		
 		// Draw buttons:
 		super.drawScreen(mouseX, mouseY, par3);
 		
 		// Draw the semi-transparent marker attached to the cursor when placing a new marker:
-		GL11.glEnable(GL11.GL_BLEND);
-		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+		GlStateManager.enableBlend();
+		GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 		if (state.is(PLACING_MARKER)) {
-			GL11.glColor4f(1, 1, 1, 0.5f);
+			GlStateManager.color(1, 1, 1, 0.5f);
 			AtlasRenderHelper.drawFullTexture(
 					MarkerTextureMap.instance().getTexture(markerFinalizer.selectedType),
 					mouseX - MARKER_SIZE/2*iconScale, mouseY - MARKER_SIZE/2*iconScale,
 					(int)Math.round(MARKER_SIZE*iconScale), (int)Math.round(MARKER_SIZE*iconScale));
-			GL11.glColor4f(1, 1, 1, 1);
+			GlStateManager.color(1, 1, 1, 1);
 		}
 		
 		// Draw progress overlay:
@@ -715,23 +716,23 @@ public class GuiAtlas extends GuiComponent {
 		}
 		boolean mouseIsOverMarker = isMouseInRadius(markerX, markerY, (int)Math.ceil(MARKER_RADIUS*scale));
 		if (state.is(PLACING_MARKER)) {
-			GL11.glColor4f(1, 1, 1, 0.5f);
+			GlStateManager.color(1, 1, 1, 0.5f);
 		} else if (state.is(DELETING_MARKER)) {
 			if (marker.isGlobal()) {
-				GL11.glColor4f(1, 1, 1, 0.5f);
+				GlStateManager.color(1, 1, 1, 0.5f);
 			} else {
 				if (mouseIsOverMarker) {
-					GL11.glColor4f(0.5f, 0.5f, 0.5f, 1);
+					GlStateManager.color(0.5f, 0.5f, 0.5f, 1);
 					toDelete = marker;
 				} else {
-					GL11.glColor4f(1, 1, 1, 1);
+					GlStateManager.color(1, 1, 1, 1);
 					if (toDelete == marker) {
 						toDelete = null;
 					}
 				}
 			}
 		} else {
-			GL11.glColor4f(1, 1, 1, 1);
+			GlStateManager.color(1, 1, 1, 1);
 		}
 		AtlasRenderHelper.drawFullTexture(
 				MarkerTextureMap.instance().getTexture(marker.getType()),
