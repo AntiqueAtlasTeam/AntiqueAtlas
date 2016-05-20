@@ -22,7 +22,6 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.Mod.Instance;
@@ -85,16 +84,14 @@ public class AntiqueAtlasMod {
 		RecipeSorter.register("antiqueatlas:atlascombining",   RecipeAtlasCombining.class,   SHAPELESS, "after:minecraft:shapeless");
 		RecipeAtlasCombining recipeCombining = new RecipeAtlasCombining();
 		GameRegistry.addRecipe(recipeCombining);
-		FMLCommonHandler.instance().bus().register(recipeCombining);
+		MinecraftForge.EVENT_BUS.register(recipeCombining);
 		
-		FMLCommonHandler.instance().bus().register(atlasData);
-		FMLCommonHandler.instance().bus().register(markersData);
+		MinecraftForge.EVENT_BUS.register(atlasData);
+		MinecraftForge.EVENT_BUS.register(markersData);
 		
 		MinecraftForge.EVENT_BUS.register(extBiomeData);
-		FMLCommonHandler.instance().bus().register(extBiomeData);
 		
 		MinecraftForge.EVENT_BUS.register(globalMarkersData);
-		FMLCommonHandler.instance().bus().register(globalMarkersData);
 		
 		MinecraftForge.EVENT_BUS.register(new DeathWatcher());
 		

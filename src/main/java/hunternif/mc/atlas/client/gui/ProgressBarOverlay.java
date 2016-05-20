@@ -2,8 +2,10 @@ package hunternif.mc.atlas.client.gui;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.WorldRenderer;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 
 import org.lwjgl.opengl.GL11;
 
@@ -44,22 +46,25 @@ public class ProgressBarOverlay implements ExportUpdateListener {
 		font.drawStringWithShadow(status, x + (barWidth - statusWidth)/2, y, 0xffffff);
 		y += 14;
 
-		GL11.glDisable(GL11.GL_TEXTURE_2D);
+		GlStateManager.disableTexture2D();
+		
 		Tessellator tessellator = Tessellator.getInstance();
 		WorldRenderer renderer = tessellator.getWorldRenderer();
-		renderer.startDrawingQuads();
-		renderer.setColorOpaque_I(8421504);
-		renderer.addVertex((double)x, (double)y, 0.0D);
-		renderer.addVertex((double)x, (double)(y + barHeight), 0.0D);
-		renderer.addVertex((double)(x + barWidth), (double)(y + barHeight), 0.0D);
-		renderer.addVertex((double)(x + barWidth), (double)y, 0.0D);
-		renderer.setColorOpaque_I(8454016);
-		renderer.addVertex((double)x, (double)y, 0.0D);
-		renderer.addVertex((double)x, (double)(y + barHeight), 0.0D);
-		renderer.addVertex((double)(x + completedWidth), (double)(y + barHeight), 0.0D);
-		renderer.addVertex((double)(x + completedWidth), (double)y, 0.0D);
+		renderer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION);
+		GlStateManager.color(0.5f, 0.5f, 0.5f, 1f);
+		renderer.pos(x,y,0).endVertex();
+		renderer.pos(x,y+barHeight,0).endVertex();
+		renderer.pos(x + barWidth, y + barHeight, 0).endVertex();
+		renderer.pos(x + barWidth, y, 0).endVertex();
 		tessellator.draw();
-		GL11.glEnable(GL11.GL_TEXTURE_2D);
+		renderer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION);
+		GlStateManager.color(0.5f, 1f, 0.5f, 1f);
+		renderer.pos(x,y,0).endVertex();
+		renderer.pos(x,y+barHeight,0).endVertex();
+		renderer.pos(x + completedWidth, y + barHeight, 0).endVertex();
+		renderer.pos(x + completedWidth, y, 0).endVertex();
+		tessellator.draw();
+		GlStateManager.enableTexture2D();
 	}
 
 	public void reset() {

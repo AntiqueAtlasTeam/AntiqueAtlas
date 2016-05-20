@@ -1,4 +1,4 @@
-**This is a branch for Minecraft 1.8**
+**This is a branch for Minecraft 1.8.9**
 
 Antique Atlas
 =============

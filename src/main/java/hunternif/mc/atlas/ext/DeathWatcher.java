@@ -17,7 +17,7 @@ public class DeathWatcher {
 			EntityPlayer player = (EntityPlayer) event.entity;
 			for (int atlasID : AtlasAPI.getPlayerAtlases(player)) {
 				AtlasAPI.markers.putMarker(player.worldObj, true, atlasID, "tomb",
-						"gui.antiqueatlas.marker.tomb " + player.getCommandSenderName(),
+						"gui.antiqueatlas.marker.tomb " + player.getCommandSenderEntity().getName(),
 						(int)player.posX, (int)player.posZ);
 			}
 		}

@@ -2,6 +2,7 @@ package hunternif.mc.atlas.client.gui.core;
 
 import java.io.IOException;
 
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.ResourceLocation;
 
 import org.lwjgl.input.Mouse;
@@ -145,14 +146,14 @@ public abstract class AGuiScrollbar extends GuiComponent {
 					/ (float) (getScrollbarLength() - anchorSize));
 		}
 		
-		GL11.glEnable(GL11.GL_TEXTURE_2D);
-		GL11.glEnable(GL11.GL_BLEND);
-		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-		GL11.glColor4f(1, 1, 1, 1);
+		GlStateManager.enableTexture2D();
+		GlStateManager.enableBlend();
+		GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+		GlStateManager.color(1, 1, 1, 1);
 		
 		drawAnchor();
 		
-		GL11.glDisable(GL11.GL_BLEND);
+		GlStateManager.disableBlend();
 	}
 	
 	private void updateAnchorSize() {
