@@ -66,7 +66,7 @@ public class AntiqueAtlasMod {
 		itemAtlas = (ItemAtlas) new ItemAtlas(settings).setUnlocalizedName("antiqueAtlas");
 		
 		itemEmptyAtlas = (ItemEmptyAtlas) new ItemEmptyAtlas()
-			.setUnlocalizedName("emptyAntiqueAtlas").setCreativeTab(CreativeTabs.tabTools);
+			.setUnlocalizedName("emptyAntiqueAtlas").setCreativeTab(CreativeTabs.TOOLS);
 		
 		GameRegistry.registerItem(itemAtlas, "antiqueAtlas");
 		GameRegistry.registerItem(itemEmptyAtlas, "emptyAntiqueAtlas");
@@ -77,7 +77,7 @@ public class AntiqueAtlasMod {
 		PacketDispatcher.registerPackets();
 		proxy.init(event);
 		
-		GameRegistry.addShapelessRecipe(new ItemStack(itemEmptyAtlas), Items.book, Items.compass);
+		GameRegistry.addShapelessRecipe(new ItemStack(itemEmptyAtlas), Items.BOOK, Items.COMPASS);
 		
 		RecipeSorter.register("antiqueatlas:atlascloning",   RecipeAtlasCloning.class,   SHAPELESS, "after:minecraft:shapeless");
 		GameRegistry.addRecipe(new RecipeAtlasCloning());

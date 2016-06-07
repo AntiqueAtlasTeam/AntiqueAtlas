@@ -1,9 +1,36 @@
 package hunternif.mc.atlas.client;
 
-import static hunternif.mc.atlas.client.TextureSet.*;
-import hunternif.mc.atlas.core.Tile;
-import hunternif.mc.atlas.util.Log;
-import hunternif.mc.atlas.util.SaveData;
+import static hunternif.mc.atlas.client.TextureSet.DENSE_FOREST;
+import static hunternif.mc.atlas.client.TextureSet.DENSE_FOREST_HILLS;
+import static hunternif.mc.atlas.client.TextureSet.DESERT;
+import static hunternif.mc.atlas.client.TextureSet.DESERT_HILLS;
+import static hunternif.mc.atlas.client.TextureSet.FOREST;
+import static hunternif.mc.atlas.client.TextureSet.FOREST_HILLS;
+import static hunternif.mc.atlas.client.TextureSet.HILLS;
+import static hunternif.mc.atlas.client.TextureSet.ICE;
+import static hunternif.mc.atlas.client.TextureSet.JUNGLE;
+import static hunternif.mc.atlas.client.TextureSet.JUNGLE_CLIFFS;
+import static hunternif.mc.atlas.client.TextureSet.JUNGLE_HILLS;
+import static hunternif.mc.atlas.client.TextureSet.MOUNTAINS_NAKED;
+import static hunternif.mc.atlas.client.TextureSet.MOUNTAINS_SNOW_CAPS;
+import static hunternif.mc.atlas.client.TextureSet.PINES;
+import static hunternif.mc.atlas.client.TextureSet.PINES_HILLS;
+import static hunternif.mc.atlas.client.TextureSet.PLAINS;
+import static hunternif.mc.atlas.client.TextureSet.PLATEAU_MESA;
+import static hunternif.mc.atlas.client.TextureSet.PLATEAU_MESA_TREES;
+import static hunternif.mc.atlas.client.TextureSet.ROCK_SHORE;
+import static hunternif.mc.atlas.client.TextureSet.SAVANNA;
+import static hunternif.mc.atlas.client.TextureSet.SAVANNA_CLIFFS;
+import static hunternif.mc.atlas.client.TextureSet.SHORE;
+import static hunternif.mc.atlas.client.TextureSet.SNOW;
+import static hunternif.mc.atlas.client.TextureSet.SNOW_HILLS;
+import static hunternif.mc.atlas.client.TextureSet.SNOW_PINES;
+import static hunternif.mc.atlas.client.TextureSet.SNOW_PINES_HILLS;
+import static hunternif.mc.atlas.client.TextureSet.SPARSE_FOREST;
+import static hunternif.mc.atlas.client.TextureSet.SPARSE_FOREST_HILLS;
+import static hunternif.mc.atlas.client.TextureSet.SWAMP;
+import static hunternif.mc.atlas.client.TextureSet.SWAMP_HILLS;
+import static hunternif.mc.atlas.client.TextureSet.WATER;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -12,13 +39,18 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import net.minecraft.util.MathHelper;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.common.BiomeDictionary.Type;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.world.biome.Biome;
+
+import hunternif.mc.atlas.core.Tile;
+import hunternif.mc.atlas.util.Log;
+import hunternif.mc.atlas.util.SaveData;
 
 /**
  * Maps biome IDs (or pseudo IDs) to textures. <i>Not thread-safe!</i>
@@ -71,7 +103,7 @@ public class BiomeTextureMap extends SaveData {
 			setTexture(biomeID, defaultTexture);
 			return;
 		}
-		BiomeGenBase biome = BiomeGenBase.getBiome(biomeID);
+		Biome biome = Biome.getBiomeForId(biomeID);
 		if (biome == null) {
 			Log.warn("Biome ID %d is null. Auto-registering default texture set", biomeID);
 			setTexture(biomeID, defaultTexture);

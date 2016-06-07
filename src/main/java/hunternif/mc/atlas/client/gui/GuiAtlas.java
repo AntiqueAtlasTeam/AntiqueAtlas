@@ -1,5 +1,21 @@
 package hunternif.mc.atlas.client.gui;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
+
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.ScaledResolution;
+import net.minecraft.client.resources.I18n;
+import net.minecraft.client.settings.KeyBinding;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
+
+import org.lwjgl.input.Keyboard;
+import org.lwjgl.input.Mouse;
+import org.lwjgl.opengl.GL11;
+
 import hunternif.mc.atlas.AntiqueAtlasMod;
 import hunternif.mc.atlas.api.AtlasAPI;
 import hunternif.mc.atlas.client.BiomeTextureMap;
@@ -26,22 +42,6 @@ import hunternif.mc.atlas.util.ExportImageUtil;
 import hunternif.mc.atlas.util.Log;
 import hunternif.mc.atlas.util.MathUtil;
 import hunternif.mc.atlas.util.Rect;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
-
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.ScaledResolution;
-import net.minecraft.client.resources.I18n;
-import net.minecraft.client.settings.KeyBinding;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
-
-import org.lwjgl.input.Keyboard;
-import org.lwjgl.input.Mouse;
-import org.lwjgl.opengl.GL11;
 
 public class GuiAtlas extends GuiComponent {
 	public static final int WIDTH = 310;
@@ -353,7 +353,7 @@ public class GuiAtlas extends GuiComponent {
 		super.initGui();
 		state.switchTo(NORMAL); //TODO: his causes the Export PNG progress bar to disappear when resizing game window
 		Keyboard.enableRepeatEvents(true);
-		screenScale = new ScaledResolution(mc, mc.displayWidth, mc.displayHeight).getScaleFactor();
+		screenScale = new ScaledResolution(mc).getScaleFactor();
 		setCentered();
 	}
 	

@@ -58,7 +58,7 @@ public class ExtBiomeData extends WorldSavedData {
 	}
 
 	@Override
-	public void writeToNBT(NBTTagCompound compound) {
+	public NBTTagCompound writeToNBT(NBTTagCompound compound) {
 		compound.setInteger(TAG_VERSION, VERSION);
 		NBTTagList dimensionMapList = new NBTTagList();
 		for (Integer dimension : dimensionMap.keySet()) {
@@ -76,6 +76,8 @@ public class ExtBiomeData extends WorldSavedData {
 			dimensionMapList.appendTag(tag);
 		}
 		compound.setTag(TAG_DIMENSION_MAP_LIST, dimensionMapList);
+		
+		return compound;
 	}
 	
 	private Map<ShortVec2, Integer> getBiomesInDimension(int dimension) {
@@ -114,7 +116,7 @@ public class ExtBiomeData extends WorldSavedData {
 			}
 			PacketDispatcher.sendTo(packet, (EntityPlayerMP) player);
 		}
-		Log.info("Sent custom biome data to player %s", player.getCommandSenderName());
+		Log.info("Sent custom biome data to player %s", player.getName());
 	}
 
 }

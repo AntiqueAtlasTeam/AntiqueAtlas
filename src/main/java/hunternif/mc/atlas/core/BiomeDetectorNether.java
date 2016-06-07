@@ -1,11 +1,14 @@
 package hunternif.mc.atlas.core;
 
+import net.minecraft.block.Block;
+import net.minecraft.init.Biomes;
+import net.minecraft.init.Blocks;
+import net.minecraft.world.biome.Biome;
+import net.minecraft.world.chunk.Chunk;
+
 import hunternif.mc.atlas.ext.ExtTileIdMap;
 import hunternif.mc.atlas.util.ByteUtil;
-import net.minecraft.block.Block;
-import net.minecraft.init.Blocks;
-import net.minecraft.world.biome.BiomeGenBase;
-import net.minecraft.world.chunk.Chunk;
+import hunternif.mc.atlas.util.WorldUtil;
 
 /**
  * Detects seas of lava, cave ground and cave walls in the Nether.
@@ -23,25 +26,27 @@ public class BiomeDetectorNether extends BiomeDetectorBase implements IBiomeDete
 	
 	@Override
 	public int getBiomeID(Chunk chunk) {
-		BiomeGenBase[] biomes = BiomeGenBase.getBiomeGenArray();
+		int biomesCount = Biome.REGISTRY.getKeys().size();
 		int[] chunkBiomes = ByteUtil.unsignedByteToIntArray(chunk.getBiomeArray());
-		int[] biomeOccurrences = new int[biomes.length];
+		int[] biomeOccurrences = new int[biomesCount];
 		
 		// The following important pseudo-biomes don't have IDs:
 		int lavaOccurences = 0;
 		int groundOccurences = 0;
 		
+		int hellID = Biome.getIdForBiome(Biomes.HELL);
+		
 		for (int x = 0; x < 16; x++) {
 			for (int z = 0; z < 16; z++) {
 				int biomeID = chunkBiomes[x << 4 | z];
-				if (biomeID == BiomeGenBase.hell.biomeID) {
+				if (biomeID == hellID) {
 					// The Nether!
-					Block netherBlock = chunk.getBlock(x, lavaSeaLevel, z);
-					if (netherBlock == Blocks.lava) {
+					Block netherBlock = chunk.getBlockState(x, lavaSeaLevel, z).getBlock();
+					if (netherBlock == Blocks.LAVA) {
 						lavaOccurences += priorityLava;
 					} else {
-						netherBlock = chunk.getBlock(x, airProbeLevel, z);
-						if (netherBlock == null || netherBlock == Blocks.air) {
+						netherBlock = chunk.getBlockState(x, airProbeLevel, z).getBlock();
+						if (netherBlock == null || netherBlock == Blocks.AIR) {
 							groundOccurences ++; // ground
 						} else {
 							biomeOccurrences[biomeID] ++; // cave walls
@@ -49,8 +54,8 @@ public class BiomeDetectorNether extends BiomeDetectorBase implements IBiomeDete
 					}
 				} else {
 					// In case there are custom biomes "modded in":
-					if (biomeID >= 0 && biomeID < biomes.length && biomes[biomeID] != null) {
-						biomeOccurrences[biomeID] += priorityForBiome(biomes[biomeID]);
+					if (biomeID >= 0 && biomeID < biomesCount && Biome.getBiomeForId(biomeID) != null) {
+						biomeOccurrences[biomeID] += priorityForBiome(Biome.getBiomeForId(biomeID));
 					}
 				}
 			}

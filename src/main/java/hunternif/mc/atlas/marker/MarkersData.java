@@ -122,7 +122,7 @@ public class MarkersData extends WorldSavedData {
 	}
 
 	@Override
-	public void writeToNBT(NBTTagCompound compound) {
+	public NBTTagCompound writeToNBT(NBTTagCompound compound) {
 		Log.info("Saving local markers data to NBT");
 		compound.setInteger(TAG_VERSION, VERSION);
 		NBTTagList dimensionMapList = new NBTTagList();
@@ -146,6 +146,8 @@ public class MarkersData extends WorldSavedData {
 			dimensionMapList.appendTag(tag);
 		}
 		compound.setTag(TAG_DIMENSION_MAP_LIST, dimensionMapList);
+		
+		return compound;
 	}
 	
 	public Set<Integer> getVisitedDimensions() {
@@ -226,7 +228,7 @@ public class MarkersData extends WorldSavedData {
 			}
 			PacketDispatcher.sendTo(packet, (EntityPlayerMP) player);
 		}
-		Log.info("Sent markers data #%d to player %s", atlasID, player.getCommandSenderName());
+		Log.info("Sent markers data #%d to player %s", atlasID, player.getName());
 		playersSentTo.add(player);
 	}
 	

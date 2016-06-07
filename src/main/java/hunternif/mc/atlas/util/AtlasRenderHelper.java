@@ -2,7 +2,8 @@ package hunternif.mc.atlas.util;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.WorldRenderer;
+import net.minecraft.client.renderer.VertexBuffer;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.ResourceLocation;
 
 import org.lwjgl.opengl.GL11;
@@ -15,12 +16,13 @@ public class AtlasRenderHelper {
 		double minV = (double)v / (double)imageHeight;
 		double maxV = (double)(v + height) / (double)imageHeight;
 		Tessellator tessellator = Tessellator.getInstance();
-		WorldRenderer renderer = tessellator.getWorldRenderer();
-		renderer.startDrawingQuads();
-		renderer.addVertexWithUV(x + scaleX*(double)width, y + scaleY*(double)height, 0, maxU, maxV);
-		renderer.addVertexWithUV(x + scaleX*(double)width, y, 0, maxU, minV);
-		renderer.addVertexWithUV(x, y, 0, minU, minV);
-		renderer.addVertexWithUV(x, y + scaleY*(double)height, 0, minU, maxV);
+		VertexBuffer renderer = tessellator.getBuffer();
+		
+		renderer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
+		renderer.pos(x + scaleX*(double)width, y + scaleY*(double)height, 0).tex(maxU, maxV).endVertex();
+		renderer.pos(x + scaleX*(double)width, y, 0).tex(maxU, minV).endVertex();
+		renderer.pos(x, y, 0).tex(minU, minV).endVertex();
+		renderer.pos(x, y + scaleY*(double)height, 0).tex(minU, maxV).endVertex();;
 		tessellator.draw();
 	}
 	
@@ -43,12 +45,12 @@ public class AtlasRenderHelper {
 		double minV = (double) v / 6d;
 		double maxV = (double)(v + 1) / 6d;
 		Tessellator tessellator = Tessellator.getInstance();
-		WorldRenderer renderer = tessellator.getWorldRenderer();
-		renderer.startDrawingQuads();
-		renderer.addVertexWithUV(x + tileHalfSize, y + tileHalfSize, 0, maxU, maxV);
-		renderer.addVertexWithUV(x + tileHalfSize, y, 0, maxU, minV);
-		renderer.addVertexWithUV(x, y, 0, minU, minV);
-		renderer.addVertexWithUV(x, y + tileHalfSize, 0, minU, maxV);
+		VertexBuffer renderer = tessellator.getBuffer();
+		renderer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
+		renderer.pos(x + tileHalfSize, y + tileHalfSize, 0).tex(maxU, maxV).endVertex();
+		renderer.pos(x + tileHalfSize, y, 0).tex(maxU, minV).endVertex();
+		renderer.pos(x, y, 0).tex(minU, minV).endVertex();
+		renderer.pos(x, y + tileHalfSize, 0).tex(minU, maxV).endVertex();
 		tessellator.draw();
 	}
 	
