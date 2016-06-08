@@ -52,7 +52,11 @@ public class ExtTileIdMap extends SaveData {
 	TILE_NETHER_WALL = "netherWall",
 	TILE_NETHER_HALL = "netherHall",
 	TILE_NETHER_FORT_STAIRS = "netherFortStairs",
-	TILE_NETHER_THRONE = "netherThrone";
+	TILE_NETHER_THRONE = "netherThrone",
+	
+	TILE_END_ISLAND = "endIsland",
+	TILE_END_ISLAND_PLANTS = "endIslandPlants",
+	TILE_END_VOID = "endVoid";
 	
 	public static final int NOT_FOUND = -1;
 	

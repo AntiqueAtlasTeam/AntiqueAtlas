@@ -18,6 +18,7 @@ import hunternif.mc.atlas.AntiqueAtlasMod;
 import hunternif.mc.atlas.SettingsConfig;
 import hunternif.mc.atlas.core.AtlasData;
 import hunternif.mc.atlas.core.BiomeDetectorBase;
+import hunternif.mc.atlas.core.BiomeDetectorEnd;
 import hunternif.mc.atlas.core.BiomeDetectorNether;
 import hunternif.mc.atlas.core.IBiomeDetector;
 import hunternif.mc.atlas.core.ITileStorage;
@@ -31,6 +32,7 @@ public class ItemAtlas extends Item {
 	private final Map<Integer, IBiomeDetector> biomeAnalyzers = new HashMap<Integer, IBiomeDetector>();
 	private final BiomeDetectorBase biomeDetectorOverworld = new BiomeDetectorBase();
 	private final BiomeDetectorNether biomeDetectorNether = new BiomeDetectorNether();
+	private final BiomeDetectorEnd biomeDetectorEnd = new BiomeDetectorEnd();
 	
 	private SettingsConfig settings;
 
@@ -39,6 +41,7 @@ public class ItemAtlas extends Item {
 		biomeDetectorOverworld.setScanPonds(settings.doScanPonds);
 		setBiomeDetectorForDimension(0, biomeDetectorOverworld);
 		setBiomeDetectorForDimension(-1, biomeDetectorNether);
+		setBiomeDetectorForDimension(1, biomeDetectorEnd);
 		setHasSubtypes(true);
 	}
 	

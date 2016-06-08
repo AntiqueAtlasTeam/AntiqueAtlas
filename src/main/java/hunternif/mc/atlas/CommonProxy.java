@@ -82,6 +82,10 @@ public class CommonProxy {
 		extTileIdMap.getOrCreatePseudoBiomeID(ExtTileIdMap.TILE_NETHER_HALL);
 		extTileIdMap.getOrCreatePseudoBiomeID(ExtTileIdMap.TILE_NETHER_FORT_STAIRS);
 		extTileIdMap.getOrCreatePseudoBiomeID(ExtTileIdMap.TILE_NETHER_THRONE);
+		
+		extTileIdMap.getOrCreatePseudoBiomeID(ExtTileIdMap.TILE_END_ISLAND);
+		extTileIdMap.getOrCreatePseudoBiomeID(ExtTileIdMap.TILE_END_ISLAND_PLANTS);
+		extTileIdMap.getOrCreatePseudoBiomeID(ExtTileIdMap.TILE_END_VOID);
 	}
 	
 	public void openAtlasGUI(ItemStack stack) {}

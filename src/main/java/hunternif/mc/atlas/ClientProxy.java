@@ -34,6 +34,7 @@ import hunternif.mc.atlas.client.gui.GuiAtlas;
 import hunternif.mc.atlas.ext.ExtTileIdMap;
 import hunternif.mc.atlas.ext.ExtTileTextureConfig;
 import hunternif.mc.atlas.ext.ExtTileTextureMap;
+import hunternif.mc.atlas.ext.StructureWatcher;
 import hunternif.mc.atlas.ext.VillageWatcher;
 import hunternif.mc.atlas.marker.MarkerTextureConfig;
 import hunternif.mc.atlas.marker.MarkerTextureMap;
@@ -220,10 +221,10 @@ public class ClientProxy extends CommonProxy {
 		map.register(NETHER_HALL);
 		map.register(NETHER_FORT_STAIRS);
 		map.register(NETHER_THRONE);
-	}
-	
-	private int biomeID(String name) {
-		return Biome.getIdForBiome(Biome.REGISTRY.getObject(new ResourceLocation(name)));
+		
+		map.register(END_ISLAND);
+		map.register(END_ISLAND_PLANTS);
+		map.register(END_VOID);
 	}
 	
 	/** Assign default textures to vanilla biomes. The textures are assigned
@@ -279,6 +280,7 @@ public class ClientProxy extends CommonProxy {
 		setBiomeTextureIfNone(Biomes.MUTATED_SWAMPLAND, SWAMP_HILLS);
 		setBiomeTextureIfNone(Biomes.SKY, SHORE);
 		setBiomeTextureIfNone(Biomes.HELL, CAVE_WALLS);
+		setBiomeTextureIfNone(Biomes.VOID, END_VOID);
 		setBiomeTextureIfNone(Biomes.MUSHROOM_ISLAND, MUSHROOM);
 		setBiomeTextureIfNone(Biomes.MUSHROOM_ISLAND_SHORE, SHORE);
 		setBiomeTextureIfNone(Biomes.SAVANNA, SAVANNA);
@@ -309,6 +311,7 @@ public class ClientProxy extends CommonProxy {
 		setMarkerTextureIfNone("red_x_large", Textures.MARKER_RED_X_LARGE);
 		setMarkerTextureIfNone("red_x_small", Textures.MARKER_RED_X_SMALL);
 		setMarkerTextureIfNone(VillageWatcher.MARKER, Textures.MARKER_VILLAGE);
+		setMarkerTextureIfNone("ENDCITY", Textures.MARKER_END_CITY);
 		setMarkerTextureIfNone("diamond", Textures.MARKER_DIAMOND);
 		setMarkerTextureIfNone("bed", Textures.MARKER_BED);
 		setMarkerTextureIfNone("pickaxe", Textures.MARKER_PICKAXE);
@@ -359,6 +362,10 @@ public class ClientProxy extends CommonProxy {
 		setCustomTileTextureIfNone(ExtTileIdMap.TILE_NETHER_HALL, NETHER_HALL);
 		setCustomTileTextureIfNone(ExtTileIdMap.TILE_NETHER_FORT_STAIRS, NETHER_FORT_STAIRS);
 		setCustomTileTextureIfNone(ExtTileIdMap.TILE_NETHER_THRONE, NETHER_THRONE);
+
+		setCustomTileTextureIfNone(ExtTileIdMap.TILE_END_ISLAND, END_ISLAND);
+		setCustomTileTextureIfNone(ExtTileIdMap.TILE_END_ISLAND_PLANTS, END_ISLAND_PLANTS);
+		setCustomTileTextureIfNone(ExtTileIdMap.TILE_END_VOID, END_VOID);
 	}
 	/** Only applies the change if no texture is registered for this tile name.
 	 * This prevents overwriting of the config when there is no real change. */

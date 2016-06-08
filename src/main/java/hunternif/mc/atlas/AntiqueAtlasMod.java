@@ -5,6 +5,7 @@ import hunternif.mc.atlas.core.AtlasDataHandler;
 import hunternif.mc.atlas.ext.DeathWatcher;
 import hunternif.mc.atlas.ext.ExtBiomeDataHandler;
 import hunternif.mc.atlas.ext.NetherFortressWatcher;
+import hunternif.mc.atlas.ext.StructureWatcher;
 import hunternif.mc.atlas.ext.VillageWatcher;
 import hunternif.mc.atlas.item.ItemAtlas;
 import hunternif.mc.atlas.item.ItemEmptyAtlas;
@@ -98,6 +99,7 @@ public class AntiqueAtlasMod {
 		
 		MinecraftForge.EVENT_BUS.register(new DeathWatcher());
 		
+		MinecraftForge.EVENT_BUS.register(new StructureWatcher("ENDCITY", "gui.antiqueatlas.marker.endcity.test", 1, "EndCity"));
 		MinecraftForge.EVENT_BUS.register(new VillageWatcher());
 		MinecraftForge.EVENT_BUS.register(new NetherFortressWatcher());
 		MinecraftForge.EVENT_BUS.register(new NetherPortalWatcher());
