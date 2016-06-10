@@ -1,15 +1,14 @@
 package hunternif.mc.atlas.ext;
 
-import hunternif.mc.atlas.AntiqueAtlasMod;
-import hunternif.mc.atlas.api.AtlasAPI;
-import hunternif.mc.atlas.marker.Marker;
-import hunternif.mc.atlas.marker.MarkersData;
-import hunternif.mc.atlas.util.Log;
-
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import net.minecraftforge.event.terraingen.PopulateChunkEvent;
+import net.minecraftforge.event.world.WorldEvent;
+import net.minecraftforge.fml.common.eventhandler.EventPriority;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
@@ -17,13 +16,15 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.world.World;
 import net.minecraft.world.gen.structure.MapGenStructureData;
 import net.minecraft.world.gen.structure.StructureBoundingBox;
-import net.minecraftforge.event.terraingen.PopulateChunkEvent;
-import net.minecraftforge.event.world.WorldEvent;
-import net.minecraftforge.fml.common.eventhandler.EventPriority;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
+
+import hunternif.mc.atlas.AntiqueAtlasMod;
+import hunternif.mc.atlas.api.AtlasAPI;
+import hunternif.mc.atlas.marker.Marker;
+import hunternif.mc.atlas.marker.MarkersData;
+import hunternif.mc.atlas.util.Log;
 
 public class VillageWatcher {
 	public static final String MARKER = "village";
@@ -91,22 +92,22 @@ public class VillageWatcher {
 	
 	@SubscribeEvent(priority=EventPriority.LOWEST)
 	public void onWorldLoad(WorldEvent.Load event) {
-		if (!event.world.isRemote && event.world.provider.getDimensionId() == 0) {
-			visitAllUnvisitedVillages(event.world);
+		if (!event.getWorld().isRemote && event.getWorld().provider.getDimension() == 0) {
+			visitAllUnvisitedVillages(event.getWorld());
 		}
 	}
 	
 	@SubscribeEvent
 	public void onPopulateChunk(PopulateChunkEvent.Post event) {
-		if (!event.world.isRemote && event.world.provider.getDimensionId() == 0) {
-			visitAllUnvisitedVillages(event.world);
+		if (!event.getWorld().isRemote && event.getWorld().provider.getDimension() == 0) {
+			visitAllUnvisitedVillages(event.getWorld());
 		}
 	}
 	
 	public void visitAllUnvisitedVillages(World world) {
-		MapGenStructureData data = (MapGenStructureData)world.getPerWorldStorage().loadData(MapGenStructureData.class, "Village");
+		MapGenStructureData data = (MapGenStructureData)world.getPerWorldStorage().getOrLoadData(MapGenStructureData.class, "Village");
 		if (data == null) return;
-		NBTTagCompound villageNBTData = data.func_143041_a();
+		NBTTagCompound villageNBTData = data.getTagCompound();
 		@SuppressWarnings("unchecked")
 		Set<String> tagSet = villageNBTData.getKeySet();
 		for (String coords : tagSet) {
@@ -131,7 +132,7 @@ public class VillageWatcher {
 		int startChunkX = tag.getInteger("ChunkX");
 		int startChunkZ = tag.getInteger("ChunkZ");
 		Log.info("Visiting NPC Village in dimension #%d \"%s\" at chunk (%d, %d) ~ blocks (%d, %d)",
-				world.provider.getDimensionId(), world.provider.getDimensionName(),
+				world.provider.getDimension(), world.provider.getDimensionType().getName(),
 				startChunkX, startChunkZ, startChunkX << 4, startChunkZ << 4);
 		NBTTagList children = tag.getTagList("Children", 10);
 		for (int i = 0; i < children.tagCount(); i++) {
@@ -150,7 +151,7 @@ public class VillageWatcher {
 				for (int j = -1; j <= 1; j++) {
 					for (int k = -1; k <= 1; k++) {
 						List<Marker> markers = AntiqueAtlasMod.globalMarkersData.getData()
-								.getMarkersAtChunk(world.provider.getDimensionId(), j + chunkX / MarkersData.CHUNK_STEP, k + chunkZ / MarkersData.CHUNK_STEP);
+								.getMarkersAtChunk(world.provider.getDimension(), j + chunkX / MarkersData.CHUNK_STEP, k + chunkZ / MarkersData.CHUNK_STEP);
 						if (markers != null) {
 							for (Marker marker : markers) {
 								if (marker.getType().equals(MARKER)) {
@@ -209,7 +210,7 @@ public class VillageWatcher {
 			int chunkZ = z >> 4;
 			if (START.equals(childID)) {
 				List<Marker> markers = AntiqueAtlasMod.globalMarkersData.getData()
-						.getMarkersAtChunk(world.provider.getDimensionId(), chunkX / MarkersData.CHUNK_STEP, chunkZ / MarkersData.CHUNK_STEP);
+						.getMarkersAtChunk(world.provider.getDimension(), chunkX / MarkersData.CHUNK_STEP, chunkZ / MarkersData.CHUNK_STEP);
 				if (markers != null) {
 					for (Marker marker : markers) {
 						if (marker.getType().equals(MARKER)) {

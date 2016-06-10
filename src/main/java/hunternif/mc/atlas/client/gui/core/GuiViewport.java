@@ -38,7 +38,7 @@ public class GuiViewport extends GuiComponent {
 	@Override
 	public void initGui() {
 		super.initGui();
-		screenScale = new ScaledResolution(mc, mc.displayWidth, mc.displayHeight).getScaleFactor();
+		screenScale = new ScaledResolution(mc).getScaleFactor();
 	}
 	
 	@Override

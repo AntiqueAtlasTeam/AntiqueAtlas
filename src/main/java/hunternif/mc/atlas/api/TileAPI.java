@@ -1,11 +1,13 @@
 package hunternif.mc.atlas.api;
 
-import hunternif.mc.atlas.client.TextureSet;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.World;
-import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.World;
+import net.minecraft.world.biome.Biome;
+
+import hunternif.mc.atlas.client.TextureSet;
 
 /**
  * API for biome tiles and custom tiles (i.e. dungeons, towns etc.)
@@ -41,7 +43,7 @@ public interface TileAPI {
 	 * See {@link #registerTextureSet()}
 	 */
 	@SideOnly(Side.CLIENT)
-	void setBiomeTexture(BiomeGenBase biome, String textureSetName, ResourceLocation ... textures);
+	void setBiomeTexture(Biome biome, String textureSetName, ResourceLocation ... textures);
 	
 	/**
 	 * Assign one or more texture to biome ID, using an existing texture set.
@@ -55,7 +57,7 @@ public interface TileAPI {
 	 * See {@link #registerTextureSet()}
 	 */
 	@SideOnly(Side.CLIENT)
-	void setBiomeTexture(BiomeGenBase biome, TextureSet textureSet);
+	void setBiomeTexture(Biome biome, TextureSet textureSet);
 	
 	
 	// Custom tile textures ====================================================
@@ -125,7 +127,7 @@ public interface TileAPI {
 	 * @param chunkX	x chunk coordinate. (block coordinate >> 4)
 	 * @param chunkZ	z chunk coordinate. (block coordinate >> 4)
 	 */
-	void putBiomeTile(World world, int atlasID, BiomeGenBase biome, int chunkX, int chunkZ);
+	void putBiomeTile(World world, int atlasID, Biome biome, int chunkX, int chunkZ);
 	
 	
 	// Custom tiles ============================================================

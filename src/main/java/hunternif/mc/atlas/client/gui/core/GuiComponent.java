@@ -304,6 +304,19 @@ public class GuiComponent extends GuiScreen {
 		}
 	}
 	
+	@Override
+	protected void keyTyped(char typedChar, int keyCode) throws IOException {
+		if (keyCode == 1 && mc.currentScreen != null)
+        {
+            this.mc.displayGuiScreen((GuiScreen)null);
+
+            if (this.mc.currentScreen == null)
+            {
+                this.mc.setIngameFocus();
+            }
+        }
+	}
+	
 	/** Render this GUI and its children. */
 	@Override
 	public void drawScreen(int mouseX, int mouseY, float partialTick) {

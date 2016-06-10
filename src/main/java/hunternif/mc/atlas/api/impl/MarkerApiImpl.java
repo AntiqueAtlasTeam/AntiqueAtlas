@@ -1,5 +1,8 @@
 package hunternif.mc.atlas.api.impl;
 
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.World;
+
 import hunternif.mc.atlas.AntiqueAtlasMod;
 import hunternif.mc.atlas.api.MarkerAPI;
 import hunternif.mc.atlas.marker.Marker;
@@ -10,8 +13,6 @@ import hunternif.mc.atlas.network.bidirectional.DeleteMarkerPacket;
 import hunternif.mc.atlas.network.client.MarkersPacket;
 import hunternif.mc.atlas.network.server.AddMarkerPacket;
 import hunternif.mc.atlas.util.Log;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.World;
 
 public class MarkerApiImpl implements MarkerAPI {
 	/** Used in place of atlasID to signify that the marker is global. */
@@ -36,17 +37,17 @@ public class MarkerApiImpl implements MarkerAPI {
 				Log.warn("Client tried to add a global marker!");
 			} else {
 				PacketDispatcher.sendToServer(new AddMarkerPacket(atlasID,
-						world.provider.getDimensionId(), markerType, label, x, z, visibleAhead));
+						world.provider.getDimension(), markerType, label, x, z, visibleAhead));
 			}
 		} else {
 			if (atlasID == GLOBAL) {
 				MarkersData data = AntiqueAtlasMod.globalMarkersData.getData();
-				Marker marker = data.createAndSaveMarker(markerType, label, world.provider.getDimensionId(), x, z, visibleAhead);
-				PacketDispatcher.sendToAll(new MarkersPacket(world.provider.getDimensionId(), marker));
+				Marker marker = data.createAndSaveMarker(markerType, label, world.provider.getDimension(), x, z, visibleAhead);
+				PacketDispatcher.sendToAll(new MarkersPacket(world.provider.getDimension(), marker));
 			} else {
 				MarkersData data = AntiqueAtlasMod.markersData.getMarkersData(atlasID, world);
-				Marker marker = data.createAndSaveMarker(markerType, label, world.provider.getDimensionId(), x, z, visibleAhead);
-				PacketDispatcher.sendToAll(new MarkersPacket(atlasID, world.provider.getDimensionId(), marker));
+				Marker marker = data.createAndSaveMarker(markerType, label, world.provider.getDimension(), x, z, visibleAhead);
+				PacketDispatcher.sendToAll(new MarkersPacket(atlasID, world.provider.getDimension(), marker));
 			}
 		}
 	}

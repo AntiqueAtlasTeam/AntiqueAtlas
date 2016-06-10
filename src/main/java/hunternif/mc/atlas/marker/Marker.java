@@ -1,7 +1,8 @@
 package hunternif.mc.atlas.marker;
 
+import net.minecraft.client.resources.I18n;
+
 import hunternif.mc.atlas.util.ShortVec2;
-import net.minecraft.util.StatCollector;
 
 /**
  * Marker on the map in an atlas. Has a type and a text label.
@@ -50,13 +51,13 @@ public class Marker {
 		// string parameter, i.e. player's name.
 		int whitespaceIndex = label.indexOf(' ');
 		if (whitespaceIndex == -1) {
-			return StatCollector.translateToLocal(label);
+			return I18n.format(label);
 		} else {
 			String key = label.substring(0, whitespaceIndex);
 			String param = label.substring(whitespaceIndex + 1);
-			String translated = StatCollector.translateToLocal(key);
+			String translated = I18n.format(key);
 			if (translated != key) { // Make sure translation succeeded
-				return String.format(StatCollector.translateToLocal(key), param);
+				return String.format(I18n.format(key), param);
 			} else {
 				return label;
 			}

@@ -4,6 +4,8 @@ import hunternif.mc.atlas.client.Textures;
 import hunternif.mc.atlas.util.SaveData;
 
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
@@ -24,7 +26,34 @@ public class MarkerTextureMap extends SaveData {
 	
 	/** Marker types are sorted by their name. */
 	final SortedMap<String, ResourceLocation> textureMap = new TreeMap<String, ResourceLocation>();
+	final Map<String, MarkerTypeData> typeData = new HashMap<String, MarkerTypeData>();
 	public static final ResourceLocation defaultTexture = Textures.MARKER_RED_X_SMALL;
+	public static final MarkerTypeData defaultTypeData = new MarkerTypeData(true, false, false);
+	
+	public void setMarkerTypeData(String markerType, MarkerTypeData data) {
+		MarkerTypeData oldData = typeData.get(markerType);
+		if(data == oldData)
+			return;
+		
+		if(data == null && oldData != null) {
+			typeData.remove(markerType);
+			markDirty();
+		}
+		
+		if(!data.equals(oldData)) {
+			typeData.put(markerType, data);
+			markDirty();
+		}
+	}
+	
+	public MarkerTypeData getMarkerTypeData(String markerType) {
+		MarkerTypeData data = typeData.get(markerType);
+		return data == null ? defaultTypeData : data;
+	}
+	
+	public boolean hasTileData(String markerType) {
+		return typeData.containsKey(markerType);
+	}
 	
 	public void setTexture(String markerType, ResourceLocation texture) {
 		ResourceLocation oldTexture = textureMap.get(markerType);

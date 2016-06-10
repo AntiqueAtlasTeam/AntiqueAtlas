@@ -47,22 +47,22 @@ public class NetherFortressWatcher {
 	
 	@SubscribeEvent(priority=EventPriority.LOWEST)
 	public void onWorldLoad(WorldEvent.Load event) {
-		if (!event.world.isRemote && event.world.provider.getDimensionId() == -1) {
-			visitAllUnvisitedFortresses(event.world);
+		if (!event.getWorld().isRemote && event.getWorld().provider.getDimension() == -1) {
+			visitAllUnvisitedFortresses(event.getWorld());
 		}
 	}
 	
 	@SubscribeEvent
 	public void onPopulateChunk(PopulateChunkEvent.Post event) {
-		if (!event.world.isRemote && event.world.provider.getDimensionId() == -1) {
-			visitAllUnvisitedFortresses(event.world);
+		if (!event.getWorld().isRemote && event.getWorld().provider.getDimension() == -1) {
+			visitAllUnvisitedFortresses(event.getWorld());
 		}
 	}
 	
 	public void visitAllUnvisitedFortresses(World world) {
-		MapGenStructureData data = (MapGenStructureData)world.getPerWorldStorage().loadData(MapGenStructureData.class, "Fortress");
+		MapGenStructureData data = (MapGenStructureData)world.getPerWorldStorage().getOrLoadData(MapGenStructureData.class, "Fortress");
 		if (data == null) return;
-		NBTTagCompound fortressNBTData = data.func_143041_a();
+		NBTTagCompound fortressNBTData = data.getTagCompound();
 		@SuppressWarnings("unchecked")
 		Set<String> tagSet = fortressNBTData.getKeySet();
 		for (String coords : tagSet) {
@@ -81,7 +81,7 @@ public class NetherFortressWatcher {
 		int startChunkX = tag.getInteger("ChunkX");
 		int startChunkZ = tag.getInteger("ChunkZ");
 		Log.info("Visiting Nether Fortress in dimension #%d \"%s\" at chunk (%d, %d) ~ blocks (%d, %d)",
-				world.provider.getDimensionId(), world.provider.getDimensionName(),
+				world.provider.getDimension(), world.provider.getDimensionType().getName(),
 				startChunkX, startChunkZ, startChunkX << 4, startChunkZ << 4);
 		NBTTagList children = tag.getTagList("Children", 10);
 		for (int i = 0; i < children.tagCount(); i++) {
@@ -156,6 +156,6 @@ public class NetherFortressWatcher {
 	}
 	
 	private static boolean noTileAt(World world, int chunkX, int chunkZ) {
-		return AntiqueAtlasMod.extBiomeData.getData().getBiomeIdAt(world.provider.getDimensionId(), chunkX, chunkZ) == -1;
+		return AntiqueAtlasMod.extBiomeData.getData().getBiomeIdAt(world.provider.getDimension(), chunkX, chunkZ) == -1;
 	}
 }

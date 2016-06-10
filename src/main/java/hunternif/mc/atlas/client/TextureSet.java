@@ -160,6 +160,10 @@ public class TextureSet implements Comparable<TextureSet> {
 	ROCK_SHORE  = new TextureSetShore("ROCK_SHORE", WATER, TILE_ROCK_SHORE).stitchesToNull(),
 	LAVA_SHORE  = new TextureSetShore("LAVA_SHORE", LAVA, TILE_LAVA_SHORE, TILE_LAVA_SHORE2).stitchesToNull(),
 	
+	END_VOID = standard("END_VOID", TILE_END_VOID),
+	END_ISLAND = standard("END_ISLAND", TILE_END_ISLAND, TILE_END_ISLAND2),
+	END_ISLAND_PLANTS = standard("END_ISLAND_PLANTS", TILE_END_ISLAND_PLANTS, TILE_END_ISLAND_PLANTS2),
+	
 	// Misc. stuff:
 	MUSHROOM   = standard("MUSHROOM", TILE_MUSHROOM, TILE_MUSHROOM2),
 	CAVE_WALLS = standard("CAVE_WALLS", TILE_CAVE_WALLS),
@@ -206,6 +210,7 @@ public class TextureSet implements Comparable<TextureSet> {
 		DESERT.stitchTo(MESA, BRYCE);
 		stitchMutually(PLATEAU_MESA, PLATEAU_MESA_TREES, PLATEAU_SAVANNA, PLATEAU_SAVANNA_M);
 		stitchMutually(PLATEAU_MESA_LOW, PLATEAU_MESA_TREES_LOW);
+		stitchMutually(END_ISLAND, END_ISLAND_PLANTS);
 		
 		// Village stuff:
 //		stitchMutually(VILLAGE_PATH_X, VILLAGE_PATH_Z);
