@@ -25,18 +25,24 @@ import hunternif.mc.atlas.util.Log;
 
 public class StructureWatcher {
 	public final String MARKER, DAT, MARKER_NAME;
+	public String TILE_MARKER, TILE_MARKER_NAME;
 	public final int DIM;
 	
-	public StructureWatcher(String marker, String markerName, int dim, String dat) {
+	public StructureWatcher(String dat, int dim, String marker, String name) {
 		MARKER = marker;
-		MARKER_NAME = markerName;
+		MARKER_NAME = name;
 		DIM = dim;
 		DAT = dat;
 	}
 	
+	public StructureWatcher setTileMarker(String type, String name) {
+		TILE_MARKER = type;
+		TILE_MARKER_NAME = name;
+		return this;
+	}
+	
 	/** Set of tag names for every structure, in the format "[x, y]" */
 	//TODO: list of visited villages must be reset when changing worlds!
-	// And the same goes for Nether Fortress Watcher
 	private final Set<String> visited = new HashSet<String>();
 	
 	@SubscribeEvent(priority=EventPriority.LOWEST)
@@ -72,28 +78,32 @@ public class StructureWatcher {
 	private void visitStructure(World world, NBTTagCompound tag) {
 		int chunkX = tag.getInteger("ChunkX");
 		int chunkZ = tag.getInteger("ChunkZ");
-		Log.info("	Visiting " + MARKER + " in dimension #%d \"%s\" at chunk (%d, %d) ~ blocks (%d, %d)",
+		Log.info("	Visiting " + DAT + " in dimension #%d \"%s\" at chunk (%d, %d) ~ blocks (%d, %d)",
 				world.provider.getDimension(), world.provider.getDimensionType().getName(),
 				chunkX, chunkZ, chunkX << 4, chunkZ << 4);
 		boolean foundMarker = false;
+		boolean foundTileMarker = false;
 		
     	List<Marker> markers = AntiqueAtlasMod.globalMarkersData.getData()
 				.getMarkersAtChunk(world.provider.getDimension(), chunkX / MarkersData.CHUNK_STEP, chunkZ / MarkersData.CHUNK_STEP);
 		if (markers != null) {
 			for (Marker marker : markers) {
-				if (marker.getChunkX() == chunkX && marker.getChunkZ() == chunkZ &&
+				if (!foundMarker && marker.getChunkX() == chunkX && marker.getChunkZ() == chunkZ &&
 				    marker.getType().equals(MARKER)) {
 					foundMarker = true;
-					break;
+				}
+				if (!foundTileMarker && TILE_MARKER != null && marker.getChunkX() == chunkX && marker.getChunkZ() == chunkZ &&
+				    marker.getType().equals(TILE_MARKER)) {
+					foundTileMarker = true;
 				}
 			}
 		}
-    	
-		if(foundMarker)
-			return;
 		
 		if (AntiqueAtlasMod.settings.autoVillageMarkers) {
-			AtlasAPI.markers.putGlobalMarker(world, false, MARKER, MARKER_NAME + ".markerthing", (chunkX << 4) + 8, (chunkZ << 4) + 8);
+			if(!foundMarker)
+				AtlasAPI.markers.putGlobalMarker(world, false, MARKER, MARKER_NAME, (chunkX << 4) + 8, (chunkZ << 4) + 8);
+			if(TILE_MARKER != null && !foundTileMarker)
+				AtlasAPI.markers.putGlobalMarker(world, false, TILE_MARKER, TILE_MARKER_NAME, (chunkX << 4) + 8, (chunkZ << 4) + 8);
 		}
 	}
 	
@@ -102,6 +112,9 @@ public class StructureWatcher {
 		
 		for (Marker marker : markers) {
 			if(marker.getType().equals(MARKER)) {
+				AtlasAPI.markers.deleteGlobalMarker(world, marker.getId());
+			}
+			if(TILE_MARKER != null && marker.getType().equals(TILE_MARKER)) {
 				AtlasAPI.markers.deleteGlobalMarker(world, marker.getId());
 			}
 		}

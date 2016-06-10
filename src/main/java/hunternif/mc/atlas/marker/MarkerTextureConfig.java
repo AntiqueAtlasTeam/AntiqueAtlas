@@ -38,6 +38,7 @@ public class MarkerTextureConfig extends AbstractJSONConfig<MarkerTextureMap> {
 			ResourceLocation texture = new ResourceLocation(entry.getValue().getAsString());
 			data.setTexture(markerType, texture);
 		}
+		// TODO: read tile data
 	}
 
 	@Override
@@ -48,5 +49,6 @@ public class MarkerTextureConfig extends AbstractJSONConfig<MarkerTextureMap> {
 			String markerType = queue.poll();
 			json.addProperty(markerType, data.textureMap.get(markerType).toString());
 		}
+		// TODO: save tile data
 	}
 }

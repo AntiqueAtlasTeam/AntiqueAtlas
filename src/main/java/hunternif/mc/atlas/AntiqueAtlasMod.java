@@ -99,7 +99,7 @@ public class AntiqueAtlasMod {
 		
 		MinecraftForge.EVENT_BUS.register(new DeathWatcher());
 		
-		MinecraftForge.EVENT_BUS.register(new StructureWatcher("ENDCITY", "gui.antiqueatlas.marker.endcity.test", 1, "EndCity"));
+		MinecraftForge.EVENT_BUS.register(new StructureWatcher("EndCity", 1, "EndCity_Far", "gui.antiqueatlas.marker.endcity").setTileMarker("EndCity", "gui.antiqueatlas.marker.endcity"));
 		MinecraftForge.EVENT_BUS.register(new VillageWatcher());
 		MinecraftForge.EVENT_BUS.register(new NetherFortressWatcher());
 		MinecraftForge.EVENT_BUS.register(new NetherPortalWatcher());

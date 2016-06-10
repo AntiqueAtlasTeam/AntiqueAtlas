@@ -34,10 +34,10 @@ import hunternif.mc.atlas.client.gui.GuiAtlas;
 import hunternif.mc.atlas.ext.ExtTileIdMap;
 import hunternif.mc.atlas.ext.ExtTileTextureConfig;
 import hunternif.mc.atlas.ext.ExtTileTextureMap;
-import hunternif.mc.atlas.ext.StructureWatcher;
 import hunternif.mc.atlas.ext.VillageWatcher;
 import hunternif.mc.atlas.marker.MarkerTextureConfig;
 import hunternif.mc.atlas.marker.MarkerTextureMap;
+import hunternif.mc.atlas.marker.MarkerTypeData;
 import hunternif.mc.atlas.marker.NetherPortalWatcher;
 import hunternif.mc.atlas.util.Log;
 
@@ -305,13 +305,14 @@ public class ClientProxy extends CommonProxy {
 		setBiomeTextureIfNone(Biome.getIdForBiome(biome), textureSet);
 	}
 	
+	MarkerTypeData dummyData = new MarkerTypeData(true, false, false);
+	
 	/** Load default marker textures. */
 	private void registerDefaultMarkers() {;
 		setMarkerTextureIfNone("google", Textures.MARKER_GOOGLE_MARKER);
 		setMarkerTextureIfNone("red_x_large", Textures.MARKER_RED_X_LARGE);
 		setMarkerTextureIfNone("red_x_small", Textures.MARKER_RED_X_SMALL);
 		setMarkerTextureIfNone(VillageWatcher.MARKER, Textures.MARKER_VILLAGE);
-		setMarkerTextureIfNone("ENDCITY", Textures.MARKER_END_CITY);
 		setMarkerTextureIfNone("diamond", Textures.MARKER_DIAMOND);
 		setMarkerTextureIfNone("bed", Textures.MARKER_BED);
 		setMarkerTextureIfNone("pickaxe", Textures.MARKER_PICKAXE);
@@ -321,6 +322,20 @@ public class ClientProxy extends CommonProxy {
 		setMarkerTextureIfNone("tower", Textures.MARKER_TOWER);
 		setMarkerTextureIfNone("scroll", Textures.MARKER_SCROLL);
 		setMarkerTextureIfNone("tomb", Textures.MARKER_TOMB);
+		
+		MarkerTypeData data;
+		
+		setMarkerTextureIfNone("EndCity", Textures.MARKER_END_CITY);
+		data = createMarkerDataOrGetDummy("EndCity");
+		data.setShowAsTileData(4, 0, -1.5f, 64, Textures.MARKER_END_CITY_MIP_32, Textures.MARKER_END_CITY_MIP_16);
+		data.setShowAsTile(true).setShouldClip(true).setClip(-2, 1000);
+		
+		setMarkerTextureIfNone("EndCity_Far", Textures.MARKER_END_CITY_FAR);
+		data = createMarkerDataOrGetDummy("EndCity_Far");
+		data.setShouldClip(true).setClip(-100, -2);
+		
+		data = createMarkerDataOrGetDummy(VillageWatcher.MARKER);
+		data.setShouldClip(true).setClip(-100, -1);
 	}
 	/** Only applies the change if no texture is registered for this marker type.
 	 * This prevents overwriting of the config when there is no real change. */
@@ -328,6 +343,19 @@ public class ClientProxy extends CommonProxy {
 		if (!markerTextureMap.isRegistered(markerType)) {
 			markerTextureMap.setTexture(markerType, texture);
 		}
+	}
+	
+	/**
+	 * Creates and returns a MarkerTypeData if it hasn't been loaded
+	 * or returns a dummy MarkerTypeData that isn't linked to any type
+	 */
+	private MarkerTypeData createMarkerDataOrGetDummy(String markerType) {
+		MarkerTypeData data = dummyData;
+		if (!markerTextureMap.hasTileData(markerType)) {
+			data = new MarkerTypeData(true, false, false);
+			markerTextureMap.setMarkerTypeData(markerType, data);
+		}
+		return data;
 	}
 	
 	/** Assign default textures to the pseudo-biomes used for vanilla Minecraft.
