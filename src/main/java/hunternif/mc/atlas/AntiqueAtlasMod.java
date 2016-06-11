@@ -5,6 +5,7 @@ import hunternif.mc.atlas.core.AtlasDataHandler;
 import hunternif.mc.atlas.ext.DeathWatcher;
 import hunternif.mc.atlas.ext.ExtBiomeDataHandler;
 import hunternif.mc.atlas.ext.NetherFortressWatcher;
+import hunternif.mc.atlas.ext.StructureWatcher;
 import hunternif.mc.atlas.ext.VillageWatcher;
 import hunternif.mc.atlas.item.ItemAtlas;
 import hunternif.mc.atlas.item.ItemEmptyAtlas;
@@ -66,7 +67,7 @@ public class AntiqueAtlasMod {
 		itemAtlas = (ItemAtlas) new ItemAtlas(settings).setUnlocalizedName("antiqueAtlas");
 		
 		itemEmptyAtlas = (ItemEmptyAtlas) new ItemEmptyAtlas()
-			.setUnlocalizedName("emptyAntiqueAtlas").setCreativeTab(CreativeTabs.tabTools);
+			.setUnlocalizedName("emptyAntiqueAtlas").setCreativeTab(CreativeTabs.TOOLS);
 		
 		GameRegistry.registerItem(itemAtlas, "antiqueAtlas");
 		GameRegistry.registerItem(itemEmptyAtlas, "emptyAntiqueAtlas");
@@ -77,7 +78,7 @@ public class AntiqueAtlasMod {
 		PacketDispatcher.registerPackets();
 		proxy.init(event);
 		
-		GameRegistry.addShapelessRecipe(new ItemStack(itemEmptyAtlas), Items.book, Items.compass);
+		GameRegistry.addShapelessRecipe(new ItemStack(itemEmptyAtlas), Items.BOOK, Items.COMPASS);
 		
 		RecipeSorter.register("antiqueatlas:atlascloning",   RecipeAtlasCloning.class,   SHAPELESS, "after:minecraft:shapeless");
 		GameRegistry.addRecipe(new RecipeAtlasCloning());
@@ -98,6 +99,7 @@ public class AntiqueAtlasMod {
 		
 		MinecraftForge.EVENT_BUS.register(new DeathWatcher());
 		
+		MinecraftForge.EVENT_BUS.register(new StructureWatcher("EndCity", 1, "EndCity_Far", "gui.antiqueatlas.marker.endcity").setTileMarker("EndCity", "gui.antiqueatlas.marker.endcity"));
 		MinecraftForge.EVENT_BUS.register(new VillageWatcher());
 		MinecraftForge.EVENT_BUS.register(new NetherFortressWatcher());
 		MinecraftForge.EVENT_BUS.register(new NetherPortalWatcher());

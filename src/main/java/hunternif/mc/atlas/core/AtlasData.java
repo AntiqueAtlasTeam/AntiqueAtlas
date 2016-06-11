@@ -71,9 +71,8 @@ public class AtlasData extends WorldSavedData {
 					dimTag.getInteger(TAG_BROWSING_Y), zoom);
 		}
 	}
-
-	@Override
-	public void writeToNBT(NBTTagCompound compound) {
+	
+	public NBTTagCompound writeToNBT(NBTTagCompound compound) {		
 		compound.setInteger(TAG_VERSION, VERSION);
 		NBTTagList dimensionMapList = new NBTTagList();
 		for (Entry<Integer, DimensionData> dimensionEntry : dimensionMap.entrySet()) {
@@ -95,6 +94,8 @@ public class AtlasData extends WorldSavedData {
 			dimensionMapList.appendTag(dimTag);
 		}
 		compound.setTag(TAG_DIMENSION_MAP_LIST, dimensionMapList);
+		
+		return compound;
 	}
 	
 	/** Puts a given tile into given map at specified coordinates and,
@@ -144,7 +145,7 @@ public class AtlasData extends WorldSavedData {
 		// Before syncing make sure the changes are written to the nbt:
 		writeToNBT(nbt);
 		PacketDispatcher.sendTo(new MapDataPacket(atlasID, nbt), (EntityPlayerMP) player);
-		Log.info("Sent Atlas #%d data to player %s", atlasID, player.getCommandSenderName());
+		Log.info("Sent Atlas #%d data to player %s", atlasID, player.getName());
 		playersSentTo.add(player);
 	}
 

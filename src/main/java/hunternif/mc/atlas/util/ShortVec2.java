@@ -1,6 +1,6 @@
 package hunternif.mc.atlas.util;
 
-import net.minecraft.util.MathHelper;
+import net.minecraft.util.math.MathHelper;
 
 public class ShortVec2 {
 	public short x;

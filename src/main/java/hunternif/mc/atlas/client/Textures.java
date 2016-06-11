@@ -44,6 +44,10 @@ public class Textures {
 	MARKER_RED_X_LARGE = marker("red_x_large.png"),
 	MARKER_RED_X_SMALL = marker("red_x_small.png"),
 	MARKER_VILLAGE = marker("village.png"),
+	MARKER_END_CITY_FAR = marker("end_city_far.png"),
+	MARKER_END_CITY = marker("end_city.png"),
+	MARKER_END_CITY_MIP_32 = marker("end_city_mipped_32.png"),
+	MARKER_END_CITY_MIP_16 = marker("end_city_mipped_16.png"),
 	MARKER_DIAMOND = marker("diamond.png"),
 	MARKER_BED = marker("bed.png"),
 	MARKER_PICKAXE = marker("pickaxe.png"),
@@ -206,6 +210,12 @@ public class Textures {
 	TILE_LAVA2 = tile("lava2.png"),
 	TILE_LAVA_SHORE = tile("lava_shore.png"),
 	TILE_LAVA_SHORE2 = tile("lava_shore2.png"),
+	
+	TILE_END_VOID = tile("end_void.png"),
+	TILE_END_ISLAND = tile("end_island.png"),
+	TILE_END_ISLAND2 = tile("end_island2.png"),
+	TILE_END_ISLAND_PLANTS = tile("end_island_plants.png"),
+	TILE_END_ISLAND_PLANTS2 = tile("end_island_plants2.png"),
 	
 	// Village:
 	TILE_HOUSE = tile("house.png"),

@@ -1,23 +1,26 @@
 package hunternif.mc.atlas.marker;
 
-import hunternif.mc.atlas.AntiqueAtlasMod;
-import hunternif.mc.atlas.api.AtlasAPI;
-import hunternif.mc.atlas.util.DummyWorldAccess;
-import hunternif.mc.atlas.util.Log;
-
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+
+import net.minecraftforge.event.world.WorldEvent;
+import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.server.FMLServerHandler;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.World;
-import net.minecraftforge.event.world.WorldEvent;
-import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+
+import hunternif.mc.atlas.AntiqueAtlasMod;
+import hunternif.mc.atlas.api.AtlasAPI;
+import hunternif.mc.atlas.util.DummyWorldAccess;
+import hunternif.mc.atlas.util.Log;
 
 /**
  * Identifies when a player teleports in or out of the nether and puts a portal
@@ -40,15 +43,15 @@ public class NetherPortalWatcher extends DummyWorldAccess {
 	
 	@SubscribeEvent
 	public void onWorldLoad(WorldEvent.Load event) {
-		if (!event.world.isRemote) {
-			event.world.addWorldAccess(this);
+		if (!event.getWorld().isRemote) {
+			event.getWorld().addEventListener(this);
 		}
 	}
 	
 	@SubscribeEvent
 	public void onWorldUnload(WorldEvent.Unload event) {
-		if (!event.world.isRemote) {
-			event.world.removeWorldAccess(this);
+		if (!event.getWorld().isRemote) {
+			event.getWorld().removeEventListener(this);
 		}
 	}
 	
@@ -74,7 +77,7 @@ public class NetherPortalWatcher extends DummyWorldAccess {
 			if (isEntityInPortal(entity)) {
 				Log.info("Exiting");
 				// player.worldObj.provider.dimensionId is the dimension of origin
-				int dimension = player.worldObj.provider.getDimensionId();
+				int dimension = player.worldObj.provider.getDimension();
 				Log.info("Player %s left the %s", player.getGameProfile().getName(),
 						dimension == 0 ? "Overworld" : "Nether");
 				teleportingPlayerIDs.add(entity.getEntityId());
@@ -88,7 +91,7 @@ public class NetherPortalWatcher extends DummyWorldAccess {
 	public void addPortalMarkerIfNone(EntityPlayer player, int dimension) {
 		// Due to switching dimensions this player entity's worldObj is lagging.
 		// We need the very specific dimension each time.
-		World world = MinecraftServer.getServer().worldServerForDimension(dimension);
+		World world = AntiqueAtlasMod.proxy.getServer().worldServerForDimension(dimension);
 		for (ItemStack stack : player.inventory.mainInventory) {
 			if (stack == null || stack.getItem() != AntiqueAtlasMod.itemAtlas) continue;
 			// Can't use entity.dimension here, because its value has already been updated!

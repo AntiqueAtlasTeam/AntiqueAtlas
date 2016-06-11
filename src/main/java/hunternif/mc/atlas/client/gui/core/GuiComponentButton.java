@@ -4,8 +4,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.minecraft.client.audio.PositionedSoundRecord;
+import net.minecraft.client.audio.PositionedSound;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundCategory;
 
 /** A GuiComponent that can act like a button. */
 @SuppressWarnings("rawtypes")
@@ -45,7 +46,7 @@ public class GuiComponentButton extends GuiComponent {
 	@SuppressWarnings("unchecked")
 	protected void onClick() {
 		if (clickSound != null) {
-			mc.getSoundHandler().playSound(PositionedSoundRecord.create(clickSound, 1.0F));
+			mc.getSoundHandler().playSound(new PositionedSound(clickSound, SoundCategory.BLOCKS) {});//.playSound(new PositionedSoundRecord(clickSound, 1.0F));
 		}
 		for (IButtonListener listener : listeners) {
 			listener.onClick(this);

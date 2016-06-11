@@ -14,15 +14,7 @@ import hunternif.mc.atlas.util.WorldUtil;
  * Detects seas of lava, cave ground and cave walls in the Nether.
  * @author Hunternif
  */
-public class BiomeDetectorNether extends BiomeDetectorBase implements IBiomeDetector {
-	/** The Nether will be checked for air/ground at this level. */
-	private static final int airProbeLevel = 50;
-	/** The Nether will be checked for lava at this level. */
-	private static final int lavaSeaLevel = 31;
-	
-	/** Increment the counter for lava biomes by this much during iteration.
-	 * This is done so that rivers are more likely to be connected. */
-	private static final int priorityLava = 1;
+public class BiomeDetectorEnd extends BiomeDetectorBase implements IBiomeDetector {
 	
 	@Override
 	public int getBiomeID(Chunk chunk) {
@@ -30,27 +22,30 @@ public class BiomeDetectorNether extends BiomeDetectorBase implements IBiomeDete
 		int[] chunkBiomes = ByteUtil.unsignedByteToIntArray(chunk.getBiomeArray());
 		int[] biomeOccurrences = new int[biomesCount];
 		
-		// The following important pseudo-biomes don't have IDs:
-		int lavaOccurences = 0;
-		int groundOccurences = 0;
+		// The following pseudo-biomes don't have IDs:
+		int islandOccurences = 0;
+		int plantOccurences = 0;
+		int voidOccurences = 0;
 		
-		int hellID = Biome.getIdForBiome(Biomes.HELL);
+		int endID = Biome.getIdForBiome(Biomes.SKY);
 		
 		for (int x = 0; x < 16; x++) {
 			for (int z = 0; z < 16; z++) {
 				int biomeID = chunkBiomes[x << 4 | z];
-				if (biomeID == hellID) {
-					// The Nether!
-					Block netherBlock = chunk.getBlockState(x, lavaSeaLevel, z).getBlock();
-					if (netherBlock == Blocks.LAVA) {
-						lavaOccurences += priorityLava;
-					} else {
-						netherBlock = chunk.getBlockState(x, airProbeLevel, z).getBlock();
-						if (netherBlock == null || netherBlock == Blocks.AIR) {
-							groundOccurences ++; // ground
-						} else {
-							biomeOccurrences[biomeID] ++; // cave walls
+				if (biomeID == endID) {
+					// The End!
+					int top = chunk.getHeightValue(x, z);
+					Block topBlock = chunk.getBlockState(x, top-1, z).getBlock();
+					
+					if(topBlock == Blocks.END_STONE) {
+						islandOccurences++;
+						Block rootBlock = chunk.getBlockState(x, top, z).getBlock();
+						if(rootBlock == Blocks.CHORUS_FLOWER || rootBlock == Blocks.CHORUS_PLANT) {
+							plantOccurences++;
 						}
+					}
+					if(topBlock == Blocks.AIR) {
+						voidOccurences++;
 					}
 				} else {
 					// In case there are custom biomes "modded in":
@@ -70,10 +65,13 @@ public class BiomeDetectorNether extends BiomeDetectorBase implements IBiomeDete
 		}
 		
 		// The following important pseudo-biomes don't have IDs:
-		if (meanBiomeOccurences < lavaOccurences) {
-			meanBiomeId = ExtTileIdMap.instance().getPseudoBiomeID(ExtTileIdMap.TILE_LAVA);
-		} else if (meanBiomeOccurences < groundOccurences) {
-			meanBiomeId = ExtTileIdMap.instance().getPseudoBiomeID(ExtTileIdMap.TILE_LAVA_SHORE);
+		if (meanBiomeOccurences < islandOccurences) {
+			if(plantOccurences == 0)
+				meanBiomeId = ExtTileIdMap.instance().getPseudoBiomeID(ExtTileIdMap.TILE_END_ISLAND);
+			else
+				meanBiomeId = ExtTileIdMap.instance().getPseudoBiomeID(ExtTileIdMap.TILE_END_ISLAND_PLANTS);
+		} else if (meanBiomeOccurences < voidOccurences) {
+			meanBiomeId = ExtTileIdMap.instance().getPseudoBiomeID(ExtTileIdMap.TILE_END_VOID); 
 		}
 		
 		return meanBiomeId;

@@ -13,11 +13,11 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 public class DeathWatcher {
 	@SubscribeEvent
 	public void onPlayerDeath(LivingDeathEvent event) {
-		if (event.entity instanceof EntityPlayer && AntiqueAtlasMod.settings.autoDeathMarker) {
-			EntityPlayer player = (EntityPlayer) event.entity;
+		if (event.getEntity() instanceof EntityPlayer && AntiqueAtlasMod.settings.autoDeathMarker) {
+			EntityPlayer player = (EntityPlayer) event.getEntity();
 			for (int atlasID : AtlasAPI.getPlayerAtlases(player)) {
 				AtlasAPI.markers.putMarker(player.worldObj, true, atlasID, "tomb",
-						"gui.antiqueatlas.marker.tomb " + player.getCommandSenderName(),
+						"gui.antiqueatlas.marker.tomb " + player.getName(),
 						(int)player.posX, (int)player.posZ);
 			}
 		}

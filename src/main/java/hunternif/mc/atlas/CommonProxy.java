@@ -1,15 +1,7 @@
 package hunternif.mc.atlas;
 
-import hunternif.mc.atlas.core.BiomeDetectorBase;
-import hunternif.mc.atlas.ext.ExtTileConfig;
-import hunternif.mc.atlas.ext.ExtTileIdMap;
-import hunternif.mc.atlas.util.Log;
-
 import java.io.File;
 
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.IThreadListener;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
@@ -17,12 +9,27 @@ import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+import net.minecraftforge.fml.server.FMLServerHandler;
+
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.IThreadListener;
+
+import hunternif.mc.atlas.core.BiomeDetectorBase;
+import hunternif.mc.atlas.ext.ExtTileConfig;
+import hunternif.mc.atlas.ext.ExtTileIdMap;
+import hunternif.mc.atlas.util.Log;
 
 public class CommonProxy {
 	protected File configDir;
 	
 	private ExtTileIdMap extTileIdMap;
 	private ExtTileConfig extTileConfig;
+	
+	public MinecraftServer getServer() {
+		return FMLServerHandler.instance().getServer();
+	}
 	
 	public void preInit(FMLPreInitializationEvent event) {
 		configDir = new File(event.getModConfigurationDirectory(), "antiqueatlas");
@@ -75,6 +82,10 @@ public class CommonProxy {
 		extTileIdMap.getOrCreatePseudoBiomeID(ExtTileIdMap.TILE_NETHER_HALL);
 		extTileIdMap.getOrCreatePseudoBiomeID(ExtTileIdMap.TILE_NETHER_FORT_STAIRS);
 		extTileIdMap.getOrCreatePseudoBiomeID(ExtTileIdMap.TILE_NETHER_THRONE);
+		
+		extTileIdMap.getOrCreatePseudoBiomeID(ExtTileIdMap.TILE_END_ISLAND);
+		extTileIdMap.getOrCreatePseudoBiomeID(ExtTileIdMap.TILE_END_ISLAND_PLANTS);
+		extTileIdMap.getOrCreatePseudoBiomeID(ExtTileIdMap.TILE_END_VOID);
 	}
 	
 	public void openAtlasGUI(ItemStack stack) {}
@@ -91,7 +102,7 @@ public class CommonProxy {
 	 * used for ensuring that the message is being handled by the main thread
 	 */
 	public IThreadListener getThreadFromContext(MessageContext ctx) {
-		return ctx.getServerHandler().playerEntity.getServerForPlayer();
+		return ctx.getServerHandler().playerEntity.getServer();
 	}
 	
 	/** When a world is saved, so is the custom tile id config. */

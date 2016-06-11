@@ -1,5 +1,15 @@
 package hunternif.mc.atlas.network;
 
+import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.network.NetworkRegistry;
+import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
+import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
+import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
+import net.minecraftforge.fml.relauncher.Side;
+
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
+
 import hunternif.mc.atlas.AntiqueAtlasMod;
 import hunternif.mc.atlas.network.bidirectional.DeleteMarkerPacket;
 import hunternif.mc.atlas.network.bidirectional.PutBiomeTilePacket;
@@ -11,14 +21,6 @@ import hunternif.mc.atlas.network.client.TilesPacket;
 import hunternif.mc.atlas.network.server.AddMarkerPacket;
 import hunternif.mc.atlas.network.server.BrowsingPositionPacket;
 import hunternif.mc.atlas.network.server.RegisterTileIdPacket;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
-import net.minecraftforge.fml.common.network.NetworkRegistry;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
-import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
-import net.minecraftforge.fml.relauncher.Side;
 
 /**
  * 
@@ -104,7 +106,7 @@ public class PacketDispatcher
 	 * Sends a message to everyone within a certain range of the player provided.
 	 */
 	public static final void sendToAllAround(IMessage message, EntityPlayer player, double range) {
-		PacketDispatcher.sendToAllAround(message, player.worldObj.provider.getDimensionId(), player.posX, player.posY, player.posZ, range);
+		PacketDispatcher.sendToAllAround(message, player.worldObj.provider.getDimension(), player.posX, player.posY, player.posZ, range);
 	}
 
 	/**

@@ -1,14 +1,15 @@
 package hunternif.mc.atlas.util;
 
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.BlockPos;
-import net.minecraft.world.IWorldAccess;
+import net.minecraft.util.SoundCategory;
+import net.minecraft.util.SoundEvent;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.IWorldEventListener;
+import net.minecraft.world.World;
 
-public class DummyWorldAccess implements IWorldAccess {
-
-	@Override
-	public void markBlockForUpdate(BlockPos pos) {}
+public class DummyWorldAccess implements IWorldEventListener {
 
 	@Override
 	public void notifyLightSet(BlockPos pos) {}
@@ -16,16 +17,6 @@ public class DummyWorldAccess implements IWorldAccess {
 	@Override
 	public void markBlockRangeForRenderUpdate(int p_147585_1_, int p_147585_2_,
 			int p_147585_3_, int p_147585_4_, int p_147585_5_, int p_147585_6_) {}
-
-	@Override
-	public void playSound(String p_72704_1_, double p_72704_2_,
-			double p_72704_4_, double p_72704_6_, float p_72704_8_,
-			float p_72704_9_) {}
-
-	@Override
-	public void playSoundToNearExcept(EntityPlayer p_85102_1_,
-			String p_85102_2_, double p_85102_3_, double p_85102_5_,
-			double p_85102_7_, float p_85102_9_, float p_85102_10_) {}
 
 	@Override
 	public void spawnParticle(int particleID, boolean ignoreRange, double xCoord,
@@ -39,15 +30,23 @@ public class DummyWorldAccess implements IWorldAccess {
 	public void onEntityRemoved(Entity entity) {}
 
 	@Override
-	public void playRecord(String p_72702_1_, BlockPos pos) {}
-
-	@Override
 	public void broadcastSound(int p_82746_1_, BlockPos pos, int p_82746_5_) {}
 
-	@Override
-	public void playAuxSFX(EntityPlayer player, int sfxType, BlockPos blockPosIn, int p_180439_4_) {}
 
 	@Override
 	public void sendBlockBreakProgress(int breakerId, BlockPos pos, int progress) {}
+
+	@Override
+	public void notifyBlockUpdate(World worldIn, BlockPos pos, IBlockState oldState, IBlockState newState, int flags) {}
+
+	@Override
+	public void playSoundToAllNearExcept(EntityPlayer player, SoundEvent soundIn, SoundCategory category, double x,
+			double y, double z, float volume, float pitch) {}
+
+	@Override
+	public void playRecord(SoundEvent soundIn, BlockPos pos) {}
+
+	@Override
+	public void playEvent(EntityPlayer player, int type, BlockPos blockPosIn, int data) {}
 
 }
