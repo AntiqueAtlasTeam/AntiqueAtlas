@@ -1,9 +1,12 @@
 package hunternif.mc.atlas.api;
 
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.World;
+
+import hunternif.mc.atlas.registry.MarkerType;
 
 /**
  * API for putting custom markers to the atlases. Set the textures on the
@@ -37,7 +40,7 @@ public interface MarkerAPI {
 	 * @param z				block coordinate
 	 */
 	void putMarker(World world, boolean visibleAhead, int atlasID,
-			String markerType, String label, int x, int z);
+			MarkerType markerType, String label, int x, int z);
 	
 	/**
 	 * Put a marker in all atlases in the world at specified block coordinates.
@@ -51,7 +54,7 @@ public interface MarkerAPI {
 	 * @param z				block coordinate
 	 */
 	void putGlobalMarker(World world, boolean visibleAhead,
-			String markerType, String label, int x, int z);
+			MarkerType markerType, String label, int x, int z);
 	
 	/**
 	 * Delete a marker from an atlas.

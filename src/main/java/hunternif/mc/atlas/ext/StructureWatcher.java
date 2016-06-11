@@ -12,30 +12,31 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
 import net.minecraft.world.World;
 import net.minecraft.world.gen.structure.MapGenStructureData;
-import net.minecraft.world.gen.structure.StructureBoundingBox;
 
 import hunternif.mc.atlas.AntiqueAtlasMod;
 import hunternif.mc.atlas.api.AtlasAPI;
 import hunternif.mc.atlas.marker.Marker;
 import hunternif.mc.atlas.marker.MarkersData;
+import hunternif.mc.atlas.registry.MarkerRegistry;
+import hunternif.mc.atlas.registry.MarkerType;
 import hunternif.mc.atlas.util.Log;
 
 public class StructureWatcher {
-	public final String MARKER, DAT, MARKER_NAME;
-	public String TILE_MARKER, TILE_MARKER_NAME;
+	public final String DAT;
+	public MarkerType MARKER, TILE_MARKER;
+	public String MARKER_NAME, TILE_MARKER_NAME;
 	public final int DIM;
 	
-	public StructureWatcher(String dat, int dim, String marker, String name) {
+	public StructureWatcher(String dat, int dim, MarkerType marker, String name) {
 		MARKER = marker;
 		MARKER_NAME = name;
 		DIM = dim;
 		DAT = dat;
 	}
 	
-	public StructureWatcher setTileMarker(String type, String name) {
+	public StructureWatcher setTileMarker(MarkerType type, String name) {
 		TILE_MARKER = type;
 		TILE_MARKER_NAME = name;
 		return this;

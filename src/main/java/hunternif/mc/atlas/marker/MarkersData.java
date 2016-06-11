@@ -1,10 +1,5 @@
 package hunternif.mc.atlas.marker;
 
-import hunternif.mc.atlas.api.MarkerAPI;
-import hunternif.mc.atlas.network.PacketDispatcher;
-import hunternif.mc.atlas.network.client.MarkersPacket;
-import hunternif.mc.atlas.util.Log;
-
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -13,12 +8,21 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import net.minecraftforge.common.util.Constants;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.world.WorldSavedData;
-import net.minecraftforge.common.util.Constants;
+
+import hunternif.mc.atlas.AntiqueAtlasMod;
+import hunternif.mc.atlas.api.MarkerAPI;
+import hunternif.mc.atlas.network.PacketDispatcher;
+import hunternif.mc.atlas.network.client.MarkersPacket;
+import hunternif.mc.atlas.registry.MarkerRegistry;
+import hunternif.mc.atlas.registry.MarkerType;
+import hunternif.mc.atlas.util.Log;
 
 /**
  * Contains markers, mapped to dimensions, and then to their chunk coordinates.
@@ -108,9 +112,10 @@ public class MarkersData extends WorldSavedData {
 				if (largestID.intValue() < id) {
 					largestID.set(id);
 				}
+				
 				Marker marker = new Marker(
 						id,
-						markerTag.getString(TAG_MARKER_TYPE),
+						MarkerRegistry.find(markerTag.getString(TAG_MARKER_TYPE)),
 						markerTag.getString(TAG_MARKER_LABEL),
 						dimensionID,
 						markerTag.getInteger(TAG_MARKER_X),
@@ -135,7 +140,7 @@ public class MarkersData extends WorldSavedData {
 				Log.debug("Saving marker %s", marker.toString());
 				NBTTagCompound markerTag = new NBTTagCompound();
 				markerTag.setInteger(TAG_MARKER_ID, marker.getId());
-				markerTag.setString(TAG_MARKER_TYPE, marker.getType());
+				markerTag.setString(TAG_MARKER_TYPE, marker.getType().getRegistryName().toString());
 				markerTag.setString(TAG_MARKER_LABEL, marker.getLabel());
 				markerTag.setInteger(TAG_MARKER_X, marker.getX());
 				markerTag.setInteger(TAG_MARKER_Y, marker.getZ());
@@ -191,7 +196,7 @@ public class MarkersData extends WorldSavedData {
 	/** For internal use. Use the {@link MarkerAPI} to put markers! This method
 	 * creates a new marker from the given data, saves and returns it.
 	 * Server side only! */
-	public Marker createAndSaveMarker(String type, String label, int dimension, int x, int z, boolean visibleAhead) {
+	public Marker createAndSaveMarker(MarkerType type, String label, int dimension, int x, int z, boolean visibleAhead) {
 		Marker marker = new Marker(getNewID(), type, label, dimension, x, z, visibleAhead);
 		Log.info("Created new marker %s", marker.toString());
 		idMap.put(marker.getId(), marker);

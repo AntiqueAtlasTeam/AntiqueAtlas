@@ -39,6 +39,8 @@ import hunternif.mc.atlas.marker.MarkerTextureConfig;
 import hunternif.mc.atlas.marker.MarkerTextureMap;
 import hunternif.mc.atlas.marker.MarkerTypeData;
 import hunternif.mc.atlas.marker.NetherPortalWatcher;
+import hunternif.mc.atlas.registry.MarkerRegistry;
+import hunternif.mc.atlas.registry.MarkerType;
 import hunternif.mc.atlas.util.Log;
 
 public class ClientProxy extends CommonProxy {
@@ -106,6 +108,9 @@ public class ClientProxy extends CommonProxy {
 	@Override
 	public void init(FMLInitializationEvent event) {
 		super.init(event);
+		for (MarkerType type : MarkerRegistry.getValues()) {
+			type.initMips();
+		}
 		guiAtlas = new GuiAtlas();
 		Minecraft.getMinecraft().getRenderItem().getItemModelMesher().register(AntiqueAtlasMod.itemAtlas, new ItemMeshDefinition() {
 			@Override

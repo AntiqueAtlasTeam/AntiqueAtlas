@@ -1,13 +1,5 @@
 package hunternif.mc.atlas.client.gui;
 
-import hunternif.mc.atlas.api.AtlasAPI;
-import hunternif.mc.atlas.client.gui.core.GuiComponent;
-import hunternif.mc.atlas.client.gui.core.GuiScrollingContainer;
-import hunternif.mc.atlas.client.gui.core.ISelectListener;
-import hunternif.mc.atlas.client.gui.core.ToggleGroup;
-import hunternif.mc.atlas.marker.MarkerTextureMap;
-import hunternif.mc.atlas.util.Log;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -18,6 +10,17 @@ import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.world.World;
 
+import hunternif.mc.atlas.api.AtlasAPI;
+import hunternif.mc.atlas.client.gui.core.GuiComponent;
+import hunternif.mc.atlas.client.gui.core.GuiScrollingContainer;
+import hunternif.mc.atlas.client.gui.core.ISelectListener;
+import hunternif.mc.atlas.client.gui.core.ToggleGroup;
+import hunternif.mc.atlas.marker.MarkerTextureMap;
+import hunternif.mc.atlas.registry.MarkerRegistry;
+import hunternif.mc.atlas.registry.MarkerType;
+import hunternif.mc.atlas.registry.MarkerTypes;
+import hunternif.mc.atlas.util.Log;
+
 /**
  * This GUI is used to enter marker label and, in future, select its icon and
  * color. When the user clicks on the confirmation button, the call to MarkerAPI
@@ -25,12 +28,12 @@ import net.minecraft.world.World;
  * @author Hunternif
  */
 public class GuiMarkerFinalizer extends GuiComponent {
-	public static final String defaultMarker = "red_x_small";
+	public static final MarkerType defaultMarker = MarkerTypes.RED_X_SMALL;
 	
 	private World world;
 	protected int atlasID, dimension, x, z;
 	
-	protected String selectedType = defaultMarker;
+	protected MarkerType selectedType = defaultMarker;
 	
 	private static final int BUTTON_WIDTH = 100;
 	private static final int BUTTON_SPACING = 4;
@@ -71,7 +74,6 @@ public class GuiMarkerFinalizer extends GuiComponent {
 		listeners.clear();
 	}
 	
-	@SuppressWarnings("unchecked")
 	@Override
 	public void initGui() {
 		buttonList.add(btnDone = new GuiButton(0, this.width/2 - BUTTON_WIDTH - BUTTON_SPACING/2, this.height/2 + 40, BUTTON_WIDTH, 20, I18n.format("gui.done")));
@@ -81,7 +83,12 @@ public class GuiMarkerFinalizer extends GuiComponent {
 		textField.setText("");
 		
 		scroller.removeAllContent();
-		int allTypesWidth = MarkerTextureMap.instance().getAllTypes().size() *
+		int typeCount = 0;
+		for (MarkerType type : MarkerRegistry.getValues()) {
+			if(!type.isTechnical())
+				typeCount++;
+		}
+		int allTypesWidth = typeCount *
 				(GuiMarkerInList.FRAME_SIZE + TYPE_SPACING) - TYPE_SPACING;
 		int scrollerWidth = Math.min(allTypesWidth, 240);
 		scroller.setViewportSize(scrollerWidth, GuiMarkerInList.FRAME_SIZE);
@@ -93,12 +100,14 @@ public class GuiMarkerFinalizer extends GuiComponent {
 			public void onSelect(GuiMarkerInList button) {
 				selectedType = button.getMarkerType();
 				for (IMarkerTypeSelectListener listener : listeners) {
-					listener.onSelectMarkerType(selectedType);
+					listener.onSelectMarkerType(button.getMarkerType());
 				}
 			}
 		});
 		int contentX = 0;
-		for (String markerType : MarkerTextureMap.instance().getAllTypes()) {
+		for (MarkerType markerType : MarkerRegistry.getValues()) {
+			if(markerType.isTechnical())
+				continue;
 			GuiMarkerInList markerGui = new GuiMarkerInList(markerType);
 			typeRadioGroup.addButton(markerGui);
 			if (selectedType.equals(markerType)) {
@@ -147,6 +156,6 @@ public class GuiMarkerFinalizer extends GuiComponent {
 	}
 	
 	protected static interface IMarkerTypeSelectListener {
-		void onSelectMarkerType(String markerType);
+		void onSelectMarkerType(MarkerType markerType);
 	}
 }

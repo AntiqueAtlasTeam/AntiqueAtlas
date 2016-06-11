@@ -24,6 +24,8 @@ import hunternif.mc.atlas.AntiqueAtlasMod;
 import hunternif.mc.atlas.api.AtlasAPI;
 import hunternif.mc.atlas.marker.Marker;
 import hunternif.mc.atlas.marker.MarkersData;
+import hunternif.mc.atlas.registry.MarkerType;
+import hunternif.mc.atlas.registry.MarkerTypes;
 import hunternif.mc.atlas.util.Log;
 
 public class VillageWatcher {
@@ -154,7 +156,7 @@ public class VillageWatcher {
 								.getMarkersAtChunk(world.provider.getDimension(), j + chunkX / MarkersData.CHUNK_STEP, k + chunkZ / MarkersData.CHUNK_STEP);
 						if (markers != null) {
 							for (Marker marker : markers) {
-								if (marker.getType().equals(MARKER)) {
+								if (marker.getType().equals(MarkerTypes.VILLAGE)) {
 									foundMarker = true;
 									break;
 								}
@@ -163,7 +165,7 @@ public class VillageWatcher {
 					}
 				}
 				if (!foundMarker && AntiqueAtlasMod.settings.autoVillageMarkers) {
-					AtlasAPI.markers.putGlobalMarker(world, false, MARKER, "gui.antiqueatlas.marker.village", x, z);
+					AtlasAPI.markers.putGlobalMarker(world, false, MarkerTypes.VILLAGE, "gui.antiqueatlas.marker.village", x, z);
 				}
 			}
 //			String tileName = null;
@@ -213,7 +215,7 @@ public class VillageWatcher {
 						.getMarkersAtChunk(world.provider.getDimension(), chunkX / MarkersData.CHUNK_STEP, chunkZ / MarkersData.CHUNK_STEP);
 				if (markers != null) {
 					for (Marker marker : markers) {
-						if (marker.getType().equals(MARKER)) {
+						if (marker.getType().equals(MarkerTypes.VILLAGE)) {
 							AtlasAPI.markers.deleteGlobalMarker(world, marker.getId());
 							Log.info("Removed faux village marker");
 							break;

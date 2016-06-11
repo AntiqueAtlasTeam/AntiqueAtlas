@@ -282,7 +282,7 @@ public class ExportImageUtil {
 						}
 						
 						// Load marker texture
-						ResourceLocation texture = MarkerTextureMap.instance().getTexture(marker.getType());
+						ResourceLocation texture = marker.getType().getIcon();
 						BufferedImage markerImage = textureImageMap.get(texture);
 						if (markerImage == null) continue;
 						

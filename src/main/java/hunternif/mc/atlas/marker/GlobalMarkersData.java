@@ -1,7 +1,9 @@
 package hunternif.mc.atlas.marker;
 
-import hunternif.mc.atlas.network.client.MarkersPacket;
 import net.minecraft.entity.player.EntityPlayer;
+
+import hunternif.mc.atlas.network.client.MarkersPacket;
+import hunternif.mc.atlas.registry.MarkerType;
 
 /** Holds global markers, i.e. ones that appear in all atlases. */
 public class GlobalMarkersData extends MarkersData {
@@ -11,7 +13,7 @@ public class GlobalMarkersData extends MarkersData {
 	}
 	
 	@Override
-	public Marker createAndSaveMarker(String type, String label, int dimension, int x, int y, boolean visibleAhead) {
+	public Marker createAndSaveMarker(MarkerType type, String label, int dimension, int x, int y, boolean visibleAhead) {
 		return super.createAndSaveMarker(type, label, dimension, x, y, visibleAhead).setGlobal(true);
 	}
 	
