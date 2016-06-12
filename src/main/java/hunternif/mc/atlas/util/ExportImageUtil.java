@@ -8,6 +8,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,13 +37,14 @@ import hunternif.mc.atlas.marker.DimensionMarkersData;
 import hunternif.mc.atlas.marker.Marker;
 import hunternif.mc.atlas.marker.MarkersData;
 import hunternif.mc.atlas.registry.MarkerRegistry;
+import hunternif.mc.atlas.registry.MarkerRenderInfo;
 import hunternif.mc.atlas.registry.MarkerType;
 
 @SideOnly(Side.CLIENT)
 public class ExportImageUtil {
 	public static final int TILE_SIZE = 16;
 	public static final int MARKER_SIZE = 32;
-	
+
 	/** Beware that the background texture doesn't follow the Autotile format. */
 	public static final int BG_TILE_SIZE = 22;
 	
@@ -60,15 +62,6 @@ public class ExportImageUtil {
 		} catch (UnsupportedLookAndFeelException e) {
 			Log.error(e, "Setting system Look&Feel for JFileChooser");
 		}
-		// Hack to bring the file chooser to front: 
-		Frame frame = new Frame();
-		frame.setUndecorated(true);
-		//frame.setOpacity(0);
-		frame.setLocationRelativeTo(null);
-		frame.setVisible(true);
-		frame.toFront();
-		frame.setVisible(false);
-		frame.dispose();
 		
 		JFileChooser chooser = new JFileChooser();
 		chooser.setDialogTitle(I18n.format("gui.antiqueatlas.exportImage"));
@@ -85,7 +78,7 @@ public class ExportImageUtil {
 			}
 		});
 		listener.setStatusString(I18n.format("gui.antiqueatlas.export.selectFile"));
-		if (chooser.showSaveDialog(frame) == JFileChooser.APPROVE_OPTION) {
+		if (chooser.showSaveDialog(new Frame()) == JFileChooser.APPROVE_OPTION) {
 			File file = chooser.getSelectedFile();
 			// Check file extension:
 			if (file.getName().length() < 4  || // No extension
@@ -141,7 +134,8 @@ public class ExportImageUtil {
 			allTextures.addAll(BiomeTextureMap.instance().getAllTextures());
 			if (showMarkers) {
 				for (MarkerType type : MarkerRegistry.getValues()) {
-					allTextures.add(type.getIcon());
+					allTextures.addAll(Arrays.asList( type.getAllIcons() ));
+//					allTextures.add(type.getIcon());
 				}
 			}
 			updateUnitsTotal += allTextures.size();
@@ -259,48 +253,57 @@ public class ExportImageUtil {
 		
 		//============== Draw markers ================
 		// Draw local markers on top of global markers
-		if (showMarkers) {
-			List<Marker> markers = new ArrayList<Marker>();
-			for (int x = biomeData.getScope().minX / MarkersData.CHUNK_STEP;
-					x <= biomeData.getScope().maxX / MarkersData.CHUNK_STEP; x++) {
-				for (int z = biomeData.getScope().minY / MarkersData.CHUNK_STEP;
-						z <= biomeData.getScope().maxY / MarkersData.CHUNK_STEP; z++) {
-					
-					markers.clear();
-					List<Marker> globalMarkersAt = globalMarkers.getMarkersAtChunk(x, z);
-					if (globalMarkersAt != null) {
-						markers.addAll(globalMarkers.getMarkersAtChunk(x, z));
+		List<Marker> markers = new ArrayList<Marker>();
+		for (int x = biomeData.getScope().minX / MarkersData.CHUNK_STEP;
+				x <= biomeData.getScope().maxX / MarkersData.CHUNK_STEP; x++) {
+			for (int z = biomeData.getScope().minY / MarkersData.CHUNK_STEP;
+					z <= biomeData.getScope().maxY / MarkersData.CHUNK_STEP; z++) {
+				
+				markers.clear();
+				List<Marker> globalMarkersAt = globalMarkers.getMarkersAtChunk(x, z);
+				if (globalMarkersAt != null) {
+					markers.addAll(globalMarkers.getMarkersAtChunk(x, z));
+				}
+				if (localMarkers != null) {
+					List<Marker> localMarkersAt = localMarkers.getMarkersAtChunk(x, z);
+					if (localMarkersAt != null) {
+						markers.addAll(localMarkersAt);
 					}
-					if (localMarkers != null) {
-						List<Marker> localMarkersAt = localMarkers.getMarkersAtChunk(x, z);
-						if (localMarkersAt != null) {
-							markers.addAll(localMarkersAt);
-						}
+				}
+				
+				for (Marker marker : markers) {
+					updateUnits++;
+					MarkerType type = marker.getType();
+					
+					if (!marker.isVisibleAhead() &&
+							!biomeData.hasTileAt(marker.getChunkX(), marker.getChunkZ())) {
+						continue;
 					}
 					
-					for (Marker marker : markers) {
-						updateUnits++;
-						if (!marker.isVisibleAhead() &&
-								!biomeData.hasTileAt(marker.getChunkX(), marker.getChunkZ())) {
-							continue;
-						}
-						
-						// Load marker texture
-						ResourceLocation texture = marker.getType().getIcon();
-						BufferedImage markerImage = textureImageMap.get(texture);
-						if (markerImage == null) continue;
-						
-						int markerX = marker.getX() - minX;
-						int markerY = marker.getZ() - minY;
-						graphics.drawImage(markerImage,
-								markerX - MARKER_SIZE/2, markerY - MARKER_SIZE/2,
-								markerX + MARKER_SIZE/2, markerY + MARKER_SIZE/2,
-								0, 0, MARKER_SIZE, MARKER_SIZE,
-								null);
-						
-						if (updateUnits % 10 == 0) { // Update every 10 tiles
-							listener.update((float)updateUnits / (float) updateUnitsTotal);
-						}
+					if (type.shouldHide(!showMarkers, 0)) {
+						continue;
+					}
+					
+					type.calculateMip(1, 1, 1);
+					MarkerRenderInfo info = type.getRenderInfo(1, 1, 1);
+					type.resetMip();
+					
+					// Load marker texture
+					ResourceLocation texture = info.tex;
+					BufferedImage markerImage = textureImageMap.get(texture);
+					if (markerImage == null)
+						continue;
+					
+					int markerX = marker.getX() - minX;
+					int markerY = marker.getZ() - minY;
+					
+					graphics.drawImage(
+							markerImage,
+							(int)( markerX + info.x), (int)( markerY + info.y ),
+							info.width, info.height, null);
+					
+					if (updateUnits % 10 == 0) { // Update every 10 tiles
+						listener.update((float)updateUnits / (float) updateUnitsTotal);
 					}
 				}
 			}
@@ -314,4 +317,6 @@ public class ExportImageUtil {
 			e.printStackTrace();
 		}
 	}
+	
+	
 }

@@ -120,6 +120,10 @@ public class MarkerType extends IRegistryEntry.Impl {
 		return icons.length == 0 || iconIndex < 0 ? TextureMap.LOCATION_MISSING_TEXTURE : icons[iconIndex];
 	}
 	
+	public ResourceLocation[] getAllIcons() {
+		return icons;
+	}
+	
 	protected int iconIndex = 0;
 	
 	public void calculateMip(double scale, double mapScale, double screenScale) {
