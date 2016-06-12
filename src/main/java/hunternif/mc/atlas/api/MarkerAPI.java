@@ -15,12 +15,6 @@ import hunternif.mc.atlas.registry.MarkerType;
  */
 public interface MarkerAPI {
 	
-	/** Assign texture to a marker type. Marker texture has to be square;
-	 * the center of the texture will point to the marked spot.
-	 * Client-side only! */
-	@SideOnly(Side.CLIENT)
-	void setTexture(String markerType, ResourceLocation texture);
-	
 	/**
 	 * Put a marker in the specified Atlas instance at specified block
 	 * coordinates. Call this method per one marker either on the server or

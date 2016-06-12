@@ -36,8 +36,6 @@ import hunternif.mc.atlas.ext.ExtTileTextureConfig;
 import hunternif.mc.atlas.ext.ExtTileTextureMap;
 import hunternif.mc.atlas.ext.VillageWatcher;
 import hunternif.mc.atlas.marker.MarkerTextureConfig;
-import hunternif.mc.atlas.marker.MarkerTextureMap;
-import hunternif.mc.atlas.marker.MarkerTypeData;
 import hunternif.mc.atlas.marker.NetherPortalWatcher;
 import hunternif.mc.atlas.registry.MarkerRegistry;
 import hunternif.mc.atlas.registry.MarkerType;
@@ -50,7 +48,6 @@ public class ClientProxy extends CommonProxy {
 	private BiomeTextureConfig biomeTextureConfig;
 	private ExtTileTextureMap tileTextureMap;
 	private ExtTileTextureConfig tileTextureConfig;
-	private MarkerTextureMap markerTextureMap;
 	private MarkerTextureConfig markerTextureConfig;
 	
 	private GuiAtlas guiAtlas;
@@ -97,12 +94,10 @@ public class ClientProxy extends CommonProxy {
 		tileTextureMap.setDirty(false);
 		registerVanillaCustomTileTextures();
 		
-		markerTextureMap = MarkerTextureMap.instance();
-		markerTextureConfig = new MarkerTextureConfig(new File(configDir, "marker_textures.json"));
-		markerTextureConfig.load(markerTextureMap);
+		markerTextureConfig = new MarkerTextureConfig(new File(configDir, "markers.json"));
+		markerTextureConfig.load(MarkerRegistry.INSTANCE);
 		// Prevent rewriting of the config while no changes have been made:
-		markerTextureMap.setDirty(false);
-		registerDefaultMarkers();
+		MarkerRegistry.INSTANCE.setDirty(true);
 	}
 	
 	@Override
@@ -310,59 +305,6 @@ public class ClientProxy extends CommonProxy {
 		setBiomeTextureIfNone(Biome.getIdForBiome(biome), textureSet);
 	}
 	
-	MarkerTypeData dummyData = new MarkerTypeData(true, false, false);
-	
-	/** Load default marker textures. */
-	private void registerDefaultMarkers() {;
-		setMarkerTextureIfNone("google", Textures.MARKER_GOOGLE_MARKER);
-		setMarkerTextureIfNone("red_x_large", Textures.MARKER_RED_X_LARGE);
-		setMarkerTextureIfNone("red_x_small", Textures.MARKER_RED_X_SMALL);
-		setMarkerTextureIfNone(VillageWatcher.MARKER, Textures.MARKER_VILLAGE);
-		setMarkerTextureIfNone("diamond", Textures.MARKER_DIAMOND);
-		setMarkerTextureIfNone("bed", Textures.MARKER_BED);
-		setMarkerTextureIfNone("pickaxe", Textures.MARKER_PICKAXE);
-		setMarkerTextureIfNone("sword", Textures.MARKER_SWORD);
-		setMarkerTextureIfNone(NetherPortalWatcher.MARKER_PORTAL, Textures.MARKER_NETHER_PORTAL);
-		setMarkerTextureIfNone("skull", Textures.MARKER_SKULL);
-		setMarkerTextureIfNone("tower", Textures.MARKER_TOWER);
-		setMarkerTextureIfNone("scroll", Textures.MARKER_SCROLL);
-		setMarkerTextureIfNone("tomb", Textures.MARKER_TOMB);
-		
-		MarkerTypeData data;
-		
-		setMarkerTextureIfNone("EndCity", Textures.MARKER_END_CITY);
-		data = createMarkerDataOrGetDummy("EndCity");
-		data.setShowAsTileData(4, 0, -1.5f, 64, Textures.MARKER_END_CITY_MIP_32, Textures.MARKER_END_CITY_MIP_16);
-		data.setShowAsTile(true).setShouldClip(true).setClip(-2, 1000);
-		
-		setMarkerTextureIfNone("EndCity_Far", Textures.MARKER_END_CITY_FAR);
-		data = createMarkerDataOrGetDummy("EndCity_Far");
-		data.setShouldClip(true).setClip(-100, -2);
-		
-		data = createMarkerDataOrGetDummy(VillageWatcher.MARKER);
-		data.setShouldClip(true).setClip(-100, -1);
-	}
-	/** Only applies the change if no texture is registered for this marker type.
-	 * This prevents overwriting of the config when there is no real change. */
-	private void setMarkerTextureIfNone(String markerType, ResourceLocation texture) {
-		if (!markerTextureMap.isRegistered(markerType)) {
-			markerTextureMap.setTexture(markerType, texture);
-		}
-	}
-	
-	/**
-	 * Creates and returns a MarkerTypeData if it hasn't been loaded
-	 * or returns a dummy MarkerTypeData that isn't linked to any type
-	 */
-	private MarkerTypeData createMarkerDataOrGetDummy(String markerType) {
-		MarkerTypeData data = dummyData;
-		if (!markerTextureMap.hasTileData(markerType)) {
-			data = new MarkerTypeData(true, false, false);
-			markerTextureMap.setMarkerTypeData(markerType, data);
-		}
-		return data;
-	}
-	
 	/** Assign default textures to the pseudo-biomes used for vanilla Minecraft.
 	 * The pseudo-biomes are: villages houses, village territory and lava. */
 	private void registerVanillaCustomTileTextures() {
@@ -436,10 +378,10 @@ public class ClientProxy extends CommonProxy {
 			tileTextureConfig.save(tileTextureMap);
 			tileTextureMap.setDirty(false);
 		}
-		if (markerTextureMap.isDirty()) {
-			Log.info("Saving marker texture config");
-			markerTextureConfig.save(markerTextureMap);
-			markerTextureMap.setDirty(false);
+		if (MarkerRegistry.INSTANCE.isDirty()) {
+			Log.info("Saving marker config");
+			markerTextureConfig.save(MarkerRegistry.INSTANCE);
+			MarkerRegistry.INSTANCE.setDirty(false);
 		}
 	}
 }

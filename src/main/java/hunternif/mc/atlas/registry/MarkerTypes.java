@@ -5,7 +5,6 @@ import net.minecraft.util.ResourceLocation;
 import hunternif.mc.atlas.AntiqueAtlasMod;
 import hunternif.mc.atlas.client.Textures;
 import hunternif.mc.atlas.ext.VillageWatcher;
-import hunternif.mc.atlas.marker.MarkerTypeData;
 import hunternif.mc.atlas.marker.NetherPortalWatcher;
 
 public class MarkerTypes {

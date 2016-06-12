@@ -1,17 +1,5 @@
 package hunternif.mc.atlas.util;
 
-import hunternif.mc.atlas.client.BiomeTextureMap;
-import hunternif.mc.atlas.client.SubTile;
-import hunternif.mc.atlas.client.SubTileQuartet;
-import hunternif.mc.atlas.client.Textures;
-import hunternif.mc.atlas.client.TileRenderIterator;
-import hunternif.mc.atlas.client.gui.ExportUpdateListener;
-import hunternif.mc.atlas.core.DimensionData;
-import hunternif.mc.atlas.marker.DimensionMarkersData;
-import hunternif.mc.atlas.marker.Marker;
-import hunternif.mc.atlas.marker.MarkerTextureMap;
-import hunternif.mc.atlas.marker.MarkersData;
-
 import java.awt.Frame;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
@@ -24,17 +12,31 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.resources.I18n;
+import net.minecraft.util.ResourceLocation;
+
 import javax.imageio.ImageIO;
 import javax.swing.JFileChooser;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.filechooser.FileFilter;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.resources.I18n;
-import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import hunternif.mc.atlas.client.BiomeTextureMap;
+import hunternif.mc.atlas.client.SubTile;
+import hunternif.mc.atlas.client.SubTileQuartet;
+import hunternif.mc.atlas.client.Textures;
+import hunternif.mc.atlas.client.TileRenderIterator;
+import hunternif.mc.atlas.client.gui.ExportUpdateListener;
+import hunternif.mc.atlas.core.DimensionData;
+import hunternif.mc.atlas.marker.DimensionMarkersData;
+import hunternif.mc.atlas.marker.Marker;
+import hunternif.mc.atlas.marker.MarkersData;
+import hunternif.mc.atlas.registry.MarkerRegistry;
+import hunternif.mc.atlas.registry.MarkerType;
 
 @SideOnly(Side.CLIENT)
 public class ExportImageUtil {
@@ -138,7 +140,9 @@ public class ExportImageUtil {
 			List<ResourceLocation> allTextures = new ArrayList<ResourceLocation>(64);
 			allTextures.addAll(BiomeTextureMap.instance().getAllTextures());
 			if (showMarkers) {
-				allTextures.addAll(MarkerTextureMap.instance().getAllTextures());
+				for (MarkerType type : MarkerRegistry.getValues()) {
+					allTextures.add(type.getIcon());
+				}
 			}
 			updateUnitsTotal += allTextures.size();
 			for (ResourceLocation texture : allTextures) {

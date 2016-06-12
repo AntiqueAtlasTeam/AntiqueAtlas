@@ -1,12 +1,10 @@
 package hunternif.mc.atlas.api.impl;
 
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 
 import hunternif.mc.atlas.AntiqueAtlasMod;
 import hunternif.mc.atlas.api.MarkerAPI;
 import hunternif.mc.atlas.marker.Marker;
-import hunternif.mc.atlas.marker.MarkerTextureMap;
 import hunternif.mc.atlas.marker.MarkersData;
 import hunternif.mc.atlas.network.PacketDispatcher;
 import hunternif.mc.atlas.network.bidirectional.DeleteMarkerPacket;
@@ -18,11 +16,6 @@ import hunternif.mc.atlas.util.Log;
 public class MarkerApiImpl implements MarkerAPI {
 	/** Used in place of atlasID to signify that the marker is global. */
 	private static final int GLOBAL = -1;
-
-	@Override
-	public void setTexture(String markerType, ResourceLocation texture) {
-		MarkerTextureMap.instance().setTexture(markerType, texture);
-	}
 	
 	@Override
 	public void putMarker(World world, boolean visibleAhead, int atlasID, MarkerType markerType, String label, int x, int z) {

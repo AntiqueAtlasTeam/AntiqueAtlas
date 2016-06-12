@@ -15,7 +15,6 @@ import hunternif.mc.atlas.client.gui.core.GuiComponent;
 import hunternif.mc.atlas.client.gui.core.GuiScrollingContainer;
 import hunternif.mc.atlas.client.gui.core.ISelectListener;
 import hunternif.mc.atlas.client.gui.core.ToggleGroup;
-import hunternif.mc.atlas.marker.MarkerTextureMap;
 import hunternif.mc.atlas.registry.MarkerRegistry;
 import hunternif.mc.atlas.registry.MarkerType;
 import hunternif.mc.atlas.registry.MarkerTypes;

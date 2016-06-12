@@ -62,8 +62,6 @@ public class GuiAtlas extends GuiComponent {
 	private static final int PLAYER_ICON_HEIGHT = 8;
 	
 	public static final int MARKER_SIZE = 32;
-	/** The radius of the area in which the marker will display hovering label. */
-	private static final int MARKER_RADIUS = 7;
 	
 	/** If the map scale goes below this value, the tiles will not scale down
 	 * visually, but will instead span greater area. */
