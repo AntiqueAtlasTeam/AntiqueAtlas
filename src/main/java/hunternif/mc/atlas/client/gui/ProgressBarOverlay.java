@@ -9,18 +9,13 @@ import net.minecraft.client.resources.I18n;
 
 import org.lwjgl.opengl.GL11;
 
-public class ProgressBarOverlay implements ExportUpdateListener {
+public class ProgressBarOverlay {
 	/** Total width of the progress bar. */
 	private final int barWidth;
 	
 	/** Total height of the progress bar. */
 	private final int barHeight;
 	
-	private float maxProgress; // float so that division isn't rounded;
-	private int currentProgress;
-	
-	private String header;
-	private String status;
 	private FontRenderer font;
 	
 	public ProgressBarOverlay(int barWidth, int barHeight) {
@@ -29,42 +24,18 @@ public class ProgressBarOverlay implements ExportUpdateListener {
 		font = Minecraft.getMinecraft().fontRendererObj;
 	}
 	
-	@Override
-	public void setStatusString(String status, Object... data) {
-		this.status = I18n.format(status, data);
-	}
-	
-	@Override
-	public void setHeaderString(String header, Object... data) {
-		this.header = I18n.format(header, data);
-	}
-
-	@Override
-	public void setProgressMax(int max) {
-		maxProgress = max;
-		currentProgress = 0;
-	}
-
-	@Override
-	public void setProgress(int progress) {
-		currentProgress = progress;
-	}
-
-	@Override
-	public void addProgress(int amount) {
-		currentProgress += amount;
-	}
-	
 	/** Render progress bar on the screen. */
 	public void draw(int x, int y) {
-		int headerWidth = font.getStringWidth(header);
-		font.drawStringWithShadow(header, x + (barWidth - headerWidth)/2, y-14, 0xffffff);
-		int statusWidth = font.getStringWidth(status);
-		font.drawStringWithShadow(status, x + (barWidth - statusWidth)/2, y, 0xffffff);
+		ExportUpdateListener l = ExportUpdateListener.INSTANCE;
+		
+		int headerWidth = font.getStringWidth(l.header);
+		font.drawStringWithShadow(l.header, x + (barWidth - headerWidth)/2, y-14, 0xffffff);
+		int statusWidth = font.getStringWidth(l.status);
+		font.drawStringWithShadow(l.status, x + (barWidth - statusWidth)/2, y, 0xffffff);
 		y += 14;
 		
-		double p = currentProgress/maxProgress;
-		if(maxProgress < 0)
+		double p = l.currentProgress/l.maxProgress;
+		if(l.maxProgress < 0)
 			p = 0;
 		
 		GL11.glDisable(GL11.GL_TEXTURE_2D);

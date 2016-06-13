@@ -423,7 +423,7 @@ public class GuiAtlas extends GuiComponent {
 		boolean showMarkers = !state.is(HIDING_MARKERS);
 		state.switchTo(EXPORTING_IMAGE);
 		// Default file name is "Atlas <N>.png"
-		ExportImageUtil.currentListener = progressBar;
+		ExportImageUtil.isExporting = true;
 		File file = ExportImageUtil.selectPngFileToSave("Atlas " + stack.getItemDamage());
 		if (file != null) {
 			try {
@@ -442,11 +442,13 @@ public class GuiAtlas extends GuiComponent {
 					
 					Log.error(e2, "Image is STILL too large, how massive is this map?! Answer: (%dx%d)", outWidth, outHeight);
 					
-					progressBar.setStatusString(I18n.format("gui.antiqueatlas.export.tooLarge"));
+					ExportUpdateListener.INSTANCE.setStatusString(I18n.format("gui.antiqueatlas.export.tooLarge"));
+					ExportImageUtil.isExporting = false;
 					return; //Don't switch to normal state yet so that the error message can be read.
 				}
 			}
 		}
+		ExportImageUtil.isExporting = false;
 		state.switchTo(showMarkers ? NORMAL : HIDING_MARKERS);
 	}
 	
@@ -860,7 +862,6 @@ public class GuiAtlas extends GuiComponent {
 		Keyboard.enableRepeatEvents(false);
 		biomeData.setBrowsingPosition(mapOffsetX, mapOffsetY, mapScale);
 		PacketDispatcher.sendToServer(new BrowsingPositionPacket(stack.getItemDamage(), player.dimension, mapOffsetX, mapOffsetY, mapScale));
-		ExportImageUtil.currentListener = ExportProgressOverlay.INSTANCE;
 	}
 	
 	/** Returns the Y coordinate that the cursor is pointing at. */

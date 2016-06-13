@@ -48,23 +48,12 @@ import hunternif.mc.atlas.registry.MarkerType;
 public class ExportImageUtil {
 	public static final int TILE_SIZE = 16;
 	public static final int MARKER_SIZE = 32;
+	public static boolean isExporting = false;
+	
 	public static Frame frame;
 	public static JFileChooser chooser = new JFileChooser();
-	public static ExportUpdateListener currentListener;
-	private static ExportUpdateListener dummyListener = new ExportUpdateListener() {
-		@Override
-		public void setStatusString(String status, Object... data) {}
-		@Override
-		public void setProgressMax(int max) {}
-		@Override
-		public void setProgress(int progress) {}
-		@Override
-		public void addProgress(int amount) {}
-		@Override
-		public void setHeaderString(String header, Object... data) {}
-	};
 	public static ExportUpdateListener getListener() {
-		return currentListener == null ? dummyListener : currentListener;
+		return ExportUpdateListener.INSTANCE;
 	}
 	
 	static {
@@ -90,6 +79,7 @@ public class ExportImageUtil {
 	public static File selectPngFileToSave(String atlasName) {
 		getListener().setHeaderString("");
 		getListener().setStatusString("gui.antiqueatlas.export.opening");
+		getListener().setProgressMax(-1);
 		try {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 		} catch (ClassNotFoundException e) {
