@@ -4,11 +4,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
-<<<<<<< HEAD
 import net.minecraft.client.renderer.VertexBuffer;
-=======
-import net.minecraft.client.renderer.WorldRenderer;
->>>>>>> master
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 
 import org.lwjgl.opengl.GL11;
@@ -53,31 +49,16 @@ public class ProgressBarOverlay implements ExportUpdateListener {
 		GlStateManager.disableTexture2D();
 		
 		Tessellator tessellator = Tessellator.getInstance();
-<<<<<<< HEAD
-		VertexBuffer vb = tessellator.getBuffer();
+		VertexBuffer renderer = tessellator.getBuffer();
 		
-		vb.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
-		
-		vb.pos(x, y, 0).color(0.5f, 0.5f, 0.5f, 1).endVertex();
-		vb.pos(x, y+barHeight, 0).color(0.5f, 0.5f, 0.5f, 1).endVertex();
-		vb.pos(x+barWidth, y+barHeight, 0).color(0.5f, 0.5f, 0.5f, 1).endVertex();
-		vb.pos(x+barWidth, y, 0).color(0.5f, 0.5f, 0.5f, 1).endVertex();
-
-		vb.pos(x, y, 0).color(0.5f, 1, 0.5f, 1).endVertex();
-		vb.pos(x, y+barHeight, 0).color(0.5f, 1, 0.5f, 1).endVertex();
-		vb.pos(x+barWidth, y+barHeight, 0).color(0.5f, 1, 0.5f, 1).endVertex();
-		vb.pos(x+barWidth, y, 0).color(0.5f, 1, 0.5f, 1).endVertex();
-		
-=======
-		WorldRenderer renderer = tessellator.getWorldRenderer();
 		renderer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION);
 		GlStateManager.color(0.5f, 0.5f, 0.5f, 1f);
 		renderer.pos(x,y,0).endVertex();
 		renderer.pos(x,y+barHeight,0).endVertex();
 		renderer.pos(x + barWidth, y + barHeight, 0).endVertex();
 		renderer.pos(x + barWidth, y, 0).endVertex();
->>>>>>> master
 		tessellator.draw();
+		
 		renderer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION);
 		GlStateManager.color(0.5f, 1f, 0.5f, 1f);
 		renderer.pos(x,y,0).endVertex();
@@ -85,6 +66,7 @@ public class ProgressBarOverlay implements ExportUpdateListener {
 		renderer.pos(x + completedWidth, y + barHeight, 0).endVertex();
 		renderer.pos(x + completedWidth, y, 0).endVertex();
 		tessellator.draw();
+		
 		GlStateManager.enableTexture2D();
 	}
 
