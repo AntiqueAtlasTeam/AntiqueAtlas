@@ -93,9 +93,6 @@ public class ExportImageUtil {
 		}
 		
 		getListener().setStatusString("gui.antiqueatlas.export.selectFile");
-		if(!chooser.isDisplayable()) {
-			Log.info("FILE CHOOSER NOT DISPLAYABLE!!! NOOOOOOO!!!");
-		}
 		frame = new Frame();
 		if (chooser.showSaveDialog(frame) == JFileChooser.APPROVE_OPTION) {
 			File file = chooser.getSelectedFile();
@@ -275,7 +272,7 @@ public class ExportImageUtil {
 						showMarkers, minX, minY,
 						scale, bg_);
 				getListener().setStatusString("gui.antiqueatlas.export.writestripe");
-				getListener().setProgressMax(sliceHeight_);
+				getListener().setProgressMax(sliceHeight_ * (slice+1) > outHeight ? outHeight - ( sliceHeight_ * slice ) : sliceHeight_);
 			}
 		}, new IntConsumer() {
 			@Override
