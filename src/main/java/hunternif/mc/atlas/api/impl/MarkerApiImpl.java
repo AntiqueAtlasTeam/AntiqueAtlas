@@ -10,6 +10,7 @@ import hunternif.mc.atlas.network.PacketDispatcher;
 import hunternif.mc.atlas.network.bidirectional.DeleteMarkerPacket;
 import hunternif.mc.atlas.network.client.MarkersPacket;
 import hunternif.mc.atlas.network.server.AddMarkerPacket;
+import hunternif.mc.atlas.registry.MarkerRegistry;
 import hunternif.mc.atlas.registry.MarkerType;
 import hunternif.mc.atlas.util.Log;
 
@@ -71,6 +72,11 @@ public class MarkerApiImpl implements MarkerAPI {
 			data.removeMarker(markerID);
 			PacketDispatcher.sendToAll(packet);
 		}
+	}
+	
+	@Override
+	public void registerMarker(MarkerType markerType) {
+		MarkerRegistry.register(markerType);
 	}
 
 }

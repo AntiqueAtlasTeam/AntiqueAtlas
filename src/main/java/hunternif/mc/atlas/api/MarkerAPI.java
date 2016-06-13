@@ -1,9 +1,5 @@
 package hunternif.mc.atlas.api;
 
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 
 import hunternif.mc.atlas.registry.MarkerType;
@@ -14,6 +10,11 @@ import hunternif.mc.atlas.registry.MarkerType;
  * @author Hunternif
  */
 public interface MarkerAPI {
+	
+	/**
+	 * Registers the marker type, this should be called in PreInit, as config file overrides are loaded in Init.
+	 */
+	void registerMarker(MarkerType markerType);
 	
 	/**
 	 * Put a marker in the specified Atlas instance at specified block

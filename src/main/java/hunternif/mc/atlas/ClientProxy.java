@@ -17,6 +17,9 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.ItemMeshDefinition;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
+import net.minecraft.client.resources.IReloadableResourceManager;
+import net.minecraft.client.resources.IResourceManager;
+import net.minecraft.client.resources.IResourceManagerReloadListener;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Biomes;
 import net.minecraft.item.ItemStack;
@@ -39,7 +42,7 @@ import hunternif.mc.atlas.registry.MarkerRegistry;
 import hunternif.mc.atlas.registry.MarkerType;
 import hunternif.mc.atlas.util.Log;
 
-public class ClientProxy extends CommonProxy {
+public class ClientProxy extends CommonProxy implements IResourceManagerReloadListener {
 	private TextureSetMap textureSetMap;
 	private TextureSetConfig textureSetConfig;
 	private BiomeTextureMap biomeTextureMap;
@@ -94,15 +97,19 @@ public class ClientProxy extends CommonProxy {
 		tileTextureMap.setDirty(false);
 		registerVanillaCustomTileTextures();
 		
-		markerTextureConfig = new MarkerTextureConfig(new File(configDir, "markers.json"));
-		markerTextureConfig.load(MarkerRegistry.INSTANCE);
-		// Prevent rewriting of the config while no changes have been made:
-		MarkerRegistry.INSTANCE.setDirty(true);
+		if(Minecraft.getMinecraft().getResourceManager() instanceof IReloadableResourceManager) {
+			((IReloadableResourceManager)Minecraft.getMinecraft().getResourceManager()).registerReloadListener(this);
+		}
 	}
 	
 	@Override
 	public void init(FMLInitializationEvent event) {
 		super.init(event);
+		markerTextureConfig = new MarkerTextureConfig(new File(configDir, "markers.json"));
+		markerTextureConfig.load(MarkerRegistry.INSTANCE);
+		// Prevent rewriting of the config while no changes have been made:
+		MarkerRegistry.INSTANCE.setDirty(true);
+		
 		for (MarkerType type : MarkerRegistry.getValues()) {
 			type.initMips();
 		}
@@ -116,6 +123,7 @@ public class ClientProxy extends CommonProxy {
 		Minecraft.getMinecraft().getRenderItem().getItemModelMesher().register(AntiqueAtlasMod.itemEmptyAtlas, 0, new ModelResourceLocation(AntiqueAtlasMod.ID + ":emptyAntiqueAtlas", "inventory"));
 		FMLCommonHandler.instance().bus().register(this);
 	}
+	
 	
 	@Override
 	public void postInit(FMLPostInitializationEvent event) {
@@ -382,6 +390,13 @@ public class ClientProxy extends CommonProxy {
 			Log.info("Saving marker config");
 			markerTextureConfig.save(MarkerRegistry.INSTANCE);
 			MarkerRegistry.INSTANCE.setDirty(false);
+		}
+	}
+
+	@Override
+	public void onResourceManagerReload(IResourceManager resourceManager) {
+		for (MarkerType type : MarkerRegistry.getValues()) {
+			type.initMips();
 		}
 	}
 }
