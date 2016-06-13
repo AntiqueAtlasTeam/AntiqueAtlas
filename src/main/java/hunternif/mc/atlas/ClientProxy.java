@@ -4,6 +4,7 @@ import static hunternif.mc.atlas.client.TextureSet.*;
 
 import java.io.File;
 
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.client.FMLClientHandler;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
@@ -16,12 +17,14 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.ItemMeshDefinition;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
+import net.minecraft.client.resources.IReloadableResourceManager;
+import net.minecraft.client.resources.IResourceManager;
+import net.minecraft.client.resources.IResourceManagerReloadListener;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Biomes;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.IThreadListener;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.biome.Biome;
 
 import hunternif.mc.atlas.client.BiomeTextureConfig;
@@ -29,26 +32,23 @@ import hunternif.mc.atlas.client.BiomeTextureMap;
 import hunternif.mc.atlas.client.TextureSet;
 import hunternif.mc.atlas.client.TextureSetConfig;
 import hunternif.mc.atlas.client.TextureSetMap;
-import hunternif.mc.atlas.client.Textures;
+import hunternif.mc.atlas.client.gui.ExportProgressOverlay;
 import hunternif.mc.atlas.client.gui.GuiAtlas;
 import hunternif.mc.atlas.ext.ExtTileIdMap;
 import hunternif.mc.atlas.ext.ExtTileTextureConfig;
 import hunternif.mc.atlas.ext.ExtTileTextureMap;
-import hunternif.mc.atlas.ext.VillageWatcher;
 import hunternif.mc.atlas.marker.MarkerTextureConfig;
-import hunternif.mc.atlas.marker.MarkerTextureMap;
-import hunternif.mc.atlas.marker.MarkerTypeData;
-import hunternif.mc.atlas.marker.NetherPortalWatcher;
+import hunternif.mc.atlas.registry.MarkerRegistry;
+import hunternif.mc.atlas.registry.MarkerType;
 import hunternif.mc.atlas.util.Log;
 
-public class ClientProxy extends CommonProxy {
+public class ClientProxy extends CommonProxy implements IResourceManagerReloadListener {
 	private TextureSetMap textureSetMap;
 	private TextureSetConfig textureSetConfig;
 	private BiomeTextureMap biomeTextureMap;
 	private BiomeTextureConfig biomeTextureConfig;
 	private ExtTileTextureMap tileTextureMap;
 	private ExtTileTextureConfig tileTextureConfig;
-	private MarkerTextureMap markerTextureMap;
 	private MarkerTextureConfig markerTextureConfig;
 	
 	private GuiAtlas guiAtlas;
@@ -61,6 +61,8 @@ public class ClientProxy extends CommonProxy {
 	@Override
 	public void preInit(FMLPreInitializationEvent event) {
 		super.preInit(event);
+		
+		MinecraftForge.EVENT_BUS.register(ExportProgressOverlay.INSTANCE);
 		
 		//TODO Enforce texture config loading process as follows:
 		// 1. pre-init: Antique Atlas defaults are loaded, config files are read.
@@ -95,17 +97,22 @@ public class ClientProxy extends CommonProxy {
 		tileTextureMap.setDirty(false);
 		registerVanillaCustomTileTextures();
 		
-		markerTextureMap = MarkerTextureMap.instance();
-		markerTextureConfig = new MarkerTextureConfig(new File(configDir, "marker_textures.json"));
-		markerTextureConfig.load(markerTextureMap);
-		// Prevent rewriting of the config while no changes have been made:
-		markerTextureMap.setDirty(false);
-		registerDefaultMarkers();
+		if(Minecraft.getMinecraft().getResourceManager() instanceof IReloadableResourceManager) {
+			((IReloadableResourceManager)Minecraft.getMinecraft().getResourceManager()).registerReloadListener(this);
+		}
 	}
 	
 	@Override
 	public void init(FMLInitializationEvent event) {
 		super.init(event);
+		markerTextureConfig = new MarkerTextureConfig(new File(configDir, "markers.json"));
+		markerTextureConfig.load(MarkerRegistry.INSTANCE);
+		// Prevent rewriting of the config while no changes have been made:
+		MarkerRegistry.INSTANCE.setDirty(true);
+		
+		for (MarkerType type : MarkerRegistry.getValues()) {
+			type.initMips();
+		}
 		guiAtlas = new GuiAtlas();
 		Minecraft.getMinecraft().getRenderItem().getItemModelMesher().register(AntiqueAtlasMod.itemAtlas, new ItemMeshDefinition() {
 			@Override
@@ -116,6 +123,7 @@ public class ClientProxy extends CommonProxy {
 		Minecraft.getMinecraft().getRenderItem().getItemModelMesher().register(AntiqueAtlasMod.itemEmptyAtlas, 0, new ModelResourceLocation(AntiqueAtlasMod.ID + ":emptyAntiqueAtlas", "inventory"));
 		FMLCommonHandler.instance().bus().register(this);
 	}
+	
 	
 	@Override
 	public void postInit(FMLPostInitializationEvent event) {
@@ -305,59 +313,6 @@ public class ClientProxy extends CommonProxy {
 		setBiomeTextureIfNone(Biome.getIdForBiome(biome), textureSet);
 	}
 	
-	MarkerTypeData dummyData = new MarkerTypeData(true, false, false);
-	
-	/** Load default marker textures. */
-	private void registerDefaultMarkers() {;
-		setMarkerTextureIfNone("google", Textures.MARKER_GOOGLE_MARKER);
-		setMarkerTextureIfNone("red_x_large", Textures.MARKER_RED_X_LARGE);
-		setMarkerTextureIfNone("red_x_small", Textures.MARKER_RED_X_SMALL);
-		setMarkerTextureIfNone(VillageWatcher.MARKER, Textures.MARKER_VILLAGE);
-		setMarkerTextureIfNone("diamond", Textures.MARKER_DIAMOND);
-		setMarkerTextureIfNone("bed", Textures.MARKER_BED);
-		setMarkerTextureIfNone("pickaxe", Textures.MARKER_PICKAXE);
-		setMarkerTextureIfNone("sword", Textures.MARKER_SWORD);
-		setMarkerTextureIfNone(NetherPortalWatcher.MARKER_PORTAL, Textures.MARKER_NETHER_PORTAL);
-		setMarkerTextureIfNone("skull", Textures.MARKER_SKULL);
-		setMarkerTextureIfNone("tower", Textures.MARKER_TOWER);
-		setMarkerTextureIfNone("scroll", Textures.MARKER_SCROLL);
-		setMarkerTextureIfNone("tomb", Textures.MARKER_TOMB);
-		
-		MarkerTypeData data;
-		
-		setMarkerTextureIfNone("EndCity", Textures.MARKER_END_CITY);
-		data = createMarkerDataOrGetDummy("EndCity");
-		data.setShowAsTileData(4, 0, -1.5f, 64, Textures.MARKER_END_CITY_MIP_32, Textures.MARKER_END_CITY_MIP_16);
-		data.setShowAsTile(true).setShouldClip(true).setClip(-2, 1000);
-		
-		setMarkerTextureIfNone("EndCity_Far", Textures.MARKER_END_CITY_FAR);
-		data = createMarkerDataOrGetDummy("EndCity_Far");
-		data.setShouldClip(true).setClip(-100, -2);
-		
-		data = createMarkerDataOrGetDummy(VillageWatcher.MARKER);
-		data.setShouldClip(true).setClip(-100, -1);
-	}
-	/** Only applies the change if no texture is registered for this marker type.
-	 * This prevents overwriting of the config when there is no real change. */
-	private void setMarkerTextureIfNone(String markerType, ResourceLocation texture) {
-		if (!markerTextureMap.isRegistered(markerType)) {
-			markerTextureMap.setTexture(markerType, texture);
-		}
-	}
-	
-	/**
-	 * Creates and returns a MarkerTypeData if it hasn't been loaded
-	 * or returns a dummy MarkerTypeData that isn't linked to any type
-	 */
-	private MarkerTypeData createMarkerDataOrGetDummy(String markerType) {
-		MarkerTypeData data = dummyData;
-		if (!markerTextureMap.hasTileData(markerType)) {
-			data = new MarkerTypeData(true, false, false);
-			markerTextureMap.setMarkerTypeData(markerType, data);
-		}
-		return data;
-	}
-	
 	/** Assign default textures to the pseudo-biomes used for vanilla Minecraft.
 	 * The pseudo-biomes are: villages houses, village territory and lava. */
 	private void registerVanillaCustomTileTextures() {
@@ -431,10 +386,17 @@ public class ClientProxy extends CommonProxy {
 			tileTextureConfig.save(tileTextureMap);
 			tileTextureMap.setDirty(false);
 		}
-		if (markerTextureMap.isDirty()) {
-			Log.info("Saving marker texture config");
-			markerTextureConfig.save(markerTextureMap);
-			markerTextureMap.setDirty(false);
+		if (MarkerRegistry.INSTANCE.isDirty()) {
+			Log.info("Saving marker config");
+			markerTextureConfig.save(MarkerRegistry.INSTANCE);
+			MarkerRegistry.INSTANCE.setDirty(false);
+		}
+	}
+
+	@Override
+	public void onResourceManagerReload(IResourceManager resourceManager) {
+		for (MarkerType type : MarkerRegistry.getValues()) {
+			type.initMips();
 		}
 	}
 }

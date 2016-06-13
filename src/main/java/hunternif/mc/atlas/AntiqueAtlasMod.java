@@ -15,6 +15,8 @@ import hunternif.mc.atlas.marker.GlobalMarkersDataHandler;
 import hunternif.mc.atlas.marker.MarkersDataHandler;
 import hunternif.mc.atlas.marker.NetherPortalWatcher;
 import hunternif.mc.atlas.network.PacketDispatcher;
+import hunternif.mc.atlas.registry.MarkerRegistry;
+import hunternif.mc.atlas.registry.MarkerTypes;
 import hunternif.mc.atlas.util.Log;
 
 import java.io.File;
@@ -60,6 +62,8 @@ public class AntiqueAtlasMod {
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent event) {
 		Log.setModID(ID);
+		MarkerRegistry.INSTANCE.getClass(); // load the class
+		MarkerTypes.INSTANCE.getClass(); // ...
 		proxy.preInit(event);
 		settings.load(new File(proxy.configDir, "settings.cfg"));
 		
@@ -96,7 +100,7 @@ public class AntiqueAtlasMod {
 		
 		MinecraftForge.EVENT_BUS.register(new DeathWatcher());
 		
-		MinecraftForge.EVENT_BUS.register(new StructureWatcher("EndCity", 1, "EndCity_Far", "gui.antiqueatlas.marker.endcity").setTileMarker("EndCity", "gui.antiqueatlas.marker.endcity"));
+		MinecraftForge.EVENT_BUS.register(new StructureWatcher("EndCity", 1, MarkerTypes.END_CITY_FAR, "gui.antiqueatlas.marker.endcity").setTileMarker(MarkerTypes.END_CITY, "gui.antiqueatlas.marker.endcity"));
 		MinecraftForge.EVENT_BUS.register(new VillageWatcher());
 		MinecraftForge.EVENT_BUS.register(new NetherFortressWatcher());
 		MinecraftForge.EVENT_BUS.register(new NetherPortalWatcher());

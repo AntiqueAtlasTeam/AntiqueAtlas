@@ -19,6 +19,7 @@ import net.minecraft.world.World;
 
 import hunternif.mc.atlas.AntiqueAtlasMod;
 import hunternif.mc.atlas.api.AtlasAPI;
+import hunternif.mc.atlas.registry.MarkerTypes;
 import hunternif.mc.atlas.util.DummyWorldAccess;
 import hunternif.mc.atlas.util.Log;
 
@@ -110,7 +111,7 @@ public class NetherPortalWatcher extends DummyWorldAccess {
 				}
 			}
 			// Marker not found, place new one:
-			AtlasAPI.markers.putMarker(world, false, stack.getItemDamage(), MARKER_PORTAL, "gui.antiqueatlas.marker.netherPortal", x, z);
+			AtlasAPI.markers.putMarker(world, false, stack.getItemDamage(), MarkerTypes.NETHER_PORTAL, "gui.antiqueatlas.marker.netherPortal", x, z);
 		}
 	}
 	

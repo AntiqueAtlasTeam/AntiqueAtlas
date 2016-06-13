@@ -1,0 +1,18 @@
+{
+	"__comment": [
+		"Any of these values can be ommited. The mod will either use the default value or if it is already been registered it will keep the existing values",
+		"This example entry is never parsed, and if modified, will not persist"
+	],
+	"textures": [
+		"List of icons at different resolutions",
+		"[Default: `antiqueatlas:textures/gui/markers/red_x_small.png`]"
+	],
+	"size": "[Default: 2] The width and height of the marker, in tiles (a chunk at 1x zoom)", 
+	"clipMin": "[Default: -1000] The minimum zoom, -1 is 1/2x, -2 is 1/4x, ...",
+	"clipMax": "[Default:  1000] The maximum zoom, 0 is 1x, 1 is 2x, ...",
+	"alwaysShow": "[Default: false] True if the marker should appear regardless of whether hide markers is on",
+	"isTile": "[Default: false] True if the marker should scale with the map",
+	"isTechnical": "[Default: false] True if user should not be able to place the marker on the map",
+	"centerX": "[Default: 0.5] The point in the image that should be at the location of the marker (0-1)",
+	"centerY": "[Default: 0.5] The point in the image that should be at the location of the marker (0-1)"
+}

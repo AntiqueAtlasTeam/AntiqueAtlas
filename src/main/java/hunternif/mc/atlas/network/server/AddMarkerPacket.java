@@ -6,6 +6,8 @@ import hunternif.mc.atlas.marker.MarkersData;
 import hunternif.mc.atlas.network.AbstractMessage.AbstractServerMessage;
 import hunternif.mc.atlas.network.PacketDispatcher;
 import hunternif.mc.atlas.network.client.MarkersPacket;
+import hunternif.mc.atlas.registry.MarkerRegistry;
+import hunternif.mc.atlas.registry.MarkerType;
 import hunternif.mc.atlas.util.Log;
 
 import java.io.IOException;
@@ -24,7 +26,7 @@ import net.minecraftforge.fml.relauncher.Side;
 public class AddMarkerPacket extends AbstractServerMessage<AddMarkerPacket> {
 	private int atlasID;
 	private int dimension;
-	private String type;
+	private MarkerType type;
 	private String label;
 	private int x, y;
 	private boolean visibleAhead;
@@ -32,7 +34,7 @@ public class AddMarkerPacket extends AbstractServerMessage<AddMarkerPacket> {
 	public AddMarkerPacket() {}
 
 	/** Use this constructor when creating a <b>local</b> marker. */
-	public AddMarkerPacket(int atlasID, int dimension, String type, String label, int x, int y, boolean visibleAhead) {
+	public AddMarkerPacket(int atlasID, int dimension, MarkerType type, String label, int x, int y, boolean visibleAhead) {
 		this.atlasID = atlasID;
 		this.dimension = dimension;
 		this.type = type;
@@ -46,7 +48,7 @@ public class AddMarkerPacket extends AbstractServerMessage<AddMarkerPacket> {
 	public void read(PacketBuffer buffer) throws IOException {
 		atlasID = buffer.readVarIntFromBuffer();
 		dimension = buffer.readVarIntFromBuffer();
-		type = ByteBufUtils.readUTF8String(buffer);
+		type = MarkerRegistry.find( ByteBufUtils.readUTF8String(buffer) );
 		label = ByteBufUtils.readUTF8String(buffer);
 		x = buffer.readInt();
 		y = buffer.readInt();
@@ -57,7 +59,7 @@ public class AddMarkerPacket extends AbstractServerMessage<AddMarkerPacket> {
 	public void write(PacketBuffer buffer) throws IOException {
 		buffer.writeVarIntToBuffer(atlasID);
 		buffer.writeVarIntToBuffer(dimension);
-		ByteBufUtils.writeUTF8String(buffer, type);
+		ByteBufUtils.writeUTF8String(buffer, type.getRegistryName().toString());
 		ByteBufUtils.writeUTF8String(buffer, label);
 		buffer.writeInt(x);
 		buffer.writeInt(y);
