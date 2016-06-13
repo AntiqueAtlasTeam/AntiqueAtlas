@@ -7,10 +7,9 @@ import hunternif.mc.atlas.util.AtlasRenderHelper;
 import java.util.Arrays;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.util.ResourceLocation;
-
-import org.lwjgl.opengl.GL11;
 
 /** Bookmark-button in the journal. When a bookmark is selected, it will not
  * bulge on mouseover. */
@@ -51,7 +50,7 @@ public class GuiBookmarkButton extends GuiToggleButton {
 	
 	@Override
 	public void drawScreen(int mouseX, int mouseY, float partialTick) {
-		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+		GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
 		RenderHelper.disableStandardItemLighting();
 		
 		// Render background:
