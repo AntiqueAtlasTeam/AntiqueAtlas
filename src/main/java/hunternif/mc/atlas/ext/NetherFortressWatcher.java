@@ -63,7 +63,6 @@ public class NetherFortressWatcher {
 		MapGenStructureData data = (MapGenStructureData)world.getPerWorldStorage().getOrLoadData(MapGenStructureData.class, "Fortress");
 		if (data == null) return;
 		NBTTagCompound fortressNBTData = data.getTagCompound();
-		@SuppressWarnings("unchecked")
 		Set<String> tagSet = fortressNBTData.getKeySet();
 		for (String coords : tagSet) {
 			if (!visited.contains(coords)) {

@@ -2,6 +2,7 @@ package hunternif.mc.atlas.client.gui;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
@@ -38,7 +39,7 @@ public class ProgressBarOverlay {
 		if(l.maxProgress < 0)
 			p = 0;
 		
-		GL11.glDisable(GL11.GL_TEXTURE_2D);
+		GlStateManager.disableTexture2D();
 		Tessellator tessellator = Tessellator.getInstance();
 		VertexBuffer vb = tessellator.getBuffer();
 		
@@ -55,7 +56,8 @@ public class ProgressBarOverlay {
 		vb.pos(x+barWidth*p, y, 0)			.color(0.5f, 1, 0.5f, 1).endVertex();
 		
 		tessellator.draw();
-		GL11.glEnable(GL11.GL_TEXTURE_2D);
+		
+		GlStateManager.enableTexture2D();
 	}
 
 }

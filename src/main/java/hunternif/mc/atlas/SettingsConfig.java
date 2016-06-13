@@ -2,11 +2,12 @@ package hunternif.mc.atlas;
 
 import java.io.File;
 
+import hunternif.mc.atlas.client.gui.GuiAtlas;
 import net.minecraftforge.common.config.Configuration;
 
 /** Config for various performance and interface settings. */
 public class SettingsConfig {
-	private static final int VERSION = 3;
+	private static final int VERSION = 4;
 	
 	private static final String GAMEPLAY = "Gameplay";
 	private static final String INTERFACE = "Interface";
@@ -36,6 +37,7 @@ public class SettingsConfig {
 	public boolean doRescan = true;
 	public int rescanRate = 4;
 	public boolean doScanPonds = true;
+	public boolean debugRender = false;
 	
 	public void load(File file) {
 		Configuration config = new Configuration(file, String.valueOf(VERSION));
@@ -87,6 +89,10 @@ public class SettingsConfig {
 				"The number of area scans between full rescans.\nHigher value gives better performance.");
 		doScanPonds = config.getBoolean("do_scan_ponds", PERFORMANCE, doScanPonds,
 				"Whether to perform additional scanning to locate small ponds of water or lava.\nDisable for better performance.");
+		
+		debugRender = config.getBoolean("debug_rendering", PERFORMANCE, debugRender,
+				"If true, map render time will be output.");
+		
 		
 		config.save();
 	}
