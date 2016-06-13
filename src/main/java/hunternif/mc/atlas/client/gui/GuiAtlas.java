@@ -274,7 +274,12 @@ public class GuiAtlas extends GuiComponent {
 		btnRight.addListener(positionListener);
 		btnPosition.addListener(positionListener);
 		
-		btnExportPng = new GuiBookmarkButton(1, Textures.ICON_EXPORT, I18n.format("gui.antiqueatlas.exportImage"));
+		btnExportPng = new GuiBookmarkButton(1, Textures.ICON_EXPORT, I18n.format("gui.antiqueatlas.exportImage")) {
+			@Override
+			public boolean isEnabled() {
+				return !ExportImageUtil.isExporting;
+			}
+		};
 		addChild(btnExportPng).offsetGuiCoords(300, 75);
 		btnExportPng.addListener(new IButtonListener<GuiBookmarkButton>() {
 			@Override
