@@ -234,6 +234,8 @@ public class GuiAtlas extends GuiComponent {
 	private int zoomLevel = zoomLevelOne;
 	private String[] zoomNames = new String[] { "256", "128", "64", "32", "16", "8", "4", "2", "1", "1/2", "1/4", "1/8", "1/16", "1/32", "1/64", "1/128", "1/256" };
 	
+	private Thread exportThread;
+	
 	@SuppressWarnings("rawtypes")
 	public GuiAtlas() {
 		setSize(WIDTH, HEIGHT);
@@ -277,14 +279,14 @@ public class GuiAtlas extends GuiComponent {
 		btnExportPng.addListener(new IButtonListener<GuiBookmarkButton>() {
 			@Override
 			public void onClick(GuiBookmarkButton button) {
-				progressBar.reset();
 				if (stack != null) {
-					new Thread(new Runnable() {
+					exportThread = new Thread(new Runnable() {
 						@Override
 						public void run() {
 							exportImage(stack.copy());
 						}
-					}).start();
+					}, "Atlas file export thread");
+					exportThread.start();
 				}
 			}
 		});
@@ -361,7 +363,8 @@ public class GuiAtlas extends GuiComponent {
 	@Override
 	public void initGui() {
 		super.initGui();
-		state.switchTo(NORMAL); //TODO: his causes the Export PNG progress bar to disappear when resizing game window
+		if(!state.equals(EXPORTING_IMAGE))
+			state.switchTo(NORMAL); //TODO: his causes the Export PNG progress bar to disappear when resizing game window
 		Keyboard.enableRepeatEvents(true);
 		screenScale = new ScaledResolution(mc).getScaleFactor();
 		setCentered();
@@ -420,16 +423,28 @@ public class GuiAtlas extends GuiComponent {
 		boolean showMarkers = !state.is(HIDING_MARKERS);
 		state.switchTo(EXPORTING_IMAGE);
 		// Default file name is "Atlas <N>.png"
-		File file = ExportImageUtil.selectPngFileToSave("Atlas " + stack.getItemDamage(), progressBar);
+		ExportImageUtil.currentListener = progressBar;
+		File file = ExportImageUtil.selectPngFileToSave("Atlas " + stack.getItemDamage());
 		if (file != null) {
 			try {
 				Log.info("Exporting image from Atlas #%d to file %s", stack.getItemDamage(), file.getAbsolutePath());
-				ExportImageUtil.exportPngImage(biomeData, globalMarkersData, localMarkersData, file, progressBar, showMarkers);
+				ExportImageUtil.exportPngImage(biomeData, globalMarkersData, localMarkersData, file, showMarkers);
 				Log.info("Finished exporting image");
 			} catch (OutOfMemoryError e) {
-				Log.error(e, "Image is too large");
-				progressBar.setStatusString(I18n.format("gui.antiqueatlas.export.tooLarge"));
-				return; //Don't switch to normal state yet so that the error message can be read.
+				Log.warn(e, "Image is too large, trying to export in strips");
+				try {
+					ExportImageUtil.exportPngImageTooLarge(biomeData, globalMarkersData, localMarkersData, file, showMarkers);
+				} catch (OutOfMemoryError e2) {
+					int minX = (biomeData.getScope().minX - 1) * ExportImageUtil.TILE_SIZE;
+					int minY = (biomeData.getScope().minY - 1) * ExportImageUtil.TILE_SIZE;
+					int outWidth = (biomeData.getScope().maxX + 2) * ExportImageUtil.TILE_SIZE - minX;
+					int outHeight = (biomeData.getScope().maxY + 2) * ExportImageUtil.TILE_SIZE - minY;
+					
+					Log.error(e2, "Image is STILL too large, how massive is this map?! Answer: (%dx%d)", outWidth, outHeight);
+					
+					progressBar.setStatusString(I18n.format("gui.antiqueatlas.export.tooLarge"));
+					return; //Don't switch to normal state yet so that the error message can be read.
+				}
 			}
 		}
 		state.switchTo(showMarkers ? NORMAL : HIDING_MARKERS);
@@ -845,6 +860,7 @@ public class GuiAtlas extends GuiComponent {
 		Keyboard.enableRepeatEvents(false);
 		biomeData.setBrowsingPosition(mapOffsetX, mapOffsetY, mapScale);
 		PacketDispatcher.sendToServer(new BrowsingPositionPacket(stack.getItemDamage(), player.dimension, mapOffsetX, mapOffsetY, mapScale));
+		ExportImageUtil.currentListener = ExportProgressOverlay.INSTANCE;
 	}
 	
 	/** Returns the Y coordinate that the cursor is pointing at. */
