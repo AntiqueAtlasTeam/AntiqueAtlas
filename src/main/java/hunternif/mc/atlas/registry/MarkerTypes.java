@@ -48,7 +48,7 @@ public class MarkerTypes {
 		END_CITY = marker("EndCity", Textures.MARKER_END_CITY, Textures.MARKER_END_CITY_MIP_32, Textures.MARKER_END_CITY_MIP_16);
 		END_CITY.setAlwaysShow(true).setClip(-1, 1000).setIsTile(true).setSize(2).setCenter(0.5, 0.75).setIsTechnical(true);
 		END_CITY_FAR = marker("EndCity_Far", Textures.MARKER_END_CITY_FAR);
-		END_CITY_FAR.setClip(-1000, -2).setIsTechnical(true);
+		END_CITY_FAR.setSize(1).setClip(-1000, -2).setIsTechnical(true);
 		// = marker("", Textures.MARKER_);
 	}
 	
