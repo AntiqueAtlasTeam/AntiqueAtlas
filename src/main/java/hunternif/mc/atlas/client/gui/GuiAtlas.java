@@ -22,6 +22,7 @@ import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
 import hunternif.mc.atlas.AntiqueAtlasMod;
+import hunternif.mc.atlas.SettingsConfig;
 import hunternif.mc.atlas.api.AtlasAPI;
 import hunternif.mc.atlas.client.BiomeTextureMap;
 import hunternif.mc.atlas.client.SubTile;
@@ -841,6 +842,10 @@ public class GuiAtlas extends GuiComponent {
 			}
 		} else {
 			GlStateManager.color(1, 1, 1, 1);
+		}
+		
+		if (AntiqueAtlasMod.settings.debugRender){
+			System.out.println("Rendering Marker: "+info.tex);
 		}
 		
 		AtlasRenderHelper.drawFullTexture(
