@@ -26,6 +26,7 @@ import hunternif.mc.atlas.core.DimensionData;
 import hunternif.mc.atlas.marker.DimensionMarkersData;
 import hunternif.mc.atlas.marker.Marker;
 import hunternif.mc.atlas.marker.MarkersData;
+import hunternif.mc.atlas.registry.MarkerRenderInfo;
 import hunternif.mc.atlas.util.AtlasRenderHelper;
 import hunternif.mc.atlas.util.Rect;
 
@@ -53,6 +54,12 @@ public class AAORenderEventReceiver {
 	 */
 	public boolean REQUIRES_HOLD = true;
 
+	/**
+	 * If true, the minimap will show
+	 * If false, it will not
+	 */
+	public boolean ENABLED = true;
+	
 	/** Size of markers on the minimap */
 	public int MARKER_SIZE = GuiAtlas.MARKER_SIZE / 2;
 
@@ -66,20 +73,27 @@ public class AAORenderEventReceiver {
 	 * somewhere else, but I couldn't be bothered to find it.
 	 */
 	public static final int CHUNK_SIZE = 16;
+	
+	/**new ScaledResolution(mc).getScaleFactor();*/
+	private int screenScale = 1;
 
 	@SubscribeEvent(priority = EventPriority.NORMAL)
 	public void eventHandler(RenderGameOverlayEvent.Post event) {
 		if (event.getType() != RenderGameOverlayEvent.ElementType.ALL) {
-			return; // chose a random element type to use for all overlays
+			return;
+		}
+		if (!ENABLED){
+			return;
 		}
 		EntityPlayerSP player = Minecraft.getMinecraft().thePlayer;
 		Integer atlas = null;
 		if (REQUIRES_HOLD) {
 			ItemStack stack = player.getHeldItemMainhand();
-			if (stack == null)
-				stack = player.getHeldItemOffhand();
+			ItemStack stack2 = player.getHeldItemOffhand();
 			if (stack != null && stack.getItem() == AntiqueAtlasMod.itemAtlas) {
 				atlas = new Integer(stack.getItemDamage());
+			}else if (stack2 != null && stack2.getItem() == AntiqueAtlasMod.itemAtlas) {
+				atlas = new Integer(stack2.getItemDamage());
 			}
 		} else {
 			atlas = getPlayerAtlas(player);
@@ -103,6 +117,7 @@ public class AAORenderEventReceiver {
 
 	public void drawMinimap(Rect shape, int atlasID, Vec3d position, float rotation,
 			int dimension, ScaledResolution res) {
+		screenScale = new ScaledResolution(Minecraft.getMinecraft()).getScaleFactor();
 		GlStateManager.color(1, 1, 1, 1);
 		GlStateManager.enableBlend();
 		GlStateManager.alphaFunc(GL11.GL_GREATER, 0); // So light detail on tiles is
@@ -252,17 +267,14 @@ public class AAORenderEventReceiver {
 				if (markers == null)
 					continue;
 				for (Marker marker : markers) {
-					// Position of this marker (measured in chunks) relative to
-					// the
-					// player
-					float relativeChunkPositionX = (float) (marker.getX() - position.xCoord)
+					// Position of this marker relative to the player
+					// Rounded to the nearest even number
+					int relativeChunkPositionX = TILE_SIZE*(marker.getX() - 2*(int)Math.floor(position.xCoord/2))
 							/ CHUNK_SIZE;
-					float relativeChunkPositionY = (float) (marker.getZ() - position.zCoord)
+					int relativeChunkPositionY = TILE_SIZE*(marker.getZ() - 2*(int)Math.floor(position.zCoord/2))
 							/ CHUNK_SIZE;
-					int guiX = (int)Math.floor(shapeMiddleX - MARKER_SIZE/2 + relativeChunkPositionX
-							* TILE_SIZE);
-					int guiY = (int)Math.floor(shapeMiddleY - MARKER_SIZE/2 + relativeChunkPositionY
-							* TILE_SIZE);
+					int guiX = (int)Math.floor(shapeMiddleX - MARKER_SIZE/2 + relativeChunkPositionX);
+					int guiY = (int)Math.floor(shapeMiddleY - MARKER_SIZE/2 + relativeChunkPositionY);
 					renderMarker(marker, guiX, guiY, biomeData);
 				}
 			}
@@ -276,7 +288,8 @@ public class AAORenderEventReceiver {
 			return;
 		}
 		GlStateManager.color(1, 1, 1, 1);
-		AtlasRenderHelper.drawFullTexture(marker.getType().getRegistryName(), x, y, MARKER_SIZE,
+		MarkerRenderInfo info = marker.getType().getRenderInfo(1, TILE_SIZE, screenScale);
+		AtlasRenderHelper.drawFullTexture(info.tex, x, y, MARKER_SIZE,
 				MARKER_SIZE);
 //		 AtlasRenderHelper.drawFullTexture(MarkerTextureMap.instance()
 //		 .getTexture(marker.getType()), x, y, MARKER_SIZE, MARKER_SIZE);
