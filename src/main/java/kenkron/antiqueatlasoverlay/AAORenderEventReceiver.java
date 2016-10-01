@@ -269,9 +269,9 @@ public class AAORenderEventReceiver {
 				for (Marker marker : markers) {
 					// Position of this marker relative to the player
 					// Rounded to the nearest even number
-					int relativeChunkPositionX = TILE_SIZE*(marker.getX() - 2*(int)Math.floor(position.xCoord/2))
+					int relativeChunkPositionX = TILE_SIZE*(2*(marker.getX()/2) - 2*(int)Math.floor(position.xCoord/2))
 							/ CHUNK_SIZE;
-					int relativeChunkPositionY = TILE_SIZE*(marker.getZ() - 2*(int)Math.floor(position.zCoord/2))
+					int relativeChunkPositionY = TILE_SIZE*(2*(marker.getZ()/2) - 2*(int)Math.floor(position.zCoord/2))
 							/ CHUNK_SIZE;
 					int guiX = (int)Math.floor(shapeMiddleX - MARKER_SIZE/2 + relativeChunkPositionX);
 					int guiY = (int)Math.floor(shapeMiddleY - MARKER_SIZE/2 + relativeChunkPositionY);
