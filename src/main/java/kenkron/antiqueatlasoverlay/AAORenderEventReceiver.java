@@ -63,7 +63,6 @@ public class AAORenderEventReceiver {
 	/** Size of markers on the minimap */
 	public int MARKER_SIZE = GuiAtlas.MARKER_SIZE / 2;
 
-
 	public int PLAYER_ICON_WIDTH = 7;
 	
 	public int PLAYER_ICON_HEIGHT = 8;
@@ -328,12 +327,18 @@ public class AAORenderEventReceiver {
 
 	/**
 	 * Convenience method that returns the first atlas ID for all atlas items
-	 * the player is currently carrying in the hotbar. Returns null if there are
-	 * none.
+	 * the player is currently carrying in the hotbar/offhand. Returns null if 
+	 * there are none. Offhand gets priority.
 	 **/
 	public static Integer getPlayerAtlas(EntityPlayer player) {
+
+		ItemStack stack = player.getHeldItemOffhand();
+		if (stack != null && stack.getItem() == AntiqueAtlasMod.itemAtlas) {
+			return new Integer(stack.getItemDamage());
+		}
+			
 		for (int i = 0; i < 9; i++) {
-			ItemStack stack = player.inventory.mainInventory[i];
+			stack = player.inventory.mainInventory[i];
 			if (stack != null && stack.getItem() == AntiqueAtlasMod.itemAtlas) {
 				return new Integer(stack.getItemDamage());
 			}
