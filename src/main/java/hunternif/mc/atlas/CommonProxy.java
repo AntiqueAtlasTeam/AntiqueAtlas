@@ -90,6 +90,10 @@ public class CommonProxy {
 	
 	public void openAtlasGUI(ItemStack stack) {}
 
+	public File getConfigDir(){
+		return configDir;
+	}
+	
 	/**
 	 * Returns a side-appropriate EntityPlayer for use during message handling
 	 */
