@@ -1,9 +1,7 @@
 package kenkron.antiqueatlasoverlay;
 
-import java.io.File;
-
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
@@ -14,17 +12,20 @@ public class AntiqueAtlasOverlayMod
     public static final String MODID = "AntiqueAtlasOverlay";
     public static final String VERSION = "1.2";
     
-    AAORenderEventReceiver renderer;
+    
+    @SidedProxy(clientSide="kenkron.antiqueatlasoverlay.AAOClient", 
+    		    serverSide="kenkron.antiqueatlasoverlay.AAOCommon")
+    protected static AAOCommon proxy;
     
     @EventHandler
     public void preInit(FMLPreInitializationEvent event){
-    	renderer = new AAORenderEventReceiver();
-    	AAOConfig.load(new File(event.getModConfigurationDirectory(), "AntiqueAtlasOverlay.cfg"), renderer);
+    	System.out.println(proxy.getClass());
+    	proxy.preInit(event);
     }
     
     @EventHandler
     public void init(FMLInitializationEvent event)
     {
-        MinecraftForge.EVENT_BUS.register(renderer);
+    	proxy.init(event);
     }
 }

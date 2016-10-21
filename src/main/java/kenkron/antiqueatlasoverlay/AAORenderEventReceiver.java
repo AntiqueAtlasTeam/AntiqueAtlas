@@ -30,7 +30,7 @@ import hunternif.mc.atlas.registry.MarkerRenderInfo;
 import hunternif.mc.atlas.util.AtlasRenderHelper;
 import hunternif.mc.atlas.util.Rect;
 
-public class AAORenderEventReceiver {
+public class AAORenderEventReceiver{
 
 	/**
 	 * I know public variables can be messed with, but that's a risk I'm willing
@@ -75,7 +75,9 @@ public class AAORenderEventReceiver {
 	
 	/**new ScaledResolution(mc).getScaleFactor();*/
 	private int screenScale = 1;
-
+	
+	private ScaledResolution res;
+	
 	@SubscribeEvent(priority = EventPriority.NORMAL)
 	public void eventHandler(RenderGameOverlayEvent.Post event) {
 		if (event.getType() != RenderGameOverlayEvent.ElementType.ALL) {
@@ -109,13 +111,14 @@ public class AAORenderEventReceiver {
 				bounds.minY = gameheight - (HEIGHT + Y);
 			}
 			bounds.setSize(WIDTH, HEIGHT);
+			res = event.getResolution();
 			drawMinimap(bounds, atlas.intValue(), player.getPositionVector(), player.getRotationYawHead(),
-					player.dimension, event.getResolution());
+					player.dimension);
 		}
 	}
 
 	public void drawMinimap(Rect shape, int atlasID, Vec3d position, float rotation,
-			int dimension, ScaledResolution res) {
+			int dimension) {
 		screenScale = new ScaledResolution(Minecraft.getMinecraft()).getScaleFactor();
 		GlStateManager.color(1, 1, 1, 1);
 		GlStateManager.enableBlend();
@@ -129,9 +132,9 @@ public class AAORenderEventReceiver {
 				shape.minY + Math.round(BORDER_Y * shape.getHeight()),
 				shape.maxX - Math.round(BORDER_X * shape.getWidth()),
 				shape.maxY - Math.round(BORDER_Y * shape.getHeight()));
-		drawTiles(innerShape, atlasID, position, dimension, res);
+		drawTiles(innerShape, atlasID, position, dimension);
 		if (MARKER_SIZE>0){
-			drawMarkers(innerShape, atlasID, position, dimension, res);
+			drawMarkers(innerShape, atlasID, position, dimension);
 			int shapeMiddleX = (shape.minX + shape.maxX) / 2;
 			int shapeMiddleY = (shape.minY + shape.maxY) / 2;
 			drawPlayer(shapeMiddleX, shapeMiddleY, position, rotation);
@@ -144,11 +147,11 @@ public class AAORenderEventReceiver {
 	}
 
 	public void drawTiles(Rect shape, int atlasID, Vec3d position,
-			int dimension, ScaledResolution res) {
+			int dimension) {
 		GL11.glEnable(GL11.GL_SCISSOR_TEST);
 		// glScissor uses the default window coordinates,
 		// the display window does not. We need to fix this
-		glScissorGUI(shape, res);
+		glScissorGUI(shape);
 		GlStateManager.enableBlend();
 		GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
@@ -197,12 +200,12 @@ public class AAORenderEventReceiver {
 	}
 
 	public void drawMarkers(Rect shape, int atlasID, Vec3d position,
-			int dimension, ScaledResolution res) {
+			int dimension) {
 
 		GL11.glEnable(GL11.GL_SCISSOR_TEST);
 		// glScissor uses the default window coordinates,
 		// the display window does not. We need to fix this
-		glScissorGUI(shape, res);
+		glScissorGUI(shape);
 
 		// biomeData needed to prevent undiscovered markers from appearing
 		DimensionData biomeData = AntiqueAtlasMod.atlasData.getAtlasData(
@@ -312,7 +315,7 @@ public class AAORenderEventReceiver {
 	}
 
 	/** Calls GL11.glScissor, but uses GUI coordinates */
-	protected void glScissorGUI(Rect shape, ScaledResolution res) {
+	protected void glScissorGUI(Rect shape) {
 		// glScissor uses the default window coordinates,
 		// the display window does not. We need to fix this
 		int mcHeight = Minecraft.getMinecraft().displayHeight;

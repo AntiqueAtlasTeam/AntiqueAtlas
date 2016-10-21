@@ -367,6 +367,10 @@ public class ClientProxy extends CommonProxy implements IResourceManagerReloadLi
 	public IThreadListener getThreadFromContext(MessageContext ctx) {
 		return (ctx.side.isClient() ? Minecraft.getMinecraft() : super.getThreadFromContext(ctx));
 	}
+	
+	public File getConfigDir(){
+		return configDir;
+	}
 
 	/** Checks if any of the configs's data has been marked dirty and saves it. */
 	@SubscribeEvent
