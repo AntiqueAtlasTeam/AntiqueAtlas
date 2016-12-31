@@ -8,6 +8,7 @@ import org.junit.Test;
 
 import hunternif.mc.atlas.core.Tile;
 import hunternif.mc.atlas.core.TileGroup;
+import hunternif.mc.atlas.util.Log;
 import net.minecraft.nbt.NBTTagCompound;
 
 public class TestTileGroup {
@@ -25,6 +26,7 @@ public class TestTileGroup {
 	
 	@Test
 	public void testBounds() {
+		Log.setModID(null);
 		tg.setTile(15,15, new Tile(1));
 		tg.setTile(32,32, new Tile(1));
 		assertEquals(null, tg.getTile(15, 15));
