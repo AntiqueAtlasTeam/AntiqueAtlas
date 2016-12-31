@@ -34,7 +34,7 @@ public class TileGroup extends WorldSavedData implements ITileStorage {
 	@Override
 	public void readFromNBT(NBTTagCompound compound) {
 		if (compound.getInteger(TAG_VERSION) < VERSION) {
-			//Log.warn("Outdated atlas data format! Was %d but current is %d", compound.getInteger(TAG_VERSION), VERSION);
+			Log.warn("Outdated atlas data format! Was %d but current is %d", compound.getInteger(TAG_VERSION), VERSION);
 		}
 		scope.minX = compound.getIntArray(TAG_POSITION)[0];
 		scope.minY = compound.getIntArray(TAG_POSITION)[1];
@@ -86,7 +86,9 @@ public class TileGroup extends WorldSavedData implements ITileStorage {
 			int ry = y - scope.minY;
 			tiles[rx][ry] = tile;
 		}else{
-			//Log.warn("TileGroup tried to set tile out of bounds");
+			Log.warn("TileGroup tried to set tile out of bounds:"+
+		"\n\tbounds:"+scope+
+		"\n\ttarget: x:"+x+", y:"+y);
 		}
 	}
 
