@@ -32,25 +32,36 @@ public class AtlasDataHandler {
 	/** Loads data for the given atlas or creates a new one. */
 	public AtlasData getAtlasData(int atlasID, World world) {
 		String key = getAtlasDataKey(atlasID);
+
+		/* TODO: packet rework
+		 *   Atlas Data must be loaded in parts.
+		 * Consider moving the requests to the AtlasData class.
+		 * This seems to require separating AtlasData into multiple NBT tags*/
 		AtlasData data = null;
+
+		//TODO: Since all data is stored in parts, the atlasDataClientCache should be
+		//use for both local and remote maps, so that partially loaded maps stay cached? maybe?
 		if (world.isRemote) {
 			// Since atlas data doesn't really belong to a single world-dimension,
 			// it can be cached. This should fix #67
 			data = atlasDataClientCache.get(key);
+			if (data != null)
+				return data;
 		}
-
+		
+		//check for Singularly Loaded Maps (from before packet rework)
+		data = (AtlasData) world.loadData(AtlasData.class, key);
+		if (data!=null)
+			return data;
+		
+		//make a new atlas data
 		if (data == null) {
-			data = (AtlasData) world.loadData(AtlasData.class, key);
-			if (data == null) {
-				data = new AtlasData(key);
-				world.setData(key, data);
-			}
-
-			if (world.isRemote) {
-			    atlasDataClientCache.put(key, data);
-            }
+			data = new AtlasData(key);
+			//markers data is no longer an individual item data
+			//world.setItemData(key, data);
 		}
-
+		if (world.isRemote) atlasDataClientCache.put(key, data);
+		
 		return data;
 	}
 
