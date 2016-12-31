@@ -71,6 +71,30 @@ public class AtlasData extends WorldSavedData {
 					dimTag.getInteger(TAG_BROWSING_Y), zoom);
 		}
 	}
+	
+	/**Reads from NBT version 2*/
+	public void readFromNBT2(NBTTagCompound compound) {
+		this.nbt = compound;
+		int version = compound.getInteger(TAG_VERSION);
+		if (version < VERSION) {
+			Log.warn("Outdated atlas data format! Was %d but current is %d", version, VERSION);
+			this.markDirty();
+		}
+		NBTTagList dimensionMapList = compound.getTagList(TAG_DIMENSION_MAP_LIST, Constants.NBT.TAG_COMPOUND);
+		for (int d = 0; d < dimensionMapList.tagCount(); d++) {
+			NBTTagCompound dimTag = dimensionMapList.getCompoundTagAt(d);
+			int dimensionID = dimTag.getInteger(TAG_DIMENSION_ID);
+			int[] intArray = dimTag.getIntArray(TAG_VISITED_CHUNKS);
+			DimensionData dimData = getDimensionData(dimensionID);
+			for (int i = 0; i < intArray.length; i += 3) {
+				dimData.setTile(intArray[i], intArray[i+1], new Tile(intArray[i+2]));
+			}
+			double zoom = (double)dimTag.getInteger(TAG_BROWSING_ZOOM) / BrowsingPositionPacket.ZOOM_SCALE_FACTOR;
+			if (zoom == 0) zoom = 0.5;
+			dimData.setBrowsingPosition(dimTag.getInteger(TAG_BROWSING_X),
+					dimTag.getInteger(TAG_BROWSING_Y), zoom);
+		}
+	}
 
 	@Override
 	public void writeToNBT(NBTTagCompound compound) {
@@ -113,6 +137,9 @@ public class AtlasData extends WorldSavedData {
 	public Set<Integer> getVisitedDimensions() {
 		return dimensionMap.keySet();
 	}
+	
+	/* TODO: Packet Rework
+	 *   Dimension data should check the server for updates*/
 	/** If this dimension is not yet visited, empty DimensionData will be created. */
 	public DimensionData getDimensionData(int dimension) {
 		DimensionData dimData = dimensionMap.get(Integer.valueOf(dimension));
