@@ -23,15 +23,18 @@ public class TileGroup extends WorldSavedData implements ITileStorage {
 	/** The tiles in this scope */
 	Tile[][] tiles = new Tile[CHUNK_STEP][CHUNK_STEP];
 
-	public TileGroup(String p_i2141_1_) {
+	public TileGroup(String p_i2141_1_, int x, int y) {
 		super(p_i2141_1_);
-		// TODO Auto-generated constructor stub
+		scope.minX = x;
+		scope.minY = y;
+		scope.maxX = scope.minX + CHUNK_STEP - 1;
+		scope.maxY = scope.minY + CHUNK_STEP - 1;
 	}
 
 	@Override
 	public void readFromNBT(NBTTagCompound compound) {
 		if (compound.getInteger(TAG_VERSION) < VERSION) {
-			Log.warn("Outdated atlas data format! Was %d but current is %d", compound.getInteger(TAG_VERSION), VERSION);
+			//Log.warn("Outdated atlas data format! Was %d but current is %d", compound.getInteger(TAG_VERSION), VERSION);
 		}
 		scope.minX = compound.getIntArray(TAG_POSITION)[0];
 		scope.minY = compound.getIntArray(TAG_POSITION)[1];
@@ -78,10 +81,12 @@ public class TileGroup extends WorldSavedData implements ITileStorage {
 
 	@Override
 	public void setTile(int x, int y, Tile tile) {
-		if (x >= scope.minX && y >= scope.minY && x < scope.maxX && y < scope.maxY) {
+		if (x >= scope.minX && y >= scope.minY && x <= scope.maxX && y <= scope.maxY) {
 			int rx = x - scope.minX;
 			int ry = y - scope.minY;
 			tiles[rx][ry] = tile;
+		}else{
+			//Log.warn("TileGroup tried to set tile out of bounds");
 		}
 	}
 
@@ -94,7 +99,7 @@ public class TileGroup extends WorldSavedData implements ITileStorage {
 
 	@Override
 	public Tile getTile(int x, int y) {
-		if (x >= scope.minX && y >= scope.minY && x < scope.maxX && y < scope.maxY) {
+		if (x >= scope.minX && y >= scope.minY && x <= scope.maxX && y <= scope.maxY) {
 			int rx = x - scope.minX;
 			int ry = y - scope.minY;
 			return tiles[rx][ry];
