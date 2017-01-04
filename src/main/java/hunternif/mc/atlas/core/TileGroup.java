@@ -3,10 +3,9 @@ package hunternif.mc.atlas.core;
 import hunternif.mc.atlas.util.Log;
 import hunternif.mc.atlas.util.Rect;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.world.WorldSavedData;
 
 /** Represents a group of tiles that may be sent/stored as a single NBT */
-public class TileGroup extends WorldSavedData implements ITileStorage {
+public class TileGroup implements ITileStorage {
 
 	public static final int VERSION = 1;
 
@@ -23,15 +22,13 @@ public class TileGroup extends WorldSavedData implements ITileStorage {
 	/** The tiles in this scope */
 	Tile[][] tiles = new Tile[CHUNK_STEP][CHUNK_STEP];
 
-	public TileGroup(String p_i2141_1_, int x, int y) {
-		super(p_i2141_1_);
+	public TileGroup(int x, int y) {
 		scope.minX = x;
 		scope.minY = y;
 		scope.maxX = scope.minX + CHUNK_STEP - 1;
 		scope.maxY = scope.minY + CHUNK_STEP - 1;
 	}
 
-	@Override
 	public void readFromNBT(NBTTagCompound compound) {
 		if (compound.getInteger(TAG_VERSION) < VERSION) {
 			Log.warn("Outdated atlas data format! Was %d but current is %d", compound.getInteger(TAG_VERSION), VERSION);
@@ -56,7 +53,6 @@ public class TileGroup extends WorldSavedData implements ITileStorage {
 		}
 	}
 
-	@Override
 	public void writeToNBT(NBTTagCompound me) {
 		int[] tileArray = new int[CHUNK_STEP * CHUNK_STEP];
 		int[] pos = { scope.minX, scope.minY };
