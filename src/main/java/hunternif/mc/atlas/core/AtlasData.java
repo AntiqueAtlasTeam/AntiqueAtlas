@@ -20,16 +20,16 @@ import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class AtlasData extends WorldSavedData {
-	private static final int VERSION = 2;
-	private static final String TAG_VERSION = "aaVersion";
-	private static final String TAG_DIMENSION_MAP_LIST = "qDimensionMap";
-	private static final String TAG_DIMENSION_ID = "qDimensionID";
-	private static final String TAG_VISITED_CHUNKS = "qVisitedChunks";
+	public static final int VERSION = 2;
+	public static final String TAG_VERSION = "aaVersion";
+	public static final String TAG_DIMENSION_MAP_LIST = "qDimensionMap";
+	public static final String TAG_DIMENSION_ID = "qDimensionID";
+	public static final String TAG_VISITED_CHUNKS = "qVisitedChunks";
 	
 	// Navigation
-	private static final String TAG_BROWSING_X = "qBrowseX";
-	private static final String TAG_BROWSING_Y = "qBrowseY";
-	private static final String TAG_BROWSING_ZOOM = "qBrowseZoom";
+	public static final String TAG_BROWSING_X = "qBrowseX";
+	public static final String TAG_BROWSING_Y = "qBrowseY";
+	public static final String TAG_BROWSING_ZOOM = "qBrowseZoom";
 
 	/** Maps dimension ID to biomeAnalyzer. */
 	private final Map<Integer, IBiomeDetector> biomeAnalyzers = new HashMap<>();
