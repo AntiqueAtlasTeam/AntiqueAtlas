@@ -66,7 +66,7 @@ public class BiomeTextureMap extends SaveData {
 	}
 	
 	/** This map allows keys other than the 256 biome IDs to use for special tiles. */
-	final Map<Integer, TextureSet> textureMap = new HashMap<Integer, TextureSet>();
+	final Map<Integer, TextureSet> textureMap = new HashMap<>();
 	
 	public static final TextureSet defaultTexture = PLAINS;
 	
@@ -245,7 +245,7 @@ public class BiomeTextureMap extends SaveData {
 	}
 	
 	/** Auto-registers the biome ID if it is not registered. */
-	public void checkRegistration(int biomeID) {
+	private void checkRegistration(int biomeID) {
 		if (!isRegistered(biomeID)) {
 			autoRegister(biomeID);
 			markDirty();
@@ -271,7 +271,7 @@ public class BiomeTextureMap extends SaveData {
 	}
 	
 	public List<ResourceLocation> getAllTextures() {
-		List<ResourceLocation> list = new ArrayList<ResourceLocation>(textureMap.size());
+		List<ResourceLocation> list = new ArrayList<>(textureMap.size());
 		for (Entry<Integer, TextureSet> entry : textureMap.entrySet()) {
 			list.addAll(Arrays.asList(entry.getValue().textures));
 		}

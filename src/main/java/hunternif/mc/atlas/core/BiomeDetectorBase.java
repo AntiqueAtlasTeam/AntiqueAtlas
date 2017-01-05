@@ -11,7 +11,6 @@ import net.minecraft.world.chunk.Chunk;
 
 import hunternif.mc.atlas.ext.ExtTileIdMap;
 import hunternif.mc.atlas.util.ByteUtil;
-import hunternif.mc.atlas.util.WorldUtil;
 
 /**
  * Detects the 256 vanilla biomes, water pools and lava pools.

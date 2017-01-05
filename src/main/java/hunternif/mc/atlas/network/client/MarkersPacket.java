@@ -29,9 +29,9 @@ import hunternif.mc.atlas.registry.MarkerType;
 public class MarkersPacket extends AbstractClientMessage<MarkersPacket> {
 	/** Used in place of atlasID to signify that the marker is global. */
 	private static final int GLOBAL = -1;
-	protected int atlasID;
-	protected int dimension;
-	protected final ListMultimap<MarkerType, Marker> markersByType = ArrayListMultimap.create();
+	private int atlasID;
+	private int dimension;
+	private final ListMultimap<MarkerType, Marker> markersByType = ArrayListMultimap.create();
 
 	public MarkersPacket() {}
 
@@ -54,11 +54,7 @@ public class MarkersPacket extends AbstractClientMessage<MarkersPacket> {
 		return this;
 	}
 
-	public boolean isEmpty() {
-		return markersByType.isEmpty();
-	}
-
-	public boolean isGlobal() {
+	private boolean isGlobal() {
 		return atlasID == GLOBAL;
 	}
 

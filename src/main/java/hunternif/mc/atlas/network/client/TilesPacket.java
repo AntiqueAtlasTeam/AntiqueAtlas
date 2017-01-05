@@ -18,7 +18,7 @@ import net.minecraftforge.fml.relauncher.Side;
  */
 public class TilesPacket extends AbstractClientMessage<TilesPacket> {
 	/** Size of one entry in the map in bytes. */
-	public static final int ENTRY_SIZE_BYTES = 2 + 2 + 2;
+	private static final int ENTRY_SIZE_BYTES = 2 + 2 + 2;
 
 	private int dimension;
 	private int tileCount;

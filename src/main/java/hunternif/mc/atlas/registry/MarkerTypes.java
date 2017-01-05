@@ -1,15 +1,12 @@
 package hunternif.mc.atlas.registry;
 
-import net.minecraft.util.ResourceLocation;
-
 import hunternif.mc.atlas.AntiqueAtlasMod;
 import hunternif.mc.atlas.client.Textures;
-import hunternif.mc.atlas.ext.VillageWatcher;
-import hunternif.mc.atlas.marker.NetherPortalWatcher;
+import net.minecraft.util.ResourceLocation;
 
 public class MarkerTypes {
 	
-	public static MarkerTypes INSTANCE = new MarkerTypes();
+	public static final MarkerTypes INSTANCE = new MarkerTypes();
 	
 	public static MarkerType
 	
@@ -42,8 +39,8 @@ public class MarkerTypes {
 		SCROLL = marker("scroll", Textures.MARKER_SCROLL);
 		TOMB = marker("tomb", Textures.MARKER_TOMB);
 		
-		VILLAGE = marker(VillageWatcher.MARKER, Textures.MARKER_VILLAGE);
-		NETHER_PORTAL = marker(NetherPortalWatcher.MARKER_PORTAL, Textures.MARKER_NETHER_PORTAL);
+		VILLAGE = marker("village", Textures.MARKER_VILLAGE);
+		NETHER_PORTAL = marker("nether_portal", Textures.MARKER_NETHER_PORTAL);
 
 		END_CITY = marker("EndCity", Textures.MARKER_END_CITY, Textures.MARKER_END_CITY_MIP_32, Textures.MARKER_END_CITY_MIP_16);
 		END_CITY.setAlwaysShow(true).setClip(-1, 1000).setIsTile(true).setSize(2).setCenter(0.5, 0.75).setIsTechnical(true);

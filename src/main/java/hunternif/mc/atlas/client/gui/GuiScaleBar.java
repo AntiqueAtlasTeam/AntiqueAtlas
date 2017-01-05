@@ -19,10 +19,11 @@ import com.google.common.collect.ImmutableMap.Builder;
  * Atlas style it is rendered at half-scale.
  */
 public class GuiScaleBar extends GuiComponent {
-	public static final int WIDTH = 20, HEIGHT = 8;
+	private static final int WIDTH = 20;
+	private static final int HEIGHT = 8;
 	
-	private static Map<Double, ResourceLocation> textureMap;
-	{
+	private static final Map<Double, ResourceLocation> textureMap;
+	static {
 		Builder<Double, ResourceLocation> builder = ImmutableMap.builder();
 		builder.put(0.0625, Textures.SCALEBAR_512);
 		builder.put(0.125, Textures.SCALEBAR_256);
@@ -38,22 +39,17 @@ public class GuiScaleBar extends GuiComponent {
 	/** Pixel-to-block ratio. */
 	private double mapScale = 1;
 	
-	public GuiScaleBar() {
+	GuiScaleBar() {
 		setSize(WIDTH, HEIGHT);
 	}
 	
-	public void setMapScale(double scale) {
+	void setMapScale(double scale) {
 		this.mapScale = scale;
 	}
 	
 	/** Returns the background texture depending on the scale. */
 	private ResourceLocation getTexture() {
 		return textureMap.get(mapScale);
-	}
-	
-	@Override
-	public void initGui() {
-		super.initGui();
 	}
 	
 	@Override

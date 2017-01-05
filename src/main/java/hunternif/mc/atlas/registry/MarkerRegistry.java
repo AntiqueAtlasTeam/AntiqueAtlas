@@ -9,14 +9,14 @@ import hunternif.mc.atlas.AntiqueAtlasMod;
 import hunternif.mc.atlas.util.SaveData;
 
 public class MarkerRegistry extends SaveData {
-	public static MarkerRegistry INSTANCE = new MarkerRegistry();
+	public static final MarkerRegistry INSTANCE = new MarkerRegistry();
 
-	private final ResourceLocation DEFAULT_LOC = new ResourceLocation("antiqueatlas:red_x_small");
+	private static final ResourceLocation DEFAULT_LOC = new ResourceLocation("antiqueatlas:red_x_small");
 	
 	private final MarkerRegistryImpl<MarkerType> registry;
 	
 	private MarkerRegistry() {
-		registry = new MarkerRegistryImpl<MarkerType>(DEFAULT_LOC);
+		registry = new MarkerRegistryImpl<>(DEFAULT_LOC);
 	}
 	
 	public static void register(ResourceLocation location, MarkerType type) {

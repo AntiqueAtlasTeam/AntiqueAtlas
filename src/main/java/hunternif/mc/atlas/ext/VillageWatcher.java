@@ -24,17 +24,14 @@ import hunternif.mc.atlas.AntiqueAtlasMod;
 import hunternif.mc.atlas.api.AtlasAPI;
 import hunternif.mc.atlas.marker.Marker;
 import hunternif.mc.atlas.marker.MarkersData;
-import hunternif.mc.atlas.registry.MarkerType;
 import hunternif.mc.atlas.registry.MarkerTypes;
 import hunternif.mc.atlas.util.Log;
 
 public class VillageWatcher {
-	public static final String MARKER = "village";
-	
 	/** Set of tag names for every village, in the format "[x, y]" */
 	//TODO: list of visited villages must be reset when changing worlds!
 	// And the same goes for Nether Fortress Watcher
-	private final Set<String> visited = new HashSet<String>();
+	private final Set<String> visited = new HashSet<>();
 	
 	private static final String LIBRARY= "ViBH"; // Big-ish house with a high slanted roof, large windows; books and couches inside.
 	private static final String SMITHY = "ViS"; // The smithy.
@@ -56,7 +53,7 @@ public class VillageWatcher {
 	
 	private static final Map<String, String> partToTileMap;
 	static {
-		ImmutableMap.Builder<String, String> builder = new Builder<String, String>();
+		ImmutableMap.Builder<String, String> builder = new Builder<>();
 		builder.put(LIBRARY, ExtTileIdMap.TILE_VILLAGE_LIBRARY);
 		builder.put(SMITHY, ExtTileIdMap.TILE_VILLAGE_SMITHY);
 		builder.put(L_HOUSE, ExtTileIdMap.TILE_VILLAGE_L_HOUSE);
@@ -75,7 +72,7 @@ public class VillageWatcher {
 	/** Tiles with the higher priority override tiles with lower priority at the same chunk. */
 	private static final Map<String, Integer> tilePriority;
 	static {
-		ImmutableMap.Builder<String, Integer> builder = new Builder<String, Integer>();
+		ImmutableMap.Builder<String, Integer> builder = new Builder<>();
 		builder.put(ExtTileIdMap.TILE_VILLAGE_LIBRARY, 5);
 		builder.put(ExtTileIdMap.TILE_VILLAGE_SMITHY, 6);
 		builder.put(ExtTileIdMap.TILE_VILLAGE_L_HOUSE, 5);
@@ -106,7 +103,7 @@ public class VillageWatcher {
 		}
 	}
 	
-	public void visitAllUnvisitedVillages(World world) {
+	private void visitAllUnvisitedVillages(World world) {
 		MapGenStructureData data = (MapGenStructureData)world.getPerWorldStorage().getOrLoadData(MapGenStructureData.class, "Village");
 		if (data == null) return;
 		NBTTagCompound villageNBTData = data.getTagCompound();

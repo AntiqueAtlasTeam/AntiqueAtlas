@@ -36,11 +36,11 @@ public class AtlasData extends WorldSavedData {
 	/** This map contains, for each dimension, a map of chunks the player
 	 * has seen. This map is thread-safe.
 	 * CAREFUL! Don't modify chunk coordinates that are already put in the map! */
-	private Map<Integer /*dimension ID*/, DimensionData> dimensionMap =
-			new ConcurrentHashMap<Integer, DimensionData>(2, 0.75f, 2);
+	private final Map<Integer /*dimension ID*/, DimensionData> dimensionMap =
+			new ConcurrentHashMap<>(2, 0.75f, 2);
 	
 	/** Set of players this Atlas data has been sent to. */
-	private final Set<EntityPlayer> playersSentTo = new HashSet<EntityPlayer>();
+	private final Set<EntityPlayer> playersSentTo = new HashSet<>();
 	
 	private NBTTagCompound nbt;
 
@@ -77,7 +77,7 @@ public class AtlasData extends WorldSavedData {
 		NBTTagList dimensionMapList = new NBTTagList();
 		for (Entry<Integer, DimensionData> dimensionEntry : dimensionMap.entrySet()) {
 			NBTTagCompound dimTag = new NBTTagCompound();
-			dimTag.setInteger(TAG_DIMENSION_ID, dimensionEntry.getKey().intValue());
+			dimTag.setInteger(TAG_DIMENSION_ID, dimensionEntry.getKey());
 			DimensionData dimData = dimensionEntry.getValue();
 			Map<ShortVec2, Tile> seenChunks = dimData.getSeenChunks();
 			int[] intArray = new int[seenChunks.size()*3];
@@ -116,12 +116,7 @@ public class AtlasData extends WorldSavedData {
 	}
 	/** If this dimension is not yet visited, empty DimensionData will be created. */
 	public DimensionData getDimensionData(int dimension) {
-		DimensionData dimData = dimensionMap.get(Integer.valueOf(dimension));
-		if (dimData == null) {
-			dimData = new DimensionData(this, dimension);
-			dimensionMap.put(Integer.valueOf(dimension), dimData);
-		}
-		return dimData;
+		return dimensionMap.computeIfAbsent(dimension, k -> new DimensionData(this, dimension));
 	}
 	public Map<ShortVec2, Tile> getSeenChunksInDimension(int dimension) {
 		return getDimensionData(dimension).getSeenChunks();

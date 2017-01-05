@@ -23,18 +23,18 @@ import com.google.common.collect.Maps;
 public class MarkerRegistryImpl<V extends IRegistryEntry> implements IRegistry<ResourceLocation, V>
 {
     private static final Logger LOGGER = LogManager.getLogger();
-    protected final Map<ResourceLocation, V> registryObjects = this.createUnderlyingMap();
+    private final Map<ResourceLocation, V> registryObjects = this.createUnderlyingMap();
     private List<V> values;
 
-    protected final ResourceLocation defaultKey;
+    private final ResourceLocation defaultKey;
     
     public MarkerRegistryImpl(ResourceLocation defaultKey) {
 		this.defaultKey = defaultKey;
 	}
     
-    protected Map<ResourceLocation, V> createUnderlyingMap()
+    private Map<ResourceLocation, V> createUnderlyingMap()
     {
-        return Maps.<ResourceLocation, V>newHashMap();
+        return Maps.newHashMap();
     }
 
     @Nullable
@@ -73,7 +73,7 @@ public class MarkerRegistryImpl<V extends IRegistryEntry> implements IRegistry<R
 
     public Set<ResourceLocation> getKeys()
     {
-        return Collections.<ResourceLocation>unmodifiableSet(this.registryObjects.keySet());
+        return Collections.unmodifiableSet(this.registryObjects.keySet());
     }
 
     @Nullable

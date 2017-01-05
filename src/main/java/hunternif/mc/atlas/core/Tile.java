@@ -26,7 +26,7 @@ public class Tile {
 	}
 	
 	/** Set variation number to a random byte. */
-	public void randomizeTexture() {
+	private void randomizeTexture() {
 		this.variationNumber = (short) RANDOM.nextInt(Short.MAX_VALUE);
 	}
 	

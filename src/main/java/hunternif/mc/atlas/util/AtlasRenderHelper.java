@@ -40,7 +40,7 @@ public class AtlasRenderHelper {
 		drawFullTexture(texture, x, y, width, height, 1, 1);
 	}
 	
-	public static void drawAutotileCorner(ResourceLocation texture, int x, int y, double u, double v, double tileHalfSize) {
+	public static void drawAutotileCorner(ResourceLocation texture, int x, int y, double u, double v, int tileHalfSize) {
 		Minecraft.getMinecraft().renderEngine.bindTexture(texture);
 		double minU =  u / 4;
 		double maxU = (u + 1) / 4;
@@ -49,10 +49,10 @@ public class AtlasRenderHelper {
 		Tessellator tessellator = Tessellator.getInstance();
 		VertexBuffer renderer = tessellator.getBuffer();
 		renderer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
-		renderer.pos((int)(x + tileHalfSize), (int)(y + tileHalfSize), 0).tex(maxU, maxV).endVertex();
-		renderer.pos((int)(x + tileHalfSize), (int)y,                  0).tex(maxU, minV).endVertex();
-		renderer.pos((int) x,                 (int)y,                  0).tex(minU, minV).endVertex();
-		renderer.pos((int) x,                 (int)(y + tileHalfSize), 0).tex(minU, maxV).endVertex();
+		renderer.pos((x + tileHalfSize), (y + tileHalfSize), 0).tex(maxU, maxV).endVertex();
+		renderer.pos((x + tileHalfSize),  y,                 0).tex(maxU, minV).endVertex();
+		renderer.pos( x,                  y,                 0).tex(minU, minV).endVertex();
+		renderer.pos( x,                 (y + tileHalfSize), 0).tex(minU, maxV).endVertex();
 		tessellator.draw();
 	}
 	

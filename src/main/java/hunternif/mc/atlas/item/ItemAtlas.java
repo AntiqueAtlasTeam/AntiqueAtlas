@@ -29,12 +29,12 @@ public class ItemAtlas extends Item {
 	protected static final String WORLD_ATLAS_DATA_ID = "aAtlas";
 	
 	/** Maps dimension ID to biomeAnalyzer. */
-	private final Map<Integer, IBiomeDetector> biomeAnalyzers = new HashMap<Integer, IBiomeDetector>();
+	private final Map<Integer, IBiomeDetector> biomeAnalyzers = new HashMap<>();
 	private final BiomeDetectorBase biomeDetectorOverworld = new BiomeDetectorBase();
 	private final BiomeDetectorNether biomeDetectorNether = new BiomeDetectorNether();
 	private final BiomeDetectorEnd biomeDetectorEnd = new BiomeDetectorEnd();
 	
-	private SettingsConfig settings;
+	private final SettingsConfig settings;
 
 	public ItemAtlas(SettingsConfig settings) {
 		this.settings = settings;
@@ -65,7 +65,7 @@ public class ItemAtlas extends Item {
 		if (world.isRemote) {
 			AntiqueAtlasMod.proxy.openAtlasGUI(stack);
 		}
-		return new ActionResult<ItemStack>(EnumActionResult.SUCCESS, stack);
+		return new ActionResult<>(EnumActionResult.SUCCESS, stack);
 	}
 	
 	@Override
@@ -84,7 +84,6 @@ public class ItemAtlas extends Item {
 		if (!world.isRemote && !markers.isSyncedOnPlayer(player) && !markers.isEmpty()) {
 			markers.syncOnPlayer(stack.getItemDamage(), player);
 		}
-		markers = null;
 		
 		// Update the actual map only so often:
 		int newScanInterval = Math.round(settings.newScanInterval * 20);

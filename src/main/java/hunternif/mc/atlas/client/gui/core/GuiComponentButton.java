@@ -9,11 +9,10 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
 
 /** A GuiComponent that can act like a button. */
-@SuppressWarnings("rawtypes")
 public class GuiComponentButton extends GuiComponent {
-	public static final ResourceLocation DEFAULT_CLICK_SOUND = new ResourceLocation("gui.button.press");
+	private static final ResourceLocation DEFAULT_CLICK_SOUND = new ResourceLocation("gui.button.press");
 	
-	private final List<IButtonListener> listeners = new ArrayList<IButtonListener>();
+	private final List<IButtonListener> listeners = new ArrayList<>();
 	
 	private boolean enabled = true;
 	private ResourceLocation clickSound = DEFAULT_CLICK_SOUND;

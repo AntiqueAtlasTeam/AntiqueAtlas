@@ -7,7 +7,7 @@ import net.minecraft.world.chunk.Chunk;
  * @author Hunternif
  */
 public interface IBiomeDetector {
-	public static final int NOT_FOUND = -1;
+	int NOT_FOUND = -1;
 	
 	/** Finds the biome ID to be used for a given chunk. */
 	int getBiomeID(Chunk chunk);

@@ -14,8 +14,8 @@ import net.minecraft.client.resources.I18n;
 import org.lwjgl.opengl.GL11;
 
 public class GuiPositionButton extends GuiComponentButton {
-	public static final int WIDTH = 11;
-	public static final int HEIGHT = 11;
+	private static final int WIDTH = 11;
+	private static final int HEIGHT = 11;
 	
 	public GuiPositionButton() {
 		setSize(WIDTH, HEIGHT);

@@ -13,7 +13,7 @@ import org.junit.Test;
  * @author Hunternif
  */
 public class TestSubTileUV {
-	private SubTile s = new SubTile(null);
+	private final SubTile s = new SubTile(null);
 	
 	@Test
 	public void testSingleObject() {

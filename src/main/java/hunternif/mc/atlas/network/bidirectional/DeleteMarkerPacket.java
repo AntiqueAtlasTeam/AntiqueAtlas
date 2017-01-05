@@ -46,11 +46,11 @@ public class DeleteMarkerPacket extends AbstractMessage<DeleteMarkerPacket> {
 
 	@Override
 	public void write(PacketBuffer buffer) throws IOException {
-		buffer.writeVarIntToBuffer(atlasID);;
+		buffer.writeVarIntToBuffer(atlasID);
 		buffer.writeVarIntToBuffer(markerID);
 	}
 
-	public boolean isGlobal() {
+	private boolean isGlobal() {
 		return atlasID == GLOBAL;
 	}
 

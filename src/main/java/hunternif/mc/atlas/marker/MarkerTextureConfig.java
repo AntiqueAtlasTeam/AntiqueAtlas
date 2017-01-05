@@ -34,7 +34,7 @@ public class MarkerTextureConfig extends AbstractJSONConfig<MarkerRegistry> {
 	
 	private static final JsonParser parser = new JsonParser();
 	private static final String EXAMPLE_LOC = "antiqueatlas:Example";
-	private JsonElement EXAMPLE_JSON;
+	private final JsonElement EXAMPLE_JSON;
 	
 	public MarkerTextureConfig(File file) {
 		super(file);
@@ -78,12 +78,7 @@ public class MarkerTextureConfig extends AbstractJSONConfig<MarkerRegistry> {
 
 	@Override
 	protected void saveData(JsonObject json, MarkerRegistry data) {
-		Queue<ResourceLocation> queue = new PriorityQueue<ResourceLocation>(new Comparator<ResourceLocation>() {
-			@Override
-			public int compare(ResourceLocation o1, ResourceLocation o2) {
-				return o1.toString().compareTo(o2.toString());
-			}
-		});
+		Queue<ResourceLocation> queue = new PriorityQueue<>(Comparator.comparing(ResourceLocation::toString));
 		queue.addAll(MarkerRegistry.getKeys());
 
 		json.add(EXAMPLE_LOC, EXAMPLE_JSON);

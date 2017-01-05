@@ -10,9 +10,9 @@ import com.google.gson.JsonObject;
  * @author Hunternif
  */
 public abstract class AbstractJSONConfig<T extends SaveData> implements Config<T> {
-	protected final File file;
+	private final File file;
 
-	public AbstractJSONConfig(File file) {
+	protected AbstractJSONConfig(File file) {
 		this.file = file;
 	}
 	
@@ -55,9 +55,7 @@ public abstract class AbstractJSONConfig<T extends SaveData> implements Config<T
 			if (outdated) {
 				save(data);
 			}
-		} catch (IllegalStateException e) {
-			Log.error(e, "Malformed config %s", file.getName());
-		} catch (NumberFormatException e) {
+		} catch (IllegalStateException | NumberFormatException e) {
 			Log.error(e, "Malformed config %s", file.getName());
 		}
 	}

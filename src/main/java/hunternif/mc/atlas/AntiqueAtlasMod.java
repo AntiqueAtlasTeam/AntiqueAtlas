@@ -67,13 +67,15 @@ public class AntiqueAtlasMod {
 		proxy.preInit(event);
 		settings.load(new File(proxy.configDir, "settings.cfg"));
 		
-		itemAtlas = (ItemAtlas) new ItemAtlas(settings).setUnlocalizedName("antiqueAtlas");
+		itemAtlas = (ItemAtlas) new ItemAtlas(settings)
+			.setRegistryName(ID, "antiqueAtlas").setUnlocalizedName("antiqueAtlas");
 		
 		itemEmptyAtlas = (ItemEmptyAtlas) new ItemEmptyAtlas()
-			.setUnlocalizedName("emptyAntiqueAtlas").setCreativeTab(CreativeTabs.TOOLS);
+			.setRegistryName(ID, "emptyAntiqueAtlas").setUnlocalizedName("emptyAntiqueAtlas")
+			.setCreativeTab(CreativeTabs.TOOLS);
 		
-		GameRegistry.registerItem(itemAtlas, "antiqueAtlas");
-		GameRegistry.registerItem(itemEmptyAtlas, "emptyAntiqueAtlas");
+		GameRegistry.register(itemAtlas);
+		GameRegistry.register(itemEmptyAtlas);
 	}
 	
 	@EventHandler

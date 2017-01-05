@@ -25,10 +25,10 @@ import net.minecraftforge.fml.relauncher.Side;
  */
 public class TileNameIDPacket extends AbstractClientMessage<TileNameIDPacket>
 {
-	private Map<String, Integer> nameToIdMap;
+	private final Map<String, Integer> nameToIdMap;
 
 	public TileNameIDPacket() {
-		nameToIdMap = new HashMap<String, Integer>();
+		nameToIdMap = new HashMap<>();
 	}
 
 	public TileNameIDPacket(Map<String, Integer> nameToIdMap) {

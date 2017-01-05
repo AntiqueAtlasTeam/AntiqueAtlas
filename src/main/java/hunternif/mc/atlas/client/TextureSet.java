@@ -2,6 +2,7 @@ package hunternif.mc.atlas.client;
 
 import static hunternif.mc.atlas.client.Textures.*;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -238,9 +239,9 @@ public class TextureSet implements Comparable<TextureSet> {
 	
 	/** Texture sets that a tile rendered with this set can be stitched to,
 	 * excluding itself. */
-	private final Set<TextureSet> stitchTo = new HashSet<TextureSet>();
-	private final Set<TextureSet> stitchToHorizontal = new HashSet<TextureSet>();
-	private final Set<TextureSet> stitchToVertical = new HashSet<TextureSet>();
+	private final Set<TextureSet> stitchTo = new HashSet<>();
+	private final Set<TextureSet> stitchToHorizontal = new HashSet<>();
+	private final Set<TextureSet> stitchToVertical = new HashSet<>();
 	
 	/** Whether the texture set is part of the standard pack. Only true for
 	 * static constants in this class. */
@@ -272,12 +273,10 @@ public class TextureSet implements Comparable<TextureSet> {
 	/** Add other texture sets that this texture set will be stitched to
 	 * (but the opposite may be false, in case of asymmetric stitching.) */
 	public TextureSet stitchTo(TextureSet ... textureSets) {
-		for (TextureSet textureSet : textureSets) {
-			stitchTo.add(textureSet);
-		}
+		Collections.addAll(stitchTo, textureSets);
 		return this;
 	}
-	/** Same as {@link #stitchTo()}, but symmetrical. */
+	/** Same as {@link #stitchTo(TextureSet...)}, but symmetrical. */
 	public TextureSet stitchToMutual(TextureSet ... textureSets) {
 		for (TextureSet textureSet : textureSets) {
 			stitchTo.add(textureSet);
@@ -288,16 +287,12 @@ public class TextureSet implements Comparable<TextureSet> {
 	
 	public TextureSet stitchToHorizontal(TextureSet ... textureSets) {
 		this.anisotropicStitching = true;
-		for (TextureSet textureSet : textureSets) {
-			stitchToHorizontal.add(textureSet);
-		}
+		Collections.addAll(stitchToHorizontal, textureSets);
 		return this;
 	}
 	public TextureSet stitchToVertical(TextureSet ... textureSets) {
 		this.anisotropicStitching = true;
-		for (TextureSet textureSet : textureSets) {
-			stitchToVertical.add(textureSet);
-		}
+		Collections.addAll(stitchToVertical, textureSets);
 		return this;
 	}
 	
@@ -328,7 +323,7 @@ public class TextureSet implements Comparable<TextureSet> {
 	/** A special texture set that is stitched to everything except water. */
 	private static class TextureSetShore extends TextureSet {
 		private final TextureSet water;
-		public TextureSetShore(String name, TextureSet water, ResourceLocation ... textures) {
+		TextureSetShore(String name, TextureSet water, ResourceLocation ... textures) {
 			super(true, name, textures);
 			this.water = water;
 		}
@@ -342,21 +337,21 @@ public class TextureSet implements Comparable<TextureSet> {
 	}
 	
 	/** Stitch provided texture sets mutually between each other. */
-	public static final void stitchMutually(TextureSet ... sets) {
+	public static void stitchMutually(TextureSet ... sets) {
 		for (TextureSet set1 : sets) {
 			for (TextureSet set2 : sets) {
 				if (set1 != set2) set1.stitchTo(set2);
 			}
 		}
 	}
-	public static final void stitchMutuallyHorizontally(TextureSet ... sets) {
+	public static void stitchMutuallyHorizontally(TextureSet ... sets) {
 		for (TextureSet set1 : sets) {
 			for (TextureSet set2 : sets) {
 				if (set1 != set2) set1.stitchToHorizontal(set2);
 			}
 		}
 	}
-	public static final void stitchMutuallyVertically(TextureSet ... sets) {
+	public static void stitchMutuallyVertically(TextureSet ... sets) {
 		for (TextureSet set1 : sets) {
 			for (TextureSet set2 : sets) {
 				if (set1 != set2) set1.stitchToVertical(set2);
