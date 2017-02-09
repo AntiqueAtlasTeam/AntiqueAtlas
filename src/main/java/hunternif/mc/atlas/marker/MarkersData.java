@@ -16,7 +16,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.world.WorldSavedData;
 
-import hunternif.mc.atlas.AntiqueAtlasMod;
 import hunternif.mc.atlas.api.MarkerAPI;
 import hunternif.mc.atlas.network.PacketDispatcher;
 import hunternif.mc.atlas.network.client.MarkersPacket;
@@ -51,15 +50,15 @@ public class MarkersData extends WorldSavedData {
 	public static final int CHUNK_STEP = 8;
 	
 	/** Set of players this data has been sent to, only once after they connect. */
-	private final Set<EntityPlayer> playersSentTo = new HashSet<EntityPlayer>();
+	private final Set<EntityPlayer> playersSentTo = new HashSet<>();
 	
 	private final AtomicInteger largestID = new AtomicInteger(0);
 	
-	protected int getNewID() {
+	private int getNewID() {
 		return largestID.incrementAndGet();
 	}
 	
-	private final Map<Integer /*marker ID*/, Marker> idMap = new ConcurrentHashMap<Integer, Marker>(2, 0.75f, 2);
+	private final Map<Integer /*marker ID*/, Marker> idMap = new ConcurrentHashMap<>(2, 0.75f, 2);
 	/**
 	 * Maps a list of markers in a square to the square's coordinates, then to
 	 * dimension ID. It exists in case someone needs to quickly find markers
@@ -71,7 +70,7 @@ public class MarkersData extends WorldSavedData {
 	 * chunks to render markers gets very slow.
 	 */
 	private final Map<Integer /*dimension ID*/, DimensionMarkersData> dimensionMap =
-			new ConcurrentHashMap<Integer, DimensionMarkersData>(2, 0.75f, 2);
+			new ConcurrentHashMap<>(2, 0.75f, 2);
 	
 	public MarkersData(String key) {
 		super(key);
@@ -166,12 +165,7 @@ public class MarkersData extends WorldSavedData {
 	
 	/** Creates a new instance of {@link DimensionMarkersData}, if necessary. */
 	public DimensionMarkersData getMarkersDataInDimension(int dimension) {
-		DimensionMarkersData data = dimensionMap.get(dimension);
-		if (data == null) {
-			data = new DimensionMarkersData(this, dimension);
-			dimensionMap.put(dimension, data);
-		}
-		return data;
+		return dimensionMap.computeIfAbsent(dimension, k -> new DimensionMarkersData(this, dimension));
 	}
 	
 	/** The "chunk" here is {@link MarkersData#CHUNK_STEP} times larger than the
@@ -207,7 +201,7 @@ public class MarkersData extends WorldSavedData {
 	
 	/**
 	 * For internal use, when markers are loaded from NBT or sent from the
-	 * server. IF a marker's id is conflicting, the marker is not loaded!
+	 * server. IF a marker's id is conflicting, the marker will not load!
 	 * @return the marker instance that was added.
 	 */
 	public Marker loadMarker(Marker marker) {

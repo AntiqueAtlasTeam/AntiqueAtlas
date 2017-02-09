@@ -30,48 +30,48 @@ import hunternif.mc.atlas.registry.MarkerRenderInfo;
 import hunternif.mc.atlas.util.AtlasRenderHelper;
 import hunternif.mc.atlas.util.Rect;
 
-public class AAORenderEventReceiver{
+class AAORenderEventReceiver{
 
 	/**
 	 * I know public variables can be messed with, but that's a risk I'm willing
 	 * to take. Fraction of image devoted to each border.
 	 */
-	public float BORDER_X = 0.0f, BORDER_Y = 0.0f;
-	public int TILE_SIZE = 8;
+	float BORDER_X = 0.0f, BORDER_Y = 0.0f;
+	int TILE_SIZE = 8;
 
 	/** Position of the minimap relative to it's corner. */
-	public int X = 2, Y = 2;
+	int X = 2, Y = 2;
 
 	/** Dimensions of the minimap */
-	public int WIDTH = GuiAtlas.WIDTH / 2, HEIGHT = GuiAtlas.HEIGHT / 2;
+	int WIDTH = GuiAtlas.WIDTH / 2, HEIGHT = GuiAtlas.HEIGHT / 2;
 
 	/** Determines which corner to align to */
-	public boolean ALIGN_RIGHT = true, ALIGN_BOTTOM = false;
+	boolean ALIGN_RIGHT = true, ALIGN_BOTTOM = false;
 
 	/**
 	 * If true, the minimap will render only while the atlas is held, instead of
 	 * rendering whenever it's in the hotbar.
 	 */
-	public boolean REQUIRES_HOLD = true;
+	boolean REQUIRES_HOLD = true;
 
 	/**
 	 * If true, the minimap will show
 	 * If false, it will not
 	 */
-	public boolean ENABLED = true;
+	boolean ENABLED = true;
 	
 	/** Size of markers on the minimap */
-	public int MARKER_SIZE = GuiAtlas.MARKER_SIZE / 2;
+	int MARKER_SIZE = GuiAtlas.MARKER_SIZE / 2;
 
-	public int PLAYER_ICON_WIDTH = 7;
+	int PLAYER_ICON_WIDTH = 7;
 	
-	public int PLAYER_ICON_HEIGHT = 8;
+	int PLAYER_ICON_HEIGHT = 8;
 	
 	/**
 	 * Number of blocks per chunk in minecraft. This is certianly stored
 	 * somewhere else, but I couldn't be bothered to find it.
 	 */
-	public static final int CHUNK_SIZE = 16;
+	private static final int CHUNK_SIZE = 16;
 	
 	/**new ScaledResolution(mc).getScaleFactor();*/
 	private int screenScale = 1;
@@ -100,15 +100,15 @@ public class AAORenderEventReceiver{
 			atlas = getPlayerAtlas(player);
 		}
 		if (atlas != null) {
-			int gamewidth = event.getResolution().getScaledWidth();
-			int gameheight = event.getResolution().getScaledHeight();
+			int gameWidth = event.getResolution().getScaledWidth();
+			int gameHeight = event.getResolution().getScaledHeight();
 			// remember, y=0 is at the top
 			Rect bounds = new Rect().setOrigin(X, Y);
 			if (ALIGN_RIGHT) {
-				bounds.minX = gamewidth - (WIDTH + X);
+				bounds.minX = gameWidth - (WIDTH + X);
 			}
 			if (ALIGN_BOTTOM) {
-				bounds.minY = gameheight - (HEIGHT + Y);
+				bounds.minY = gameHeight - (HEIGHT + Y);
 			}
 			bounds.setSize(WIDTH, HEIGHT);
 			res = event.getResolution();
@@ -117,8 +117,8 @@ public class AAORenderEventReceiver{
 		}
 	}
 
-	public void drawMinimap(Rect shape, int atlasID, Vec3d position, float rotation,
-			int dimension) {
+	private void drawMinimap(Rect shape, int atlasID, Vec3d position, float rotation,
+							 int dimension) {
 		screenScale = new ScaledResolution(Minecraft.getMinecraft()).getScaleFactor();
 		GlStateManager.color(1, 1, 1, 1);
 		GlStateManager.enableBlend();
@@ -146,8 +146,8 @@ public class AAORenderEventReceiver{
 		GlStateManager.disableBlend();
 	}
 
-	public void drawTiles(Rect shape, int atlasID, Vec3d position,
-			int dimension) {
+	private void drawTiles(Rect shape, int atlasID, Vec3d position,
+						   int dimension) {
 		GL11.glEnable(GL11.GL_SCISSOR_TEST);
 		// glScissor uses the default window coordinates,
 		// the display window does not. We need to fix this
@@ -199,8 +199,8 @@ public class AAORenderEventReceiver{
 		GlStateManager.color(1, 1, 1, 1);
 	}
 
-	public void drawMarkers(Rect shape, int atlasID, Vec3d position,
-			int dimension) {
+	private void drawMarkers(Rect shape, int atlasID, Vec3d position,
+							 int dimension) {
 
 		GL11.glEnable(GL11.GL_SCISSOR_TEST);
 		// glScissor uses the default window coordinates,
@@ -232,7 +232,7 @@ public class AAORenderEventReceiver{
 		GlStateManager.color(1, 1, 1, 1);
 	}
 	
-	public void drawPlayer(float x, float y, Vec3d posisiton, float rotation){
+	private void drawPlayer(float x, float y, Vec3d posisiton, float rotation){
 		// Draw player icon:
 		
 		GlStateManager.pushMatrix(); 
@@ -244,8 +244,8 @@ public class AAORenderEventReceiver{
 		GlStateManager.color(1, 1, 1, 1);
 	}
 
-	protected void drawMarkersData(DimensionMarkersData markersData,
-			Rect shape, DimensionData biomeData, Vec3d position) {
+	private void drawMarkersData(DimensionMarkersData markersData,
+								 Rect shape, DimensionData biomeData, Vec3d position) {
 		
 		//this will be large enough to include markers that are larger than tiles
 		Rect markerShape = new Rect(shape.minX-MARKER_SIZE/2, shape.minY-MARKER_SIZE/2,
@@ -283,8 +283,8 @@ public class AAORenderEventReceiver{
 		}
 	}
 
-	protected void renderMarker(Marker marker, int x, int y,
-			DimensionData biomeData) {
+	private void renderMarker(Marker marker, int x, int y,
+							  DimensionData biomeData) {
 		if (!marker.isVisibleAhead()
 				&& !biomeData.hasTileAt(marker.getChunkX(), marker.getChunkZ())) {
 			return;
@@ -297,7 +297,7 @@ public class AAORenderEventReceiver{
 //		 .getTexture(marker.getType()), x, y, MARKER_SIZE, MARKER_SIZE);
 	}
 
-	protected Rect getChunkCoverage(Vec3d position, Rect windowShape) {
+	private Rect getChunkCoverage(Vec3d position, Rect windowShape) {
 		int CHUNKSIZE = 16;
 		int minChunkX = (int) Math.floor(position.xCoord / CHUNKSIZE
 				- windowShape.getWidth() / (2f * TILE_SIZE));
@@ -315,7 +315,7 @@ public class AAORenderEventReceiver{
 	}
 
 	/** Calls GL11.glScissor, but uses GUI coordinates */
-	protected void glScissorGUI(Rect shape) {
+	private void glScissorGUI(Rect shape) {
 		// glScissor uses the default window coordinates,
 		// the display window does not. We need to fix this
 		int mcHeight = Minecraft.getMinecraft().displayHeight;
@@ -333,7 +333,8 @@ public class AAORenderEventReceiver{
 	 * the player is currently carrying in the hotbar/offhand. Returns null if 
 	 * there are none. Offhand gets priority.
 	 **/
-	public static Integer getPlayerAtlas(EntityPlayer player) {
+	private static Integer getPlayerAtlas(EntityPlayer player) {
+    
 		ItemStack stack = player.getHeldItemOffhand();
 		if (!stack.isEmpty() && stack.getItem() == AntiqueAtlasMod.itemAtlas) {
 			return new Integer(stack.getItemDamage());

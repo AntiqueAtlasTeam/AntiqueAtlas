@@ -12,27 +12,22 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public class DimensionMarkersData {
-	public final MarkersData parent;
-	public final int dimension;
+	private final MarkersData parent;
+	private final int dimension;
 	
 	private int size = 0;
 	
 	private final Map<ShortVec2 /*chunk coords*/, List<Marker>> chunkMap =
-			new ConcurrentHashMap<ShortVec2, List<Marker>>(2, 0.75f, 2);
+			new ConcurrentHashMap<>(2, 0.75f, 2);
 	
 	private final Values values = new Values();
 	
 	/** Maps threads to the temporary key for thread-safe access to chunkMap. */
-	private final Map<Thread, ShortVec2> thread2KeyMap = new ConcurrentHashMap<Thread, ShortVec2>(2, 0.75f, 2);
+	private final Map<Thread, ShortVec2> thread2KeyMap = new ConcurrentHashMap<>(2, 0.75f, 2);
 	
 	/** Temporary key for thread-safe access to chunkMap. */
 	private ShortVec2 getKey() {
-		ShortVec2 key = thread2KeyMap.get(Thread.currentThread());
-		if (key == null) {
-			key = new ShortVec2(0, 0);
-			thread2KeyMap.put(Thread.currentThread(), key);
-		}
-		return key;
+		return thread2KeyMap.computeIfAbsent(Thread.currentThread(), k -> new ShortVec2(0, 0));
 	}
 	
 	public DimensionMarkersData(MarkersData parent, int dimension) {
@@ -58,7 +53,7 @@ public class DimensionMarkersData {
 				marker.getChunkZ() / MarkersData.CHUNK_STEP);
 		List<Marker> list = chunkMap.get(key);
 		if (list == null) {
-			list = new CopyOnWriteArrayList<Marker>();
+			list = new CopyOnWriteArrayList<>();
 			chunkMap.put(key.clone(), list);
 		}
 		boolean inserted = false;
@@ -88,10 +83,10 @@ public class DimensionMarkersData {
 		return values;
 	}
 	
-	protected class Values extends AbstractCollection<Marker> {
+	private class Values extends AbstractCollection<Marker> {
 		@Override
 		public Iterator<Marker> iterator() {
-			return new ListMapValueIterator<Marker>(chunkMap).setImmutable(true);
+			return new ListMapValueIterator<>(chunkMap).setImmutable(true);
 		}
 		@Override
 		public int size() {

@@ -4,8 +4,9 @@ import java.util.BitSet;
 
 public class BitMatrix {
 
-	private BitSet set;
-	private int width, height;
+	private final BitSet set;
+	private final int width;
+	private final int height;
 	
 	public BitMatrix(int width, int height) {
 		this.width = width;

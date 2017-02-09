@@ -1,40 +1,6 @@
 package hunternif.mc.atlas.util;
 
-import java.awt.Frame;
-import java.awt.Graphics2D;
-import java.awt.image.BufferedImage;
-import java.awt.image.RenderedImage;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.function.Consumer;
-import java.util.function.IntConsumer;
-
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.resources.I18n;
-import net.minecraft.util.ResourceLocation;
-
-import javax.imageio.ImageIO;
-import javax.swing.JFileChooser;
-import javax.swing.JFrame;
-import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
-import javax.swing.filechooser.FileFilter;
-
-import hunternif.mc.atlas.client.BiomeTextureMap;
-import hunternif.mc.atlas.client.SubTile;
-import hunternif.mc.atlas.client.SubTileQuartet;
-import hunternif.mc.atlas.client.Textures;
-import hunternif.mc.atlas.client.TileRenderIterator;
+import hunternif.mc.atlas.client.*;
 import hunternif.mc.atlas.client.gui.ExportUpdateListener;
 import hunternif.mc.atlas.core.DimensionData;
 import hunternif.mc.atlas.marker.DimensionMarkersData;
@@ -43,6 +9,24 @@ import hunternif.mc.atlas.marker.MarkersData;
 import hunternif.mc.atlas.registry.MarkerRegistry;
 import hunternif.mc.atlas.registry.MarkerRenderInfo;
 import hunternif.mc.atlas.registry.MarkerType;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.resources.I18n;
+import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+
+import javax.imageio.ImageIO;
+import javax.swing.*;
+import javax.swing.filechooser.FileFilter;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.awt.image.RenderedImage;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.*;
+import java.util.List;
 
 @SideOnly(Side.CLIENT)
 public class ExportImageUtil {
@@ -50,9 +34,9 @@ public class ExportImageUtil {
 	public static final int MARKER_SIZE = 32;
 	public static boolean isExporting = false;
 	
-	public static Frame frame;
-	public static JFileChooser chooser = new JFileChooser();
-	public static ExportUpdateListener getListener() {
+	private static Frame frame;
+	private static final JFileChooser chooser = new JFileChooser();
+	private static ExportUpdateListener getListener() {
 		return ExportUpdateListener.INSTANCE;
 	}
 	
@@ -73,7 +57,7 @@ public class ExportImageUtil {
 	}
 	
 	/** Beware that the background texture doesn't follow the Autotile format. */
-	public static final int BG_TILE_SIZE = 22;
+	private static final int BG_TILE_SIZE = 22;
 	
 	/** Opens a dialog and returns the file that was chosen, null if none or error. */
 	public static File selectPngFileToSave(String atlasName) {
@@ -82,16 +66,10 @@ public class ExportImageUtil {
 		getListener().setProgressMax(-1);
 		try {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-		} catch (ClassNotFoundException e) {
-			Log.error(e, "Setting system Look&Feel for JFileChooser");
-		} catch (InstantiationException e) {
-			Log.error(e, "Setting system Look&Feel for JFileChooser");
-		} catch (IllegalAccessException e) {
-			Log.error(e, "Setting system Look&Feel for JFileChooser");
-		} catch (UnsupportedLookAndFeelException e) {
+		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException e) {
 			Log.error(e, "Setting system Look&Feel for JFileChooser");
 		}
-		
+
 		getListener().setStatusString("gui.antiqueatlas.export.selectFile");
 		frame = new Frame();
 		if (chooser.showSaveDialog(frame) == JFileChooser.APPROVE_OPTION) {
@@ -134,14 +112,14 @@ public class ExportImageUtil {
 		getListener().setStatusString("gui.antiqueatlas.export.loadingtextures");
 		getListener().setProgressMax(-1);
 		BufferedImage bg = null;
-		Map<ResourceLocation, BufferedImage> textureImageMap = new HashMap<ResourceLocation, BufferedImage>();
+		Map<ResourceLocation, BufferedImage> textureImageMap = new HashMap<>();
 		try {
 			InputStream is = Minecraft.getMinecraft().getResourceManager().getResource(Textures.EXPORTED_BG).getInputStream();
 			bg = ImageIO.read(is);
 			is.close();
 			
 			// Biome & Marker textures:
-			List<ResourceLocation> allTextures = new ArrayList<ResourceLocation>(64);
+			List<ResourceLocation> allTextures = new ArrayList<>(64);
 			allTextures.addAll(BiomeTextureMap.instance().getAllTextures());
 			if (showMarkers) {
 				for (MarkerType type : MarkerRegistry.getValues()) {
@@ -204,14 +182,14 @@ public class ExportImageUtil {
 		getListener().setStatusString("gui.antiqueatlas.export.loadingtextures");
 		getListener().setProgressMax(-1);
 		BufferedImage bg = null;
-		final Map<ResourceLocation, BufferedImage> textureImageMap = new HashMap<ResourceLocation, BufferedImage>();
+		final Map<ResourceLocation, BufferedImage> textureImageMap = new HashMap<>();
 		try {
 			InputStream is = Minecraft.getMinecraft().getResourceManager().getResource(Textures.EXPORTED_BG).getInputStream();
 			bg = ImageIO.read(is);
 			is.close();
 			
 			// Biome & Marker textures:
-			List<ResourceLocation> allTextures = new ArrayList<ResourceLocation>(64);
+			List<ResourceLocation> allTextures = new ArrayList<>(64);
 			allTextures.addAll(BiomeTextureMap.instance().getAllTextures());
 			if (showMarkers) {
 				for (MarkerType type : MarkerRegistry.getValues()) {
@@ -258,28 +236,20 @@ public class ExportImageUtil {
 		final BufferedImage scanBuffer = new BufferedImage(outWidth, sliceHeight, BufferedImage.TYPE_INT_ARGB);
 		
 		getListener().setProgressMax(slices);
-		RenderedImage outImage = new RenderedImageScanned(outWidth, outHeight, scanBuffer, new Consumer<Graphics2D>() {
-			@Override
-			public void accept(Graphics2D graphics) {
-				int slice = (int)Math.floor( -graphics.getTransform().getTranslateY()/sliceHeight_ );
-				getListener().setProgress( slice );
-				getListener().setHeaderString("gui.antiqueatlas.export.renderstripe", slice+1, slices);
-				drawMapToGraphics(
-						graphics,
-						bgTilesX, bgTilesY, outWidth, outHeight,
-						biomeData, textureImageMap,
-						globalMarkers, localMarkers,
-						showMarkers, minX, minY,
-						scale, bg_);
-				getListener().setStatusString("gui.antiqueatlas.export.writestripe");
-				getListener().setProgressMax(sliceHeight_ * (slice+1) > outHeight ? outHeight - ( sliceHeight_ * slice ) : sliceHeight_);
-			}
-		}, new IntConsumer() {
-			@Override
-			public void accept(int value) {
-				getListener().setProgress(value);
-			}
-		});
+		RenderedImage outImage = new RenderedImageScanned(outWidth, outHeight, scanBuffer, graphics -> {
+            int slice = (int)Math.floor( -graphics.getTransform().getTranslateY()/sliceHeight_ );
+            getListener().setProgress( slice );
+            getListener().setHeaderString("gui.antiqueatlas.export.renderstripe", slice+1, slices);
+            drawMapToGraphics(
+                    graphics,
+                    bgTilesX, bgTilesY, outWidth, outHeight,
+                    biomeData, textureImageMap,
+                    globalMarkers, localMarkers,
+                    showMarkers, minX, minY,
+                    scale, bg_);
+            getListener().setStatusString("gui.antiqueatlas.export.writestripe");
+            getListener().setProgressMax(sliceHeight_ * (slice+1) > outHeight ? outHeight - ( sliceHeight_ * slice ) : sliceHeight_);
+        }, value -> getListener().setProgress(value));
 		
 		try {
 			getListener().setHeaderString("gui.antiqueatlas.export.renderstripe", 1, slices);
@@ -405,7 +375,7 @@ public class ExportImageUtil {
 		getListener().setStatusString("gui.antiqueatlas.export.rendering.markers");
 		getListener().setProgressMax(-1);
 		
-		List<Marker> markers = new ArrayList<Marker>();
+		List<Marker> markers = new ArrayList<>();
 		for (int x = biomeData.getScope().minX / MarkersData.CHUNK_STEP;
 				x <= biomeData.getScope().maxX / MarkersData.CHUNK_STEP; x++) {
 			for (int z = biomeData.getScope().minY / MarkersData.CHUNK_STEP;

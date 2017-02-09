@@ -9,7 +9,7 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 
 public class AAOClient extends AAOCommon{
 
-	AAORenderEventReceiver renderer;
+	private AAORenderEventReceiver renderer;
 
     public void preInit(FMLPreInitializationEvent event){
     	//this is a client side only mod

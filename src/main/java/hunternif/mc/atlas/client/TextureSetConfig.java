@@ -50,7 +50,7 @@ public class TextureSetConfig extends AbstractJSONConfig<TextureSetMap> {
 	@Override
 	protected void saveData(JsonObject json, TextureSetMap data) {
 		// Sort keys alphabetically:
-		Queue<TextureSet> queue = new PriorityQueue<TextureSet>(data.getAllNonStandardTextureSets());
+		Queue<TextureSet> queue = new PriorityQueue<>(data.getAllNonStandardTextureSets());
 		while (!queue.isEmpty()) {
 			TextureSet set = queue.poll();
 			JsonArray paths = new JsonArray();

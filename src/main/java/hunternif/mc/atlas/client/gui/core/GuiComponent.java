@@ -26,7 +26,7 @@ import org.lwjgl.opengl.GL11;
 @SideOnly(Side.CLIENT)
 public class GuiComponent extends GuiScreen {
 	private GuiComponent parent = null;
-	private final List<GuiComponent> children = new CopyOnWriteArrayList<GuiComponent>();
+	private final List<GuiComponent> children = new CopyOnWriteArrayList<>();
 	
 	/** The component's own size. */
 	protected int properWidth, properHeight;
@@ -304,19 +304,6 @@ public class GuiComponent extends GuiScreen {
 		}
 	}
 	
-	@Override
-	protected void keyTyped(char typedChar, int keyCode) throws IOException {
-		if (keyCode == 1 && mc.currentScreen != null)
-        {
-            this.mc.displayGuiScreen((GuiScreen)null);
-
-            if (this.mc.currentScreen == null)
-            {
-                this.mc.setIngameFocus();
-            }
-        }
-	}
-	
 	/** Render this GUI and its children. */
 	@Override
 	public void drawScreen(int mouseX, int mouseY, float partialTick) {
@@ -487,7 +474,7 @@ public class GuiComponent extends GuiScreen {
 			this.drawGradientRect(i1 - 3, j1 + k1 + 2, i1 + k + 3, j1 + k1 + 3, j2, j2);
 
 			for (int k2 = 0; k2 < lines.size(); ++k2) {
-				String s1 = (String)lines.get(k2);
+				String s1 = lines.get(k2);
 				font.drawStringWithShadow(s1, i1, j1, -1);
 
 				if (k2 == 0) {
@@ -515,7 +502,7 @@ public class GuiComponent extends GuiScreen {
 	/**
 	 * Draws a text tooltip at mouse coordinates.
 	 * <p>
-	 * Same as {@link #drawHoveringText(List, int, int, FontRenderer2)}, but
+	 * Same as {@link #drawHoveringText2(List, int, int, FontRenderer)}, but
 	 * the text is drawn on the top level parent component, after all its child
 	 * components have finished drawing. This allows the hovering text to be
 	 * unobscured by other components.

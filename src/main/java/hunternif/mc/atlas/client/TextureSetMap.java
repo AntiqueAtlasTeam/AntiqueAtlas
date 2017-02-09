@@ -20,11 +20,11 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 @SideOnly(Side.CLIENT)
 public class TextureSetMap extends SaveData {
 	private static final TextureSetMap INSTANCE = new TextureSetMap();
-	public static final TextureSetMap instance() {
+	public static TextureSetMap instance() {
 		return INSTANCE;
 	}
 	
-	private final Map<String, TextureSet> map = new HashMap<String, TextureSet>();
+	private final Map<String, TextureSet> map = new HashMap<>();
 	
 	public void register(TextureSet set) {
 		TextureSet old = map.put(set.name, set);
@@ -61,8 +61,8 @@ public class TextureSetMap extends SaveData {
 	}
 	/** Returns all registered texture sets that are not part of the standard
 	 * pack (static constants in {@link TextureSet})/ */
-	public Collection<TextureSet> getAllNonStandardTextureSets() {
-		List<TextureSet> list = new ArrayList<TextureSet>(map.size());
+	Collection<TextureSet> getAllNonStandardTextureSets() {
+		List<TextureSet> list = new ArrayList<>(map.size());
 		for (TextureSet set : map.values()) {
 			if (!set.isStandard) {
 				list.add(set);

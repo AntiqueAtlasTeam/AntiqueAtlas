@@ -6,15 +6,12 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import net.minecraftforge.event.world.WorldEvent;
-import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.server.FMLServerHandler;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.World;
 
 import hunternif.mc.atlas.AntiqueAtlasMod;
@@ -30,9 +27,7 @@ import hunternif.mc.atlas.util.Log;
  */
 public class NetherPortalWatcher extends DummyWorldAccess {
 	private static final String[] inPortalFieldNames = {"inPortal", "field_71087_bX", "bX"};
-	
-	public static final String MARKER_PORTAL = "nether_portal";
-	
+
 	/**
 	 * When a player teleports, he is removed from the source dimension, where
 	 * portal detection works well, and his ID is placed in this set.
@@ -89,7 +84,7 @@ public class NetherPortalWatcher extends DummyWorldAccess {
 	
 	/** Put the Portal marker at the player's current coordinates into all
 	 * atlases that he is carrying, if the same marker is not already there. */
-	public void addPortalMarkerIfNone(EntityPlayer player, int dimension) {
+	private void addPortalMarkerIfNone(EntityPlayer player, int dimension) {
 		// Due to switching dimensions this player entity's worldObj is lagging.
 		// We need the very specific dimension each time.
 		World world = AntiqueAtlasMod.proxy.getServer().worldServerForDimension(dimension);
@@ -104,7 +99,7 @@ public class NetherPortalWatcher extends DummyWorldAccess {
 			List<Marker> markers = data.getMarkersAtChunk((x >> 4) / MarkersData.CHUNK_STEP, (z >> 4) / MarkersData.CHUNK_STEP);
 			if (markers != null) {
 				for (Marker marker : markers) {
-					if (marker.getType().equals(MARKER_PORTAL)) {
+					if (marker.getType().equals(MarkerTypes.NETHER_PORTAL)) {
 						// Found the marker.
 						return;
 					}
@@ -115,7 +110,7 @@ public class NetherPortalWatcher extends DummyWorldAccess {
 		}
 	}
 	
-	public static boolean isEntityInPortal(Entity entity) {
+	private static boolean isEntityInPortal(Entity entity) {
 		return ObfuscationReflectionHelper.getPrivateValue(Entity.class, entity, inPortalFieldNames);
 	}
 }

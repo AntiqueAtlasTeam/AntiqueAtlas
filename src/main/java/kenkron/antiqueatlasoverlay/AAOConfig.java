@@ -4,12 +4,12 @@ import java.io.File;
 
 import net.minecraftforge.common.config.Configuration;
 
-public class AAOConfig {
+class AAOConfig {
 
 	private static final int VERSION = 1;
 
-	public static final String POSITION = "Map Position";
-	public static final String APPEARANCE = "Map Appearance";
+	private static final String POSITION = "Map Position";
+	private static final String APPEARANCE = "Map Appearance";
 
 	public static void load(File file, AAORenderEventReceiver renderer) {
 		Configuration config = new Configuration(file, String.valueOf(VERSION));
@@ -95,7 +95,7 @@ public class AAOConfig {
 				.getFloat(
 						"BORDER_Y",
 						APPEARANCE,
-						renderer.BORDER_X,
+						renderer.BORDER_Y,
 						0,
 						0.5f,
 						"The width of the map border on the top and bottom "

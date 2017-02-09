@@ -1,7 +1,6 @@
 package hunternif.mc.atlas.registry;
 
 import net.minecraftforge.fml.common.FMLContainer;
-import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.InjectedModContainer;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.ModContainer;
@@ -14,7 +13,7 @@ public interface IRegistryEntry
     
     ResourceLocation getRegistryName();
     
-    public static class Impl implements IRegistryEntry
+    class Impl implements IRegistryEntry
     {
     	private ResourceLocation registryName = null;
 

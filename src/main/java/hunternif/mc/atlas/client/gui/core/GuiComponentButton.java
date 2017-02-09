@@ -12,9 +12,8 @@ import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
 
 /** A GuiComponent that can act like a button. */
-@SuppressWarnings("rawtypes")
 public class GuiComponentButton extends GuiComponent {
-	private final List<IButtonListener> listeners = new ArrayList<IButtonListener>();
+  private final List<IButtonListener> listeners = new ArrayList<>();
 	
 	private boolean enabled = true;
 	private SoundEvent clickSound = SoundEvents.UI_BUTTON_CLICK;

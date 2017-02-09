@@ -21,15 +21,15 @@ public class SubTile {
 	 * starting from (0,0) in the top left corner. */
 	public int x, y;
 	
-	public static enum Shape {
-		CONVEX, CONCAVE, HORIZONTAL, VERTICAL, FULL, SINGLE_OBJECT;
+	public enum Shape {
+		CONVEX, CONCAVE, HORIZONTAL, VERTICAL, FULL, SINGLE_OBJECT
 	}
 	public Shape shape;
 	
-	public static enum Part {
+	public enum Part {
 		TOP_LEFT(0, 0), TOP_RIGHT(1, 0), BOTTOM_LEFT(0, 1), BOTTOM_RIGHT(1, 1);
 		/** Texture offset from a whole-tile-section to the respective part, in subtiles. */
-		int u, v;
+		final int u, v;
 		Part(int u, int v) {
 			this.u = u;
 			this.v = v;

@@ -17,9 +17,9 @@ import net.minecraftforge.fml.common.network.FMLNetworkEvent.ClientConnectedToSe
  * @author Hunternif
  */
 public class AtlasDataHandler {
-	protected static final String ATLAS_DATA_PREFIX = "aAtlas_";
+	private static final String ATLAS_DATA_PREFIX = "aAtlas_";
 	
-	private final Map<String, AtlasData> atlasDataClientCache = new ConcurrentHashMap<String, AtlasData>();
+	private final Map<String, AtlasData> atlasDataClientCache = new ConcurrentHashMap<>();
 	
 	/** Loads data for the given atlas ID or creates a new one. */
 	public AtlasData getAtlasData(ItemStack stack, World world) {
@@ -50,7 +50,7 @@ public class AtlasDataHandler {
 		return data;
 	}
 	
-	protected String getAtlasDataKey(int atlasID) {
+	private String getAtlasDataKey(int atlasID) {
 		return ATLAS_DATA_PREFIX + atlasID;
 	}
 	

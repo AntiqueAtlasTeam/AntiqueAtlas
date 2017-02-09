@@ -61,11 +61,6 @@ public class Rect {
 	}
 	
 	@Override
-	protected Rect clone() {
-		return new Rect(this);
-	}
-	
-	@Override
 	public String toString() {
 		return String.format("Rect{%d, %d, %d, %d}", minX, minY, maxX, maxY);
 	}

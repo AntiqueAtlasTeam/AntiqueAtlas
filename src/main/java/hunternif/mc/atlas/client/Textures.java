@@ -4,12 +4,12 @@ import hunternif.mc.atlas.AntiqueAtlasMod;
 import net.minecraft.util.ResourceLocation;
 
 public class Textures {
-	public static final String MOD_PREFIX = AntiqueAtlasMod.ID + ":";
-	public static final String GUI = MOD_PREFIX + "textures/gui/";
-	public static final String GUI_ICONS = GUI + "icons/";
-	public static final String GUI_TILES = GUI + "tiles/";
-	public static final String GUI_MARKERS = GUI + "markers/";
-	public static final String GUI_SCALEBAR = GUI + "scalebar/";
+	private static final String MOD_PREFIX = AntiqueAtlasMod.ID + ":";
+	private static final String GUI = MOD_PREFIX + "textures/gui/";
+	private static final String GUI_ICONS = GUI + "icons/";
+	private static final String GUI_TILES = GUI + "tiles/";
+	private static final String GUI_MARKERS = GUI + "markers/";
+	private static final String GUI_SCALEBAR = GUI + "scalebar/";
 	
 	public static final ResourceLocation
 	BOOK = gui("book.png"),
@@ -248,19 +248,19 @@ public class Textures {
 	TILE_NETHER_THRONE = tile("nether_throne.png");
 	
 	// Constructor helpers:
-	public static final ResourceLocation gui(String fileName) {
+	private static ResourceLocation gui(String fileName) {
 		return new ResourceLocation(GUI + fileName);
 	}
-	public static final ResourceLocation scaleBar(String fileName) {
+	private static ResourceLocation scaleBar(String fileName) {
 		return new ResourceLocation(GUI_SCALEBAR + fileName);
 	}
-	public static final ResourceLocation marker(String fileName) {
+	private static ResourceLocation marker(String fileName) {
 		return new ResourceLocation(GUI_MARKERS + fileName);
 	}
-	public static final ResourceLocation tile(String fileName) {
+	private static ResourceLocation tile(String fileName) {
 		return new ResourceLocation(GUI_TILES + fileName);
 	}
-	public static final ResourceLocation icon(String fileName) {
+	private static ResourceLocation icon(String fileName) {
 		return new ResourceLocation(GUI_ICONS + fileName);
 	}
 }

@@ -2,7 +2,6 @@ package hunternif.mc.atlas;
 
 import java.io.File;
 
-import hunternif.mc.atlas.client.gui.GuiAtlas;
 import net.minecraftforge.common.config.Configuration;
 
 /** Config for various performance and interface settings. */
@@ -12,7 +11,7 @@ public class SettingsConfig {
 	private static final String GAMEPLAY = "Gameplay";
 	private static final String INTERFACE = "Interface";
 	private static final String PERFORMANCE = "Performance";
-	
+
 	private File configFile;
 	private Configuration config;
 	
@@ -40,7 +39,8 @@ public class SettingsConfig {
 	public boolean debugRender = false;
 	
 	public void load(File file) {
-		Configuration config = new Configuration(file, String.valueOf(VERSION));
+		configFile = file;
+		config = new Configuration(file, String.valueOf(VERSION));
 		config.setCategoryComment(GAMEPLAY,
 				"These settings will affect how the mod behaves in certain situations and the players' overall gameplay,\n"
 				+ "but generally won't affect performance.");

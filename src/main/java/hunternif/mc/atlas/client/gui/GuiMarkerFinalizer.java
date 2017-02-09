@@ -1,38 +1,38 @@
 package hunternif.mc.atlas.client.gui;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
+import hunternif.mc.atlas.api.AtlasAPI;
+import hunternif.mc.atlas.client.gui.core.GuiComponent;
+import hunternif.mc.atlas.client.gui.core.GuiScrollingContainer;
+import hunternif.mc.atlas.client.gui.core.ToggleGroup;
+import hunternif.mc.atlas.registry.MarkerRegistry;
+import hunternif.mc.atlas.registry.MarkerType;
+import hunternif.mc.atlas.registry.MarkerTypes;
+import hunternif.mc.atlas.util.Log;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.world.World;
 
-import hunternif.mc.atlas.api.AtlasAPI;
-import hunternif.mc.atlas.client.gui.core.GuiComponent;
-import hunternif.mc.atlas.client.gui.core.GuiScrollingContainer;
-import hunternif.mc.atlas.client.gui.core.ISelectListener;
-import hunternif.mc.atlas.client.gui.core.ToggleGroup;
-import hunternif.mc.atlas.registry.MarkerRegistry;
-import hunternif.mc.atlas.registry.MarkerType;
-import hunternif.mc.atlas.registry.MarkerTypes;
-import hunternif.mc.atlas.util.Log;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
- * This GUI is used to enter marker label and, in future, select its icon and
- * color. When the user clicks on the confirmation button, the call to MarkerAPI
- * is made.
+ * This GUI is used select marker icon and enter a label.
+ * When the user clicks on the confirmation button, the call to MarkerAPI is made.
  * @author Hunternif
  */
 public class GuiMarkerFinalizer extends GuiComponent {
-	public static final MarkerType defaultMarker = MarkerTypes.RED_X_SMALL;
+	private static final MarkerType defaultMarker = MarkerTypes.RED_X_SMALL;
 	
 	private World world;
-	protected int atlasID, dimension, x, z;
+	private int atlasID;
+	private int dimension;
+	private int x;
+	private int z;
 	
-	protected MarkerType selectedType = defaultMarker;
+	MarkerType selectedType = defaultMarker;
 	
 	private static final int BUTTON_WIDTH = 100;
 	private static final int BUTTON_SPACING = 4;
@@ -46,15 +46,15 @@ public class GuiMarkerFinalizer extends GuiComponent {
 	private final GuiScrollingContainer scroller;
 	private ToggleGroup<GuiMarkerInList> typeRadioGroup;
 	
-	private final List<IMarkerTypeSelectListener> listeners = new ArrayList<IMarkerTypeSelectListener>();
+	private final List<IMarkerTypeSelectListener> listeners = new ArrayList<>();
 	
-	public GuiMarkerFinalizer() {
+	GuiMarkerFinalizer() {
 		scroller = new GuiScrollingContainer();
 		scroller.setWheelScrollsHorizontally();
 		this.addChild(scroller);
 	}
 	
-	public void setMarkerData(World world, int atlasID, int dimension, int markerX, int markerZ) {
+	void setMarkerData(World world, int atlasID, int dimension, int markerX, int markerZ) {
 		this.world = world;
 		this.atlasID = atlasID;
 		this.dimension = dimension;
@@ -63,13 +63,13 @@ public class GuiMarkerFinalizer extends GuiComponent {
 		setBlocksScreen(true);
 	}
 	
-	public void addListener(IMarkerTypeSelectListener listener) {
+	void addListener(IMarkerTypeSelectListener listener) {
 		listeners.add(listener);
 	}
-	public void removeListener(IMarkerTypeSelectListener listener) {
+	void removeListener(IMarkerTypeSelectListener listener) {
 		listeners.remove(listener);
 	}
-	public void removeAllListeners() {
+	void removeAllListeners() {
 		listeners.clear();
 	}
 	
@@ -93,16 +93,13 @@ public class GuiMarkerFinalizer extends GuiComponent {
 		scroller.setViewportSize(scrollerWidth, GuiMarkerInList.FRAME_SIZE);
 		scroller.setGuiCoords((this.width - scrollerWidth)/2, this.height/2 - 25);
 		
-		typeRadioGroup = new ToggleGroup<GuiMarkerInList>();
-		typeRadioGroup.addListener(new ISelectListener<GuiMarkerInList>() {
-			@Override
-			public void onSelect(GuiMarkerInList button) {
-				selectedType = button.getMarkerType();
-				for (IMarkerTypeSelectListener listener : listeners) {
-					listener.onSelectMarkerType(button.getMarkerType());
-				}
-			}
-		});
+		typeRadioGroup = new ToggleGroup<>();
+		typeRadioGroup.addListener(button -> {
+            selectedType = button.getMarkerType();
+            for (IMarkerTypeSelectListener listener : listeners) {
+                listener.onSelectMarkerType(button.getMarkerType());
+            }
+        });
 		int contentX = 0;
 		for (MarkerType markerType : MarkerRegistry.getValues()) {
 			if(markerType.isTechnical())
@@ -154,7 +151,7 @@ public class GuiMarkerFinalizer extends GuiComponent {
 		super.drawScreen(mouseX, mouseY, partialTick);
 	}
 	
-	protected static interface IMarkerTypeSelectListener {
+	protected interface IMarkerTypeSelectListener {
 		void onSelectMarkerType(MarkerType markerType);
 	}
 }

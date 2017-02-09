@@ -18,27 +18,22 @@ import net.minecraft.util.ResourceLocation;
 public class SetTileRenderer {
 	
 	public class TileCorner{
-		public int x, y, u, v;
-		public TileCorner(int x, int y, int u, int v){
+		final int x, y, u, v;
+		TileCorner(int x, int y, int u, int v){
 			this.x = x; this.y = y; this.u = u; this.v = v;
 		}
 	}
 	
-	public int tileHalfSize=8;
+	private int tileHalfSize = 8;
 	
-	HashMap<ResourceLocation, ArrayList<TileCorner>> subjects;
+	private final HashMap<ResourceLocation, ArrayList<TileCorner>> subjects = new HashMap<>();
 	
 	public SetTileRenderer(int tileHalfSize){
-		this.tileHalfSize=tileHalfSize;
-		subjects = new HashMap<ResourceLocation, ArrayList<TileCorner>>();
+		this.tileHalfSize = tileHalfSize;
 	}
 
 	public void addTileCorner(ResourceLocation texture, int x, int y, int u, int v){
-		ArrayList<TileCorner> set = subjects.get(texture);
-		if (set == null){
-			set = new ArrayList<TileCorner>();
-			subjects.put(texture, set);
-		}
+		ArrayList<TileCorner> set = subjects.computeIfAbsent(texture, k -> new ArrayList<>());
 		set.add(new TileCorner(x, y, u, v));
 	}
 	
@@ -58,7 +53,7 @@ public class SetTileRenderer {
 		}
 	}
 	
-	protected void drawInlineAutotileCorner(int x, int y, int u, int v) {
+	private void drawInlineAutotileCorner(int x, int y, int u, int v) {
 		float minU = u / 4f;
 		float maxU =(u + 1) / 4f;
 		float minV = v / 6f;

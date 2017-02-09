@@ -1,41 +1,47 @@
 package hunternif.mc.atlas.registry;
 
-import java.awt.image.BufferedImage;
-import java.io.Closeable;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
+import hunternif.mc.atlas.util.BitMatrix;
+import hunternif.mc.atlas.util.Log;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.texture.TextureUtil;
 import net.minecraft.client.resources.IResource;
 import net.minecraft.util.ResourceLocation;
-
 import org.apache.commons.io.IOUtils;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonPrimitive;
-
-import hunternif.mc.atlas.util.BitMatrix;
-import hunternif.mc.atlas.util.Log;
+import java.awt.image.BufferedImage;
+import java.io.Closeable;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MarkerType extends IRegistryEntry.Impl {
 
-	protected ResourceLocation[] icons;
-	protected BitMatrix[] iconPixels;
-	protected int[] iconSizes = null;
-	protected int viewSize = 2, clipMin = -1000, clipMax = 1000; 
-	protected boolean alwaysShow = false, isTile = false, isTechnical = false;
-	protected double centerX = 0.5, centerY = 0.5;
+	private ResourceLocation[] icons;
+	private BitMatrix[] iconPixels;
+	private int[] iconSizes = null;
+
+	private int viewSize = 2;
+	private int clipMin = -1000;
+	private int clipMax = 1000;
+
+	private boolean alwaysShow = false;
+	private boolean isTile = false;
+	private boolean isTechnical = false;
+
+	private double centerX = 0.5;
+	private double centerY = 0.5;
+
 	protected boolean isFromJson = false;
 	
-	protected JSONData data = new JSONData(this);
+	protected final JSONData data = new JSONData(this);
 	
 	public MarkerType(ResourceLocation loc, ResourceLocation... icons) {
+		if (loc == null) throw new IllegalArgumentException("MarkerType registry name can't be null");
 		setRegistryName(loc);
 		this.icons = icons;
 	}
@@ -88,8 +94,6 @@ public class MarkerType extends IRegistryEntry.Impl {
 
 	/**
 	 * Whether the marker is a tile, and as such should scale with the map
-	 * 
-	 * @return
 	 */
 	public boolean isTile() {
 		return isTile;
@@ -97,8 +101,6 @@ public class MarkerType extends IRegistryEntry.Impl {
 
 	/**
 	 * The X position (0-1) of the icon that should be at the marker location
-	 * 
-	 * @return
 	 */
 	public double getCenterX() {
 		return centerX;
@@ -106,8 +108,6 @@ public class MarkerType extends IRegistryEntry.Impl {
 
 	/**
 	 * The Y position (0-1) of the icon that should be at the marker location
-	 * 
-	 * @return
 	 */
 	public double getCenterY() {
 		return centerY;
@@ -124,7 +124,7 @@ public class MarkerType extends IRegistryEntry.Impl {
 		return icons;
 	}
 	
-	protected int iconIndex = 0;
+	private int iconIndex = 0;
 	
 	public void calculateMip(double scale, double mapScale, double screenScale) {
 		int size = (int) (16 * scale * viewSize());
@@ -214,12 +214,12 @@ public class MarkerType extends IRegistryEntry.Impl {
 				Log.warn(e, "Marker %s -- Error getting texture size data for index %d - %s",
 						getRegistryName().toString(), i, icons[i].toString());
 			} finally {
-				IOUtils.closeQuietly((Closeable) iresource);
+				IOUtils.closeQuietly(iresource);
 			}
 		}
 	}
 
-	{ /* Setters */ }
+	/* Setters */
 
 	public MarkerType setSize(int value) {
 		this.viewSize = value;
@@ -236,9 +236,9 @@ public class MarkerType extends IRegistryEntry.Impl {
 		return this;
 	}
 
-	public MarkerType setClip(int a, int b) {
-		this.clipMin = Math.min(a, b);
-		this.clipMax = Math.max(a, b);
+	public MarkerType setClip(int min, int max) {
+		this.clipMin = Math.min(min, max);
+		this.clipMax = Math.max(min, max);
 		return this;
 	}
 
@@ -261,9 +261,9 @@ public class MarkerType extends IRegistryEntry.Impl {
 	public JSONData getJSONData() {
 		return data;
 	}
-	
+
 	public static class JSONData {
-		public static final String
+		static final String
 			ICONS = "textures",
 			SIZE  = "size",
 			CLIP_MIN = "clipMin",
@@ -277,14 +277,14 @@ public class MarkerType extends IRegistryEntry.Impl {
 			NONE = "NONE";
 		
 		
-		protected MarkerType type;
+		private final MarkerType type;
 		
-		protected ResourceLocation[] icons;
-		protected Integer viewSize = null, clipMin = null, clipMax = null; 
-		protected Boolean alwaysShow = null, isTile = null, isTechnical = null;
-		protected Double centerX = null, centerY = null;
+		ResourceLocation[] icons;
+		Integer viewSize = null, clipMin = null, clipMax = null;
+		Boolean alwaysShow = null, isTile = null, isTechnical = null;
+		Double centerX = null, centerY = null;
 		
-		public JSONData(MarkerType type) {
+		JSONData(MarkerType type) {
 			this.type = type;
 		}
 		
@@ -342,12 +342,10 @@ public class MarkerType extends IRegistryEntry.Impl {
 			try {
 				if(object.has(ICONS) && object.get(ICONS).isJsonArray()) {
 					workingOn = ICONS;
-					List<ResourceLocation> list = new ArrayList<ResourceLocation>();
+					List<ResourceLocation> list = new ArrayList<>();
 					int i = 0;
-					Iterator<JsonElement> iter = object.get(ICONS).getAsJsonArray().iterator();
-					while(iter.hasNext()) {
-						JsonElement elem = iter.next();
-						if(elem.isJsonPrimitive()) {
+					for (JsonElement elem : object.get(ICONS).getAsJsonArray()) {
+						if (elem.isJsonPrimitive()) {
 							list.add(new ResourceLocation(elem.getAsString()));
 						} else {
 							Log.warn("Loading marker %s from JSON: Texture item %d isn't a primitive", typeName, i);
@@ -435,85 +433,4 @@ public class MarkerType extends IRegistryEntry.Impl {
 		}
 		
 	}
-	
-	public static class Accessor {
-		protected MarkerType wrap;
-		
-		public Accessor(MarkerType type) {
-			wrap = type;
-		}
-		
-		public ResourceLocation[] getIcons() {
-			return wrap.icons;
-		}
-
-		public void setIcons(ResourceLocation[] icons) {
-			wrap.icons = icons;
-		}
-
-		public int getViewSize() {
-			return wrap.viewSize;
-		}
-
-		public void setViewSize(int viewSize) {
-			wrap.viewSize = viewSize;
-		}
-
-		public int getClipMin() {
-			return wrap.clipMin;
-		}
-
-		public void setClipMin(int clipMin) {
-			wrap.clipMin = clipMin;
-		}
-
-		public int getClipMax() {
-			return wrap.clipMax;
-		}
-
-		public void setClipMax(int clipMax) {
-			wrap.clipMax = clipMax;
-		}
-
-		public boolean isAlwaysShow() {
-			return wrap.alwaysShow;
-		}
-
-		public void setAlwaysShow(boolean alwaysShow) {
-			wrap.alwaysShow = alwaysShow;
-		}
-
-		public boolean isTile() {
-			return wrap.isTile;
-		}
-
-		public void setTile(boolean isTile) {
-			wrap.isTile = isTile;
-		}
-
-		public boolean isTechnical() {
-			return wrap.isTechnical;
-		}
-
-		public void setTechnical(boolean isTechnical) {
-			wrap.isTechnical = isTechnical;
-		}
-
-		public double getCenterX() {
-			return wrap.centerX;
-		}
-
-		public void setCenterX(double centerX) {
-			wrap.centerX = centerX;
-		}
-
-		public double getCenterY() {
-			return wrap.centerY;
-		}
-
-		public void setCenterY(double centerY) {
-			wrap.centerY = centerY;
-		}
-	}
-	
 }
