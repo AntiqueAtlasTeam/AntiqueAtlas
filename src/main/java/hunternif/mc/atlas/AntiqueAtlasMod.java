@@ -1,12 +1,7 @@
 package hunternif.mc.atlas;
 
-import static net.minecraftforge.oredict.RecipeSorter.Category.SHAPELESS;
 import hunternif.mc.atlas.core.AtlasDataHandler;
-import hunternif.mc.atlas.ext.DeathWatcher;
-import hunternif.mc.atlas.ext.ExtBiomeDataHandler;
-import hunternif.mc.atlas.ext.NetherFortressWatcher;
-import hunternif.mc.atlas.ext.StructureWatcher;
-import hunternif.mc.atlas.ext.VillageWatcher;
+import hunternif.mc.atlas.ext.*;
 import hunternif.mc.atlas.item.ItemAtlas;
 import hunternif.mc.atlas.item.ItemEmptyAtlas;
 import hunternif.mc.atlas.item.RecipeAtlasCloning;
@@ -18,9 +13,6 @@ import hunternif.mc.atlas.network.PacketDispatcher;
 import hunternif.mc.atlas.registry.MarkerRegistry;
 import hunternif.mc.atlas.registry.MarkerTypes;
 import hunternif.mc.atlas.util.Log;
-
-import java.io.File;
-
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
@@ -34,6 +26,10 @@ import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.oredict.RecipeSorter;
+
+import java.io.File;
+
+import static net.minecraftforge.oredict.RecipeSorter.Category.SHAPELESS;
 
 @Mod(modid=AntiqueAtlasMod.ID, name=AntiqueAtlasMod.NAME, version=AntiqueAtlasMod.VERSION)
 public class AntiqueAtlasMod {
@@ -74,8 +70,8 @@ public class AntiqueAtlasMod {
 			.setRegistryName(ID, "emptyAntiqueAtlas").setUnlocalizedName("emptyAntiqueAtlas")
 			.setCreativeTab(CreativeTabs.TOOLS);
 		
-		GameRegistry.register(itemAtlas.setRegistryName("antiqueAtlas"));
-		GameRegistry.register(itemEmptyAtlas.setRegistryName("emptyAntiqueAtlas"));
+		GameRegistry.register(itemAtlas);
+		GameRegistry.register(itemEmptyAtlas);
 	}
 	
 	@EventHandler

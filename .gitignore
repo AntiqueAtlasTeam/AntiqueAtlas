@@ -4,6 +4,7 @@ release
 dist
 build
 run
+classes
 
 # Gradle
 .gradle

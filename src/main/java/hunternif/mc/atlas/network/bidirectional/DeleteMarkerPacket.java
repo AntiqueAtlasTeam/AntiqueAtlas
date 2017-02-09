@@ -5,13 +5,12 @@ import hunternif.mc.atlas.api.AtlasAPI;
 import hunternif.mc.atlas.marker.MarkersData;
 import hunternif.mc.atlas.network.AbstractMessage;
 import hunternif.mc.atlas.util.Log;
-
-import java.io.IOException;
-
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fml.relauncher.Side;
+
+import java.io.IOException;
 
 /**
  * Deletes a marker. A client sends this packet to the server as a request,
@@ -46,8 +45,8 @@ public class DeleteMarkerPacket extends AbstractMessage<DeleteMarkerPacket> {
 
 	@Override
 	public void write(PacketBuffer buffer) throws IOException {
-		buffer.writeVarIntToBuffer(atlasID);
-		buffer.writeVarIntToBuffer(markerID);
+		buffer.writeVarInt(atlasID);
+		buffer.writeVarInt(markerID);
 	}
 
 	private boolean isGlobal() {

@@ -5,21 +5,16 @@ import hunternif.mc.atlas.network.client.MapDataPacket;
 import hunternif.mc.atlas.network.server.BrowsingPositionPacket;
 import hunternif.mc.atlas.util.Log;
 import hunternif.mc.atlas.util.ShortVec2;
-
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.world.WorldSavedData;
 import net.minecraftforge.common.util.Constants;
+
+import java.util.*;
+import java.util.Map.Entry;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class AtlasData extends WorldSavedData {
 	private static final int VERSION = 2;
@@ -118,6 +113,7 @@ public class AtlasData extends WorldSavedData {
 	public DimensionData getDimensionData(int dimension) {
 		return dimensionMap.computeIfAbsent(dimension, k -> new DimensionData(this, dimension));
 	}
+
 	public Map<ShortVec2, Tile> getSeenChunksInDimension(int dimension) {
 		return getDimensionData(dimension).getSeenChunks();
 	}
@@ -126,6 +122,7 @@ public class AtlasData extends WorldSavedData {
 	public Collection<EntityPlayer> getSyncedPlayers() {
 		return Collections.unmodifiableCollection(playersSentTo);
 	}
+
 	/** Whether this AtlasData has already been sent to the specified player. */
 	public boolean isSyncedOnPlayer(EntityPlayer player) {
 		return playersSentTo.contains(player);
