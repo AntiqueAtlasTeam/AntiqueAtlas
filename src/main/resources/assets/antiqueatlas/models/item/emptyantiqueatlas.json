@@ -1,7 +1,7 @@
 {
-    "parent": "antiqueatlas:builtin/generated",
+    "parent": "item/generated",
     "textures": {
-        "layer0": "antiqueatlas:items/emptyAntiqueAtlas"
+        "layer0": "antiqueatlas:items/empty_antique_atlas"
     },
     "display": {
         "thirdperson": {

@@ -64,7 +64,7 @@ public class GuiScaleBar extends GuiComponent {
 		AtlasRenderHelper.drawFullTexture(texture, getGuiX(), getGuiY(), WIDTH, HEIGHT);
 		
 		if (isMouseOver) {
-			drawTooltip(Arrays.asList(I18n.format("gui.antiqueatlas.scalebar")), Minecraft.getMinecraft().fontRendererObj);
+			drawTooltip(Arrays.asList(I18n.format("gui.antiqueatlas.scalebar")), Minecraft.getMinecraft().fontRenderer);
 		}
 	}
 }

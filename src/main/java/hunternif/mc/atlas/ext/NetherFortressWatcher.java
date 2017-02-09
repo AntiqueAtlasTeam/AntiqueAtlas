@@ -7,6 +7,7 @@ import hunternif.mc.atlas.util.Log;
 import java.util.HashSet;
 import java.util.Set;
 
+import hunternif.mc.atlas.util.MathUtil;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -90,7 +91,7 @@ public class NetherFortressWatcher {
 			if (BRIDGE.equals(childID)) { // Straight open bridge segment. Is allowed to span several chunks.
 				if (boundingBox.getXSize() > 16) {
 					String tileName = ExtTileIdMap.TILE_NETHER_BRIDGE_X;
-					int chunkZ = boundingBox.getCenter().getZ() >> 4;
+					int chunkZ = MathUtil.getCenter(boundingBox).getZ() >> 4;
 					for (int x = boundingBox.minX; x < boundingBox.maxX; x += 16) {
 						int chunkX = x >> 4;
 						if (noTileAt(world, chunkX, chunkZ)) {
@@ -99,7 +100,7 @@ public class NetherFortressWatcher {
 					}
 				} else {//if (boundingBox.getZSize() > 16) {
 					String tileName = ExtTileIdMap.TILE_NETHER_BRIDGE_Z;
-					int chunkX = boundingBox.getCenter().getX() >> 4;
+					int chunkX = MathUtil.getCenter(boundingBox).getX() >> 4;
 					for (int z = boundingBox.minZ; z < boundingBox.maxZ; z += 16) {
 						int chunkZ = z >> 4;
 						if (noTileAt(world, chunkX, chunkZ)) {
@@ -113,18 +114,18 @@ public class NetherFortressWatcher {
 				if (boundingBox.getXSize() > boundingBox.getZSize()) {
 					tileName = ExtTileIdMap.TILE_NETHER_BRIDGE_END_X;
 					chunkX = boundingBox.minX >> 4;
-					chunkZ = boundingBox.getCenter().getZ() >> 4;
+					chunkZ = MathUtil.getCenter(boundingBox).getZ() >> 4;
 				} else {
 					tileName = ExtTileIdMap.TILE_NETHER_BRIDGE_END_Z;
-					chunkX = boundingBox.getCenter().getX() >> 4;
+					chunkX = MathUtil.getCenter(boundingBox).getX() >> 4;
 					chunkZ = boundingBox.minZ >> 4;
 				}
 				if (noTileAt(world, chunkX, chunkZ)) {
 					AtlasAPI.tiles.putCustomGlobalTile(world, tileName, chunkX, chunkZ);
 				}
 			} else {
-				int chunkX = boundingBox.getCenter().getX() >> 4;
-				int chunkZ = boundingBox.getCenter().getZ() >> 4;
+				int chunkX = MathUtil.getCenter(boundingBox).getX() >> 4;
+				int chunkZ = MathUtil.getCenter(boundingBox).getZ() >> 4;
 				String tileName;
 				if (BRIDGE_GATE.equals(childID)) {
 					tileName = ExtTileIdMap.TILE_NETHER_BRIDGE_GATE;

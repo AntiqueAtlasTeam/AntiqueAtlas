@@ -22,7 +22,7 @@ public class ProgressBarOverlay {
 	public ProgressBarOverlay(int barWidth, int barHeight) {
 		this.barWidth = barWidth;
 		this.barHeight = barHeight;
-		font = Minecraft.getMinecraft().fontRendererObj;
+		font = Minecraft.getMinecraft().fontRenderer;
 	}
 	
 	/** Render progress bar on the screen. */

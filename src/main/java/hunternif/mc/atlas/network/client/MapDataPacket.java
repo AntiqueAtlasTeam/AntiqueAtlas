@@ -31,20 +31,20 @@ public class MapDataPacket extends AbstractClientMessage<MapDataPacket> {
 
 	@Override
 	public void read(PacketBuffer buffer) throws IOException {
-		atlasID = buffer.readVarIntFromBuffer();
+		atlasID = buffer.readVarInt();
 		data = ByteBufUtils.readTag(buffer);
 	}
 
 	@Override
 	public void write(PacketBuffer buffer) throws IOException {
-		buffer.writeVarIntToBuffer(atlasID);
+		buffer.writeVarInt(atlasID);
 		ByteBufUtils.writeTag(buffer, data);
 	}
 
 	@Override
 	protected void process(EntityPlayer player, Side side) {
 		if (data == null) return; // Atlas is empty
-		AtlasData atlasData = AntiqueAtlasMod.atlasData.getAtlasData(atlasID, player.worldObj);
+		AtlasData atlasData = AntiqueAtlasMod.atlasData.getAtlasData(atlasID, player.getEntityWorld());
 		atlasData.readFromNBT(data);
 		// GuiAtlas may already be opened at (0, 0) browsing position, force load saved position:
 		if (AntiqueAtlasMod.settings.doSaveBrowsingPos &&

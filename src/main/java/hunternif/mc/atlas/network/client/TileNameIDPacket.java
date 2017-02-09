@@ -42,24 +42,24 @@ public class TileNameIDPacket extends AbstractClientMessage<TileNameIDPacket>
 
 	@Override
 	public void read(PacketBuffer buffer) throws IOException {
-		int size = buffer.readVarIntFromBuffer();
+		int size = buffer.readVarInt();
 		for (int i = 0; i < size; i++) {
 			String name = ByteBufUtils.readUTF8String(buffer);
 			// Reading negative value to save on traffic, because custom biome
 			// IDs are always negative.
-			int biomeID = -buffer.readVarIntFromBuffer();
+			int biomeID = -buffer.readVarInt();
 			nameToIdMap.put(name, biomeID);
 		}
 	}
 
 	@Override
 	public void write(PacketBuffer buffer) throws IOException {
-		buffer.writeVarIntToBuffer(nameToIdMap.size());
+		buffer.writeVarInt(nameToIdMap.size());
 		for (Entry<String, Integer> entry : nameToIdMap.entrySet()) {
 			ByteBufUtils.writeUTF8String(buffer, entry.getKey());
 			// Writing negative value to save on traffic, because custom biome
 			// IDs are always negative.
-			buffer.writeVarIntToBuffer(-entry.getValue());
+			buffer.writeVarInt(-entry.getValue());
 		}
 	}
 
