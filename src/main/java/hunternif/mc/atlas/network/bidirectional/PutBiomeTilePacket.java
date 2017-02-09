@@ -34,20 +34,20 @@ public class PutBiomeTilePacket extends AbstractMessage<PutBiomeTilePacket> {
 	
 	@Override
 	protected void read(PacketBuffer buffer) throws IOException {
-		atlasID = buffer.readVarIntFromBuffer();
-		dimension = buffer.readVarIntFromBuffer();
-		x = buffer.readVarIntFromBuffer();
-		z = buffer.readVarIntFromBuffer();
-		biomeID = buffer.readVarIntFromBuffer();
+		atlasID = buffer.readVarInt();
+		dimension = buffer.readVarInt();
+		x = buffer.readVarInt();
+		z = buffer.readVarInt();
+		biomeID = buffer.readVarInt();
 	}
 
 	@Override
 	protected void write(PacketBuffer buffer) throws IOException {
-		buffer.writeVarIntToBuffer(atlasID);
-		buffer.writeVarIntToBuffer(dimension);
-		buffer.writeVarIntToBuffer(x);
-		buffer.writeVarIntToBuffer(z);
-		buffer.writeVarIntToBuffer(biomeID);
+		buffer.writeVarInt(atlasID);
+		buffer.writeVarInt(dimension);
+		buffer.writeVarInt(x);
+		buffer.writeVarInt(z);
+		buffer.writeVarInt(biomeID);
 	}
 
 	@Override
@@ -59,9 +59,9 @@ public class PutBiomeTilePacket extends AbstractMessage<PutBiomeTilePacket> {
 						player.getGameProfile().getName(), atlasID);
 				return;
 			}
-			AtlasAPI.tiles.putBiomeTile(player.worldObj, atlasID, biomeID, x, z);
+			AtlasAPI.tiles.putBiomeTile(player.getEntityWorld(), atlasID, biomeID, x, z);
 		} else {
-			AtlasData data = AntiqueAtlasMod.atlasData.getAtlasData(atlasID, player.worldObj);
+			AtlasData data = AntiqueAtlasMod.atlasData.getAtlasData(atlasID, player.getEntityWorld());
 			data.setTile(dimension, x, z, new Tile(biomeID));
 		}
 	}

@@ -40,14 +40,14 @@ public class DeleteMarkerPacket extends AbstractMessage<DeleteMarkerPacket> {
 
 	@Override
 	public void read(PacketBuffer buffer) throws IOException {
-		atlasID = buffer.readVarIntFromBuffer();
-		markerID = buffer.readVarIntFromBuffer();
+		atlasID = buffer.readVarInt();
+		markerID = buffer.readVarInt();
 	}
 
 	@Override
 	public void write(PacketBuffer buffer) throws IOException {
-		buffer.writeVarIntToBuffer(atlasID);;
-		buffer.writeVarIntToBuffer(markerID);
+		buffer.writeVarInt(atlasID);
+		buffer.writeVarInt(markerID);
 	}
 
 	public boolean isGlobal() {
@@ -64,14 +64,14 @@ public class DeleteMarkerPacket extends AbstractMessage<DeleteMarkerPacket> {
 				return;
 			}
 			if (isGlobal()) {
-				AtlasAPI.markers.deleteGlobalMarker(player.worldObj, markerID);
+				AtlasAPI.markers.deleteGlobalMarker(player.getEntityWorld(), markerID);
 			} else {
-				AtlasAPI.markers.deleteMarker(player.worldObj, atlasID, markerID);
+				AtlasAPI.markers.deleteMarker(player.getEntityWorld(), atlasID, markerID);
 			}
 		} else {
 			MarkersData data = isGlobal() ?
 					AntiqueAtlasMod.globalMarkersData.getData() :
-					AntiqueAtlasMod.markersData.getMarkersData(atlasID, player.worldObj);
+					AntiqueAtlasMod.markersData.getMarkersData(atlasID, player.getEntityWorld());
 					data.removeMarker(markerID);
 		}
 	}

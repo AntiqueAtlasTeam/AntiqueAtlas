@@ -6,19 +6,19 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.world.World;
 
-public class RecipeAtlasCloning implements IRecipe {
+public class RecipeAtlasCloning extends RecipeBase {
 
 	@Override
 	public boolean matches(InventoryCrafting inv, World world) {
 		int i = 0; // number of empty atlases
-		ItemStack filledAtlas = null;
+		ItemStack filledAtlas = ItemStack.EMPTY;
 
 		for (int j = 0; j < inv.getSizeInventory(); ++j) {
 			ItemStack stack = inv.getStackInSlot(j);
 		
-			if (stack != null) {
+			if (!stack.isEmpty()) {
 				if (stack.getItem() == AntiqueAtlasMod.itemAtlas) {
-					if (filledAtlas != null) {
+					if (!filledAtlas.isEmpty()) {
 						return false;
 					}
 					filledAtlas = stack;
@@ -31,33 +31,33 @@ public class RecipeAtlasCloning implements IRecipe {
 			}
 		}
 
-		return filledAtlas != null && i > 0;
+		return !filledAtlas.isEmpty() && i > 0;
 	}
 
 	@Override
 	public ItemStack getCraftingResult(InventoryCrafting inv) {
 		int i = 0; // number of new copies
-		ItemStack filledAtlas = null;
+		ItemStack filledAtlas = ItemStack.EMPTY;
 
 		for (int j = 0; j < inv.getSizeInventory(); ++j) {
 			ItemStack stack = inv.getStackInSlot(j);
 
-			if (stack != null) {
+			if (!stack.isEmpty()) {
 				if (stack.getItem() == AntiqueAtlasMod.itemAtlas) {
-					if (filledAtlas != null) {
-						return null;
+					if (!filledAtlas.isEmpty()) {
+						return ItemStack.EMPTY;
 					}
 					filledAtlas = stack;
 				} else {
 					if (stack.getItem() != AntiqueAtlasMod.itemEmptyAtlas) {
-						return null;
+						return ItemStack.EMPTY;
 					}
 					i++;
 				}
 			}
 		}
 
-		if (filledAtlas != null && i >= 1) {
+		if (!filledAtlas.isEmpty() && i >= 1) {
 			ItemStack newAtlas = new ItemStack(AntiqueAtlasMod.itemAtlas, i + 1, filledAtlas.getItemDamage());
 
 			if (filledAtlas.hasDisplayName()) {
@@ -68,7 +68,7 @@ public class RecipeAtlasCloning implements IRecipe {
 		}
 		else
 		{
-			return null;
+			return ItemStack.EMPTY;
 		}
 	}
 
@@ -79,16 +79,6 @@ public class RecipeAtlasCloning implements IRecipe {
 
 	@Override
 	public ItemStack getRecipeOutput() {
-		return null;
-	}
-
-	@Override
-	public ItemStack[] getRemainingItems(InventoryCrafting inv) {
-		ItemStack[] aitemstack = new ItemStack[inv.getSizeInventory()];
-		for (int i = 0; i < aitemstack.length; ++i) {
-			ItemStack itemstack = inv.getStackInSlot(i);
-			aitemstack[i] = net.minecraftforge.common.ForgeHooks.getContainerItem(itemstack);
-		}
-		return aitemstack;
+		return ItemStack.EMPTY;
 	}
 }

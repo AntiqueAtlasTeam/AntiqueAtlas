@@ -77,7 +77,7 @@ public class GuiMarkerFinalizer extends GuiComponent {
 	public void initGui() {
 		buttonList.add(btnDone = new GuiButton(0, this.width/2 - BUTTON_WIDTH - BUTTON_SPACING/2, this.height/2 + 40, BUTTON_WIDTH, 20, I18n.format("gui.done")));
 		buttonList.add(btnCancel = new GuiButton(0, this.width/2 + BUTTON_SPACING/2, this.height/2 + 40, BUTTON_WIDTH, 20, I18n.format("gui.cancel")));
-		textField = new GuiTextField(0, Minecraft.getMinecraft().fontRendererObj, (this.width - 200)/2, this.height/2 - 81, 200, 20);
+		textField = new GuiTextField(0, Minecraft.getMinecraft().fontRenderer, (this.width - 200)/2, this.height/2 - 81, 200, 20);
 		textField.setFocused(true);
 		textField.setText("");
 		

@@ -35,20 +35,20 @@ public class BrowsingPositionPacket extends AbstractServerMessage<BrowsingPositi
 	
 	@Override
 	protected void read(PacketBuffer buffer) throws IOException {
-		atlasID = buffer.readVarIntFromBuffer();
-		dimension = buffer.readVarIntFromBuffer();
-		x = buffer.readVarIntFromBuffer();
-		y = buffer.readVarIntFromBuffer();
-		zoom = (double)buffer.readVarIntFromBuffer() / ZOOM_SCALE_FACTOR;
+		atlasID = buffer.readVarInt();
+		dimension = buffer.readVarInt();
+		x = buffer.readVarInt();
+		y = buffer.readVarInt();
+		zoom = (double)buffer.readVarInt() / ZOOM_SCALE_FACTOR;
 	}
 
 	@Override
 	protected void write(PacketBuffer buffer) throws IOException {
-		buffer.writeVarIntToBuffer(atlasID);
-		buffer.writeVarIntToBuffer(dimension);
-		buffer.writeVarIntToBuffer(x);
-		buffer.writeVarIntToBuffer(y);
-		buffer.writeVarIntToBuffer((int)Math.round(zoom * ZOOM_SCALE_FACTOR));
+		buffer.writeVarInt(atlasID);
+		buffer.writeVarInt(dimension);
+		buffer.writeVarInt(x);
+		buffer.writeVarInt(y);
+		buffer.writeVarInt((int)Math.round(zoom * ZOOM_SCALE_FACTOR));
 	}
 
 	@Override
@@ -59,7 +59,7 @@ public class BrowsingPositionPacket extends AbstractServerMessage<BrowsingPositi
 					player.getGameProfile().getName(), atlasID);
 			return;
 		}
-		AntiqueAtlasMod.atlasData.getAtlasData(atlasID, player.worldObj)
+		AntiqueAtlasMod.atlasData.getAtlasData(atlasID, player.getEntityWorld())
 			.getDimensionData(dimension).setBrowsingPosition(x, y, zoom);
 	}
 

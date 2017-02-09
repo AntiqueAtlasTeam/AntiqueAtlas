@@ -60,8 +60,9 @@ public class ItemAtlas extends Item {
 	}
 	
 	@Override
-	public ActionResult<ItemStack> onItemRightClick(ItemStack stack, World world, EntityPlayer playerIn,
+	public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer playerIn,
 			EnumHand hand) {
+		ItemStack stack = playerIn.getHeldItem(hand);
 		if (world.isRemote) {
 			AntiqueAtlasMod.proxy.openAtlasGUI(stack);
 		}
@@ -93,8 +94,8 @@ public class ItemAtlas extends Item {
 			return;
 		}
 		
-		int playerX = MathHelper.floor_double(player.posX) >> 4;
-		int playerZ = MathHelper.floor_double(player.posZ) >> 4;
+		int playerX = MathHelper.floor(player.posX) >> 4;
+		int playerZ = MathHelper.floor(player.posZ) >> 4;
 		ITileStorage seenChunks = data.getDimensionData(player.dimension);
 		IBiomeDetector biomeDetector = getBiomeDetectorForDimension(player.dimension);
 		int scanRadius = settings.scanRadius;
@@ -115,10 +116,10 @@ public class ItemAtlas extends Item {
 				
 				// If there's no custom tile, check the actual chunk:
 				if (biomeId == -1) {
-					Chunk chunk = player.worldObj.getChunkFromChunkCoords(x, z);
+					Chunk chunk = player.getEntityWorld().getChunkFromChunkCoords(x, z);
 					// Force loading of chunk, if required:
 					if (settings.forceChunkLoading && !chunk.isLoaded()) {
-						player.worldObj.getChunkProvider().provideChunk(x << 4, z << 4);
+						player.getEntityWorld().getChunkProvider().provideChunk(x << 4, z << 4);
 					}
 					// Skip chunk if it hasn't loaded yet:
 					if (!chunk.isLoaded()) { 

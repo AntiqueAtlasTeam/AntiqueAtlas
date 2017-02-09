@@ -86,7 +86,7 @@ public class AAORenderEventReceiver{
 		if (!ENABLED){
 			return;
 		}
-		EntityPlayerSP player = Minecraft.getMinecraft().thePlayer;
+		EntityPlayerSP player = Minecraft.getMinecraft().player;
 		Integer atlas = null;
 		if (REQUIRES_HOLD) {
 			ItemStack stack = player.getHeldItemMainhand();
@@ -156,7 +156,7 @@ public class AAORenderEventReceiver{
 		GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
 		DimensionData biomeData = AntiqueAtlasMod.atlasData.getAtlasData(
-				atlasID, Minecraft.getMinecraft().theWorld).getDimensionData(
+				atlasID, Minecraft.getMinecraft().world).getDimensionData(
 				dimension);
 
 		TileRenderIterator iter = new TileRenderIterator(biomeData);
@@ -209,7 +209,7 @@ public class AAORenderEventReceiver{
 
 		// biomeData needed to prevent undiscovered markers from appearing
 		DimensionData biomeData = AntiqueAtlasMod.atlasData.getAtlasData(
-				atlasID, Minecraft.getMinecraft().theWorld).getDimensionData(
+				atlasID, Minecraft.getMinecraft().world).getDimensionData(
 				dimension);
 		DimensionMarkersData globalMarkersData = AntiqueAtlasMod.globalMarkersData
 				.getData().getMarkersDataInDimension(dimension);
@@ -218,7 +218,7 @@ public class AAORenderEventReceiver{
 		drawMarkersData(globalMarkersData, shape, biomeData, position);
 
 		MarkersData markersData = AntiqueAtlasMod.markersData.getMarkersData(
-				atlasID, Minecraft.getMinecraft().theWorld);
+				atlasID, Minecraft.getMinecraft().world);
 		DimensionMarkersData localMarkersData = null;
 		if (markersData != null) {
 			localMarkersData = markersData.getMarkersDataInDimension(dimension);
@@ -334,15 +334,14 @@ public class AAORenderEventReceiver{
 	 * there are none. Offhand gets priority.
 	 **/
 	public static Integer getPlayerAtlas(EntityPlayer player) {
-
 		ItemStack stack = player.getHeldItemOffhand();
-		if (stack != null && stack.getItem() == AntiqueAtlasMod.itemAtlas) {
+		if (!stack.isEmpty() && stack.getItem() == AntiqueAtlasMod.itemAtlas) {
 			return new Integer(stack.getItemDamage());
 		}
 			
 		for (int i = 0; i < 9; i++) {
-			stack = player.inventory.mainInventory[i];
-			if (stack != null && stack.getItem() == AntiqueAtlasMod.itemAtlas) {
+			stack = player.inventory.getStackInSlot(i);
+			if (!stack.isEmpty() && stack.getItem() == AntiqueAtlasMod.itemAtlas) {
 				return new Integer(stack.getItemDamage());
 			}
 		}

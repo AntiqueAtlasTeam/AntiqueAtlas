@@ -264,7 +264,7 @@ public class GuiAtlas extends GuiComponent {
 				} else {
 					// Navigate once, before enabling pause:
 					navigateByButton(selectedButton);
-					timeButtonPressed = player.worldObj.getTotalWorldTime();
+					timeButtonPressed = player.getEntityWorld().getTotalWorldTime();
 				}
 			}
 		};
@@ -349,7 +349,7 @@ public class GuiAtlas extends GuiComponent {
 	}
 	
 	public GuiAtlas setAtlasItemStack(ItemStack stack) {
-		this.player = Minecraft.getMinecraft().thePlayer;
+		this.player = Minecraft.getMinecraft().player;
 		this.stack = stack;
 		updateAtlasData();
 		if (!followPlayer && AntiqueAtlasMod.settings.doSaveBrowsingPos) {
@@ -390,7 +390,7 @@ public class GuiAtlas extends GuiComponent {
 		if (!state.is(NORMAL) && !state.is(HIDING_MARKERS)) {
 			if (state.is(PLACING_MARKER) // If clicked on the map, place marker:
 					&& isMouseOverMap && mouseState == 0 /* left click */) {
-				markerFinalizer.setMarkerData(player.worldObj,
+				markerFinalizer.setMarkerData(player.getEntityWorld(),
 						stack.getItemDamage(), player.dimension,
 						screenXToWorldX(mouseX), screenYToWorldZ(mouseY));
 				addChild(markerFinalizer);
@@ -409,7 +409,7 @@ public class GuiAtlas extends GuiComponent {
 				
 			} else if (state.is(DELETING_MARKER) // If clicked on a marker, delete it:
 					&& toDelete != null && isMouseOverMap && mouseState == 0) {
-				AtlasAPI.markers.deleteMarker(player.worldObj,
+				AtlasAPI.markers.deleteMarker(player.getEntityWorld(),
 						stack.getItemDamage(), toDelete.getId());
 			}
 			state.switchTo(NORMAL);
@@ -527,7 +527,7 @@ public class GuiAtlas extends GuiComponent {
 			mapOffsetX = (int)(- player.posX * mapScale);
 			mapOffsetY = (int)(- player.posZ * mapScale);
 		}
-		if (player.worldObj.getTotalWorldTime() > timeButtonPressed + BUTTON_PAUSE) {
+		if (player.getEntityWorld().getTotalWorldTime() > timeButtonPressed + BUTTON_PAUSE) {
 			navigateByButton(selectedButton);
 		}
 		
@@ -538,12 +538,12 @@ public class GuiAtlas extends GuiComponent {
 	 * {@link #globalMarkersData} */
 	private void updateAtlasData() {
 		biomeData = AntiqueAtlasMod.atlasData
-				.getAtlasData(stack, player.worldObj)
+				.getAtlasData(stack, player.getEntityWorld())
 				.getDimensionData(player.dimension);
 		globalMarkersData = AntiqueAtlasMod.globalMarkersData.getData()
 				.getMarkersDataInDimension(player.dimension);
 		MarkersData markersData = AntiqueAtlasMod.markersData
-				.getMarkersData(stack, player.worldObj);
+				.getMarkersData(stack, player.getEntityWorld());
 		if (markersData != null) {
 			localMarkersData = markersData
 					.getMarkersDataInDimension(player.dimension);
@@ -594,7 +594,7 @@ public class GuiAtlas extends GuiComponent {
 		dragMapOffsetX *= mapScale / oldScale;
 		dragMapOffsetY *= mapScale / oldScale;
 		// 2^13 = 8192
-		scaleClipIndex = MathHelper.calculateLogBaseTwo( (int)( mapScale * 8192 ) ) + 1 - 13;
+		scaleClipIndex = MathHelper.log2( (int)( mapScale * 8192 ) ) + 1 - 13;
 		zoomLevel = -scaleClipIndex + zoomLevelOne;
 		scaleAlpha = 255;
 	}
@@ -754,8 +754,8 @@ public class GuiAtlas extends GuiComponent {
 			int textWidth, xWidth;
 			
 			text = "x";
-			xWidth = textWidth = fontRendererObj.getStringWidth(text); xWidth++;
-			fontRendererObj.drawString(text, -textWidth, 0, scaleAlpha << 24 | 0x000000);
+			xWidth = textWidth = fontRenderer.getStringWidth(text); xWidth++;
+			fontRenderer.drawString(text, -textWidth, 0, scaleAlpha << 24 | 0x000000);
 			
 			text = zoomNames[zoomLevel];
 			if(text.contains("/")) {
@@ -763,33 +763,33 @@ public class GuiAtlas extends GuiComponent {
 				String[] parts = text.split("/");
 				
 				text = parts[0];
-				int centerXtranslate = Math.max(fontRendererObj.getStringWidth(parts[0]), fontRendererObj.getStringWidth(parts[1]) )/2;
-				GlStateManager.translate(-xWidth-centerXtranslate, -fontRendererObj.FONT_HEIGHT/2, 0);
+				int centerXtranslate = Math.max(fontRenderer.getStringWidth(parts[0]), fontRenderer.getStringWidth(parts[1]) )/2;
+				GlStateManager.translate(-xWidth-centerXtranslate, -fontRenderer.FONT_HEIGHT/2, 0);
 				
 				GlStateManager.disableTexture2D();
 				Tessellator t = Tessellator.getInstance();
 				VertexBuffer vb = t.getBuffer();
                 vb.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION);
-                vb.pos( centerXtranslate,   fontRendererObj.FONT_HEIGHT - 1, 0.0D).endVertex();
-                vb.pos(-centerXtranslate-1, fontRendererObj.FONT_HEIGHT - 1, 0.0D).endVertex();
-                vb.pos(-centerXtranslate-1, fontRendererObj.FONT_HEIGHT    , 0.0D).endVertex();
-                vb.pos( centerXtranslate,   fontRendererObj.FONT_HEIGHT    , 0.0D).endVertex();
+                vb.pos( centerXtranslate,   fontRenderer.FONT_HEIGHT - 1, 0.0D).endVertex();
+                vb.pos(-centerXtranslate-1, fontRenderer.FONT_HEIGHT - 1, 0.0D).endVertex();
+                vb.pos(-centerXtranslate-1, fontRenderer.FONT_HEIGHT    , 0.0D).endVertex();
+                vb.pos( centerXtranslate,   fontRenderer.FONT_HEIGHT    , 0.0D).endVertex();
                 t.draw();
                 GlStateManager.enableTexture2D();
 				
-				textWidth = fontRendererObj.getStringWidth(text);
-				fontRendererObj.drawString(text, -textWidth/2, 0, scaleAlpha << 24 | 0x000000);
+				textWidth = fontRenderer.getStringWidth(text);
+				fontRenderer.drawString(text, -textWidth/2, 0, scaleAlpha << 24 | 0x000000);
 				
 				text = parts[1];
-				GlStateManager.translate(0, fontRendererObj.FONT_HEIGHT + 1, 0);
+				GlStateManager.translate(0, fontRenderer.FONT_HEIGHT + 1, 0);
 				
-				textWidth = fontRendererObj.getStringWidth(text);
-				fontRendererObj.drawString(text, -textWidth/2, 0, scaleAlpha << 24 | 0x000000);
+				textWidth = fontRenderer.getStringWidth(text);
+				fontRenderer.drawString(text, -textWidth/2, 0, scaleAlpha << 24 | 0x000000);
 				
-				GlStateManager.translate(xWidth+centerXtranslate, ( -fontRendererObj.FONT_HEIGHT/2 ) -2, 0);
+				GlStateManager.translate(xWidth+centerXtranslate, ( -fontRenderer.FONT_HEIGHT/2 ) -2, 0);
 			} else {
-				textWidth = fontRendererObj.getStringWidth(text);
-				fontRendererObj.drawString(text, -textWidth-xWidth+1, 1, scaleAlpha << 24 | 0x000000);
+				textWidth = fontRenderer.getStringWidth(text);
+				fontRenderer.drawString(text, -textWidth-xWidth+1, 1, scaleAlpha << 24 | 0x000000);
 			}
 			
 			GlStateManager.translate(-(getGuiX()+WIDTH-13), -(getGuiY()+12), 0);
@@ -854,7 +854,7 @@ public class GuiAtlas extends GuiComponent {
 				markerY + info.y,
 				info.width, info.height);
 		if (isMouseOver && mouseIsOverMarker && marker.getLabel().length() > 0) {
-			drawTooltip(Arrays.asList(marker.getLocalizedLabel()), mc.fontRendererObj);
+			drawTooltip(Arrays.asList(marker.getLocalizedLabel()), mc.fontRenderer);
 		}
 	}
 	

@@ -40,10 +40,10 @@ public class MarkersDataHandler {
 			data = markersDataClientCache.get(key);
 		}
 		if (data == null) {
-			data = (MarkersData) world.loadItemData(MarkersData.class, key);
+			data = (MarkersData) world.loadData(MarkersData.class, key);
 			if (data == null) {
 				data = new MarkersData(key);
-				world.setItemData(key, data);
+				world.setData(key, data);
 			}
 			if (world.isRemote) markersDataClientCache.put(key, data);
 		}

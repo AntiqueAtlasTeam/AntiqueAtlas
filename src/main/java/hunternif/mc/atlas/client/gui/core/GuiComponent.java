@@ -561,8 +561,8 @@ public class GuiComponent extends GuiScreen {
 	
 	/** Draw a text string centered horizontally, using this GUI's FontRenderer. */
 	protected void drawCenteredString(String text, int y, int color, boolean dropShadow) {
-		int length = fontRendererObj.getStringWidth(text);
-		fontRendererObj.drawString(text, (this.width - length)/2, y, color, dropShadow);
+		int length = fontRenderer.getStringWidth(text);
+		fontRenderer.drawString(text, (this.width - length)/2, y, color, dropShadow);
 	}
 	
 	protected int getMouseX() {

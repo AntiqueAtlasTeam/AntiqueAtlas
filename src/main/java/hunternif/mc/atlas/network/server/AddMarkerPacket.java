@@ -46,8 +46,8 @@ public class AddMarkerPacket extends AbstractServerMessage<AddMarkerPacket> {
 
 	@Override
 	public void read(PacketBuffer buffer) throws IOException {
-		atlasID = buffer.readVarIntFromBuffer();
-		dimension = buffer.readVarIntFromBuffer();
+		atlasID = buffer.readVarInt();
+		dimension = buffer.readVarInt();
 		type = MarkerRegistry.find( ByteBufUtils.readUTF8String(buffer) );
 		label = ByteBufUtils.readUTF8String(buffer);
 		x = buffer.readInt();
@@ -57,8 +57,8 @@ public class AddMarkerPacket extends AbstractServerMessage<AddMarkerPacket> {
 
 	@Override
 	public void write(PacketBuffer buffer) throws IOException {
-		buffer.writeVarIntToBuffer(atlasID);
-		buffer.writeVarIntToBuffer(dimension);
+		buffer.writeVarInt(atlasID);
+		buffer.writeVarInt(dimension);
 		ByteBufUtils.writeUTF8String(buffer, type.getRegistryName().toString());
 		ByteBufUtils.writeUTF8String(buffer, label);
 		buffer.writeInt(x);
@@ -74,7 +74,7 @@ public class AddMarkerPacket extends AbstractServerMessage<AddMarkerPacket> {
 					player.getGameProfile().getName(), atlasID);
 			return;
 		}
-		MarkersData markersData = AntiqueAtlasMod.markersData.getMarkersData(atlasID, player.worldObj);
+		MarkersData markersData = AntiqueAtlasMod.markersData.getMarkersData(atlasID, player.getEntityWorld());
 		Marker marker = markersData.createAndSaveMarker(type, label, dimension, x, y, visibleAhead);
 		// If these are a manually set markers sent from the client, forward
 		// them to other players. Including the original sender, because he
