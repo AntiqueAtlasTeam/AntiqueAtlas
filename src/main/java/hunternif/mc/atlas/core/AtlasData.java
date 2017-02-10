@@ -65,6 +65,7 @@ public class AtlasData extends WorldSavedData {
 			Log.warn("Outdated atlas data format! Was %d but current is %d", version, VERSION);
 			this.markDirty();
 		}
+
 		NBTTagList dimensionMapList = compound.getTagList(TAG_DIMENSION_MAP_LIST, Constants.NBT.TAG_COMPOUND);
 		for (int d = 0; d < dimensionMapList.tagCount(); d++) {
 			NBTTagCompound dimTag = dimensionMapList.getCompoundTagAt(d);
@@ -73,9 +74,13 @@ public class AtlasData extends WorldSavedData {
 			DimensionData dimData = getDimensionData(dimensionID);
 			for (int i = 0; i < intArray.length; i += 3) {
 				dimData.setTile(intArray[i], intArray[i+1], new Tile(intArray[i+2]));
-			}
-			double zoom = (double)dimTag.getInteger(TAG_BROWSING_ZOOM) / BrowsingPositionPacket.ZOOM_SCALE_FACTOR;
-			if (zoom == 0) zoom = 0.5;
+            }
+
+            double zoom = (double)dimTag.getInteger(TAG_BROWSING_ZOOM) / BrowsingPositionPacket.ZOOM_SCALE_FACTOR;
+			if (zoom == 0) {
+			    zoom = 0.5;
+            }
+
 			dimData.setBrowsingPosition(dimTag.getInteger(TAG_BROWSING_X),
 					dimTag.getInteger(TAG_BROWSING_Y), zoom);
 		}
@@ -107,7 +112,7 @@ public class AtlasData extends WorldSavedData {
 		return compound;
 	}
 
-	public void setBiomeDetectorForDimension(int dimension, IBiomeDetector biomeAnalyzer) {
+	private void setBiomeDetectorForDimension(int dimension, IBiomeDetector biomeAnalyzer) {
 		biomeAnalyzers.put(dimension, biomeAnalyzer);
 	}
 

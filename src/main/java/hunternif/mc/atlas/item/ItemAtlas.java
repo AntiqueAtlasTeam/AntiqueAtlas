@@ -13,7 +13,7 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.world.World;
 
 public class ItemAtlas extends Item {
-	protected static final String WORLD_ATLAS_DATA_ID = "aAtlas";
+	static final String WORLD_ATLAS_DATA_ID = "aAtlas";
 
 	public ItemAtlas() {
 		setHasSubtypes(true);
@@ -52,6 +52,7 @@ public class ItemAtlas extends Item {
 			markers.syncOnPlayer(stack.getItemDamage(), player);
 		}
 
+		// Updating map around player
 		data.updateMapAroundPlayer(player);
 	}
 

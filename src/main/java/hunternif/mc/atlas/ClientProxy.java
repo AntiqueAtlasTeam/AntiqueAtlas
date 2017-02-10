@@ -76,6 +76,7 @@ public class ClientProxy extends CommonProxy implements IResourceManagerReloadLi
 		if (biomeTextureConfigFile.exists()) {
 			biomeTextureConfigFile.renameTo(new File(configDir, "biome_textures.json"));
 		}
+
 		biomeTextureMap = BiomeTextureMap.instance();
 		biomeTextureConfig = new BiomeTextureConfig(new File(configDir, "biome_textures.json"), textureSetMap);
 		biomeTextureConfig.load(biomeTextureMap);
@@ -111,6 +112,9 @@ public class ClientProxy extends CommonProxy implements IResourceManagerReloadLi
 		if (AntiqueAtlasMod.settings.itemNeeded) {
             Minecraft.getMinecraft().getRenderItem().getItemModelMesher().register(AntiqueAtlasMod.itemAtlas, stack -> new ModelResourceLocation(AntiqueAtlasMod.ID + ":antiqueAtlas", "inventory"));
             Minecraft.getMinecraft().getRenderItem().getItemModelMesher().register(AntiqueAtlasMod.itemEmptyAtlas, 0, new ModelResourceLocation(AntiqueAtlasMod.ID + ":emptyAntiqueAtlas", "inventory"));
+        } else {
+            KeyHandler.registerBindings();
+            MinecraftForge.EVENT_BUS.register(new KeyHandler());
         }
 
 		MinecraftForge.EVENT_BUS.register(this);
@@ -122,15 +126,24 @@ public class ClientProxy extends CommonProxy implements IResourceManagerReloadLi
 		super.postInit(event);
 		guiAtlas.setMapScale(AntiqueAtlasMod.settings.defaultScale);
 	}
-	
+
 	@Override
 	public void openAtlasGUI(ItemStack stack) {
-		Minecraft mc = Minecraft.getMinecraft();
-		if (mc.currentScreen == null) { // In-game screen
-			guiAtlas.updateL18n();
-			mc.displayGuiScreen(guiAtlas.setAtlasItemStack(stack));
-		}
+	    openAtlasGUI(guiAtlas.prepareToOpen(stack));
 	}
+
+	@Override
+	public void openAtlasGUI() {
+	    openAtlasGUI(guiAtlas.prepareToOpen());
+    }
+
+    private void openAtlasGUI(GuiAtlas gui) {
+        Minecraft mc = Minecraft.getMinecraft();
+        if (mc.currentScreen == null) { // In-game screen
+            guiAtlas.updateL18n();
+            mc.displayGuiScreen(gui);
+        }
+    }
 	
 	private void registerDefaultTextureSets(TextureSetMap map) {
 		map.register(ICE);

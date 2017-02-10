@@ -85,6 +85,10 @@ class AAORenderEventReceiver {
      * there are none. Offhand gets priority.
      **/
     private static Integer getPlayerAtlas(EntityPlayer player) {
+        if (!AntiqueAtlasMod.settings.itemNeeded) {
+            return player.getUniqueID().hashCode();
+        }
+
         ItemStack stack = player.getHeldItemOffhand();
         if (!stack.isEmpty() && stack.getItem() == AntiqueAtlasMod.itemAtlas) {
             return stack.getItemDamage();

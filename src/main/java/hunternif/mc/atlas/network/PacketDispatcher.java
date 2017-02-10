@@ -1,26 +1,20 @@
 package hunternif.mc.atlas.network;
 
+import hunternif.mc.atlas.AntiqueAtlasMod;
+import hunternif.mc.atlas.network.bidirectional.DeleteMarkerPacket;
+import hunternif.mc.atlas.network.bidirectional.PutBiomeTilePacket;
+import hunternif.mc.atlas.network.client.*;
+import hunternif.mc.atlas.network.server.AddMarkerPacket;
+import hunternif.mc.atlas.network.server.BrowsingPositionPacket;
+import hunternif.mc.atlas.network.server.RegisterTileIdPacket;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraftforge.fml.relauncher.Side;
-
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
-
-import hunternif.mc.atlas.AntiqueAtlasMod;
-import hunternif.mc.atlas.network.bidirectional.DeleteMarkerPacket;
-import hunternif.mc.atlas.network.bidirectional.PutBiomeTilePacket;
-import hunternif.mc.atlas.network.client.DeleteCustomGlobalTilePacket;
-import hunternif.mc.atlas.network.client.MapDataPacket;
-import hunternif.mc.atlas.network.client.MarkersPacket;
-import hunternif.mc.atlas.network.client.TileNameIDPacket;
-import hunternif.mc.atlas.network.client.TilesPacket;
-import hunternif.mc.atlas.network.server.AddMarkerPacket;
-import hunternif.mc.atlas.network.server.BrowsingPositionPacket;
-import hunternif.mc.atlas.network.server.RegisterTileIdPacket;
 
 /**
  * 
@@ -60,7 +54,7 @@ public class PacketDispatcher
 	/**
 	 * Registers an {@link AbstractMessage} to the appropriate side(s)
 	 */
-	private static final <T extends AbstractMessage<T> & IMessageHandler<T, IMessage>> void registerMessage(Class<T> clazz) {
+	private static <T extends AbstractMessage<T> & IMessageHandler<T, IMessage>> void registerMessage(Class<T> clazz) {
 		if (AbstractMessage.AbstractClientMessage.class.isAssignableFrom(clazz)) {
 			PacketDispatcher.dispatcher.registerMessage(clazz, clazz, packetId++, Side.CLIENT);
 		} else if (AbstractMessage.AbstractServerMessage.class.isAssignableFrom(clazz)) {
@@ -83,7 +77,7 @@ public class PacketDispatcher
 	 * Send this message to the specified player.
 	 * See {@link SimpleNetworkWrapper#sendTo(IMessage, EntityPlayerMP)}
 	 */
-	public static final void sendTo(IMessage message, EntityPlayerMP player) {
+	public static void sendTo(IMessage message, EntityPlayerMP player) {
 		PacketDispatcher.dispatcher.sendTo(message, player);
 	}
 
@@ -91,21 +85,21 @@ public class PacketDispatcher
 	 * Send this message to everyone within a certain range of a point.
 	 * See {@link SimpleNetworkWrapper#sendToAllAround(IMessage, NetworkRegistry.TargetPoint)}
 	 */
-	public static final void sendToAllAround(IMessage message, NetworkRegistry.TargetPoint point) {
+	public static void sendToAllAround(IMessage message, NetworkRegistry.TargetPoint point) {
 		PacketDispatcher.dispatcher.sendToAllAround(message, point);
 	}
 
 	/**
 	 * Sends a message to everyone within a certain range of the coordinates in the same dimension.
 	 */
-	public static final void sendToAllAround(IMessage message, int dimension, double x, double y, double z, double range) {
+	public static void sendToAllAround(IMessage message, int dimension, double x, double y, double z, double range) {
 		PacketDispatcher.sendToAllAround(message, new NetworkRegistry.TargetPoint(dimension, x, y, z, range));
 	}
 
 	/**
 	 * Sends a message to everyone within a certain range of the player provided.
 	 */
-	public static final void sendToAllAround(IMessage message, EntityPlayer player, double range) {
+	public static void sendToAllAround(IMessage message, EntityPlayer player, double range) {
 		PacketDispatcher.sendToAllAround(message, player.getEntityWorld().provider.getDimension(), player.posX, player.posY, player.posZ, range);
 	}
 
@@ -113,7 +107,7 @@ public class PacketDispatcher
 	 * Send this message to everyone within the supplied dimension.
 	 * See {@link SimpleNetworkWrapper#sendToDimension(IMessage, int)}
 	 */
-	public static final void sendToDimension(IMessage message, int dimensionId) {
+	public static void sendToDimension(IMessage message, int dimensionId) {
 		PacketDispatcher.dispatcher.sendToDimension(message, dimensionId);
 	}
 
@@ -121,7 +115,7 @@ public class PacketDispatcher
 	 * Send this message to the server.
 	 * See {@link SimpleNetworkWrapper#sendToServer(IMessage)}
 	 */
-	public static final void sendToServer(IMessage message) {
+	public static void sendToServer(IMessage message) {
 		PacketDispatcher.dispatcher.sendToServer(message);
 	}
 }

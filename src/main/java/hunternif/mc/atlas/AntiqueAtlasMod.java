@@ -1,6 +1,7 @@
 package hunternif.mc.atlas;
 
 import hunternif.mc.atlas.core.AtlasDataHandler;
+import hunternif.mc.atlas.core.PlayerEventHandler;
 import hunternif.mc.atlas.ext.*;
 import hunternif.mc.atlas.item.ItemAtlas;
 import hunternif.mc.atlas.item.ItemEmptyAtlas;
@@ -92,6 +93,8 @@ public class AntiqueAtlasMod {
 			GameRegistry.addRecipe(recipeCombining);
 
 			MinecraftForge.EVENT_BUS.register(recipeCombining);
+		} else {
+			MinecraftForge.EVENT_BUS.register(new PlayerEventHandler());
 		}
 		
 		MinecraftForge.EVENT_BUS.register(atlasData);
