@@ -1,14 +1,13 @@
 package hunternif.mc.atlas.core;
 
 import hunternif.mc.atlas.AntiqueAtlasMod;
-
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.network.FMLNetworkEvent.ClientConnectedToServerEvent;
+
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Provides access to {@link AtlasData}. Maintains a cache on the client side,
@@ -39,14 +38,19 @@ public class AtlasDataHandler {
 			// it can be cached. This should fix #67
 			data = atlasDataClientCache.get(key);
 		}
+
 		if (data == null) {
 			data = (AtlasData) world.loadData(AtlasData.class, key);
 			if (data == null) {
 				data = new AtlasData(key);
 				world.setData(key, data);
 			}
-			if (world.isRemote) atlasDataClientCache.put(key, data);
+
+			if (world.isRemote) {
+			    atlasDataClientCache.put(key, data);
+            }
 		}
+
 		return data;
 	}
 	

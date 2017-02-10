@@ -62,32 +62,37 @@ public class AntiqueAtlasMod {
 		MarkerTypes.INSTANCE.getClass(); // ...
 		proxy.preInit(event);
 		settings.load(new File(proxy.configDir, "settings.cfg"));
-		
-		itemAtlas = (ItemAtlas) new ItemAtlas(settings)
-			.setRegistryName(ID, "antiqueAtlas").setUnlocalizedName("antiqueAtlas");
-		
-		itemEmptyAtlas = (ItemEmptyAtlas) new ItemEmptyAtlas()
-			.setRegistryName(ID, "emptyAntiqueAtlas").setUnlocalizedName("emptyAntiqueAtlas")
-			.setCreativeTab(CreativeTabs.TOOLS);
-		
-		GameRegistry.register(itemAtlas);
-		GameRegistry.register(itemEmptyAtlas);
+
+		if (settings.itemNeeded) {
+			itemAtlas = (ItemAtlas) new ItemAtlas()
+					.setRegistryName(ID, "antiqueAtlas").setUnlocalizedName("antiqueAtlas");
+
+			itemEmptyAtlas = (ItemEmptyAtlas) new ItemEmptyAtlas()
+					.setRegistryName(ID, "emptyAntiqueAtlas").setUnlocalizedName("emptyAntiqueAtlas")
+					.setCreativeTab(CreativeTabs.TOOLS);
+
+			GameRegistry.register(itemAtlas);
+			GameRegistry.register(itemEmptyAtlas);
+		}
 	}
 	
 	@EventHandler
 	public void init(FMLInitializationEvent event){
 		PacketDispatcher.registerPackets();
 		proxy.init(event);
-		
-		GameRegistry.addShapelessRecipe(new ItemStack(itemEmptyAtlas), Items.BOOK, Items.COMPASS);
-		
-		RecipeSorter.register("antiqueatlas:atlascloning",   RecipeAtlasCloning.class,   SHAPELESS, "after:minecraft:shapeless");
-		GameRegistry.addRecipe(new RecipeAtlasCloning());
-		
-		RecipeSorter.register("antiqueatlas:atlascombining",   RecipeAtlasCombining.class,   SHAPELESS, "after:minecraft:shapeless");
-		RecipeAtlasCombining recipeCombining = new RecipeAtlasCombining();
-		GameRegistry.addRecipe(recipeCombining);
-		MinecraftForge.EVENT_BUS.register(recipeCombining);
+
+		if (settings.itemNeeded) {
+			GameRegistry.addShapelessRecipe(new ItemStack(itemEmptyAtlas), Items.BOOK, Items.COMPASS);
+
+			RecipeSorter.register("antiqueatlas:atlascloning", RecipeAtlasCloning.class, SHAPELESS, "after:minecraft:shapeless");
+			GameRegistry.addRecipe(new RecipeAtlasCloning());
+
+			RecipeSorter.register("antiqueatlas:atlascombining", RecipeAtlasCombining.class, SHAPELESS, "after:minecraft:shapeless");
+			RecipeAtlasCombining recipeCombining = new RecipeAtlasCombining();
+			GameRegistry.addRecipe(recipeCombining);
+
+			MinecraftForge.EVENT_BUS.register(recipeCombining);
+		}
 		
 		MinecraftForge.EVENT_BUS.register(atlasData);
 		MinecraftForge.EVENT_BUS.register(markersData);
