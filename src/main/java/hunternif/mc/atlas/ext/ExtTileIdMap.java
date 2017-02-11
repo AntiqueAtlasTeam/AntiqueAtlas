@@ -1,16 +1,14 @@
 package hunternif.mc.atlas.ext;
 
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
 import hunternif.mc.atlas.network.PacketDispatcher;
 import hunternif.mc.atlas.network.client.TileNameIDPacket;
 import hunternif.mc.atlas.util.SaveData;
-
-import java.util.Map;
-
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 
-import com.google.common.collect.BiMap;
-import com.google.common.collect.HashBiMap;
+import java.util.Map;
 
 
 /** Maps unique names of external tiles to pseudo-biome IDs. Set on the server,
@@ -70,11 +68,12 @@ public class ExtTileIdMap extends SaveData {
 	public int getOrCreatePseudoBiomeID(String uniqueName) {
 		Integer id = nameToIdMap.get(uniqueName);
 		if (id == null) {
-			id = Integer.valueOf(findNewID());
+			id = findNewID();
 			nameToIdMap.put(uniqueName, id);
 			markDirty();
 		}
-		return id.intValue();
+
+		return id;
 	}
 	
 	/** If the name is not registered, returns {@link #NOT_FOUND} ({@value #NOT_FOUND}). */
@@ -89,8 +88,9 @@ public class ExtTileIdMap extends SaveData {
 	
 	private int findNewID() {
 		while (lastID > Short.MIN_VALUE) {
-			if (!nameToIdMap.inverse().containsKey(Integer.valueOf(--lastID))) break;
+			if (!nameToIdMap.inverse().containsKey(--lastID)) break;
 		}
+
 		return lastID;
 	}
 	
@@ -99,7 +99,7 @@ public class ExtTileIdMap extends SaveData {
 	 *  IDs set via this method should not be saved, or client config may become
 	 *  inconsistent! */
 	public void setPseudoBiomeID(String uniqueName, int id) {
-		nameToIdMap.forcePut(uniqueName, Integer.valueOf(id));
+		nameToIdMap.forcePut(uniqueName, id);
 	}
 	
 	/** Map of tile names to biome ID, used for saving config file. */

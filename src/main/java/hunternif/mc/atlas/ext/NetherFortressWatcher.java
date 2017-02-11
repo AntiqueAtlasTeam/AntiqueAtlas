@@ -3,10 +3,6 @@ package hunternif.mc.atlas.ext;
 import hunternif.mc.atlas.AntiqueAtlasMod;
 import hunternif.mc.atlas.api.AtlasAPI;
 import hunternif.mc.atlas.util.Log;
-
-import java.util.HashSet;
-import java.util.Set;
-
 import hunternif.mc.atlas.util.MathUtil;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
@@ -19,10 +15,13 @@ import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
+import java.util.HashSet;
+import java.util.Set;
+
 @SuppressWarnings("unused")
 public class NetherFortressWatcher {
 	/** Set of tag names for every fortress, in the format "[x, y]" */
-	private final Set<String> visited = new HashSet<String>();
+	private final Set<String> visited = new HashSet<>();
 	
 	// Corridors:
 	private static final String ROOFED = "NeSCLT"; // Roofed corridor, solid wall down to the ground

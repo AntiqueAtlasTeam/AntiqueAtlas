@@ -203,7 +203,7 @@ public class AtlasData extends WorldSavedData {
 	}
 	
 	/** Returns the Tile previously set at given coordinates. */
-	public Tile removeTile(int dimension, int x, int y) {
+    private Tile removeTile(int dimension, int x, int y) {
 		DimensionData dimData = getDimensionData(dimension);
 		return dimData.removeTile(x, y);
 	}

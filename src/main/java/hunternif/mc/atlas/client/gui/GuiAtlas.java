@@ -763,7 +763,7 @@ public class GuiAtlas extends GuiComponent {
 			
 			text = "x";
 			xWidth = textWidth = fontRenderer.getStringWidth(text); xWidth++;
-			fontRenderer.drawString(text, -textWidth, 0, scaleAlpha << 24 | 0x000000);
+			fontRenderer.drawString(text, -textWidth, 0, scaleAlpha << 24);
 			
 			text = zoomNames[zoomLevel];
 			if(text.contains("/")) {
@@ -786,18 +786,18 @@ public class GuiAtlas extends GuiComponent {
                 GlStateManager.enableTexture2D();
 				
 				textWidth = fontRenderer.getStringWidth(text);
-				fontRenderer.drawString(text, -textWidth/2, 0, scaleAlpha << 24 | 0x000000);
+				fontRenderer.drawString(text, -textWidth/2, 0, scaleAlpha << 24);
 				
 				text = parts[1];
 				GlStateManager.translate(0, fontRenderer.FONT_HEIGHT + 1, 0);
 				
 				textWidth = fontRenderer.getStringWidth(text);
-				fontRenderer.drawString(text, -textWidth/2, 0, scaleAlpha << 24 | 0x000000);
+				fontRenderer.drawString(text, -textWidth/2, 0, scaleAlpha << 24);
 				
 				GlStateManager.translate(xWidth+centerXtranslate, ( -fontRenderer.FONT_HEIGHT/2 ) -2, 0);
 			} else {
 				textWidth = fontRenderer.getStringWidth(text);
-				fontRenderer.drawString(text, -textWidth-xWidth+1, 1, scaleAlpha << 24 | 0x000000);
+				fontRenderer.drawString(text, -textWidth-xWidth+1, 1, scaleAlpha << 24);
 			}
 			
 			GlStateManager.translate(-(getGuiX()+WIDTH-13), -(getGuiY()+12), 0);

@@ -4,18 +4,15 @@ import hunternif.mc.atlas.AntiqueAtlasMod;
 import hunternif.mc.atlas.core.AtlasData;
 import hunternif.mc.atlas.marker.Marker;
 import hunternif.mc.atlas.marker.MarkersData;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.IRecipe;
-import net.minecraft.util.NonNullList;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.ItemCraftedEvent;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 2 or more atlases combine into one with all biome and marker data copied.
@@ -45,7 +42,7 @@ public class RecipeAtlasCombining extends RecipeBase {
 	@Override
 	public ItemStack getCraftingResult(InventoryCrafting inv) {
 		ItemStack firstAtlas = ItemStack.EMPTY;
-		List<Integer> atlasIds = new ArrayList<Integer>(9);
+		List<Integer> atlasIds = new ArrayList<>(9);
 		for (int i = 0; i < inv.getSizeInventory(); ++i) {
 			ItemStack stack = inv.getStackInSlot(i);
 			if (!stack.isEmpty()) {

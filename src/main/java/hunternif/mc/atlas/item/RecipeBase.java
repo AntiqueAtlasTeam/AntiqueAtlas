@@ -5,7 +5,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.util.NonNullList;
 
-public abstract class RecipeBase implements IRecipe {
+abstract class RecipeBase implements IRecipe {
     @Override
     public NonNullList<ItemStack> getRemainingItems(InventoryCrafting inv) {
         NonNullList<ItemStack> aitemstack = NonNullList.create();

@@ -13,7 +13,7 @@ public class AntiqueAtlasOverlayMod {
 
     @SidedProxy(clientSide = "kenkron.antiqueatlasoverlay.AAOClient",
             serverSide = "kenkron.antiqueatlasoverlay.AAOCommon")
-    protected static AAOCommon proxy;
+    private static AAOCommon proxy;
 
     @EventHandler
     public void preInit(FMLPreInitializationEvent event) {

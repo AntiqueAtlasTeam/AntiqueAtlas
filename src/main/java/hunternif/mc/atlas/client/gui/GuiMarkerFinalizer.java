@@ -151,7 +151,7 @@ public class GuiMarkerFinalizer extends GuiComponent {
 		super.drawScreen(mouseX, mouseY, partialTick);
 	}
 	
-	protected interface IMarkerTypeSelectListener {
+	interface IMarkerTypeSelectListener {
 		void onSelectMarkerType(MarkerType markerType);
 	}
 }

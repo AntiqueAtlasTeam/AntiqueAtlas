@@ -14,7 +14,6 @@ import net.minecraft.util.ResourceLocation;
 import org.apache.commons.io.IOUtils;
 
 import java.awt.image.BufferedImage;
-import java.io.Closeable;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -36,9 +35,9 @@ public class MarkerType extends IRegistryEntry.Impl {
 	private double centerX = 0.5;
 	private double centerY = 0.5;
 
-	protected boolean isFromJson = false;
+	private boolean isFromJson = false;
 	
-	protected final JSONData data = new JSONData(this);
+	private final JSONData data = new JSONData(this);
 	
 	public MarkerType(ResourceLocation loc, ResourceLocation... icons) {
 		if (loc == null) throw new IllegalArgumentException("MarkerType registry name can't be null");
@@ -60,7 +59,7 @@ public class MarkerType extends IRegistryEntry.Impl {
 	/**
 	 * Whether the marker should hide due to the scale clipping
 	 */
-	public boolean shouldClip(int scaleIndex) {
+    private boolean shouldClip(int scaleIndex) {
 		return !(scaleIndex >= clipMin && scaleIndex <= clipMax);
 	}
 
@@ -88,28 +87,28 @@ public class MarkerType extends IRegistryEntry.Impl {
 	/**
 	 * The size of the icon, in chunks
 	 */
-	public int viewSize() {
+    private int viewSize() {
 		return viewSize;
 	}
 
 	/**
 	 * Whether the marker is a tile, and as such should scale with the map
 	 */
-	public boolean isTile() {
+    private boolean isTile() {
 		return isTile;
 	}
 
 	/**
 	 * The X position (0-1) of the icon that should be at the marker location
 	 */
-	public double getCenterX() {
+    private double getCenterX() {
 		return centerX;
 	}
 
 	/**
 	 * The Y position (0-1) of the icon that should be at the marker location
 	 */
-	public double getCenterY() {
+    private double getCenterY() {
 		return centerY;
 	}
 

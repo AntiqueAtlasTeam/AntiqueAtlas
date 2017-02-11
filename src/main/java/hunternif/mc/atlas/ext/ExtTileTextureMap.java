@@ -4,12 +4,11 @@ import hunternif.mc.atlas.client.BiomeTextureMap;
 import hunternif.mc.atlas.client.TextureSet;
 import hunternif.mc.atlas.util.Log;
 import hunternif.mc.atlas.util.SaveData;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.util.HashMap;
 import java.util.Map;
-
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
 /**
  * Maps unique tile name to texture set.
@@ -24,7 +23,7 @@ public class ExtTileTextureMap extends SaveData {
 		return INSTANCE;
 	}
 	
-	final Map<String, TextureSet> textureMap = new HashMap<String, TextureSet>();
+	final Map<String, TextureSet> textureMap = new HashMap<>();
 	
 	public void setTexture(String tileName, TextureSet textureSet) {
 		if (textureSet == null) {

@@ -1,10 +1,5 @@
 package hunternif.mc.atlas.client.gui.core;
 
-import java.io.IOException;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.concurrent.CopyOnWriteArrayList;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiScreen;
@@ -12,10 +7,14 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.ListIterator;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Core visual component class, which facilitates hierarchy. You can add child
@@ -29,9 +28,11 @@ public class GuiComponent extends GuiScreen {
 	private final List<GuiComponent> children = new CopyOnWriteArrayList<>();
 	
 	/** The component's own size. */
-	protected int properWidth, properHeight;
+    int properWidth;
+    int properHeight;
 	/** The component's total calculated size, including itself and its children. */
-	protected int contentWidth, contentHeight;
+    int contentWidth;
+    int contentHeight;
 	/** If true, content size will be validated on the next update. */
 	private boolean sizeIsInvalid = false;
 	/** If true, this GUI will not be rendered. */
@@ -57,7 +58,7 @@ public class GuiComponent extends GuiScreen {
 	
 	/** Set absolute coordinates of the top left corner of this component on
 	 * the screen. If this GUI has a parent, its size will be invalidated. */
-	public void setGuiCoords(int x, int y) {
+    public void setGuiCoords(int x, int y) {
 		int dx = x - guiX;
 		int dy = y - guiY;
 		this.guiX = x;
@@ -101,7 +102,7 @@ public class GuiComponent extends GuiScreen {
 		setGuiCoords(guiX + dx, guiY + dy);
 	}
 	/** Position this component in the center of its parent. */
-	public final void setCentered() {
+	protected final void setCentered() {
 		validateSize();
 		if (parent == null) {
 			setGuiCoords((this.width - getWidth()) / 2, (this.height - getHeight()) / 2);
@@ -110,24 +111,24 @@ public class GuiComponent extends GuiScreen {
 		}
 	}
 	/** Absolute X coordinate on the screen. */
-	public int getGuiX() {
+    public int getGuiX() {
 		return guiX;
 	}
 	/** Absolute Y coordinate on the screen. */
-	public int getGuiY() {
+    public int getGuiY() {
 		return guiY;
 	}
 	/** X coordinate relative to the parent's top left corner. */
-	public int getRelativeX() {
+    int getRelativeX() {
 		return parent == null ? guiX : (guiX - parent.guiX);
 	}
 	/** Y coordinate relative to the parent's top left corner. */
-	public int getRelativeY() {
+    int getRelativeY() {
 		return parent == null ? guiY : (guiY - parent.guiY);
 	}
 	
 	/** Set this component's own size. This shouldn't affect the size or position of the children. */
-	public void setSize(int width, int height) {
+    protected void setSize(int width, int height) {
 		this.properWidth = width;
 		this.properHeight = height;
 		this.contentWidth = width;
@@ -138,7 +139,7 @@ public class GuiComponent extends GuiScreen {
 	/** Adds the child component to this GUI's content and initializes it.
 	 * The child is placed at the top left corner of this component.
 	 * @return the child added. */
-	public GuiComponent addChild(GuiComponent child) {
+    protected GuiComponent addChild(GuiComponent child) {
 		doAddChild(null, child, null);
 		return child;
 	}
@@ -156,7 +157,7 @@ public class GuiComponent extends GuiScreen {
 	 * which is equivalent to putting it behind that child in Z-order.
 	 * The child is placed at the top left corner of this component.
 	 * @return the child added. */
-	public GuiComponent addChildBehind(GuiComponent behind, GuiComponent child) {
+    protected GuiComponent addChildBehind(GuiComponent behind, GuiComponent child) {
 		doAddChild(null, child, behind);
 		return child;
 	}
@@ -183,7 +184,7 @@ public class GuiComponent extends GuiScreen {
 		invalidateSize();
 	}
 	/** @return the child removed. */
-	public GuiComponent removeChild(GuiComponent child) {
+    protected GuiComponent removeChild(GuiComponent child) {
 		if (child != null && children.contains(child)) {
 			child.parent = null;
 			children.remove(child);
@@ -192,7 +193,7 @@ public class GuiComponent extends GuiScreen {
 		}
 		return child;
 	}
-	public void removeAllChildren() {
+	void removeAllChildren() {
 		children.clear();
 		invalidateSize();
 	}
@@ -200,7 +201,7 @@ public class GuiComponent extends GuiScreen {
 	public GuiComponent getParent() {
 		return parent;
 	}
-	public List<GuiComponent> getChildren() {
+	List<GuiComponent> getChildren() {
 		return children;
 	}
 	
@@ -212,7 +213,7 @@ public class GuiComponent extends GuiScreen {
 	}
 	/** If true, pressing keyboard keys will affect this GUI, it's children,
 	 * and the in-game controller. */
-	public void setInterceptKeyboard(boolean value) {
+    protected void setInterceptKeyboard(boolean value) {
 		this.interceptsKeyboard = value;
 		this.allowUserInput = !interceptsMouse | !interceptsKeyboard;
 	}
@@ -246,7 +247,7 @@ public class GuiComponent extends GuiScreen {
 	 * mouse-processing methods) if the input has been handled by this GUI
 	 * andshouldn't be handled by its parents.
 	 * This won't prevent the sibling children of this GUI from handling input. */
-	protected void mouseHasBeenHandled() {
+    void mouseHasBeenHandled() {
 		this.hasHandledMouse = true;
 	}
 	/** Call this method from within {@link #handleKeyboardInput()} if the input
@@ -352,30 +353,30 @@ public class GuiComponent extends GuiScreen {
 	
 	/** Width of the GUI or its contents. This method may be called often so it
 	 * should be fast. */
-	public int getWidth() {
+    protected int getWidth() {
 		return contentWidth;
 	}
 	/** Height of the GUI or its contents. This method may be called often so it
 	 * should be fast. */
-	public int getHeight() {
+    protected int getHeight() {
 		return contentHeight;
 	}
 	
 	/** If set to true, the parent of this GUI will not render it. */
-	protected void setClipped(boolean value) {
+    void setClipped(boolean value) {
 		this.isClipped = value;
 	}
 	
 	/** Cause the size of the component to be recalculate on the next update
 	 * tick. If this GUI has a parent, the parent's size will be invalidated too. */
-	protected void invalidateSize() {
+    private void invalidateSize() {
 		sizeIsInvalid = true;
 		if (parent != null) {
 			parent.invalidateSize();
 		}
 	}
 	/** Recalculate the dimensions of the contents (children) of this GUI. */
-	protected void validateSize() {
+    void validateSize() {
 		int leftmost = Integer.MAX_VALUE;
 		int rightmost = Integer.MIN_VALUE;
 		int topmost = Integer.MAX_VALUE;
@@ -405,7 +406,7 @@ public class GuiComponent extends GuiScreen {
 	
 	/** Returns true, if the mouse cursor is within the specified bounds.
 	 * Note: left and top are absolute. */
-	protected boolean isMouseInRegion(int left, int top, int width, int height) {
+    boolean isMouseInRegion(int left, int top, int width, int height) {
 		int mouseX = getMouseX();
 		int mouseY = getMouseY();
 		return mouseX >= left && mouseX < left + width && mouseY >= top && mouseY < top + height;
@@ -426,7 +427,7 @@ public class GuiComponent extends GuiScreen {
 	/** Draws a standard Minecraft hovering text window, constrained by this
 	 * component's dimensions (i.e. if it won't fit in when drawn to the left
 	 * of the cursor, it will be drawn to the right instead). */
-	protected void drawHoveringText2(List<String> lines, int x, int y, FontRenderer font) {
+    private void drawHoveringText2(List<String> lines, int x, int y, FontRenderer font) {
 		if (!lines.isEmpty()) {
 			// Stencil test is used by VScrollingComponent to hide the content
 			// that is currently outside the viewport; that shouldn't affect
@@ -491,7 +492,7 @@ public class GuiComponent extends GuiScreen {
 	
 	/** Returns the top level parent of this component, or itself if it has no
 	 * parent. Useful for correctly drawing hovering text. */
-	public GuiComponent getTopLevelParent() {
+    private GuiComponent getTopLevelParent() {
 		GuiComponent component = this;
 		while (component.parent != null) {
 			component = component.parent;

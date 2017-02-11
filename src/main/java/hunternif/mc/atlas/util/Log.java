@@ -1,7 +1,6 @@
 package hunternif.mc.atlas.util;
 
 import net.minecraftforge.fml.common.FMLLog;
-
 import org.apache.logging.log4j.Level;
 
 /**
@@ -16,7 +15,7 @@ public class Log {
 		Log.modID = modID;
 	}
 	
-	public static void log(Level level, Throwable ex, String msg, Object ... data) {
+	private static void log(Level level, Throwable ex, String msg, Object... data) {
 		if (modID != null) {
 			FMLLog.log(modID, level, ex, msg, data);
 		} else {

@@ -3,7 +3,6 @@ package hunternif.mc.atlas.item;
 import hunternif.mc.atlas.AntiqueAtlasMod;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.world.World;
 
 public class RecipeAtlasCloning extends RecipeBase {

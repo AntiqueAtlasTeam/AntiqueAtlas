@@ -85,14 +85,14 @@ public class PacketDispatcher
 	 * Send this message to everyone within a certain range of a point.
 	 * See {@link SimpleNetworkWrapper#sendToAllAround(IMessage, NetworkRegistry.TargetPoint)}
 	 */
-	public static void sendToAllAround(IMessage message, NetworkRegistry.TargetPoint point) {
+	private static void sendToAllAround(IMessage message, NetworkRegistry.TargetPoint point) {
 		PacketDispatcher.dispatcher.sendToAllAround(message, point);
 	}
 
 	/**
 	 * Sends a message to everyone within a certain range of the coordinates in the same dimension.
 	 */
-	public static void sendToAllAround(IMessage message, int dimension, double x, double y, double z, double range) {
+	private static void sendToAllAround(IMessage message, int dimension, double x, double y, double z, double range) {
 		PacketDispatcher.sendToAllAround(message, new NetworkRegistry.TargetPoint(dimension, x, y, z, range));
 	}
 

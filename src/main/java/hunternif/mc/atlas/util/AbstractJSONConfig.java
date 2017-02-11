@@ -1,9 +1,9 @@
 package hunternif.mc.atlas.util;
 
-import java.io.File;
-
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+
+import java.io.File;
 
 /**
  * Basic JSON config that handles format versions and empty or malformed files.
@@ -87,5 +87,5 @@ public abstract class AbstractJSONConfig<T extends SaveData> implements Config<T
 	
 	/** Latest version of the config format. This version is what is going to
 	 * get written into file, but previous versions may still be read. */
-	public abstract int currentVersion();
+	protected abstract int currentVersion();
 }

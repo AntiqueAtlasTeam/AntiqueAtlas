@@ -1,14 +1,13 @@
 package hunternif.mc.atlas.ext;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import hunternif.mc.atlas.util.AbstractJSONConfig;
 
 import java.io.File;
 import java.util.Map.Entry;
 import java.util.PriorityQueue;
 import java.util.Queue;
-
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 
 /**
  * Maps unique names of external tiles to pseudo-biome IDs.
@@ -40,7 +39,7 @@ public class ExtTileConfig extends AbstractJSONConfig<ExtTileIdMap> {
 	@Override
 	protected void saveData(JsonObject json, ExtTileIdMap data) {
 		// Sort keys alphabetically
-		Queue<String> queue = new PriorityQueue<String>(data.getMap().keySet());
+		Queue<String> queue = new PriorityQueue<>(data.getMap().keySet());
 		while (!queue.isEmpty()) {
 			String tileName = queue.poll();
 			json.addProperty(tileName, data.getMap().get(tileName).intValue());
