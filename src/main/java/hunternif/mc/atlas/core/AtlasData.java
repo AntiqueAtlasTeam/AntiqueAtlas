@@ -85,7 +85,8 @@ public class AtlasData extends WorldSavedData {
 					dimTag.getInteger(TAG_BROWSING_Y), zoom);
 		}
 	}
-	
+
+	@Override
 	public NBTTagCompound writeToNBT(NBTTagCompound compound) {		
 		compound.setInteger(TAG_VERSION, VERSION);
 		NBTTagList dimensionMapList = new NBTTagList();

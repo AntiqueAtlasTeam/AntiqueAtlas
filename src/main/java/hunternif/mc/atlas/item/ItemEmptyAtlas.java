@@ -1,7 +1,8 @@
 package hunternif.mc.atlas.item;
 
-import net.minecraftforge.common.ForgeHooks;
-
+import hunternif.mc.atlas.AntiqueAtlasMod;
+import hunternif.mc.atlas.core.AtlasData;
+import hunternif.mc.atlas.marker.MarkersData;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -9,10 +10,7 @@ import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumHand;
 import net.minecraft.world.World;
-
-import hunternif.mc.atlas.AntiqueAtlasMod;
-import hunternif.mc.atlas.core.AtlasData;
-import hunternif.mc.atlas.marker.MarkersData;
+import net.minecraftforge.common.ForgeHooks;
 
 public class ItemEmptyAtlas extends Item {
 	public ItemEmptyAtlas() {
@@ -23,7 +21,7 @@ public class ItemEmptyAtlas extends Item {
 			EnumHand hand) {
 		ItemStack stack = player.getHeldItem(hand);
 		if (world.isRemote)
-			return new ActionResult<ItemStack>(EnumActionResult.SUCCESS, stack);
+			return new ActionResult<>(EnumActionResult.SUCCESS, stack);
 		
 		int atlasID = world.getUniqueDataId(ItemAtlas.WORLD_ATLAS_DATA_ID);
 		ItemStack atlasStack = new ItemStack(AntiqueAtlasMod.itemAtlas, 1, atlasID);
@@ -40,12 +38,13 @@ public class ItemEmptyAtlas extends Item {
 		
 		stack.shrink(1);
 		if (stack.isEmpty()) {
-			return new ActionResult<ItemStack>(EnumActionResult.SUCCESS, atlasStack);
+			return new ActionResult<>(EnumActionResult.SUCCESS, atlasStack);
 		} else {
 			if (!player.inventory.addItemStackToInventory(atlasStack.copy())) {
 				ForgeHooks.onPlayerTossEvent(player, atlasStack, false);
 			}
-			return new ActionResult<ItemStack>(EnumActionResult.SUCCESS, stack);
+
+			return new ActionResult<>(EnumActionResult.SUCCESS, stack);
 		}
 	}
 }

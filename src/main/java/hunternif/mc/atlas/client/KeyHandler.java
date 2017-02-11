@@ -1,6 +1,9 @@
 package hunternif.mc.atlas.client;
 
 import hunternif.mc.atlas.AntiqueAtlasMod;
+import hunternif.mc.atlas.client.gui.GuiAtlas;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -28,7 +31,12 @@ public class KeyHandler {
     @SubscribeEvent(receiveCanceled = true)
     public void onKeyEvent(InputEvent.KeyInputEvent event) {
         if (bindings.get(KEY_ATLAS).isPressed()) {
-            AntiqueAtlasMod.proxy.openAtlasGUI();
+            GuiScreen currentScreen = Minecraft.getMinecraft().currentScreen;
+            if (currentScreen instanceof GuiAtlas) {
+                ((GuiAtlas) currentScreen).close();
+            } else {
+                AntiqueAtlasMod.proxy.openAtlasGUI();
+            }
         }
     }
 }

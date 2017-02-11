@@ -1,12 +1,11 @@
 package hunternif.mc.atlas.client.gui.core;
 
-import java.io.IOException;
-
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.ResourceLocation;
-
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
+
+import java.io.IOException;
 
 public abstract class AGuiScrollbar extends GuiComponent {
 	protected ResourceLocation texture;
@@ -82,6 +81,7 @@ public abstract class AGuiScrollbar extends GuiComponent {
 		viewport.validateSize();
 		doSetScrollPos(scrollPos);
 	}
+
 	/** Offset of the viewport's content in pixels. This will only work
 	 * correctly after the viewport's size has been validated. */
 	private void doSetScrollPos(int scrollPos) {
@@ -99,6 +99,7 @@ public abstract class AGuiScrollbar extends GuiComponent {
 		viewport.validateSize();
 		doSetScrollRatio(scrollRatio);
 	}
+
 	/** Amount scrolled (0.0 = top, 1.0 = bottom). This will only work
 	 * correctly after the viewport's size has been validated. */
 	private void doSetScrollRatio(float scrollRatio) {

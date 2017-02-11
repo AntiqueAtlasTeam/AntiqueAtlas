@@ -466,15 +466,36 @@ public class GuiAtlas extends GuiComponent {
 	@Override
 	public void handleMouseInput() throws IOException {
 		super.handleMouseInput();
+
 		int wheelMove = Mouse.getEventDWheel();
 		if (wheelMove != 0) {
 			wheelMove = wheelMove > 0 ? 1 : -1;
-			if (AntiqueAtlasMod.settings.doReverseWheelZoom) wheelMove *= -1;
-			setMapScale(mapScale * Math.pow(2, wheelMove));
+			if (AntiqueAtlasMod.settings.doReverseWheelZoom) {
+			    wheelMove *= -1;
+            }
+
+			int mouseOffsetX = mc.displayWidth / screenScale / 2 - getMouseX();
+			int mouseOffsetY = mc.displayHeight / screenScale / 2 - getMouseY();
+			double newScale = mapScale * Math.pow(2, wheelMove);
+            int addOffsetX = 0;
+            int addOffsetY = 0;
+            if (Math.abs(mouseOffsetX) < MAP_WIDTH / 2 && Math.abs(mouseOffsetY) < MAP_HEIGHT / 2) {
+                addOffsetX = mouseOffsetX * wheelMove;
+                addOffsetY = mouseOffsetY * wheelMove;
+
+                if (wheelMove > 0) {
+                    addOffsetX *= mapScale / newScale;
+                    addOffsetY *= mapScale / newScale;
+                }
+            }
+
+			setMapScale(newScale, addOffsetX, addOffsetY);
 		}
 	}
-	
-	@Override
+
+
+
+    @Override
 	protected void mouseReleased(int mouseX, int mouseY, int mouseState) {
 		super.mouseReleased(mouseX, mouseY, mouseState);
 		if (mouseState != -1) {
@@ -499,8 +520,8 @@ public class GuiAtlas extends GuiComponent {
 		super.updateScreen();
 		if (player == null) return;
 		if (followPlayer) {
-			mapOffsetX = (int)(- player.posX * mapScale);
-			mapOffsetY = (int)(- player.posZ * mapScale);
+			mapOffsetX = (int)(-player.posX * mapScale);
+			mapOffsetY = (int)(-player.posZ * mapScale);
 		}
 		if (player.getEntityWorld().getTotalWorldTime() > timeButtonPressed + BUTTON_PAUSE) {
 			navigateByButton(selectedButton);
@@ -513,7 +534,7 @@ public class GuiAtlas extends GuiComponent {
 	 * {@link #globalMarkersData} */
 	private void updateAtlasData() {
         int atlasID = getAtlasID();
-
+        
 		biomeData = AntiqueAtlasMod.atlasData
 				.getAtlasData(atlasID, player.getEntityWorld())
 				.getDimensionData(player.dimension);
@@ -550,31 +571,46 @@ public class GuiAtlas extends GuiComponent {
 		followPlayer = false;
 		btnPosition.setEnabled(true);
 	}
-	
-	/** Set the pixel-to-block ratio, maintaining the current center of the screen. */
-	public void setMapScale(double scale) {
-		double oldScale = mapScale;
-		mapScale = scale;
-		if (mapScale < AntiqueAtlasMod.settings.minScale) mapScale = AntiqueAtlasMod.settings.minScale;
-		if (mapScale > AntiqueAtlasMod.settings.maxScale) mapScale = AntiqueAtlasMod.settings.maxScale;
-		if (mapScale >= MIN_SCALE_THRESHOLD) {
-			tileHalfSize = (int)Math.round(8 * mapScale);
-			tile2ChunkScale = 1;
-		} else {
-			tileHalfSize = (int)Math.round(8 * MIN_SCALE_THRESHOLD);
-			tile2ChunkScale = (int)Math.round(MIN_SCALE_THRESHOLD / mapScale);
-		}
-		// Times 2 because the contents of the Atlas are rendered at resolution 2 times smaller:
-		scaleBar.setMapScale(mapScale*2);
-		mapOffsetX *= mapScale / oldScale;
-		mapOffsetY *= mapScale / oldScale;
-		dragMapOffsetX *= mapScale / oldScale;
-		dragMapOffsetY *= mapScale / oldScale;
-		// 2^13 = 8192
-		scaleClipIndex = MathHelper.log2( (int)( mapScale * 8192 ) ) + 1 - 13;
-		zoomLevel = -scaleClipIndex + zoomLevelOne;
-		scaleAlpha = 255;
-	}
+
+    /** Set the pixel-to-block ratio, maintaining the current center of the screen. */
+    public void setMapScale(double scale) {
+        setMapScale(scale, 0, 0);
+    }
+
+    /** Set the pixel-to-block ratio, maintaining the current center of the screen with additional offset. */
+    private void setMapScale(double scale, int addOffsetX, int addOffsetY) {
+        double oldScale = mapScale;
+        mapScale = Math.min(Math.max(scale, AntiqueAtlasMod.settings.minScale), AntiqueAtlasMod.settings.maxScale);
+
+        // Scaling not needed
+        if (oldScale == mapScale) {
+            return;
+        }
+
+        if (mapScale >= MIN_SCALE_THRESHOLD) {
+            tileHalfSize = (int)Math.round(8 * mapScale);
+            tile2ChunkScale = 1;
+        } else {
+            tileHalfSize = (int)Math.round(8 * MIN_SCALE_THRESHOLD);
+            tile2ChunkScale = (int)Math.round(MIN_SCALE_THRESHOLD / mapScale);
+        }
+
+        // Times 2 because the contents of the Atlas are rendered at resolution 2 times smaller:
+        scaleBar.setMapScale(mapScale * 2);
+        mapOffsetX = (int) ((mapOffsetX + addOffsetX) * (mapScale / oldScale));
+        mapOffsetY = (int) ((mapOffsetY + addOffsetY) * (mapScale / oldScale));
+        dragMapOffsetX *= mapScale / oldScale;
+        dragMapOffsetY *= mapScale / oldScale;
+        // 2^13 = 8192
+        scaleClipIndex = MathHelper.log2((int)(mapScale * 8192)) + 1 - 13;
+        zoomLevel = -scaleClipIndex + zoomLevelOne;
+        scaleAlpha = 255;
+
+        if (followPlayer && (addOffsetX != 0 || addOffsetY != 0)) {
+            followPlayer = false;
+            btnPosition.setEnabled(true);
+        }
+    }
 	
 	@Override
 	public void drawScreen(int mouseX, int mouseY, float par3) {
@@ -595,15 +631,14 @@ public class GuiAtlas extends GuiComponent {
 		AtlasRenderHelper.drawFullTexture(Textures.BOOK, getGuiX(), getGuiY(), WIDTH, HEIGHT);
 		
 		if ((stack == null && AntiqueAtlasMod.settings.itemNeeded) || biomeData == null) return;
-		
-		
+
 		if (state.is(DELETING_MARKER)) {
 			GlStateManager.color(1, 1, 1, 0.5f);
 		}
 		GL11.glEnable(GL11.GL_SCISSOR_TEST);
-		GL11.glScissor((getGuiX() + CONTENT_X)*screenScale,
+		GL11.glScissor((getGuiX() + CONTENT_X) * screenScale,
 				mc.displayHeight - (getGuiY() + CONTENT_Y + MAP_HEIGHT)*screenScale,
-				MAP_WIDTH*screenScale, MAP_HEIGHT*screenScale);
+				MAP_WIDTH * screenScale, MAP_HEIGHT*screenScale);
 		GlStateManager.enableBlend();
 		GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 		// Find chunk coordinates of the top left corner of the map.
@@ -611,12 +646,12 @@ public class GuiAtlas extends GuiComponent {
 		// threshold the tiles don't change when map position changes slightly.
 		// The +-2 at the end provide margin so that tiles at the edges of
 		// the page have their stitched texture correct.
-		int mapStartX = MathUtil.roundToBase((int)Math.floor(-((double)MAP_WIDTH/2d + mapOffsetX + 2*tileHalfSize) / mapScale / 16d), tile2ChunkScale);
-		int mapStartZ = MathUtil.roundToBase((int)Math.floor(-((double)MAP_HEIGHT/2d + mapOffsetY + 2*tileHalfSize) / mapScale / 16d), tile2ChunkScale);
-		int mapEndX = MathUtil.roundToBase((int)Math.ceil(((double)MAP_WIDTH/2d - mapOffsetX + 2*tileHalfSize) / mapScale / 16d), tile2ChunkScale);
-		int mapEndZ = MathUtil.roundToBase((int)Math.ceil(((double)MAP_HEIGHT/2d - mapOffsetY + 2*tileHalfSize) / mapScale / 16d), tile2ChunkScale);
-		int mapStartScreenX = getGuiX() + WIDTH/2 + (int)((mapStartX << 4) * mapScale) + mapOffsetX;
-		int mapStartScreenY = getGuiY() + HEIGHT/2 + (int)((mapStartZ << 4) * mapScale) + mapOffsetY;
+		int mapStartX = MathUtil.roundToBase((int)Math.floor(-((double)MAP_WIDTH / 2d + mapOffsetX + 2 * tileHalfSize) / mapScale / 16d), tile2ChunkScale);
+		int mapStartZ = MathUtil.roundToBase((int)Math.floor(-((double)MAP_HEIGHT / 2d + mapOffsetY + 2 * tileHalfSize) / mapScale / 16d), tile2ChunkScale);
+		int mapEndX = MathUtil.roundToBase((int)Math.ceil(((double)MAP_WIDTH / 2d - mapOffsetX + 2 * tileHalfSize) / mapScale / 16d), tile2ChunkScale);
+		int mapEndZ = MathUtil.roundToBase((int)Math.ceil(((double)MAP_HEIGHT / 2d - mapOffsetY + 2 * tileHalfSize) / mapScale / 16d), tile2ChunkScale);
+		int mapStartScreenX = getGuiX() + WIDTH / 2 + (int)((mapStartX << 4) * mapScale) + mapOffsetX;
+		int mapStartScreenY = getGuiY() + HEIGHT / 2 + (int)((mapStartZ << 4) * mapScale) + mapOffsetY;
 		
 		TileRenderIterator iter = new TileRenderIterator(biomeData);
 		iter.setScope(new Rect().setOrigin(mapStartX, mapStartZ).
