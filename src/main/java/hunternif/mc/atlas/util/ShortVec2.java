@@ -21,8 +21,8 @@ public class ShortVec2 {
 	}
 	
 	public ShortVec2(double x, double y) {
-		this.x = (short)MathHelper.floor(x);
-		this.y = (short)MathHelper.floor(y);
+		this.x = (short)MathHelper.floor_double(x);
+		this.y = (short)MathHelper.floor_double(y);
 	}
 	
 	/** Modifies and returns self. */

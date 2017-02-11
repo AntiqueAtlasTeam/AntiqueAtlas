@@ -1,19 +1,16 @@
 package hunternif.mc.atlas.client.gui;
 
-import net.minecraftforge.client.event.RenderGameOverlayEvent;
-import net.minecraftforge.client.event.RenderGameOverlayEvent.ElementType;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-
+import hunternif.mc.atlas.util.ExportImageUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-
+import net.minecraftforge.client.event.RenderGameOverlayEvent;
+import net.minecraftforge.client.event.RenderGameOverlayEvent.ElementType;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import org.lwjgl.opengl.GL11;
-
-import hunternif.mc.atlas.util.ExportImageUtil;
 
 public enum ExportProgressOverlay {
 	INSTANCE;
@@ -27,7 +24,7 @@ public enum ExportProgressOverlay {
 		if(event.getType() != ElementType.ALL || !ExportImageUtil.isExporting)
 			return;
 		
-		FontRenderer font = Minecraft.getMinecraft().fontRenderer;
+		FontRenderer font = Minecraft.getMinecraft().fontRendererObj;
 		
 		int s = 2;
 		

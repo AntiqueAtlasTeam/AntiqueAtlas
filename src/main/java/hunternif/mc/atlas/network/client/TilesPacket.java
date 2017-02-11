@@ -5,12 +5,11 @@ import hunternif.mc.atlas.ext.ExtBiomeData;
 import hunternif.mc.atlas.network.AbstractMessage.AbstractClientMessage;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
-
-import java.io.IOException;
-
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fml.relauncher.Side;
+
+import java.io.IOException;
 
 /**
  * Used to sync custom tiles from server to client.
@@ -46,15 +45,15 @@ public class TilesPacket extends AbstractClientMessage<TilesPacket> {
 
 	@Override
 	public void read(PacketBuffer buffer) throws IOException {
-		dimension = buffer.readVarInt();
-		tileCount = buffer.readVarInt();
+		dimension = buffer.readVarIntFromBuffer();
+		tileCount = buffer.readVarIntFromBuffer();
 		tileData = buffer.readBytes(tileCount * ENTRY_SIZE_BYTES);
 	}
 
 	@Override
 	public void write(PacketBuffer buffer) throws IOException {
-		buffer.writeVarInt(dimension);
-		buffer.writeVarInt(tileCount);
+		buffer.writeVarIntToBuffer(dimension);
+		buffer.writeVarIntToBuffer(tileCount);
 		buffer.writeBytes(tileData);
 	}
 

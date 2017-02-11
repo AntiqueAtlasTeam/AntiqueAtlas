@@ -44,7 +44,7 @@ public class AtlasAPI {
 
 		List<Integer> list = new ArrayList<>();
 		for (ItemStack stack : player.inventory.mainInventory) {
-			if (!stack.isEmpty() && stack.getItem() == AntiqueAtlasMod.itemAtlas) {
+			if (stack != null && stack.getItem() == AntiqueAtlasMod.itemAtlas) {
 				list.add(stack.getItemDamage());
 			}
 		}

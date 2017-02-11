@@ -17,9 +17,9 @@ public class ItemEmptyAtlas extends Item {
 	}
 	
 	@Override
-	public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player,
+	public ActionResult<ItemStack> onItemRightClick(ItemStack stack, World world, EntityPlayer player,
 			EnumHand hand) {
-		ItemStack stack = player.getHeldItem(hand);
+
 		if (world.isRemote)
 			return new ActionResult<>(EnumActionResult.SUCCESS, stack);
 		
@@ -35,9 +35,9 @@ public class ItemEmptyAtlas extends Item {
 
         MarkersData markersData = AntiqueAtlasMod.markersData.getMarkersData(atlasID, world);
         markersData.markDirty();
-		
-		stack.shrink(1);
-		if (stack.isEmpty()) {
+
+		stack.stackSize--;
+		if (stack.stackSize <= 0) {
 			return new ActionResult<>(EnumActionResult.SUCCESS, atlasStack);
 		} else {
 			if (!player.inventory.addItemStackToInventory(atlasStack.copy())) {

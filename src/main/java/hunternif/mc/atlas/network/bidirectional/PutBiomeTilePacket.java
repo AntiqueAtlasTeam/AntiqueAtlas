@@ -33,20 +33,20 @@ public class PutBiomeTilePacket extends AbstractMessage<PutBiomeTilePacket> {
 	
 	@Override
 	protected void read(PacketBuffer buffer) throws IOException {
-		atlasID = buffer.readVarInt();
-		dimension = buffer.readVarInt();
-		x = buffer.readVarInt();
-		z = buffer.readVarInt();
-		biomeID = buffer.readVarInt();
+		atlasID = buffer.readVarIntFromBuffer();
+		dimension = buffer.readVarIntFromBuffer();
+		x = buffer.readVarIntFromBuffer();
+		z = buffer.readVarIntFromBuffer();
+		biomeID = buffer.readVarIntFromBuffer();
 	}
 
 	@Override
 	protected void write(PacketBuffer buffer) throws IOException {
-		buffer.writeVarInt(atlasID);
-		buffer.writeVarInt(dimension);
-		buffer.writeVarInt(x);
-		buffer.writeVarInt(z);
-		buffer.writeVarInt(biomeID);
+		buffer.writeVarIntToBuffer(atlasID);
+		buffer.writeVarIntToBuffer(dimension);
+		buffer.writeVarIntToBuffer(x);
+		buffer.writeVarIntToBuffer(z);
+		buffer.writeVarIntToBuffer(biomeID);
 	}
 
 	@Override

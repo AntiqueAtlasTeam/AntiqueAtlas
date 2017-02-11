@@ -4,15 +4,14 @@ import hunternif.mc.atlas.AntiqueAtlasMod;
 import hunternif.mc.atlas.client.gui.GuiAtlas;
 import hunternif.mc.atlas.core.AtlasData;
 import hunternif.mc.atlas.network.AbstractMessage.AbstractClientMessage;
-
-import java.io.IOException;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.relauncher.Side;
+
+import java.io.IOException;
 
 /**
  * Used to sync bulk atlas data from server to client.
@@ -31,13 +30,13 @@ public class MapDataPacket extends AbstractClientMessage<MapDataPacket> {
 
 	@Override
 	public void read(PacketBuffer buffer) throws IOException {
-		atlasID = buffer.readVarInt();
+		atlasID = buffer.readVarIntFromBuffer();
 		data = ByteBufUtils.readTag(buffer);
 	}
 
 	@Override
 	public void write(PacketBuffer buffer) throws IOException {
-		buffer.writeVarInt(atlasID);
+		buffer.writeVarIntToBuffer(atlasID);
 		ByteBufUtils.writeTag(buffer, data);
 	}
 

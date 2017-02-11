@@ -1,14 +1,13 @@
 package hunternif.mc.atlas.marker;
 
 import hunternif.mc.atlas.AntiqueAtlasMod;
-
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.network.FMLNetworkEvent.ClientConnectedToServerEvent;
+
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Provides access to {@link MarkersData}. Maintains a cache on the client side,
@@ -40,10 +39,10 @@ public class MarkersDataHandler {
 			data = markersDataClientCache.get(key);
 		}
 		if (data == null) {
-			data = (MarkersData) world.loadData(MarkersData.class, key);
+			data = (MarkersData) world.loadItemData(MarkersData.class, key);
 			if (data == null) {
 				data = new MarkersData(key);
-				world.setData(key, data);
+				world.setItemData(key, data);
 			}
 			if (world.isRemote) markersDataClientCache.put(key, data);
 		}

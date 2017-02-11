@@ -34,10 +34,10 @@ public class BiomeDetectorBase implements IBiomeDetector {
 	 * given higher priority when identifying mean biome ID for a chunk.
 	 * (Currently WATER and BEACH) */
 	public static void scanBiomeTypes() {
-		for (Biome biome : BiomeDictionary.getBiomes(Type.WATER)) {
+		for (Biome biome : BiomeDictionary.getBiomesForType(Type.WATER)) {
 			waterBiomes[Biome.getIdForBiome(biome)] = true;
 		}
-		for (Biome biome : BiomeDictionary.getBiomes(Type.BEACH)) {
+		for (Biome biome : BiomeDictionary.getBiomesForType(Type.BEACH)) {
 			beachBiomes[Biome.getIdForBiome(biome)] = true;
 		}
 	}

@@ -319,7 +319,7 @@ public class GuiAtlas extends GuiComponent {
     }
 
 	public GuiAtlas prepareToOpen() {
-        this.player = Minecraft.getMinecraft().player;
+        this.player = Minecraft.getMinecraft().thePlayer;
         updateAtlasData();
         if (!followPlayer && AntiqueAtlasMod.settings.doSaveBrowsingPos) {
             loadSavedBrowsingPosition();
@@ -602,7 +602,7 @@ public class GuiAtlas extends GuiComponent {
         dragMapOffsetX *= mapScale / oldScale;
         dragMapOffsetY *= mapScale / oldScale;
         // 2^13 = 8192
-        scaleClipIndex = MathHelper.log2((int)(mapScale * 8192)) + 1 - 13;
+        scaleClipIndex = MathHelper.calculateLogBaseTwo((int)(mapScale * 8192)) + 1 - 13;
         zoomLevel = -scaleClipIndex + zoomLevelOne;
         scaleAlpha = 255;
 
@@ -762,8 +762,8 @@ public class GuiAtlas extends GuiComponent {
 			int textWidth, xWidth;
 			
 			text = "x";
-			xWidth = textWidth = fontRenderer.getStringWidth(text); xWidth++;
-			fontRenderer.drawString(text, -textWidth, 0, scaleAlpha << 24);
+			xWidth = textWidth = fontRendererObj.getStringWidth(text); xWidth++;
+			fontRendererObj.drawString(text, -textWidth, 0, scaleAlpha << 24);
 			
 			text = zoomNames[zoomLevel];
 			if(text.contains("/")) {
@@ -771,33 +771,33 @@ public class GuiAtlas extends GuiComponent {
 				String[] parts = text.split("/");
 				
 				text = parts[0];
-				int centerXtranslate = Math.max(fontRenderer.getStringWidth(parts[0]), fontRenderer.getStringWidth(parts[1]) )/2;
-				GlStateManager.translate(-xWidth-centerXtranslate, -fontRenderer.FONT_HEIGHT/2, 0);
+				int centerXtranslate = Math.max(fontRendererObj.getStringWidth(parts[0]), fontRendererObj.getStringWidth(parts[1]) )/2;
+				GlStateManager.translate(-xWidth-centerXtranslate, -fontRendererObj.FONT_HEIGHT/2, 0);
 				
 				GlStateManager.disableTexture2D();
 				Tessellator t = Tessellator.getInstance();
 				VertexBuffer vb = t.getBuffer();
                 vb.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION);
-                vb.pos( centerXtranslate,   fontRenderer.FONT_HEIGHT - 1, 0.0D).endVertex();
-                vb.pos(-centerXtranslate-1, fontRenderer.FONT_HEIGHT - 1, 0.0D).endVertex();
-                vb.pos(-centerXtranslate-1, fontRenderer.FONT_HEIGHT    , 0.0D).endVertex();
-                vb.pos( centerXtranslate,   fontRenderer.FONT_HEIGHT    , 0.0D).endVertex();
+                vb.pos( centerXtranslate,   fontRendererObj.FONT_HEIGHT - 1, 0.0D).endVertex();
+                vb.pos(-centerXtranslate-1, fontRendererObj.FONT_HEIGHT - 1, 0.0D).endVertex();
+                vb.pos(-centerXtranslate-1, fontRendererObj.FONT_HEIGHT    , 0.0D).endVertex();
+                vb.pos( centerXtranslate,   fontRendererObj.FONT_HEIGHT    , 0.0D).endVertex();
                 t.draw();
                 GlStateManager.enableTexture2D();
 				
-				textWidth = fontRenderer.getStringWidth(text);
-				fontRenderer.drawString(text, -textWidth/2, 0, scaleAlpha << 24);
+				textWidth = fontRendererObj.getStringWidth(text);
+				fontRendererObj.drawString(text, -textWidth/2, 0, scaleAlpha << 24);
 				
 				text = parts[1];
-				GlStateManager.translate(0, fontRenderer.FONT_HEIGHT + 1, 0);
+				GlStateManager.translate(0, fontRendererObj.FONT_HEIGHT + 1, 0);
 				
-				textWidth = fontRenderer.getStringWidth(text);
-				fontRenderer.drawString(text, -textWidth/2, 0, scaleAlpha << 24);
+				textWidth = fontRendererObj.getStringWidth(text);
+				fontRendererObj.drawString(text, -textWidth/2, 0, scaleAlpha << 24);
 				
-				GlStateManager.translate(xWidth+centerXtranslate, ( -fontRenderer.FONT_HEIGHT/2 ) -2, 0);
+				GlStateManager.translate(xWidth+centerXtranslate, ( -fontRendererObj.FONT_HEIGHT/2 ) -2, 0);
 			} else {
-				textWidth = fontRenderer.getStringWidth(text);
-				fontRenderer.drawString(text, -textWidth-xWidth+1, 1, scaleAlpha << 24);
+				textWidth = fontRendererObj.getStringWidth(text);
+				fontRendererObj.drawString(text, -textWidth-xWidth+1, 1, scaleAlpha << 24);
 			}
 			
 			GlStateManager.translate(-(getGuiX()+WIDTH-13), -(getGuiY()+12), 0);
@@ -854,7 +854,7 @@ public class GuiAtlas extends GuiComponent {
 				markerY + info.y,
 				info.width, info.height);
 		if (isMouseOver && mouseIsOverMarker && marker.getLabel().length() > 0) {
-			drawTooltip(Collections.singletonList(marker.getLocalizedLabel()), mc.fontRenderer);
+			drawTooltip(Collections.singletonList(marker.getLocalizedLabel()), mc.fontRendererObj);
 		}
 	}
 	

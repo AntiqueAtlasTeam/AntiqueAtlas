@@ -132,8 +132,8 @@ public class AtlasData extends WorldSavedData {
 			return;
 		}
 
-		int playerX = MathHelper.floor(player.posX) >> 4;
-		int playerZ = MathHelper.floor(player.posZ) >> 4;
+		int playerX = MathHelper.floor_double(player.posX) >> 4;
+		int playerZ = MathHelper.floor_double(player.posZ) >> 4;
 		ITileStorage seenChunks = this.getDimensionData(player.dimension);
 		IBiomeDetector biomeDetector = getBiomeDetectorForDimension(player.dimension);
 		int scanRadius = AntiqueAtlasMod.settings.scanRadius;

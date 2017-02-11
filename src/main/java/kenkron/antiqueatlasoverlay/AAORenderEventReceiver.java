@@ -90,13 +90,13 @@ class AAORenderEventReceiver {
         }
 
         ItemStack stack = player.getHeldItemOffhand();
-        if (!stack.isEmpty() && stack.getItem() == AntiqueAtlasMod.itemAtlas) {
+        if (stack != null && stack.getItem() == AntiqueAtlasMod.itemAtlas) {
             return stack.getItemDamage();
         }
 
         for (int i = 0; i < 9; i++) {
             stack = player.inventory.getStackInSlot(i);
-            if (!stack.isEmpty() && stack.getItem() == AntiqueAtlasMod.itemAtlas) {
+            if (stack != null && stack.getItem() == AntiqueAtlasMod.itemAtlas) {
                 return stack.getItemDamage();
             }
         }
@@ -119,7 +119,7 @@ class AAORenderEventReceiver {
             return;
         }
 
-        EntityPlayerSP player = Minecraft.getMinecraft().player;
+        EntityPlayerSP player = Minecraft.getMinecraft().thePlayer;
         Integer atlas = null;
 
         if (REQUIRES_HOLD) {
@@ -194,7 +194,7 @@ class AAORenderEventReceiver {
         GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
         DimensionData biomeData = AntiqueAtlasMod.atlasData.getAtlasData(
-                atlasID, Minecraft.getMinecraft().world).getDimensionData(dimension);
+                atlasID, Minecraft.getMinecraft().theWorld).getDimensionData(dimension);
 
         TileRenderIterator iter = new TileRenderIterator(biomeData);
         Rect iteratorScope = getChunkCoverage(position, shape);
@@ -247,7 +247,7 @@ class AAORenderEventReceiver {
 
         // biomeData needed to prevent undiscovered markers from appearing
         DimensionData biomeData = AntiqueAtlasMod.atlasData.getAtlasData(
-                atlasID, Minecraft.getMinecraft().world).getDimensionData(
+                atlasID, Minecraft.getMinecraft().theWorld).getDimensionData(
                 dimension);
         DimensionMarkersData globalMarkersData = AntiqueAtlasMod.globalMarkersData
                 .getData().getMarkersDataInDimension(dimension);
@@ -256,7 +256,7 @@ class AAORenderEventReceiver {
         drawMarkersData(globalMarkersData, shape, biomeData, position);
 
         MarkersData markersData = AntiqueAtlasMod.markersData.getMarkersData(
-                atlasID, Minecraft.getMinecraft().world);
+                atlasID, Minecraft.getMinecraft().theWorld);
         DimensionMarkersData localMarkersData = null;
         if (markersData != null) {
             localMarkersData = markersData.getMarkersDataInDimension(dimension);

@@ -30,7 +30,7 @@ public class RecipeAtlasCombining extends RecipeBase {
 		int atlasesFound = 0;
 		for (int i = 0; i < inv.getSizeInventory(); ++i) {
 			ItemStack stack = inv.getStackInSlot(i);
-			if (!stack.isEmpty()) {
+			if (stack != null) {
 				if (stack.getItem() == AntiqueAtlasMod.itemAtlas) {
 					atlasesFound++;
 				}
@@ -41,13 +41,13 @@ public class RecipeAtlasCombining extends RecipeBase {
 
 	@Override
 	public ItemStack getCraftingResult(InventoryCrafting inv) {
-		ItemStack firstAtlas = ItemStack.EMPTY;
+		ItemStack firstAtlas = null;
 		List<Integer> atlasIds = new ArrayList<>(9);
 		for (int i = 0; i < inv.getSizeInventory(); ++i) {
 			ItemStack stack = inv.getStackInSlot(i);
-			if (!stack.isEmpty()) {
+			if (stack != null) {
 				if (stack.getItem() == AntiqueAtlasMod.itemAtlas) {
-					if (firstAtlas.isEmpty()) {
+					if (firstAtlas == null) {
 						firstAtlas = stack;
 					} else {
 						atlasIds.add(stack.getItemDamage());
@@ -55,7 +55,7 @@ public class RecipeAtlasCombining extends RecipeBase {
 				}
 			}
 		}
-		if (atlasIds.size() < 1) return ItemStack.EMPTY;
+		if (atlasIds.size() < 1) return null;
 		return firstAtlas;
 	}
 
@@ -66,7 +66,7 @@ public class RecipeAtlasCombining extends RecipeBase {
 
 	@Override
 	public ItemStack getRecipeOutput() {
-		return ItemStack.EMPTY;
+		return null;
 	}
 	
 	@SubscribeEvent
@@ -86,7 +86,7 @@ public class RecipeAtlasCombining extends RecipeBase {
 		destMarkers.markDirty();
 		for (int i = 0; i < event.craftMatrix.getSizeInventory(); ++i) {
 			ItemStack stack = event.craftMatrix.getStackInSlot(i);
-			if (stack.isEmpty()) continue;
+			if (stack == null) continue;
 			AtlasData srcBiomes = AntiqueAtlasMod.atlasData.getAtlasData(stack, world);
 			if (destBiomes != null && srcBiomes != null && destBiomes != srcBiomes) {
 				for (int dim : srcBiomes.getVisitedDimensions()) {

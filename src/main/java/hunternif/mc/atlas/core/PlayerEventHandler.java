@@ -12,7 +12,7 @@ public class PlayerEventHandler {
     @SubscribeEvent
     public void onPlayerLogin(PlayerEvent.PlayerLoggedInEvent event) {
         EntityPlayer player = event.player;
-        World world = player.world;
+        World world = player.getEntityWorld();
         int atlasID = player.getUniqueID().hashCode();
 
         AtlasData data = AntiqueAtlasMod.atlasData.getAtlasData(atlasID, world);
@@ -31,7 +31,7 @@ public class PlayerEventHandler {
     @SubscribeEvent
     public void onPlayerTick(TickEvent.PlayerTickEvent event) {
         AtlasData data = AntiqueAtlasMod.atlasData.getAtlasData(
-                event.player.getUniqueID().hashCode(), event.player.world);
+                event.player.getUniqueID().hashCode(), event.player.getEntityWorld());
 
         // Updating map around player
         data.updateMapAroundPlayer(event.player);

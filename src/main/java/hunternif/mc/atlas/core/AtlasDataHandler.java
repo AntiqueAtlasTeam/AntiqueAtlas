@@ -40,10 +40,10 @@ public class AtlasDataHandler {
 		}
 
 		if (data == null) {
-			data = (AtlasData) world.loadData(AtlasData.class, key);
+			data = (AtlasData) world.loadItemData(AtlasData.class, key);
 			if (data == null) {
 				data = new AtlasData(key);
-				world.setData(key, data);
+				world.setItemData(key, data);
 			}
 
 			if (world.isRemote) {

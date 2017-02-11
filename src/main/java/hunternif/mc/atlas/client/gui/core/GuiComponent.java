@@ -547,10 +547,10 @@ public class GuiComponent extends GuiScreen {
 	/** Called when a child removes itself from this component. */
 	protected void onChildClosed(GuiComponent child) {}
 	
-	/** Draw a text string centered horizontally, using this GUI's FontRenderer. */
+	/** Draw a text string centered horizontally, using this GUI's fontRendererObj. */
 	protected void drawCenteredString(String text, int y, int color, boolean dropShadow) {
-		int length = fontRenderer.getStringWidth(text);
-		fontRenderer.drawString(text, (this.width - length)/2, y, color, dropShadow);
+		int length = fontRendererObj.getStringWidth(text);
+		fontRendererObj.drawString(text, (this.width - length)/2, y, color, dropShadow);
 	}
 	
 	protected int getMouseX() {

@@ -63,7 +63,7 @@ public class GuiBookmarkButton extends GuiToggleButton {
 				getGuiY() + 1, ICON_WIDTH, ICON_HEIGHT);
 		
 		if (isMouseOver) {
-			drawTooltip(Collections.singletonList(title), Minecraft.getMinecraft().fontRenderer);
+			drawTooltip(Collections.singletonList(title), Minecraft.getMinecraft().fontRendererObj);
 		}
 	}
 }
