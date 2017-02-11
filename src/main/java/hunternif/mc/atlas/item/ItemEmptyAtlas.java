@@ -25,16 +25,16 @@ public class ItemEmptyAtlas extends Item {
 		
 		int atlasID = world.getUniqueDataId(ItemAtlas.WORLD_ATLAS_DATA_ID);
 		ItemStack atlasStack = new ItemStack(AntiqueAtlasMod.itemAtlas, 1, atlasID);
-		
-		AtlasData atlasData = AntiqueAtlasMod.atlasData.getAtlasData(atlasID, world);
-		atlasData.getDimensionData(player.dimension).setBrowsingPosition(
-				(int)Math.round(-player.posX * AntiqueAtlasMod.settings.defaultScale),
-				(int)Math.round(-player.posZ * AntiqueAtlasMod.settings.defaultScale),
-				AntiqueAtlasMod.settings.defaultScale);
-		atlasData.markDirty();
-		
-		MarkersData markersData = AntiqueAtlasMod.markersData.getMarkersData(atlasID, world);
-		markersData.markDirty();
+
+        AtlasData atlasData = AntiqueAtlasMod.atlasData.getAtlasData(atlasID, world);
+        atlasData.getDimensionData(player.dimension).setBrowsingPosition(
+                (int)Math.round(-player.posX * AntiqueAtlasMod.settings.defaultScale),
+                (int)Math.round(-player.posZ * AntiqueAtlasMod.settings.defaultScale),
+                AntiqueAtlasMod.settings.defaultScale);
+        atlasData.markDirty();
+
+        MarkersData markersData = AntiqueAtlasMod.markersData.getMarkersData(atlasID, world);
+        markersData.markDirty();
 		
 		stack.shrink(1);
 		if (stack.isEmpty()) {

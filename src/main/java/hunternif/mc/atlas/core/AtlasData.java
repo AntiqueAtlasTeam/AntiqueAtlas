@@ -48,7 +48,7 @@ public class AtlasData extends WorldSavedData {
 	
 	private NBTTagCompound nbt;
 
-	AtlasData(String key) {
+	public AtlasData(String key) {
 		super(key);
 
 		biomeDetectorOverworld.setScanPonds(AntiqueAtlasMod.settings.doScanPonds);
@@ -120,6 +120,7 @@ public class AtlasData extends WorldSavedData {
 	/** If not found, returns the analyzer for overworld. */
 	private IBiomeDetector getBiomeDetectorForDimension(int dimension) {
 		IBiomeDetector biomeAnalyzer = biomeAnalyzers.get(dimension);
+
 		return biomeAnalyzer == null ? biomeDetectorOverworld : biomeAnalyzer;
 	}
 
@@ -143,6 +144,7 @@ public class AtlasData extends WorldSavedData {
 				if (dx*dx + dz*dz > scanRadius*scanRadius) {
 					continue; // Outside the circle
 				}
+
 				int x = (int)(playerX + dx);
 				int z = (int)(playerZ + dz);
 				Tile oldTile = seenChunks.getTile(x, z);
@@ -158,6 +160,7 @@ public class AtlasData extends WorldSavedData {
 					if (AntiqueAtlasMod.settings.forceChunkLoading && !chunk.isLoaded()) {
 						player.getEntityWorld().getChunkProvider().provideChunk(x << 4, z << 4);
 					}
+
 					// Skip chunk if it hasn't loaded yet:
 					if (!chunk.isLoaded()) {
 						continue;

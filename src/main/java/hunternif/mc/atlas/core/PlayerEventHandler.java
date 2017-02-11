@@ -14,16 +14,16 @@ public class PlayerEventHandler {
         EntityPlayer player = event.player;
         World world = player.world;
         int atlasID = player.getUniqueID().hashCode();
-        AtlasData data = AntiqueAtlasMod.atlasData.getAtlasData(atlasID, world);
 
+        AtlasData data = AntiqueAtlasMod.atlasData.getAtlasData(atlasID, world);
         // On the player join send the map from the server to the client:
-        if (!data.isSyncedOnPlayer(player) && !data.isEmpty()) {
+        if (!data.isEmpty()) {
             data.syncOnPlayer(atlasID, player);
         }
 
         // Same thing with the local markers:
         MarkersData markers = AntiqueAtlasMod.markersData.getMarkersData(atlasID, world);
-        if (!markers.isSyncedOnPlayer(player) && !markers.isEmpty()) {
+        if (!markers.isEmpty()) {
             markers.syncOnPlayer(atlasID, player);
         }
     }

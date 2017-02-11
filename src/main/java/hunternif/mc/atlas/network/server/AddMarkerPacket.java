@@ -9,14 +9,13 @@ import hunternif.mc.atlas.network.client.MarkersPacket;
 import hunternif.mc.atlas.registry.MarkerRegistry;
 import hunternif.mc.atlas.registry.MarkerType;
 import hunternif.mc.atlas.util.Log;
-
-import java.io.IOException;
-
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.relauncher.Side;
+
+import java.io.IOException;
 
 /**
  * A request from a client to create a new marker. In order to prevent griefing,
@@ -69,7 +68,7 @@ public class AddMarkerPacket extends AbstractServerMessage<AddMarkerPacket> {
 	@Override
 	protected void process(EntityPlayer player, Side side) {
 		// Make sure it's this player's atlas :^)
-		if (!player.inventory.hasItemStack(new ItemStack(AntiqueAtlasMod.itemAtlas, 1, atlasID))) {
+		if (AntiqueAtlasMod.settings.itemNeeded && !player.inventory.hasItemStack(new ItemStack(AntiqueAtlasMod.itemAtlas, 1, atlasID))) {
 			Log.warn("Player %s attempted to put marker into someone else's Atlas #%d",
 					player.getGameProfile().getName(), atlasID);
 			return;
