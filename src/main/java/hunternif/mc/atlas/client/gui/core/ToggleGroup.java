@@ -6,9 +6,9 @@ import java.util.List;
 
 /** A group of GuiToggleButtons only one of which can be selected at any time. */
 public class ToggleGroup<B extends GuiToggleButton> implements Iterable<B> {
-	private final List<B> buttons = new ArrayList<B>();
+	private final List<B> buttons = new ArrayList<>();
 	
-	private final List<ISelectListener<? extends B>> listeners = new ArrayList<ISelectListener<? extends B>>();
+	private final List<ISelectListener<? extends B>> listeners = new ArrayList<>();
 	
 	private B selectedButton = null;
 	

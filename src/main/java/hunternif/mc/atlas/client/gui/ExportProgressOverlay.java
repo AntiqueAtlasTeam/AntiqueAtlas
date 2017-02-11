@@ -27,7 +27,7 @@ public enum ExportProgressOverlay {
 		if(event.getType() != ElementType.ALL || !ExportImageUtil.isExporting)
 			return;
 		
-		FontRenderer font = Minecraft.getMinecraft().fontRendererObj;
+		FontRenderer font = Minecraft.getMinecraft().fontRenderer;
 		
 		int s = 2;
 		

@@ -8,23 +8,23 @@ public class MarkerTypes {
 	
 	public static final MarkerTypes INSTANCE = new MarkerTypes();
 	
-	public static MarkerType
+	private static MarkerType
 	
-	GOOGLE,
-	RED_X_LARGE,
-	RED_X_SMALL,
-	VILLAGE,
-	DIAMOND,
-	BED,
-	PICKAXE,
-	SWORD,
-	NETHER_PORTAL,
-	SKULL,
-	TOWER,
-	SCROLL,
-	TOMB,
-	END_CITY,
-	END_CITY_FAR;
+	GOOGLE;
+    private static MarkerType RED_X_LARGE;
+    public static MarkerType RED_X_SMALL;
+    public static MarkerType VILLAGE;
+    private static MarkerType DIAMOND;
+    private static MarkerType BED;
+    private static MarkerType PICKAXE;
+    private static MarkerType SWORD;
+    public static MarkerType NETHER_PORTAL;
+    private static MarkerType SKULL;
+    private static MarkerType TOWER;
+    private static MarkerType SCROLL;
+    public static MarkerType TOMB;
+    public static MarkerType END_CITY;
+    public static MarkerType END_CITY_FAR;
 	
 	private MarkerTypes() {
 		GOOGLE = marker("google", Textures.MARKER_GOOGLE_MARKER);

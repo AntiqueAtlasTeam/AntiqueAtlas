@@ -20,3 +20,6 @@ gui.antiqueatlas.export.selectFile=Укажите PNG файл, куда сох�
 gui.antiqueatlas.export.tooLarge=Извините, картинка слишком большая. Попробуйте выделить больше памяти для Java.
 gui.antiqueatlas.export.rendering=Отрисовка...
 gui.antiqueatlas.export.writing=Запись в файл...
+
+key.openatlas.desc=Открыть атлас
+key.antiqueatlas.category=Antique Atlas

@@ -1,20 +1,17 @@
 package hunternif.mc.atlas;
 
-import static hunternif.mc.atlas.client.TextureSet.*;
-
-import java.io.File;
-
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.client.FMLClientHandler;
-import net.minecraftforge.fml.common.event.FMLInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.gameevent.TickEvent.ClientTickEvent;
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
-
+import hunternif.mc.atlas.client.*;
+import hunternif.mc.atlas.client.TextureSet;
+import hunternif.mc.atlas.client.gui.ExportProgressOverlay;
+import hunternif.mc.atlas.client.gui.GuiAtlas;
+import hunternif.mc.atlas.ext.ExtTileIdMap;
+import hunternif.mc.atlas.ext.ExtTileTextureConfig;
+import hunternif.mc.atlas.ext.ExtTileTextureMap;
+import hunternif.mc.atlas.marker.MarkerTextureConfig;
+import hunternif.mc.atlas.registry.MarkerRegistry;
+import hunternif.mc.atlas.registry.MarkerType;
+import hunternif.mc.atlas.util.Log;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.ItemMeshDefinition;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.resources.IReloadableResourceManager;
 import net.minecraft.client.resources.IResourceManager;
@@ -25,21 +22,18 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.IThreadListener;
 import net.minecraft.world.biome.Biome;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.client.FMLClientHandler;
+import net.minecraftforge.fml.common.event.FMLInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.TickEvent.ClientTickEvent;
+import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
-import hunternif.mc.atlas.client.BiomeTextureConfig;
-import hunternif.mc.atlas.client.BiomeTextureMap;
-import hunternif.mc.atlas.client.TextureSet;
-import hunternif.mc.atlas.client.TextureSetConfig;
-import hunternif.mc.atlas.client.TextureSetMap;
-import hunternif.mc.atlas.client.gui.ExportProgressOverlay;
-import hunternif.mc.atlas.client.gui.GuiAtlas;
-import hunternif.mc.atlas.ext.ExtTileIdMap;
-import hunternif.mc.atlas.ext.ExtTileTextureConfig;
-import hunternif.mc.atlas.ext.ExtTileTextureMap;
-import hunternif.mc.atlas.marker.MarkerTextureConfig;
-import hunternif.mc.atlas.registry.MarkerRegistry;
-import hunternif.mc.atlas.registry.MarkerType;
-import hunternif.mc.atlas.util.Log;
+import java.io.File;
+
+import static hunternif.mc.atlas.client.TextureSet.*;
 
 public class ClientProxy extends CommonProxy implements IResourceManagerReloadListener {
 	private TextureSetMap textureSetMap;
@@ -82,6 +76,7 @@ public class ClientProxy extends CommonProxy implements IResourceManagerReloadLi
 		if (biomeTextureConfigFile.exists()) {
 			biomeTextureConfigFile.renameTo(new File(configDir, "biome_textures.json"));
 		}
+
 		biomeTextureMap = BiomeTextureMap.instance();
 		biomeTextureConfig = new BiomeTextureConfig(new File(configDir, "biome_textures.json"), textureSetMap);
 		biomeTextureConfig.load(biomeTextureMap);
@@ -113,8 +108,15 @@ public class ClientProxy extends CommonProxy implements IResourceManagerReloadLi
 			type.initMips();
 		}
 		guiAtlas = new GuiAtlas();
-		Minecraft.getMinecraft().getRenderItem().getItemModelMesher().register(AntiqueAtlasMod.itemAtlas, stack -> new ModelResourceLocation(AntiqueAtlasMod.ID + ":antiqueAtlas", "inventory"));
-		Minecraft.getMinecraft().getRenderItem().getItemModelMesher().register(AntiqueAtlasMod.itemEmptyAtlas, 0, new ModelResourceLocation(AntiqueAtlasMod.ID + ":emptyAntiqueAtlas", "inventory"));
+
+		if (AntiqueAtlasMod.settings.itemNeeded) {
+            Minecraft.getMinecraft().getRenderItem().getItemModelMesher().register(AntiqueAtlasMod.itemAtlas, stack -> new ModelResourceLocation(AntiqueAtlasMod.ID + ":antiqueAtlas", "inventory"));
+            Minecraft.getMinecraft().getRenderItem().getItemModelMesher().register(AntiqueAtlasMod.itemEmptyAtlas, 0, new ModelResourceLocation(AntiqueAtlasMod.ID + ":emptyAntiqueAtlas", "inventory"));
+        } else {
+            KeyHandler.registerBindings();
+            MinecraftForge.EVENT_BUS.register(new KeyHandler());
+        }
+
 		MinecraftForge.EVENT_BUS.register(this);
 	}
 	
@@ -124,15 +126,24 @@ public class ClientProxy extends CommonProxy implements IResourceManagerReloadLi
 		super.postInit(event);
 		guiAtlas.setMapScale(AntiqueAtlasMod.settings.defaultScale);
 	}
-	
+
 	@Override
 	public void openAtlasGUI(ItemStack stack) {
-		Minecraft mc = Minecraft.getMinecraft();
-		if (mc.currentScreen == null) { // In-game screen
-			guiAtlas.updateL18n();
-			mc.displayGuiScreen(guiAtlas.setAtlasItemStack(stack));
-		}
+	    openAtlasGUI(guiAtlas.prepareToOpen(stack));
 	}
+
+	@Override
+	public void openAtlasGUI() {
+	    openAtlasGUI(guiAtlas.prepareToOpen());
+    }
+
+    private void openAtlasGUI(GuiAtlas gui) {
+        Minecraft mc = Minecraft.getMinecraft();
+        if (mc.currentScreen == null) { // In-game screen
+            guiAtlas.updateL18n();
+            mc.displayGuiScreen(gui);
+        }
+    }
 	
 	private void registerDefaultTextureSets(TextureSetMap map) {
 		map.register(ICE);
@@ -354,7 +365,7 @@ public class ClientProxy extends CommonProxy implements IResourceManagerReloadLi
 
 	@Override
 	public EntityPlayer getPlayerEntity(MessageContext ctx) {
-		return (ctx.side.isClient() ? Minecraft.getMinecraft().thePlayer : super.getPlayerEntity(ctx));
+		return (ctx.side.isClient() ? Minecraft.getMinecraft().player : super.getPlayerEntity(ctx));
 	}
 	
 	@Override

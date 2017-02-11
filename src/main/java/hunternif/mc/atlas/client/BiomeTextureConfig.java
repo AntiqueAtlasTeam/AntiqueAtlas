@@ -1,20 +1,18 @@
 package hunternif.mc.atlas.client;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import hunternif.mc.atlas.util.AbstractJSONConfig;
 import hunternif.mc.atlas.util.Log;
+import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.io.File;
 import java.util.Map.Entry;
 import java.util.PriorityQueue;
 import java.util.Queue;
-
-import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 
 /**
  * Client-only config mapping biome IDs to texture sets.
@@ -72,7 +70,7 @@ public class BiomeTextureConfig extends AbstractJSONConfig<BiomeTextureMap> {
 	@Override
 	protected void saveData(JsonObject json, BiomeTextureMap data) {
 		// Sort keys (biome IDs) numerically:
-		Queue<Integer> queue = new PriorityQueue<Integer>(data.textureMap.keySet());
+		Queue<Integer> queue = new PriorityQueue<>(data.textureMap.keySet());
 		while (!queue.isEmpty()) {
 			int biomeID = queue.poll();
 			// Only save biomes 0-256 in this config.

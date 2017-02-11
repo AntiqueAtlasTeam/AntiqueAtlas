@@ -3,13 +3,12 @@ package hunternif.mc.atlas.network.server;
 import hunternif.mc.atlas.AntiqueAtlasMod;
 import hunternif.mc.atlas.network.AbstractMessage.AbstractServerMessage;
 import hunternif.mc.atlas.util.Log;
-
-import java.io.IOException;
-
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fml.relauncher.Side;
+
+import java.io.IOException;
 
 /**
  * Packet used to save the last browsing position for a dimension in an atlas.
@@ -35,31 +34,33 @@ public class BrowsingPositionPacket extends AbstractServerMessage<BrowsingPositi
 	
 	@Override
 	protected void read(PacketBuffer buffer) throws IOException {
-		atlasID = buffer.readVarIntFromBuffer();
-		dimension = buffer.readVarIntFromBuffer();
-		x = buffer.readVarIntFromBuffer();
-		y = buffer.readVarIntFromBuffer();
-		zoom = (double)buffer.readVarIntFromBuffer() / ZOOM_SCALE_FACTOR;
+		atlasID = buffer.readVarInt();
+		dimension = buffer.readVarInt();
+		x = buffer.readVarInt();
+		y = buffer.readVarInt();
+		zoom = (double)buffer.readVarInt() / ZOOM_SCALE_FACTOR;
 	}
 
 	@Override
 	protected void write(PacketBuffer buffer) throws IOException {
-		buffer.writeVarIntToBuffer(atlasID);
-		buffer.writeVarIntToBuffer(dimension);
-		buffer.writeVarIntToBuffer(x);
-		buffer.writeVarIntToBuffer(y);
-		buffer.writeVarIntToBuffer((int)Math.round(zoom * ZOOM_SCALE_FACTOR));
+		buffer.writeVarInt(atlasID);
+		buffer.writeVarInt(dimension);
+		buffer.writeVarInt(x);
+		buffer.writeVarInt(y);
+		buffer.writeVarInt((int)Math.round(zoom * ZOOM_SCALE_FACTOR));
 	}
 
 	@Override
 	protected void process(EntityPlayer player, Side side) {
 		// Make sure it's this player's atlas :^)
-		if (!player.inventory.hasItemStack(new ItemStack(AntiqueAtlasMod.itemAtlas, 1, atlasID))) {
-			Log.warn("Player %s attempted to put marker into someone else's Atlas #%d",
+		if (AntiqueAtlasMod.settings.itemNeeded &&
+				!player.inventory.hasItemStack(new ItemStack(AntiqueAtlasMod.itemAtlas, 1, atlasID))) {
+			Log.warn("Player %s attempted to put position marker into someone else's Atlas #%d",
 					player.getGameProfile().getName(), atlasID);
 			return;
 		}
-		AntiqueAtlasMod.atlasData.getAtlasData(atlasID, player.worldObj)
+
+		AntiqueAtlasMod.atlasData.getAtlasData(atlasID, player.getEntityWorld())
 			.getDimensionData(dimension).setBrowsingPosition(x, y, zoom);
 	}
 

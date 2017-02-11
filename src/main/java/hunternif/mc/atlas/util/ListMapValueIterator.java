@@ -1,10 +1,10 @@
 package hunternif.mc.atlas.util;
 
+import com.google.common.collect.Maps;
+
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
-import com.google.common.collect.Maps;
 
 /**
  * Iterates over the values in a map of lists, similar to
@@ -33,6 +33,7 @@ public class ListMapValueIterator<E> implements Iterator<E> {
 		}
 		return next != null;
 	}
+
 	@Override
 	public E next() {
 		if (this.next == null) {
@@ -42,6 +43,7 @@ public class ListMapValueIterator<E> implements Iterator<E> {
 		this.next = null;
 		return next;
 	}
+
 	@Override
 	public void remove() {
 		if (!immutable) {

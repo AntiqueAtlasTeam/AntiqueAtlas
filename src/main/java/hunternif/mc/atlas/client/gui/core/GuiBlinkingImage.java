@@ -1,11 +1,9 @@
 package hunternif.mc.atlas.client.gui.core;
 
 import hunternif.mc.atlas.util.AtlasRenderHelper;
-
-import org.lwjgl.opengl.GL11;
-
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.ResourceLocation;
+import org.lwjgl.opengl.GL11;
 
 /** Displays a texture that changes alpha at regular intervals.
  * By default the texture file is assumed to be full image, but that behavior
@@ -57,7 +55,7 @@ public class GuiBlinkingImage extends GuiComponent {
 		drawImage();
 	}
 	
-	protected void drawImage() {
+	private void drawImage() {
 		AtlasRenderHelper.drawFullTexture(texture, getGuiX(), getGuiY(), getWidth(), getHeight());
 	}
 }

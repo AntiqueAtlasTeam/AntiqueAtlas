@@ -9,14 +9,13 @@ import hunternif.mc.atlas.network.client.MarkersPacket;
 import hunternif.mc.atlas.registry.MarkerRegistry;
 import hunternif.mc.atlas.registry.MarkerType;
 import hunternif.mc.atlas.util.Log;
-
-import java.io.IOException;
-
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.relauncher.Side;
+
+import java.io.IOException;
 
 /**
  * A request from a client to create a new marker. In order to prevent griefing,
@@ -46,8 +45,8 @@ public class AddMarkerPacket extends AbstractServerMessage<AddMarkerPacket> {
 
 	@Override
 	public void read(PacketBuffer buffer) throws IOException {
-		atlasID = buffer.readVarIntFromBuffer();
-		dimension = buffer.readVarIntFromBuffer();
+		atlasID = buffer.readVarInt();
+		dimension = buffer.readVarInt();
 		type = MarkerRegistry.find( ByteBufUtils.readUTF8String(buffer) );
 		label = ByteBufUtils.readUTF8String(buffer);
 		x = buffer.readInt();
@@ -57,8 +56,8 @@ public class AddMarkerPacket extends AbstractServerMessage<AddMarkerPacket> {
 
 	@Override
 	public void write(PacketBuffer buffer) throws IOException {
-		buffer.writeVarIntToBuffer(atlasID);
-		buffer.writeVarIntToBuffer(dimension);
+		buffer.writeVarInt(atlasID);
+		buffer.writeVarInt(dimension);
 		ByteBufUtils.writeUTF8String(buffer, type.getRegistryName().toString());
 		ByteBufUtils.writeUTF8String(buffer, label);
 		buffer.writeInt(x);
@@ -69,12 +68,12 @@ public class AddMarkerPacket extends AbstractServerMessage<AddMarkerPacket> {
 	@Override
 	protected void process(EntityPlayer player, Side side) {
 		// Make sure it's this player's atlas :^)
-		if (!player.inventory.hasItemStack(new ItemStack(AntiqueAtlasMod.itemAtlas, 1, atlasID))) {
+		if (AntiqueAtlasMod.settings.itemNeeded && !player.inventory.hasItemStack(new ItemStack(AntiqueAtlasMod.itemAtlas, 1, atlasID))) {
 			Log.warn("Player %s attempted to put marker into someone else's Atlas #%d",
 					player.getGameProfile().getName(), atlasID);
 			return;
 		}
-		MarkersData markersData = AntiqueAtlasMod.markersData.getMarkersData(atlasID, player.worldObj);
+		MarkersData markersData = AntiqueAtlasMod.markersData.getMarkersData(atlasID, player.getEntityWorld());
 		Marker marker = markersData.createAndSaveMarker(type, label, dimension, x, y, visibleAhead);
 		// If these are a manually set markers sent from the client, forward
 		// them to other players. Including the original sender, because he

@@ -6,7 +6,6 @@ import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.ResourceLocation;
-
 import org.lwjgl.opengl.GL11;
 
 public class AtlasRenderHelper {
@@ -32,7 +31,7 @@ public class AtlasRenderHelper {
 		drawTexturedRect(texture, x, y, u, v, width, height, imageWidth, imageHeight, 1, 1);
 	}
 	
-	public static void drawFullTexture(ResourceLocation texture, double x, double y, int width, int height, double scaleX, double scaleY) {
+	private static void drawFullTexture(ResourceLocation texture, double x, double y, int width, int height, double scaleX, double scaleY) {
 		drawTexturedRect(texture, x, y, 0, 0, width, height, width, height, scaleX, scaleY);
 	}
 	

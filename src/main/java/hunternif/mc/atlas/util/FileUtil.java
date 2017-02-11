@@ -1,22 +1,10 @@
 package hunternif.mc.atlas.util;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import com.google.gson.*;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonIOException;
-import com.google.gson.JsonParser;
-import com.google.gson.JsonSyntaxException;
+import java.io.*;
 
-public class FileUtil {
+class FileUtil {
 	private static final JsonParser parser = new JsonParser();
 	private static final Gson gson = new GsonBuilder().setPrettyPrinting().create();
 	
@@ -37,9 +25,7 @@ public class FileUtil {
 			Log.error(e, "Error creating file %s", file.getName());
 		} catch (IOException e) {
 			Log.error(e, "Error opening file %s", file.getName());
-		} catch (JsonIOException e) {
-			Log.error(e, "Error parsing file %s", file.getName());
-		} catch (JsonSyntaxException e) {
+		} catch (JsonIOException | JsonSyntaxException e) {
 			Log.error(e, "Error parsing file %s", file.getName());
 		} finally {
 			if (input != null) {

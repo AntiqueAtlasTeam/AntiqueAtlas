@@ -8,7 +8,7 @@ package hunternif.mc.atlas.util;
 public abstract class SaveData {
 	private boolean dirty;
 	
-	public void markDirty() {
+	protected void markDirty() {
 		this.dirty = true;
 	}
 	

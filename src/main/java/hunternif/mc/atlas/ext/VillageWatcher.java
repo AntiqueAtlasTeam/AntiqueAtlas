@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import hunternif.mc.atlas.util.MathUtil;
 import net.minecraftforge.event.terraingen.PopulateChunkEvent;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
@@ -137,8 +138,8 @@ public class VillageWatcher {
 			NBTTagCompound child = children.getCompoundTagAt(i);
 			String childID = child.getString("id");
 			StructureBoundingBox boundingBox = new StructureBoundingBox(child.getIntArray("BB"));
-			int x = boundingBox.getCenter().getX();
-			int z = boundingBox.getCenter().getZ();
+			int x = MathUtil.getCenter(boundingBox).getX();
+			int z = MathUtil.getCenter(boundingBox).getZ();
 			int chunkX = x >> 4;
 			int chunkZ = z >> 4;
 			if (START.equals(childID)) {
@@ -202,8 +203,8 @@ public class VillageWatcher {
 			NBTTagCompound child = children.getCompoundTagAt(i);
 			String childID = child.getString("id");
 			StructureBoundingBox boundingBox = new StructureBoundingBox(child.getIntArray("BB"));
-			int x = boundingBox.getCenter().getX();
-			int z = boundingBox.getCenter().getZ();
+			int x = MathUtil.getCenter(boundingBox).getX();
+			int z = MathUtil.getCenter(boundingBox).getZ();
 			int chunkX = x >> 4;
 			int chunkZ = z >> 4;
 			if (START.equals(childID)) {
