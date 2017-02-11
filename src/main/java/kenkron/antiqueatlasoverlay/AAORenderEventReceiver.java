@@ -114,6 +114,11 @@ class AAORenderEventReceiver {
             return;
         }
 
+        // Overlay must close if Atlas GUI is opened
+        if (Minecraft.getMinecraft().currentScreen instanceof GuiAtlas) {
+            return;
+        }
+
         EntityPlayerSP player = Minecraft.getMinecraft().player;
         Integer atlas = null;
 
