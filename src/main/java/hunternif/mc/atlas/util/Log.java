@@ -3,6 +3,7 @@ package hunternif.mc.atlas.util;
 import org.apache.logging.log4j.Level;
 
 import cpw.mods.fml.common.FMLLog;
+import cpw.mods.fml.relauncher.FMLRelaunchLog;
 
 /**
  * A simple logging helper that is not directly dependent on any mod classes.
@@ -19,8 +20,10 @@ public class Log {
 	public static void log(Level level, Throwable ex, String msg, Object ... data) {
 		if (modID != null) {
 			FMLLog.log(modID, level, ex, msg, data);
-		} else {
+		} else if (FMLRelaunchLog.log.getLogger() != null){
 			FMLLog.log(level, ex, msg, data);
+		} else {
+			System.out.println("Logger Not Initialized. Falling back to STDOUT:\n\t"+msg);
 		}
 	}
 	

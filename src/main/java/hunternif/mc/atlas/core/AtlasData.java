@@ -16,22 +16,23 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.world.WorldSavedData;
 import net.minecraftforge.common.util.Constants;
 
 public class AtlasData extends WorldSavedData {
-	private static final int VERSION = 2;
-	private static final String TAG_VERSION = "aaVersion";
-	private static final String TAG_DIMENSION_MAP_LIST = "qDimensionMap";
-	private static final String TAG_DIMENSION_ID = "qDimensionID";
-	private static final String TAG_VISITED_CHUNKS = "qVisitedChunks";
+	public static final int VERSION = 3;
+	public static final String TAG_VERSION = "aaVersion";
+	public static final String TAG_DIMENSION_MAP_LIST = "qDimensionMap";
+	public static final String TAG_DIMENSION_ID = "qDimensionID";
+	public static final String TAG_VISITED_CHUNKS = "qVisitedChunks";
 	
 	// Navigation
-	private static final String TAG_BROWSING_X = "qBrowseX";
-	private static final String TAG_BROWSING_Y = "qBrowseY";
-	private static final String TAG_BROWSING_ZOOM = "qBrowseZoom";
+	public static final String TAG_BROWSING_X = "qBrowseX";
+	public static final String TAG_BROWSING_Y = "qBrowseY";
+	public static final String TAG_BROWSING_ZOOM = "qBrowseZoom";
 	
 	/** This map contains, for each dimension, a map of chunks the player
 	 * has seen. This map is thread-safe.
@@ -50,6 +51,28 @@ public class AtlasData extends WorldSavedData {
 
 	@Override
 	public void readFromNBT(NBTTagCompound compound) {
+		this.nbt = compound;
+		int version = compound.getInteger(TAG_VERSION);
+		if (version < VERSION) {
+			Log.warn("Outdated atlas data format! Was %d but current is %d", version, VERSION);
+			this.markDirty();
+		}
+		NBTTagList dimensionMapList = compound.getTagList(TAG_DIMENSION_MAP_LIST, Constants.NBT.TAG_COMPOUND);
+		for (int d = 0; d < dimensionMapList.tagCount(); d++) {
+			NBTTagCompound dimTag = dimensionMapList.getCompoundTagAt(d);
+			int dimensionID = dimTag.getInteger(TAG_DIMENSION_ID);
+			NBTTagList dimensionTag = (NBTTagList) dimTag.getTag(TAG_VISITED_CHUNKS);
+			DimensionData dimData = getDimensionData(dimensionID);
+			dimData.readFromNBT(dimensionTag);
+			double zoom = (double)dimTag.getInteger(TAG_BROWSING_ZOOM) / BrowsingPositionPacket.ZOOM_SCALE_FACTOR;
+			if (zoom == 0) zoom = 0.5;
+			dimData.setBrowsingPosition(dimTag.getInteger(TAG_BROWSING_X),
+					dimTag.getInteger(TAG_BROWSING_Y), zoom);
+		}
+	}
+	
+	/**Reads from NBT version 2*/
+	public void readFromNBT2(NBTTagCompound compound) {
 		this.nbt = compound;
 		int version = compound.getInteger(TAG_VERSION);
 		if (version < VERSION) {
@@ -80,15 +103,15 @@ public class AtlasData extends WorldSavedData {
 			NBTTagCompound dimTag = new NBTTagCompound();
 			dimTag.setInteger(TAG_DIMENSION_ID, dimensionEntry.getKey().intValue());
 			DimensionData dimData = dimensionEntry.getValue();
-			Map<ShortVec2, Tile> seenChunks = dimData.getSeenChunks();
-			int[] intArray = new int[seenChunks.size()*3];
-			int i = 0;
-			for (Entry<ShortVec2, Tile> entry : seenChunks.entrySet()) {
-				intArray[i++] = entry.getKey().x;
-				intArray[i++] = entry.getKey().y;
-				intArray[i++] = entry.getValue().biomeID;
-			}
-			dimTag.setIntArray(TAG_VISITED_CHUNKS, intArray);
+//			Map<ShortVec2, Tile> seenChunks = dimData.getSeenChunks();
+//			int[] intArray = new int[seenChunks.size()*3];
+//			int i = 0;
+//			for (Entry<ShortVec2, Tile> entry : seenChunks.entrySet()) {
+//				intArray[i++] = entry.getKey().x;
+//				intArray[i++] = entry.getKey().y;
+//				intArray[i++] = entry.getValue().biomeID;
+//			}
+			dimTag.setTag(TAG_VISITED_CHUNKS, dimData.writeToNBT());
 			dimTag.setInteger(TAG_BROWSING_X, dimData.getBrowsingX());
 			dimTag.setInteger(TAG_BROWSING_Y, dimData.getBrowsingY());
 			dimTag.setInteger(TAG_BROWSING_ZOOM, (int)Math.round(dimData.getBrowsingZoom() * BrowsingPositionPacket.ZOOM_SCALE_FACTOR));
@@ -113,6 +136,9 @@ public class AtlasData extends WorldSavedData {
 	public Set<Integer> getVisitedDimensions() {
 		return dimensionMap.keySet();
 	}
+	
+	/* TODO: Packet Rework
+	 *   Dimension data should check the server for updates*/
 	/** If this dimension is not yet visited, empty DimensionData will be created. */
 	public DimensionData getDimensionData(int dimension) {
 		DimensionData dimData = dimensionMap.get(Integer.valueOf(dimension));
@@ -150,5 +176,16 @@ public class AtlasData extends WorldSavedData {
 
 	public boolean isEmpty() {
 		return dimensionMap.isEmpty();
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (!(obj instanceof AtlasData)) return false;
+		AtlasData other = (AtlasData) obj;
+		if (other.dimensionMap.size()!=dimensionMap.size()) return false;
+		for (Integer key: dimensionMap.keySet()){
+			if (!dimensionMap.get(key).equals(other.dimensionMap.get(key))) return false;
+		}
+		return true;
 	}
 }
