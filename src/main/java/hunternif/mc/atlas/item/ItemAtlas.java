@@ -17,35 +17,37 @@ public class ItemAtlas extends Item {
 
 	public ItemAtlas() {
 		setHasSubtypes(true);
+		setRegistryName("antiqueatlas");
 	}
-	
+
 	@Override
 	public String getItemStackDisplayName(ItemStack stack) {
 		return super.getItemStackDisplayName(stack) + " #" + stack.getItemDamage();
 	}
-	
+
 	@Override
 	public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer playerIn,
 			EnumHand hand) {
 		ItemStack stack = playerIn.getHeldItem(hand);
+
 		if (world.isRemote) {
 			AntiqueAtlasMod.proxy.openAtlasGUI(stack);
 		}
 
 		return new ActionResult<>(EnumActionResult.SUCCESS, stack);
 	}
-	
+
 	@Override
 	public void onUpdate(ItemStack stack, World world, Entity entity, int slot, boolean isEquipped) {
 		AtlasData data = AntiqueAtlasMod.atlasData.getAtlasData(stack, world);
 		if (data == null || !(entity instanceof EntityPlayer)) return;
-		
+
 		// On the first run send the map from the server to the client:
 		EntityPlayer player = (EntityPlayer) entity;
 		if (!world.isRemote && !data.isSyncedOnPlayer(player) && !data.isEmpty()) {
 			data.syncOnPlayer(stack.getItemDamage(), player);
 		}
-		
+
 		// Same thing with the local markers:
 		MarkersData markers = AntiqueAtlasMod.markersData.getMarkersData(stack, world);
 		if (!world.isRemote && !markers.isSyncedOnPlayer(player) && !markers.isEmpty()) {

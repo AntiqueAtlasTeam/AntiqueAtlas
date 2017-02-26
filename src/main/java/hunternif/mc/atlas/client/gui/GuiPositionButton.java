@@ -14,7 +14,7 @@ import java.util.Collections;
 public class GuiPositionButton extends GuiComponentButton {
 	private static final int WIDTH = 11;
 	private static final int HEIGHT = 11;
-	
+
 	public GuiPositionButton() {
 		setSize(WIDTH, HEIGHT);
 	}
@@ -25,18 +25,18 @@ public class GuiPositionButton extends GuiComponentButton {
 			RenderHelper.disableStandardItemLighting();
 			GlStateManager.enableBlend();
 			GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-			
+
 			int x = getGuiX(), y = getGuiY();
 			if (isMouseOver) {
 				GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
 			} else {
 				GlStateManager.color(1.0F, 1.0F, 1.0F, 0.5F);
 			}
-			
+
 			AtlasRenderHelper.drawFullTexture(Textures.BTN_POSITION, x, y, WIDTH, HEIGHT);
-			
+
 			GlStateManager.disableBlend();
-			
+
 			if (isMouseOver) {
 				drawTooltip(Collections.singletonList(I18n.format("gui.antiqueatlas.followPlayer")), Minecraft.getMinecraft().fontRenderer);
 			}

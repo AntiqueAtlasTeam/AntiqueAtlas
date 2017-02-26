@@ -20,7 +20,6 @@ import net.minecraft.world.gen.structure.StructureBoundingBox;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
-
 import hunternif.mc.atlas.AntiqueAtlasMod;
 import hunternif.mc.atlas.api.AtlasAPI;
 import hunternif.mc.atlas.marker.Marker;
@@ -29,29 +28,31 @@ import hunternif.mc.atlas.registry.MarkerTypes;
 import hunternif.mc.atlas.util.Log;
 
 public class VillageWatcher {
+	public static final String MARKER = "village";
+
 	/** Set of tag names for every village, in the format "[x, y]" */
 	//TODO: list of visited villages must be reset when changing worlds!
 	// And the same goes for Nether Fortress Watcher
 	private final Set<String> visited = new HashSet<>();
-	
+
 	private static final String LIBRARY= "ViBH"; // Big-ish house with a high slanted roof, large windows; books and couches inside.
 	private static final String SMITHY = "ViS"; // The smithy.
 	private static final String L_HOUSE = "ViTRH"; // Medium-sized, L-shaped houses with slanted roof.
-	
+
 	private static final String FARMLAND_LARGE = "ViDF"; // Large field, basically 2 times larger than FIELD2
 	private static final String FARMLAND_SMALL = "ViF"; // Smaller field.
-	
+
 	@SuppressWarnings("unused")
 	private static final String PATH = "ViSR"; // Usually too narrow to be seen between the houses...
 	private static final String TORCH = "ViL";
 	private static final String WELL = "ViW";
 	private static final String START = "ViStart"; // Same as WELL
-	
+
 	private static final String BUTCHERS = "ViPH"; // Medium house with a low slanted roof and a dirt porch with a fence.
 	private static final String HUT = "ViSmH"; // Tiniest hut with a flat roof.
 	private static final String HOUSE_SMALL = "ViSH"; // Slightly larger than huts, sometimes with a fenced balcony on the roof and a ladder.
 	private static final String CHURCH = "ViST"; // The church.
-	
+
 	private static final Map<String, String> partToTileMap;
 	static {
 		ImmutableMap.Builder<String, String> builder = new Builder<>();
@@ -89,21 +90,21 @@ public class VillageWatcher {
 		builder.put(ExtTileIdMap.TILE_VILLAGE_CHURCH, 6);
 		tilePriority = builder.build();
 	}
-	
+
 	@SubscribeEvent(priority=EventPriority.LOWEST)
 	public void onWorldLoad(WorldEvent.Load event) {
 		if (!event.getWorld().isRemote && event.getWorld().provider.getDimension() == 0) {
 			visitAllUnvisitedVillages(event.getWorld());
 		}
 	}
-	
+
 	@SubscribeEvent
 	public void onPopulateChunk(PopulateChunkEvent.Post event) {
 		if (!event.getWorld().isRemote && event.getWorld().provider.getDimension() == 0) {
 			visitAllUnvisitedVillages(event.getWorld());
 		}
 	}
-	
+
 	private void visitAllUnvisitedVillages(World world) {
 		MapGenStructureData data = (MapGenStructureData)world.getPerWorldStorage().getOrLoadData(MapGenStructureData.class, "Village");
 		if (data == null) return;
@@ -119,7 +120,7 @@ public class VillageWatcher {
 			}
 		}
 	}
-	
+
 	/** Put all child parts of the fortress on the map as global custom tiles. */
 	private void visitVillage(World world, NBTTagCompound tag) {
 		if (!tag.getBoolean("Valid")) {
@@ -190,12 +191,12 @@ public class VillageWatcher {
 			}
 		}
 	}
-	
+
 	private static String tileAt(int chunkX, int chunkZ) {
 		int biomeID = AntiqueAtlasMod.extBiomeData.getData().getBiomeIdAt(0, chunkX, chunkZ);
 		return ExtTileIdMap.instance().getPseudoBiomeName(biomeID);
 	}
-	
+
 	/** Delete the marker and custom tile data about the village. */
 	private static void removeVillage(World world, NBTTagCompound tag) {
 		NBTTagList children = tag.getTagList("Children", 10);

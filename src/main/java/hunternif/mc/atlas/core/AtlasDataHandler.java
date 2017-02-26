@@ -19,7 +19,7 @@ public class AtlasDataHandler {
 	private static final String ATLAS_DATA_PREFIX = "aAtlas_";
 	
 	private final Map<String, AtlasData> atlasDataClientCache = new ConcurrentHashMap<>();
-	
+
 	/** Loads data for the given atlas ID or creates a new one. */
 	public AtlasData getAtlasData(ItemStack stack, World world) {
 		if (stack.getItem() == AntiqueAtlasMod.itemAtlas) {
@@ -28,7 +28,7 @@ public class AtlasDataHandler {
 			return null;
 		}
 	}
-	
+
 	/** Loads data for the given atlas or creates a new one. */
 	public AtlasData getAtlasData(int atlasID, World world) {
 		String key = getAtlasDataKey(atlasID);
@@ -53,11 +53,11 @@ public class AtlasDataHandler {
 
 		return data;
 	}
-	
+
 	private String getAtlasDataKey(int atlasID) {
 		return ATLAS_DATA_PREFIX + atlasID;
 	}
-	
+
 	/**
 	 * This method resets the cache when the client loads a new world.
 	 * It is required in order that old atlas data is not

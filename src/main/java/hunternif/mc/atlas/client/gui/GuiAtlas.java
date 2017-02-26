@@ -40,29 +40,30 @@ public class GuiAtlas extends GuiComponent {
 	public static final int HEIGHT = 218;
 	private static final int CONTENT_X = 17;
 	private static final int CONTENT_Y = 11;
-	
+
 	private static final int MAP_WIDTH = WIDTH - 17*2;
 	private static final int MAP_HEIGHT = 194;
 	private static final float PLAYER_ROTATION_STEPS = 16;
 	private static final int PLAYER_ICON_WIDTH = 7;
 	private static final int PLAYER_ICON_HEIGHT = 8;
-	
+
 	public static final int MARKER_SIZE = 32;
-	
+
 	/** If the map scale goes below this value, the tiles will not scale down
 	 * visually, but will instead span greater area. */
 	private static final double MIN_SCALE_THRESHOLD = 0.5;
 	
 	private final long[] renderTimes = new long[30];
+
 	private int renderTimesIndex = 0;
-	
+
 	// States ==================================================================
-	
+
 	private final GuiStates state = new GuiStates();
-	
+
 	/** If on, navigate the map normally. */
 	private final IState NORMAL = new SimpleState();
-	
+
 	/** If on, all markers as well as the player icon are hidden. */
 	private final IState HIDING_MARKERS = new IState() {
 		@Override
@@ -79,7 +80,7 @@ public class GuiAtlas extends GuiComponent {
 			btnShowMarkers.setIconTexture(Textures.ICON_HIDE_MARKERS);
 		}
 	};
-	
+
 	/** If on, a semi-transparent marker is attached to the cursor, and the
 	 * player's icon becomes semi-transparent as well. */
 	private final IState PLACING_MARKER = new IState() {
@@ -92,7 +93,7 @@ public class GuiAtlas extends GuiComponent {
 			btnMarker.setSelected(false);
 		}
 	};
-	
+
 	/** If on, the closest marker will be deleted upon mouseclick. */
 	private final IState DELETING_MARKER = new IState() {
 		@Override
@@ -109,7 +110,7 @@ public class GuiAtlas extends GuiComponent {
 		}
 	};
 	private final GuiCursor eraser = new GuiCursor();
-	
+
 	private final IState EXPORTING_IMAGE = new IState() {
 		@Override
 		public void onEnterState() {
@@ -120,34 +121,34 @@ public class GuiAtlas extends GuiComponent {
 			btnExportPng.setSelected(false);
 		}
 	};
-	
+
 	// Buttons =================================================================
-	
+
 	/** Arrow buttons for navigating the map view via mouse clicks. */
 	private final GuiArrowButton btnUp, btnDown, btnLeft, btnRight;
-	
+
 	/** Button for exporting PNG image of the Atlas's contents. */
 	private final GuiBookmarkButton btnExportPng;
-	
+
 	/** Button for placing a marker at current position, local to this Atlas instance. */
 	private final GuiBookmarkButton btnMarker;
-	
+
 	/** Button for deleting local markers. */
 	private final GuiBookmarkButton btnDelMarker;
-	
+
 	/** Button for showing/hiding all markers. */
 	private final GuiBookmarkButton btnShowMarkers;
-	
+
 	/** Button for restoring player's position at the center of the Atlas. */
 	private final GuiPositionButton btnPosition;
-	
-	
+
+
 	// Navigation ==============================================================
-	
+
 	/** Pause between after the arrow button is pressed and continuous
 	 * navigation starts, in ticks. */
 	private static final int BUTTON_PAUSE = 8;
-	
+
 	/** How much the map view is offset, in blocks, per click (or per tick). */
 	private static final int navigateStep = 24;
 	
@@ -155,18 +156,18 @@ public class GuiAtlas extends GuiComponent {
 	 * navigation using the arrow buttons. Also used to prevent immediate
 	 * canceling of placing marker. */
 	private GuiComponentButton selectedButton = null;
-	
+
 	/** Time in world ticks when the button was pressed. Used to create a pause
 	 * before continuous navigation using the arrow buttons. */
 	private long timeButtonPressed = 0;
-	
+
 	/** Set to true when dragging the map view. */
 	private boolean isDragging = false;
 	/** The starting cursor position when dragging. */
 	private int dragMouseX, dragMouseY;
 	/** Map offset at the beginning of drag. */
 	private int dragMapOffsetX, dragMapOffsetY;
-	
+
 	/** Offset to the top left corner of the tile at (0, 0) from the center of
 	 * the map drawing area, in pixels. */
 	private int mapOffsetX, mapOffsetY;
@@ -175,18 +176,19 @@ public class GuiAtlas extends GuiComponent {
 	 * position of the player that will be calculated with respect to the
 	 * offset. */
 	private boolean followPlayer = true;
-	
+
 	private final GuiScaleBar scaleBar = new GuiScaleBar();
+
 	/** Pixel-to-block ratio. */
 	private double mapScale;
 	/** The visual size of a tile in pixels. */
 	private int tileHalfSize;
 	/** The number of chunks a tile spans. */
 	private int tile2ChunkScale;
-	
-	
+
+
 	// Markers =================================================================
-	
+
 	/** Local markers in the current dimension */
 	private DimensionMarkersData localMarkersData;
 	/** Global markers in the current dimension */
@@ -198,35 +200,34 @@ public class GuiAtlas extends GuiComponent {
 	private final GuiMarkerFinalizer markerFinalizer = new GuiMarkerFinalizer();
 	/** Displayed where the marker is about to be placed when the Finalizer GUI is on. */
 	private final GuiBlinkingMarker blinkingIcon = new GuiBlinkingMarker();
-	
-	
+
 	// Misc stuff ==============================================================
-	
+
 	private EntityPlayer player;
 	private ItemStack stack;
 	private DimensionData biomeData;
-	
+
 	/** Coordinate scale factor relative to the actual screen size. */
 	private int screenScale;
-	
+
 	/** Progress bar for exporting images. */
 	private final ProgressBarOverlay progressBar = new ProgressBarOverlay(100, 2);
-	
+
 	private int scaleAlpha = 255;
 	private int scaleClipIndex = 0;
 	private int zoomLevelOne = 8;
 	private int zoomLevel = zoomLevelOne;
 	private String[] zoomNames = new String[] { "256", "128", "64", "32", "16", "8", "4", "2", "1", "1/2", "1/4", "1/8", "1/16", "1/32", "1/64", "1/128", "1/256" };
-	
+
 	private Thread exportThread;
-	
+
 	@SuppressWarnings("rawtypes")
 	public GuiAtlas() {
 		setSize(WIDTH, HEIGHT);
 		setMapScale(0.5);
 		followPlayer = true;
 		setInterceptKeyboard(false);
-		
+
 		btnUp = GuiArrowButton.up();
 		addChild(btnUp).offsetGuiCoords(148, 10);
 		btnDown = GuiArrowButton.down();
@@ -254,7 +255,7 @@ public class GuiAtlas extends GuiComponent {
 		btnLeft.addListener(positionListener);
 		btnRight.addListener(positionListener);
 		btnPosition.addListener(positionListener);
-		
+
 		btnExportPng = new GuiBookmarkButton(1, Textures.ICON_EXPORT, I18n.format("gui.antiqueatlas.exportImage")) {
 			@Override
 			public boolean isEnabled() {
@@ -268,7 +269,7 @@ public class GuiAtlas extends GuiComponent {
                 exportThread.start();
             }
         });
-		
+
 		btnMarker = new GuiBookmarkButton(0, Textures.ICON_ADD_MARKER, I18n.format("gui.antiqueatlas.addMarker"));
 		addChild(btnMarker).offsetGuiCoords(300, 14);
 		btnMarker.addListener(button -> {
@@ -303,12 +304,12 @@ public class GuiAtlas extends GuiComponent {
                 state.switchTo(state.is(HIDING_MARKERS) ? NORMAL : HIDING_MARKERS);
             }
         });
-		
+
 		addChild(scaleBar).offsetGuiCoords(20, 198);
 		scaleBar.setMapScale(1);
-		
+
 		markerFinalizer.addListener(blinkingIcon);
-		
+
 		eraser.setTexture(Textures.ERASER, 12, 14, 2, 11);
 	}
 
@@ -335,7 +336,7 @@ public class GuiAtlas extends GuiComponent {
 		mapOffsetY = biomeData.getBrowsingY();
 		isDragging = false;
 	}
-	
+
 	@Override
 	public void initGui() {
 		super.initGui();
@@ -347,14 +348,14 @@ public class GuiAtlas extends GuiComponent {
 		screenScale = new ScaledResolution(mc).getScaleFactor();
 		setCentered();
 	}
-	
+
 	@Override
 	protected void mouseClicked(int mouseX, int mouseY, int mouseState) throws IOException {
 		super.mouseClicked(mouseX, mouseY, mouseState);
 		if (state.is(EXPORTING_IMAGE)) {
 			return; // Don't remove the progress bar.
 		}
-		
+
 		// If clicked on the map, start dragging
 		int mapX = (width - MAP_WIDTH)/2;
 		int mapY = (height - MAP_HEIGHT)/2;
@@ -369,19 +370,19 @@ public class GuiAtlas extends GuiComponent {
                         atlasID, player.dimension,
 						screenXToWorldX(mouseX), screenYToWorldZ(mouseY));
 				addChild(markerFinalizer);
-				
+
 				blinkingIcon.setTexture(markerFinalizer.selectedType.getIcon(),
 						MARKER_SIZE, MARKER_SIZE);
 				addChildBehind(markerFinalizer, blinkingIcon)
 					.setRelativeCoords(mouseX - getGuiX() - MARKER_SIZE/2,
 									   mouseY - getGuiY() - MARKER_SIZE/2);
-				
+
 				// Need to intercept keyboard events to type in the label:
 				setInterceptKeyboard(true);
-				
-				// Un-press all keys to prevent player from walking infinitely: 
+
+				// Un-press all keys to prevent player from walking infinitely:
 				KeyBinding.unPressAllKeys();
-				
+
 			} else if (state.is(DELETING_MARKER) // If clicked on a marker, delete it:
 					&& toDelete != null && isMouseOverMap && mouseState == 0) {
 				AtlasAPI.markers.deleteMarker(player.getEntityWorld(),
@@ -396,7 +397,7 @@ public class GuiAtlas extends GuiComponent {
 			dragMapOffsetY = mapOffsetY;
 		}
 	}
-	
+
 	/** Opens a dialog window to select which file to save to, then performs
 	 * rendering of the map of current dimension into a PNG image. */
 	private void exportImage(int atlasID) {
@@ -419,9 +420,9 @@ public class GuiAtlas extends GuiComponent {
 					int minY = (biomeData.getScope().minY - 1) * ExportImageUtil.TILE_SIZE;
 					int outWidth = (biomeData.getScope().maxX + 2) * ExportImageUtil.TILE_SIZE - minX;
 					int outHeight = (biomeData.getScope().maxY + 2) * ExportImageUtil.TILE_SIZE - minY;
-					
+
 					Log.error(e2, "Image is STILL too large, how massive is this map?! Answer: (%dx%d)", outWidth, outHeight);
-					
+
 					ExportUpdateListener.INSTANCE.setStatusString(I18n.format("gui.antiqueatlas.export.tooLarge"));
 					ExportImageUtil.isExporting = false;
 					return; //Don't switch to normal state yet so that the error message can be read.
@@ -431,7 +432,7 @@ public class GuiAtlas extends GuiComponent {
 		ExportImageUtil.isExporting = false;
 		state.switchTo(showMarkers ? NORMAL : HIDING_MARKERS);
 	}
-	
+
 	@Override
 	public void handleKeyboardInput() throws IOException {
 		super.handleKeyboardInput();
@@ -462,7 +463,7 @@ public class GuiAtlas extends GuiComponent {
 			}
 		}
 	}
-	
+
 	@Override
 	public void handleMouseInput() throws IOException {
 		super.handleMouseInput();
@@ -493,8 +494,6 @@ public class GuiAtlas extends GuiComponent {
 		}
 	}
 
-
-
     @Override
 	protected void mouseReleased(int mouseX, int mouseY, int mouseState) {
 		super.mouseReleased(mouseX, mouseY, mouseState);
@@ -503,7 +502,7 @@ public class GuiAtlas extends GuiComponent {
 			isDragging = false;
 		}
 	}
-	
+
 	@Override
 	protected void mouseClickMove(int mouseX, int mouseY, int lastMouseButton, long timeSinceMouseClick) {
 		super.mouseClickMove(mouseX, mouseY, lastMouseButton, timeSinceMouseClick);
@@ -514,7 +513,7 @@ public class GuiAtlas extends GuiComponent {
 			mapOffsetY = dragMapOffsetY + mouseY - dragMouseY;
 		}
 	}
-	
+
 	@Override
 	public void updateScreen() {
 		super.updateScreen();
@@ -526,10 +525,10 @@ public class GuiAtlas extends GuiComponent {
 		if (player.getEntityWorld().getTotalWorldTime() > timeButtonPressed + BUTTON_PAUSE) {
 			navigateByButton(selectedButton);
 		}
-		
+
 		updateAtlasData();
 	}
-	
+
 	/** Update {@link #biomeData}, {@link #localMarkersData},
 	 * {@link #globalMarkersData} */
 	private void updateAtlasData() {
@@ -549,7 +548,7 @@ public class GuiAtlas extends GuiComponent {
 			localMarkersData = null;
 		}
 	}
-	
+
 	/** Offset the map view depending on which button was pressed. */
 	private void navigateByButton(GuiComponentButton btn) {
 		if (btn == null) return;
@@ -563,7 +562,7 @@ public class GuiAtlas extends GuiComponent {
 			navigateMap(-navigateStep, 0);
 		}
 	}
-	
+
 	/** Offset the map view by given values, in blocks. */
 	private void navigateMap(int dx, int dy) {
 		mapOffsetX += dx;
@@ -625,11 +624,11 @@ public class GuiAtlas extends GuiComponent {
 				System.out.printf("GuiAtlas avg. render time: %.3f\n", elapsed / renderTimes.length);
 			}
 		}
-		
+
 		GlStateManager.color(1, 1, 1, 1);
 		GlStateManager.alphaFunc(GL11.GL_GREATER, 0); // So light detail on tiles is visible
 		AtlasRenderHelper.drawFullTexture(Textures.BOOK, getGuiX(), getGuiY(), WIDTH, HEIGHT);
-		
+
 		if ((stack == null && AntiqueAtlasMod.settings.itemNeeded) || biomeData == null) return;
 
 		if (state.is(DELETING_MARKER)) {
@@ -652,7 +651,6 @@ public class GuiAtlas extends GuiComponent {
 		int mapEndZ = MathUtil.roundToBase((int)Math.ceil(((double)MAP_HEIGHT / 2d - mapOffsetY + 2 * tileHalfSize) / mapScale / 16d), tile2ChunkScale);
 		int mapStartScreenX = getGuiX() + WIDTH / 2 + (int)((mapStartX << 4) * mapScale) + mapOffsetX;
 		int mapStartScreenY = getGuiY() + HEIGHT / 2 + (int)((mapStartZ << 4) * mapScale) + mapOffsetY;
-		
 		TileRenderIterator iter = new TileRenderIterator(biomeData);
 		iter.setScope(new Rect().setOrigin(mapStartX, mapStartZ).
 				set(mapStartX, mapStartZ, mapEndX, mapEndZ));
@@ -668,13 +666,13 @@ public class GuiAtlas extends GuiComponent {
 						subtile.getTextureU(), subtile.getTextureV(), tileHalfSize);
 			}
 		}
-		
+
 		int markersStartX = MathUtil.roundToBase(mapStartX, MarkersData.CHUNK_STEP) / MarkersData.CHUNK_STEP - 1;
 		int markersStartZ = MathUtil.roundToBase(mapStartZ, MarkersData.CHUNK_STEP) / MarkersData.CHUNK_STEP - 1;
 		int markersEndX = MathUtil.roundToBase(mapEndX, MarkersData.CHUNK_STEP) / MarkersData.CHUNK_STEP + 1;
 		int markersEndZ = MathUtil.roundToBase(mapEndZ, MarkersData.CHUNK_STEP) / MarkersData.CHUNK_STEP + 1;
 		double iconScale = getIconScale();
-		
+
 		// Draw global markers:
 		for (int x = markersStartX; x <= markersEndX; x++) {
 			for (int z = markersStartZ; z <= markersEndZ; z++) {
@@ -685,7 +683,7 @@ public class GuiAtlas extends GuiComponent {
 				}
 			}
 		}
-		
+
 		// Draw local markers:
 		if (localMarkersData != null) {
 			for (int x = markersStartX; x <= markersEndX; x++) {
@@ -698,15 +696,15 @@ public class GuiAtlas extends GuiComponent {
 				}
 			}
 		}
-		
+
 		GL11.glDisable(GL11.GL_SCISSOR_TEST);
-		
+
 		// Overlay the frame so that edges of the map are smooth:
 		GlStateManager.color(1, 1, 1, 1);
 		AtlasRenderHelper.drawFullTexture(Textures.BOOK_FRAME, getGuiX(), getGuiY(), WIDTH, HEIGHT);
 		renderScaleOverlay();
 		iconScale = getIconScale();
-		
+
 		// Draw player icon:
 		if (!state.is(HIDING_MARKERS)) {
 			// How much the player has moved from the top left corner of the map, in pixels:
@@ -728,10 +726,10 @@ public class GuiAtlas extends GuiComponent {
 			GlStateManager.popMatrix();
 			GlStateManager.color(1, 1, 1, 1);
 		}
-		
+
 		// Draw buttons:
 		super.drawScreen(mouseX, mouseY, par3);
-		
+
 		// Draw the semi-transparent marker attached to the cursor when placing a new marker:
 		GlStateManager.enableBlend();
 		GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
@@ -746,34 +744,34 @@ public class GuiAtlas extends GuiComponent {
 					renderInfo.width, renderInfo.height);
 			GlStateManager.color(1, 1, 1, 1);
 		}
-		
+
 		// Draw progress overlay:
 		if (state.is(EXPORTING_IMAGE)) {
 			drawDefaultBackground();
 			progressBar.draw((width - 100)/2, height/2 - 34);
 		}
 	}
-	
-	private void renderScaleOverlay() {
-		if(scaleAlpha > 0) {			
+
+	private void renderScaleOverlay(long deltaMillis) {
+		if(scaleAlpha > 0) {
 			GlStateManager.translate(getGuiX()+WIDTH-13, getGuiY()+12, 0);
-			
+
 			String text;
 			int textWidth, xWidth;
-			
+
 			text = "x";
 			xWidth = textWidth = fontRenderer.getStringWidth(text); xWidth++;
 			fontRenderer.drawString(text, -textWidth, 0, scaleAlpha << 24);
-			
+
 			text = zoomNames[zoomLevel];
 			if(text.contains("/")) {
-				
+
 				String[] parts = text.split("/");
-				
+
 				text = parts[0];
 				int centerXtranslate = Math.max(fontRenderer.getStringWidth(parts[0]), fontRenderer.getStringWidth(parts[1]) )/2;
 				GlStateManager.translate(-xWidth-centerXtranslate, -fontRenderer.FONT_HEIGHT/2, 0);
-				
+
 				GlStateManager.disableTexture2D();
 				Tessellator t = Tessellator.getInstance();
 				VertexBuffer vb = t.getBuffer();
@@ -784,38 +782,42 @@ public class GuiAtlas extends GuiComponent {
                 vb.pos( centerXtranslate,   fontRenderer.FONT_HEIGHT    , 0.0D).endVertex();
                 t.draw();
                 GlStateManager.enableTexture2D();
-				
 				textWidth = fontRenderer.getStringWidth(text);
-				fontRenderer.drawString(text, -textWidth/2, 0, scaleAlpha << 24);
-				
+				fontRenderer.drawString(text, -textWidth/2, 0, scaleAlpha << 24 | 0x000000);
+
 				text = parts[1];
 				GlStateManager.translate(0, fontRenderer.FONT_HEIGHT + 1, 0);
-				
+
 				textWidth = fontRenderer.getStringWidth(text);
-				fontRenderer.drawString(text, -textWidth/2, 0, scaleAlpha << 24);
-				
+				fontRenderer.drawString(text, -textWidth/2, 0, scaleAlpha << 24 | 0x000000);
+
 				GlStateManager.translate(xWidth+centerXtranslate, ( -fontRenderer.FONT_HEIGHT/2 ) -2, 0);
 			} else {
 				textWidth = fontRenderer.getStringWidth(text);
-				fontRenderer.drawString(text, -textWidth-xWidth+1, 1, scaleAlpha << 24);
+				fontRenderer.drawString(text, -textWidth-xWidth + 1, 1, scaleAlpha << 24 | 0x000000);
 			}
-			
+
 			GlStateManager.translate(-(getGuiX()+WIDTH-13), -(getGuiY()+12), 0);
 
-			scaleAlpha -= 20;
-			
+			int deltaScaleAlpha = (int)( deltaMillis * ( 256 / 1000) );
+			if(deltaScaleAlpha == 0) { // because of some crazy high framerate
+				deltaScaleAlpha = 1;
+			}
+
+			scaleAlpha -= 20 * deltaScaleAlpha;
+
 			if(scaleAlpha < 0)
 				scaleAlpha = 0;
 		}
 	}
-	
+
 	private void renderMarker(Marker marker, double scale) {
 		MarkerType type = marker.getType();
-		
+
 		if (type.shouldHide(state.is(HIDING_MARKERS), scaleClipIndex)) {
 			return;
 		}
-		
+
 		int markerX = worldXToScreenX(marker.getX());
 		int markerY = worldZToScreenY(marker.getZ());
 		if (!marker.isVisibleAhead() &&
@@ -824,10 +826,10 @@ public class GuiAtlas extends GuiComponent {
 		}
 		type.calculateMip(scale, mapScale, screenScale);
 		MarkerRenderInfo info = type.getRenderInfo(scale, mapScale, screenScale);
-		
+
 		boolean mouseIsOverMarker = type.shouldHover((getMouseX()-(markerX+info.x))/info.width, (getMouseY()-(markerY+info.y))/info.height);
 		type.resetMip();
-		
+
 		if (state.is(PLACING_MARKER)) {
 			GlStateManager.color(1, 1, 1, 0.5f);
 		} else if (state.is(DELETING_MARKER)) {
@@ -847,7 +849,11 @@ public class GuiAtlas extends GuiComponent {
 		} else {
 			GlStateManager.color(1, 1, 1, 1);
 		}
-		
+
+		if (AntiqueAtlasMod.settings.debugRender){
+			System.out.println("Rendering Marker: "+info.tex);
+		}
+
 		AtlasRenderHelper.drawFullTexture(
 				info.tex,
 				markerX + info.x,
@@ -857,12 +863,12 @@ public class GuiAtlas extends GuiComponent {
 			drawTooltip(Collections.singletonList(marker.getLocalizedLabel()), mc.fontRenderer);
 		}
 	}
-	
+
 	@Override
 	public boolean doesGuiPauseGame() {
 		return false;
 	}
-	
+
 	@Override
 	public void onGuiClosed() {
 		super.onGuiClosed();
@@ -873,7 +879,7 @@ public class GuiAtlas extends GuiComponent {
 
 		PacketDispatcher.sendToServer(new BrowsingPositionPacket(getAtlasID(), player.dimension, mapOffsetX, mapOffsetY, mapScale));
 	}
-	
+
 	/** Returns the Y coordinate that the cursor is pointing at. */
 	private int screenXToWorldX(int mouseX) {
 		return (int)Math.round((double)(mouseX - this.width/2 - mapOffsetX) / mapScale);
@@ -882,14 +888,14 @@ public class GuiAtlas extends GuiComponent {
 	private int screenYToWorldZ(int mouseY) {
 		return (int)Math.round((double)(mouseY - this.height/2 - mapOffsetY) / mapScale);
 	}
-	
+
 	private int worldXToScreenX(int x) {
 		return (int)Math.round((double)x * mapScale + this.width/2 + mapOffsetX);
 	}
 	private int worldZToScreenY(int z) {
 		return (int)Math.round((double)z * mapScale + this.height/2 + mapOffsetY);
 	}
-	
+
 	@Override
 	protected void onChildClosed(GuiComponent child) {
 		if (child.equals(markerFinalizer)) {
@@ -903,7 +909,7 @@ public class GuiAtlas extends GuiComponent {
 		btnExportPng.setTitle(I18n.format("gui.antiqueatlas.exportImage"));
 		btnMarker.setTitle(I18n.format("gui.antiqueatlas.addMarker"));
 	}
-	
+
 	/** Returns the scale of markers and player icon at given mapScale. */
 	private double getIconScale() {
 		return AntiqueAtlasMod.settings.doScaleMarkers ? (mapScale < 0.5 ? 0.5 : mapScale > 1 ? 2 : 1) : 1;

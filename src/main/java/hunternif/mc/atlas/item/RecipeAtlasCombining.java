@@ -25,7 +25,7 @@ public class RecipeAtlasCombining extends RecipeBase {
 	public boolean matches(InventoryCrafting inv, World world) {
 		return matches(inv);
 	}
-	
+
 	private boolean matches(IInventory inv) {
 		int atlasesFound = 0;
 		for (int i = 0; i < inv.getSizeInventory(); ++i) {
@@ -68,7 +68,7 @@ public class RecipeAtlasCombining extends RecipeBase {
 	public ItemStack getRecipeOutput() {
 		return ItemStack.EMPTY;
 	}
-	
+
 	@SubscribeEvent
 	public void onCrafted(ItemCraftedEvent event) {
 		// Make sure it's the same recipe:
@@ -79,7 +79,7 @@ public class RecipeAtlasCombining extends RecipeBase {
 		if (world.isRemote) return;
 		// Until the first update, on the client the returned atlas ID is the same as the first Atlas on the crafting grid.
 		int atlasID = world.getUniqueDataId(ItemAtlas.WORLD_ATLAS_DATA_ID);
-		
+
 		AtlasData destBiomes = AntiqueAtlasMod.atlasData.getAtlasData(atlasID, world);
 		destBiomes.markDirty();
 		MarkersData destMarkers = AntiqueAtlasMod.markersData.getMarkersData(atlasID, world);
@@ -103,7 +103,7 @@ public class RecipeAtlasCombining extends RecipeBase {
 				}
 			}
 		}
-		
+
 		// Set item damage last, because otherwise we wouldn't be able copy the
 		// data from the atlas which was used as a placeholder for the result.
 		event.crafting.setItemDamage(atlasID);

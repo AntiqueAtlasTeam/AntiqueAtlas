@@ -20,6 +20,8 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.opengl.GL11;
 
 import java.util.List;
@@ -105,6 +107,7 @@ class AAORenderEventReceiver {
     }
 
     @SubscribeEvent(priority = EventPriority.NORMAL)
+	@SideOnly(Side.CLIENT)
     public void eventHandler(RenderGameOverlayEvent.Post event) {
         if (event.getType() != RenderGameOverlayEvent.ElementType.ALL) {
             return;
@@ -153,6 +156,7 @@ class AAORenderEventReceiver {
         }
     }
 
+	@SideOnly(Side.CLIENT)
     private void drawMinimap(Rect shape, int atlasID, Vec3d position, float rotation,
                              int dimension) {
         screenScale = new ScaledResolution(Minecraft.getMinecraft()).getScaleFactor();
@@ -184,6 +188,7 @@ class AAORenderEventReceiver {
         GlStateManager.disableBlend();
     }
 
+	@SideOnly(Side.CLIENT)
     private void drawTiles(Rect shape, int atlasID, Vec3d position,
                            int dimension) {
         GL11.glEnable(GL11.GL_SCISSOR_TEST);
@@ -237,6 +242,7 @@ class AAORenderEventReceiver {
         GlStateManager.color(1, 1, 1, 1);
     }
 
+	@SideOnly(Side.CLIENT)
     private void drawMarkers(Rect shape, int atlasID, Vec3d position,
                              int dimension) {
 
@@ -270,6 +276,7 @@ class AAORenderEventReceiver {
         GlStateManager.color(1, 1, 1, 1);
     }
 
+	@SideOnly(Side.CLIENT)
     private void drawPlayer(float x, float y, float rotation) {
         // Draw player icon:
 
@@ -282,6 +289,7 @@ class AAORenderEventReceiver {
         GlStateManager.color(1, 1, 1, 1);
     }
 
+	@SideOnly(Side.CLIENT)
     private void drawMarkersData(DimensionMarkersData markersData,
                                  Rect shape, DimensionData biomeData, Vec3d position) {
 
@@ -321,6 +329,7 @@ class AAORenderEventReceiver {
         }
     }
 
+	@SideOnly(Side.CLIENT)
     private void renderMarker(Marker marker, int x, int y,
                               DimensionData biomeData) {
         if (!marker.isVisibleAhead()
@@ -351,6 +360,7 @@ class AAORenderEventReceiver {
     /**
      * Calls GL11.glScissor, but uses GUI coordinates
      */
+	@SideOnly(Side.CLIENT)
     private void glScissorGUI(Rect shape) {
         // glScissor uses the default window coordinates,
         // the display window does not. We need to fix this

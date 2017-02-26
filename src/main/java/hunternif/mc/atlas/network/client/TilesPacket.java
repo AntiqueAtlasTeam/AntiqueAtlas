@@ -5,12 +5,11 @@ import hunternif.mc.atlas.ext.ExtBiomeData;
 import hunternif.mc.atlas.network.AbstractMessage.AbstractClientMessage;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
-
-import java.io.IOException;
-
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fml.relauncher.Side;
+
+import java.io.IOException;
 
 /**
  * Used to sync custom tiles from server to client.

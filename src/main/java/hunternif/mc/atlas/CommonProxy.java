@@ -21,14 +21,14 @@ import java.io.File;
 
 public class CommonProxy {
 	File configDir;
-	
+
 	private ExtTileIdMap extTileIdMap;
 	private ExtTileConfig extTileConfig;
-	
+
 	public MinecraftServer getServer() {
 		return FMLServerHandler.instance().getServer();
 	}
-	
+
 	public void preInit(FMLPreInitializationEvent event) {
 		configDir = new File(event.getModConfigurationDirectory(), "antiqueatlas");
 		configDir.mkdir();
@@ -39,15 +39,15 @@ public class CommonProxy {
 		registerVanillaCustomTiles();
 		checkSaveConfig();
 	}
-	
+
 	public void init(FMLInitializationEvent event) {
 		MinecraftForge.EVENT_BUS.register(this);
 	}
-	
+
 	public void postInit(FMLPostInitializationEvent event) {
 		BiomeDetectorBase.scanBiomeTypes();
 	}
-	
+
 	/** Register IDs for the pseudo-biomes used for vanilla Minecraft.
 	 * The pseudo-biomes are: villages houses, village territory and lava. */
 	private void registerVanillaCustomTiles() {
@@ -65,7 +65,7 @@ public class CommonProxy {
 		extTileIdMap.getOrCreatePseudoBiomeID(ExtTileIdMap.TILE_VILLAGE_SMALL_HOUSE);
 		extTileIdMap.getOrCreatePseudoBiomeID(ExtTileIdMap.TILE_VILLAGE_BUTCHERS_SHOP);
 		extTileIdMap.getOrCreatePseudoBiomeID(ExtTileIdMap.TILE_VILLAGE_CHURCH);
-		
+
 		// Nether & Nether Fortress:
 		extTileIdMap.getOrCreatePseudoBiomeID(ExtTileIdMap.TILE_LAVA);
 		extTileIdMap.getOrCreatePseudoBiomeID(ExtTileIdMap.TILE_LAVA_SHORE);
@@ -80,12 +80,12 @@ public class CommonProxy {
 		extTileIdMap.getOrCreatePseudoBiomeID(ExtTileIdMap.TILE_NETHER_HALL);
 		extTileIdMap.getOrCreatePseudoBiomeID(ExtTileIdMap.TILE_NETHER_FORT_STAIRS);
 		extTileIdMap.getOrCreatePseudoBiomeID(ExtTileIdMap.TILE_NETHER_THRONE);
-		
+
 		extTileIdMap.getOrCreatePseudoBiomeID(ExtTileIdMap.TILE_END_ISLAND);
 		extTileIdMap.getOrCreatePseudoBiomeID(ExtTileIdMap.TILE_END_ISLAND_PLANTS);
 		extTileIdMap.getOrCreatePseudoBiomeID(ExtTileIdMap.TILE_END_VOID);
 	}
-	
+
 	public void openAtlasGUI(ItemStack stack) {}
 
 	public void openAtlasGUI() {}
@@ -93,7 +93,7 @@ public class CommonProxy {
 	public File getConfigDir(){
 		return configDir;
 	}
-	
+
 	/**
 	 * Returns a side-appropriate EntityPlayer for use during message handling
 	 */
@@ -108,13 +108,13 @@ public class CommonProxy {
 	public IThreadListener getThreadFromContext(MessageContext ctx) {
 		return ctx.getServerHandler().player.getServer();
 	}
-	
+
 	/** When a world is saved, so is the custom tile id config. */
 	@SubscribeEvent
 	public void onWorldSave(WorldEvent.Save event) {
 		checkSaveConfig();
 	}
-	
+
 	private void checkSaveConfig() {
 		if (extTileIdMap.isDirty()) {
 			Log.info("Saving ext tile id config");

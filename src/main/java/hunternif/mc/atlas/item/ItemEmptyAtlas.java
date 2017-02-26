@@ -15,7 +15,7 @@ import net.minecraftforge.common.ForgeHooks;
 public class ItemEmptyAtlas extends Item {
 	public ItemEmptyAtlas() {
 	}
-	
+
 	@Override
 	public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player,
 			EnumHand hand) {

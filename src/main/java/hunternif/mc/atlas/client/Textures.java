@@ -24,7 +24,7 @@ public class Textures {
 	MARKER_FRAME_ON = gui("marker_frame_on.png"),
 	MARKER_FRAME_OFF = gui("marker_frame_off.png"),
 	ERASER = gui("eraser.png"),
-	
+
 	SCALEBAR_4 = scaleBar("scalebar_4.png"),
 	SCALEBAR_8 = scaleBar("scalebar_8.png"),
 	SCALEBAR_16 = scaleBar("scalebar_16.png"),
@@ -33,13 +33,13 @@ public class Textures {
 	SCALEBAR_128 = scaleBar("scalebar_128.png"),
 	SCALEBAR_256 = scaleBar("scalebar_256.png"),
 	SCALEBAR_512 = scaleBar("scalebar_512.png"),
-	
+
 	ICON_ADD_MARKER = icon("add_marker.png"),
 	ICON_DELETE_MARKER = icon("del_marker.png"),
 	ICON_SHOW_MARKERS = icon("show_markers.png"),
 	ICON_HIDE_MARKERS = icon("hide_markers.png"),
 	ICON_EXPORT = icon("export.png"),
-	
+
 	MARKER_GOOGLE_MARKER = marker("google_marker.png"),
 	MARKER_RED_X_LARGE = marker("red_x_large.png"),
 	MARKER_RED_X_SMALL = marker("red_x_small.png"),
@@ -57,7 +57,7 @@ public class Textures {
 	MARKER_TOWER = marker("tower.png"),
 	MARKER_SCROLL = marker("scroll.png"),
 	MARKER_TOMB = marker("tomb.png"),
-	
+
 	TILE_TEST = tile("test.png"),
 	TILE_MOUNTAINS = tile("mountains.png"),
 	TILE_MOUNTAINS2 = tile("mountains2.png"),
@@ -210,13 +210,13 @@ public class Textures {
 	TILE_LAVA2 = tile("lava2.png"),
 	TILE_LAVA_SHORE = tile("lava_shore.png"),
 	TILE_LAVA_SHORE2 = tile("lava_shore2.png"),
-	
+
 	TILE_END_VOID = tile("end_void.png"),
 	TILE_END_ISLAND = tile("end_island.png"),
 	TILE_END_ISLAND2 = tile("end_island2.png"),
 	TILE_END_ISLAND_PLANTS = tile("end_island_plants.png"),
 	TILE_END_ISLAND_PLANTS2 = tile("end_island_plants2.png"),
-	
+
 	// Village:
 	TILE_HOUSE = tile("house.png"),
 	TILE_FENCE = tile("fence.png"),
@@ -233,7 +233,7 @@ public class Textures {
 	TILE_HOUSE_SMALL = tile("house_small.png"),
 	TILE_BUTCHERS_SHOP = tile("butchers_shop.png"),
 	TILE_CHURCH = tile("church.png"),
-	
+
 	// Nether Fortress:
 	TILE_NETHER_BRIDGE = tile("nether_bridge.png"),
 	TILE_NETHER_BRIDGE_X = tile("nether_bridge_x.png"),
@@ -246,7 +246,7 @@ public class Textures {
 	TILE_NETHER_HALL = tile("nether_hall.png"),
 	TILE_NETHER_FORT_STAIRS = tile("nether_fort_stairs.png"),
 	TILE_NETHER_THRONE = tile("nether_throne.png");
-	
+
 	// Constructor helpers:
 	private static ResourceLocation gui(String fileName) {
 		return new ResourceLocation(GUI + fileName);

@@ -19,7 +19,7 @@ import java.util.Map;
 public class GuiScaleBar extends GuiComponent {
 	private static final int WIDTH = 20;
 	private static final int HEIGHT = 8;
-	
+
 	private static final Map<Double, ResourceLocation> textureMap;
 	static {
 		Builder<Double, ResourceLocation> builder = ImmutableMap.builder();
@@ -33,30 +33,29 @@ public class GuiScaleBar extends GuiComponent {
 		builder.put(8.0, Textures.SCALEBAR_4);
 		textureMap = builder.build();
 	}
-	
 	/** Pixel-to-block ratio. */
 	private double mapScale = 1;
 	
 	GuiScaleBar() {
 		setSize(WIDTH, HEIGHT);
 	}
-	
+
 	void setMapScale(double scale) {
 		this.mapScale = scale;
 	}
-	
+
 	/** Returns the background texture depending on the scale. */
 	private ResourceLocation getTexture() {
 		return textureMap.get(mapScale);
 	}
-	
+
 	@Override
 	public void drawScreen(int mouseX, int mouseY, float partialTick) {
 		ResourceLocation texture = getTexture();
 		if (texture == null) return;
-		
+
 		AtlasRenderHelper.drawFullTexture(texture, getGuiX(), getGuiY(), WIDTH, HEIGHT);
-		
+
 		if (isMouseOver) {
 			drawTooltip(Collections.singletonList(I18n.format("gui.antiqueatlas.scalebar")), Minecraft.getMinecraft().fontRenderer);
 		}

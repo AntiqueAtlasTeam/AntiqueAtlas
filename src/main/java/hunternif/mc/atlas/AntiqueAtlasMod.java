@@ -38,21 +38,21 @@ public class AntiqueAtlasMod {
 	public static final String NAME = "Antique Atlas";
 	public static final String CHANNEL = ID;
 	public static final String VERSION = "@VERSION@";
-	
+
 	@Instance(ID)
 	public static AntiqueAtlasMod instance;
-	
+
 	@SidedProxy(clientSide="hunternif.mc.atlas.ClientProxy", serverSide="hunternif.mc.atlas.CommonProxy")
 	public static CommonProxy proxy;
-	
+
 	public static final SettingsConfig settings = new SettingsConfig();
-	
+
 	public static final AtlasDataHandler atlasData = new AtlasDataHandler();
 	public static final MarkersDataHandler markersData = new MarkersDataHandler();
-	
+
 	public static final ExtBiomeDataHandler extBiomeData = new ExtBiomeDataHandler();
 	public static final GlobalMarkersDataHandler globalMarkersData = new GlobalMarkersDataHandler();
-	
+
 	public static ItemAtlas itemAtlas;
 	public static ItemEmptyAtlas itemEmptyAtlas;
 
@@ -76,7 +76,7 @@ public class AntiqueAtlasMod {
 			GameRegistry.register(itemEmptyAtlas);
 		}
 	}
-	
+
 	@EventHandler
 	public void init(FMLInitializationEvent event){
 		PacketDispatcher.registerPackets();
@@ -99,19 +99,19 @@ public class AntiqueAtlasMod {
 		
 		MinecraftForge.EVENT_BUS.register(atlasData);
 		MinecraftForge.EVENT_BUS.register(markersData);
-		
+
 		MinecraftForge.EVENT_BUS.register(extBiomeData);
-		
+
 		MinecraftForge.EVENT_BUS.register(globalMarkersData);
-		
+
 		MinecraftForge.EVENT_BUS.register(new DeathWatcher());
-		
+
 		MinecraftForge.EVENT_BUS.register(new StructureWatcher("EndCity", 1, MarkerTypes.END_CITY_FAR, "gui.antiqueatlas.marker.endcity").setTileMarker(MarkerTypes.END_CITY, "gui.antiqueatlas.marker.endcity"));
 		MinecraftForge.EVENT_BUS.register(new VillageWatcher());
 		MinecraftForge.EVENT_BUS.register(new NetherFortressWatcher());
 		MinecraftForge.EVENT_BUS.register(new NetherPortalWatcher());
 	}
-	
+
 	@EventHandler
 	public void postInit(FMLPostInitializationEvent event) {
 		proxy.postInit(event);

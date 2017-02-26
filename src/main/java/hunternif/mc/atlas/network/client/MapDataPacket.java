@@ -4,15 +4,15 @@ import hunternif.mc.atlas.AntiqueAtlasMod;
 import hunternif.mc.atlas.client.gui.GuiAtlas;
 import hunternif.mc.atlas.core.AtlasData;
 import hunternif.mc.atlas.network.AbstractMessage.AbstractClientMessage;
-
-import java.io.IOException;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+
+import java.io.IOException;
 
 /**
  * Used to sync bulk atlas data from server to client.
@@ -41,7 +41,9 @@ public class MapDataPacket extends AbstractClientMessage<MapDataPacket> {
 		ByteBufUtils.writeTag(buffer, data);
 	}
 
+
 	@Override
+	@SideOnly(Side.CLIENT)
 	protected void process(EntityPlayer player, Side side) {
 		if (data == null) return; // Atlas is empty
 		AtlasData atlasData = AntiqueAtlasMod.atlasData.getAtlasData(atlasID, player.getEntityWorld());

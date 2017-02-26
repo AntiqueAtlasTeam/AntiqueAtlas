@@ -7,9 +7,9 @@ import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
 
 public class ExtBiomeDataHandler {
 	private static final String DATA_KEY = "aAtlasExtTiles";
-	
+
 	private ExtBiomeData data;
-	
+
 	@SubscribeEvent(priority=EventPriority.HIGHEST)
 	public void onWorldLoad(WorldEvent.Load event) {
 		if (!event.getWorld().isRemote) {
@@ -21,14 +21,14 @@ public class ExtBiomeDataHandler {
 			}
 		}
 	}
-	
+
 	public ExtBiomeData getData() {
 		if (data == null) { // This will happen on the client
 			data = new ExtBiomeData(DATA_KEY);
 		}
 		return data;
 	}
-	
+
 	@SubscribeEvent
 	public void onPlayerLogin(PlayerLoggedInEvent event) {
 		ExtTileIdMap.instance().syncOnPlayer(event.player);
