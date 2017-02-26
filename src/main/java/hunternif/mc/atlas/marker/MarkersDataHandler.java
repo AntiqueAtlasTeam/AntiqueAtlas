@@ -1,14 +1,13 @@
 package hunternif.mc.atlas.marker;
 
 import hunternif.mc.atlas.AntiqueAtlasMod;
-
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.network.FMLNetworkEvent.ClientConnectedToServerEvent;
+
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Provides access to {@link MarkersData}. Maintains a cache on the client side,
@@ -18,9 +17,9 @@ import net.minecraftforge.fml.common.network.FMLNetworkEvent.ClientConnectedToSe
  */
 public class MarkersDataHandler {
 	protected static final String MARKERS_DATA_PREFIX = "aaMarkers_";
-	
+
 	private final Map<String, MarkersData> markersDataClientCache = new ConcurrentHashMap<String, MarkersData>();
-	
+
 	/** Loads data for the given atlas or creates a new one. */
 	public MarkersData getMarkersData(ItemStack stack, World world) {
 		if (stack.getItem() == AntiqueAtlasMod.itemAtlas) {
@@ -29,7 +28,7 @@ public class MarkersDataHandler {
 			return null;
 		}
 	}
-	
+
 	/** Loads data for the given atlas ID or creates a new one. */
 	public MarkersData getMarkersData(int atlasID, World world) {
 		String key = getMarkersDataKey(atlasID);
@@ -40,20 +39,20 @@ public class MarkersDataHandler {
 			data = markersDataClientCache.get(key);
 		}
 		if (data == null) {
-			data = (MarkersData) world.loadItemData(MarkersData.class, key);
+			data = (MarkersData) world.loadData(MarkersData.class, key);
 			if (data == null) {
 				data = new MarkersData(key);
-				world.setItemData(key, data);
+				world.setData(key, data);
 			}
 			if (world.isRemote) markersDataClientCache.put(key, data);
 		}
 		return data;
 	}
-	
+
 	protected String getMarkersDataKey(int atlasID) {
 		return MARKERS_DATA_PREFIX + atlasID;
 	}
-	
+
 	/**
 	 * This method resets the cache when the client loads a new world.
 	 * It is required in order that old markers data is not

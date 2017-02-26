@@ -50,24 +50,24 @@ public class ClientProxy extends CommonProxy implements IResourceManagerReloadLi
 	private ExtTileTextureMap tileTextureMap;
 	private ExtTileTextureConfig tileTextureConfig;
 	private MarkerTextureConfig markerTextureConfig;
-	
+
 	private GuiAtlas guiAtlas;
-	
+
 	@Override
 	public MinecraftServer getServer() {
 		return FMLClientHandler.instance().getServer();
 	}
-	
+
 	@Override
 	public void preInit(FMLPreInitializationEvent event) {
 		super.preInit(event);
-		
+
 		MinecraftForge.EVENT_BUS.register(ExportProgressOverlay.INSTANCE);
-		
+
 		//TODO Enforce texture config loading process as follows:
 		// 1. pre-init: Antique Atlas defaults are loaded, config files are read.
 		// 2. init: mods set their custom textures. Those loaded from the config must not be overwritten!
-		
+
 		textureSetMap = TextureSetMap.instance();
 		textureSetConfig = new TextureSetConfig(new File(configDir, "texture_sets.json"));
 		// Register default values before the config file loads, possibly overwriting the,:
@@ -89,19 +89,19 @@ public class ClientProxy extends CommonProxy implements IResourceManagerReloadLi
 		// Prevent rewriting of the config while no changes have been made:
 		biomeTextureMap.setDirty(false);
 		assignVanillaBiomeTextures();
-		
+
 		tileTextureMap = ExtTileTextureMap.instance();
 		tileTextureConfig = new ExtTileTextureConfig(new File(configDir, "tile_textures.json"), textureSetMap);
 		tileTextureConfig.load(tileTextureMap);
 		// Prevent rewriting of the config while no changes have been made:
 		tileTextureMap.setDirty(false);
 		registerVanillaCustomTileTextures();
-		
+
 		if(Minecraft.getMinecraft().getResourceManager() instanceof IReloadableResourceManager) {
 			((IReloadableResourceManager)Minecraft.getMinecraft().getResourceManager()).registerReloadListener(this);
 		}
 	}
-	
+
 	@Override
 	public void init(FMLInitializationEvent event) {
 		super.init(event);
@@ -109,7 +109,7 @@ public class ClientProxy extends CommonProxy implements IResourceManagerReloadLi
 		markerTextureConfig.load(MarkerRegistry.INSTANCE);
 		// Prevent rewriting of the config while no changes have been made:
 		MarkerRegistry.INSTANCE.setDirty(true);
-		
+
 		for (MarkerType type : MarkerRegistry.getValues()) {
 			type.initMips();
 		}
@@ -117,20 +117,20 @@ public class ClientProxy extends CommonProxy implements IResourceManagerReloadLi
 		Minecraft.getMinecraft().getRenderItem().getItemModelMesher().register(AntiqueAtlasMod.itemAtlas, new ItemMeshDefinition() {
 			@Override
 			public ModelResourceLocation getModelLocation(ItemStack stack) {
-				return new ModelResourceLocation(AntiqueAtlasMod.ID + ":antiqueAtlas", "inventory");
+				return new ModelResourceLocation(AntiqueAtlasMod.ID + ":antiqueatlas", "inventory");
 			}
 		});
-		Minecraft.getMinecraft().getRenderItem().getItemModelMesher().register(AntiqueAtlasMod.itemEmptyAtlas, 0, new ModelResourceLocation(AntiqueAtlasMod.ID + ":emptyAntiqueAtlas", "inventory"));
+		Minecraft.getMinecraft().getRenderItem().getItemModelMesher().register(AntiqueAtlasMod.itemEmptyAtlas, 0, new ModelResourceLocation(AntiqueAtlasMod.ID + ":emptyantiqueatlas", "inventory"));
 		FMLCommonHandler.instance().bus().register(this);
 	}
-	
-	
+
+
 	@Override
 	public void postInit(FMLPostInitializationEvent event) {
 		super.postInit(event);
 		guiAtlas.setMapScale(AntiqueAtlasMod.settings.defaultScale);
 	}
-	
+
 	@Override
 	public void openAtlasGUI(ItemStack stack) {
 		Minecraft mc = Minecraft.getMinecraft();
@@ -139,7 +139,7 @@ public class ClientProxy extends CommonProxy implements IResourceManagerReloadLi
 			mc.displayGuiScreen(guiAtlas.setAtlasItemStack(stack));
 		}
 	}
-	
+
 	private void registerDefaultTextureSets(TextureSetMap map) {
 		map.register(ICE);
 		map.register(SHORE);
@@ -149,18 +149,18 @@ public class ClientProxy extends CommonProxy implements IResourceManagerReloadLi
 		map.register(SUNFLOWERS);
 		map.register(HILLS);
 		map.register(DESERT_HILLS);
-		
+
 		map.register(ICE_SPIKES);
 		map.register(SNOW_PINES);
 		map.register(SNOW_PINES_HILLS);
 		map.register(SNOW_HILLS);
 		map.register(SNOW);
-		
+
 		map.register(MOUNTAINS_NAKED);
 		map.register(MOUNTAINS);
 		map.register(MOUNTAINS_SNOW_CAPS);
 		map.register(MOUNTAINS_ALL);
-		
+
 		map.register(FOREST);
 		map.register(FOREST_HILLS);
 		map.register(FOREST_FLOWERS);
@@ -188,12 +188,12 @@ public class ClientProxy extends CommonProxy implements IResourceManagerReloadLi
 		map.register(PLATEAU_MESA_TREES);
 		map.register(PLATEAU_MESA_TREES_LOW);
 		map.register(PLATEAU_SAVANNA);
-		
+
 		map.register(MEGA_SPRUCE);
 		map.register(MEGA_SPRUCE_HILLS);
 		map.register(MEGA_TAIGA);
 		map.register(MEGA_TAIGA_HILLS);
-		
+
 		map.register(SWAMP);
 		map.register(SWAMP_HILLS);
 		map.register(MUSHROOM);
@@ -201,7 +201,7 @@ public class ClientProxy extends CommonProxy implements IResourceManagerReloadLi
 		map.register(LAVA);
 		map.register(LAVA_SHORE);
 		map.register(CAVE_WALLS);
-		
+
 		map.register(HOUSE);
 		map.register(FENCE);
 		map.register(LIBRARY);
@@ -217,7 +217,7 @@ public class ClientProxy extends CommonProxy implements IResourceManagerReloadLi
 		map.register(HOUSE_SMALL);
 		map.register(BUTCHERS_SHOP);
 		map.register(CHURCH);
-		
+
 		map.register(NETHER_BRIDGE);
 		map.register(NETHER_BRIDGE_X);
 		map.register(NETHER_BRIDGE_Z);
@@ -229,12 +229,12 @@ public class ClientProxy extends CommonProxy implements IResourceManagerReloadLi
 		map.register(NETHER_HALL);
 		map.register(NETHER_FORT_STAIRS);
 		map.register(NETHER_THRONE);
-		
+
 		map.register(END_ISLAND);
 		map.register(END_ISLAND_PLANTS);
 		map.register(END_VOID);
 	}
-	
+
 	/** Assign default textures to vanilla biomes. The textures are assigned
 	 * only if the biome was not in the config. This prevents unnecessary
 	 * overwriting, to aid people who manually modify the config. */
@@ -312,7 +312,7 @@ public class ClientProxy extends CommonProxy implements IResourceManagerReloadLi
 	private void setBiomeTextureIfNone(Biome biome, TextureSet textureSet) {
 		setBiomeTextureIfNone(Biome.getIdForBiome(biome), textureSet);
 	}
-	
+
 	/** Assign default textures to the pseudo-biomes used for vanilla Minecraft.
 	 * The pseudo-biomes are: villages houses, village territory and lava. */
 	private void registerVanillaCustomTileTextures() {
@@ -330,7 +330,7 @@ public class ClientProxy extends CommonProxy implements IResourceManagerReloadLi
 		setCustomTileTextureIfNone(ExtTileIdMap.TILE_VILLAGE_SMALL_HOUSE, HOUSE_SMALL);
 		setCustomTileTextureIfNone(ExtTileIdMap.TILE_VILLAGE_BUTCHERS_SHOP, BUTCHERS_SHOP);
 		setCustomTileTextureIfNone(ExtTileIdMap.TILE_VILLAGE_CHURCH, CHURCH);
-		
+
 		// Nether & Nether Fortress:
 		setCustomTileTextureIfNone(ExtTileIdMap.TILE_LAVA, LAVA);
 		setCustomTileTextureIfNone(ExtTileIdMap.TILE_LAVA_SHORE, LAVA_SHORE);
@@ -360,14 +360,14 @@ public class ClientProxy extends CommonProxy implements IResourceManagerReloadLi
 
 	@Override
 	public EntityPlayer getPlayerEntity(MessageContext ctx) {
-		return (ctx.side.isClient() ? Minecraft.getMinecraft().thePlayer : super.getPlayerEntity(ctx));
+		return (ctx.side.isClient() ? Minecraft.getMinecraft().player : super.getPlayerEntity(ctx));
 	}
-	
+
 	@Override
 	public IThreadListener getThreadFromContext(MessageContext ctx) {
 		return (ctx.side.isClient() ? Minecraft.getMinecraft() : super.getThreadFromContext(ctx));
 	}
-	
+
 	public File getConfigDir(){
 		return configDir;
 	}

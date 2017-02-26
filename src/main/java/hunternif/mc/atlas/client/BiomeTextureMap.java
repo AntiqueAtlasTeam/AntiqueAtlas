@@ -1,61 +1,25 @@
 package hunternif.mc.atlas.client;
 
-import static hunternif.mc.atlas.client.TextureSet.DENSE_FOREST;
-import static hunternif.mc.atlas.client.TextureSet.DENSE_FOREST_HILLS;
-import static hunternif.mc.atlas.client.TextureSet.DESERT;
-import static hunternif.mc.atlas.client.TextureSet.DESERT_HILLS;
-import static hunternif.mc.atlas.client.TextureSet.FOREST;
-import static hunternif.mc.atlas.client.TextureSet.FOREST_HILLS;
-import static hunternif.mc.atlas.client.TextureSet.HILLS;
-import static hunternif.mc.atlas.client.TextureSet.ICE;
-import static hunternif.mc.atlas.client.TextureSet.JUNGLE;
-import static hunternif.mc.atlas.client.TextureSet.JUNGLE_CLIFFS;
-import static hunternif.mc.atlas.client.TextureSet.JUNGLE_HILLS;
-import static hunternif.mc.atlas.client.TextureSet.MOUNTAINS_NAKED;
-import static hunternif.mc.atlas.client.TextureSet.MOUNTAINS_SNOW_CAPS;
-import static hunternif.mc.atlas.client.TextureSet.PINES;
-import static hunternif.mc.atlas.client.TextureSet.PINES_HILLS;
-import static hunternif.mc.atlas.client.TextureSet.PLAINS;
-import static hunternif.mc.atlas.client.TextureSet.PLATEAU_MESA;
-import static hunternif.mc.atlas.client.TextureSet.PLATEAU_MESA_TREES;
-import static hunternif.mc.atlas.client.TextureSet.ROCK_SHORE;
-import static hunternif.mc.atlas.client.TextureSet.SAVANNA;
-import static hunternif.mc.atlas.client.TextureSet.SAVANNA_CLIFFS;
-import static hunternif.mc.atlas.client.TextureSet.SHORE;
-import static hunternif.mc.atlas.client.TextureSet.SNOW;
-import static hunternif.mc.atlas.client.TextureSet.SNOW_HILLS;
-import static hunternif.mc.atlas.client.TextureSet.SNOW_PINES;
-import static hunternif.mc.atlas.client.TextureSet.SNOW_PINES_HILLS;
-import static hunternif.mc.atlas.client.TextureSet.SPARSE_FOREST;
-import static hunternif.mc.atlas.client.TextureSet.SPARSE_FOREST_HILLS;
-import static hunternif.mc.atlas.client.TextureSet.SWAMP;
-import static hunternif.mc.atlas.client.TextureSet.SWAMP_HILLS;
-import static hunternif.mc.atlas.client.TextureSet.WATER;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-
+import hunternif.mc.atlas.core.Tile;
+import hunternif.mc.atlas.util.Log;
+import hunternif.mc.atlas.util.SaveData;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.world.biome.Biome;
 import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.common.BiomeDictionary.Type;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.world.biome.Biome;
+import java.util.*;
+import java.util.Map.Entry;
 
-import hunternif.mc.atlas.core.Tile;
-import hunternif.mc.atlas.util.Log;
-import hunternif.mc.atlas.util.SaveData;
+import static hunternif.mc.atlas.client.TextureSet.*;
 
 /**
  * Maps biome IDs (or pseudo IDs) to textures. <i>Not thread-safe!</i>
  * <p>If several textures are set for one ID, one will be chosen at random when
- * putting tile into Atlas.</p> 
+ * putting tile into Atlas.</p>
  * @author Hunternif
  */
 @SideOnly(Side.CLIENT)
@@ -64,12 +28,12 @@ public class BiomeTextureMap extends SaveData {
 	public static BiomeTextureMap instance() {
 		return INSTANCE;
 	}
-	
+
 	/** This map allows keys other than the 256 biome IDs to use for special tiles. */
-	final Map<Integer, TextureSet> textureMap = new HashMap<Integer, TextureSet>();
-	
+	final Map<Integer, TextureSet> textureMap = new HashMap<>();
+
 	public static final TextureSet defaultTexture = PLAINS;
-	
+
 	/** Assign texture set to biome. */
 	public void setTexture(int biomeID, TextureSet textureSet) {
 		if (textureSet == null) {
@@ -94,7 +58,7 @@ public class BiomeTextureMap extends SaveData {
 			}
 		}
 	}
-	
+
 	/** Find the most appropriate standard texture set depending on
 	 * BiomeDictionary types. */
 	private void autoRegister(int biomeID) {
@@ -109,7 +73,7 @@ public class BiomeTextureMap extends SaveData {
 			setTexture(biomeID, defaultTexture);
 			return;
 		}
-		List<Type> types = Arrays.asList(BiomeDictionary.getTypesForBiome(biome));
+		List<Type> types = Arrays.asList((Type[])BiomeDictionary.getTypes(biome).toArray());
 		// 1. Swamp
 		if (types.contains(Type.SWAMP)) {
 			if (types.contains(Type.HILLS)) {
@@ -140,7 +104,7 @@ public class BiomeTextureMap extends SaveData {
 			} else {
 				setTexture(biomeID, SHORE);
 			}
-		} 
+		}
 		// 4. Jungle
 		else if (types.contains(Type.JUNGLE)) {
 			if (types.contains(Type.MOUNTAIN)) {
@@ -243,7 +207,7 @@ public class BiomeTextureMap extends SaveData {
 		}
 		Log.info("Auto-registered standard texture set for biome %d", biomeID);
 	}
-	
+
 	/** Auto-registers the biome ID if it is not registered. */
 	public void checkRegistration(int biomeID) {
 		if (!isRegistered(biomeID)) {
@@ -251,11 +215,11 @@ public class BiomeTextureMap extends SaveData {
 			markDirty();
 		}
 	}
-	
+
 	public boolean isRegistered(int biomeID) {
 		return textureMap.containsKey(biomeID);
 	}
-	
+
 	/** If unknown biome, auto-registers a texture set. If null, returns default set. */
 	public TextureSet getTextureSet(Tile tile) {
 		if (tile == null) return defaultTexture;
@@ -265,13 +229,14 @@ public class BiomeTextureMap extends SaveData {
 
 	public ResourceLocation getTexture(Tile tile) {
 		TextureSet set = getTextureSet(tile);
-		int i = MathHelper.floor_float((float)(tile.getVariationNumber())
+
+		int i = MathHelper.floor((float)(tile.getVariationNumber())
 				/ (float)(Short.MAX_VALUE) * (float)(set.textures.length));
 		return set.textures[i];
 	}
-	
+
 	public List<ResourceLocation> getAllTextures() {
-		List<ResourceLocation> list = new ArrayList<ResourceLocation>(textureMap.size());
+		List<ResourceLocation> list = new ArrayList<>(textureMap.size());
 		for (Entry<Integer, TextureSet> entry : textureMap.entrySet()) {
 			list.addAll(Arrays.asList(entry.getValue().textures));
 		}

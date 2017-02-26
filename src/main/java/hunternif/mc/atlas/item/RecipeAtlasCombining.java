@@ -4,17 +4,18 @@ import hunternif.mc.atlas.AntiqueAtlasMod;
 import hunternif.mc.atlas.core.AtlasData;
 import hunternif.mc.atlas.marker.Marker;
 import hunternif.mc.atlas.marker.MarkersData;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
+import net.minecraft.util.NonNullList;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.ItemCraftedEvent;
+
+import javax.annotation.Nonnull;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 2 or more atlases combine into one with all biome and marker data copied.
@@ -27,7 +28,7 @@ public class RecipeAtlasCombining implements IRecipe {
 	public boolean matches(InventoryCrafting inv, World world) {
 		return matches(inv);
 	}
-	
+
 	private boolean matches(IInventory inv) {
 		int atlasesFound = 0;
 		for (int i = 0; i < inv.getSizeInventory(); ++i) {
@@ -42,6 +43,7 @@ public class RecipeAtlasCombining implements IRecipe {
 	}
 
 	@Override
+	@Nonnull
 	public ItemStack getCraftingResult(InventoryCrafting inv) {
 		ItemStack firstAtlas = null;
 		List<Integer> atlasIds = new ArrayList<Integer>(9);
@@ -57,7 +59,7 @@ public class RecipeAtlasCombining implements IRecipe {
 				}
 			}
 		}
-		if (atlasIds.size() < 1) return null;
+		if (atlasIds.size() < 1) return ItemStack.EMPTY;
 		return firstAtlas;
 	}
 
@@ -67,21 +69,22 @@ public class RecipeAtlasCombining implements IRecipe {
 	}
 
 	@Override
+	@Nonnull
 	public ItemStack getRecipeOutput() {
-		return null;
+		return ItemStack.EMPTY;
 	}
-	
+
 	@SubscribeEvent
 	public void onCrafted(ItemCraftedEvent event) {
 		// Make sure it's the same recipe:
 		if (event.crafting.getItem() != AntiqueAtlasMod.itemAtlas || !matches(event.craftMatrix)) {
 			return;
 		}
-		World world = event.player.worldObj;
+		World world = event.player.world;
 		if (world.isRemote) return;
 		// Until the first update, on the client the returned atlas ID is the same as the first Atlas on the crafting grid.
 		int atlasID = world.getUniqueDataId(ItemAtlas.WORLD_ATLAS_DATA_ID);
-		
+
 		AtlasData destBiomes = AntiqueAtlasMod.atlasData.getAtlasData(atlasID, world);
 		destBiomes.markDirty();
 		MarkersData destMarkers = AntiqueAtlasMod.markersData.getMarkersData(atlasID, world);
@@ -105,18 +108,18 @@ public class RecipeAtlasCombining implements IRecipe {
 				}
 			}
 		}
-		
+
 		// Set item damage last, because otherwise we wouldn't be able copy the
 		// data from the atlas which was used as a placeholder for the result.
 		event.crafting.setItemDamage(atlasID);
 	}
 
 	@Override
-	public ItemStack[] getRemainingItems(InventoryCrafting inv) {
-		ItemStack[] aitemstack = new ItemStack[inv.getSizeInventory()];
-		for (int i = 0; i < aitemstack.length; ++i) {
+	public NonNullList<ItemStack> getRemainingItems(InventoryCrafting inv) {
+		NonNullList<ItemStack> aitemstack = NonNullList.create();
+		for (int i = 0; i < inv.getSizeInventory(); ++i) {
 			ItemStack itemstack = inv.getStackInSlot(i);
-			aitemstack[i] = net.minecraftforge.common.ForgeHooks.getContainerItem(itemstack);
+			aitemstack.add(net.minecraftforge.common.ForgeHooks.getContainerItem(itemstack));
 		}
 		return aitemstack;
 	}

@@ -1,14 +1,13 @@
 package hunternif.mc.atlas.core;
 
 import hunternif.mc.atlas.AntiqueAtlasMod;
-
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.network.FMLNetworkEvent.ClientConnectedToServerEvent;
+
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Provides access to {@link AtlasData}. Maintains a cache on the client side,
@@ -18,9 +17,9 @@ import net.minecraftforge.fml.common.network.FMLNetworkEvent.ClientConnectedToSe
  */
 public class AtlasDataHandler {
 	protected static final String ATLAS_DATA_PREFIX = "aAtlas_";
-	
+
 	private final Map<String, AtlasData> atlasDataClientCache = new ConcurrentHashMap<String, AtlasData>();
-	
+
 	/** Loads data for the given atlas ID or creates a new one. */
 	public AtlasData getAtlasData(ItemStack stack, World world) {
 		if (stack.getItem() == AntiqueAtlasMod.itemAtlas) {
@@ -29,7 +28,7 @@ public class AtlasDataHandler {
 			return null;
 		}
 	}
-	
+
 	/** Loads data for the given atlas or creates a new one. */
 	public AtlasData getAtlasData(int atlasID, World world) {
 		String key = getAtlasDataKey(atlasID);
@@ -40,20 +39,20 @@ public class AtlasDataHandler {
 			data = atlasDataClientCache.get(key);
 		}
 		if (data == null) {
-			data = (AtlasData) world.loadItemData(AtlasData.class, key);
+			data = (AtlasData) world.loadData(AtlasData.class, key);
 			if (data == null) {
 				data = new AtlasData(key);
-				world.setItemData(key, data);
+				world.setData(key, data);
 			}
 			if (world.isRemote) atlasDataClientCache.put(key, data);
 		}
 		return data;
 	}
-	
+
 	protected String getAtlasDataKey(int atlasID) {
 		return ATLAS_DATA_PREFIX + atlasID;
 	}
-	
+
 	/**
 	 * This method resets the cache when the client loads a new world.
 	 * It is required in order that old atlas data is not

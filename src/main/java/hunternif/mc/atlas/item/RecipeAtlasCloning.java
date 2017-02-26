@@ -4,7 +4,10 @@ import hunternif.mc.atlas.AntiqueAtlasMod;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
+import net.minecraft.util.NonNullList;
 import net.minecraft.world.World;
+
+import javax.annotation.Nonnull;
 
 public class RecipeAtlasCloning implements IRecipe {
 
@@ -15,7 +18,7 @@ public class RecipeAtlasCloning implements IRecipe {
 
 		for (int j = 0; j < inv.getSizeInventory(); ++j) {
 			ItemStack stack = inv.getStackInSlot(j);
-		
+
 			if (stack != null) {
 				if (stack.getItem() == AntiqueAtlasMod.itemAtlas) {
 					if (filledAtlas != null) {
@@ -35,6 +38,7 @@ public class RecipeAtlasCloning implements IRecipe {
 	}
 
 	@Override
+	@Nonnull
 	public ItemStack getCraftingResult(InventoryCrafting inv) {
 		int i = 0; // number of new copies
 		ItemStack filledAtlas = null;
@@ -45,12 +49,12 @@ public class RecipeAtlasCloning implements IRecipe {
 			if (stack != null) {
 				if (stack.getItem() == AntiqueAtlasMod.itemAtlas) {
 					if (filledAtlas != null) {
-						return null;
+						return  ItemStack.EMPTY;
 					}
 					filledAtlas = stack;
 				} else {
 					if (stack.getItem() != AntiqueAtlasMod.itemEmptyAtlas) {
-						return null;
+						return  ItemStack.EMPTY;
 					}
 					i++;
 				}
@@ -68,7 +72,7 @@ public class RecipeAtlasCloning implements IRecipe {
 		}
 		else
 		{
-			return null;
+			return ItemStack.EMPTY;
 		}
 	}
 
@@ -78,16 +82,17 @@ public class RecipeAtlasCloning implements IRecipe {
 	}
 
 	@Override
+	@Nonnull
 	public ItemStack getRecipeOutput() {
-		return null;
+		return ItemStack.EMPTY;
 	}
 
 	@Override
-	public ItemStack[] getRemainingItems(InventoryCrafting inv) {
-		ItemStack[] aitemstack = new ItemStack[inv.getSizeInventory()];
-		for (int i = 0; i < aitemstack.length; ++i) {
+	public NonNullList<ItemStack> getRemainingItems(InventoryCrafting inv) {
+		NonNullList<ItemStack> aitemstack = NonNullList.create();
+		for (int i = 0; i < inv.getSizeInventory(); ++i) {
 			ItemStack itemstack = inv.getStackInSlot(i);
-			aitemstack[i] = net.minecraftforge.common.ForgeHooks.getContainerItem(itemstack);
+			aitemstack.add(net.minecraftforge.common.ForgeHooks.getContainerItem(itemstack));
 		}
 		return aitemstack;
 	}

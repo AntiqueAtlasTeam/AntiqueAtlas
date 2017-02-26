@@ -1,33 +1,34 @@
 package kenkron.antiqueatlasoverlay;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-
-import org.lwjgl.opengl.GL11;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+import org.lwjgl.opengl.GL11;
+
+import java.util.ArrayList;
+import java.util.HashMap;
 
 /**The minimap render is a bit slow.  The function that really takes time is
  * AtlasRenderHelper.drawAutotileCorner(...).  This class makes it faster by
  * sorting the draw commands by texture, then
  * rendering all of the same textures of a map at once without re-binding.*/
 public class SetTileRenderer {
-	
+
 	public class TileCorner{
 		public int x, y, u, v;
 		public TileCorner(int x, int y, int u, int v){
 			this.x = x; this.y = y; this.u = u; this.v = v;
 		}
 	}
-	
+
 	public int tileHalfSize=8;
-	
+
 	HashMap<ResourceLocation, ArrayList<TileCorner>> subjects;
-	
+
 	public SetTileRenderer(int tileHalfSize){
 		this.tileHalfSize=tileHalfSize;
 		subjects = new HashMap<ResourceLocation, ArrayList<TileCorner>>();
@@ -41,7 +42,8 @@ public class SetTileRenderer {
 		}
 		set.add(new TileCorner(x, y, u, v));
 	}
-	
+
+	@SideOnly(Side.CLIENT)
 	public void draw(){
 		for (ResourceLocation key: subjects.keySet()){
 			ArrayList<TileCorner> tca = subjects.get(key);
@@ -57,7 +59,8 @@ public class SetTileRenderer {
 			tessellator.draw();
 		}
 	}
-	
+
+	@SideOnly(Side.CLIENT)
 	protected void drawInlineAutotileCorner(int x, int y, int u, int v) {
 		float minU = u / 4f;
 		float maxU =(u + 1) / 4f;
