@@ -19,7 +19,7 @@ public class RecipeAtlasCloning implements IRecipe {
 		for (int j = 0; j < inv.getSizeInventory(); ++j) {
 			ItemStack stack = inv.getStackInSlot(j);
 
-			if (stack != null) {
+			if (!stack.isEmpty()) {
 				if (stack.getItem() == AntiqueAtlasMod.itemAtlas) {
 					if (filledAtlas != null) {
 						return false;
@@ -46,7 +46,7 @@ public class RecipeAtlasCloning implements IRecipe {
 		for (int j = 0; j < inv.getSizeInventory(); ++j) {
 			ItemStack stack = inv.getStackInSlot(j);
 
-			if (stack != null) {
+			if (!stack.isEmpty()) {
 				if (stack.getItem() == AntiqueAtlasMod.itemAtlas) {
 					if (filledAtlas != null) {
 						return  ItemStack.EMPTY;

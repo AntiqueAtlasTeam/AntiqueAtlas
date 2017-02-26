@@ -33,7 +33,7 @@ public class RecipeAtlasCombining implements IRecipe {
 		int atlasesFound = 0;
 		for (int i = 0; i < inv.getSizeInventory(); ++i) {
 			ItemStack stack = inv.getStackInSlot(i);
-			if (stack != null) {
+			if (!stack.isEmpty()) {
 				if (stack.getItem() == AntiqueAtlasMod.itemAtlas) {
 					atlasesFound++;
 				}
@@ -49,7 +49,7 @@ public class RecipeAtlasCombining implements IRecipe {
 		List<Integer> atlasIds = new ArrayList<Integer>(9);
 		for (int i = 0; i < inv.getSizeInventory(); ++i) {
 			ItemStack stack = inv.getStackInSlot(i);
-			if (stack != null) {
+			if (!stack.isEmpty()) {
 				if (stack.getItem() == AntiqueAtlasMod.itemAtlas) {
 					if (firstAtlas == null) {
 						firstAtlas = stack;
@@ -60,7 +60,7 @@ public class RecipeAtlasCombining implements IRecipe {
 			}
 		}
 		if (atlasIds.size() < 1) return ItemStack.EMPTY;
-		return firstAtlas;
+		return firstAtlas == null ? ItemStack.EMPTY : firstAtlas.copy();
 	}
 
 	@Override
@@ -80,8 +80,10 @@ public class RecipeAtlasCombining implements IRecipe {
 		if (event.crafting.getItem() != AntiqueAtlasMod.itemAtlas || !matches(event.craftMatrix)) {
 			return;
 		}
+
 		World world = event.player.world;
 		if (world.isRemote) return;
+
 		// Until the first update, on the client the returned atlas ID is the same as the first Atlas on the crafting grid.
 		int atlasID = world.getUniqueDataId(ItemAtlas.WORLD_ATLAS_DATA_ID);
 
@@ -91,7 +93,7 @@ public class RecipeAtlasCombining implements IRecipe {
 		destMarkers.markDirty();
 		for (int i = 0; i < event.craftMatrix.getSizeInventory(); ++i) {
 			ItemStack stack = event.craftMatrix.getStackInSlot(i);
-			if (stack == null) continue;
+			if (stack.isEmpty()) continue;
 			AtlasData srcBiomes = AntiqueAtlasMod.atlasData.getAtlasData(stack, world);
 			if (destBiomes != null && srcBiomes != null && destBiomes != srcBiomes) {
 				for (int dim : srcBiomes.getVisitedDimensions()) {
