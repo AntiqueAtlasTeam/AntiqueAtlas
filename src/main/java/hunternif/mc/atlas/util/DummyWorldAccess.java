@@ -24,6 +24,9 @@ public class DummyWorldAccess implements IWorldEventListener {
 			double zOffset, int ... p_180442_15_) {}
 
 	@Override
+	public void spawnParticle(int id, boolean ignoreRange, boolean p_190570_3_, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed, int... parameters) {}
+
+	@Override
 	public void onEntityAdded(Entity entity) {}
 
 	@Override

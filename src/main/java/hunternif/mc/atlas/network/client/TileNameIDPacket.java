@@ -6,17 +6,17 @@ import hunternif.mc.atlas.ext.ExtTileIdMap;
 import hunternif.mc.atlas.ext.ExtTileTextureMap;
 import hunternif.mc.atlas.ext.TileIdRegisteredEvent;
 import hunternif.mc.atlas.network.AbstractMessage.AbstractClientMessage;
-
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Map.Entry;
-
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
 
 /**
  * Used to send pairs (unique tile name)-(pseudo-biome ID) from the server
@@ -42,28 +42,29 @@ public class TileNameIDPacket extends AbstractClientMessage<TileNameIDPacket>
 
 	@Override
 	public void read(PacketBuffer buffer) throws IOException {
-		int size = buffer.readVarIntFromBuffer();
+		int size = buffer.readVarInt();
 		for (int i = 0; i < size; i++) {
 			String name = ByteBufUtils.readUTF8String(buffer);
 			// Reading negative value to save on traffic, because custom biome
 			// IDs are always negative.
-			int biomeID = -buffer.readVarIntFromBuffer();
+			int biomeID = -buffer.readVarInt();
 			nameToIdMap.put(name, biomeID);
 		}
 	}
 
 	@Override
 	public void write(PacketBuffer buffer) throws IOException {
-		buffer.writeVarIntToBuffer(nameToIdMap.size());
+		buffer.writeVarInt(nameToIdMap.size());
 		for (Entry<String, Integer> entry : nameToIdMap.entrySet()) {
 			ByteBufUtils.writeUTF8String(buffer, entry.getKey());
 			// Writing negative value to save on traffic, because custom biome
 			// IDs are always negative.
-			buffer.writeVarIntToBuffer(-entry.getValue());
+			buffer.writeVarInt(-entry.getValue());
 		}
 	}
 
 	@Override
+	@SideOnly(Side.CLIENT)
 	protected void process(EntityPlayer player, Side side) {
 		for (Entry<String, Integer> entry : nameToIdMap.entrySet()) {
 			String tileName = entry.getKey();

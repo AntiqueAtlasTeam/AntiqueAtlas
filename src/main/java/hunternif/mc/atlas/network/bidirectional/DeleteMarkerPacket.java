@@ -5,13 +5,12 @@ import hunternif.mc.atlas.api.AtlasAPI;
 import hunternif.mc.atlas.marker.MarkersData;
 import hunternif.mc.atlas.network.AbstractMessage;
 import hunternif.mc.atlas.util.Log;
-
-import java.io.IOException;
-
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fml.relauncher.Side;
+
+import java.io.IOException;
 
 /**
  * Deletes a marker. A client sends this packet to the server as a request,
@@ -40,14 +39,14 @@ public class DeleteMarkerPacket extends AbstractMessage<DeleteMarkerPacket> {
 
 	@Override
 	public void read(PacketBuffer buffer) throws IOException {
-		atlasID = buffer.readVarIntFromBuffer();
-		markerID = buffer.readVarIntFromBuffer();
+		atlasID = buffer.readVarInt();
+		markerID = buffer.readVarInt();
 	}
 
 	@Override
 	public void write(PacketBuffer buffer) throws IOException {
-		buffer.writeVarIntToBuffer(atlasID);;
-		buffer.writeVarIntToBuffer(markerID);
+		buffer.writeVarInt(atlasID);;
+		buffer.writeVarInt(markerID);
 	}
 
 	public boolean isGlobal() {
@@ -64,14 +63,14 @@ public class DeleteMarkerPacket extends AbstractMessage<DeleteMarkerPacket> {
 				return;
 			}
 			if (isGlobal()) {
-				AtlasAPI.markers.deleteGlobalMarker(player.worldObj, markerID);
+				AtlasAPI.markers.deleteGlobalMarker(player.world, markerID);
 			} else {
-				AtlasAPI.markers.deleteMarker(player.worldObj, atlasID, markerID);
+				AtlasAPI.markers.deleteMarker(player.world, atlasID, markerID);
 			}
 		} else {
 			MarkersData data = isGlobal() ?
 					AntiqueAtlasMod.globalMarkersData.getData() :
-					AntiqueAtlasMod.markersData.getMarkersData(atlasID, player.worldObj);
+					AntiqueAtlasMod.markersData.getMarkersData(atlasID, player.world);
 					data.removeMarker(markerID);
 		}
 	}

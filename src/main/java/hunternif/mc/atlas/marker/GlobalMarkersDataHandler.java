@@ -20,21 +20,21 @@ import net.minecraftforge.fml.common.network.FMLNetworkEvent.ClientConnectedToSe
  */
 public class GlobalMarkersDataHandler {
 	private static final String DATA_KEY = "aAtlasGlobalMarkers";
-	
+
 	private GlobalMarkersData data;
-	
+
 	@SubscribeEvent(priority=EventPriority.HIGHEST)
 	public void onWorldLoad(WorldEvent.Load event) {
 		if (!event.getWorld().isRemote && event.getWorld().provider.getDimension() == 0) {
-			data = (GlobalMarkersData) event.getWorld().loadItemData(GlobalMarkersData.class, DATA_KEY);
+			data = (GlobalMarkersData) event.getWorld().loadData(GlobalMarkersData.class, DATA_KEY);
 			if (data == null) {
 				data = new GlobalMarkersData(DATA_KEY);
 				data.markDirty();
-				event.getWorld().setItemData(DATA_KEY, data);
+				event.getWorld().setData(DATA_KEY, data);
 			}
 		}
 	}
-	
+
 	/**
 	 * This method sets {@link #data} to null when the client connects to a
 	 * remote server. It is required in order that global markers data is not
@@ -50,14 +50,14 @@ public class GlobalMarkersDataHandler {
 			data = null;
 		}
 	}
-	
+
 	public GlobalMarkersData getData() {
 		if (data == null) { // This will happen on the client
 			data = new GlobalMarkersData(DATA_KEY);
 		}
 		return data;
 	}
-	
+
 	/** Synchronizes global markers with the connecting client. */
 	@SubscribeEvent
 	public void onPlayerLogin(PlayerLoggedInEvent event) {

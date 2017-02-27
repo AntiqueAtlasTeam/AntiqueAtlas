@@ -4,15 +4,15 @@ import hunternif.mc.atlas.AntiqueAtlasMod;
 import hunternif.mc.atlas.client.gui.GuiAtlas;
 import hunternif.mc.atlas.core.AtlasData;
 import hunternif.mc.atlas.network.AbstractMessage.AbstractClientMessage;
-
-import java.io.IOException;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+
+import java.io.IOException;
 
 /**
  * Used to sync bulk atlas data from server to client.
@@ -31,20 +31,22 @@ public class MapDataPacket extends AbstractClientMessage<MapDataPacket> {
 
 	@Override
 	public void read(PacketBuffer buffer) throws IOException {
-		atlasID = buffer.readVarIntFromBuffer();
+		atlasID = buffer.readVarInt();
 		data = ByteBufUtils.readTag(buffer);
 	}
 
 	@Override
 	public void write(PacketBuffer buffer) throws IOException {
-		buffer.writeVarIntToBuffer(atlasID);
+		buffer.writeVarInt(atlasID);
 		ByteBufUtils.writeTag(buffer, data);
 	}
 
+
 	@Override
+	@SideOnly(Side.CLIENT)
 	protected void process(EntityPlayer player, Side side) {
 		if (data == null) return; // Atlas is empty
-		AtlasData atlasData = AntiqueAtlasMod.atlasData.getAtlasData(atlasID, player.worldObj);
+		AtlasData atlasData = AntiqueAtlasMod.atlasData.getAtlasData(atlasID, player.getEntityWorld());
 		atlasData.readFromNBT(data);
 		// GuiAtlas may already be opened at (0, 0) browsing position, force load saved position:
 		if (AntiqueAtlasMod.settings.doSaveBrowsingPos &&

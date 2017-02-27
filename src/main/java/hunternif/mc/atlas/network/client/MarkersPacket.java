@@ -1,24 +1,21 @@
 package hunternif.mc.atlas.network.client;
 
-import java.io.IOException;
-import java.util.List;
-import java.util.Set;
-
-import net.minecraftforge.fml.common.network.ByteBufUtils;
-import net.minecraftforge.fml.relauncher.Side;
-
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.network.PacketBuffer;
-
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
-
 import hunternif.mc.atlas.AntiqueAtlasMod;
 import hunternif.mc.atlas.marker.Marker;
 import hunternif.mc.atlas.marker.MarkersData;
 import hunternif.mc.atlas.network.AbstractMessage.AbstractClientMessage;
 import hunternif.mc.atlas.registry.MarkerRegistry;
 import hunternif.mc.atlas.registry.MarkerType;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.network.PacketBuffer;
+import net.minecraftforge.fml.common.network.ByteBufUtils;
+import net.minecraftforge.fml.relauncher.Side;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Sends markers set via API from server to client.
@@ -64,14 +61,14 @@ public class MarkersPacket extends AbstractClientMessage<MarkersPacket> {
 
 	@Override
 	public void read(PacketBuffer buffer) throws IOException {
-		atlasID = buffer.readVarIntFromBuffer();
-		dimension = buffer.readVarIntFromBuffer();
-		int typesLength = buffer.readVarIntFromBuffer();
+		atlasID = buffer.readVarInt();
+		dimension = buffer.readVarInt();
+		int typesLength = buffer.readVarInt();
 		for (int i = 0; i < typesLength; i++) {
 			MarkerType type = MarkerRegistry.find(ByteBufUtils.readUTF8String(buffer));
-			int markersLength = buffer.readVarIntFromBuffer();
+			int markersLength = buffer.readVarInt();
 			for (int j = 0; j < markersLength; j++) {
-				Marker marker = new Marker(buffer.readVarIntFromBuffer(),
+				Marker marker = new Marker(buffer.readVarInt(),
 						type, ByteBufUtils.readUTF8String(buffer),
 						dimension, buffer.readInt(), buffer.readInt(),
 						buffer.readBoolean());
@@ -82,16 +79,16 @@ public class MarkersPacket extends AbstractClientMessage<MarkersPacket> {
 
 	@Override
 	public void write(PacketBuffer buffer) throws IOException {
-		buffer.writeVarIntToBuffer(atlasID);
-		buffer.writeVarIntToBuffer(dimension);
+		buffer.writeVarInt(atlasID);
+		buffer.writeVarInt(dimension);
 		Set<MarkerType> types = markersByType.keySet();
-		buffer.writeVarIntToBuffer(types.size());
+		buffer.writeVarInt(types.size());
 		for (MarkerType type : types) {
 			ByteBufUtils.writeUTF8String(buffer, type.getRegistryName().toString());
 			List<Marker> markers = markersByType.get(type);
-			buffer.writeVarIntToBuffer(markers.size());
+			buffer.writeVarInt(markers.size());
 			for (Marker marker : markers) {
-				buffer.writeVarIntToBuffer(marker.getId());
+				buffer.writeVarInt(marker.getId());
 				ByteBufUtils.writeUTF8String(buffer, marker.getLabel());
 				buffer.writeInt(marker.getX());
 				buffer.writeInt(marker.getZ());
@@ -104,7 +101,7 @@ public class MarkersPacket extends AbstractClientMessage<MarkersPacket> {
 	protected void process(EntityPlayer player, Side side) {
 		MarkersData markersData = isGlobal() ?
 				AntiqueAtlasMod.globalMarkersData.getData() :
-					AntiqueAtlasMod.markersData.getMarkersData(atlasID, player.worldObj);
+					AntiqueAtlasMod.markersData.getMarkersData(atlasID, player.getEntityWorld());
 		for (Marker marker : markersByType.values()) {
 			markersData.loadMarker(marker);
 		}

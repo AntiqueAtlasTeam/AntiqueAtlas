@@ -6,13 +6,12 @@ import hunternif.mc.atlas.core.AtlasData;
 import hunternif.mc.atlas.core.Tile;
 import hunternif.mc.atlas.network.AbstractMessage;
 import hunternif.mc.atlas.util.Log;
-
-import java.io.IOException;
-
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fml.relauncher.Side;
+
+import java.io.IOException;
 
 /**
  * Puts biome tile into one atlas. When sent to server, forwards it to every
@@ -21,9 +20,9 @@ import net.minecraftforge.fml.relauncher.Side;
  */
 public class PutBiomeTilePacket extends AbstractMessage<PutBiomeTilePacket> {
 	private int atlasID, dimension, x, z, biomeID;
-	
+
 	public PutBiomeTilePacket() {}
-	
+
 	public PutBiomeTilePacket(int atlasID, int dimension, int x, int z, int biomeID) {
 		this.atlasID = atlasID;
 		this.dimension = dimension;
@@ -31,23 +30,23 @@ public class PutBiomeTilePacket extends AbstractMessage<PutBiomeTilePacket> {
 		this.z = z;
 		this.biomeID = biomeID;
 	}
-	
+
 	@Override
 	protected void read(PacketBuffer buffer) throws IOException {
-		atlasID = buffer.readVarIntFromBuffer();
-		dimension = buffer.readVarIntFromBuffer();
-		x = buffer.readVarIntFromBuffer();
-		z = buffer.readVarIntFromBuffer();
-		biomeID = buffer.readVarIntFromBuffer();
+		atlasID = buffer.readVarInt();
+		dimension = buffer.readVarInt();
+		x = buffer.readVarInt();
+		z = buffer.readVarInt();
+		biomeID = buffer.readVarInt();
 	}
 
 	@Override
 	protected void write(PacketBuffer buffer) throws IOException {
-		buffer.writeVarIntToBuffer(atlasID);
-		buffer.writeVarIntToBuffer(dimension);
-		buffer.writeVarIntToBuffer(x);
-		buffer.writeVarIntToBuffer(z);
-		buffer.writeVarIntToBuffer(biomeID);
+		buffer.writeVarInt(atlasID);
+		buffer.writeVarInt(dimension);
+		buffer.writeVarInt(x);
+		buffer.writeVarInt(z);
+		buffer.writeVarInt(biomeID);
 	}
 
 	@Override
@@ -59,9 +58,9 @@ public class PutBiomeTilePacket extends AbstractMessage<PutBiomeTilePacket> {
 						player.getGameProfile().getName(), atlasID);
 				return;
 			}
-			AtlasAPI.tiles.putBiomeTile(player.worldObj, atlasID, biomeID, x, z);
+			AtlasAPI.tiles.putBiomeTile(player.world, atlasID, biomeID, x, z);
 		} else {
-			AtlasData data = AntiqueAtlasMod.atlasData.getAtlasData(atlasID, player.worldObj);
+			AtlasData data = AntiqueAtlasMod.atlasData.getAtlasData(atlasID, player.world);
 			data.setTile(dimension, x, z, new Tile(biomeID));
 		}
 	}

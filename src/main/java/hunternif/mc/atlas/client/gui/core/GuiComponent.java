@@ -27,7 +27,7 @@ import org.lwjgl.opengl.GL11;
 public class GuiComponent extends GuiScreen {
 	private GuiComponent parent = null;
 	private final List<GuiComponent> children = new CopyOnWriteArrayList<GuiComponent>();
-	
+
 	/** The component's own size. */
 	protected int properWidth, properHeight;
 	/** The component's total calculated size, including itself and its children. */
@@ -38,7 +38,7 @@ public class GuiComponent extends GuiScreen {
 	private boolean isClipped = false;
 	/** This flag is updated on every mouse event. */
 	protected boolean isMouseOver = false;
-	
+
 	/** If true, mouse actions will only affect this GUI and its children,
 	 * else they will only affect the in-game controller. */
 	private boolean interceptsMouse = true;
@@ -51,10 +51,10 @@ public class GuiComponent extends GuiScreen {
 	private boolean hasHandledKeyboard = false, hasHandledMouse = false;
 	/** If true, no input is handled by the parent or any sibling GUIs. */
 	private boolean blocksScreen = false;
-	
+
 	/** guiX and guiY are absolute coordinates on the screen. */
 	private int guiX = 0, guiY = 0;
-	
+
 	/** Set absolute coordinates of the top left corner of this component on
 	 * the screen. If this GUI has a parent, its size will be invalidated. */
 	public void setGuiCoords(int x, int y) {
@@ -125,7 +125,7 @@ public class GuiComponent extends GuiScreen {
 	public int getRelativeY() {
 		return parent == null ? guiY : (guiY - parent.guiY);
 	}
-	
+
 	/** Set this component's own size. This shouldn't affect the size or position of the children. */
 	public void setSize(int width, int height) {
 		this.properWidth = width;
@@ -134,7 +134,7 @@ public class GuiComponent extends GuiScreen {
 		this.contentHeight = height;
 		invalidateSize();
 	}
-	
+
 	/** Adds the child component to this GUI's content and initializes it.
 	 * The child is placed at the top left corner of this component.
 	 * @return the child added. */
@@ -203,7 +203,7 @@ public class GuiComponent extends GuiScreen {
 	public List<GuiComponent> getChildren() {
 		return children;
 	}
-	
+
 	/** If true, mouse actions will only affect this GUI and its children,
 	 * else they will only affect the in-game controller. */
 	public void setInterceptMouse(boolean value) {
@@ -241,7 +241,7 @@ public class GuiComponent extends GuiScreen {
 			}
 		}
 	}
-	
+
 	/** Call this method from within {@link #handleMouseInput()} (or other
 	 * mouse-processing methods) if the input has been handled by this GUI
 	 * andshouldn't be handled by its parents.
@@ -259,7 +259,7 @@ public class GuiComponent extends GuiScreen {
 	protected void setBlocksScreen(boolean value) {
 		this.blocksScreen = value;
 	}
-	
+
 	/** Handle mouse input for this GUI and its children. */
 	@Override
 	public void handleMouseInput() throws IOException {
@@ -281,7 +281,7 @@ public class GuiComponent extends GuiScreen {
 			super.handleMouseInput();
 		}
 	}
-	
+
 	/** Handle keyboard input for this GUI and its children. */
 	@Override
 	public void handleKeyboardInput() throws IOException {
@@ -303,7 +303,7 @@ public class GuiComponent extends GuiScreen {
 			}
 		}
 	}
-	
+
 	@Override
 	protected void keyTyped(char typedChar, int keyCode) throws IOException {
 		if (keyCode == 1 && mc.currentScreen != null)
@@ -316,7 +316,7 @@ public class GuiComponent extends GuiScreen {
             }
         }
 	}
-	
+
 	/** Render this GUI and its children. */
 	@Override
 	public void drawScreen(int mouseX, int mouseY, float partialTick) {
@@ -332,7 +332,7 @@ public class GuiComponent extends GuiScreen {
 			hoveringTextInfo.shouldDraw = false;
 		}
 	}
-	
+
 	/** Called when the GUI is unloaded, called for each child as well. */
 	@Override
 	public void onGuiClosed() {
@@ -341,7 +341,7 @@ public class GuiComponent extends GuiScreen {
 		}
 		super.onGuiClosed();
 	}
-	
+
 	/** Called each in-game tick for this GUI and its children. If this GUI's
 	 * size has been invalidated, it will be validated on the next update. */
 	@Override
@@ -354,7 +354,7 @@ public class GuiComponent extends GuiScreen {
 			validateSize();
 		}
 	}
-	
+
 	@Override
 	public void setWorldAndResolution(Minecraft mc, int width, int height) {
 		super.setWorldAndResolution(mc, width, height);
@@ -362,7 +362,7 @@ public class GuiComponent extends GuiScreen {
 			child.setWorldAndResolution(mc, width, height);
 		}
 	}
-	
+
 	/** Width of the GUI or its contents. This method may be called often so it
 	 * should be fast. */
 	public int getWidth() {
@@ -373,12 +373,12 @@ public class GuiComponent extends GuiScreen {
 	public int getHeight() {
 		return contentHeight;
 	}
-	
+
 	/** If set to true, the parent of this GUI will not render it. */
 	protected void setClipped(boolean value) {
 		this.isClipped = value;
 	}
-	
+
 	/** Cause the size of the component to be recalculate on the next update
 	 * tick. If this GUI has a parent, the parent's size will be invalidated too. */
 	protected void invalidateSize() {
@@ -415,7 +415,7 @@ public class GuiComponent extends GuiScreen {
 		contentHeight = Math.max(properHeight, bottommost - topmost);
 		sizeIsInvalid = false;
 	}
-	
+
 	/** Returns true, if the mouse cursor is within the specified bounds.
 	 * Note: left and top are absolute. */
 	protected boolean isMouseInRegion(int left, int top, int width, int height) {
@@ -435,7 +435,7 @@ public class GuiComponent extends GuiScreen {
 		int mouseY = getMouseY();
 		return mouseX >= x - radius && mouseX < x + radius && mouseY >= y - radius && mouseY < y + radius;
 	}
-	
+
 	/** Draws a standard Minecraft hovering text window, constrained by this
 	 * component's dimensions (i.e. if it won't fit in when drawn to the left
 	 * of the cursor, it will be drawn to the right instead). */
@@ -443,11 +443,11 @@ public class GuiComponent extends GuiScreen {
 		if (!lines.isEmpty()) {
 			// Stencil test is used by VScrollingComponent to hide the content
 			// that is currently outside the viewport; that shouldn't affect
-			// hovering text though. 
+			// hovering text though.
 			boolean stencilEnabled = GL11.glIsEnabled(GL11.GL_STENCIL_TEST);
 			if (stencilEnabled) GL11.glDisable(GL11.GL_STENCIL_TEST);
 			RenderHelper.disableStandardItemLighting();
-			
+
 			int k = 0;
 			for (String s : lines) {
 				int l = font.getStringWidth(s);
@@ -501,7 +501,7 @@ public class GuiComponent extends GuiScreen {
 			GlStateManager.enableBlend();
 		}
 	}
-	
+
 	/** Returns the top level parent of this component, or itself if it has no
 	 * parent. Useful for correctly drawing hovering text. */
 	public GuiComponent getTopLevelParent() {
@@ -511,7 +511,7 @@ public class GuiComponent extends GuiScreen {
 		}
 		return component;
 	}
-	
+
 	/**
 	 * Draws a text tooltip at mouse coordinates.
 	 * <p>
@@ -533,7 +533,7 @@ public class GuiComponent extends GuiScreen {
 		topLevel.hoveringTextInfo.font = font;
 		topLevel.hoveringTextInfo.shouldDraw = true;
 	}
-	
+
 	/** Wrapper for data used to draw hovering text at the end of rendering
 	 * current frame. It is used by child components that wish to draw hovering
 	 * text unobscured by their neighboring components. */
@@ -546,7 +546,7 @@ public class GuiComponent extends GuiScreen {
 		 * This flag is reset to false after rendering finishes. */
 		boolean shouldDraw = false;
 	}
-	
+
 	/** Remove itself from its parent component (if any), notifying it. */
 	public void close() {
 		if (parent != null) {
@@ -555,16 +555,16 @@ public class GuiComponent extends GuiScreen {
 			Minecraft.getMinecraft().displayGuiScreen(null);
 		}
 	}
-	
+
 	/** Called when a child removes itself from this component. */
 	protected void onChildClosed(GuiComponent child) {}
-	
+
 	/** Draw a text string centered horizontally, using this GUI's FontRenderer. */
 	protected void drawCenteredString(String text, int y, int color, boolean dropShadow) {
-		int length = fontRendererObj.getStringWidth(text);
-		fontRendererObj.drawString(text, (this.width - length)/2, y, color, dropShadow);
+		int length = fontRenderer.getStringWidth(text);
+		fontRenderer.drawString(text, (this.width - length)/2, y, color, dropShadow);
 	}
-	
+
 	protected int getMouseX() {
 		return Mouse.getX() * width / mc.displayWidth;
 	}
