@@ -3,13 +3,12 @@ package hunternif.mc.atlas.client.gui;
 import hunternif.mc.atlas.client.Textures;
 import hunternif.mc.atlas.client.gui.core.GuiToggleButton;
 import hunternif.mc.atlas.util.AtlasRenderHelper;
-
-import java.util.Arrays;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.util.ResourceLocation;
+
+import java.util.Collections;
 
 /** Bookmark-button in the journal. When a bookmark is selected, it will not
  * bulge on mouseover. */
@@ -64,7 +63,7 @@ public class GuiBookmarkButton extends GuiToggleButton {
 				getGuiY() + 1, ICON_WIDTH, ICON_HEIGHT);
 		
 		if (isMouseOver) {
-			drawTooltip(Arrays.asList(title), Minecraft.getMinecraft().fontRendererObj);
+			drawTooltip(Collections.singletonList(title), Minecraft.getMinecraft().fontRendererObj);
 		}
 	}
 }

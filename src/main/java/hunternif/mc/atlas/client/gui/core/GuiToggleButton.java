@@ -13,11 +13,11 @@ public class GuiToggleButton extends GuiComponentButton {
 	public void setSelected(boolean value) {
 		this.selected = value;
 	}
-	public boolean isSelected() {
+	protected boolean isSelected() {
 		return selected;
 	}
 	
-	protected void setRadioGroup(ToggleGroup radioGroup) {
+	void setRadioGroup(ToggleGroup radioGroup) {
 		this.radioGroup = radioGroup;
 	}
 	public ToggleGroup getRadioGroup() {

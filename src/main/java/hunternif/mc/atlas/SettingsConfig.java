@@ -1,8 +1,8 @@
 package hunternif.mc.atlas;
 
-import java.io.File;
-
 import net.minecraftforge.common.config.Configuration;
+
+import java.io.File;
 
 /** Config for various performance and interface settings. */
 public class SettingsConfig {
@@ -21,6 +21,7 @@ public class SettingsConfig {
 	public boolean doSaveBrowsingPos = true;
 	public boolean autoDeathMarker = true;
 	public boolean autoVillageMarkers = true;
+	public boolean itemNeeded = true;
 	
 	//============ Interface settings =============
 	public boolean doScaleMarkers = false;
@@ -58,6 +59,8 @@ public class SettingsConfig {
 				"Whether to add local marker for the spot where the player died.");
 		autoVillageMarkers = config.getBoolean("auto_village_markers", GAMEPLAY, autoVillageMarkers,
 				"Whether to add global markers for NPC villages.");
+		itemNeeded = config.getBoolean("item_needed", GAMEPLAY, itemNeeded,
+				"Player will need to craft atlas item to use atlas.");
 		
 		defaultScale = config.getFloat("default_scale", INTERFACE, (float)defaultScale, 0.001953125f, 16,
 				"Default zoom level. The number corresponds to the size of a block on the map relative to the size of\n"
@@ -92,8 +95,8 @@ public class SettingsConfig {
 		
 		debugRender = config.getBoolean("debug_rendering", PERFORMANCE, debugRender,
 				"If true, map render time will be output.");
-		
-		
+
+
 		config.save();
 	}
 	
@@ -101,6 +104,7 @@ public class SettingsConfig {
 		if (configFile == null || !configFile.equals(file)) {
 			load(file);
 		}
+
 		config.save();
 	}
 }

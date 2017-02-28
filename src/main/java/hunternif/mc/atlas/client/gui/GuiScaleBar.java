@@ -1,18 +1,16 @@
 package hunternif.mc.atlas.client.gui;
 
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableMap.Builder;
 import hunternif.mc.atlas.client.Textures;
 import hunternif.mc.atlas.client.gui.core.GuiComponent;
 import hunternif.mc.atlas.util.AtlasRenderHelper;
-
-import java.util.Arrays;
-import java.util.Map;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.ResourceLocation;
 
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableMap.Builder;
+import java.util.Collections;
+import java.util.Map;
 
 /**
  * A scale bar that displays pixel-to-block ratio. To fit into the overall
@@ -60,7 +58,8 @@ public class GuiScaleBar extends GuiComponent {
 		AtlasRenderHelper.drawFullTexture(texture, getGuiX(), getGuiY(), WIDTH, HEIGHT);
 		
 		if (isMouseOver) {
-			drawTooltip(Arrays.asList(I18n.format("gui.antiqueatlas.scalebar")), Minecraft.getMinecraft().fontRendererObj);
+			drawTooltip(Collections.singletonList(I18n.format("gui.antiqueatlas.scalebar")),
+					Minecraft.getMinecraft().fontRendererObj);
 		}
 	}
 }

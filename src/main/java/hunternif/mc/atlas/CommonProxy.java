@@ -1,7 +1,13 @@
 package hunternif.mc.atlas;
 
-import java.io.File;
-
+import hunternif.mc.atlas.core.BiomeDetectorBase;
+import hunternif.mc.atlas.ext.ExtTileConfig;
+import hunternif.mc.atlas.ext.ExtTileIdMap;
+import hunternif.mc.atlas.util.Log;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.IThreadListener;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
@@ -11,18 +17,10 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.server.FMLServerHandler;
 
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.IThreadListener;
-
-import hunternif.mc.atlas.core.BiomeDetectorBase;
-import hunternif.mc.atlas.ext.ExtTileConfig;
-import hunternif.mc.atlas.ext.ExtTileIdMap;
-import hunternif.mc.atlas.util.Log;
+import java.io.File;
 
 public class CommonProxy {
-	protected File configDir;
+	File configDir;
 	
 	private ExtTileIdMap extTileIdMap;
 	private ExtTileConfig extTileConfig;
@@ -89,6 +87,8 @@ public class CommonProxy {
 	}
 	
 	public void openAtlasGUI(ItemStack stack) {}
+
+	public void openAtlasGUI() {}
 
 	public File getConfigDir(){
 		return configDir;

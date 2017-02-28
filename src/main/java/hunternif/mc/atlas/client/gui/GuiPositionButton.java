@@ -3,15 +3,13 @@ package hunternif.mc.atlas.client.gui;
 import hunternif.mc.atlas.client.Textures;
 import hunternif.mc.atlas.client.gui.core.GuiComponentButton;
 import hunternif.mc.atlas.util.AtlasRenderHelper;
-
-import java.util.Arrays;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.resources.I18n;
-
 import org.lwjgl.opengl.GL11;
+
+import java.util.Collections;
 
 public class GuiPositionButton extends GuiComponentButton {
 	private static final int WIDTH = 11;
@@ -40,7 +38,7 @@ public class GuiPositionButton extends GuiComponentButton {
 			GlStateManager.disableBlend();
 			
 			if (isMouseOver) {
-				drawTooltip(Arrays.asList(I18n.format("gui.antiqueatlas.followPlayer")), Minecraft.getMinecraft().fontRendererObj);
+				drawTooltip(Collections.singletonList(I18n.format("gui.antiqueatlas.followPlayer")), Minecraft.getMinecraft().fontRendererObj);
 			}
 		}
 	}

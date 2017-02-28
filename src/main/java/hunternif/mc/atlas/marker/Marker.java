@@ -1,9 +1,8 @@
 package hunternif.mc.atlas.marker;
 
-import net.minecraft.client.resources.I18n;
-
 import hunternif.mc.atlas.registry.MarkerType;
 import hunternif.mc.atlas.util.ShortVec2;
+import net.minecraft.client.resources.I18n;
 
 /**
  * Marker on the map in an atlas. Has a type and a text label.
@@ -94,7 +93,7 @@ public class Marker {
 	public boolean isGlobal() {
 		return isGlobal;
 	}
-	protected Marker setGlobal(boolean value) {
+	Marker setGlobal(boolean value) {
 		this.isGlobal = value;
 		return this;
 	}

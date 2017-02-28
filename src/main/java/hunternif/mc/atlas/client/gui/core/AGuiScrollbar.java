@@ -1,24 +1,24 @@
 package hunternif.mc.atlas.client.gui.core;
 
-import java.io.IOException;
-
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.ResourceLocation;
-
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
+import java.io.IOException;
+
 public abstract class AGuiScrollbar extends GuiComponent {
-	protected ResourceLocation texture;
-	protected int textureWidth, textureHeight;
+	ResourceLocation texture;
+	int textureWidth;
+    int textureHeight;
 	/** Length of the non-scaling caps at the beginning and end of the anchor. */
-	protected int capLength;
-	protected int textureBodyLength;
+    int capLength;
+	int textureBodyLength;
 	
 	/** In pixels. */
 	private static int scrollStep = 18;
 	
-	protected boolean visible = false;
+	boolean visible = false;
 	/** True if the anchor is being dragged */
 	private boolean isDragged = false;
 	/** True if the left mouse button was held down last time drawScreen was called. */
@@ -33,17 +33,17 @@ public abstract class AGuiScrollbar extends GuiComponent {
 	private float scrollRatio = 0;
 	
 	
-	protected int anchorPos = 0;
-	protected int anchorSize;
+	int anchorPos = 0;
+	int anchorSize;
 	/** How much to scale the texture vertically to draw the body of the anchor. */
-	protected double bodyTextureScale = 1;
+    double bodyTextureScale = 1;
 	/** How much the content of the viewport is displaced. */
-	protected int scrollPos = 0;
+    int scrollPos = 0;
 	
 	/** The attached viewport that this scrollbar scrolls. */
-	protected final GuiViewport viewport;
+	final GuiViewport viewport;
 	
-	public AGuiScrollbar(GuiViewport viewport) {
+	AGuiScrollbar(GuiViewport viewport) {
 		this.viewport = viewport;
 	}
 	
@@ -82,6 +82,7 @@ public abstract class AGuiScrollbar extends GuiComponent {
 		viewport.validateSize();
 		doSetScrollPos(scrollPos);
 	}
+
 	/** Offset of the viewport's content in pixels. This will only work
 	 * correctly after the viewport's size has been validated. */
 	private void doSetScrollPos(int scrollPos) {
@@ -99,6 +100,7 @@ public abstract class AGuiScrollbar extends GuiComponent {
 		viewport.validateSize();
 		doSetScrollRatio(scrollRatio);
 	}
+
 	/** Amount scrolled (0.0 = top, 1.0 = bottom). This will only work
 	 * correctly after the viewport's size has been validated. */
 	private void doSetScrollRatio(float scrollRatio) {

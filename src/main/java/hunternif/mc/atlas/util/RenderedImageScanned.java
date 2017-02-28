@@ -1,19 +1,12 @@
 package hunternif.mc.atlas.util;
 
-import java.awt.Color;
-import java.awt.Graphics2D;
-import java.awt.Rectangle;
-import java.awt.image.BufferedImage;
-import java.awt.image.ColorModel;
-import java.awt.image.Raster;
-import java.awt.image.RenderedImage;
-import java.awt.image.SampleModel;
-import java.awt.image.WritableRaster;
+import java.awt.*;
+import java.awt.image.*;
 import java.util.Vector;
 import java.util.function.Consumer;
 import java.util.function.IntConsumer;
 
-public class RenderedImageScanned implements RenderedImage {
+class RenderedImageScanned implements RenderedImage {
 
 	private final int width;
 	private final int height;

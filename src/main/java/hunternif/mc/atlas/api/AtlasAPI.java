@@ -1,13 +1,14 @@
 package hunternif.mc.atlas.api;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
 import hunternif.mc.atlas.AntiqueAtlasMod;
 import hunternif.mc.atlas.api.impl.MarkerApiImpl;
 import hunternif.mc.atlas.api.impl.TileApiImpl;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Use this class to obtain a reference to the APIs.
@@ -37,12 +38,17 @@ public class AtlasAPI {
 	/** Convenience method that returns a list of atlas IDs for all atlas items
 	 * the player is currently carrying. **/
 	public static List<Integer> getPlayerAtlases(EntityPlayer player) {
-		List<Integer> list = new ArrayList<Integer>();
+		if (!AntiqueAtlasMod.settings.itemNeeded) {
+			return Collections.singletonList(player.getUniqueID().hashCode());
+		}
+
+		List<Integer> list = new ArrayList<>();
 		for (ItemStack stack : player.inventory.mainInventory) {
 			if (stack != null && stack.getItem() == AntiqueAtlasMod.itemAtlas) {
 				list.add(stack.getItemDamage());
 			}
 		}
+
 		return list;
 	}
 }

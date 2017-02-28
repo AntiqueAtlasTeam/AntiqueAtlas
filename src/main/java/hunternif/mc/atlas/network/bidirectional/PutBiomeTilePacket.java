@@ -6,13 +6,12 @@ import hunternif.mc.atlas.core.AtlasData;
 import hunternif.mc.atlas.core.Tile;
 import hunternif.mc.atlas.network.AbstractMessage;
 import hunternif.mc.atlas.util.Log;
-
-import java.io.IOException;
-
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fml.relauncher.Side;
+
+import java.io.IOException;
 
 /**
  * Puts biome tile into one atlas. When sent to server, forwards it to every
@@ -54,14 +53,15 @@ public class PutBiomeTilePacket extends AbstractMessage<PutBiomeTilePacket> {
 	protected void process(EntityPlayer player, Side side) {
 		if (side.isServer()) {
 			// Make sure it's this player's atlas :^)
-			if (!player.inventory.hasItemStack(new ItemStack(AntiqueAtlasMod.itemAtlas, 1, atlasID))) {
+			if (AntiqueAtlasMod.settings.itemNeeded &&
+					!player.inventory.hasItemStack(new ItemStack(AntiqueAtlasMod.itemAtlas, 1, atlasID))) {
 				Log.warn("Player %s attempted to modify someone else's Atlas #%d",
 						player.getGameProfile().getName(), atlasID);
 				return;
 			}
-			AtlasAPI.tiles.putBiomeTile(player.worldObj, atlasID, biomeID, x, z);
+			AtlasAPI.tiles.putBiomeTile(player.getEntityWorld(), atlasID, biomeID, x, z);
 		} else {
-			AtlasData data = AntiqueAtlasMod.atlasData.getAtlasData(atlasID, player.worldObj);
+			AtlasData data = AntiqueAtlasMod.atlasData.getAtlasData(atlasID, player.getEntityWorld());
 			data.setTile(dimension, x, z, new Tile(biomeID));
 		}
 	}

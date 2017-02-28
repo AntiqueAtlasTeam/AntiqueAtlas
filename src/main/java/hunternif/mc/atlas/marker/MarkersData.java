@@ -1,27 +1,21 @@
 package hunternif.mc.atlas.marker;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicInteger;
-
-import net.minecraftforge.common.util.Constants;
-
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
-import net.minecraft.world.WorldSavedData;
-
 import hunternif.mc.atlas.api.MarkerAPI;
 import hunternif.mc.atlas.network.PacketDispatcher;
 import hunternif.mc.atlas.network.client.MarkersPacket;
 import hunternif.mc.atlas.registry.MarkerRegistry;
 import hunternif.mc.atlas.registry.MarkerType;
 import hunternif.mc.atlas.util.Log;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
+import net.minecraft.world.WorldSavedData;
+import net.minecraftforge.common.util.Constants;
+
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Contains markers, mapped to dimensions, and then to their chunk coordinates.
@@ -174,7 +168,7 @@ public class MarkersData extends WorldSavedData {
 		return getMarkersDataInDimension(dimension).getMarkersAtChunk(x, z);
 	}
 	
-	public Marker getMarkerByID(int id) {
+	private Marker getMarkerByID(int id) {
 		return idMap.get(id);
 	}
 	public Marker removeMarker(int id) {
@@ -232,7 +226,7 @@ public class MarkersData extends WorldSavedData {
 	}
 	
 	/** To be overridden in GlobalMarkersData. */
-	protected MarkersPacket newMarkersPacket(int atlasID, int dimension) {
+	MarkersPacket newMarkersPacket(int atlasID, int dimension) {
 		return new MarkersPacket(atlasID, dimension);
 	}
 	

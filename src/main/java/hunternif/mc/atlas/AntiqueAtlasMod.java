@@ -1,12 +1,8 @@
 package hunternif.mc.atlas;
 
-import static net.minecraftforge.oredict.RecipeSorter.Category.SHAPELESS;
 import hunternif.mc.atlas.core.AtlasDataHandler;
-import hunternif.mc.atlas.ext.DeathWatcher;
-import hunternif.mc.atlas.ext.ExtBiomeDataHandler;
-import hunternif.mc.atlas.ext.NetherFortressWatcher;
-import hunternif.mc.atlas.ext.StructureWatcher;
-import hunternif.mc.atlas.ext.VillageWatcher;
+import hunternif.mc.atlas.core.PlayerEventHandler;
+import hunternif.mc.atlas.ext.*;
 import hunternif.mc.atlas.item.ItemAtlas;
 import hunternif.mc.atlas.item.ItemEmptyAtlas;
 import hunternif.mc.atlas.item.RecipeAtlasCloning;
@@ -18,9 +14,6 @@ import hunternif.mc.atlas.network.PacketDispatcher;
 import hunternif.mc.atlas.registry.MarkerRegistry;
 import hunternif.mc.atlas.registry.MarkerTypes;
 import hunternif.mc.atlas.util.Log;
-
-import java.io.File;
-
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
@@ -34,6 +27,10 @@ import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.oredict.RecipeSorter;
+
+import java.io.File;
+
+import static net.minecraftforge.oredict.RecipeSorter.Category.SHAPELESS;
 
 @Mod(modid=AntiqueAtlasMod.ID, name=AntiqueAtlasMod.NAME, version=AntiqueAtlasMod.VERSION)
 public class AntiqueAtlasMod {
@@ -66,32 +63,39 @@ public class AntiqueAtlasMod {
 		MarkerTypes.INSTANCE.getClass(); // ...
 		proxy.preInit(event);
 		settings.load(new File(proxy.configDir, "settings.cfg"));
-		
-		itemAtlas = (ItemAtlas) new ItemAtlas(settings)
-			.setRegistryName(ID, "antiqueAtlas").setUnlocalizedName("antiqueAtlas");
-		
-		itemEmptyAtlas = (ItemEmptyAtlas) new ItemEmptyAtlas()
-			.setRegistryName(ID, "emptyAntiqueAtlas").setUnlocalizedName("emptyAntiqueAtlas")
-			.setCreativeTab(CreativeTabs.TOOLS);
-		
-		GameRegistry.register(itemAtlas);
-		GameRegistry.register(itemEmptyAtlas);
+
+		if (settings.itemNeeded) {
+			itemAtlas = (ItemAtlas) new ItemAtlas()
+					.setRegistryName(ID, "antiqueAtlas").setUnlocalizedName("antiqueAtlas");
+
+			itemEmptyAtlas = (ItemEmptyAtlas) new ItemEmptyAtlas()
+					.setRegistryName(ID, "emptyAntiqueAtlas").setUnlocalizedName("emptyAntiqueAtlas")
+					.setCreativeTab(CreativeTabs.TOOLS);
+
+			GameRegistry.register(itemAtlas);
+			GameRegistry.register(itemEmptyAtlas);
+		}
 	}
 	
 	@EventHandler
 	public void init(FMLInitializationEvent event){
 		PacketDispatcher.registerPackets();
 		proxy.init(event);
-		
-		GameRegistry.addShapelessRecipe(new ItemStack(itemEmptyAtlas), Items.BOOK, Items.COMPASS);
-		
-		RecipeSorter.register("antiqueatlas:atlascloning",   RecipeAtlasCloning.class,   SHAPELESS, "after:minecraft:shapeless");
-		GameRegistry.addRecipe(new RecipeAtlasCloning());
-		
-		RecipeSorter.register("antiqueatlas:atlascombining",   RecipeAtlasCombining.class,   SHAPELESS, "after:minecraft:shapeless");
-		RecipeAtlasCombining recipeCombining = new RecipeAtlasCombining();
-		GameRegistry.addRecipe(recipeCombining);
-		MinecraftForge.EVENT_BUS.register(recipeCombining);
+
+		if (settings.itemNeeded) {
+			GameRegistry.addShapelessRecipe(new ItemStack(itemEmptyAtlas), Items.BOOK, Items.COMPASS);
+
+			RecipeSorter.register("antiqueatlas:atlascloning", RecipeAtlasCloning.class, SHAPELESS, "after:minecraft:shapeless");
+			GameRegistry.addRecipe(new RecipeAtlasCloning());
+
+			RecipeSorter.register("antiqueatlas:atlascombining", RecipeAtlasCombining.class, SHAPELESS, "after:minecraft:shapeless");
+			RecipeAtlasCombining recipeCombining = new RecipeAtlasCombining();
+			GameRegistry.addRecipe(recipeCombining);
+
+			MinecraftForge.EVENT_BUS.register(recipeCombining);
+		} else {
+			MinecraftForge.EVENT_BUS.register(new PlayerEventHandler());
+		}
 		
 		MinecraftForge.EVENT_BUS.register(atlasData);
 		MinecraftForge.EVENT_BUS.register(markersData);

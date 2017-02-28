@@ -49,6 +49,6 @@ public class SubTileQuartet implements Iterable<SubTile> {
 
 	@Override
 	public Iterator<SubTile> iterator() {
-		return new ArrayIterator<SubTile>(array);
+		return new ArrayIterator<>(array);
 	}
 }

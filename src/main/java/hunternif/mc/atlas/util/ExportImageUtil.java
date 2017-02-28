@@ -266,8 +266,8 @@ public class ExportImageUtil {
 		long freeMemory = runtime.freeMemory(); // out of the current heap, how much is free
 		long maxMemory = runtime.maxMemory(); // Max heap VM can use e.g. Xmx setting
 		long usedMemory = totalMemory - freeMemory; // how much of the current heap the VM is using
-		long availableMemory = maxMemory - usedMemory; // available memory i.e. Maximum heap size minus the current amount used
-		return availableMemory;
+
+		return maxMemory - usedMemory; // available memory i.e. Maximum heap size minus the current amount used
 	}
 	
 	private static void drawMapToGraphics(Graphics2D graphics,

@@ -3,9 +3,9 @@ package hunternif.mc.atlas.client.gui.core;
 import hunternif.mc.atlas.client.Textures;
 
 public class GuiScrollingContainer extends GuiComponent {
-	protected final GuiViewport viewport;
-	protected final GuiHScrollbar scrollbarHor;
-	protected final GuiVScrollbar scrollbarVer;
+	private final GuiViewport viewport;
+	private final GuiHScrollbar scrollbarHor;
+	private final GuiVScrollbar scrollbarVer;
 	
 	public GuiScrollingContainer() {
 		viewport = new GuiViewport();
@@ -54,7 +54,7 @@ public class GuiScrollingContainer extends GuiComponent {
 		scrollbarVer.setUsesWheel(false);
 	}
 	/** Mouse wheel will affect <b>vertical</b> scrolling and not horizontal. */
-	public void setWheelScrollsVertially() {
+    private void setWheelScrollsVertially() {
 		scrollbarHor.setUsesWheel(false);
 		scrollbarVer.setUsesWheel(true);
 	}

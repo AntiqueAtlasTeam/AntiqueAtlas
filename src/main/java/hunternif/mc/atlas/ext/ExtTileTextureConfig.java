@@ -1,20 +1,18 @@
 package hunternif.mc.atlas.ext;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import hunternif.mc.atlas.client.TextureSetConfig;
 import hunternif.mc.atlas.client.TextureSetMap;
 import hunternif.mc.atlas.util.AbstractJSONConfig;
 import hunternif.mc.atlas.util.Log;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.io.File;
 import java.util.Map.Entry;
 import java.util.PriorityQueue;
 import java.util.Queue;
-
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 
 /**
  * Client-only config mapping tile names to texture sets.
@@ -53,7 +51,7 @@ public class ExtTileTextureConfig extends AbstractJSONConfig<ExtTileTextureMap> 
 	@Override
 	protected void saveData(JsonObject json, ExtTileTextureMap data) {
 		// Sort keys alphabetically:
-		Queue<String> queue = new PriorityQueue<String>(data.textureMap.keySet());
+		Queue<String> queue = new PriorityQueue<>(data.textureMap.keySet());
 		while (!queue.isEmpty()) {
 			String tileName = queue.poll();
 			json.addProperty(tileName, data.textureMap.get(tileName).name);

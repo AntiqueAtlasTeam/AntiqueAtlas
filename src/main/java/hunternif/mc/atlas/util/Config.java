@@ -6,7 +6,7 @@ package hunternif.mc.atlas.util;
  * @author Hunternif
  * @param <T>	the data container class to be loaded into and saved from.
  */
-public interface Config<T extends SaveData> {
+interface Config<T extends SaveData> {
 	void load(T data);
 	void save(T data);
 }

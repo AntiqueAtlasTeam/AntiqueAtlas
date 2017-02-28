@@ -10,7 +10,7 @@ public class ShortVec2 {
 		this(vec.x, vec.y);
 	}
 	
-	public ShortVec2(short x, short y) {
+	private ShortVec2(short x, short y) {
 		this.x = x;
 		this.y = y;
 	}

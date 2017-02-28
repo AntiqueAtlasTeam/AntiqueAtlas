@@ -7,24 +7,23 @@ import net.minecraft.util.ResourceLocation;
 public class MarkerTypes {
 	
 	public static final MarkerTypes INSTANCE = new MarkerTypes();
-	
+
 	public static MarkerType
-	
-	GOOGLE,
-	RED_X_LARGE,
-	RED_X_SMALL,
-	VILLAGE,
-	DIAMOND,
-	BED,
-	PICKAXE,
-	SWORD,
-	NETHER_PORTAL,
-	SKULL,
-	TOWER,
-	SCROLL,
-	TOMB,
-	END_CITY,
-	END_CITY_FAR;
+			GOOGLE,
+			RED_X_LARGE,
+			RED_X_SMALL,
+			VILLAGE,
+			DIAMOND,
+			BED,
+			PICKAXE,
+			SWORD,
+			NETHER_PORTAL,
+			SKULL,
+			TOWER,
+			SCROLL,
+			TOMB,
+			END_CITY,
+			END_CITY_FAR;
 	
 	private MarkerTypes() {
 		GOOGLE = marker("google", Textures.MARKER_GOOGLE_MARKER);
@@ -42,11 +41,10 @@ public class MarkerTypes {
 		VILLAGE = marker("village", Textures.MARKER_VILLAGE);
 		NETHER_PORTAL = marker("nether_portal", Textures.MARKER_NETHER_PORTAL);
 
-		END_CITY = marker("EndCity", Textures.MARKER_END_CITY, Textures.MARKER_END_CITY_MIP_32, Textures.MARKER_END_CITY_MIP_16);
+		END_CITY = marker("end_city", Textures.MARKER_END_CITY, Textures.MARKER_END_CITY_MIP_32, Textures.MARKER_END_CITY_MIP_16);
 		END_CITY.setAlwaysShow(true).setClip(-1, 1000).setIsTile(true).setSize(2).setCenter(0.5, 0.75).setIsTechnical(true);
-		END_CITY_FAR = marker("EndCity_Far", Textures.MARKER_END_CITY_FAR);
+		END_CITY_FAR = marker("end_city_far", Textures.MARKER_END_CITY_FAR);
 		END_CITY_FAR.setSize(1).setClip(-1000, -2).setIsTechnical(true);
-		// = marker("", Textures.MARKER_);
 	}
 	
 	private MarkerType marker(String name, ResourceLocation... textures) {

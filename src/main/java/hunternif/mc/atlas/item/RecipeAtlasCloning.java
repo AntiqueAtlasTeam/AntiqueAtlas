@@ -3,10 +3,9 @@ package hunternif.mc.atlas.item;
 import hunternif.mc.atlas.AntiqueAtlasMod;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.world.World;
 
-public class RecipeAtlasCloning implements IRecipe {
+public class RecipeAtlasCloning extends RecipeBase {
 
 	@Override
 	public boolean matches(InventoryCrafting inv, World world) {
@@ -80,15 +79,5 @@ public class RecipeAtlasCloning implements IRecipe {
 	@Override
 	public ItemStack getRecipeOutput() {
 		return null;
-	}
-
-	@Override
-	public ItemStack[] getRemainingItems(InventoryCrafting inv) {
-		ItemStack[] aitemstack = new ItemStack[inv.getSizeInventory()];
-		for (int i = 0; i < aitemstack.length; ++i) {
-			ItemStack itemstack = inv.getStackInSlot(i);
-			aitemstack[i] = net.minecraftforge.common.ForgeHooks.getContainerItem(itemstack);
-		}
-		return aitemstack;
 	}
 }
