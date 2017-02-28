@@ -337,6 +337,7 @@ public class GuiComponent extends GuiScreen {
 		for (GuiComponent child : children) {
 			child.updateScreen();
 		}
+
 		super.updateScreen();
 		if (sizeIsInvalid) {
 			validateSize();
