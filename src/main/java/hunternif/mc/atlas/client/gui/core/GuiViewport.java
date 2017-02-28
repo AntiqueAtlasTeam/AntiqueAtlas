@@ -1,10 +1,9 @@
 package hunternif.mc.atlas.client.gui.core;
 
-import java.io.IOException;
-
 import net.minecraft.client.gui.ScaledResolution;
-
 import org.lwjgl.opengl.GL11;
+
+import java.io.IOException;
 
 /**
  * The children of this component are rendered and process input only inside
@@ -13,7 +12,7 @@ import org.lwjgl.opengl.GL11;
  */
 public class GuiViewport extends GuiComponent {
 	/** The container component for content. */
-	protected final GuiComponent content = new GuiComponent();
+	final GuiComponent content = new GuiComponent();
 	
 	/** Coordinate scale factor relative to the actual screen size. */
 	private int screenScale;

@@ -1,17 +1,14 @@
 package hunternif.mc.atlas.core;
 
-import net.minecraftforge.common.BiomeDictionary;
-import net.minecraftforge.common.BiomeDictionary.Type;
-
+import hunternif.mc.atlas.ext.ExtTileIdMap;
+import hunternif.mc.atlas.util.ByteUtil;
 import net.minecraft.block.Block;
 import net.minecraft.init.Biomes;
 import net.minecraft.init.Blocks;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.chunk.Chunk;
-
-import hunternif.mc.atlas.ext.ExtTileIdMap;
-import hunternif.mc.atlas.util.ByteUtil;
-import hunternif.mc.atlas.util.WorldUtil;
+import net.minecraftforge.common.BiomeDictionary;
+import net.minecraftforge.common.BiomeDictionary.Type;
 
 /**
  * Detects the 256 vanilla biomes, water pools and lava pools.
@@ -37,10 +34,10 @@ public class BiomeDetectorBase implements IBiomeDetector {
 	 * given higher priority when identifying mean biome ID for a chunk.
 	 * (Currently WATER and BEACH) */
 	public static void scanBiomeTypes() {
-		for (Biome biome : BiomeDictionary.getBiomesForType(Type.WATER)) {
+		for (Biome biome : BiomeDictionary.getBiomes(Type.WATER)) {
 			waterBiomes[Biome.getIdForBiome(biome)] = true;
 		}
-		for (Biome biome : BiomeDictionary.getBiomesForType(Type.BEACH)) {
+		for (Biome biome : BiomeDictionary.getBiomes(Type.BEACH)) {
 			beachBiomes[Biome.getIdForBiome(biome)] = true;
 		}
 	}
@@ -49,7 +46,7 @@ public class BiomeDetectorBase implements IBiomeDetector {
 		this.doScanPonds = value;
 	}
 	
-	protected int priorityForBiome(Biome biome) {
+	int priorityForBiome(Biome biome) {
 		if (waterBiomes[Biome.getIdForBiome(biome)]) {
 			return 4;
 		} else if (beachBiomes[Biome.getIdForBiome(biome)]) {

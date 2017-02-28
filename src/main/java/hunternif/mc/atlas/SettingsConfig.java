@@ -1,9 +1,8 @@
 package hunternif.mc.atlas;
 
-import java.io.File;
-
-import hunternif.mc.atlas.client.gui.GuiAtlas;
 import net.minecraftforge.common.config.Configuration;
+
+import java.io.File;
 
 /** Config for various performance and interface settings. */
 public class SettingsConfig {
@@ -12,7 +11,7 @@ public class SettingsConfig {
 	private static final String GAMEPLAY = "Gameplay";
 	private static final String INTERFACE = "Interface";
 	private static final String PERFORMANCE = "Performance";
-	
+
 	private File configFile;
 	private Configuration config;
 	
@@ -22,6 +21,7 @@ public class SettingsConfig {
 	public boolean doSaveBrowsingPos = true;
 	public boolean autoDeathMarker = true;
 	public boolean autoVillageMarkers = true;
+	public boolean itemNeeded = true;
 	
 	//============ Interface settings =============
 	public boolean doScaleMarkers = false;
@@ -40,7 +40,8 @@ public class SettingsConfig {
 	public boolean debugRender = false;
 	
 	public void load(File file) {
-		Configuration config = new Configuration(file, String.valueOf(VERSION));
+		configFile = file;
+		config = new Configuration(file, String.valueOf(VERSION));
 		config.setCategoryComment(GAMEPLAY,
 				"These settings will affect how the mod behaves in certain situations and the players' overall gameplay,\n"
 				+ "but generally won't affect performance.");
@@ -58,6 +59,8 @@ public class SettingsConfig {
 				"Whether to add local marker for the spot where the player died.");
 		autoVillageMarkers = config.getBoolean("auto_village_markers", GAMEPLAY, autoVillageMarkers,
 				"Whether to add global markers for NPC villages.");
+		itemNeeded = config.getBoolean("item_needed", GAMEPLAY, itemNeeded,
+				"Player will need to craft atlas item to use atlas.");
 		
 		defaultScale = config.getFloat("default_scale", INTERFACE, (float)defaultScale, 0.001953125f, 16,
 				"Default zoom level. The number corresponds to the size of a block on the map relative to the size of\n"
@@ -92,8 +95,8 @@ public class SettingsConfig {
 		
 		debugRender = config.getBoolean("debug_rendering", PERFORMANCE, debugRender,
 				"If true, map render time will be output.");
-		
-		
+
+
 		config.save();
 	}
 	
@@ -101,6 +104,7 @@ public class SettingsConfig {
 		if (configFile == null || !configFile.equals(file)) {
 			load(file);
 		}
+
 		config.save();
 	}
 }

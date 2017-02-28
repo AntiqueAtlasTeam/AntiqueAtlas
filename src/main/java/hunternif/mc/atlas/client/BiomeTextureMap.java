@@ -32,11 +32,7 @@ import static hunternif.mc.atlas.client.TextureSet.SWAMP;
 import static hunternif.mc.atlas.client.TextureSet.SWAMP_HILLS;
 import static hunternif.mc.atlas.client.TextureSet.WATER;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
 
 import net.minecraftforge.common.BiomeDictionary;
@@ -66,7 +62,7 @@ public class BiomeTextureMap extends SaveData {
 	}
 	
 	/** This map allows keys other than the 256 biome IDs to use for special tiles. */
-	final Map<Integer, TextureSet> textureMap = new HashMap<Integer, TextureSet>();
+	final Map<Integer, TextureSet> textureMap = new HashMap<>();
 	
 	public static final TextureSet defaultTexture = PLAINS;
 	
@@ -109,7 +105,7 @@ public class BiomeTextureMap extends SaveData {
 			setTexture(biomeID, defaultTexture);
 			return;
 		}
-		List<Type> types = Arrays.asList(BiomeDictionary.getTypesForBiome(biome));
+		Set<Type> types = BiomeDictionary.getTypes(biome);
 		// 1. Swamp
 		if (types.contains(Type.SWAMP)) {
 			if (types.contains(Type.HILLS)) {
@@ -245,7 +241,7 @@ public class BiomeTextureMap extends SaveData {
 	}
 	
 	/** Auto-registers the biome ID if it is not registered. */
-	public void checkRegistration(int biomeID) {
+	private void checkRegistration(int biomeID) {
 		if (!isRegistered(biomeID)) {
 			autoRegister(biomeID);
 			markDirty();
@@ -265,13 +261,13 @@ public class BiomeTextureMap extends SaveData {
 
 	public ResourceLocation getTexture(Tile tile) {
 		TextureSet set = getTextureSet(tile);
-		int i = MathHelper.floor_float((float)(tile.getVariationNumber())
+		int i = MathHelper.floor((float)(tile.getVariationNumber())
 				/ (float)(Short.MAX_VALUE) * (float)(set.textures.length));
 		return set.textures[i];
 	}
 	
 	public List<ResourceLocation> getAllTextures() {
-		List<ResourceLocation> list = new ArrayList<ResourceLocation>(textureMap.size());
+		List<ResourceLocation> list = new ArrayList<>(textureMap.size());
 		for (Entry<Integer, TextureSet> entry : textureMap.entrySet()) {
 			list.addAll(Arrays.asList(entry.getValue().textures));
 		}

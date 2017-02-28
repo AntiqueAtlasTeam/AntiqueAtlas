@@ -39,10 +39,10 @@ public class TileApiImpl implements TileAPI {
 	 * is put into this map to be later registered when the server sends the
 	 * packet with the pseudo-biome ID for the corresponding unique name.
 	 */
-	private final Map<String, TileData> pendingTiles = new HashMap<String, TileData>();
+	private final Map<String, TileData> pendingTiles = new HashMap<>();
 	private static class TileData {
-		World world;
-		int atlasID, x, z;
+		final World world;
+		final int atlasID, x, z;
 		TileData(World world, int atlasID, int x, int z) {
 			this.world = world;
 			this.atlasID = atlasID;
@@ -68,8 +68,9 @@ public class TileApiImpl implements TileAPI {
 	
 	@Override
 	public void setBiomeTexture(int biomeID, String textureSetName, ResourceLocation... textures) {
-		TextureSetMap.instance().register(new TextureSet(textureSetName, textures));
-		setBiomeTexture(biomeID, textureSetName);
+		TextureSet set = new TextureSet(textureSetName, textures);
+		TextureSetMap.instance().register(set);
+		BiomeTextureMap.instance().setTexture(biomeID, set);
 	}
 	
 	@Override

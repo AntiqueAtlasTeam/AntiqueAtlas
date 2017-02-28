@@ -10,7 +10,7 @@ public class ShortVec2 {
 		this(vec.x, vec.y);
 	}
 	
-	public ShortVec2(short x, short y) {
+	private ShortVec2(short x, short y) {
 		this.x = x;
 		this.y = y;
 	}
@@ -21,8 +21,8 @@ public class ShortVec2 {
 	}
 	
 	public ShortVec2(double x, double y) {
-		this.x = (short)MathHelper.floor_double(x);
-		this.y = (short)MathHelper.floor_double(y);
+		this.x = (short)MathHelper.floor(x);
+		this.y = (short)MathHelper.floor(y);
 	}
 	
 	/** Modifies and returns self. */

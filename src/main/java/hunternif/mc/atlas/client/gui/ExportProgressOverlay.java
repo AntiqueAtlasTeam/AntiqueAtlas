@@ -10,7 +10,6 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.client.resources.I18n;
 
 import org.lwjgl.opengl.GL11;
 
@@ -28,7 +27,7 @@ public enum ExportProgressOverlay {
 		if(event.getType() != ElementType.ALL || !ExportImageUtil.isExporting)
 			return;
 		
-		FontRenderer font = Minecraft.getMinecraft().fontRendererObj;
+		FontRenderer font = Minecraft.getMinecraft().fontRenderer;
 		
 		int s = 2;
 		

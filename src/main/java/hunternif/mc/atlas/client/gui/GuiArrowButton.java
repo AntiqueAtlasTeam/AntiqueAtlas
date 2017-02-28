@@ -9,37 +9,37 @@ import net.minecraft.client.renderer.RenderHelper;
 import org.lwjgl.opengl.GL11;
 
 public class GuiArrowButton extends GuiComponentButton {
-	public static final int WIDTH = 12;
-	public static final int HEIGHT = 12;
+	private static final int WIDTH = 12;
+	private static final int HEIGHT = 12;
 	private static final int IMAGE_WIDTH = 24;
 	private static final int IMAGE_HEIGHT = 24;
 	
-	public static enum ArrowDirection {
+	public enum ArrowDirection {
 		UP("Up"), DOWN("Down"), LEFT("Left"), RIGHT("Right");
 		
-		public String description;
+		public final String description;
 		ArrowDirection(String text) {
 			this.description = text;
 		}
 	}
 	
-	public ArrowDirection direction;
+	private final ArrowDirection direction;
 	
-	public GuiArrowButton(ArrowDirection direction) {
+	private GuiArrowButton(ArrowDirection direction) {
 		setSize(WIDTH, HEIGHT);
 		this.direction = direction;
 	}
 	
-	public static GuiArrowButton up() {
+	static GuiArrowButton up() {
 		return new GuiArrowButton(ArrowDirection.UP);
 	}
-	public static GuiArrowButton down() {
+	static GuiArrowButton down() {
 		return new GuiArrowButton(ArrowDirection.DOWN);
 	}
-	public static GuiArrowButton left() {
+	static GuiArrowButton left() {
 		return new GuiArrowButton(ArrowDirection.LEFT);
 	}
-	public static GuiArrowButton right() {
+	static GuiArrowButton right() {
 		return new GuiArrowButton(ArrowDirection.RIGHT);
 	}
 

@@ -12,7 +12,7 @@ import hunternif.mc.atlas.client.TextureSet;
 /**
  * API for biome tiles and custom tiles (i.e. dungeons, towns etc.)
  * Texture methods are client side only. Consider registering your own
- * texture set with a unique name: see {@link #registerTextureSet()}
+ * texture set with a unique name: see {@link #registerTextureSet}
  * @author Hunternf
  */
 public interface TileAPI {
@@ -33,28 +33,28 @@ public interface TileAPI {
 	
 	/**
 	 * Assign one or more texture to biome ID, creating a new texture set.
-	 * See {@link #registerTextureSet()}
+	 * See {@link #registerTextureSet}
 	 */
 	@SideOnly(Side.CLIENT)
 	void setBiomeTexture(int biomeID, String textureSetName, ResourceLocation ... textures);
 	
 	/**
 	 * Assign one or more texture to biome ID, creating a new texture set.
-	 * See {@link #registerTextureSet()}
+	 * See {@link #registerTextureSet}
 	 */
 	@SideOnly(Side.CLIENT)
 	void setBiomeTexture(Biome biome, String textureSetName, ResourceLocation ... textures);
 	
 	/**
 	 * Assign one or more texture to biome ID, using an existing texture set.
-	 * See {@link #registerTextureSet()}
+	 * See {@link #registerTextureSet}
 	 */
 	@SideOnly(Side.CLIENT)
 	void setBiomeTexture(int biomeID, TextureSet textureSet);
 	
 	/**
 	 * Assign one or more texture to biome ID, using an existing texture set.
-	 * See {@link #registerTextureSet()}
+	 * See {@link #registerTextureSet}
 	 */
 	@SideOnly(Side.CLIENT)
 	void setBiomeTexture(Biome biome, TextureSet textureSet);
@@ -65,7 +65,7 @@ public interface TileAPI {
 	/**
 	 * Assign one or more textures to a unique tile name.
 	 * This creates a new texture set with the same name as the tile.
-	 * See {@link #registerTextureSet()}
+	 * See {@link #registerTextureSet}
 	 */
 	@SideOnly(Side.CLIENT)
 	void setCustomTileTexture(String uniqueTileName, ResourceLocation ... textures);
@@ -179,7 +179,7 @@ public interface TileAPI {
 	
 	/**
 	 * Delete the global tile at the specified chunk coordinates if a tile has
-	 * been previously put there by {@link #putCustomGlobalTile()}.
+	 * been previously put there by {@link #putCustomGlobalTile}.
 	 * This method has to be called on the <b>server</b> only!
 	 * 
 	 * @param world		dimension the chunk is located in.

@@ -17,11 +17,9 @@
 
 package hunternif.mc.atlas.network;
 
+import com.google.common.base.Throwables;
 import hunternif.mc.atlas.AntiqueAtlasMod;
 import io.netty.buffer.ByteBuf;
-
-import java.io.IOException;
-
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.IThreadListener;
@@ -30,10 +28,10 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 
-import com.google.common.base.Throwables;
+import java.io.IOException;
 
 /**
- * 
+ *
  * A wrapper much like the vanilla packet class, allowing use of PacketBuffer's many
  * useful methods as well as implementing a final version of IMessageHandler which
  * calls {@link #process(EntityPlayer, Side)} on each received message, letting the
@@ -64,7 +62,7 @@ public abstract class AbstractMessage<T extends AbstractMessage<T>> implements I
 	 * If message is sent to the wrong side, an exception will be thrown during handling
 	 * @return True if the message is allowed to be handled on the given side
 	 */
-	protected boolean isValidOnSide(Side side) {
+	boolean isValidOnSide(Side side) {
 		return true;
 	}
 
@@ -72,7 +70,7 @@ public abstract class AbstractMessage<T extends AbstractMessage<T>> implements I
 	 * Whether this message requires the main thread to be processed (i.e. it
 	 * requires that the world, player, and other objects are in a valid state).
 	 */
-	protected boolean requiresMainThread() {
+	boolean requiresMainThread() {
 		return true;
 	}
 
@@ -109,14 +107,10 @@ public abstract class AbstractMessage<T extends AbstractMessage<T>> implements I
 	/**
 	 * Ensures that the message is being handled on the main thread
 	 */
-	private static final <T extends AbstractMessage<T>> void checkThreadAndEnqueue(final AbstractMessage<T> msg, final MessageContext ctx) {
+	private static <T extends AbstractMessage<T>> void checkThreadAndEnqueue(final AbstractMessage<T> msg, final MessageContext ctx) {
 		IThreadListener thread = AntiqueAtlasMod.proxy.getThreadFromContext(ctx);
 		if (!thread.isCallingFromMinecraftThread()) {
-			thread.addScheduledTask(new Runnable() {
-				public void run() {
-					msg.process(AntiqueAtlasMod.proxy.getPlayerEntity(ctx), ctx.side);
-				}
-			});
+			thread.addScheduledTask(() -> msg.process(AntiqueAtlasMod.proxy.getPlayerEntity(ctx), ctx.side));
 		}
 	}
 

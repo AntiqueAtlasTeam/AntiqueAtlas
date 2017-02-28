@@ -188,7 +188,7 @@ public class TileRenderIterator implements Iterator<SubTileQuartet> {
 		if (tile == null) return false;
 		TextureSet set = BiomeTextureMap.instance().getTextureSet(tile);
 		TextureSet toSet = BiomeTextureMap.instance().getTextureSet(to);
-		return set == null ? false : set.shouldStitchTo(toSet);
+		return set != null && set.shouldStitchTo(toSet);
 	}
 	/** Whether the first tile should be stitched to the 2nd along the X axis
 	 * (but the opposite is not always true!) */
@@ -196,7 +196,7 @@ public class TileRenderIterator implements Iterator<SubTileQuartet> {
 		if (tile == null) return false;
 		TextureSet set = BiomeTextureMap.instance().getTextureSet(tile);
 		TextureSet toSet = BiomeTextureMap.instance().getTextureSet(to);
-		return set == null ? false : set.shouldStitchToHorizontally(toSet);
+		return set != null && set.shouldStitchToHorizontally(toSet);
 	}
 	/** Whether the first tile should be stitched to the 2nd along the Z axis
 	 * (but the opposite is not always true!) */
@@ -204,7 +204,7 @@ public class TileRenderIterator implements Iterator<SubTileQuartet> {
 		if (tile == null) return false;
 		TextureSet set = BiomeTextureMap.instance().getTextureSet(tile);
 		TextureSet toSet = BiomeTextureMap.instance().getTextureSet(to);
-		return set == null ? false : set.shouldStitchToVertically(toSet);
+		return set != null && set.shouldStitchToVertically(toSet);
 	}
 	
 	/** Change the shape of the subtile in order to stitch it vertically

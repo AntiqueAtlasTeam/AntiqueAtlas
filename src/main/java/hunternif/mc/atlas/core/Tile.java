@@ -20,13 +20,13 @@ public class Tile {
 		this(biomeID, (byte)0);
 		randomizeTexture();
 	}
-	public Tile(int biomeID, byte variationNumber) {
+	private Tile(int biomeID, byte variationNumber) {
 		this.biomeID = biomeID;
 		this.variationNumber = variationNumber;
 	}
 	
 	/** Set variation number to a random byte. */
-	public void randomizeTexture() {
+	private void randomizeTexture() {
 		this.variationNumber = (short) RANDOM.nextInt(Short.MAX_VALUE);
 	}
 	

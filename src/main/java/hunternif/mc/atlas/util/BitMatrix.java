@@ -4,10 +4,11 @@ import java.util.BitSet;
 
 public class BitMatrix {
 
-	private BitSet set;
-	private int width, height;
+	private final BitSet set;
+	private final int width;
+	private final int height;
 	
-	public BitMatrix(int width, int height) {
+	private BitMatrix(int width, int height) {
 		this.width = width;
 		this.height = height;
 		set = new BitSet(width*height);
@@ -34,9 +35,7 @@ public class BitMatrix {
 	}
 	
 	public boolean get(int x, int y) {
-		if(x < 0 || y < 0 || x >= width || y >= height)
-			return false;
-		return set.get(calcIndex(x,y));
+		return !(x < 0 || y < 0 || x >= width || y >= height) && set.get(calcIndex(x, y));
 	}
 	
 	private int calcIndex(int x, int y) {

@@ -8,7 +8,6 @@ import net.minecraft.world.chunk.Chunk;
 
 import hunternif.mc.atlas.ext.ExtTileIdMap;
 import hunternif.mc.atlas.util.ByteUtil;
-import hunternif.mc.atlas.util.WorldUtil;
 
 /**
  * Detects seas of lava, cave ground and cave walls in the Nether.

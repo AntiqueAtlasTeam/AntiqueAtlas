@@ -1,15 +1,13 @@
 package hunternif.mc.atlas.util;
 
-import java.util.List;
-
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.village.Village;
 import net.minecraft.village.VillageDoorInfo;
-import net.minecraft.world.biome.Biome;
 import net.minecraft.world.chunk.Chunk;
 
-public class WorldUtil {
+import java.util.List;
+
+class WorldUtil {
 	
 	/**
 	 * Returns the village if the specified chunk overlays its territory.

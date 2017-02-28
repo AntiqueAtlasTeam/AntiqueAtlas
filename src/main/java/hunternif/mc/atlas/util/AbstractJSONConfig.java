@@ -1,18 +1,18 @@
 package hunternif.mc.atlas.util;
 
-import java.io.File;
-
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+
+import java.io.File;
 
 /**
  * Basic JSON config that handles format versions and empty or malformed files.
  * @author Hunternif
  */
 public abstract class AbstractJSONConfig<T extends SaveData> implements Config<T> {
-	protected final File file;
+	private final File file;
 
-	public AbstractJSONConfig(File file) {
+	protected AbstractJSONConfig(File file) {
 		this.file = file;
 	}
 	
@@ -55,9 +55,7 @@ public abstract class AbstractJSONConfig<T extends SaveData> implements Config<T
 			if (outdated) {
 				save(data);
 			}
-		} catch (IllegalStateException e) {
-			Log.error(e, "Malformed config %s", file.getName());
-		} catch (NumberFormatException e) {
+		} catch (IllegalStateException | NumberFormatException e) {
 			Log.error(e, "Malformed config %s", file.getName());
 		}
 	}
@@ -89,5 +87,5 @@ public abstract class AbstractJSONConfig<T extends SaveData> implements Config<T
 	
 	/** Latest version of the config format. This version is what is going to
 	 * get written into file, but previous versions may still be read. */
-	public abstract int currentVersion();
+	protected abstract int currentVersion();
 }

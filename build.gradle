@@ -13,65 +13,47 @@ buildscript {
 }
 apply plugin: 'net.minecraftforge.gradle.forge'
 
-version = mcversion + '-' + version_major + '.' + version_minor + '.' + version_patch
-group= "hunternif.mc.atlas" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
+group= "hunternif.mc.atlas"
 archivesBaseName = "antiqueatlas"
 
+sourceCompatibility = targetCompatibility = 1.8
+
+ext.mod_version = "$version_major.$version_minor.$version_patch"
+version = "$mc_version-$mod_version" // This will be in the jar file name
+
+println "Building " + archivesBaseName + " " + version
+
 minecraft {
-    version = mcversion + '-' + forgeversion
-    if (file('../run').exists()) {
-		runDir = "../run"
-	} else {
-		runDir = "run"
-	}
-    
+    version = mc_version + '-' + forge_version
+    runDir = "run"
+
     // the mappings can be changed at any time, and must be in the following format.
     // snapshot_YYYYMMDD   snapshot are built nightly.
     // stable_#            stables are built at the discretion of the MCP team.
     // Use non-default mappings at your own risk. they may not allways work.
     // simply re-run your setup task after changing the mappings to update your workspace.
-    mappings = "snapshot_20160606"
+    mappings = mcp_version
     // makeObfSourceJar = false // an Srg named sources jar is made by default. uncomment this to disable.
-    
-    replace '@VERSION@', project.version
+
+    replace '@VERSION@', project.mod_version
 }
 
 dependencies {
-    // you may put jars on which you depend on in ./libs
-    // or you may define them like so..
-    //compile "some.group:artifact:version:classifier"
-    //compile "some.group:artifact:version"
-      
-    // real examples
-    //compile 'com.mod-buildcraft:buildcraft:6.0.8:dev'  // adds buildcraft to the dev env
-    //compile 'com.googlecode.efficient-java-matrix-library:ejml:0.24' // adds ejml to the dev env
-
-    // the 'provided' configuration is for optional dependencies that exist at compile-time but might not at runtime.
-    //provided 'com.mod-buildcraft:buildcraft:6.0.8:dev'
-
-    // the deobf configurations:  'deobfCompile' and 'deobfProvided' are the same as the normal compile and provided,
-    // except that these dependencies get remapped to your current MCP mappings
-    //deobfCompile 'com.mod-buildcraft:buildcraft:6.0.8:dev'
-    //deobfProvided 'com.mod-buildcraft:buildcraft:6.0.8:dev'
-
-    // for more info...
-    // http://www.gradle.org/docs/current/userguide/artifact_dependencies_tutorial.html
-    // http://www.gradle.org/docs/current/userguide/dependency_management.html
-
+    testCompile "junit:junit:4.+"
 }
 
 processResources
 {
     // this will ensure that this task is redone when the versions change.
-    inputs.property "version", project.version
-    inputs.property "mcversion", project.minecraft.version
+    inputs.property "mod_version", project.mod_version
+    inputs.property "mc_version", project.mc_version
 
     // replace stuff in mcmod.info, nothing else
     from(sourceSets.main.resources.srcDirs) {
         include 'mcmod.info'
                 
-        // replace version and mcversion
-        expand 'version':project.version, 'mcversion':project.minecraft.version
+        // replace version and mc_version
+        expand 'version':project.mod_version, 'mcversion':project.mc_version
     }
         
     // copy everything else, thats not the mcmod.info
@@ -79,7 +61,6 @@ processResources
         exclude 'mcmod.info'
     }
 }
-
 
 task deobfJar(type: Jar) {
     from sourceSets.main.output

@@ -6,23 +6,21 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.client.resources.I18n;
-
 import org.lwjgl.opengl.GL11;
 
-public class ProgressBarOverlay {
+class ProgressBarOverlay {
 	/** Total width of the progress bar. */
 	private final int barWidth;
 	
 	/** Total height of the progress bar. */
 	private final int barHeight;
 	
-	private FontRenderer font;
+	private final FontRenderer font;
 	
 	public ProgressBarOverlay(int barWidth, int barHeight) {
 		this.barWidth = barWidth;
 		this.barHeight = barHeight;
-		font = Minecraft.getMinecraft().fontRendererObj;
+		font = Minecraft.getMinecraft().fontRenderer;
 	}
 	
 	/** Render progress bar on the screen. */

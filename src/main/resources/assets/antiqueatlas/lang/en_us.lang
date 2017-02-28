@@ -31,3 +31,6 @@ gui.antiqueatlas.export.writestripe=Writing slice...
 gui.antiqueatlas.export.rendering.background=Rendering map background
 gui.antiqueatlas.export.rendering.map=Rendering map tiles
 gui.antiqueatlas.export.rendering.markers=Rendering markers
+
+key.openatlas.desc=Open Atlas
+key.antiqueatlas.category=Antique Atlas

@@ -6,7 +6,7 @@ import java.util.zip.DataFormatException;
 import java.util.zip.Deflater;
 import java.util.zip.Inflater;
 
-public class ZipUtil {
+class ZipUtil {
 	public static byte[] decompressByteArray(byte[] bytes) {
 		ByteArrayOutputStream baos = null;
 		Inflater iflr = new Inflater();

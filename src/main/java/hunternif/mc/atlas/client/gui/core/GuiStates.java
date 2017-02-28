@@ -7,7 +7,7 @@ package hunternif.mc.atlas.client.gui.core;
  */
 public class GuiStates {
 	/** Meant to declare anonymous classes. */
-	public static interface IState {
+	public interface IState {
 		void onEnterState();
 		void onExitState();
 	}

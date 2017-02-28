@@ -18,7 +18,7 @@ import net.minecraftforge.fml.relauncher.Side;
  */
 public class TilesPacket extends AbstractClientMessage<TilesPacket> {
 	/** Size of one entry in the map in bytes. */
-	public static final int ENTRY_SIZE_BYTES = 2 + 2 + 2;
+	private static final int ENTRY_SIZE_BYTES = 2 + 2 + 2;
 
 	private int dimension;
 	private int tileCount;
@@ -46,15 +46,15 @@ public class TilesPacket extends AbstractClientMessage<TilesPacket> {
 
 	@Override
 	public void read(PacketBuffer buffer) throws IOException {
-		dimension = buffer.readVarIntFromBuffer();
-		tileCount = buffer.readVarIntFromBuffer();
+		dimension = buffer.readVarInt();
+		tileCount = buffer.readVarInt();
 		tileData = buffer.readBytes(tileCount * ENTRY_SIZE_BYTES);
 	}
 
 	@Override
 	public void write(PacketBuffer buffer) throws IOException {
-		buffer.writeVarIntToBuffer(dimension);
-		buffer.writeVarIntToBuffer(tileCount);
+		buffer.writeVarInt(dimension);
+		buffer.writeVarInt(tileCount);
 		buffer.writeBytes(tileData);
 	}
 

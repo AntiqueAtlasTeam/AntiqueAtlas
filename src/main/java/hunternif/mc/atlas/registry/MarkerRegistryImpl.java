@@ -1,40 +1,31 @@
 package hunternif.mc.atlas.registry;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-import java.util.Set;
-
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Maps;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.registry.IRegistry;
-
-import javax.annotation.Nullable;
-
 import org.apache.commons.lang3.Validate;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Maps;
+import javax.annotation.Nullable;
+import java.util.*;
 
-public class MarkerRegistryImpl<V extends IRegistryEntry> implements IRegistry<ResourceLocation, V>
+class MarkerRegistryImpl<V extends IRegistryEntry> implements IRegistry<ResourceLocation, V>
 {
     private static final Logger LOGGER = LogManager.getLogger();
-    protected final Map<ResourceLocation, V> registryObjects = this.createUnderlyingMap();
+    private final Map<ResourceLocation, V> registryObjects = this.createUnderlyingMap();
     private List<V> values;
 
-    protected final ResourceLocation defaultKey;
+    private final ResourceLocation defaultKey;
     
     public MarkerRegistryImpl(ResourceLocation defaultKey) {
 		this.defaultKey = defaultKey;
 	}
     
-    protected Map<ResourceLocation, V> createUnderlyingMap()
+    private Map<ResourceLocation, V> createUnderlyingMap()
     {
-        return Maps.<ResourceLocation, V>newHashMap();
+        return Maps.newHashMap();
     }
 
     @Nullable
@@ -73,7 +64,7 @@ public class MarkerRegistryImpl<V extends IRegistryEntry> implements IRegistry<R
 
     public Set<ResourceLocation> getKeys()
     {
-        return Collections.<ResourceLocation>unmodifiableSet(this.registryObjects.keySet());
+        return Collections.unmodifiableSet(this.registryObjects.keySet());
     }
 
     @Nullable

@@ -1,40 +1,34 @@
 package hunternif.mc.atlas;
 
 import hunternif.mc.atlas.util.ListMapValueIterator;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
-import static org.junit.Assert.*;
-
 import org.junit.Before;
 import org.junit.Test;
+
+import java.util.*;
+
+import static org.junit.Assert.assertEquals;
 
 public class TestListMapValueIterator {
 	private Map<Integer, List<String>> map;
 	
 	@Before
 	public void init() {
-		map = new HashMap<Integer, List<String>>();
-		List<String> list = new ArrayList<String>(Arrays.asList("lol", "wut"));
+		map = new HashMap<>();
+		List<String> list = new ArrayList<>(Arrays.asList("lol", "wut"));
 		map.put(0, list);
-		list = new ArrayList<String>(Arrays.asList("omg"));
+		list = new ArrayList<>(Collections.singletonList("omg"));
 		map.put(2, list);
-		map.put(3, new ArrayList<String>());
-		list = new ArrayList<String>(Arrays.asList("wtf", "bbq"));
+		map.put(3, new ArrayList<>());
+		list = new ArrayList<>(Arrays.asList("wtf", "bbq"));
 		map.put(5, list);
-		map.put(10, new ArrayList<String>());
+		map.put(10, new ArrayList<>());
 	}
 	
 	@Test
 	public void testSize() {
 		assertIteration(map, "lolwutomgwtfbbq");
 		int i = 0;
-		for (Iterator<String> iter = new ListMapValueIterator<String>(map); iter.hasNext(); iter.next()) {
+		for (Iterator<String> iter = new ListMapValueIterator<>(map); iter.hasNext(); iter.next()) {
 			i++;
 		}
 		assertEquals(5, i);
@@ -46,7 +40,7 @@ public class TestListMapValueIterator {
 		for (int i = 0; i < answers.length; i++) {
 			init();
 			int j = 0;
-			Iterator<String> iter = new ListMapValueIterator<String>(map);
+			Iterator<String> iter = new ListMapValueIterator<>(map);
 			while (j <= i) {
 				j++;
 				iter.next();
@@ -82,9 +76,9 @@ public class TestListMapValueIterator {
 	
 	@Test
 	public void testSmallMap() {
-		Map<Integer, List<String>> map2 = new HashMap<Integer, List<String>>();
+		Map<Integer, List<String>> map2 = new HashMap<>();
 		assertIteration(map2, "");
-		List<String> list = new ArrayList<String>(Arrays.asList("lol"));
+		List<String> list = new ArrayList<>(Collections.singletonList("lol"));
 		map2.put(0, list);
 		assertIteration(map2, "lol");
 		// Add and remove one item:
@@ -103,7 +97,7 @@ public class TestListMapValueIterator {
 	/** Assert that iterating through the map while concatenating found values
 	 * to a string will produce the specified string. */
 	private static <E> void assertIteration(Map<?, List<E>> map, String result) {
-		Iterator<E> iter = new ListMapValueIterator<E>(map);
+		Iterator<E> iter = new ListMapValueIterator<>(map);
 		String output = "";
 		while (iter.hasNext()) {
 			output += iter.next();

@@ -4,17 +4,16 @@ import hunternif.mc.atlas.network.PacketDispatcher;
 import hunternif.mc.atlas.network.client.TilesPacket;
 import hunternif.mc.atlas.util.Log;
 import hunternif.mc.atlas.util.ShortVec2;
-
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.concurrent.ConcurrentHashMap;
-
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.world.WorldSavedData;
 import net.minecraftforge.common.util.Constants;
+
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * This world-saved data contains all the custom pseudo-biome IDs in a world.
@@ -33,7 +32,7 @@ public class ExtBiomeData extends WorldSavedData {
 	}
 	
 	private final Map<Integer /*dimension ID*/, Map<ShortVec2, Integer /*biome ID*/>> dimensionMap =
-			new ConcurrentHashMap<Integer, Map<ShortVec2, Integer /*biome ID*/>>(2, 0.75f, 2);
+            new ConcurrentHashMap<>(2, 0.75f, 2);
 	
 	private final ShortVec2 tempCoords = new ShortVec2(0, 0);
 
@@ -52,7 +51,7 @@ public class ExtBiomeData extends WorldSavedData {
 			int[] intArray = tag.getIntArray(TAG_BIOME_IDS);
 			for (int i = 0; i < intArray.length; i += 3) {
 				ShortVec2 coords = new ShortVec2(intArray[i], intArray[i+1]);
-				biomeMap.put(coords, Integer.valueOf(intArray[i+2]));
+				biomeMap.put(coords, intArray[i + 2]);
 			}
 		}
 	}
@@ -81,12 +80,8 @@ public class ExtBiomeData extends WorldSavedData {
 	}
 	
 	private Map<ShortVec2, Integer> getBiomesInDimension(int dimension) {
-		Map<ShortVec2, Integer> map = dimensionMap.get(Integer.valueOf(dimension));
-		if (map == null) {
-			map = new ConcurrentHashMap<ShortVec2, Integer>(2, 0.75f, 2);
-			dimensionMap.put(Integer.valueOf(dimension), map);
-		}
-		return map;
+		return dimensionMap.computeIfAbsent(dimension,
+				k -> new ConcurrentHashMap<>(2, 0.75f, 2));
 	}
 	
 	/** If no custom tile is set at the specified coordinates, returns -1. */

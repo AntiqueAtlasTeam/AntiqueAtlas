@@ -1,9 +1,8 @@
 package hunternif.mc.atlas.marker;
 
-import net.minecraft.entity.player.EntityPlayer;
-
 import hunternif.mc.atlas.network.client.MarkersPacket;
 import hunternif.mc.atlas.registry.MarkerType;
+import net.minecraft.entity.player.EntityPlayer;
 
 /** Holds global markers, i.e. ones that appear in all atlases. */
 public class GlobalMarkersData extends MarkersData {
@@ -23,7 +22,7 @@ public class GlobalMarkersData extends MarkersData {
 	}
 	
 	/** Send all data to the player in several packets. */
-	protected void syncOnPlayer(EntityPlayer player) {
+    void syncOnPlayer(EntityPlayer player) {
 		syncOnPlayer(-1, player);
 	}
 	

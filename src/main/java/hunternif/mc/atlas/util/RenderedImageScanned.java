@@ -1,24 +1,19 @@
 package hunternif.mc.atlas.util;
 
-import java.awt.Color;
-import java.awt.Graphics2D;
-import java.awt.Rectangle;
-import java.awt.image.BufferedImage;
-import java.awt.image.ColorModel;
-import java.awt.image.Raster;
-import java.awt.image.RenderedImage;
-import java.awt.image.SampleModel;
-import java.awt.image.WritableRaster;
+import java.awt.*;
+import java.awt.image.*;
 import java.util.Vector;
 import java.util.function.Consumer;
 import java.util.function.IntConsumer;
 
-public class RenderedImageScanned implements RenderedImage {
+class RenderedImageScanned implements RenderedImage {
 
-	protected int width, height, bufY;
-	protected BufferedImage scanBuffer;
-	protected Consumer<Graphics2D> generator;
-	protected IntConsumer rowListener;
+	private final int width;
+	private final int height;
+	private int bufY;
+	private final BufferedImage scanBuffer;
+	private final Consumer<Graphics2D> generator;
+	private final IntConsumer rowListener;
 	
 	public RenderedImageScanned(int width, int height, BufferedImage scanBuffer, Consumer<Graphics2D> generator, IntConsumer rowListener) {
 		this.width = width;
@@ -48,7 +43,7 @@ public class RenderedImageScanned implements RenderedImage {
 			return null;
 				
 		if(rect.y >= bufY+scanBuffer.getHeight() || rect.y + rect.height <= bufY) {
-			bufY = (int)rect.y;
+			bufY = rect.y;
 			redrawToBuffer();
 		}
 		rowListener.accept(rect.y-bufY);

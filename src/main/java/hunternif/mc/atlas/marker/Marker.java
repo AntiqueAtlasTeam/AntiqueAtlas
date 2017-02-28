@@ -1,9 +1,8 @@
 package hunternif.mc.atlas.marker;
 
-import net.minecraft.client.resources.I18n;
-
 import hunternif.mc.atlas.registry.MarkerType;
 import hunternif.mc.atlas.util.ShortVec2;
+import net.minecraft.client.resources.I18n;
 
 /**
  * Marker on the map in an atlas. Has a type and a text label.
@@ -41,7 +40,6 @@ public class Marker {
 
 	/** The label "as is", it might be a placeholder in the format
 	 * "gui.antiqueatlas.marker.*" that has to be translated.
-	 * @return
 	 */
 	public String getLabel() {
 		return label;
@@ -57,7 +55,7 @@ public class Marker {
 			String key = label.substring(0, whitespaceIndex);
 			String param = label.substring(whitespaceIndex + 1);
 			String translated = I18n.format(key);
-			if (translated != key) { // Make sure translation succeeded
+			if (!key.equals(translated)) { // Make sure translation succeeded
 				return String.format(I18n.format(key), param);
 			} else {
 				return label;
@@ -95,7 +93,7 @@ public class Marker {
 	public boolean isGlobal() {
 		return isGlobal;
 	}
-	protected Marker setGlobal(boolean value) {
+	Marker setGlobal(boolean value) {
 		this.isGlobal = value;
 		return this;
 	}

@@ -17,9 +17,9 @@ import net.minecraftforge.fml.common.network.FMLNetworkEvent.ClientConnectedToSe
  * @author Hunternif
  */
 public class MarkersDataHandler {
-	protected static final String MARKERS_DATA_PREFIX = "aaMarkers_";
+	private static final String MARKERS_DATA_PREFIX = "aaMarkers_";
 	
-	private final Map<String, MarkersData> markersDataClientCache = new ConcurrentHashMap<String, MarkersData>();
+	private final Map<String, MarkersData> markersDataClientCache = new ConcurrentHashMap<>();
 	
 	/** Loads data for the given atlas or creates a new one. */
 	public MarkersData getMarkersData(ItemStack stack, World world) {
@@ -40,17 +40,17 @@ public class MarkersDataHandler {
 			data = markersDataClientCache.get(key);
 		}
 		if (data == null) {
-			data = (MarkersData) world.loadItemData(MarkersData.class, key);
+			data = (MarkersData) world.loadData(MarkersData.class, key);
 			if (data == null) {
 				data = new MarkersData(key);
-				world.setItemData(key, data);
+				world.setData(key, data);
 			}
 			if (world.isRemote) markersDataClientCache.put(key, data);
 		}
 		return data;
 	}
 	
-	protected String getMarkersDataKey(int atlasID) {
+	private String getMarkersDataKey(int atlasID) {
 		return MARKERS_DATA_PREFIX + atlasID;
 	}
 	
