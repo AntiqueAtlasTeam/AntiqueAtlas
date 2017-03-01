@@ -31,3 +31,6 @@ gui.antiqueatlas.export.writestripe=Skriver skive...
 gui.antiqueatlas.export.rendering.background=Renderer kortbaggrund
 gui.antiqueatlas.export.rendering.map=Renderer kortfelter
 gui.antiqueatlas.export.rendering.markers=Viser markører
+
+key.openatlas.desc=Åben Atlas
+key.antiqueatlas.category=Antique Atlas
