@@ -1,0 +1,9 @@
+language: java
+jdk:
+  - oraclejdk8
+
+before_install:
+ - chmod +x gradlew
+
+install: ./gradlew setupCIWorkspace -S
+script: ./gradlew build -S
