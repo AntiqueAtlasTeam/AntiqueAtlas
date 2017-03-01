@@ -1,6 +1,10 @@
 language: java
-sudo: false
 jdk:
   - oraclejdk8
+  - openjdk8
+
 before_install:
  - chmod +x gradlew
+
+install: ./gradlew setupCIWorkspace -S
+script: ./gradlew build -S
