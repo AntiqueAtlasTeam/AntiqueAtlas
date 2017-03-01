@@ -55,8 +55,8 @@ public class RecipeAtlasCombining extends RecipeBase {
 				}
 			}
 		}
-		if (atlasIds.size() < 1) return null;
-		return firstAtlas;
+
+		return atlasIds.size() < 1 ? null : firstAtlas;
 	}
 
 	@Override

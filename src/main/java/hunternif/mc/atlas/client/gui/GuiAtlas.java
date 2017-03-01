@@ -211,7 +211,8 @@ public class GuiAtlas extends GuiComponent {
 	
 	/** Progress bar for exporting images. */
 	private final ProgressBarOverlay progressBar = new ProgressBarOverlay(100, 2);
-	
+
+	private long lastUpdateMillis = System.currentTimeMillis();
 	private int scaleAlpha = 255;
 	private int scaleClipIndex = 0;
 	private int zoomLevelOne = 8;
@@ -611,9 +612,13 @@ public class GuiAtlas extends GuiComponent {
             btnPosition.setEnabled(true);
         }
     }
-	
+
 	@Override
 	public void drawScreen(int mouseX, int mouseY, float par3) {
+		long currentMillis = System.currentTimeMillis();
+		long deltaMillis = currentMillis - lastUpdateMillis;
+		lastUpdateMillis = currentMillis;
+
 		if (AntiqueAtlasMod.settings.debugRender) {
 			renderTimes[renderTimesIndex++] = System.currentTimeMillis();
 			if (renderTimesIndex == renderTimes.length) {
@@ -629,8 +634,9 @@ public class GuiAtlas extends GuiComponent {
 		GlStateManager.color(1, 1, 1, 1);
 		GlStateManager.alphaFunc(GL11.GL_GREATER, 0); // So light detail on tiles is visible
 		AtlasRenderHelper.drawFullTexture(Textures.BOOK, getGuiX(), getGuiY(), WIDTH, HEIGHT);
-		
-		if ((stack == null && AntiqueAtlasMod.settings.itemNeeded) || biomeData == null) return;
+
+		if ((stack == null && AntiqueAtlasMod.settings.itemNeeded) || biomeData == null)
+			return;
 
 		if (state.is(DELETING_MARKER)) {
 			GlStateManager.color(1, 1, 1, 0.5f);
@@ -704,7 +710,7 @@ public class GuiAtlas extends GuiComponent {
 		// Overlay the frame so that edges of the map are smooth:
 		GlStateManager.color(1, 1, 1, 1);
 		AtlasRenderHelper.drawFullTexture(Textures.BOOK_FRAME, getGuiX(), getGuiY(), WIDTH, HEIGHT);
-		renderScaleOverlay();
+		renderScaleOverlay(deltaMillis);
 		iconScale = getIconScale();
 		
 		// Draw player icon:
@@ -753,11 +759,11 @@ public class GuiAtlas extends GuiComponent {
 			progressBar.draw((width - 100)/2, height/2 - 34);
 		}
 	}
-	
-	private void renderScaleOverlay() {
-		if(scaleAlpha > 0) {			
-			GlStateManager.translate(getGuiX()+WIDTH-13, getGuiY()+12, 0);
-			
+
+	private void renderScaleOverlay(long deltaMillis) {
+		if(scaleAlpha > 0) {
+			GlStateManager.translate(getGuiX() + WIDTH-13, getGuiY() + 12, 0);
+
 			String text;
 			int textWidth, xWidth;
 			
@@ -784,16 +790,16 @@ public class GuiAtlas extends GuiComponent {
                 vb.pos( centerXtranslate,   fontRendererObj.FONT_HEIGHT    , 0.0D).endVertex();
                 t.draw();
                 GlStateManager.enableTexture2D();
-				
+
 				textWidth = fontRendererObj.getStringWidth(text);
 				fontRendererObj.drawString(text, -textWidth/2, 0, scaleAlpha << 24);
-				
+
 				text = parts[1];
 				GlStateManager.translate(0, fontRendererObj.FONT_HEIGHT + 1, 0);
-				
+
 				textWidth = fontRendererObj.getStringWidth(text);
 				fontRendererObj.drawString(text, -textWidth/2, 0, scaleAlpha << 24);
-				
+
 				GlStateManager.translate(xWidth+centerXtranslate, ( -fontRendererObj.FONT_HEIGHT/2 ) -2, 0);
 			} else {
 				textWidth = fontRendererObj.getStringWidth(text);
@@ -802,8 +808,14 @@ public class GuiAtlas extends GuiComponent {
 			
 			GlStateManager.translate(-(getGuiX()+WIDTH-13), -(getGuiY()+12), 0);
 
-			scaleAlpha -= 20;
-			
+			int deltaScaleAlpha = (int)(deltaMillis * 0.256);
+			// because of some crazy high frame rate
+			if(deltaScaleAlpha == 0) {
+				deltaScaleAlpha = 1;
+			}
+
+			scaleAlpha -= 20 * deltaScaleAlpha;
+
 			if(scaleAlpha < 0)
 				scaleAlpha = 0;
 		}
