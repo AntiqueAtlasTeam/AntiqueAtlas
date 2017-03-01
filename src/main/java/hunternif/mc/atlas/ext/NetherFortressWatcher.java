@@ -2,7 +2,6 @@ package hunternif.mc.atlas.ext;
 
 import hunternif.mc.atlas.AntiqueAtlasMod;
 import hunternif.mc.atlas.api.AtlasAPI;
-import hunternif.mc.atlas.util.BoundingBox;
 import hunternif.mc.atlas.util.Log;
 import hunternif.mc.atlas.util.MathUtil;
 import net.minecraft.nbt.NBTBase;

@@ -64,9 +64,7 @@ public class RecipeAtlasCloning extends RecipeBase {
 			}
 
 			return newAtlas;
-		}
-		else
-		{
+		} else {
 			return ItemStack.EMPTY;
 		}
 	}
