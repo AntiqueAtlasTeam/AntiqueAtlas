@@ -17,7 +17,6 @@ public class ItemAtlas extends Item {
 
 	public ItemAtlas() {
 		setHasSubtypes(true);
-		setRegistryName("antiqueatlas");
 	}
 
 	@Override
