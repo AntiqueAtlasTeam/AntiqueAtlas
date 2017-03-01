@@ -23,6 +23,7 @@ import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.Mod.Instance;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLMissingMappingsEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
@@ -66,10 +67,10 @@ public class AntiqueAtlasMod {
 
 		if (settings.itemNeeded) {
 			itemAtlas = (ItemAtlas) new ItemAtlas()
-					.setRegistryName(ID, "antiqueAtlas").setUnlocalizedName("antiqueAtlas");
+					.setRegistryName(ID, "antique_atlas").setUnlocalizedName("antiqueAtlas");
 
 			itemEmptyAtlas = (ItemEmptyAtlas) new ItemEmptyAtlas()
-					.setRegistryName(ID, "emptyAntiqueAtlas").setUnlocalizedName("emptyAntiqueAtlas")
+					.setRegistryName(ID, "empty_antique_atlas").setUnlocalizedName("emptyAntiqueAtlas")
 					.setCreativeTab(CreativeTabs.TOOLS);
 
 			GameRegistry.register(itemAtlas);
@@ -115,5 +116,21 @@ public class AntiqueAtlasMod {
 	@EventHandler
 	public void postInit(FMLPostInitializationEvent event) {
 		proxy.postInit(event);
+	}
+
+	@Mod.EventHandler
+	public void onMissingMapping(FMLMissingMappingsEvent event) {
+		Log.info("Repairing missing mappings");
+		for (FMLMissingMappingsEvent.MissingMapping mapping : event.get()) {
+			String resourcePath = mapping.resourceLocation.getResourcePath().toLowerCase();
+			if (mapping.type == GameRegistry.Type.ITEM) {
+				if ("antiqueatlas".equals(resourcePath)) {
+					mapping.remap(itemAtlas);
+				} else if ("emptyantiqueatlas".equals(resourcePath)) {
+					mapping.remap(itemEmptyAtlas);
+				}
+			}
+		}
+
 	}
 }
