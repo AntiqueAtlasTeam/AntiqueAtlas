@@ -10,6 +10,11 @@ import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.common.BiomeDictionary.Type;
 
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Detects the 256 vanilla biomes, water pools and lava pools.
  * Water and beach biomes are given priority because shore line is the defining
@@ -59,13 +64,13 @@ public class BiomeDetectorBase implements IBiomeDetector {
 	/** If no valid biome ID is found, returns {@link IBiomeDetector#NOT_FOUND}. */
 	@Override
 	public int getBiomeID(Chunk chunk) {
-		int biomeCount = 256;
+		int biomeCount = Biome.REGISTRY.getKeys().size();
 
 		int[] chunkBiomes = ByteUtil.unsignedByteToIntArray(chunk.getBiomeArray());
-		int[] biomeOccurrences = new int[biomeCount];
+		Map<Integer, Integer> biomeOccurrences = new HashMap<>(biomeCount);
 
 		// The following important pseudo-biomes don't have IDs:
-		int lavaOccurences = 0;
+		int lavaOccurrences = 0;
 
 		for (int x = 0; x < 16; x++) {
 			for (int z = 0; z < 16; z++) {
@@ -81,28 +86,27 @@ public class BiomeDetectorBase implements IBiomeDetector {
 						if (topBlock == Blocks.WATER &&
 								biomeID != Biome.getIdForBiome(Biomes.SWAMPLAND) &&
 								biomeID != Biome.getIdForBiome(Biomes.MUTATED_SWAMPLAND)) {
-							biomeOccurrences[waterPoolBiomeID] += priorityWaterPool;
+							int occurrence = biomeOccurrences.getOrDefault(waterPoolBiomeID, 0) + priorityWaterPool;
+							biomeOccurrences.put(waterPoolBiomeID, occurrence);
 						} else if (topBlock2 == Blocks.LAVA) {
-							lavaOccurences += prioritylavaPool;
+							lavaOccurrences += prioritylavaPool;
 						}
 					}
 				}
-				if (biomeID >= 0 && biomeID < biomeCount && Biome.getBiomeForId(biomeID) != null) {
-					biomeOccurrences[biomeID] += priorityForBiome(Biome.getBiomeForId(biomeID));
+				if (biomeID >= 0 && Biome.getBiomeForId(biomeID) != null) {
+					int occurrence = biomeOccurrences.getOrDefault(biomeID, 0) + priorityForBiome(Biome.getBiomeForId(biomeID));
+					biomeOccurrences.put(biomeID, occurrence);
 				}
 			}
 		}
-		int meanBiomeId = NOT_FOUND;
-		int meanBiomeOccurences = 0;
-		for (int i = 0; i < biomeOccurrences.length; i++) {
-			if (biomeOccurrences[i] > meanBiomeOccurences) {
-				meanBiomeId = i;
-				meanBiomeOccurences = biomeOccurrences[i];
-			}
-		}
+
+		Map.Entry<Integer, Integer> meanBiome = Collections.max(biomeOccurrences.entrySet(), Comparator.comparingInt(Map.Entry::getValue));
+		int meanBiomeId = meanBiome.getKey();
+		int meanBiomeOccurrences = meanBiome.getValue();
+
 
 		// The following important pseudo-biomes don't have IDs:
-		if (meanBiomeOccurences < lavaOccurences) {
+		if (meanBiomeOccurrences < lavaOccurrences) {
 			return ExtTileIdMap.instance().getPseudoBiomeID(ExtTileIdMap.TILE_LAVA);
 		}
 
