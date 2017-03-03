@@ -59,7 +59,7 @@ public class BiomeDetectorBase implements IBiomeDetector {
 	/** If no valid biome ID is found, returns {@link IBiomeDetector#NOT_FOUND}. */
 	@Override
 	public int getBiomeID(Chunk chunk) {
-		int biomeCount = Biome.REGISTRY.getKeys().size();
+		int biomeCount = 256;
 
 		int[] chunkBiomes = ByteUtil.unsignedByteToIntArray(chunk.getBiomeArray());
 		int[] biomeOccurrences = new int[biomeCount];
