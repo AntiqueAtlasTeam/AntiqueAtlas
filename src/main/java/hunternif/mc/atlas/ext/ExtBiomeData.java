@@ -28,7 +28,7 @@ public class ExtBiomeData extends WorldSavedData {
 	private static final String TAG_DIMENSION_ID = "dimID";
 	private static final String TAG_BIOME_IDS = "biomeIDs";
 	
-	public ExtBiomeData(String key) {
+	ExtBiomeData(String key) {
 		super(key);
 	}
 	
@@ -52,7 +52,7 @@ public class ExtBiomeData extends WorldSavedData {
 			int[] intArray = tag.getIntArray(TAG_BIOME_IDS);
 			for (int i = 0; i < intArray.length; i += 3) {
 				ShortVec2 coords = new ShortVec2(intArray[i], intArray[i+1]);
-				biomeMap.put(coords, Integer.valueOf(intArray[i+2]));
+				biomeMap.put(coords, intArray[i+2]);
 			}
 		}
 	}
@@ -79,10 +79,10 @@ public class ExtBiomeData extends WorldSavedData {
 	}
 	
 	private Map<ShortVec2, Integer> getBiomesInDimension(int dimension) {
-		Map<ShortVec2, Integer> map = dimensionMap.get(Integer.valueOf(dimension));
+		Map<ShortVec2, Integer> map = dimensionMap.get(dimension);
 		if (map == null) {
 			map = new ConcurrentHashMap<ShortVec2, Integer>(2, 0.75f, 2);
-			dimensionMap.put(Integer.valueOf(dimension), map);
+			dimensionMap.put(dimension, map);
 		}
 		return map;
 	}
@@ -105,7 +105,7 @@ public class ExtBiomeData extends WorldSavedData {
 	}
 	
 	/** Send all data to player in several zipped packets. */
-	public void syncOnPlayer(EntityPlayer player) {
+	void syncOnPlayer(EntityPlayer player) {
 		for (Integer dimension : dimensionMap.keySet()) {
 			TilesPacket packet = new TilesPacket(dimension);
 			Map<ShortVec2, Integer> biomes = getBiomesInDimension(dimension);
@@ -114,7 +114,7 @@ public class ExtBiomeData extends WorldSavedData {
 			}
 			PacketDispatcher.sendTo(packet, (EntityPlayerMP) player);
 		}
-		Log.info("Sent custom biome data to player %s", player.getCommandSenderEntity().getName());
+		Log.info("Sent custom biome data to player %s", player.getName());
 	}
 
 }

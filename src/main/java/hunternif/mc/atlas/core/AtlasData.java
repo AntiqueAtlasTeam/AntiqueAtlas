@@ -44,7 +44,7 @@ public class AtlasData extends WorldSavedData {
 	
 	private NBTTagCompound nbt;
 
-	public AtlasData(String key) {
+	AtlasData(String key) {
 		super(key);
 	}
 
@@ -78,7 +78,7 @@ public class AtlasData extends WorldSavedData {
 		NBTTagList dimensionMapList = new NBTTagList();
 		for (Entry<Integer, DimensionData> dimensionEntry : dimensionMap.entrySet()) {
 			NBTTagCompound dimTag = new NBTTagCompound();
-			dimTag.setInteger(TAG_DIMENSION_ID, dimensionEntry.getKey().intValue());
+			dimTag.setInteger(TAG_DIMENSION_ID, dimensionEntry.getKey());
 			DimensionData dimData = dimensionEntry.getValue();
 			Map<ShortVec2, Tile> seenChunks = dimData.getSeenChunks();
 			int[] intArray = new int[seenChunks.size()*3];
@@ -115,10 +115,10 @@ public class AtlasData extends WorldSavedData {
 	}
 	/** If this dimension is not yet visited, empty DimensionData will be created. */
 	public DimensionData getDimensionData(int dimension) {
-		DimensionData dimData = dimensionMap.get(Integer.valueOf(dimension));
+		DimensionData dimData = dimensionMap.get(dimension);
 		if (dimData == null) {
 			dimData = new DimensionData(this, dimension);
-			dimensionMap.put(Integer.valueOf(dimension), dimData);
+			dimensionMap.put(dimension, dimData);
 		}
 		return dimData;
 	}
@@ -144,7 +144,7 @@ public class AtlasData extends WorldSavedData {
 		// Before syncing make sure the changes are written to the nbt:
 		writeToNBT(nbt);
 		PacketDispatcher.sendTo(new MapDataPacket(atlasID, nbt), (EntityPlayerMP) player);
-		Log.info("Sent Atlas #%d data to player %s", atlasID, player.getCommandSenderEntity().getName());
+		Log.info("Sent Atlas #%d data to player %s", atlasID, player.getName());
 		playersSentTo.add(player);
 	}
 
