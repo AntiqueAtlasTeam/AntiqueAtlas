@@ -97,7 +97,7 @@ public class AntiqueAtlasMod {
 		} else {
 			MinecraftForge.EVENT_BUS.register(new PlayerEventHandler());
 		}
-		
+
 		MinecraftForge.EVENT_BUS.register(atlasData);
 		MinecraftForge.EVENT_BUS.register(markersData);
 
@@ -122,11 +122,11 @@ public class AntiqueAtlasMod {
 	public void onMissingMapping(FMLMissingMappingsEvent event) {
 		Log.info("Repairing missing mappings");
 		for (FMLMissingMappingsEvent.MissingMapping mapping : event.get()) {
-			String resourcePath = mapping.resourceLocation.getResourcePath().toLowerCase();
+			String resourcePath = mapping.resourceLocation.getResourcePath();
 			if (mapping.type == GameRegistry.Type.ITEM) {
-				if ("antiqueatlas".equals(resourcePath)) {
+				if ("antiqueatlas".equalsIgnoreCase(resourcePath)) {
 					mapping.remap(itemAtlas);
-				} else if ("emptyantiqueatlas".equals(resourcePath)) {
+				} else if ("emptyantiqueatlas".equalsIgnoreCase(resourcePath)) {
 					mapping.remap(itemEmptyAtlas);
 				}
 			}
