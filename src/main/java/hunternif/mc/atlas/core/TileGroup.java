@@ -7,9 +7,6 @@ import net.minecraft.nbt.NBTTagCompound;
 /** Represents a group of tiles that may be sent/stored as a single NBT */
 public class TileGroup implements ITileStorage {
 
-	public static final int VERSION = 1;
-
-	public static final String TAG_VERSION = "v";
 	public static final String TAG_POSITION = "p";
 	public static final String TAG_TILES = "t";
 
@@ -30,9 +27,6 @@ public class TileGroup implements ITileStorage {
 	}
 
 	public void readFromNBT(NBTTagCompound compound) {
-		if (compound.getInteger(TAG_VERSION) < VERSION) {
-			Log.warn("Outdated atlas data format! Was %d but current is %d", compound.getInteger(TAG_VERSION), VERSION);
-		}
 		scope.minX = compound.getIntArray(TAG_POSITION)[0];
 		scope.minY = compound.getIntArray(TAG_POSITION)[1];
 		scope.maxX = scope.minX + CHUNK_STEP - 1;
@@ -69,7 +63,6 @@ public class TileGroup implements ITileStorage {
 				}
 			}
 		}
-		me.setInteger(TAG_VERSION, VERSION);
 		me.setIntArray(TAG_POSITION, pos);
 		me.setIntArray(TAG_TILES, tileArray);
 	}
