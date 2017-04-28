@@ -63,8 +63,8 @@ public class AtlasData extends WorldSavedData {
 		this.nbt = compound;
 		int version = compound.getInteger(TAG_VERSION);
 		if (version < VERSION) {
-			Log.warn("Outdated atlas data format! Was %d but current is %d", version, VERSION);
-			this.markDirty();
+			Log.warn("Outdated atlas data format! Was %d but current is %d. Updating.", version, VERSION);
+			readFromNBT2(compound);
 		}
 
 		NBTTagList dimensionMapList = compound.getTagList(TAG_DIMENSION_MAP_LIST, Constants.NBT.TAG_COMPOUND);
@@ -81,12 +81,12 @@ public class AtlasData extends WorldSavedData {
 		}
 	}
 	
-	/**Reads from NBT version 2*/
+	/**Reads from NBT version 2. This is designed to allow easy upgrading to version 3.*/
 	public void readFromNBT2(NBTTagCompound compound) {
 		this.nbt = compound;
 		int version = compound.getInteger(TAG_VERSION);
-		if (version < VERSION) {
-			Log.warn("Outdated atlas data format! Was %d but current is %d", version, VERSION);
+		if (version < 2) {
+			Log.warn("Loading map with version 2 failed");
 			this.markDirty();
 		}
 		NBTTagList dimensionMapList = compound.getTagList(TAG_DIMENSION_MAP_LIST, Constants.NBT.TAG_COMPOUND);

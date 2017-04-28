@@ -84,7 +84,7 @@ public class DimensionData implements ITileStorage {
 				(int)Math.floor(y / (float) TileGroup.CHUNK_STEP));
 		TileGroup tg = tileGroups.get(groupPos);
 		if (tg == null) {
-			tg = new TileGroup(groupPos.x, groupPos.y);
+			tg = new TileGroup(groupPos.x * TileGroup.CHUNK_STEP, groupPos.y * TileGroup.CHUNK_STEP);
 			tileGroups.put(groupPos, tg);
 		}
 		tg.setTile(x, y, tile);
@@ -99,7 +99,7 @@ public class DimensionData implements ITileStorage {
 		// Tile oldTile = tileGroups.remove(getKey().set(x, y));
 		// if (oldTile != null) parent.markDirty();
 		// return oldTile;
-		return null;
+		return getTile(x,y);
 	}
 
 	@Override
