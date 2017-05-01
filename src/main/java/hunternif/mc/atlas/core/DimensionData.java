@@ -39,13 +39,24 @@ public class DimensionData implements ITileStorage {
 		this.dimension = dimension;
 	}
 
-	@Deprecated
 	/**
-	 * TODO This function has to create a new map on each call since the packet
-	 * rework
+	 * This function has to create a new map on each call since the packet rework
 	 */
 	public Map<ShortVec2, Tile> getSeenChunks() {
 		Map<ShortVec2, Tile> chunks = new ConcurrentHashMap<ShortVec2, Tile>(2, 0.75f, 2);
+		Tile t = null;
+		for (Map.Entry<ShortVec2, TileGroup> entry: tileGroups.entrySet()){
+			int basex = entry.getKey().x;
+			int basey = entry.getKey().y;
+			for (int x = basex; x < basex+TileGroup.CHUNK_STEP; x++){
+				for (int y = basey; y < basey+TileGroup.CHUNK_STEP; y++){
+					t = entry.getValue().getTile(x, y);
+					if (t!=null){
+						chunks.put(new ShortVec2(x, y), t);
+					}
+				}
+			}
+		}
 		return chunks;
 	}
 
