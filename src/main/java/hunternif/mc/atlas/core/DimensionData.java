@@ -23,6 +23,8 @@ public class DimensionData implements ITileStorage {
 	/**
 	 * a map of chunks the player has seen. This map is thread-safe. CAREFUL!
 	 * Don't modify chunk coordinates that are already put in the map!
+	 * 
+	 * Key is a ShortVec2 representing the gilegroup's position in units of TileGroup.CHUNK_STEP
 	 */
 	private final Map<ShortVec2, TileGroup> tileGroups = new ConcurrentHashMap<ShortVec2, TileGroup>(2, 0.75f, 2);
 
@@ -163,7 +165,7 @@ public class DimensionData implements ITileStorage {
 			NBTTagCompound tgTag = me.getCompoundTagAt(d);
 			TileGroup tg = new TileGroup(0, 0);
 			tg.readFromNBT(tgTag);
-			ShortVec2 key = new ShortVec2(tg.getScope().minX, tg.getScope().minY);
+			ShortVec2 key = new ShortVec2(tg.getScope().minX/TileGroup.CHUNK_STEP, tg.getScope().minY/TileGroup.CHUNK_STEP);
 			tileGroups.put(key, tg);
 		}
 	}
