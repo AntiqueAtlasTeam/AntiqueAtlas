@@ -56,6 +56,7 @@ public class AtlasData extends WorldSavedData {
 		if (version < VERSION) {
 			Log.warn("Outdated atlas data format! Was %d but current is %d. Updating.", version, VERSION);
 			readFromNBT2(compound);
+			return;
 		}
 		NBTTagList dimensionMapList = compound.getTagList(TAG_DIMENSION_MAP_LIST, Constants.NBT.TAG_COMPOUND);
 		for (int d = 0; d < dimensionMapList.tagCount(); d++) {
@@ -78,6 +79,7 @@ public class AtlasData extends WorldSavedData {
 		if (version < 2) {
 			Log.warn("Loading map with version 2 failed");
 			this.markDirty();
+			return;
 		}
 		NBTTagList dimensionMapList = compound.getTagList(TAG_DIMENSION_MAP_LIST, Constants.NBT.TAG_COMPOUND);
 		for (int d = 0; d < dimensionMapList.tagCount(); d++) {
@@ -86,8 +88,12 @@ public class AtlasData extends WorldSavedData {
 			int[] intArray = dimTag.getIntArray(TAG_VISITED_CHUNKS);
 			DimensionData dimData = getDimensionData(dimensionID);
 			for (int i = 0; i < intArray.length; i += 3) {
+				if (dimData.getTile(intArray[i], intArray[i+1]) != null){
+					Log.warn("Duplicate tile at "+ intArray[i] + ", " + intArray[i]);
+				}
 				dimData.setTile(intArray[i], intArray[i+1], new Tile(intArray[i+2]));
 			}
+			Log.info("Updated " + intArray.length/3 + " chunks");
 			double zoom = (double)dimTag.getInteger(TAG_BROWSING_ZOOM) / BrowsingPositionPacket.ZOOM_SCALE_FACTOR;
 			if (zoom == 0) zoom = 0.5;
 			dimData.setBrowsingPosition(dimTag.getInteger(TAG_BROWSING_X),
