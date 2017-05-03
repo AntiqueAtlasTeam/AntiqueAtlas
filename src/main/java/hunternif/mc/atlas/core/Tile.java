@@ -2,8 +2,6 @@ package hunternif.mc.atlas.core;
 
 import java.util.Random;
 
-import javax.print.attribute.standard.MediaSize.Other;
-
 /**
  * Contains information about the biome and - on the client - the variation
  * number of the biome's texture set.
