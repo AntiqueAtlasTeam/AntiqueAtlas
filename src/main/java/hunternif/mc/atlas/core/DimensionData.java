@@ -6,7 +6,6 @@ import hunternif.mc.atlas.util.Rect;
 import hunternif.mc.atlas.util.ShortVec2;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraftforge.common.util.Constants;
 
 import java.util.Map;
 import java.util.Map.Entry;
