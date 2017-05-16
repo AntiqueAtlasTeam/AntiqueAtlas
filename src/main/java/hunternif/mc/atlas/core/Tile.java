@@ -38,9 +38,4 @@ public class Tile {
 	public String toString() {
 		return "tile" + biomeID;
 	}
-	
-	@Override
-	public boolean equals(Object obj) {
-		return (obj instanceof Tile) && ((Tile)obj).biomeID == biomeID;
-	}
 }
