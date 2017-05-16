@@ -36,7 +36,7 @@ public class TestNBT {
 	}
 	
 	/**Sample atlas data*/
-	AtlasData ad = new DummyAtlasData(Test);
+	AtlasData ad = new DummyAtlasData("Test");
 	/**Dimension 0 in {@link #ad}*/
 	DimensionData dd;
 	/**Equal to (but not a reference to) the tile group at (16,16) in {@link #dd}*/
@@ -88,7 +88,7 @@ public class TestNBT {
 	
 	@Test
 	public void testTileGroupBounds() {
-		Log.setModID(null);
+		Log.setModID(AntiqueAtlasMod.ID);
 		tg.setTile(15,15, new Tile(1));
 		tg.setTile(32,32, new Tile(1));
 		assertEquals(null, tg.getTile(15, 15));
@@ -111,7 +111,7 @@ public class TestNBT {
  		
 		NBTTagCompound tagAD = new NBTTagCompound();
 		ad.writeToNBT(tagAD);
-		AtlasData ad2 = new AtlasData("test");
+		AtlasData ad2 = new DummyAtlasData("test");
 		ad2.readFromNBT(tagAD);
 		assertEquals(ad, ad2);
 	}
