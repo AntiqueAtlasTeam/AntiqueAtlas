@@ -15,7 +15,7 @@ import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.relauncher.Side;
 
 /**
- * Used to sync bulk atlas data from server to client.
+ * Used to sync atlas data from server to client.
  * @author Hunternif
  */
 public class MapDataPacket extends AbstractClientMessage<MapDataPacket> {

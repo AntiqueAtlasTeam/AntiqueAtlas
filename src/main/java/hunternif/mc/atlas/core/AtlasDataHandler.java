@@ -30,7 +30,7 @@ public class AtlasDataHandler {
 			return null;
 		}
 	}
-	
+
 	/** Loads data for the given atlas or creates a new one. */
 	public AtlasData getAtlasData(int atlasID, World world) {
 		String key = getAtlasDataKey(atlasID);
