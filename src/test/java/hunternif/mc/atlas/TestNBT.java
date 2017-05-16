@@ -36,7 +36,7 @@ public class TestNBT {
 	}
 	
 	/**Sample atlas data*/
-	AtlasData ad = new DummyAtlasData("test");
+	AtlasData ad = new DummyAtlasData(Test);
 	/**Dimension 0 in {@link #ad}*/
 	DimensionData dd;
 	/**Equal to (but not a reference to) the tile group at (16,16) in {@link #dd}*/
