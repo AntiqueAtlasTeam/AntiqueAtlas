@@ -1,0 +1,22 @@
+item.antiqueAtlas.name=アンティークアトラス
+item.emptyAntiqueAtlas.name=空のアンティークアトラス
+
+gui.antiqueatlas.scalebar=ブロックのスケール
+gui.antiqueatlas.addMarker=印をつける
+gui.antiqueatlas.delMarker=印を消す
+gui.antiqueatlas.followPlayer=プレイヤーに焦点を当てる
+gui.antiqueatlas.exportImage=写真を保存する
+gui.antiqueatlas.hideMarkers=印を隠す
+gui.antiqueatlas.showMarkers=印を表す
+
+gui.antiqueatlas.marker.label=ラベル:
+gui.antiqueatlas.marker.type=タイプ:
+gui.antiqueatlas.marker.village=村
+gui.antiqueatlas.marker.netherPortal=ネザーポータル
+gui.antiqueatlas.marker.tomb=%sの墓
+
+gui.antiqueatlas.export.opening=ファイルシステムのダイアログを開いています...
+gui.antiqueatlas.export.selectFile=PNGファイルの保存先の選択
+gui.antiqueatlas.export.tooLarge=すみません！ 写真が大きすぎます。Java heap sizeを増やして下さい。
+gui.antiqueatlas.export.rendering=レンダリング中...
+gui.antiqueatlas.export.writing=ファイルに書き込んでいます...

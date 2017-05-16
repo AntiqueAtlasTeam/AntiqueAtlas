@@ -51,7 +51,7 @@ public class MarkersData extends WorldSavedData {
 	
 	private final AtomicInteger largestID = new AtomicInteger(0);
 	
-	protected int getNewID() {
+	private int getNewID() {
 		return largestID.incrementAndGet();
 	}
 	
@@ -99,7 +99,7 @@ public class MarkersData extends WorldSavedData {
 					id = getNewID();
 				} else {
 					id = markerTag.getInteger(TAG_MARKER_ID);
-					if (getMarkerByID(id) != null) {
+					if (idMap.containsKey(id)) {
 						Log.warn("Loading marker with duplicate id %d. Getting new id", id);
 						id = getNewID();
 					}
@@ -172,12 +172,9 @@ public class MarkersData extends WorldSavedData {
 	public List<Marker> getMarkersAtChunk(int dimension, int x, int z) {
 		return getMarkersDataInDimension(dimension).getMarkersAtChunk(x, z);
 	}
-	
-	public Marker getMarkerByID(int id) {
-		return idMap.get(id);
-	}
+
 	public Marker removeMarker(int id) {
-		Marker marker = getMarkerByID(id);
+		Marker marker = idMap.get(id);
 		if (marker == null) return null;
 		if (idMap.remove(id) != null) {
 			getMarkersDataInDimension(marker.getDimension()).removeMarker(marker);
@@ -226,7 +223,7 @@ public class MarkersData extends WorldSavedData {
 			}
 			PacketDispatcher.sendTo(packet, (EntityPlayerMP) player);
 		}
-		Log.info("Sent markers data #%d to player %s", atlasID, player.getCommandSenderEntity().getName());
+		Log.info("Sent markers data #%d to player %s", atlasID, player.getName());
 		playersSentTo.add(player);
 	}
 	

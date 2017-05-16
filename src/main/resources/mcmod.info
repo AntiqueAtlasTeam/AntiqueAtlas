@@ -5,12 +5,11 @@
   "description": "Antique Atlas is a book that acts like a map featuring infinite scrolling, zoom and custom labeled markers. The map is generated around the player by calculating the average biome in each 16x16 chunk.",
   "version": "${version}",
   "mcversion": "${mcversion}",
-  "logoFile": "",
-  "url": "http://www.minecraftforum.net/topic/2045745-164forge-antique-atlas-v10",
+  "logoFile": "/antiqueatlas_logo.png",
+  "url": "http://www.minecraftforum.net/topic/2045745",
   "updateUrl": "",
-  "authors": ["Hunternif"],
-  "credits": "Mod by Hunternif. Localizations by crafteverywhere, CapoFantasma97, Mazdallier.",
-  "parent": "",
+  "authorList": ["Hunternif"],
+  "credits": "Hunternif, coolAlias, Kenkron, TheCodeWarrior. Localizations by crafteverywhere, CapoFantasma97, Mazdallier, mankra, Zerotiger.",
   "screenshots": [],
   "dependencies": []
 }

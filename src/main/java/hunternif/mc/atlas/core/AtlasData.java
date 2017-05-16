@@ -44,7 +44,7 @@ public class AtlasData extends WorldSavedData {
 	
 	private NBTTagCompound nbt;
 
-	public AtlasData(String key) {
+	AtlasData(String key) {
 		super(key);
 	}
 
@@ -110,7 +110,7 @@ public class AtlasData extends WorldSavedData {
 		compound.setInteger(TAG_VERSION, VERSION);
 		for (Entry<Integer, DimensionData> dimensionEntry : dimensionMap.entrySet()) {
 			NBTTagCompound dimTag = new NBTTagCompound();
-			dimTag.setInteger(TAG_DIMENSION_ID, dimensionEntry.getKey().intValue());
+			dimTag.setInteger(TAG_DIMENSION_ID, dimensionEntry.getKey());
 			DimensionData dimData = dimensionEntry.getValue();
 			if (includeTileData){
 				dimTag.setTag(TAG_VISITED_CHUNKS, dimData.writeToNBT());
@@ -144,10 +144,10 @@ public class AtlasData extends WorldSavedData {
 	 *   Dimension data should check the server for updates*/
 	/** If this dimension is not yet visited, empty DimensionData will be created. */
 	public DimensionData getDimensionData(int dimension) {
-		DimensionData dimData = dimensionMap.get(Integer.valueOf(dimension));
+		DimensionData dimData = dimensionMap.get(dimension);
 		if (dimData == null) {
 			dimData = new DimensionData(this, dimension);
-			dimensionMap.put(Integer.valueOf(dimension), dimData);
+			dimensionMap.put(dimension, dimData);
 		}
 		return dimData;
 	}
@@ -174,7 +174,7 @@ public class AtlasData extends WorldSavedData {
 		// Do not include dimension tile data.  This will happen later.
 		writeToNBT(nbt, false);
 		PacketDispatcher.sendTo(new MapDataPacket(atlasID, nbt), (EntityPlayerMP) player);
-		
+
 		for (Integer i: dimensionMap.keySet()){
 			dimensionMap.get(i).syncOnPlayer(atlasID, player);
 		}
