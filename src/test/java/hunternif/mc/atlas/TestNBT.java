@@ -11,7 +11,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import hunternif.mc.atlas.core.AtlasData;
-import hunternif.mc.atlas.core.AtlasDataHandler;
 import hunternif.mc.atlas.core.DimensionData;
 import hunternif.mc.atlas.core.Tile;
 import hunternif.mc.atlas.core.TileGroup;
@@ -20,25 +19,11 @@ import hunternif.mc.atlas.util.Log;
 import hunternif.mc.atlas.util.ShortVec2;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.profiler.Profiler;
-import net.minecraft.world.World;
-import net.minecraft.world.WorldProvider;
-import net.minecraft.world.chunk.IChunkProvider;
-import net.minecraft.world.storage.ISaveHandler;
-import net.minecraft.world.storage.WorldInfo;
 
 public class TestNBT {
 	
-	class DummyAtlasData extends AtlasData{
-		public DummyAtlasData(String s){
-			super(s);
-		}
-	}
-	
-	/**Sample atlas data*/
-	AtlasData ad = new DummyAtlasData("Test");
 	/**Dimension 0 in {@link #ad}*/
-	DimensionData dd;
+	DimensionData dd = new DimensionData(null, 0);;
 	/**Equal to (but not a reference to) the tile group at (16,16) in {@link #dd}*/
 	TileGroup tg = new TileGroup(16, 16);
 	
@@ -73,12 +58,6 @@ public class TestNBT {
 	
 	@Before
 	public void init() {
-		ad.setTile(0, 16, 16, new Tile(0));
-		ad.setTile(0, 17, 16, new Tile(1));
-		ad.setTile(0, 18, 16, new Tile(2));
-		ad.setTile(0, 16, 17, new Tile(3));
-		ad.setTile(0, 31, 31, new Tile(4));
-		dd = ad.getDimensionData(0);
 		tg.setTile(16, 16, new Tile(0));
 		tg.setTile(17, 16, new Tile(1));
 		tg.setTile(18, 16, new Tile(2));
@@ -106,13 +85,7 @@ public class TestNBT {
 		assertEquals(tg, tg2);
 		
 		NBTTagList tagDD = dd.writeToNBT();
-		DimensionData dd2 = new DimensionData(ad, 0);
+		DimensionData dd2 = new DimensionData(null, 0);
 		dd2.readFromNBT(tagDD);
- 		
-		NBTTagCompound tagAD = new NBTTagCompound();
-		ad.writeToNBT(tagAD);
-		AtlasData ad2 = new DummyAtlasData("test");
-		ad2.readFromNBT(tagAD);
-		assertEquals(ad, ad2);
 	}
 }
