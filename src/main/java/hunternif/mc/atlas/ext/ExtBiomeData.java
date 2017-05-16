@@ -27,7 +27,7 @@ public class ExtBiomeData extends WorldSavedData {
 	private static final String TAG_DIMENSION_ID = "dimID";
 	private static final String TAG_BIOME_IDS = "biomeIDs";
 	
-	public ExtBiomeData(String key) {
+	ExtBiomeData(String key) {
 		super(key);
 	}
 	
@@ -102,7 +102,7 @@ public class ExtBiomeData extends WorldSavedData {
 	}
 	
 	/** Send all data to player in several zipped packets. */
-	public void syncOnPlayer(EntityPlayer player) {
+	void syncOnPlayer(EntityPlayer player) {
 		for (Integer dimension : dimensionMap.keySet()) {
 			TilesPacket packet = new TilesPacket(dimension);
 			Map<ShortVec2, Integer> biomes = getBiomesInDimension(dimension);

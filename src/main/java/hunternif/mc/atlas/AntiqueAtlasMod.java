@@ -1,5 +1,7 @@
 package hunternif.mc.atlas;
 
+
+import static net.minecraftforge.oredict.RecipeSorter.Category.SHAPELESS;
 import hunternif.mc.atlas.core.AtlasDataHandler;
 import hunternif.mc.atlas.core.PlayerEventHandler;
 import hunternif.mc.atlas.ext.*;
@@ -29,8 +31,6 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.oredict.RecipeSorter;
 
 import java.io.File;
-
-import static net.minecraftforge.oredict.RecipeSorter.Category.SHAPELESS;
 
 @Mod(modid=AntiqueAtlasMod.ID, name=AntiqueAtlasMod.NAME, version=AntiqueAtlasMod.VERSION)
 public class AntiqueAtlasMod {

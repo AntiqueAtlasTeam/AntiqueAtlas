@@ -18,6 +18,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class AtlasDataHandler {
 	private static final String ATLAS_DATA_PREFIX = "aAtlas_";
 	
+	/** Maps atlas ID to its data */
 	private final Map<String, AtlasData> atlasDataClientCache = new ConcurrentHashMap<>();
 	
 	/** Loads data for the given atlas ID or creates a new one. */
@@ -28,7 +29,7 @@ public class AtlasDataHandler {
 			return null;
 		}
 	}
-	
+
 	/** Loads data for the given atlas or creates a new one. */
 	public AtlasData getAtlasData(int atlasID, World world) {
 		String key = getAtlasDataKey(atlasID);
