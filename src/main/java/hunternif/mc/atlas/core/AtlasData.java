@@ -111,22 +111,20 @@ public class AtlasData extends WorldSavedData {
 	}
 
 	@Override
-	public NBTTagCompound writeToNBT(NBTTagCompound compound) {		
-		compound.setInteger(TAG_VERSION, VERSION);
+	public NBTTagCompound writeToNBT(NBTTagCompound compound) {
+		return writeToNBT(compound, true);
+	}
+	
+	public NBTTagCompound writeToNBT(NBTTagCompound compound, boolean includeTileData) {
 		NBTTagList dimensionMapList = new NBTTagList();
+		compound.setInteger(TAG_VERSION, VERSION);
 		for (Entry<Integer, DimensionData> dimensionEntry : dimensionMap.entrySet()) {
 			NBTTagCompound dimTag = new NBTTagCompound();
 			dimTag.setInteger(TAG_DIMENSION_ID, dimensionEntry.getKey());
 			DimensionData dimData = dimensionEntry.getValue();
-//			Map<ShortVec2, Tile> seenChunks = dimData.getSeenChunks();
-//			int[] intArray = new int[seenChunks.size()*3];
-//			int i = 0;
-//			for (Entry<ShortVec2, Tile> entry : seenChunks.entrySet()) {
-//				intArray[i++] = entry.getKey().x;
-//				intArray[i++] = entry.getKey().y;
-//				intArray[i++] = entry.getValue().biomeID;
-//			}
-			dimTag.setTag(TAG_VISITED_CHUNKS, dimData.writeToNBT());
+			if (includeTileData){
+				dimTag.setTag(TAG_VISITED_CHUNKS, dimData.writeToNBT());
+			}
 			dimTag.setInteger(TAG_BROWSING_X, dimData.getBrowsingX());
 			dimTag.setInteger(TAG_BROWSING_Y, dimData.getBrowsingY());
 			dimTag.setInteger(TAG_BROWSING_ZOOM, (int)Math.round(dimData.getBrowsingZoom() * BrowsingPositionPacket.ZOOM_SCALE_FACTOR));
@@ -266,10 +264,20 @@ public class AtlasData extends WorldSavedData {
 		if (nbt == null) {
 			nbt = new NBTTagCompound();
 		}
-		// Before syncing make sure the changes are written to the nbt:
-		writeToNBT(nbt);
+		// Before syncing make sure the changes are written to the nbt.
+		// Do not include dimension tile data.  This will happen later.
+		writeToNBT(nbt, false);
 		PacketDispatcher.sendTo(new MapDataPacket(atlasID, nbt), (EntityPlayerMP) player);
+<<<<<<< HEAD
 		Log.info("Sent Atlas #%d data to player %s", atlasID, player.getName());
+=======
+		
+		for (Integer i: dimensionMap.keySet()){
+			dimensionMap.get(i).syncOnPlayer(atlasID, player);
+		}
+		
+		Log.info("Sent Atlas #%d data to player %s", atlasID, player.getCommandSenderName());
+>>>>>>> 636ab05... Updated packet system to send map incrementally
 		playersSentTo.add(player);
 	}
 

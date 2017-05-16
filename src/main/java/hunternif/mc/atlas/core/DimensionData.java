@@ -1,12 +1,18 @@
 package hunternif.mc.atlas.core;
 
 import hunternif.mc.atlas.AntiqueAtlasMod;
+import hunternif.mc.atlas.network.PacketDispatcher;
+import hunternif.mc.atlas.network.client.TileGroupsPacket;
 import hunternif.mc.atlas.util.Log;
 import hunternif.mc.atlas.util.Rect;
 import hunternif.mc.atlas.util.ShortVec2;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
@@ -104,6 +110,12 @@ public class DimensionData implements ITileStorage {
 		parent.markDirty();
 	}
 
+	/**Puts a tileGroup into this dimensionData, overwriting any previous stuff.*/
+	public void putTileGroup(TileGroup t){
+		ShortVec2 key = getKey().set(t.scope.minX/TileGroup.CHUNK_STEP, t.scope.minY/TileGroup.CHUNK_STEP);
+		tileGroups.put(key, t);
+	}
+	
 	@Override
 	public Tile removeTile(int x, int y) {
 		//TODO
@@ -155,6 +167,9 @@ public class DimensionData implements ITileStorage {
 	}
 	
 	public void readFromNBT(NBTTagList me){
+		if (me == null){
+			return;
+		}
 		for (int d = 0; d < me.tagCount(); d++) {
 			NBTTagCompound tgTag = me.getCompoundTagAt(d);
 			TileGroup tg = new TileGroup(0, 0);
@@ -162,6 +177,28 @@ public class DimensionData implements ITileStorage {
 			ShortVec2 key = new ShortVec2(tg.getScope().minX/TileGroup.CHUNK_STEP, tg.getScope().minY/TileGroup.CHUNK_STEP);
 			tileGroups.put(key, tg);
 		}
+	}
+	
+	public void syncOnPlayer(int atlasID, EntityPlayer player){
+		Log.info("Sending dimension #%d", dimension);
+		ArrayList<TileGroup> tgs = new ArrayList<TileGroup>(TileGroupsPacket.TILE_GROUPS_PER_PACKET);
+		int count = 0;
+		int total = 0;
+		for (Entry<ShortVec2, TileGroup> t:tileGroups.entrySet()){
+			tgs.add(t.getValue());
+			count++;
+			total++;
+			if (count >= TileGroupsPacket.TILE_GROUPS_PER_PACKET){
+				TileGroupsPacket p = new TileGroupsPacket(tgs, atlasID, dimension);
+				PacketDispatcher.sendTo(p, (EntityPlayerMP) player);
+				count = 0;
+			}
+		}
+		if (count > 0){
+			TileGroupsPacket p = new TileGroupsPacket(tgs, atlasID, dimension);
+			PacketDispatcher.sendTo(p, (EntityPlayerMP) player);
+		}
+		Log.info("Sent dimension #%d (%d tiles)", dimension, total);
 	}
 	
 	@Override
