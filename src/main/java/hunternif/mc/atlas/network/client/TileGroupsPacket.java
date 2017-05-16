@@ -3,7 +3,6 @@ package hunternif.mc.atlas.network.client;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import cpw.mods.fml.relauncher.Side;
 import hunternif.mc.atlas.AntiqueAtlasMod;
 import hunternif.mc.atlas.core.AtlasData;
 import hunternif.mc.atlas.core.DimensionData;
@@ -12,6 +11,8 @@ import hunternif.mc.atlas.network.AbstractMessage.AbstractClientMessage;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
+import net.minecraftforge.fml.common.network.ByteBufUtils;
+import net.minecraftforge.fml.relauncher.Side;
 
 public class TileGroupsPacket extends AbstractClientMessage<TileGroupsPacket> {
 
@@ -32,32 +33,32 @@ public class TileGroupsPacket extends AbstractClientMessage<TileGroupsPacket> {
 
 	@Override
 	protected void read(PacketBuffer buffer) throws IOException {
-		atlasID = buffer.readVarIntFromBuffer();
-		dimension = buffer.readVarIntFromBuffer();
-		int length = buffer.readVarIntFromBuffer();
+		atlasID = buffer.readVarInt();
+		dimension = buffer.readVarInt();
+		int length = buffer.readVarInt();
 		tileGroups = new ArrayList<TileGroup>(length);
 		for (int i = 0; i < length; i++) {
 			TileGroup newbie = new TileGroup(0, 0);
-			newbie.readFromNBT(readNBT(buffer));
+			newbie.readFromNBT(ByteBufUtils.readTag(buffer));
 			tileGroups.add(newbie);
 		}
 	}
 
 	@Override
 	protected void write(PacketBuffer buffer) throws IOException {
-		buffer.writeVarIntToBuffer(atlasID);
-		buffer.writeVarIntToBuffer(dimension);
-		buffer.writeVarIntToBuffer(tileGroups.size());
+		buffer.writeVarInt(atlasID);
+		buffer.writeVarInt(dimension);
+		buffer.writeVarInt(tileGroups.size());
 		for (TileGroup t : tileGroups) {
 			NBTTagCompound me = new NBTTagCompound();
 			t.writeToNBT(me);
-			writeNBT(buffer, me);
+			ByteBufUtils.writeTag(buffer, me);
 		}
 	}
 
 	@Override
 	protected void process(EntityPlayer player, Side side) {
-		AtlasData atlasData = AntiqueAtlasMod.atlasData.getAtlasData(atlasID, player.worldObj);
+		AtlasData atlasData = AntiqueAtlasMod.atlasData.getAtlasData(atlasID, player.world);
 		DimensionData dimData = atlasData.getDimensionData(dimension);
 		for (TileGroup t : tileGroups) {
 			dimData.putTileGroup(t);
