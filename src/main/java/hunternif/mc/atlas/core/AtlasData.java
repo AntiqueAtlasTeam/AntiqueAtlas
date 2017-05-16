@@ -268,16 +268,12 @@ public class AtlasData extends WorldSavedData {
 		// Do not include dimension tile data.  This will happen later.
 		writeToNBT(nbt, false);
 		PacketDispatcher.sendTo(new MapDataPacket(atlasID, nbt), (EntityPlayerMP) player);
-<<<<<<< HEAD
-		Log.info("Sent Atlas #%d data to player %s", atlasID, player.getName());
-=======
 		
 		for (Integer i: dimensionMap.keySet()){
 			dimensionMap.get(i).syncOnPlayer(atlasID, player);
 		}
 		
-		Log.info("Sent Atlas #%d data to player %s", atlasID, player.getCommandSenderName());
->>>>>>> 636ab05... Updated packet system to send map incrementally
+		Log.info("Sent Atlas #%d data to player %s", atlasID, player.getName());
 		playersSentTo.add(player);
 	}
 

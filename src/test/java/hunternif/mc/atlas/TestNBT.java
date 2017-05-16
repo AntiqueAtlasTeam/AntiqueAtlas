@@ -11,6 +11,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import hunternif.mc.atlas.core.AtlasData;
+import hunternif.mc.atlas.core.AtlasDataHandler;
 import hunternif.mc.atlas.core.DimensionData;
 import hunternif.mc.atlas.core.Tile;
 import hunternif.mc.atlas.core.TileGroup;
@@ -19,11 +20,23 @@ import hunternif.mc.atlas.util.Log;
 import hunternif.mc.atlas.util.ShortVec2;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.profiler.Profiler;
+import net.minecraft.world.World;
+import net.minecraft.world.WorldProvider;
+import net.minecraft.world.chunk.IChunkProvider;
+import net.minecraft.world.storage.ISaveHandler;
+import net.minecraft.world.storage.WorldInfo;
 
 public class TestNBT {
-
+	
+	class DummyAtlasData extends AtlasData{
+		public DummyAtlasData(String s){
+			super(s);
+		}
+	}
+	
 	/**Sample atlas data*/
-	AtlasData ad = new AtlasData("test");
+	AtlasData ad = new DummyAtlasData("test");
 	/**Dimension 0 in {@link #ad}*/
 	DimensionData dd;
 	/**Equal to (but not a reference to) the tile group at (16,16) in {@link #dd}*/
