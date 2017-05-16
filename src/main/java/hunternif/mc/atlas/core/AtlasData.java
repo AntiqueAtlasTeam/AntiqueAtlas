@@ -44,7 +44,7 @@ public class AtlasData extends WorldSavedData {
 	
 	private NBTTagCompound nbt;
 
-	AtlasData(String key) {
+	protected AtlasData(String key) {
 		super(key);
 	}
 
