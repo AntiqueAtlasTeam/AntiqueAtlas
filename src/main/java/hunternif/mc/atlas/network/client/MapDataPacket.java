@@ -14,7 +14,7 @@ import net.minecraft.network.PacketBuffer;
 import cpw.mods.fml.relauncher.Side;
 
 /**
- * Used to sync bulk atlas data from server to client.
+ * Used to sync atlas data from server to client.
  * @author Hunternif
  */
 public class MapDataPacket extends AbstractClientMessage<MapDataPacket> {

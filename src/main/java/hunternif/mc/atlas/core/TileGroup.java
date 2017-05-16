@@ -18,7 +18,7 @@ public class TileGroup implements ITileStorage {
 
 	/** The tiles in this scope */
 	Tile[][] tiles = new Tile[CHUNK_STEP][CHUNK_STEP];
-
+	
 	public TileGroup(int x, int y) {
 		scope.minX = x;
 		scope.minY = y;
