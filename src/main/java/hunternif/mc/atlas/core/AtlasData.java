@@ -48,7 +48,7 @@ public class AtlasData extends WorldSavedData {
 	
 	private NBTTagCompound nbt;
 
-	public AtlasData(String key) {
+	protected AtlasData(String key) {
 		super(key);
 
 		biomeDetectorOverworld.setScanPonds(AntiqueAtlasMod.settings.doScanPonds);
