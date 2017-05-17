@@ -11,7 +11,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import hunternif.mc.atlas.core.AtlasData;
-import hunternif.mc.atlas.core.AtlasDataHandler;
 import hunternif.mc.atlas.core.DimensionData;
 import hunternif.mc.atlas.core.Tile;
 import hunternif.mc.atlas.core.TileGroup;
@@ -20,12 +19,6 @@ import hunternif.mc.atlas.util.Log;
 import hunternif.mc.atlas.util.ShortVec2;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.profiler.Profiler;
-import net.minecraft.world.World;
-import net.minecraft.world.WorldProvider;
-import net.minecraft.world.chunk.IChunkProvider;
-import net.minecraft.world.storage.ISaveHandler;
-import net.minecraft.world.storage.WorldInfo;
 
 public class TestNBT {
 	
