@@ -40,6 +40,7 @@ public class PacketDispatcher
 
 		// Messages sent to CLIENT
 		registerMessage(MapDataPacket.class);
+		registerMessage(TileGroupsPacket.class);
 		registerMessage(TileNameIDPacket.class);
 		registerMessage(TilesPacket.class);
 		registerMessage(MarkersPacket.class);
