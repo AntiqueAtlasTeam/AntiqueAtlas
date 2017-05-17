@@ -27,7 +27,7 @@ public class ExtBiomeData extends WorldSavedData {
 	private static final String TAG_DIMENSION_ID = "dimID";
 	private static final String TAG_BIOME_IDS = "biomeIDs";
 	
-	ExtBiomeData(String key) {
+	public ExtBiomeData(String key) {
 		super(key);
 	}
 	
