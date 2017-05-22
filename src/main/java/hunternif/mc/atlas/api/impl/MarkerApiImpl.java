@@ -19,14 +19,14 @@ public class MarkerApiImpl implements MarkerAPI {
 	private static final int GLOBAL = -1;
 	
 	@Override
-	public void putMarker(World world, boolean visibleAhead, int atlasID, MarkerType markerType, String label, int x, int z) {
+	public void putMarker(World world, boolean visibleAhead, int atlasID, String markerType, String label, int x, int z) {
 		doPutMarker(world, visibleAhead, atlasID, markerType, label, x, z);
 	}
 	@Override
-	public void putGlobalMarker(World world, boolean visibleAhead, MarkerType markerType, String label, int x, int z) {
+	public void putGlobalMarker(World world, boolean visibleAhead, String markerType, String label, int x, int z) {
 		doPutMarker(world, visibleAhead, GLOBAL, markerType, label, x, z);
 	}
-	private void doPutMarker(World world, boolean visibleAhead, int atlasID, MarkerType markerType, String label, int x, int z) {
+	private void doPutMarker(World world, boolean visibleAhead, int atlasID, String markerType, String label, int x, int z) {
 		if (world.isRemote) {
 			if (atlasID == GLOBAL) {
 				Log.warn("Client tried to add a global marker!");
