@@ -12,7 +12,7 @@ public class Marker {
 	/** Id is unique only within a MarkersData instance, i.e. within one atlas
 	 * or among global markers in a world. */
 	private final int id;
-	private final MarkerType type;
+	private final String type;
 	private final String label;
 	private final int dim, x, z;
 	private final boolean visibleAhead;
@@ -20,7 +20,7 @@ public class Marker {
 	
 	//TODO make an option for the marker to disappear at a certain scale.
 	
-	public Marker(int id, MarkerType type, String label, int dimension, int x, int z, boolean visibleAhead) {
+	public Marker(int id, String type, String label, int dimension, int x, int z, boolean visibleAhead) {
 		this.id = id;
 		this.type = type;
 		this.label = label == null ? "" : label;
@@ -34,7 +34,7 @@ public class Marker {
 		return id;
 	}
 
-	public MarkerType getType() {
+	public String getType() {
 		return type;
 	}
 

@@ -128,7 +128,7 @@ public class GuiMarkerFinalizer extends GuiComponent {
 	
 	protected void actionPerformed(GuiButton button) {
 		if (button == btnDone) {
-			AtlasAPI.markers.putMarker(world, true, atlasID, selectedType, textField.getText(), x, z);
+			AtlasAPI.markers.putMarker(world, true, atlasID, selectedType.getRegistryName().toString(), textField.getText(), x, z);
 			Log.info("Put marker in Atlas #%d \"%s\" at (%d, %d)", atlasID, textField.getText(), x, z);
 			close();
 		} else if (button == btnCancel) {

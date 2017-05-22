@@ -103,9 +103,9 @@ public class StructureWatcher {
 		
 		if (AntiqueAtlasMod.settings.autoVillageMarkers) {
 			if(!foundMarker)
-				AtlasAPI.markers.putGlobalMarker(world, false, marker, markerLabel, (chunkX << 4) + 8, (chunkZ << 4) + 8);
+				AtlasAPI.markers.putGlobalMarker(world, false, marker.getRegistryName().toString(), markerLabel, (chunkX << 4) + 8, (chunkZ << 4) + 8);
 			if(tileMarker != null && !foundTileMarker)
-				AtlasAPI.markers.putGlobalMarker(world, false, tileMarker, tileMarkerLabel, (chunkX << 4) + 8, (chunkZ << 4) + 8);
+				AtlasAPI.markers.putGlobalMarker(world, false, tileMarker.getRegistryName().toString(), tileMarkerLabel, (chunkX << 4) + 8, (chunkZ << 4) + 8);
 		}
 	}
 	
