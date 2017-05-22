@@ -163,7 +163,7 @@ public class VillageWatcher {
 					}
 				}
 				if (!foundMarker && AntiqueAtlasMod.settings.autoVillageMarkers) {
-					AtlasAPI.markers.putGlobalMarker(world, false, MarkerTypes.VILLAGE, "gui.antiqueatlas.marker.village", x, z);
+					AtlasAPI.markers.putGlobalMarker(world, false, MarkerTypes.VILLAGE.getRegistryName().toString(), "gui.antiqueatlas.marker.village", x, z);
 				}
 			}
 //			String tileName = null;

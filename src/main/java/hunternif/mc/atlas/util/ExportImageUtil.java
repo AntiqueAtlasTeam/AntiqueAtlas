@@ -394,7 +394,11 @@ public class ExportImageUtil {
 				}
 				
 				for (Marker marker : markers) {
-					MarkerType type = marker.getType();
+					MarkerType type = MarkerRegistry.find(marker.getType());
+					if (type == null){
+						Log.warn("Could not find marker data for type: %s\n", marker.getType());
+						continue;
+					}
 					
 					if (!marker.isVisibleAhead() &&
 							!biomeData.hasTileAt(marker.getChunkX(), marker.getChunkZ())) {

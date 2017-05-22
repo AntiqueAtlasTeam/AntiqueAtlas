@@ -7,9 +7,12 @@ import hunternif.mc.atlas.core.DimensionData;
 import hunternif.mc.atlas.marker.DimensionMarkersData;
 import hunternif.mc.atlas.marker.Marker;
 import hunternif.mc.atlas.marker.MarkersData;
+import hunternif.mc.atlas.registry.MarkerRegistry;
 import hunternif.mc.atlas.registry.MarkerRenderInfo;
+import hunternif.mc.atlas.registry.MarkerType;
 import hunternif.mc.atlas.util.AtlasRenderHelper;
 import hunternif.mc.atlas.util.Rect;
+import jline.internal.Log;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.gui.ScaledResolution;
@@ -337,7 +340,11 @@ class AAORenderEventReceiver {
             return;
         }
         GlStateManager.color(1, 1, 1, 1);
-        MarkerRenderInfo info = marker.getType().getRenderInfo(1, TILE_SIZE, screenScale);
+        MarkerType m = MarkerRegistry.find(marker.getType());
+        if (m == null){
+        	Log.warn("Could not find marker type for %s\n");
+        }
+        MarkerRenderInfo info = m.getRenderInfo(1, TILE_SIZE, screenScale);
         AtlasRenderHelper.drawFullTexture(info.tex, x, y, MARKER_SIZE, MARKER_SIZE);
     }
 

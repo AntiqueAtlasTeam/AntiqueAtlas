@@ -119,7 +119,7 @@ public class NetherPortalWatcher extends DummyWorldAccess {
 		}
 
 		// Marker not found, place new one:
-		AtlasAPI.markers.putMarker(world, false, atlasID, MarkerTypes.NETHER_PORTAL, "gui.antiqueatlas.marker.netherPortal", x, z);
+		AtlasAPI.markers.putMarker(world, false, atlasID, MarkerTypes.NETHER_PORTAL.getRegistryName().toString(), "gui.antiqueatlas.marker.netherPortal", x, z);
 	}
 	
 	private static boolean isEntityInPortal(Entity entity) {

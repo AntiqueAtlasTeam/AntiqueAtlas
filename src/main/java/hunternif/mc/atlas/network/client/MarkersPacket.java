@@ -28,7 +28,7 @@ public class MarkersPacket extends AbstractClientMessage<MarkersPacket> {
 	private static final int GLOBAL = -1;
 	private int atlasID;
 	private int dimension;
-	private final ListMultimap<MarkerType, Marker> markersByType = ArrayListMultimap.create();
+	private final ListMultimap<String, Marker> markersByType = ArrayListMultimap.create();
 
 	public MarkersPacket() {}
 
@@ -61,7 +61,7 @@ public class MarkersPacket extends AbstractClientMessage<MarkersPacket> {
 		dimension = buffer.readVarInt();
 		int typesLength = buffer.readVarInt();
 		for (int i = 0; i < typesLength; i++) {
-			MarkerType type = MarkerRegistry.find(ByteBufUtils.readUTF8String(buffer));
+			String type = ByteBufUtils.readUTF8String(buffer);
 			int markersLength = buffer.readVarInt();
 			for (int j = 0; j < markersLength; j++) {
 				Marker marker = new Marker(buffer.readVarInt(),
@@ -77,10 +77,10 @@ public class MarkersPacket extends AbstractClientMessage<MarkersPacket> {
 	public void write(PacketBuffer buffer) throws IOException {
 		buffer.writeVarInt(atlasID);
 		buffer.writeVarInt(dimension);
-		Set<MarkerType> types = markersByType.keySet();
+		Set<String> types = markersByType.keySet();
 		buffer.writeVarInt(types.size());
-		for (MarkerType type : types) {
-			ByteBufUtils.writeUTF8String(buffer, type.getRegistryName().toString());
+		for (String type : types) {
+			ByteBufUtils.writeUTF8String(buffer, type);
 			List<Marker> markers = markersByType.get(type);
 			buffer.writeVarInt(markers.size());
 			for (Marker marker : markers) {

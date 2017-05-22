@@ -10,6 +10,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.WorldSavedData;
 import net.minecraftforge.common.util.Constants;
 
@@ -108,7 +109,7 @@ public class MarkersData extends WorldSavedData {
 				
 				Marker marker = new Marker(
 						id,
-						MarkerRegistry.find(markerTag.getString(TAG_MARKER_TYPE)),
+						markerTag.getString(TAG_MARKER_TYPE),
 						markerTag.getString(TAG_MARKER_LABEL),
 						dimensionID,
 						markerTag.getInteger(TAG_MARKER_X),
@@ -130,10 +131,10 @@ public class MarkersData extends WorldSavedData {
 			DimensionMarkersData data = getMarkersDataInDimension(dimension);
 			NBTTagList tagList = new NBTTagList();
 			for (Marker marker : data.getAllMarkers()) {
-				Log.debug("Saving marker %s", marker.toString());
+				System.out.format("Saving marker %s\n", marker.toString());
 				NBTTagCompound markerTag = new NBTTagCompound();
 				markerTag.setInteger(TAG_MARKER_ID, marker.getId());
-				markerTag.setString(TAG_MARKER_TYPE, marker.getType().getRegistryName().toString());
+				markerTag.setString(TAG_MARKER_TYPE, marker.getType());
 				markerTag.setString(TAG_MARKER_LABEL, marker.getLabel());
 				markerTag.setInteger(TAG_MARKER_X, marker.getX());
 				markerTag.setInteger(TAG_MARKER_Y, marker.getZ());
@@ -184,7 +185,7 @@ public class MarkersData extends WorldSavedData {
 	/** For internal use. Use the {@link MarkerAPI} to put markers! This method
 	 * creates a new marker from the given data, saves and returns it.
 	 * Server side only! */
-	public Marker createAndSaveMarker(MarkerType type, String label, int dimension, int x, int z, boolean visibleAhead) {
+	public Marker createAndSaveMarker(String type, String label, int dimension, int x, int z, boolean visibleAhead) {
 		Marker marker = new Marker(getNewID(), type, label, dimension, x, z, visibleAhead);
 		Log.info("Created new marker %s", marker.toString());
 		idMap.put(marker.getId(), marker);
