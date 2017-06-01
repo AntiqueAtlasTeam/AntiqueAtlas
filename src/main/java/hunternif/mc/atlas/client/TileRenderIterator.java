@@ -46,10 +46,11 @@ public class TileRenderIterator implements Iterator<SubTileQuartet> {
 	/**
 	 * The group of adjacent tiles used for traversing the storage.
 	 * <pre>
-	 *   a b
-	 * c d e f
-	 * g h i j
-	 *   k l
+	 *   a | b
+	 * c d | e f
+	 * ---------
+	 * g h | i j
+	 *   k | l
 	 * </pre>
 	 * 'i' is at (x, y).
 	 * The returned array of subtiles represents the corner 'd-e-h-i'

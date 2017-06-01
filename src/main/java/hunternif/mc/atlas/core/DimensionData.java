@@ -111,8 +111,9 @@ public class DimensionData implements ITileStorage {
 
 	/**Puts a tileGroup into this dimensionData, overwriting any previous stuff.*/
 	public void putTileGroup(TileGroup t){
-		ShortVec2 key = getKey().set(t.scope.minX/TileGroup.CHUNK_STEP, t.scope.minY/TileGroup.CHUNK_STEP);
+		ShortVec2 key = new ShortVec2(Math.floorDiv(t.scope.minX,TileGroup.CHUNK_STEP), Math.floorDiv(t.scope.minY,TileGroup.CHUNK_STEP));
 		tileGroups.put(key, t);
+		extendToTileGroup(t);
 	}
 	
 	@Override
@@ -165,6 +166,16 @@ public class DimensionData implements ITileStorage {
 		return tileGroupList;
 	}
 	
+	private void extendToTileGroup(TileGroup tg){
+		for (int x = tg.scope.minX; x <= tg.scope.maxX; x++){
+			for (int y = tg.scope.minY; y <= tg.scope.maxY; y++){
+				if (tg.hasTileAt(x, y)){
+					scope.extendTo(x, y);
+				}
+			}
+		}
+	}
+	
 	public void readFromNBT(NBTTagList me){
 		if (me == null){
 			return;
@@ -173,8 +184,7 @@ public class DimensionData implements ITileStorage {
 			NBTTagCompound tgTag = me.getCompoundTagAt(d);
 			TileGroup tg = new TileGroup(0, 0);
 			tg.readFromNBT(tgTag);
-			ShortVec2 key = new ShortVec2(tg.getScope().minX/TileGroup.CHUNK_STEP, tg.getScope().minY/TileGroup.CHUNK_STEP);
-			tileGroups.put(key, tg);
+			putTileGroup(tg);
 		}
 	}
 	

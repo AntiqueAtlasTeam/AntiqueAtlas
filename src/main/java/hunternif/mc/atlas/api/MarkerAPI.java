@@ -35,7 +35,7 @@ public interface MarkerAPI {
 	 * @param z				block coordinate
 	 */
 	void putMarker(World world, boolean visibleAhead, int atlasID,
-			MarkerType markerType, String label, int x, int z);
+			String markerType, String label, int x, int z);
 	
 	/**
 	 * Put a marker in all atlases in the world at specified block coordinates.
@@ -49,7 +49,7 @@ public interface MarkerAPI {
 	 * @param z				block coordinate
 	 */
 	void putGlobalMarker(World world, boolean visibleAhead,
-			MarkerType markerType, String label, int x, int z);
+			String markerType, String label, int x, int z);
 	
 	/**
 	 * Delete a marker from an atlas.

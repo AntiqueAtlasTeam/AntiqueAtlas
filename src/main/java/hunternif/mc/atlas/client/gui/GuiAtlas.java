@@ -12,6 +12,7 @@ import hunternif.mc.atlas.marker.Marker;
 import hunternif.mc.atlas.marker.MarkersData;
 import hunternif.mc.atlas.network.PacketDispatcher;
 import hunternif.mc.atlas.network.server.BrowsingPositionPacket;
+import hunternif.mc.atlas.registry.MarkerRegistry;
 import hunternif.mc.atlas.registry.MarkerRenderInfo;
 import hunternif.mc.atlas.registry.MarkerType;
 import hunternif.mc.atlas.util.*;
@@ -822,7 +823,11 @@ public class GuiAtlas extends GuiComponent {
 	}
 	
 	private void renderMarker(Marker marker, double scale) {
-		MarkerType type = marker.getType();
+		MarkerType type = MarkerRegistry.find(marker.getType());
+		if (type == null){
+			Log.warn("Could not find marker data for %d. Is it in the config file?\n", marker.getType());
+			return;
+		}
 		
 		if (type.shouldHide(state.is(HIDING_MARKERS), scaleClipIndex)) {
 			return;
