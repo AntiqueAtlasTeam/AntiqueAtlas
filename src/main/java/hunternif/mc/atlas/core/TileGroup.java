@@ -99,7 +99,7 @@ public class TileGroup implements ITileStorage {
 
 	@Override
 	public boolean hasTileAt(int x, int y) {
-		return getTile(x, y) == null;
+		return getTile(x, y) != null;
 	}
 
 	@Override
