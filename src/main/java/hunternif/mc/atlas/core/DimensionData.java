@@ -169,7 +169,7 @@ public class DimensionData implements ITileStorage {
 	
 	private void extendToTileGroup(TileGroup tg){
 		for (int x = tg.scope.minX; x <= tg.scope.maxX; x++){
-			for (int y = tg.scope.minX; y <= tg.scope.maxX; y++){
+			for (int y = tg.scope.minY; y <= tg.scope.maxY; y++){
 				if (tg.hasTileAt(x, y)){
 					scope.extendTo(x, y);
 				}
