@@ -10,6 +10,7 @@ import hunternif.mc.atlas.marker.MarkersData;
 import hunternif.mc.atlas.registry.MarkerRegistry;
 import hunternif.mc.atlas.registry.MarkerRenderInfo;
 import hunternif.mc.atlas.registry.MarkerType;
+import hunternif.mc.atlas.registry.MarkerTypes;
 import hunternif.mc.atlas.util.AtlasRenderHelper;
 import hunternif.mc.atlas.util.Rect;
 import jline.internal.Log;
@@ -333,7 +334,9 @@ class AAORenderEventReceiver {
         GlStateManager.color(1, 1, 1, 1);
         MarkerType m = MarkerRegistry.find(marker.getType());
         if (m == null){
-        	Log.warn("Could not find marker type for %s\n");
+        	//This info is already logged by an open map. Don't log here to remove congestion.
+        	//Log.debug("Could not find marker type for ", marker.getType());
+        	m = MarkerTypes.UNKNOWN;
         }
         MarkerRenderInfo info = m.getRenderInfo(1, TILE_SIZE, screenScale);
         AtlasRenderHelper.drawFullTexture(info.tex, x, y, MARKER_SIZE, MARKER_SIZE);

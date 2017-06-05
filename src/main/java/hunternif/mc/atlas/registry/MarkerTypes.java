@@ -9,6 +9,7 @@ public class MarkerTypes {
 	public static final MarkerTypes INSTANCE = new MarkerTypes();
 
 	public static MarkerType
+			UNKNOWN,
 			GOOGLE,
 			RED_X_LARGE,
 			RED_X_SMALL,
@@ -26,6 +27,7 @@ public class MarkerTypes {
 			END_CITY_FAR;
 	
 	private MarkerTypes() {
+		UNKNOWN = marker("unknown_marker", Textures.MARKER_UNKNOWN_MARKER).setIsTechnical(true);
 		GOOGLE = marker("google", Textures.MARKER_GOOGLE_MARKER);
 		RED_X_LARGE = marker("red_x_large", Textures.MARKER_RED_X_LARGE);
 		RED_X_SMALL = marker("red_x_small", Textures.MARKER_RED_X_SMALL);

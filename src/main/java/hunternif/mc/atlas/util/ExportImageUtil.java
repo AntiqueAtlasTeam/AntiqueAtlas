@@ -9,6 +9,7 @@ import hunternif.mc.atlas.marker.MarkersData;
 import hunternif.mc.atlas.registry.MarkerRegistry;
 import hunternif.mc.atlas.registry.MarkerRenderInfo;
 import hunternif.mc.atlas.registry.MarkerType;
+import hunternif.mc.atlas.registry.MarkerTypes;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.ResourceLocation;
@@ -396,8 +397,8 @@ public class ExportImageUtil {
 				for (Marker marker : markers) {
 					MarkerType type = MarkerRegistry.find(marker.getType());
 					if (type == null){
-						Log.warn("Could not find marker data for type: %s\n", marker.getType());
-						continue;
+						Log.warn("Could not find marker data for type: ", marker.getType());
+						type = MarkerTypes.UNKNOWN;
 					}
 					
 					if (!marker.isVisibleAhead() &&
