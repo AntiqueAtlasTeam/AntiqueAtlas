@@ -4,21 +4,27 @@ import net.minecraftforge.common.config.Configuration;
 
 import java.io.File;
 
-class AAOConfig {
+public class AAOConfig {
 
     private static final int VERSION = 1;
 
-    private static final String POSITION = "Map Position";
-    private static final String APPEARANCE = "Map Appearance";
+    public static final String POSITION = "Map Position";
+    public static final String APPEARANCE = "Map Appearance";
+
+    public static Configuration config;
 
     public static void load(File file, AAORenderEventReceiver renderer) {
-        Configuration config = new Configuration(file, String.valueOf(VERSION));
+        config = new Configuration(file, String.valueOf(VERSION));
         config.setCategoryComment(POSITION,
                 "These settings change the location and size.");
 
         config.setCategoryComment(APPEARANCE,
                 "These settings change what the map shows, or how it is shown.");
 
+        sync(renderer);
+    }
+
+    public static void sync(AAORenderEventReceiver renderer) {
         renderer.ALIGN_RIGHT = config.getBoolean("ALIGN_RIGHT", POSITION,
                 renderer.ALIGN_RIGHT,
                 "If true, the map position's x axis will align 0 to the right\n"

@@ -21,6 +21,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
+import net.minecraftforge.fml.client.event.ConfigChangedEvent;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import org.lwjgl.opengl.GL11;
@@ -369,5 +370,11 @@ class AAORenderEventReceiver {
                 (int) (mcHeight - shape.maxY * scissorScaleY),
                 (int) (shape.getWidth() * scissorScaleX),
                 (int) (shape.getHeight() * scissorScaleY));
+    }
+
+    @SubscribeEvent
+    public void onConfigChanged(ConfigChangedEvent.OnConfigChangedEvent event) {
+        if (event.getModID().equals(AntiqueAtlasOverlayMod.MODID))
+            AAOConfig.sync(this);
     }
 }
