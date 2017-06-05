@@ -228,8 +228,8 @@ public class GuiAtlas extends GuiComponent {
 		setSize(WIDTH, HEIGHT);
 		setMapScale(0.5);
 		followPlayer = true;
-		setInterceptKeyboard(false);
-
+		setInterceptKeyboard(true);
+		
 		btnUp = GuiArrowButton.up();
 		addChild(btnUp).offsetGuiCoords(148, 10);
 		btnDown = GuiArrowButton.down();
@@ -452,6 +452,8 @@ public class GuiAtlas extends GuiComponent {
 				setMapScale(mapScale * 2);
 			} else if (key == Keyboard.KEY_SUBTRACT || key == Keyboard.KEY_MINUS) {
 				setMapScale(mapScale / 2);
+			} else if (key == mc.gameSettings.keyBindInventory.getKeyCode()){
+				close();
 			}
 			// Close the GUI if a hotbar key is pressed
 			else {
