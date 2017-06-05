@@ -32,7 +32,7 @@ import net.minecraftforge.oredict.RecipeSorter;
 
 import java.io.File;
 
-@Mod(modid=AntiqueAtlasMod.ID, name=AntiqueAtlasMod.NAME, version=AntiqueAtlasMod.VERSION)
+@Mod(modid=AntiqueAtlasMod.ID, name=AntiqueAtlasMod.NAME, version=AntiqueAtlasMod.VERSION, guiFactory="hunternif.mc.atlas.client.gui.config.AAConfigGuiFactory")
 public class AntiqueAtlasMod {
 	public static final String ID = "antiqueatlas";
 	public static final String NAME = "Antique Atlas";
@@ -63,6 +63,7 @@ public class AntiqueAtlasMod {
 		MarkerTypes.INSTANCE.getClass(); // ...
 		proxy.preInit(event);
 		settings.load(new File(proxy.configDir, "settings.cfg"));
+		MinecraftForge.EVENT_BUS.register(new SettingsConfig.Listener());
 
 		if (settings.itemNeeded) {
 			itemAtlas = (ItemAtlas) new ItemAtlas()

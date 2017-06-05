@@ -1,6 +1,8 @@
 package hunternif.mc.atlas;
 
 import net.minecraftforge.common.config.Configuration;
+import net.minecraftforge.fml.client.event.ConfigChangedEvent;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 import java.io.File;
 
@@ -8,14 +10,12 @@ import java.io.File;
 public class SettingsConfig {
 	private static final int VERSION = 4;
 	
-	private static final String GAMEPLAY = "Gameplay";
-	private static final String INTERFACE = "Interface";
-	private static final String PERFORMANCE = "Performance";
+	public static final String GAMEPLAY = "Gameplay";
+    public static final String INTERFACE = "Interface";
+    public static final String PERFORMANCE = "Performance";
 
 	private File configFile;
-	private Configuration config;
-	
-	//TODO make these options configurable via an in-game GUI menu
+	public Configuration config;
 	
 	//============= Gameplay settings =============
 	public boolean doSaveBrowsingPos = true;
@@ -40,17 +40,21 @@ public class SettingsConfig {
 	public boolean debugRender = false;
 	
 	public void load(File file) {
-		configFile = file;
-		config = new Configuration(file, String.valueOf(VERSION));
-		config.setCategoryComment(GAMEPLAY,
-				"These settings will affect how the mod behaves in certain situations and the players' overall gameplay,\n"
-				+ "but generally won't affect performance.");
-		config.setCategoryComment(INTERFACE,
-				"These setting will affect the look and feel of the Atlas' interface.");
-		config.setCategoryComment(PERFORMANCE,
-				"These settings affect the algorithms for scanning the world, drawing the map etc. Changing them may\n"
-				+ "improve the game's overall stability and performance at the cost of Atlas' functionality.");
-		
+        configFile = file;
+        config = new Configuration(file, String.valueOf(VERSION));
+        config.setCategoryComment(GAMEPLAY,
+                "These settings will affect how the mod behaves in certain situations and the players' overall gameplay,\n"
+                        + "but generally won't affect performance.");
+        config.setCategoryComment(INTERFACE,
+                "These setting will affect the look and feel of the Atlas' interface.");
+        config.setCategoryComment(PERFORMANCE,
+                "These settings affect the algorithms for scanning the world, drawing the map etc. Changing them may\n"
+                        + "improve the game's overall stability and performance at the cost of Atlas' functionality.");
+
+        sync();
+    }
+
+    public void sync() {
 		doSaveBrowsingPos = config.getBoolean("do_save_browsing_pos", GAMEPLAY, doSaveBrowsingPos,
 				"Whether to remember last open browsing position and zoom level for each dimension in every atlas.\n"
 				+ "If disabled, all dimensions and all atlases will be \"synchronized\" at the same coordinates and\n"
@@ -107,4 +111,12 @@ public class SettingsConfig {
 
 		config.save();
 	}
+
+	public static class Listener {
+	    @SubscribeEvent
+	    public void onConfigChanged(ConfigChangedEvent.OnConfigChangedEvent event) {
+	        if (event.getModID().equals(AntiqueAtlasMod.ID))
+	            AntiqueAtlasMod.settings.sync();
+        }
+    }
 }
