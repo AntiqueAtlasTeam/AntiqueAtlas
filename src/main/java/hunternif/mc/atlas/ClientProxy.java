@@ -109,7 +109,7 @@ public class ClientProxy extends CommonProxy implements IResourceManagerReloadLi
 		}
 		guiAtlas = new GuiAtlas();
 
-		if (AntiqueAtlasMod.settings.itemNeeded) {
+		if (SettingsConfig.gameplay.itemNeeded) {
             Minecraft.getMinecraft().getRenderItem().getItemModelMesher().register(AntiqueAtlasMod.itemAtlas, stack -> new ModelResourceLocation(AntiqueAtlasMod.ID + ":antique_atlas", "inventory"));
             Minecraft.getMinecraft().getRenderItem().getItemModelMesher().register(AntiqueAtlasMod.itemEmptyAtlas, 0, new ModelResourceLocation(AntiqueAtlasMod.ID + ":empty_antique_atlas", "inventory"));
         } else {
@@ -124,7 +124,7 @@ public class ClientProxy extends CommonProxy implements IResourceManagerReloadLi
 	@Override
 	public void postInit(FMLPostInitializationEvent event) {
 		super.postInit(event);
-		guiAtlas.setMapScale(AntiqueAtlasMod.settings.defaultScale);
+		guiAtlas.setMapScale(SettingsConfig.userInterface.defaultScale);
 	}
 
 	@Override

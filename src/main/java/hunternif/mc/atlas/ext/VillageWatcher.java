@@ -1,31 +1,30 @@
 package hunternif.mc.atlas.ext;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableMap.Builder;
+import hunternif.mc.atlas.AntiqueAtlasMod;
+import hunternif.mc.atlas.SettingsConfig;
+import hunternif.mc.atlas.api.AtlasAPI;
+import hunternif.mc.atlas.marker.Marker;
+import hunternif.mc.atlas.marker.MarkersData;
+import hunternif.mc.atlas.registry.MarkerTypes;
+import hunternif.mc.atlas.util.Log;
 import hunternif.mc.atlas.util.MathUtil;
-import net.minecraftforge.event.terraingen.PopulateChunkEvent;
-import net.minecraftforge.event.world.WorldEvent;
-import net.minecraftforge.fml.common.eventhandler.EventPriority;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.world.World;
 import net.minecraft.world.gen.structure.MapGenStructureData;
 import net.minecraft.world.gen.structure.StructureBoundingBox;
+import net.minecraftforge.event.terraingen.PopulateChunkEvent;
+import net.minecraftforge.event.world.WorldEvent;
+import net.minecraftforge.fml.common.eventhandler.EventPriority;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableMap.Builder;
-import hunternif.mc.atlas.AntiqueAtlasMod;
-import hunternif.mc.atlas.api.AtlasAPI;
-import hunternif.mc.atlas.marker.Marker;
-import hunternif.mc.atlas.marker.MarkersData;
-import hunternif.mc.atlas.registry.MarkerTypes;
-import hunternif.mc.atlas.util.Log;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class VillageWatcher {
 	public static final String MARKER = "village";
@@ -162,7 +161,7 @@ public class VillageWatcher {
 						}
 					}
 				}
-				if (!foundMarker && AntiqueAtlasMod.settings.autoVillageMarkers) {
+				if (!foundMarker && SettingsConfig.gameplay.autoVillageMarkers) {
 					AtlasAPI.markers.putGlobalMarker(world, false, MarkerTypes.VILLAGE.getRegistryName().toString(), "gui.antiqueatlas.marker.village", x, z);
 				}
 			}

@@ -1,13 +1,12 @@
 package hunternif.mc.atlas.network.server;
 
 import hunternif.mc.atlas.AntiqueAtlasMod;
+import hunternif.mc.atlas.SettingsConfig;
 import hunternif.mc.atlas.marker.Marker;
 import hunternif.mc.atlas.marker.MarkersData;
 import hunternif.mc.atlas.network.AbstractMessage.AbstractServerMessage;
 import hunternif.mc.atlas.network.PacketDispatcher;
 import hunternif.mc.atlas.network.client.MarkersPacket;
-import hunternif.mc.atlas.registry.MarkerRegistry;
-import hunternif.mc.atlas.registry.MarkerType;
 import hunternif.mc.atlas.util.Log;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -68,7 +67,7 @@ public class AddMarkerPacket extends AbstractServerMessage<AddMarkerPacket> {
 	@Override
 	protected void process(EntityPlayer player, Side side) {
 		// Make sure it's this player's atlas :^)
-		if (AntiqueAtlasMod.settings.itemNeeded && !player.inventory.hasItemStack(new ItemStack(AntiqueAtlasMod.itemAtlas, 1, atlasID))) {
+		if (SettingsConfig.gameplay.itemNeeded && !player.inventory.hasItemStack(new ItemStack(AntiqueAtlasMod.itemAtlas, 1, atlasID))) {
 			Log.warn("Player %s attempted to put marker into someone else's Atlas #%d",
 					player.getGameProfile().getName(), atlasID);
 			return;

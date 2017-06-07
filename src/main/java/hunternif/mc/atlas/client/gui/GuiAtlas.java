@@ -1,6 +1,7 @@
 package hunternif.mc.atlas.client.gui;
 
 import hunternif.mc.atlas.AntiqueAtlasMod;
+import hunternif.mc.atlas.SettingsConfig;
 import hunternif.mc.atlas.api.AtlasAPI;
 import hunternif.mc.atlas.client.*;
 import hunternif.mc.atlas.client.gui.core.*;
@@ -266,7 +267,7 @@ public class GuiAtlas extends GuiComponent {
 		};
 		addChild(btnExportPng).offsetGuiCoords(300, 75);
 		btnExportPng.addListener(button -> {
-            if (stack != null || !AntiqueAtlasMod.settings.itemNeeded) {
+            if (stack != null || !SettingsConfig.gameplay.itemNeeded) {
                 exportThread = new Thread(() -> exportImage(getAtlasID()), "Atlas file export thread");
                 exportThread.start();
             }
@@ -275,7 +276,7 @@ public class GuiAtlas extends GuiComponent {
 		btnMarker = new GuiBookmarkButton(0, Textures.ICON_ADD_MARKER, I18n.format("gui.antiqueatlas.addMarker"));
 		addChild(btnMarker).offsetGuiCoords(300, 14);
 		btnMarker.addListener(button -> {
-            if (stack != null || !AntiqueAtlasMod.settings.itemNeeded) {
+            if (stack != null || !SettingsConfig.gameplay.itemNeeded) {
                 if (state.is(PLACING_MARKER)) {
                     selectedButton = null;
                     state.switchTo(NORMAL);
@@ -288,7 +289,7 @@ public class GuiAtlas extends GuiComponent {
 		btnDelMarker = new GuiBookmarkButton(2, Textures.ICON_DELETE_MARKER, I18n.format("gui.antiqueatlas.delMarker"));
 		addChild(btnDelMarker).offsetGuiCoords(300, 33);
 		btnDelMarker.addListener(button -> {
-            if (stack != null || !AntiqueAtlasMod.settings.itemNeeded) {
+            if (stack != null || !SettingsConfig.gameplay.itemNeeded) {
                 if (state.is(DELETING_MARKER)) {
                     selectedButton = null;
                     state.switchTo(NORMAL);
@@ -301,7 +302,7 @@ public class GuiAtlas extends GuiComponent {
 		btnShowMarkers = new GuiBookmarkButton(3, Textures.ICON_HIDE_MARKERS, I18n.format("gui.antiqueatlas.hideMarkers"));
 		addChild(btnShowMarkers).offsetGuiCoords(300, 52);
 		btnShowMarkers.addListener(button -> {
-            if (stack != null || !AntiqueAtlasMod.settings.itemNeeded) {
+            if (stack != null || !SettingsConfig.gameplay.itemNeeded) {
                 selectedButton = null;
                 state.switchTo(state.is(HIDING_MARKERS) ? NORMAL : HIDING_MARKERS);
             }
@@ -324,7 +325,7 @@ public class GuiAtlas extends GuiComponent {
 	public GuiAtlas prepareToOpen() {
         this.player = Minecraft.getMinecraft().player;
         updateAtlasData();
-        if (!followPlayer && AntiqueAtlasMod.settings.doSaveBrowsingPos) {
+        if (!followPlayer && SettingsConfig.gameplay.doSaveBrowsingPos) {
             loadSavedBrowsingPosition();
         }
 
@@ -475,7 +476,7 @@ public class GuiAtlas extends GuiComponent {
 		int wheelMove = Mouse.getEventDWheel();
 		if (wheelMove != 0) {
 			wheelMove = wheelMove > 0 ? 1 : -1;
-			if (AntiqueAtlasMod.settings.doReverseWheelZoom) {
+			if (SettingsConfig.userInterface.doReverseWheelZoom) {
 			    wheelMove *= -1;
             }
 
@@ -583,7 +584,7 @@ public class GuiAtlas extends GuiComponent {
     /** Set the pixel-to-block ratio, maintaining the current center of the screen with additional offset. */
     private void setMapScale(double scale, int addOffsetX, int addOffsetY) {
         double oldScale = mapScale;
-        mapScale = Math.min(Math.max(scale, AntiqueAtlasMod.settings.minScale), AntiqueAtlasMod.settings.maxScale);
+        mapScale = Math.min(Math.max(scale, SettingsConfig.userInterface.minScale), SettingsConfig.userInterface.maxScale);
 
         // Scaling not needed
         if (oldScale == mapScale) {
@@ -621,7 +622,7 @@ public class GuiAtlas extends GuiComponent {
 		long deltaMillis = currentMillis - lastUpdateMillis;
 		lastUpdateMillis = currentMillis;
 
-		if (AntiqueAtlasMod.settings.debugRender) {
+		if (SettingsConfig.performance.debugRender) {
 			renderTimes[renderTimesIndex++] = System.currentTimeMillis();
 			if (renderTimesIndex == renderTimes.length) {
 				renderTimesIndex = 0;
@@ -637,7 +638,7 @@ public class GuiAtlas extends GuiComponent {
 		GlStateManager.alphaFunc(GL11.GL_GREATER, 0); // So light detail on tiles is visible
 		AtlasRenderHelper.drawFullTexture(Textures.BOOK, getGuiX(), getGuiY(), WIDTH, HEIGHT);
 
-		if ((stack == null && AntiqueAtlasMod.settings.itemNeeded) || biomeData == null)
+		if ((stack == null && SettingsConfig.gameplay.itemNeeded) || biomeData == null)
 			return;
 
 		if (state.is(DELETING_MARKER)) {
@@ -863,7 +864,7 @@ public class GuiAtlas extends GuiComponent {
 			GlStateManager.color(1, 1, 1, 1);
 		}
 
-		if (AntiqueAtlasMod.settings.debugRender){
+		if (SettingsConfig.performance.debugRender){
 			System.out.println("Rendering Marker: "+info.tex);
 		}
 
@@ -925,11 +926,11 @@ public class GuiAtlas extends GuiComponent {
 
 	/** Returns the scale of markers and player icon at given mapScale. */
 	private double getIconScale() {
-		return AntiqueAtlasMod.settings.doScaleMarkers ? (mapScale < 0.5 ? 0.5 : mapScale > 1 ? 2 : 1) : 1;
+		return SettingsConfig.userInterface.doScaleMarkers ? (mapScale < 0.5 ? 0.5 : mapScale > 1 ? 2 : 1) : 1;
 	}
 
 	/** Returns atlas id based on "itemNeeded" option */
 	private int getAtlasID() {
-	    return AntiqueAtlasMod.settings.itemNeeded ? stack.getItemDamage() : player.getUniqueID().hashCode();
+	    return SettingsConfig.gameplay.itemNeeded ? stack.getItemDamage() : player.getUniqueID().hashCode();
     }
 }

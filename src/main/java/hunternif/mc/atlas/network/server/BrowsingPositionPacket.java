@@ -1,6 +1,7 @@
 package hunternif.mc.atlas.network.server;
 
 import hunternif.mc.atlas.AntiqueAtlasMod;
+import hunternif.mc.atlas.SettingsConfig;
 import hunternif.mc.atlas.network.AbstractMessage.AbstractServerMessage;
 import hunternif.mc.atlas.util.Log;
 import net.minecraft.entity.player.EntityPlayer;
@@ -53,7 +54,7 @@ public class BrowsingPositionPacket extends AbstractServerMessage<BrowsingPositi
 	@Override
 	protected void process(EntityPlayer player, Side side) {
 		// Make sure it's this player's atlas :^)
-		if (AntiqueAtlasMod.settings.itemNeeded &&
+		if (SettingsConfig.gameplay.itemNeeded &&
 				!player.inventory.hasItemStack(new ItemStack(AntiqueAtlasMod.itemAtlas, 1, atlasID))) {
 			Log.warn("Player %s attempted to put position marker into someone else's Atlas #%d",
 					player.getGameProfile().getName(), atlasID);

@@ -1,6 +1,7 @@
 package kenkron.antiqueatlasoverlay;
 
 import hunternif.mc.atlas.AntiqueAtlasMod;
+import hunternif.mc.atlas.SettingsConfig;
 import hunternif.mc.atlas.client.*;
 import hunternif.mc.atlas.client.gui.GuiAtlas;
 import hunternif.mc.atlas.core.DimensionData;
@@ -50,7 +51,7 @@ public class AAORenderEventReceiver {
      * there are none. Offhand gets priority.
      **/
     private static Integer getPlayerAtlas(EntityPlayer player) {
-        if (!AntiqueAtlasMod.settings.itemNeeded) {
+        if (!SettingsConfig.gameplay.itemNeeded) {
             return player.getUniqueID().hashCode();
         }
 

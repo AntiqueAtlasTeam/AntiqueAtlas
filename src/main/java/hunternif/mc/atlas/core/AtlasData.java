@@ -1,6 +1,7 @@
 package hunternif.mc.atlas.core;
 
 import hunternif.mc.atlas.AntiqueAtlasMod;
+import hunternif.mc.atlas.SettingsConfig;
 import hunternif.mc.atlas.network.PacketDispatcher;
 import hunternif.mc.atlas.network.client.MapDataPacket;
 import hunternif.mc.atlas.network.server.BrowsingPositionPacket;
@@ -51,7 +52,7 @@ public class AtlasData extends WorldSavedData {
 	public AtlasData(String key) {
 		super(key);
 
-		biomeDetectorOverworld.setScanPonds(AntiqueAtlasMod.settings.doScanPonds);
+		biomeDetectorOverworld.setScanPonds(SettingsConfig.performance.doScanPonds);
 		setBiomeDetectorForDimension(0, biomeDetectorOverworld);
 		setBiomeDetectorForDimension(-1, biomeDetectorNether);
 		setBiomeDetectorForDimension(1, biomeDetectorEnd);
@@ -148,8 +149,8 @@ public class AtlasData extends WorldSavedData {
 
 	public void updateMapAroundPlayer(EntityPlayer player) {
 		// Update the actual map only so often:
-		int newScanInterval = Math.round(AntiqueAtlasMod.settings.newScanInterval * 20);
-		int rescanInterval = newScanInterval * AntiqueAtlasMod.settings.rescanRate;
+		int newScanInterval = Math.round(SettingsConfig.performance.newScanInterval * 20);
+		int rescanInterval = newScanInterval * SettingsConfig.performance.rescanRate;
 		if (player.ticksExisted % newScanInterval != 0) {
 			return;
 		}
@@ -158,7 +159,7 @@ public class AtlasData extends WorldSavedData {
 		int playerZ = MathHelper.floor(player.posZ) >> 4;
 		ITileStorage seenChunks = this.getDimensionData(player.dimension);
 		IBiomeDetector biomeDetector = getBiomeDetectorForDimension(player.dimension);
-		int scanRadius = AntiqueAtlasMod.settings.scanRadius;
+		int scanRadius = SettingsConfig.performance.scanRadius;
 
 		// Look at chunks around in a circular area:
 		for (double dx = -scanRadius; dx <= scanRadius; dx++) {
@@ -179,7 +180,7 @@ public class AtlasData extends WorldSavedData {
 				if (biomeId == -1) {
 					Chunk chunk = player.getEntityWorld().getChunkFromChunkCoords(x, z);
 					// Force loading of chunk, if required:
-					if (AntiqueAtlasMod.settings.forceChunkLoading && !chunk.isLoaded()) {
+					if (SettingsConfig.performance.forceChunkLoading && !chunk.isLoaded()) {
 						player.getEntityWorld().getChunkProvider().provideChunk(x << 4, z << 4);
 					}
 
@@ -190,7 +191,7 @@ public class AtlasData extends WorldSavedData {
 
 					if (oldTile != null) {
 						// If the chunk has been scanned previously, only re-scan it so often:
-						if (!AntiqueAtlasMod.settings.doRescan || player.ticksExisted % rescanInterval != 0) {
+						if (!SettingsConfig.performance.doRescan || player.ticksExisted % rescanInterval != 0) {
 							continue;
 						}
 						biomeId = biomeDetector.getBiomeID(chunk);
