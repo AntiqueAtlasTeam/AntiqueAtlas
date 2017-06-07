@@ -25,6 +25,7 @@ public class SettingsConfig {
         @Config.Comment({"Whether to add global markers for NPC villages."})
         public boolean autoVillageMarkers = true;
         @Config.Comment({"Player will need to craft atlas item to use atlas."})
+        @Config.RequiresMcRestart
         public boolean itemNeeded = true;
     }
 
