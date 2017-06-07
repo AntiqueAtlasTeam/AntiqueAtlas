@@ -15,6 +15,7 @@ import hunternif.mc.atlas.network.server.BrowsingPositionPacket;
 import hunternif.mc.atlas.registry.MarkerRegistry;
 import hunternif.mc.atlas.registry.MarkerRenderInfo;
 import hunternif.mc.atlas.registry.MarkerType;
+import hunternif.mc.atlas.registry.MarkerTypes;
 import hunternif.mc.atlas.util.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScaledResolution;
@@ -827,8 +828,8 @@ public class GuiAtlas extends GuiComponent {
 	private void renderMarker(Marker marker, double scale) {
 		MarkerType type = MarkerRegistry.find(marker.getType());
 		if (type == null){
-			Log.warn("Could not find marker data for %d. Is it in the config file?\n", marker.getType());
-			return;
+			Log.debug("Could not find marker data for %s. Is it in the config file?\n", marker.getType());
+			type = MarkerTypes.UNKNOWN;
 		}
 		
 		if (type.shouldHide(state.is(HIDING_MARKERS), scaleClipIndex)) {

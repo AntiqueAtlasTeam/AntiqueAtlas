@@ -40,6 +40,7 @@ public class Textures {
 	ICON_HIDE_MARKERS = icon("hide_markers.png"),
 	ICON_EXPORT = icon("export.png"),
 	
+	MARKER_UNKNOWN_MARKER = marker("unknown_marker.png"),
 	MARKER_GOOGLE_MARKER = marker("google_marker.png"),
 	MARKER_RED_X_LARGE = marker("red_x_large.png"),
 	MARKER_RED_X_SMALL = marker("red_x_small.png"),
