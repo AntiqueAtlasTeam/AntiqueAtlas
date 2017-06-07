@@ -913,7 +913,7 @@ public class GuiAtlas extends GuiComponent {
 	@Override
 	protected void onChildClosed(GuiComponent child) {
 		if (child.equals(markerFinalizer)) {
-			setInterceptKeyboard(false);
+			setInterceptKeyboard(true);
 			removeChild(blinkingIcon);
 		}
 	}
