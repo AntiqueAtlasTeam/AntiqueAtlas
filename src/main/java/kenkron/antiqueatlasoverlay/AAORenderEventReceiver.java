@@ -12,7 +12,6 @@ import hunternif.mc.atlas.registry.MarkerRenderInfo;
 import hunternif.mc.atlas.registry.MarkerType;
 import hunternif.mc.atlas.util.AtlasRenderHelper;
 import hunternif.mc.atlas.util.Rect;
-import jline.internal.Log;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.gui.ScaledResolution;
@@ -21,6 +20,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
+import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
@@ -29,53 +29,13 @@ import org.lwjgl.opengl.GL11;
 
 import java.util.List;
 
-class AAORenderEventReceiver {
+@Mod.EventBusSubscriber(value = Side.CLIENT, modid = AntiqueAtlasOverlayMod.MODID)
+public class AAORenderEventReceiver {
     /**
      * Number of blocks per chunk in minecraft. This is certianly stored
      * somewhere else, but I couldn't be bothered to find it.
      */
     private static final int CHUNK_SIZE = 16;
-
-    /**
-     * I know public variables can be messed with, but that's a risk I'm willing
-     * to take. Fraction of image devoted to each border.
-     */
-    float BORDER_X = 0.0f, BORDER_Y = 0.0f;
-    int TILE_SIZE = 8;
-
-    /**
-     * Position of the minimap relative to it's corner.
-     */
-    int X = 2, Y = 2;
-
-    /**
-     * Dimensions of the minimap
-     */
-    int WIDTH = GuiAtlas.WIDTH / 2, HEIGHT = GuiAtlas.HEIGHT / 2;
-
-    /**
-     * Determines which corner to align to
-     */
-    boolean ALIGN_RIGHT = true, ALIGN_BOTTOM = false;
-
-    /**
-     * If true, the minimap will render only while the atlas is held, instead of
-     * rendering whenever it's in the hotbar.
-     */
-    boolean REQUIRES_HOLD = true;
-
-    /**
-     * If true, the minimap will show
-     * If false, it will not
-     */
-    boolean ENABLED = true;
-
-    /**
-     * Size of markers on the minimap
-     */
-    int MARKER_SIZE = GuiAtlas.MARKER_SIZE / 2;
-    int PLAYER_ICON_WIDTH = 7;
-    int PLAYER_ICON_HEIGHT = 8;
 
     /**
      * new ScaledResolution(mc).getScaleFactor();
@@ -110,13 +70,12 @@ class AAORenderEventReceiver {
     }
 
     @SubscribeEvent(priority = EventPriority.NORMAL)
-	@SideOnly(Side.CLIENT)
     public void eventHandler(RenderGameOverlayEvent.Post event) {
         if (event.getType() != RenderGameOverlayEvent.ElementType.ALL) {
             return;
         }
 
-        if (!ENABLED) {
+        if (!AAOConfig.appearance.enabled) {
             return;
         }
 
@@ -128,13 +87,13 @@ class AAORenderEventReceiver {
         EntityPlayerSP player = Minecraft.getMinecraft().player;
         Integer atlas = null;
 
-        if (REQUIRES_HOLD) {
+        if (AAOConfig.appearance.requiresHold) {
             ItemStack stack = player.getHeldItemMainhand();
             ItemStack stack2 = player.getHeldItemOffhand();
 
-            if (stack != null && stack.getItem() == AntiqueAtlasMod.itemAtlas) {
+            if (!stack.isEmpty() && stack.getItem() == AntiqueAtlasMod.itemAtlas) {
                 atlas = stack.getItemDamage();
-            } else if (stack2 != null && stack2.getItem() == AntiqueAtlasMod.itemAtlas) {
+            } else if (!stack2.isEmpty() && stack2.getItem() == AntiqueAtlasMod.itemAtlas) {
                 atlas = stack2.getItemDamage();
             }
         } else {
@@ -145,21 +104,20 @@ class AAORenderEventReceiver {
             int gameWidth = event.getResolution().getScaledWidth();
             int gameHeight = event.getResolution().getScaledHeight();
             // remember, y=0 is at the top
-            Rect bounds = new Rect().setOrigin(X, Y);
-            if (ALIGN_RIGHT) {
-                bounds.minX = gameWidth - (WIDTH + X);
+            Rect bounds = new Rect().setOrigin(AAOConfig.position.xPosition, AAOConfig.position.yPosition);
+            if (AAOConfig.position.alignRight) {
+                bounds.minX = gameWidth - (AAOConfig.position.width + AAOConfig.position.xPosition);
             }
-            if (ALIGN_BOTTOM) {
-                bounds.minY = gameHeight - (HEIGHT + Y);
+            if (AAOConfig.position.alignBottom) {
+                bounds.minY = gameHeight - (AAOConfig.position.height + AAOConfig.position.yPosition);
             }
 
-            bounds.setSize(WIDTH, HEIGHT);
+            bounds.setSize(AAOConfig.position.width, AAOConfig.position.height);
             res = event.getResolution();
             drawMinimap(bounds, atlas, player.getPositionVector(), player.getRotationYawHead(), player.dimension);
         }
     }
 
-	@SideOnly(Side.CLIENT)
     private void drawMinimap(Rect shape, int atlasID, Vec3d position, float rotation,
                              int dimension) {
         screenScale = new ScaledResolution(Minecraft.getMinecraft()).getScaleFactor();
@@ -171,13 +129,13 @@ class AAORenderEventReceiver {
                 shape.minY, shape.getWidth(), shape.getHeight());
         Rect innerShape = new Rect(
                 // stop it eclipse
-                shape.minX + Math.round(BORDER_X * shape.getWidth()),
-                shape.minY + Math.round(BORDER_Y * shape.getHeight()),
-                shape.maxX - Math.round(BORDER_X * shape.getWidth()),
-                shape.maxY - Math.round(BORDER_Y * shape.getHeight()));
+                shape.minX + Math.round(AAOConfig.appearance.borderX * shape.getWidth()),
+                shape.minY + Math.round(AAOConfig.appearance.borderY * shape.getHeight()),
+                shape.maxX - Math.round(AAOConfig.appearance.borderX * shape.getWidth()),
+                shape.maxY - Math.round(AAOConfig.appearance.borderY * shape.getHeight()));
         drawTiles(innerShape, atlasID, position, dimension);
 
-        if (MARKER_SIZE > 0) {
+        if (AAOConfig.appearance.markerSize > 0) {
             drawMarkers(innerShape, atlasID, position, dimension);
             int shapeMiddleX = (shape.minX + shape.maxX) / 2;
             int shapeMiddleY = (shape.minY + shape.maxY) / 2;
@@ -191,7 +149,6 @@ class AAORenderEventReceiver {
         GlStateManager.disableBlend();
     }
 
-	@SideOnly(Side.CLIENT)
     private void drawTiles(Rect shape, int atlasID, Vec3d position,
                            int dimension) {
         GL11.glEnable(GL11.GL_SCISSOR_TEST);
@@ -215,7 +172,7 @@ class AAORenderEventReceiver {
                 position.zCoord / CHUNK_SIZE);
         int shapeMiddleX = (shape.minX + shape.maxX) / 2;
         int shapeMiddleY = (shape.minY + shape.maxY) / 2;
-        SetTileRenderer renderer = new SetTileRenderer(TILE_SIZE / 2);
+        SetTileRenderer renderer = new SetTileRenderer(AAOConfig.appearance.tileSize / 2);
 
         while (iter.hasNext()) {
             SubTileQuartet subtiles = iter.next();
@@ -232,10 +189,10 @@ class AAORenderEventReceiver {
                         BiomeTextureMap.instance().getTexture(subtile.tile),
                         shapeMiddleX
                                 + (int) Math.floor(relativeChunkPositionX
-                                * TILE_SIZE),
+                                * AAOConfig.appearance.tileSize),
                         shapeMiddleY
                                 + (int) Math.floor(relativeChunkPositionY
-                                * TILE_SIZE), subtile.getTextureU(),
+                                * AAOConfig.appearance.tileSize), subtile.getTextureU(),
                         subtile.getTextureV());
             }
         }
@@ -245,7 +202,6 @@ class AAORenderEventReceiver {
         GlStateManager.color(1, 1, 1, 1);
     }
 
-	@SideOnly(Side.CLIENT)
     private void drawMarkers(Rect shape, int atlasID, Vec3d position,
                              int dimension) {
 
@@ -286,19 +242,18 @@ class AAORenderEventReceiver {
         GlStateManager.pushMatrix();
         GlStateManager.translate(x, y, 0);
         GlStateManager.rotate(180 + rotation, 0, 0, 1);
-        GlStateManager.translate(-PLAYER_ICON_WIDTH / 2, -PLAYER_ICON_HEIGHT / 2, 0);
-        AtlasRenderHelper.drawFullTexture(Textures.PLAYER, 0, 0, PLAYER_ICON_WIDTH, PLAYER_ICON_HEIGHT);
+        GlStateManager.translate(-AAOConfig.appearance.playerIconWidth / 2, -AAOConfig.appearance.playerIconHeight / 2, 0);
+        AtlasRenderHelper.drawFullTexture(Textures.PLAYER, 0, 0, AAOConfig.appearance.playerIconWidth, AAOConfig.appearance.playerIconHeight);
         GlStateManager.popMatrix();
         GlStateManager.color(1, 1, 1, 1);
     }
 
-	@SideOnly(Side.CLIENT)
     private void drawMarkersData(DimensionMarkersData markersData,
                                  Rect shape, DimensionData biomeData, Vec3d position) {
 
         //this will be large enough to include markers that are larger than tiles
-        Rect markerShape = new Rect(shape.minX - MARKER_SIZE / 2, shape.minY - MARKER_SIZE / 2,
-                shape.maxX + MARKER_SIZE / 2, shape.maxY + MARKER_SIZE / 2);
+        Rect markerShape = new Rect(shape.minX - AAOConfig.appearance.markerSize / 2, shape.minY - AAOConfig.appearance.markerSize / 2,
+                shape.maxX + AAOConfig.appearance.markerSize / 2, shape.maxY + AAOConfig.appearance.markerSize / 2);
 
         Rect mcchunks = getChunkCoverage(position, markerShape);
         Rect chunks = new Rect((int) Math.floor(mcchunks.minX / MarkersData.CHUNK_STEP),
@@ -320,19 +275,18 @@ class AAORenderEventReceiver {
                 for (Marker marker : markers) {
                     // Position of this marker relative to the player
                     // Rounded to the nearest even number
-                    int relativeChunkPositionX = TILE_SIZE * (2 * (marker.getX() / 2) - 2 * (int) Math.floor(position.xCoord / 2))
+                    int relativeChunkPositionX = AAOConfig.appearance.tileSize * (2 * (marker.getX() / 2) - 2 * (int) Math.floor(position.xCoord / 2))
                             / CHUNK_SIZE;
-                    int relativeChunkPositionY = TILE_SIZE * (2 * (marker.getZ() / 2) - 2 * (int) Math.floor(position.zCoord / 2))
+                    int relativeChunkPositionY = AAOConfig.appearance.tileSize * (2 * (marker.getZ() / 2) - 2 * (int) Math.floor(position.zCoord / 2))
                             / CHUNK_SIZE;
-                    int guiX = (int) Math.floor(shapeMiddleX - MARKER_SIZE / 2 + relativeChunkPositionX);
-                    int guiY = (int) Math.floor(shapeMiddleY - MARKER_SIZE / 2 + relativeChunkPositionY);
+                    int guiX = (int) Math.floor(shapeMiddleX - AAOConfig.appearance.markerSize / 2 + relativeChunkPositionX);
+                    int guiY = (int) Math.floor(shapeMiddleY - AAOConfig.appearance.markerSize / 2 + relativeChunkPositionY);
                     renderMarker(marker, guiX, guiY, biomeData);
                 }
             }
         }
     }
 
-	@SideOnly(Side.CLIENT)
     private void renderMarker(Marker marker, int x, int y,
                               DimensionData biomeData) {
         if (!marker.isVisibleAhead()
@@ -342,24 +296,25 @@ class AAORenderEventReceiver {
         GlStateManager.color(1, 1, 1, 1);
         MarkerType m = MarkerRegistry.find(marker.getType());
         if (m == null){
-        	Log.warn("Could not find marker type for %s\n");
+        	AntiqueAtlasOverlayMod.LOGGER.warn("Could not find marker type for {}", marker.getId());
+        	return;
         }
-        MarkerRenderInfo info = m.getRenderInfo(1, TILE_SIZE, screenScale);
-        AtlasRenderHelper.drawFullTexture(info.tex, x, y, MARKER_SIZE, MARKER_SIZE);
+        MarkerRenderInfo info = m.getRenderInfo(1, AAOConfig.appearance.tileSize, screenScale);
+        AtlasRenderHelper.drawFullTexture(info.tex, x, y, AAOConfig.appearance.markerSize, AAOConfig.appearance.markerSize);
     }
 
     private Rect getChunkCoverage(Vec3d position, Rect windowShape) {
         int minChunkX = (int) Math.floor(position.xCoord / CHUNK_SIZE
-                - windowShape.getWidth() / (2f * TILE_SIZE));
+                - windowShape.getWidth() / (2f * AAOConfig.appearance.tileSize));
         minChunkX -= 1;// IDK
         int minChunkY = (int) Math.floor(position.zCoord / CHUNK_SIZE
-                - windowShape.getHeight() / (2f * TILE_SIZE));
+                - windowShape.getHeight() / (2f * AAOConfig.appearance.tileSize));
         minChunkY -= 1;// IDK
         int maxChunkX = (int) Math.ceil(position.xCoord / CHUNK_SIZE
-                + windowShape.getWidth() / (2f * TILE_SIZE));
+                + windowShape.getWidth() / (2f * AAOConfig.appearance.tileSize));
         maxChunkX += 1;
         int maxChunkY = (int) Math.ceil(position.zCoord / CHUNK_SIZE
-                + windowShape.getHeight() / (2f * TILE_SIZE));
+                + windowShape.getHeight() / (2f * AAOConfig.appearance.tileSize));
         maxChunkY += 1;
         return new Rect(minChunkX, minChunkY, maxChunkX, maxChunkY);
     }
@@ -367,7 +322,6 @@ class AAORenderEventReceiver {
     /**
      * Calls GL11.glScissor, but uses GUI coordinates
      */
-	@SideOnly(Side.CLIENT)
     private void glScissorGUI(Rect shape) {
         // glScissor uses the default window coordinates,
         // the display window does not. We need to fix this
