@@ -1,6 +1,7 @@
 package hunternif.mc.atlas.marker;
 
 import hunternif.mc.atlas.AntiqueAtlasMod;
+import hunternif.mc.atlas.SettingsConfig;
 import hunternif.mc.atlas.api.AtlasAPI;
 import hunternif.mc.atlas.registry.MarkerTypes;
 import hunternif.mc.atlas.util.DummyWorldAccess;
@@ -87,7 +88,7 @@ public class NetherPortalWatcher extends DummyWorldAccess {
 		// We need the very specific dimension each time.
 		World world = AntiqueAtlasMod.proxy.getServer().worldServerForDimension(dimension);
 
-		if (!AntiqueAtlasMod.settings.itemNeeded) {
+		if (!SettingsConfig.gameplay.itemNeeded) {
 			addPortalMarkerIfNone(player, world, dimension, player.getUniqueID().hashCode());
 			return;
 		}

@@ -1,26 +1,25 @@
 package hunternif.mc.atlas.ext;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-import net.minecraftforge.event.terraingen.PopulateChunkEvent;
-import net.minecraftforge.event.world.WorldEvent;
-import net.minecraftforge.fml.common.eventhandler.EventPriority;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-
-import net.minecraft.nbt.NBTBase;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.world.World;
-import net.minecraft.world.gen.structure.MapGenStructureData;
-
 import hunternif.mc.atlas.AntiqueAtlasMod;
+import hunternif.mc.atlas.SettingsConfig;
 import hunternif.mc.atlas.api.AtlasAPI;
 import hunternif.mc.atlas.marker.Marker;
 import hunternif.mc.atlas.marker.MarkersData;
 import hunternif.mc.atlas.registry.MarkerType;
 import hunternif.mc.atlas.util.Log;
+import net.minecraft.nbt.NBTBase;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.world.World;
+import net.minecraft.world.gen.structure.MapGenStructureData;
+import net.minecraftforge.event.terraingen.PopulateChunkEvent;
+import net.minecraftforge.event.world.WorldEvent;
+import net.minecraftforge.fml.common.eventhandler.EventPriority;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 public class StructureWatcher {
 	private final String datFileName;
@@ -101,7 +100,7 @@ public class StructureWatcher {
 			}
 		}
 		
-		if (AntiqueAtlasMod.settings.autoVillageMarkers) {
+		if (SettingsConfig.gameplay.autoVillageMarkers) {
 			if(!foundMarker)
 				AtlasAPI.markers.putGlobalMarker(world, false, marker.getRegistryName().toString(), markerLabel, (chunkX << 4) + 8, (chunkZ << 4) + 8);
 			if(tileMarker != null && !foundTileMarker)

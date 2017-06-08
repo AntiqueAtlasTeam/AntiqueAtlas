@@ -29,8 +29,6 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.oredict.RecipeSorter;
 
-import java.io.File;
-
 import static net.minecraftforge.oredict.RecipeSorter.Category.SHAPELESS;
 
 @Mod(modid=AntiqueAtlasMod.ID, name=AntiqueAtlasMod.NAME, version=AntiqueAtlasMod.VERSION)
@@ -45,8 +43,6 @@ public class AntiqueAtlasMod {
 
 	@SidedProxy(clientSide="hunternif.mc.atlas.ClientProxy", serverSide="hunternif.mc.atlas.CommonProxy")
 	public static CommonProxy proxy;
-
-	public static final SettingsConfig settings = new SettingsConfig();
 
 	public static final AtlasDataHandler atlasData = new AtlasDataHandler();
 	public static final MarkersDataHandler markersData = new MarkersDataHandler();
@@ -63,9 +59,8 @@ public class AntiqueAtlasMod {
 		MarkerRegistry.INSTANCE.getClass(); // load the class
 		MarkerTypes.INSTANCE.getClass(); // ...
 		proxy.preInit(event);
-		settings.load(new File(proxy.configDir, "settings.cfg"));
 
-		if (settings.itemNeeded) {
+		if (SettingsConfig.gameplay.itemNeeded) {
 			itemAtlas = (ItemAtlas) new ItemAtlas()
 					.setRegistryName(ID, "antique_atlas").setUnlocalizedName("antiqueAtlas");
 
@@ -83,7 +78,7 @@ public class AntiqueAtlasMod {
 		PacketDispatcher.registerPackets();
 		proxy.init(event);
 
-		if (settings.itemNeeded) {
+		if (SettingsConfig.gameplay.itemNeeded) {
 			GameRegistry.addShapelessRecipe(new ItemStack(itemEmptyAtlas), Items.BOOK, Items.COMPASS);
 
 			RecipeSorter.register("antiqueatlas:atlascloning", RecipeAtlasCloning.class, SHAPELESS, "after:minecraft:shapeless");

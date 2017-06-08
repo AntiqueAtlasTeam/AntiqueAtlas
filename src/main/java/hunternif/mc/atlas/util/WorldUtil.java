@@ -13,9 +13,9 @@ class WorldUtil {
 	 * Returns the village if the specified chunk overlays its territory.
 	 */
 	public static Village getVillageInChunk(Chunk chunk) {
-		int centerX = (chunk.xPosition << 4) + 8;
-		int centerZ = (chunk.zPosition << 4) + 8;
-		List<Village> villages = chunk.getWorld().villageCollectionObj.getVillageList();
+		int centerX = (chunk.x << 4) + 8;
+		int centerZ = (chunk.z << 4) + 8;
+		List<Village> villages = chunk.getWorld().villageCollection.getVillageList();
 		for (Village village : villages) {
 			BlockPos coords = village.getCenter();
 			if ((centerX - coords.getX())*(centerX - coords.getX()) + (centerZ - coords.getZ())*(centerZ - coords.getZ())
@@ -30,8 +30,8 @@ class WorldUtil {
 	 * Returns true if the village has a door in the specified chunk.
 	 */
 	public static boolean isVillageDoorInChunk(Village village, Chunk chunk) {
-		int centerX = (chunk.xPosition << 4) + 8;
-		int centerZ = (chunk.zPosition << 4) + 8;
+		int centerX = (chunk.x << 4) + 8;
+		int centerZ = (chunk.z << 4) + 8;
 		if (village.isAnnihilated()) {
 			return true;
 		}

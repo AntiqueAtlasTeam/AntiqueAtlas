@@ -1,12 +1,11 @@
 package hunternif.mc.atlas.core;
 
-import hunternif.mc.atlas.AntiqueAtlasMod;
+import hunternif.mc.atlas.SettingsConfig;
 import hunternif.mc.atlas.network.PacketDispatcher;
 import hunternif.mc.atlas.network.client.TileGroupsPacket;
 import hunternif.mc.atlas.util.Log;
 import hunternif.mc.atlas.util.Rect;
 import hunternif.mc.atlas.util.ShortVec2;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
@@ -74,7 +73,7 @@ public class DimensionData implements ITileStorage {
 		this.browsingZoom = zoom;
 		if (browsingZoom <= 0) {
 			Log.warn("Setting map zoom to invalid value of %f", zoom);
-			browsingZoom = AntiqueAtlasMod.settings.minScale;
+			browsingZoom = SettingsConfig.userInterface.minScale;
 		}
 		parent.markDirty();
 	}
