@@ -24,13 +24,11 @@ import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.opengl.GL11;
 
 import java.util.List;
 
-@Mod.EventBusSubscriber(value = Side.CLIENT, modid = AntiqueAtlasOverlayMod.MODID)
+@Mod.EventBusSubscriber(modid = AntiqueAtlasOverlayMod.MODID)
 public class AAORenderEventReceiver {
     /**
      * Number of blocks per chunk in minecraft. This is certianly stored
@@ -41,9 +39,9 @@ public class AAORenderEventReceiver {
     /**
      * new ScaledResolution(mc).getScaleFactor();
      */
-    private int screenScale = 1;
+    private static int screenScale = 1;
 
-    private ScaledResolution res;
+    private static ScaledResolution res;
 
     /**
      * Convenience method that returns the first atlas ID for all atlas items
@@ -71,7 +69,7 @@ public class AAORenderEventReceiver {
     }
 
     @SubscribeEvent(priority = EventPriority.NORMAL)
-    public void eventHandler(RenderGameOverlayEvent.Post event) {
+    public static void eventHandler(RenderGameOverlayEvent.Post event) {
         if (event.getType() != RenderGameOverlayEvent.ElementType.ALL) {
             return;
         }
@@ -119,7 +117,7 @@ public class AAORenderEventReceiver {
         }
     }
 
-    private void drawMinimap(Rect shape, int atlasID, Vec3d position, float rotation,
+    private static void drawMinimap(Rect shape, int atlasID, Vec3d position, float rotation,
                              int dimension) {
         screenScale = new ScaledResolution(Minecraft.getMinecraft()).getScaleFactor();
         GlStateManager.color(1, 1, 1, 1);
@@ -150,7 +148,7 @@ public class AAORenderEventReceiver {
         GlStateManager.disableBlend();
     }
 
-    private void drawTiles(Rect shape, int atlasID, Vec3d position,
+    private static void drawTiles(Rect shape, int atlasID, Vec3d position,
                            int dimension) {
         GL11.glEnable(GL11.GL_SCISSOR_TEST);
         // glScissor uses the default window coordinates,
@@ -203,7 +201,7 @@ public class AAORenderEventReceiver {
         GlStateManager.color(1, 1, 1, 1);
     }
 
-    private void drawMarkers(Rect shape, int atlasID, Vec3d position,
+    private static void drawMarkers(Rect shape, int atlasID, Vec3d position,
                              int dimension) {
 
         GL11.glEnable(GL11.GL_SCISSOR_TEST);
@@ -236,8 +234,7 @@ public class AAORenderEventReceiver {
         GlStateManager.color(1, 1, 1, 1);
     }
 
-	@SideOnly(Side.CLIENT)
-    private void drawPlayer(float x, float y, float rotation) {
+    private static void drawPlayer(float x, float y, float rotation) {
         // Draw player icon:
 
         GlStateManager.pushMatrix();
@@ -249,7 +246,7 @@ public class AAORenderEventReceiver {
         GlStateManager.color(1, 1, 1, 1);
     }
 
-    private void drawMarkersData(DimensionMarkersData markersData,
+    private static void drawMarkersData(DimensionMarkersData markersData,
                                  Rect shape, DimensionData biomeData, Vec3d position) {
 
         //this will be large enough to include markers that are larger than tiles
@@ -288,7 +285,7 @@ public class AAORenderEventReceiver {
         }
     }
 
-    private void renderMarker(Marker marker, int x, int y,
+    private static void renderMarker(Marker marker, int x, int y,
                               DimensionData biomeData) {
         if (!marker.isVisibleAhead()
                 && !biomeData.hasTileAt(marker.getChunkX(), marker.getChunkZ())) {
@@ -304,7 +301,7 @@ public class AAORenderEventReceiver {
         AtlasRenderHelper.drawFullTexture(info.tex, x, y, AAOConfig.appearance.markerSize, AAOConfig.appearance.markerSize);
     }
 
-    private Rect getChunkCoverage(Vec3d position, Rect windowShape) {
+    private static Rect getChunkCoverage(Vec3d position, Rect windowShape) {
         int minChunkX = (int) Math.floor(position.xCoord / CHUNK_SIZE
                 - windowShape.getWidth() / (2f * AAOConfig.appearance.tileSize));
         minChunkX -= 1;// IDK
@@ -323,7 +320,7 @@ public class AAORenderEventReceiver {
     /**
      * Calls GL11.glScissor, but uses GUI coordinates
      */
-    private void glScissorGUI(Rect shape) {
+    private static void glScissorGUI(Rect shape) {
         // glScissor uses the default window coordinates,
         // the display window does not. We need to fix this
         int mcHeight = Minecraft.getMinecraft().displayHeight;
