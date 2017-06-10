@@ -2,6 +2,7 @@ package hunternif.mc.atlas.ext.watcher.impl;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
+import com.google.common.collect.Sets;
 import hunternif.mc.atlas.AntiqueAtlasMod;
 import hunternif.mc.atlas.SettingsConfig;
 import hunternif.mc.atlas.api.AtlasAPI;
@@ -16,12 +17,11 @@ import hunternif.mc.atlas.util.Log;
 import hunternif.mc.atlas.util.MathUtil;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.EnumActionResult;
 import net.minecraft.world.DimensionType;
 import net.minecraft.world.World;
 import net.minecraft.world.gen.structure.MapGenStructureData;
 import net.minecraft.world.gen.structure.StructureBoundingBox;
+import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -113,17 +113,21 @@ public class StructureWatcherVillage implements IStructureWatcher {
         return data.getTagCompound();
     }
 
+    @Nonnull
     @Override
-    public void visitStructure(@Nonnull World world, @Nonnull NBTTagCompound structureTag) {
+    public Set<Pair<WatcherPos, String>> visitStructure(@Nonnull World world, @Nonnull NBTTagCompound structureTag) {
         Set<String> tagSet = structureTag.getKeySet();
+        Set<Pair<WatcherPos, String>> visits = Sets.newHashSet();
         for (String coords : tagSet) {
             WatcherPos pos = new WatcherPos(coords);
             if (!visited.contains(pos)) {
                 NBTTagCompound tag = structureTag.getCompoundTag(coords);
                 visitVillage(world, tag);
                 visited.add(pos);
+                visits.add(Pair.of(pos, "Village"));
             }
         }
+        return visits;
     }
 
 	/** Put all child parts of the fortress on the map as global custom tiles. */
@@ -134,11 +138,6 @@ public class StructureWatcherVillage implements IStructureWatcher {
 			removeVillage(world, tag);
 			return;
 		}
-		int startChunkX = tag.getInteger("ChunkX");
-		int startChunkZ = tag.getInteger("ChunkZ");
-		Log.info("Visiting NPC Village in dimension #%d \"%s\" at chunk (%d, %d) ~ blocks (%d, %d)",
-				world.provider.getDimension(), world.provider.getDimensionType().getName(),
-				startChunkX, startChunkZ, startChunkX << 4, startChunkZ << 4);
 		NBTTagList children = tag.getTagList("Children", 10);
 		for (int i = 0; i < children.tagCount(); i++) {
 			NBTTagCompound child = children.getCompoundTagAt(i);

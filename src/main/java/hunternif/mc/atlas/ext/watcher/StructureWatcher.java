@@ -1,6 +1,7 @@
 package hunternif.mc.atlas.ext.watcher;
 
 import com.google.common.collect.Sets;
+import hunternif.mc.atlas.util.Log;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
@@ -8,6 +9,7 @@ import net.minecraftforge.event.terraingen.PopulateChunkEvent;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.Set;
 
@@ -38,8 +40,11 @@ public class StructureWatcher {
         for (IStructureWatcher watcher : structureWatchers)
             if (watcher.isDimensionValid(world.provider.getDimensionType())) {
                 NBTTagCompound structureData = watcher.getStructureData(world);
-                if (structureData != null)
-                    watcher.visitStructure(world, structureData);
+                if (structureData != null) {
+                    Set<Pair<WatcherPos, String>> visited = watcher.visitStructure(world, structureData);
+                    for (Pair<WatcherPos, String> visit : visited)
+                        Log.info("Visited %s in dimension %d at %s", visit.getRight(), world.provider.getDimension(), visit.getLeft().toString());
+                }
             }
     }
 

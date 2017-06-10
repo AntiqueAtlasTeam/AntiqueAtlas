@@ -1,5 +1,6 @@
 package hunternif.mc.atlas.ext.watcher.impl;
 
+import com.google.common.collect.Sets;
 import hunternif.mc.atlas.AntiqueAtlasMod;
 import hunternif.mc.atlas.SettingsConfig;
 import hunternif.mc.atlas.api.AtlasAPI;
@@ -15,6 +16,7 @@ import net.minecraft.world.DimensionType;
 import net.minecraft.world.World;
 import net.minecraft.world.gen.structure.MapGenStructureData;
 import net.minecraftforge.common.DimensionManager;
+import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -66,8 +68,10 @@ public class StructureWatcherGeneric implements IStructureWatcher {
         return data.getTagCompound();
     }
 
+    @Nonnull
     @Override
-    public void visitStructure(@Nonnull World world, @Nonnull NBTTagCompound structureTag) {
+    public Set<Pair<WatcherPos, String>> visitStructure(@Nonnull World world, @Nonnull NBTTagCompound structureTag) {
+        Set<Pair<WatcherPos, String>> visits = Sets.newHashSet();
         Set<String> tagSet = structureTag.getKeySet();
         for (String coords : tagSet) {
             WatcherPos pos = new WatcherPos(coords);
@@ -75,8 +79,10 @@ public class StructureWatcherGeneric implements IStructureWatcher {
                 NBTTagCompound tag = structureTag.getCompoundTag(coords);
                 visit(world, tag);
                 visited.add(pos);
+                visits.add(Pair.of(pos, datFileName));
             }
         }
+        return visits;
     }
 
     public StructureWatcherGeneric setTileMarker(MarkerType type, String label) {
@@ -88,9 +94,6 @@ public class StructureWatcherGeneric implements IStructureWatcher {
 	private void visit(World world, NBTTagCompound tag) {
 		int chunkX = tag.getInteger("ChunkX");
 		int chunkZ = tag.getInteger("ChunkZ");
-		Log.info("	Visiting " + datFileName + " in dimension #%d \"%s\" at chunk (%d, %d) ~ blocks (%d, %d)",
-				world.provider.getDimension(), world.provider.getDimensionType().getName(),
-				chunkX, chunkZ, chunkX << 4, chunkZ << 4);
 		boolean foundMarker = false;
 		boolean foundTileMarker = false;
 		

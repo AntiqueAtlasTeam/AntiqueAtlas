@@ -1,12 +1,12 @@
 package hunternif.mc.atlas.ext.watcher.impl;
 
+import com.google.common.collect.Sets;
 import hunternif.mc.atlas.AntiqueAtlasMod;
 import hunternif.mc.atlas.api.AtlasAPI;
 import hunternif.mc.atlas.ext.ExtTileIdMap;
 import hunternif.mc.atlas.ext.watcher.IStructureWatcher;
 import hunternif.mc.atlas.ext.watcher.StructureWatcher;
 import hunternif.mc.atlas.ext.watcher.WatcherPos;
-import hunternif.mc.atlas.util.Log;
 import hunternif.mc.atlas.util.MathUtil;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -14,6 +14,7 @@ import net.minecraft.world.DimensionType;
 import net.minecraft.world.World;
 import net.minecraft.world.gen.structure.MapGenStructureData;
 import net.minecraft.world.gen.structure.StructureBoundingBox;
+import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -71,8 +72,10 @@ public class StructureWatcherFortress implements IStructureWatcher {
         return data.getTagCompound();
     }
 
+    @Nonnull
     @Override
-    public void visitStructure(@Nonnull World world, @Nonnull NBTTagCompound structureTag) {
+    public Set<Pair<WatcherPos, String>> visitStructure(@Nonnull World world, @Nonnull NBTTagCompound structureTag) {
+        Set<Pair<WatcherPos, String>> visits = Sets.newHashSet();
         Set<String> tagSet = structureTag.getKeySet();
         for (String coords : tagSet) {
             WatcherPos pos = new WatcherPos(coords);
@@ -80,17 +83,15 @@ public class StructureWatcherFortress implements IStructureWatcher {
                 NBTTagCompound tag = structureTag.getCompoundTag(coords);
                 visitFortress(world, tag);
                 visited.add(pos);
+                visits.add(Pair.of(pos, "Nether Fortress"));
             }
         }
+
+        return visits;
     }
 
 	/** Put all child parts of the fortress on the map as global custom tiles. */
 	private void visitFortress(World world, NBTTagCompound tag) {
-		int startChunkX = tag.getInteger("ChunkX");
-		int startChunkZ = tag.getInteger("ChunkZ");
-		Log.info("Visiting Nether Fortress in dimension #%d \"%s\" at chunk (%d, %d) ~ blocks (%d, %d)",
-				world.provider.getDimension(), world.provider.getDimensionType().getName(),
-				startChunkX, startChunkZ, startChunkX << 4, startChunkZ << 4);
 		NBTTagList children = tag.getTagList("Children", 10);
 		for (int i = 0; i < children.tagCount(); i++) {
 			NBTTagCompound child = children.getCompoundTagAt(i);
