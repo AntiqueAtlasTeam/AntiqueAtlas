@@ -1,18 +1,13 @@
 package hunternif.mc.atlas.ext.watcher;
 
 import com.google.common.collect.Sets;
-import hunternif.mc.atlas.util.Log;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.EnumActionResult;
-import net.minecraft.world.DimensionType;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.terraingen.PopulateChunkEvent;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.Set;
 
@@ -42,15 +37,9 @@ public class StructureWatcher {
 
         for (IStructureWatcher watcher : structureWatchers)
             if (watcher.isDimensionValid(world.provider.getDimensionType())) {
-                ActionResult<NBTTagCompound> result = watcher.canVisit(world);
-                if (result.getType() == EnumActionResult.SUCCESS) {
-                    if (result.getResult() == null) { // You never know what people will do
-                        Log.warn("Structure watcher %s returned null NBT when it said it found a structure. Bad watcher.", watcher.getClass().getCanonicalName());
-                        continue;
-                    }
-
-                    watcher.visitStructure(world, result.getResult());
-                }
+                NBTTagCompound structureData = watcher.getStructureData(world);
+                if (structureData != null)
+                    watcher.visitStructure(world, structureData);
             }
     }
 

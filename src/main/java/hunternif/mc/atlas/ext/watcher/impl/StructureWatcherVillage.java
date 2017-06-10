@@ -24,6 +24,7 @@ import net.minecraft.world.gen.structure.MapGenStructureData;
 import net.minecraft.world.gen.structure.StructureBoundingBox;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.*;
 
 public class StructureWatcherVillage implements IStructureWatcher {
@@ -102,14 +103,14 @@ public class StructureWatcherVillage implements IStructureWatcher {
         return type.getId() == 0; // Only overworld
     }
 
-    @Nonnull
+    @Nullable
     @Override
-    public ActionResult<NBTTagCompound> canVisit(@Nonnull World world) {
+    public NBTTagCompound getStructureData(@Nonnull World world) {
         MapGenStructureData data = (MapGenStructureData)world.getPerWorldStorage().getOrLoadData(MapGenStructureData.class, "Village");
         if (data == null)
-            return ActionResult.newResult(EnumActionResult.FAIL, null);
+            return null;
 
-        return ActionResult.newResult(EnumActionResult.SUCCESS, data.getTagCompound());
+        return data.getTagCompound();
     }
 
     @Override

@@ -10,14 +10,13 @@ import hunternif.mc.atlas.util.Log;
 import hunternif.mc.atlas.util.MathUtil;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.EnumActionResult;
 import net.minecraft.world.DimensionType;
 import net.minecraft.world.World;
 import net.minecraft.world.gen.structure.MapGenStructureData;
 import net.minecraft.world.gen.structure.StructureBoundingBox;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -62,14 +61,14 @@ public class StructureWatcherFortress implements IStructureWatcher {
         return type.getId() == -1; // Only nether
     }
 
-    @Nonnull
+    @Nullable
     @Override
-    public ActionResult<NBTTagCompound> canVisit(@Nonnull World world) {
+    public NBTTagCompound getStructureData(@Nonnull World world) {
         MapGenStructureData data = (MapGenStructureData)world.getPerWorldStorage().getOrLoadData(MapGenStructureData.class, "Fortress");
         if (data == null)
-            return ActionResult.newResult(EnumActionResult.FAIL, null);
+            return null;
 
-        return ActionResult.newResult(EnumActionResult.SUCCESS, data.getTagCompound());
+        return data.getTagCompound();
     }
 
     @Override

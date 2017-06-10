@@ -1,11 +1,11 @@
 package hunternif.mc.atlas.ext.watcher;
 
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.ActionResult;
 import net.minecraft.world.DimensionType;
 import net.minecraft.world.World;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Set;
 
 public interface IStructureWatcher {
@@ -24,14 +24,14 @@ public interface IStructureWatcher {
     boolean isDimensionValid(DimensionType type);
 
     /**
-     * If the boolean is true, NBTTagCompound must be non-null.
+     * Return null if a structure should not be attempted to be visited.
      *
      * @param world the world containing the structure
      *
-     * @return if a valid structure has been found and the relevant NBT tag to read the data from
+     * @return the NBT tag to read structure data from
      */
-    @Nonnull
-    ActionResult<NBTTagCompound> canVisit(@Nonnull World world);
+    @Nullable
+    NBTTagCompound getStructureData(@Nonnull World world);
 
     /**
      * Called when a world is loaded or a chunk is populated.
