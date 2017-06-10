@@ -11,11 +11,12 @@ import hunternif.mc.atlas.marker.MarkersData;
 import hunternif.mc.atlas.registry.MarkerType;
 import hunternif.mc.atlas.util.Log;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.ActionResult;
+import net.minecraft.util.EnumActionResult;
 import net.minecraft.world.DimensionType;
 import net.minecraft.world.World;
 import net.minecraft.world.gen.structure.MapGenStructureData;
 import net.minecraftforge.common.DimensionManager;
-import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nonnull;
 import java.util.HashSet;
@@ -58,12 +59,12 @@ public class StructureWatcherGeneric implements IStructureWatcher {
 
     @Nonnull
     @Override
-    public Pair<Boolean, NBTTagCompound> canVisit(@Nonnull World world) {
+    public ActionResult<NBTTagCompound> canVisit(@Nonnull World world) {
         MapGenStructureData data = (MapGenStructureData)world.getPerWorldStorage().getOrLoadData(MapGenStructureData.class, datFileName);
         if (data == null)
-            return Pair.of(false, null);
+            return ActionResult.newResult(EnumActionResult.FAIL, null);
 
-        return Pair.of(true, data.getTagCompound());
+        return ActionResult.newResult(EnumActionResult.SUCCESS, data.getTagCompound());
     }
 
     @Override
