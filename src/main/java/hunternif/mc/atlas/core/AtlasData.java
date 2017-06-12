@@ -180,14 +180,14 @@ public class AtlasData extends WorldSavedData {
 
 				// If there's no custom tile, check the actual chunk:
 				if (biomeId == -1) {
-					Chunk chunk = player.getEntityWorld().getChunkFromChunkCoords(x, z);
+					Chunk chunk = player.getEntityWorld().getChunkProvider().getLoadedChunk(x, z);
 					// Force loading of chunk, if required:
-					if (AntiqueAtlasMod.settings.forceChunkLoading && !chunk.isLoaded()) {
+					if (AntiqueAtlasMod.settings.forceChunkLoading && chunk == null) {
 						player.getEntityWorld().getChunkProvider().provideChunk(x << 4, z << 4);
 					}
 
 					// Skip chunk if it hasn't loaded yet:
-					if (!chunk.isLoaded()) {
+					if (chunk == null) {
 						continue;
 					}
 
