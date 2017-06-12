@@ -200,6 +200,7 @@ public class DimensionData implements ITileStorage {
 			if (count >= TileGroupsPacket.TILE_GROUPS_PER_PACKET){
 				TileGroupsPacket p = new TileGroupsPacket(tgs, atlasID, dimension);
 				PacketDispatcher.sendTo(p, (EntityPlayerMP) player);
+				tgs.clear();
 				count = 0;
 			}
 		}
