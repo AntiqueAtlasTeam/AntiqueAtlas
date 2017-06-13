@@ -1,8 +1,8 @@
 package kenkron.antiqueatlasoverlay;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
@@ -37,7 +37,7 @@ class SetTileRenderer {
             Minecraft.getMinecraft().renderEngine.bindTexture(key);
 
             Tessellator tessellator = Tessellator.getInstance();
-            VertexBuffer renderer = tessellator.getBuffer();
+            BufferBuilder renderer = tessellator.getBuffer();
             renderer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
             for (TileCorner tc : tca) {
                 drawInlineAutotileCorner(tc.x, tc.y, tc.u, tc.v);
@@ -52,7 +52,7 @@ class SetTileRenderer {
         float minV = v / 6f;
         float maxV = (v + 1) / 6f;
         Tessellator tessellator = Tessellator.getInstance();
-        VertexBuffer renderer = tessellator.getBuffer();
+        BufferBuilder renderer = tessellator.getBuffer();
         renderer.pos(x + tileHalfSize, y + tileHalfSize, 0).tex(maxU, maxV).endVertex();
         renderer.pos(x + tileHalfSize, y, 0).tex(maxU, minV).endVertex();
         renderer.pos(x, y, 0).tex(minU, minV).endVertex();

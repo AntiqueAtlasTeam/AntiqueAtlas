@@ -166,9 +166,9 @@ public class AAORenderEventReceiver {
 
         iter.setStep(1);
         Vec3d chunkPosition = new Vec3d(
-                position.xCoord / CHUNK_SIZE,
-                position.yCoord / CHUNK_SIZE,
-                position.zCoord / CHUNK_SIZE);
+                position.x / CHUNK_SIZE,
+                position.y / CHUNK_SIZE,
+                position.z / CHUNK_SIZE);
         int shapeMiddleX = (shape.minX + shape.maxX) / 2;
         int shapeMiddleY = (shape.minY + shape.maxY) / 2;
         SetTileRenderer renderer = new SetTileRenderer(AAOConfig.appearance.tileSize / 2);
@@ -181,9 +181,9 @@ public class AAORenderEventReceiver {
                 // Position of this subtile (measured in chunks) relative to the
                 // player
                 float relativeChunkPositionX = (float) (subtile.x / 2.0
-                        + iteratorScope.minX - chunkPosition.xCoord);
+                        + iteratorScope.minX - chunkPosition.x);
                 float relativeChunkPositionY = (float) (subtile.y / 2.0
-                        + iteratorScope.minY - chunkPosition.zCoord);
+                        + iteratorScope.minY - chunkPosition.z);
                 renderer.addTileCorner(
                         BiomeTextureMap.instance().getTexture(subtile.tile),
                         shapeMiddleX
@@ -273,9 +273,9 @@ public class AAORenderEventReceiver {
                 for (Marker marker : markers) {
                     // Position of this marker relative to the player
                     // Rounded to the nearest even number
-                    int relativeChunkPositionX = AAOConfig.appearance.tileSize * (2 * (marker.getX() / 2) - 2 * (int) Math.floor(position.xCoord / 2))
+                    int relativeChunkPositionX = AAOConfig.appearance.tileSize * (2 * (marker.getX() / 2) - 2 * (int) Math.floor(position.x / 2))
                             / CHUNK_SIZE;
-                    int relativeChunkPositionY = AAOConfig.appearance.tileSize * (2 * (marker.getZ() / 2) - 2 * (int) Math.floor(position.zCoord / 2))
+                    int relativeChunkPositionY = AAOConfig.appearance.tileSize * (2 * (marker.getZ() / 2) - 2 * (int) Math.floor(position.z / 2))
                             / CHUNK_SIZE;
                     int guiX = (int) Math.floor(shapeMiddleX - AAOConfig.appearance.markerSize / 2 + relativeChunkPositionX);
                     int guiY = (int) Math.floor(shapeMiddleY - AAOConfig.appearance.markerSize / 2 + relativeChunkPositionY);
@@ -302,16 +302,16 @@ public class AAORenderEventReceiver {
     }
 
     private static Rect getChunkCoverage(Vec3d position, Rect windowShape) {
-        int minChunkX = (int) Math.floor(position.xCoord / CHUNK_SIZE
+        int minChunkX = (int) Math.floor(position.x / CHUNK_SIZE
                 - windowShape.getWidth() / (2f * AAOConfig.appearance.tileSize));
         minChunkX -= 1;// IDK
-        int minChunkY = (int) Math.floor(position.zCoord / CHUNK_SIZE
+        int minChunkY = (int) Math.floor(position.z / CHUNK_SIZE
                 - windowShape.getHeight() / (2f * AAOConfig.appearance.tileSize));
         minChunkY -= 1;// IDK
-        int maxChunkX = (int) Math.ceil(position.xCoord / CHUNK_SIZE
+        int maxChunkX = (int) Math.ceil(position.x / CHUNK_SIZE
                 + windowShape.getWidth() / (2f * AAOConfig.appearance.tileSize));
         maxChunkX += 1;
-        int maxChunkY = (int) Math.ceil(position.zCoord / CHUNK_SIZE
+        int maxChunkY = (int) Math.ceil(position.z / CHUNK_SIZE
                 + windowShape.getHeight() / (2f * AAOConfig.appearance.tileSize));
         maxChunkY += 1;
         return new Rect(minChunkX, minChunkY, maxChunkX, maxChunkY);
