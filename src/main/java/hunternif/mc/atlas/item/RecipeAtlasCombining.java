@@ -8,6 +8,7 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.ItemCraftedEvent;
 
@@ -21,7 +22,11 @@ import java.util.List;
  */
 public class RecipeAtlasCombining extends RecipeBase {
 
-	@Override
+    public RecipeAtlasCombining() {
+        MinecraftForge.EVENT_BUS.register(this);
+    }
+
+    @Override
 	public boolean matches(InventoryCrafting inv, World world) {
 		return matches(inv);
 	}
@@ -59,12 +64,12 @@ public class RecipeAtlasCombining extends RecipeBase {
 		return atlasIds.size() < 1 ? ItemStack.EMPTY : firstAtlas.copy();
 	}
 
-	@Override
-	public int getRecipeSize() {
-		return 9;
-	}
+    @Override
+    public boolean canFit(int width, int height) {
+        return true;
+    }
 
-	@Override
+    @Override
 	public ItemStack getRecipeOutput() {
 		return ItemStack.EMPTY;
 	}

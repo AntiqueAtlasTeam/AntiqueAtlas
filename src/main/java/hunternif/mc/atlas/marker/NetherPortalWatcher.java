@@ -86,7 +86,7 @@ public class NetherPortalWatcher extends DummyWorldAccess {
 	private void addPortalMarkerIfNone(EntityPlayer player, int dimension) {
 		// Due to switching dimensions this player entity's worldObj is lagging.
 		// We need the very specific dimension each time.
-		World world = AntiqueAtlasMod.proxy.getServer().worldServerForDimension(dimension);
+		World world = AntiqueAtlasMod.proxy.getServer().getWorld(dimension);
 
 		if (!SettingsConfig.gameplay.itemNeeded) {
 			addPortalMarkerIfNone(player, world, dimension, player.getUniqueID().hashCode());

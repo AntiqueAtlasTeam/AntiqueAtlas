@@ -17,6 +17,11 @@ import hunternif.mc.atlas.util.Log;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.CraftingManager;
+import net.minecraft.item.crafting.Ingredient;
+import net.minecraft.item.crafting.ShapelessRecipes;
+import net.minecraft.util.NonNullList;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
@@ -79,16 +84,13 @@ public class AntiqueAtlasMod {
 		proxy.init(event);
 
 		if (SettingsConfig.gameplay.itemNeeded) {
-			GameRegistry.addShapelessRecipe(new ItemStack(itemEmptyAtlas), Items.BOOK, Items.COMPASS);
+            CraftingManager.register(new ResourceLocation(ID, "atlas_blank"), new ShapelessRecipes(new ResourceLocation(ID, "atlas_blank").toString(), new ItemStack(itemEmptyAtlas), NonNullList.from(Ingredient.EMPTY, Ingredient.fromItem(Items.BOOK), Ingredient.fromItem(Items.COMPASS))));
 
-			RecipeSorter.register("antiqueatlas:atlascloning", RecipeAtlasCloning.class, SHAPELESS, "after:minecraft:shapeless");
-			GameRegistry.addRecipe(new RecipeAtlasCloning());
+//			RecipeSorter.register("antiqueatlas:atlascloning", RecipeAtlasCloning.class, SHAPELESS, "after:minecraft:shapeless");
+			CraftingManager.register(new ResourceLocation(ID, "atlas_clone"), new RecipeAtlasCloning());
 
-			RecipeSorter.register("antiqueatlas:atlascombining", RecipeAtlasCombining.class, SHAPELESS, "after:minecraft:shapeless");
-			RecipeAtlasCombining recipeCombining = new RecipeAtlasCombining();
-			GameRegistry.addRecipe(recipeCombining);
-
-			MinecraftForge.EVENT_BUS.register(recipeCombining);
+//			RecipeSorter.register("antiqueatlas:atlascombining", RecipeAtlasCombining.class, SHAPELESS, "after:minecraft:shapeless");
+            CraftingManager.register(new ResourceLocation(ID, "atlas_combine"), new RecipeAtlasCombining());
 		} else {
 			MinecraftForge.EVENT_BUS.register(new PlayerEventHandler());
 		}

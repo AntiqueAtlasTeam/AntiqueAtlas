@@ -69,12 +69,12 @@ public class RecipeAtlasCloning extends RecipeBase {
 		}
 	}
 
-	@Override
-	public int getRecipeSize() {
-		return 9;
-	}
+    @Override
+    public boolean canFit(int width, int height) {
+        return true;
+    }
 
-	@Override
+    @Override
 	public ItemStack getRecipeOutput() {
 		return ItemStack.EMPTY;
 	}
