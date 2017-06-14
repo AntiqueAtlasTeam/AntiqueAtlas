@@ -6,8 +6,6 @@ import hunternif.mc.atlas.AntiqueAtlasMod;
 import hunternif.mc.atlas.marker.Marker;
 import hunternif.mc.atlas.marker.MarkersData;
 import hunternif.mc.atlas.network.AbstractMessage.AbstractClientMessage;
-import hunternif.mc.atlas.registry.MarkerRegistry;
-import hunternif.mc.atlas.registry.MarkerType;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fml.common.network.ByteBufUtils;

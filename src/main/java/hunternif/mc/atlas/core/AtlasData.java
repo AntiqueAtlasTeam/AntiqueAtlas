@@ -147,12 +147,17 @@ public class AtlasData extends WorldSavedData {
 		return biomeAnalyzer == null ? biomeDetectorOverworld : biomeAnalyzer;
 	}
 
-	public void updateMapAroundPlayer(EntityPlayer player) {
+	/**Updates map data around player
+	 * 
+	 * @return A set of the new tiles, mostly so the server can synch those with relavent clients.*/
+	public ArrayList<TileInfo> updateMapAroundPlayer(EntityPlayer player) {
 		// Update the actual map only so often:
+		ArrayList<TileInfo> updatedTiles = new ArrayList<TileInfo>();
 		int newScanInterval = Math.round(SettingsConfig.performance.newScanInterval * 20);
 		int rescanInterval = newScanInterval * SettingsConfig.performance.rescanRate;
+		
 		if (player.ticksExisted % newScanInterval != 0) {
-			return;
+			return updatedTiles;//no new tiles
 		}
 
 		int playerX = MathHelper.floor(player.posX) >> 4;
@@ -202,24 +207,28 @@ public class AtlasData extends WorldSavedData {
 						} else if (oldTile.biomeID != biomeId) {
 							// Only update if the old tile's biome ID doesn't match the new one:
 							this.setTile(player.dimension, x, z, new Tile(biomeId));
+							updatedTiles.add(new TileInfo(x, z, biomeId));
 						}
 					} else {
 						// Scanning new chunk:
 						biomeId = biomeDetector.getBiomeID(chunk);
 						if (biomeId != IBiomeDetector.NOT_FOUND) {
 							this.setTile(player.dimension, x, z, new Tile(biomeId));
+							updatedTiles.add(new TileInfo(x, z, biomeId));
 						}
 					}
 				} else {
 					// Only update the custom tile if it doesn't rewrite itself:
 					if (oldTile == null || oldTile.biomeID != biomeId) {
 						this.setTile(player.dimension, x, z, new Tile(biomeId));
+						updatedTiles.add(new TileInfo(x, z, biomeId));
 						this.markDirty();
 					}
 				}
 
 			}
 		}
+		return updatedTiles;
 	}
 	
 	/** Puts a given tile into given map at specified coordinates and,
