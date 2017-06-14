@@ -1,8 +1,14 @@
 package hunternif.mc.atlas.item;
 
+import java.util.ArrayList;
+
 import hunternif.mc.atlas.AntiqueAtlasMod;
 import hunternif.mc.atlas.core.AtlasData;
+import hunternif.mc.atlas.core.TileInfo;
 import hunternif.mc.atlas.marker.MarkersData;
+import hunternif.mc.atlas.network.PacketDispatcher;
+import hunternif.mc.atlas.network.client.DimensionUpdatePacket;
+import jline.internal.Log;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -52,7 +58,17 @@ public class ItemAtlas extends Item {
 		}
 
 		// Updating map around player
-		data.updateMapAroundPlayer(player);
+		if (!world.isRemote) {
+			ArrayList<TileInfo> newTiles = data.updateMapAroundPlayer(player);
+
+			if (newTiles.size() > 0) {
+				DimensionUpdatePacket packet = new DimensionUpdatePacket(stack.getItemDamage(), player.dimension);
+				for (TileInfo t : newTiles) {
+					packet.addTile(t.x, t.z, t.biome);
+				}
+				PacketDispatcher.sendToAll(packet);
+			}
+		}
 	}
 
 }
