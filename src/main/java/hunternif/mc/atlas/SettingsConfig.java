@@ -36,6 +36,7 @@ public class SettingsConfig {
 	public float newScanInterval = 1f;
 	public boolean doRescan = true;
 	public int rescanRate = 4;
+	public int markerLimit = 1024;
 	public boolean doScanPonds = true;
 	public boolean debugRender = false;
 	
@@ -94,6 +95,8 @@ public class SettingsConfig {
 				+ "(for sky worlds).\nDisable for better performance.");
 		rescanRate = config.getInt("area_rescan_rate", PERFORMANCE, rescanRate, 1, 1000, 
 				"The number of area scans between full rescans.\nHigher value gives better performance.");
+		markerLimit = config.getInt("marker_limit", PERFORMANCE, markerLimit, 0, Integer.MAX_VALUE, 
+				"The maximum number of markers a particular atlas can hold.");
 		doScanPonds = config.getBoolean("do_scan_ponds", PERFORMANCE, doScanPonds,
 				"Whether to perform additional scanning to locate small ponds of water or lava.\nDisable for better performance.");
 		

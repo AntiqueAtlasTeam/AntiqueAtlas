@@ -1,7 +1,7 @@
 package hunternif.mc.atlas.marker;
 
-import hunternif.mc.atlas.registry.MarkerType;
 import hunternif.mc.atlas.util.ShortVec2;
+import jline.internal.Log;
 import net.minecraft.client.resources.I18n;
 
 /**
@@ -9,6 +9,12 @@ import net.minecraft.client.resources.I18n;
  * @author Hunternif
  */
 public class Marker {
+	
+	/**Longest allowed type length*/
+	public static final int TYPE_LIMIT = 128;
+	/**Longest allowed label length*/
+	public static final int LABEL_LIMIT = 128;
+	
 	/** Id is unique only within a MarkersData instance, i.e. within one atlas
 	 * or among global markers in a world. */
 	private final int id;
@@ -22,7 +28,15 @@ public class Marker {
 	
 	public Marker(int id, String type, String label, int dimension, int x, int z, boolean visibleAhead) {
 		this.id = id;
+		if (type.length() > TYPE_LIMIT){
+			type = type.substring(0, TYPE_LIMIT);
+			Log.warn("Marker type is to long. Trimming to %d characters. Type: %s", LABEL_LIMIT, type);
+		}
 		this.type = type;
+		if (label.length() > LABEL_LIMIT){
+			label = label.substring(0, LABEL_LIMIT);
+			Log.warn("Marker type is to long. Trimming to %d characters. Type: %s", LABEL_LIMIT, label);
+		}
 		this.label = label == null ? "" : label;
 		this.dim = dimension;
 		this.x = x;
