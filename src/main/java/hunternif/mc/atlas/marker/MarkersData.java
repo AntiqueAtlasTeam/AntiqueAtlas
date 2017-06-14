@@ -131,7 +131,6 @@ public class MarkersData extends WorldSavedData {
 			DimensionMarkersData data = getMarkersDataInDimension(dimension);
 			NBTTagList tagList = new NBTTagList();
 			for (Marker marker : data.getAllMarkers()) {
-				System.out.format("Saving marker %s\n", marker.toString());
 				NBTTagCompound markerTag = new NBTTagCompound();
 				markerTag.setInteger(TAG_MARKER_ID, marker.getId());
 				markerTag.setString(TAG_MARKER_TYPE, marker.getType());
