@@ -16,6 +16,7 @@ public class SettingsConfig {
     @Config.Comment({"These settings affect the algorithms for scanning the world, drawing the map etc. Changing them may improve the game's overall stability and performance at the cost of Atlas' functionality."})
     public static Performance performance = new Performance();
 
+
     //============= Gameplay settings =============
     public static class Gameplay {
         @Config.Comment({"Whether to remember last open browsing position and zoom level for each dimension in every atlas.", "If disabled, all dimensions and all atlases will be \"synchronized\" at the same coordinates and zoom level, and map will \"follow\" player by default."})
@@ -58,6 +59,9 @@ public class SettingsConfig {
         @Config.Comment({"The number of area scans between full rescans.", "Higher value gives better performance."})
         @Config.RangeInt(min = 1, max = 1000)
         public int rescanRate = 4;
+        @Config.Comment({"The maximum number of markers a particular atlas can hold."})
+        @Config.RangeInt(min = 0, max = 2147483647)
+        public int markerLimit = 1024;
         @Config.Comment({"Whether to perform additional scanning to locate small ponds of water or lava.", "Disable for better performance."})
         public boolean doScanPonds = true;
         @Config.Comment({"If true, map render time will be output."})
