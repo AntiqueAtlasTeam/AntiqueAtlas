@@ -58,9 +58,9 @@ public class ItemAtlas extends Item {
 		}
 
 		// Updating map around player
+		ArrayList<TileInfo> newTiles = data.updateMapAroundPlayer(player);
+		
 		if (!world.isRemote) {
-			ArrayList<TileInfo> newTiles = data.updateMapAroundPlayer(player);
-
 			if (newTiles.size() > 0) {
 				DimensionUpdatePacket packet = new DimensionUpdatePacket(stack.getItemDamage(), player.dimension);
 				for (TileInfo t : newTiles) {
