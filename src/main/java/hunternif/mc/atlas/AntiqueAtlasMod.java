@@ -17,10 +17,6 @@ import hunternif.mc.atlas.util.Log;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.CraftingManager;
-import net.minecraft.item.crafting.Ingredient;
-import net.minecraft.item.crafting.ShapelessRecipes;
-import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
@@ -32,9 +28,7 @@ import net.minecraftforge.fml.common.event.FMLMissingMappingsEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
-import net.minecraftforge.oredict.RecipeSorter;
-
-import static net.minecraftforge.oredict.RecipeSorter.Category.SHAPELESS;
+import net.minecraftforge.oredict.ShapelessOreRecipe;
 
 @Mod(modid=AntiqueAtlasMod.ID, name=AntiqueAtlasMod.NAME, version=AntiqueAtlasMod.VERSION)
 public class AntiqueAtlasMod {
@@ -84,13 +78,9 @@ public class AntiqueAtlasMod {
 		proxy.init(event);
 
 		if (SettingsConfig.gameplay.itemNeeded) {
-            CraftingManager.register(new ResourceLocation(ID, "atlas_blank"), new ShapelessRecipes(new ResourceLocation(ID, "atlas_blank").toString(), new ItemStack(itemEmptyAtlas), NonNullList.from(Ingredient.EMPTY, Ingredient.fromItem(Items.BOOK), Ingredient.fromItem(Items.COMPASS))));
-
-//			RecipeSorter.register("antiqueatlas:atlascloning", RecipeAtlasCloning.class, SHAPELESS, "after:minecraft:shapeless");
-			CraftingManager.register(new ResourceLocation(ID, "atlas_clone"), new RecipeAtlasCloning());
-
-//			RecipeSorter.register("antiqueatlas:atlascombining", RecipeAtlasCombining.class, SHAPELESS, "after:minecraft:shapeless");
-            CraftingManager.register(new ResourceLocation(ID, "atlas_combine"), new RecipeAtlasCombining());
+            GameRegistry.register(new ShapelessOreRecipe(new ResourceLocation(ID, "atlas"), new ItemStack(itemEmptyAtlas), Items.BOOK, Items.COMPASS).setRegistryName("atlas_blank"));
+			GameRegistry.register(new RecipeAtlasCloning().setRegistryName("atlas_clone"));
+            GameRegistry.register(new RecipeAtlasCombining().setRegistryName("atlas_combine"));
 		} else {
 			MinecraftForge.EVENT_BUS.register(new PlayerEventHandler());
 		}
