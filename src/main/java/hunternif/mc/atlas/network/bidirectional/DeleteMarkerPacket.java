@@ -1,6 +1,7 @@
 package hunternif.mc.atlas.network.bidirectional;
 
 import hunternif.mc.atlas.AntiqueAtlasMod;
+import hunternif.mc.atlas.RegistrarAntiqueAtlas;
 import hunternif.mc.atlas.SettingsConfig;
 import hunternif.mc.atlas.api.AtlasAPI;
 import hunternif.mc.atlas.marker.MarkersData;
@@ -59,7 +60,7 @@ public class DeleteMarkerPacket extends AbstractMessage<DeleteMarkerPacket> {
 		if (side.isServer()) {
 			// Make sure it's this player's atlas :^)
 			if (side.isServer() && SettingsConfig.gameplay.itemNeeded
-					&& !player.inventory.hasItemStack(new ItemStack(AntiqueAtlasMod.itemAtlas, 1, atlasID))) {
+					&& !player.inventory.hasItemStack(new ItemStack(RegistrarAntiqueAtlas.ATLAS, 1, atlasID))) {
 				Log.warn("Player %s attempted to delete marker from someone else's Atlas #%d",
 						player.getGameProfile().getName(), atlasID);
 				return;

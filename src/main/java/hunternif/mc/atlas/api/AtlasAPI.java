@@ -1,11 +1,12 @@
 package hunternif.mc.atlas.api;
 
-import hunternif.mc.atlas.AntiqueAtlasMod;
 import hunternif.mc.atlas.SettingsConfig;
 import hunternif.mc.atlas.api.impl.MarkerApiImpl;
 import hunternif.mc.atlas.api.impl.TileApiImpl;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.fml.common.registry.GameRegistry;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -19,6 +20,8 @@ public class AtlasAPI {
 	private static final int VERSION = 3;
 	public static final TileAPI tiles = new TileApiImpl();
 	public static final MarkerAPI markers = new MarkerApiImpl();
+	@GameRegistry.ObjectHolder("antiqueatlas:antique_atlas")
+	public static final Item ATLAS_ITEM = new Item();
 	
 	/** Version of the API, meaning only this particular class. You might
 	 * want to check static field VERSION in the specific API interfaces. */
@@ -45,7 +48,7 @@ public class AtlasAPI {
 
 		List<Integer> list = new ArrayList<>();
 		for (ItemStack stack : player.inventory.mainInventory) {
-			if (!stack.isEmpty() && stack.getItem() == AntiqueAtlasMod.itemAtlas) {
+			if (!stack.isEmpty() && stack.getItem() == ATLAS_ITEM) {
 				list.add(stack.getItemDamage());
 			}
 		}

@@ -1,10 +1,9 @@
 package hunternif.mc.atlas.marker;
 
-import hunternif.mc.atlas.AntiqueAtlasMod;
-
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import hunternif.mc.atlas.RegistrarAntiqueAtlas;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -23,7 +22,7 @@ public class MarkersDataHandler {
 	
 	/** Loads data for the given atlas or creates a new one. */
 	public MarkersData getMarkersData(ItemStack stack, World world) {
-		if (stack.getItem() == AntiqueAtlasMod.itemAtlas) {
+		if (stack.getItem() == RegistrarAntiqueAtlas.ATLAS) {
 			return getMarkersData(stack.getItemDamage(), world);
 		} else {
 			return null;

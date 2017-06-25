@@ -1,6 +1,7 @@
 package hunternif.mc.atlas.marker;
 
 import hunternif.mc.atlas.AntiqueAtlasMod;
+import hunternif.mc.atlas.RegistrarAntiqueAtlas;
 import hunternif.mc.atlas.SettingsConfig;
 import hunternif.mc.atlas.api.AtlasAPI;
 import hunternif.mc.atlas.registry.MarkerTypes;
@@ -94,7 +95,7 @@ public class NetherPortalWatcher extends DummyWorldAccess {
 		}
 
 		for (ItemStack stack : player.inventory.mainInventory) {
-			if (stack == null || stack.getItem() != AntiqueAtlasMod.itemAtlas) continue;
+			if (stack == null || stack.getItem() != RegistrarAntiqueAtlas.ATLAS) continue;
 
 			addPortalMarkerIfNone(player, world, dimension, stack.getItemDamage());
 		}

@@ -1,6 +1,7 @@
 package kenkron.antiqueatlasoverlay;
 
 import hunternif.mc.atlas.AntiqueAtlasMod;
+import hunternif.mc.atlas.RegistrarAntiqueAtlas;
 import hunternif.mc.atlas.SettingsConfig;
 import hunternif.mc.atlas.client.*;
 import hunternif.mc.atlas.client.gui.GuiAtlas;
@@ -54,13 +55,13 @@ public class AAORenderEventReceiver {
         }
 
         ItemStack stack = player.getHeldItemOffhand();
-        if (!stack.isEmpty() && stack.getItem() == AntiqueAtlasMod.itemAtlas) {
+        if (!stack.isEmpty() && stack.getItem() == RegistrarAntiqueAtlas.ATLAS) {
             return stack.getItemDamage();
         }
 
         for (int i = 0; i < 9; i++) {
             stack = player.inventory.getStackInSlot(i);
-            if (!stack.isEmpty() && stack.getItem() == AntiqueAtlasMod.itemAtlas) {
+            if (!stack.isEmpty() && stack.getItem() == RegistrarAntiqueAtlas.ATLAS) {
                 return stack.getItemDamage();
             }
         }
@@ -90,9 +91,9 @@ public class AAORenderEventReceiver {
             ItemStack stack = player.getHeldItemMainhand();
             ItemStack stack2 = player.getHeldItemOffhand();
 
-            if (!stack.isEmpty() && stack.getItem() == AntiqueAtlasMod.itemAtlas) {
+            if (!stack.isEmpty() && stack.getItem() == RegistrarAntiqueAtlas.ATLAS) {
                 atlas = stack.getItemDamage();
-            } else if (!stack2.isEmpty() && stack2.getItem() == AntiqueAtlasMod.itemAtlas) {
+            } else if (!stack2.isEmpty() && stack2.getItem() == RegistrarAntiqueAtlas.ATLAS) {
                 atlas = stack2.getItemDamage();
             }
         } else {

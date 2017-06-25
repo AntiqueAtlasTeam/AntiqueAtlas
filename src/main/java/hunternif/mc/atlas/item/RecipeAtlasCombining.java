@@ -1,6 +1,7 @@
 package hunternif.mc.atlas.item;
 
 import hunternif.mc.atlas.AntiqueAtlasMod;
+import hunternif.mc.atlas.RegistrarAntiqueAtlas;
 import hunternif.mc.atlas.core.AtlasData;
 import hunternif.mc.atlas.marker.Marker;
 import hunternif.mc.atlas.marker.MarkersData;
@@ -36,7 +37,7 @@ public class RecipeAtlasCombining extends RecipeBase {
 		for (int i = 0; i < inv.getSizeInventory(); ++i) {
 			ItemStack stack = inv.getStackInSlot(i);
 			if (!stack.isEmpty()) {
-				if (stack.getItem() == AntiqueAtlasMod.itemAtlas) {
+				if (stack.getItem() == RegistrarAntiqueAtlas.ATLAS) {
 					atlasesFound++;
 				}
 			}
@@ -51,7 +52,7 @@ public class RecipeAtlasCombining extends RecipeBase {
 		for (int i = 0; i < inv.getSizeInventory(); ++i) {
 			ItemStack stack = inv.getStackInSlot(i);
 			if (!stack.isEmpty()) {
-				if (stack.getItem() == AntiqueAtlasMod.itemAtlas) {
+				if (stack.getItem() == RegistrarAntiqueAtlas.ATLAS) {
 					if (firstAtlas.isEmpty()) {
 						firstAtlas = stack;
 					} else {
@@ -77,7 +78,7 @@ public class RecipeAtlasCombining extends RecipeBase {
 	@SubscribeEvent
 	public void onCrafted(ItemCraftedEvent event) {
 		// Make sure it's the same recipe:
-		if (event.crafting.getItem() != AntiqueAtlasMod.itemAtlas || !matches(event.craftMatrix)) {
+		if (event.crafting.getItem() != RegistrarAntiqueAtlas.ATLAS || !matches(event.craftMatrix)) {
 			return;
 		}
 		World world = event.player.getEntityWorld();
