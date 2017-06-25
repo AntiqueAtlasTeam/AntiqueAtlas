@@ -37,9 +37,11 @@ public class RegistrarAntiqueAtlas {
 
     @SubscribeEvent
     public static void registerRecipes(RegistryEvent.Register<IRecipe> event) {
-        event.getRegistry().register(new ShapelessOreRecipe(new ResourceLocation(AntiqueAtlasMod.ID, "atlas"), new ItemStack(EMPTY_ATLAS), Items.BOOK, Items.COMPASS).setRegistryName("atlas_blank"));
-        event.getRegistry().register(new RecipeAtlasCloning().setRegistryName("atlas_clone"));
-        event.getRegistry().register(new RecipeAtlasCombining().setRegistryName("atlas_combine"));
+        if (SettingsConfig.gameplay.itemNeeded) {
+            event.getRegistry().register(new ShapelessOreRecipe(new ResourceLocation(AntiqueAtlasMod.ID, "atlas"), new ItemStack(EMPTY_ATLAS), Items.BOOK, Items.COMPASS).setRegistryName("atlas_blank"));
+            event.getRegistry().register(new RecipeAtlasCloning().setRegistryName("atlas_clone"));
+            event.getRegistry().register(new RecipeAtlasCombining().setRegistryName("atlas_combine"));
+        }
     }
 
     @SubscribeEvent
