@@ -3,10 +3,6 @@ package hunternif.mc.atlas;
 import hunternif.mc.atlas.core.AtlasDataHandler;
 import hunternif.mc.atlas.core.PlayerEventHandler;
 import hunternif.mc.atlas.ext.*;
-import hunternif.mc.atlas.ext.watcher.*;
-import hunternif.mc.atlas.ext.watcher.impl.StructureWatcherFortress;
-import hunternif.mc.atlas.ext.watcher.impl.StructureWatcherGeneric;
-import hunternif.mc.atlas.ext.watcher.impl.StructureWatcherVillage;
 import hunternif.mc.atlas.item.ItemAtlas;
 import hunternif.mc.atlas.item.ItemEmptyAtlas;
 import hunternif.mc.atlas.item.RecipeAtlasCloning;
@@ -21,13 +17,15 @@ import hunternif.mc.atlas.util.Log;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
-import net.minecraft.world.DimensionType;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.Mod.Instance;
 import net.minecraftforge.fml.common.SidedProxy;
-import net.minecraftforge.fml.common.event.*;
+import net.minecraftforge.fml.common.event.FMLInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLMissingMappingsEvent;
+import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.oredict.RecipeSorter;
 
@@ -104,12 +102,10 @@ public class AntiqueAtlasMod {
 
 		MinecraftForge.EVENT_BUS.register(new DeathWatcher());
 
+		MinecraftForge.EVENT_BUS.register(new StructureWatcher("EndCity", 1, MarkerTypes.END_CITY_FAR, "gui.antiqueatlas.marker.endcity").setTileMarker(MarkerTypes.END_CITY, "gui.antiqueatlas.marker.endcity"));
+		MinecraftForge.EVENT_BUS.register(new VillageWatcher());
+		MinecraftForge.EVENT_BUS.register(new NetherFortressWatcher());
 		MinecraftForge.EVENT_BUS.register(new NetherPortalWatcher());
-
-		// Structure Watchers
-        new StructureWatcherVillage();
-        new StructureWatcherFortress();
-		new StructureWatcherGeneric("EndCity", DimensionType.THE_END, MarkerTypes.END_CITY_FAR, "gui.antiqueatlas.marker.endcity").setTileMarker(MarkerTypes.END_CITY, "gui.antiqueatlas.marker.endcity");
 	}
 
 	@EventHandler
@@ -117,7 +113,7 @@ public class AntiqueAtlasMod {
 		proxy.postInit(event);
 	}
 
-	@EventHandler
+	@Mod.EventHandler
 	public void onMissingMapping(FMLMissingMappingsEvent event) {
 		Log.info("Repairing missing mappings");
 		for (FMLMissingMappingsEvent.MissingMapping mapping : event.get()) {
@@ -130,11 +126,6 @@ public class AntiqueAtlasMod {
 				}
 			}
 		}
-	}
 
-	@EventHandler
-	public void onServerStop(FMLServerStoppedEvent event) {
-        Log.info("Clearing visited locations");
-        StructureWatcher.INSTANCE.handleShutdown();
-    }
+	}
 }
