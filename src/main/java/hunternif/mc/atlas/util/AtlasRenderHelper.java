@@ -1,9 +1,9 @@
 package hunternif.mc.atlas.util;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
@@ -18,7 +18,7 @@ public class AtlasRenderHelper {
 //		After testing, there is no noticeable time difference between raw OpenGL rendering,
 //		and using the WorldRenderere
 		Tessellator tessellator = Tessellator.getInstance();
-		VertexBuffer renderer = tessellator.getBuffer();
+		BufferBuilder renderer = tessellator.getBuffer();
 		renderer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
 		renderer.pos((int)(x + scaleX*width), (int)(y + scaleY*height), 0).tex(maxU, maxV).endVertex();
 		renderer.pos((int)(x + scaleX*width), (int)y,                   0).tex(maxU, minV).endVertex();
@@ -46,7 +46,7 @@ public class AtlasRenderHelper {
 		double minV =  v / 6;
 		double maxV = (v + 1) / 6;
 		Tessellator tessellator = Tessellator.getInstance();
-		VertexBuffer renderer = tessellator.getBuffer();
+		BufferBuilder renderer = tessellator.getBuffer();
 		renderer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
 		renderer.pos((x + tileHalfSize), (y + tileHalfSize), 0).tex(maxU, maxV).endVertex();
 		renderer.pos((x + tileHalfSize),  y,                 0).tex(maxU, minV).endVertex();

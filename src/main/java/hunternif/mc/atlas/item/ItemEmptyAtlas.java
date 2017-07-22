@@ -1,9 +1,11 @@
 package hunternif.mc.atlas.item;
 
 import hunternif.mc.atlas.AntiqueAtlasMod;
+import hunternif.mc.atlas.RegistrarAntiqueAtlas;
 import hunternif.mc.atlas.SettingsConfig;
 import hunternif.mc.atlas.core.AtlasData;
 import hunternif.mc.atlas.marker.MarkersData;
+import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -14,7 +16,10 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeHooks;
 
 public class ItemEmptyAtlas extends Item {
+
 	public ItemEmptyAtlas() {
+	    setUnlocalizedName("emptyAntiqueAtlas");
+        setCreativeTab(CreativeTabs.TOOLS);
 	}
 
 	@Override
@@ -25,7 +30,7 @@ public class ItemEmptyAtlas extends Item {
 			return new ActionResult<>(EnumActionResult.SUCCESS, stack);
 		
 		int atlasID = world.getUniqueDataId(ItemAtlas.WORLD_ATLAS_DATA_ID);
-		ItemStack atlasStack = new ItemStack(AntiqueAtlasMod.itemAtlas, 1, atlasID);
+		ItemStack atlasStack = new ItemStack(RegistrarAntiqueAtlas.ATLAS, 1, atlasID);
 
         AtlasData atlasData = AntiqueAtlasMod.atlasData.getAtlasData(atlasID, world);
         atlasData.getDimensionData(player.dimension).setBrowsingPosition(

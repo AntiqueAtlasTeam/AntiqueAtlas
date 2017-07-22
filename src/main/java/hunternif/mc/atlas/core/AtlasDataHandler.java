@@ -1,6 +1,6 @@
 package hunternif.mc.atlas.core;
 
-import hunternif.mc.atlas.AntiqueAtlasMod;
+import hunternif.mc.atlas.RegistrarAntiqueAtlas;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -22,7 +22,7 @@ public class AtlasDataHandler {
 
 	/** Loads data for the given atlas ID or creates a new one. */
 	public AtlasData getAtlasData(ItemStack stack, World world) {
-		if (stack.getItem() == AntiqueAtlasMod.itemAtlas) {
+		if (stack.getItem() == RegistrarAntiqueAtlas.ATLAS) {
 			return getAtlasData(stack.getItemDamage(), world);
 		} else {
 			return null;

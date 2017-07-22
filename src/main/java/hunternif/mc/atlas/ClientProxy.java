@@ -12,7 +12,6 @@ import hunternif.mc.atlas.registry.MarkerRegistry;
 import hunternif.mc.atlas.registry.MarkerType;
 import hunternif.mc.atlas.util.Log;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.resources.IReloadableResourceManager;
 import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.client.resources.IResourceManagerReloadListener;
@@ -109,10 +108,7 @@ public class ClientProxy extends CommonProxy implements IResourceManagerReloadLi
 		}
 		guiAtlas = new GuiAtlas();
 
-		if (SettingsConfig.gameplay.itemNeeded) {
-            Minecraft.getMinecraft().getRenderItem().getItemModelMesher().register(AntiqueAtlasMod.itemAtlas, stack -> new ModelResourceLocation(AntiqueAtlasMod.ID + ":antique_atlas", "inventory"));
-            Minecraft.getMinecraft().getRenderItem().getItemModelMesher().register(AntiqueAtlasMod.itemEmptyAtlas, 0, new ModelResourceLocation(AntiqueAtlasMod.ID + ":empty_antique_atlas", "inventory"));
-        } else {
+		if (!SettingsConfig.gameplay.itemNeeded) {
             KeyHandler.registerBindings();
             MinecraftForge.EVENT_BUS.register(new KeyHandler());
         }

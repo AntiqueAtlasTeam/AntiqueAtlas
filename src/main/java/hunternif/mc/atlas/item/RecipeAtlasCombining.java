@@ -1,6 +1,7 @@
 package hunternif.mc.atlas.item;
 
 import hunternif.mc.atlas.AntiqueAtlasMod;
+import hunternif.mc.atlas.RegistrarAntiqueAtlas;
 import hunternif.mc.atlas.core.AtlasData;
 import hunternif.mc.atlas.marker.Marker;
 import hunternif.mc.atlas.marker.MarkersData;
@@ -8,6 +9,7 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.ItemCraftedEvent;
 
@@ -21,7 +23,11 @@ import java.util.List;
  */
 public class RecipeAtlasCombining extends RecipeBase {
 
-	@Override
+    public RecipeAtlasCombining() {
+        MinecraftForge.EVENT_BUS.register(this);
+    }
+
+    @Override
 	public boolean matches(InventoryCrafting inv, World world) {
 		return matches(inv);
 	}
@@ -31,7 +37,7 @@ public class RecipeAtlasCombining extends RecipeBase {
 		for (int i = 0; i < inv.getSizeInventory(); ++i) {
 			ItemStack stack = inv.getStackInSlot(i);
 			if (!stack.isEmpty()) {
-				if (stack.getItem() == AntiqueAtlasMod.itemAtlas) {
+				if (stack.getItem() == RegistrarAntiqueAtlas.ATLAS) {
 					atlasesFound++;
 				}
 			}
@@ -46,7 +52,7 @@ public class RecipeAtlasCombining extends RecipeBase {
 		for (int i = 0; i < inv.getSizeInventory(); ++i) {
 			ItemStack stack = inv.getStackInSlot(i);
 			if (!stack.isEmpty()) {
-				if (stack.getItem() == AntiqueAtlasMod.itemAtlas) {
+				if (stack.getItem() == RegistrarAntiqueAtlas.ATLAS) {
 					if (firstAtlas.isEmpty()) {
 						firstAtlas = stack;
 					} else {
@@ -59,12 +65,12 @@ public class RecipeAtlasCombining extends RecipeBase {
 		return atlasIds.size() < 1 ? ItemStack.EMPTY : firstAtlas.copy();
 	}
 
-	@Override
-	public int getRecipeSize() {
-		return 9;
-	}
+    @Override
+    public boolean canFit(int width, int height) {
+        return true;
+    }
 
-	@Override
+    @Override
 	public ItemStack getRecipeOutput() {
 		return ItemStack.EMPTY;
 	}
@@ -72,7 +78,7 @@ public class RecipeAtlasCombining extends RecipeBase {
 	@SubscribeEvent
 	public void onCrafted(ItemCraftedEvent event) {
 		// Make sure it's the same recipe:
-		if (event.crafting.getItem() != AntiqueAtlasMod.itemAtlas || !matches(event.craftMatrix)) {
+		if (event.crafting.getItem() != RegistrarAntiqueAtlas.ATLAS || !matches(event.craftMatrix)) {
 			return;
 		}
 		World world = event.player.getEntityWorld();

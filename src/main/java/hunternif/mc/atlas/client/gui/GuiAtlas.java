@@ -19,9 +19,9 @@ import hunternif.mc.atlas.registry.MarkerType;
 import hunternif.mc.atlas.util.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScaledResolution;
+import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.settings.KeyBinding;
@@ -784,7 +784,7 @@ public class GuiAtlas extends GuiComponent {
 
 				GlStateManager.disableTexture2D();
 				Tessellator t = Tessellator.getInstance();
-				VertexBuffer vb = t.getBuffer();
+				BufferBuilder vb = t.getBuffer();
                 vb.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION);
                 vb.pos( centerXtranslate,   fontRenderer.FONT_HEIGHT - 1, 0.0D).endVertex();
                 vb.pos(-centerXtranslate-1, fontRenderer.FONT_HEIGHT - 1, 0.0D).endVertex();

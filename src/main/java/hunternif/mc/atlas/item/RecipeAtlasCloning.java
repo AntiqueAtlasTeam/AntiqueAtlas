@@ -1,6 +1,6 @@
 package hunternif.mc.atlas.item;
 
-import hunternif.mc.atlas.AntiqueAtlasMod;
+import hunternif.mc.atlas.RegistrarAntiqueAtlas;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
@@ -16,13 +16,13 @@ public class RecipeAtlasCloning extends RecipeBase {
 			ItemStack stack = inv.getStackInSlot(j);
 
 			if (!stack.isEmpty()) {
-				if (stack.getItem() == AntiqueAtlasMod.itemAtlas) {
+				if (stack.getItem() == RegistrarAntiqueAtlas.ATLAS) {
 					if (!filledAtlas.isEmpty()) {
 						return false;
 					}
 					filledAtlas = stack;
 				} else {
-					if (stack.getItem() != AntiqueAtlasMod.itemEmptyAtlas) {
+					if (stack.getItem() != RegistrarAntiqueAtlas.EMPTY_ATLAS) {
 						return false;
 					}
 					i++;
@@ -42,13 +42,13 @@ public class RecipeAtlasCloning extends RecipeBase {
 			ItemStack stack = inv.getStackInSlot(j);
 
 			if (!stack.isEmpty()) {
-				if (stack.getItem() == AntiqueAtlasMod.itemAtlas) {
+				if (stack.getItem() == RegistrarAntiqueAtlas.ATLAS) {
 					if (!filledAtlas.isEmpty()) {
 						return ItemStack.EMPTY;
 					}
 					filledAtlas = stack;
 				} else {
-					if (stack.getItem() != AntiqueAtlasMod.itemEmptyAtlas) {
+					if (stack.getItem() != RegistrarAntiqueAtlas.EMPTY_ATLAS) {
 						return ItemStack.EMPTY;
 					}
 					i++;
@@ -57,7 +57,7 @@ public class RecipeAtlasCloning extends RecipeBase {
 		}
 
 		if (!filledAtlas.isEmpty() && i >= 1) {
-			ItemStack newAtlas = new ItemStack(AntiqueAtlasMod.itemAtlas, i + 1, filledAtlas.getItemDamage());
+			ItemStack newAtlas = new ItemStack(RegistrarAntiqueAtlas.ATLAS, i + 1, filledAtlas.getItemDamage());
 
 			if (filledAtlas.hasDisplayName()) {
 				newAtlas.setStackDisplayName(filledAtlas.getDisplayName());
@@ -69,12 +69,12 @@ public class RecipeAtlasCloning extends RecipeBase {
 		}
 	}
 
-	@Override
-	public int getRecipeSize() {
-		return 9;
-	}
+    @Override
+    public boolean canFit(int width, int height) {
+        return true;
+    }
 
-	@Override
+    @Override
 	public ItemStack getRecipeOutput() {
 		return ItemStack.EMPTY;
 	}
