@@ -55,8 +55,9 @@ public class RecipeAtlasCombining extends RecipeBase {
 				}
 			}
 		}
-
-		return atlasIds.size() < 1 ? null : firstAtlas;
+		ItemStack result = firstAtlas.copy();
+		result.stackSize = 1;
+		return atlasIds.size() < 1 ? null : result;
 	}
 
 	@Override
@@ -90,7 +91,7 @@ public class RecipeAtlasCombining extends RecipeBase {
 			AtlasData srcBiomes = AntiqueAtlasMod.atlasData.getAtlasData(stack, world);
 			if (destBiomes != null && srcBiomes != null && destBiomes != srcBiomes) {
 				for (int dim : srcBiomes.getVisitedDimensions()) {
-					destBiomes.getSeenChunksInDimension(dim).putAll(srcBiomes.getSeenChunksInDimension(dim));
+					destBiomes.getDimensionData(dim).addData(srcBiomes.getDimensionData(dim));
 				}
 			}
 			MarkersData srcMarkers = AntiqueAtlasMod.markersData.getMarkersData(stack, world);
