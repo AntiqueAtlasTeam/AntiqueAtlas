@@ -5,6 +5,9 @@ import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
+import net.minecraft.item.ItemStack;
+import net.minecraftforge.client.event.RenderTooltipEvent;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.input.Keyboard;
@@ -438,69 +441,90 @@ public class GuiComponent extends GuiScreen {
 		return mouseX >= x - radius && mouseX < x + radius && mouseY >= y - radius && mouseY < y + radius;
 	}
 
+
 	/** Draws a standard Minecraft hovering text window, constrained by this
 	 * component's dimensions (i.e. if it won't fit in when drawn to the left
 	 * of the cursor, it will be drawn to the right instead). */
-    private void drawHoveringText2(List<String> lines, int x, int y, FontRenderer font) {
-		if (!lines.isEmpty()) {
+	private void drawHoveringText2(List<String> textLines, int mouseX, int mouseY, FontRenderer font) {
+		if (!textLines.isEmpty()) {
 			// Stencil test is used by VScrollingComponent to hide the content
 			// that is currently outside the viewport; that shouldn't affect
 			// hovering text though.
 			boolean stencilEnabled = GL11.glIsEnabled(GL11.GL_STENCIL_TEST);
 			if (stencilEnabled) GL11.glDisable(GL11.GL_STENCIL_TEST);
+
+			GlStateManager.disableRescaleNormal();
 			RenderHelper.disableStandardItemLighting();
+			GlStateManager.disableLighting();
+			GlStateManager.disableDepth();
 
-			int k = 0;
-			for (String s : lines) {
-				int l = font.getStringWidth(s);
+			RenderTooltipEvent.Pre event = new RenderTooltipEvent.Pre(null, textLines, mouseX, mouseY, contentWidth, contentHeight, 300, font);
+			if (MinecraftForge.EVENT_BUS.post(event)) {
+				return;
+			}
 
-				if (l > k) {
-					k = l;
+			int tooltipTextWidth = 0;
+			for (String s : textLines) {
+				int textLineWidth = font.getStringWidth(s);
+
+				if (textLineWidth > tooltipTextWidth) {
+					tooltipTextWidth = textLineWidth;
 				}
 			}
 
-			int i1 = x + 12;
-			int j1 = y - 12;
-			int k1 = 8;
+			int tooltipX = mouseX + 12;
+			int tooltipY = mouseY - 12;
+			int tooltipHeight = 8;
 
-			if (lines.size() > 1) {
-				k1 += 2 + (lines.size() - 1) * 10;
+			if (textLines.size() > 1) {
+				tooltipHeight += 2 + (textLines.size() - 1) * 10;
 			}
 
-			if (i1 + k > width) {
-				i1 -= 28 + k;
+			if (tooltipX + tooltipTextWidth > width) {
+				tooltipX -= 28 + tooltipTextWidth;
 			}
 
-			if (j1 + k1 + 6 > height) {
-				j1 = height - k1 - 6;
+			if (tooltipY + tooltipHeight + 6 > height) {
+				tooltipY = height - tooltipHeight - 6;
 			}
 
-			int l1 = -267386864;
-			this.drawGradientRect(i1 - 3, j1 - 4, i1 + k + 3, j1 - 3, l1, l1);
-			this.drawGradientRect(i1 - 3, j1 + k1 + 3, i1 + k + 3, j1 + k1 + 4, l1, l1);
-			this.drawGradientRect(i1 - 3, j1 - 3, i1 + k + 3, j1 + k1 + 3, l1, l1);
-			this.drawGradientRect(i1 - 4, j1 - 3, i1 - 3, j1 + k1 + 3, l1, l1);
-			this.drawGradientRect(i1 + k + 3, j1 - 3, i1 + k + 4, j1 + k1 + 3, l1, l1);
-			int i2 = 1347420415;
-			int j2 = (i2 & 16711422) >> 1 | i2 & -16777216;
-			this.drawGradientRect(i1 - 3, j1 - 3 + 1, i1 - 3 + 1, j1 + k1 + 3 - 1, i2, j2);
-			this.drawGradientRect(i1 + k + 2, j1 - 3 + 1, i1 + k + 3, j1 + k1 + 3 - 1, i2, j2);
-			this.drawGradientRect(i1 - 3, j1 - 3, i1 + k + 3, j1 - 3 + 1, i2, i2);
-			this.drawGradientRect(i1 - 3, j1 + k1 + 2, i1 + k + 3, j1 + k1 + 3, j2, j2);
 
-			for (int k2 = 0; k2 < lines.size(); ++k2) {
-				String s1 = lines.get(k2);
-				font.drawStringWithShadow(s1, i1, j1, -1);
 
-				if (k2 == 0) {
-					j1 += 2;
+			this.zLevel = 300;
+			final int backgroundColor = 0xF0100010;
+			this.drawGradientRect(tooltipX - 3, tooltipY - 4, tooltipX + tooltipTextWidth + 3, tooltipY - 3, backgroundColor, backgroundColor);
+			this.drawGradientRect(tooltipX - 3, tooltipY + tooltipHeight + 3, tooltipX + tooltipTextWidth + 3, tooltipY + tooltipHeight + 4, backgroundColor, backgroundColor);
+			this.drawGradientRect(tooltipX - 3, tooltipY - 3, tooltipX + tooltipTextWidth + 3, tooltipY + tooltipHeight + 3, backgroundColor, backgroundColor);
+			this.drawGradientRect(tooltipX - 4, tooltipY - 3, tooltipX - 3, tooltipY + tooltipHeight + 3, backgroundColor, backgroundColor);
+			this.drawGradientRect(tooltipX + tooltipTextWidth + 3, tooltipY - 3, tooltipX + tooltipTextWidth + 4, tooltipY + tooltipHeight + 3, backgroundColor, backgroundColor);
+			final int borderColorStart = 0x505000FF;
+			final int borderColorEnd = (borderColorStart & 0xFEFEFE) >> 1 | borderColorStart & 0xFF000000;
+			this.drawGradientRect(tooltipX - 3, tooltipY - 3 + 1, tooltipX - 3 + 1, tooltipY + tooltipHeight + 3 - 1, borderColorStart, borderColorEnd);
+			this.drawGradientRect(tooltipX + tooltipTextWidth + 2, tooltipY - 3 + 1, tooltipX + tooltipTextWidth + 3, tooltipY + tooltipHeight + 3 - 1, borderColorStart, borderColorEnd);
+			this.drawGradientRect(tooltipX - 3, tooltipY - 3, tooltipX + tooltipTextWidth + 3, tooltipY - 3 + 1, borderColorStart, borderColorStart);
+			this.drawGradientRect(tooltipX - 3, tooltipY + tooltipHeight + 2, tooltipX + tooltipTextWidth + 3, tooltipY + tooltipHeight + 3, borderColorEnd, borderColorEnd);
+
+			MinecraftForge.EVENT_BUS.post(new RenderTooltipEvent.PostBackground(ItemStack.EMPTY, textLines, tooltipX, tooltipY, font, tooltipTextWidth, tooltipHeight));
+			int tooltipTop = tooltipY;
+
+			for (int lineNumber = 0; lineNumber < textLines.size(); ++lineNumber) {
+				String s1 = textLines.get(lineNumber);
+				font.drawStringWithShadow(s1, (float)tooltipX, (float)tooltipY, 0xFFFFFFFF);
+
+				if (lineNumber == 0) {
+					tooltipY += 2;
 				}
 
-				j1 += 10;
+				tooltipY += 10;
 			}
+
+			MinecraftForge.EVENT_BUS.post(new RenderTooltipEvent.PostText(ItemStack.EMPTY, textLines, tooltipX, tooltipTop, font, tooltipTextWidth, tooltipHeight));
+
 			if (stencilEnabled) GL11.glEnable(GL11.GL_STENCIL_TEST);
+			GlStateManager.enableLighting();
+			GlStateManager.enableDepth();
 			RenderHelper.enableStandardItemLighting();
-			GlStateManager.enableBlend();
+			GlStateManager.enableRescaleNormal();
 		}
 	}
 
