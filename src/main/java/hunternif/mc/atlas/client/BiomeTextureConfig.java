@@ -6,6 +6,7 @@ import com.google.gson.JsonObject;
 import hunternif.mc.atlas.util.AbstractJSONConfig;
 import hunternif.mc.atlas.util.Log;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.biome.Biome;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -41,8 +42,41 @@ public class BiomeTextureConfig extends AbstractJSONConfig<BiomeTextureMap> {
 					+ " disregarding this config entirely");
 			return;
 		}
+
 		for (Entry<String, JsonElement> entry : json.entrySet()) {
-			int biomeID = Integer.parseInt(entry.getKey());
+			String key = entry.getKey();
+
+			if (!(key.length() > 0)) {
+				Log.warn("No biome ID specified, skipping entry");
+				return;
+			}
+
+			int biomeID;
+
+			try {
+				// See if the biome id is an integer
+				biomeID = Integer.parseInt(key);
+			} catch(NumberFormatException e) {
+				// If it is not an integer, attempt to find the biome ID assuming it is a resource location
+				ResourceLocation biomeResourceLocation;
+
+				if (key.contains(":")) {
+					String[] biomeStringSplit = key.split(":");
+					biomeResourceLocation = new ResourceLocation(biomeStringSplit[0], biomeStringSplit[1]);
+				} else {
+					biomeResourceLocation = new ResourceLocation(key);
+				}
+
+				Biome biome = Biome.REGISTRY.getObject(biomeResourceLocation);
+
+				if (biome == null) {
+					Log.warn("Biome ID is invalid, skipping entry");
+					return;
+				}
+
+				biomeID = Biome.getIdForBiome(biome);
+			}
+
 			if (entry.getValue().isJsonArray()) {
 				// List of textures: (this should be gone as of VERSION > 1)
 				JsonArray array = entry.getValue().getAsJsonArray();
