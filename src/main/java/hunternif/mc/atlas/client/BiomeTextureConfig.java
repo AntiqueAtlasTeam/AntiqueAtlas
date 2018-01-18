@@ -110,7 +110,8 @@ public class BiomeTextureConfig extends AbstractJSONConfig<BiomeTextureMap> {
 			// Only save biomes 0-256 in this config.
 			// The rest goes into ExtTileTextureConfig
 			if (biomeID >= 0 && biomeID < 256) {
-				json.addProperty(String.valueOf(biomeID), data.textureMap.get(biomeID).name);
+				String key = Biome.REGISTRY.getObjectById(biomeID).getRegistryName().toString();
+				json.addProperty(key, data.textureMap.get(biomeID).name);
 			}
 		}
 	}
