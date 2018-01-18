@@ -97,15 +97,15 @@ public class BiomeTextureConfig extends AbstractJSONConfig<BiomeTextureMap> {
 	@Override
 	protected void saveData(JsonObject json, BiomeTextureMap data) {
 		// Sort keys (biome IDs) numerically:
-		Queue<Integer> queue = new PriorityQueue<>(data.textureMap.keySet());
+		Queue<Biome> queue = new PriorityQueue<>(data.textureMap.keySet());
 		while (!queue.isEmpty()) {
-			int biomeID = queue.poll();
+			Biome biome = queue.poll();
+			int biomeID = Biome.getIdForBiome(biome);
 			// Only save biomes 0-256 in this config.
 			// The rest goes into ExtTileTextureConfig
 			if (biomeID >= 0 && biomeID < 256) {
-				Biome biome = ((ForgeRegistry<Biome>) ForgeRegistries.BIOMES).getValue(biomeID);
 				String key = biome.getRegistryName().toString();
-				json.addProperty(key, data.textureMap.get(biomeID).name);
+				json.addProperty(key, data.textureMap.get(biome).name);
 			}
 		}
 	}

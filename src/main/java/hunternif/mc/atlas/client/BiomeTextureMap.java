@@ -30,14 +30,14 @@ public class BiomeTextureMap extends SaveData {
 	}
 
 	/** This map allows keys other than the 256 biome IDs to use for special tiles. */
-	final Map<Integer, TextureSet> textureMap = new HashMap<>();
+	final Map<Biome, TextureSet> textureMap = new HashMap<>();
 
 	public static final TextureSet defaultTexture = PLAINS;
 
 	/** Assign texture set to biome. */
 	public void setTexture(int biomeID, TextureSet textureSet) {
 		if (textureSet == null) {
-			if (textureMap.remove(biomeID) != null) {
+			if (textureMap.remove(Biome.getBiomeForId(biomeID)) != null) {
 				Log.warn("Removing old texture for biome %s", biomeID);
 				if (biomeID >= 0 && biomeID < 256) {
 					markDirty();
@@ -45,7 +45,7 @@ public class BiomeTextureMap extends SaveData {
 			}
 			return;
 		}
-		TextureSet previous = textureMap.put(biomeID, textureSet);
+		TextureSet previous = textureMap.put(Biome.getBiomeForId(biomeID), textureSet);
 		if (biomeID >= 0 && biomeID < 256) {
 			// The config only concerns itself with biomes 0-256.
 			// If the old texture set is equal to the new one (i.e. has equal name
@@ -217,14 +217,14 @@ public class BiomeTextureMap extends SaveData {
 	}
 
 	public boolean isRegistered(int biomeID) {
-		return textureMap.containsKey(biomeID);
+		return textureMap.containsKey(Biome.getBiomeForId(biomeID));
 	}
 
 	/** If unknown biome, auto-registers a texture set. If null, returns default set. */
 	public TextureSet getTextureSet(Tile tile) {
 		if (tile == null) return defaultTexture;
 		checkRegistration(tile.biomeID);
-		return textureMap.get(tile.biomeID);
+		return textureMap.get(Biome.getBiomeForId(tile.biomeID));
 	}
 
 	public ResourceLocation getTexture(Tile tile) {
@@ -237,7 +237,7 @@ public class BiomeTextureMap extends SaveData {
 
 	public List<ResourceLocation> getAllTextures() {
 		List<ResourceLocation> list = new ArrayList<>(textureMap.size());
-		for (Entry<Integer, TextureSet> entry : textureMap.entrySet()) {
+		for (Entry<Biome, TextureSet> entry : textureMap.entrySet()) {
 			list.addAll(Arrays.asList(entry.getValue().textures));
 		}
 		return list;
