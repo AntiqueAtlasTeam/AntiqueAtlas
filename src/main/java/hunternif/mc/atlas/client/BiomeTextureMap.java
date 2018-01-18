@@ -1,6 +1,7 @@
 package hunternif.mc.atlas.client;
 
 import hunternif.mc.atlas.core.Tile;
+import hunternif.mc.atlas.util.CustomFormatter;
 import hunternif.mc.atlas.util.Log;
 import hunternif.mc.atlas.util.SaveData;
 import net.minecraft.util.ResourceLocation;
@@ -36,16 +37,22 @@ public class BiomeTextureMap extends SaveData {
 
 	/** Assign texture set to biome. */
 	public void setTexture(int biomeID, TextureSet textureSet) {
+		Biome biome = Biome.getBiomeForId(biomeID);
+
+		if (biome == null) {
+			return;
+		}
+
 		if (textureSet == null) {
-			if (textureMap.remove(Biome.getBiomeForId(biomeID)) != null) {
-				Log.warn("Removing old texture for biome %s", biomeID);
+			if (textureMap.remove(biome) != null) {
+				Log.warn("Removing old texture for biome %s", CustomFormatter.getRegistryString(biome));
 				if (biomeID >= 0 && biomeID < 256) {
 					markDirty();
 				}
 			}
 			return;
 		}
-		TextureSet previous = textureMap.put(Biome.getBiomeForId(biomeID), textureSet);
+		TextureSet previous = textureMap.put(biome, textureSet);
 		if (biomeID >= 0 && biomeID < 256) {
 			// The config only concerns itself with biomes 0-256.
 			// If the old texture set is equal to the new one (i.e. has equal name
@@ -53,7 +60,7 @@ public class BiomeTextureMap extends SaveData {
 			if (previous == null) {
 				markDirty();
 			} else if (!previous.equals(textureSet)) {
-				Log.warn("Overwriting texture set for biome %d", biomeID);
+				Log.warn("Overwriting texture set for biome %s", CustomFormatter.getRegistryString(biome));
 				markDirty();
 			}
 		}
@@ -62,12 +69,13 @@ public class BiomeTextureMap extends SaveData {
 	/** Find the most appropriate standard texture set depending on
 	 * BiomeDictionary types. */
 	private void autoRegister(int biomeID) {
+		Biome biome = Biome.getBiomeForId(biomeID);
 		if (biomeID < 0 || biomeID >= 256) {
-			Log.warn("Biome ID %d is out of range. Auto-registering default texture set", biomeID);
+			Log.warn("Biome ID %s is out of range. Auto-registering default texture set",
+					biome == null ? biomeID : CustomFormatter.getRegistryString(biome));
 			setTexture(biomeID, defaultTexture);
 			return;
 		}
-		Biome biome = Biome.getBiomeForId(biomeID);
 		if (biome == null) {
 			Log.warn("Biome ID %d is null. Auto-registering default texture set", biomeID);
 			setTexture(biomeID, defaultTexture);
@@ -205,7 +213,8 @@ public class BiomeTextureMap extends SaveData {
 		} else {
 			setTexture(biomeID, defaultTexture);
 		}
-		Log.info("Auto-registered standard texture set for biome %d", biomeID);
+		Log.info("Auto-registered standard texture set for biome %s",
+				CustomFormatter.getRegistryString(biome));
 	}
 
 	/** Auto-registers the biome ID if it is not registered. */
