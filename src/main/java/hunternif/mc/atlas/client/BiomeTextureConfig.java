@@ -7,8 +7,10 @@ import hunternif.mc.atlas.util.AbstractJSONConfig;
 import hunternif.mc.atlas.util.Log;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.biome.Biome;
+import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.registries.ForgeRegistry;
 
 import java.io.File;
 import java.util.Map.Entry;
@@ -58,16 +60,7 @@ public class BiomeTextureConfig extends AbstractJSONConfig<BiomeTextureMap> {
 				biomeID = Integer.parseInt(key);
 			} catch(NumberFormatException e) {
 				// If it is not an integer, attempt to find the biome ID assuming it is a resource location
-				ResourceLocation biomeResourceLocation;
-
-				if (key.contains(":")) {
-					String[] biomeStringSplit = key.split(":");
-					biomeResourceLocation = new ResourceLocation(biomeStringSplit[0], biomeStringSplit[1]);
-				} else {
-					biomeResourceLocation = new ResourceLocation(key);
-				}
-
-				Biome biome = Biome.REGISTRY.getObject(biomeResourceLocation);
+				Biome biome = ForgeRegistries.BIOMES.getValue(new ResourceLocation(key));
 
 				if (biome == null) {
 					Log.warn("Biome ID is invalid, skipping entry");
@@ -110,7 +103,8 @@ public class BiomeTextureConfig extends AbstractJSONConfig<BiomeTextureMap> {
 			// Only save biomes 0-256 in this config.
 			// The rest goes into ExtTileTextureConfig
 			if (biomeID >= 0 && biomeID < 256) {
-				String key = Biome.REGISTRY.getObjectById(biomeID).getRegistryName().toString();
+				Biome biome = ((ForgeRegistry<Biome>) ForgeRegistries.BIOMES).getValue(biomeID);
+				String key = biome.getRegistryName().toString();
 				json.addProperty(key, data.textureMap.get(biomeID).name);
 			}
 		}
