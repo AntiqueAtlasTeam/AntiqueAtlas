@@ -187,7 +187,7 @@ public class AtlasData extends WorldSavedData {
 					// Force loading of chunk, if required:
 
 					if (SettingsConfig.performance.forceChunkLoading && chunk == null) {
-						player.getEntityWorld().getChunkProvider().provideChunk(x << 4, z << 4);
+						chunk = player.getEntityWorld().getChunkProvider().provideChunk(x, z);
 					}
 
 					// Skip chunk if it hasn't loaded yet:

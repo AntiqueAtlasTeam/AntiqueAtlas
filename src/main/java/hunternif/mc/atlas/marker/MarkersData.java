@@ -1,20 +1,19 @@
 package hunternif.mc.atlas.marker;
 
+import hunternif.mc.atlas.SettingsConfig;
 import hunternif.mc.atlas.api.MarkerAPI;
 import hunternif.mc.atlas.network.PacketDispatcher;
 import hunternif.mc.atlas.network.client.MarkersPacket;
-import hunternif.mc.atlas.registry.MarkerRegistry;
-import hunternif.mc.atlas.registry.MarkerType;
 import hunternif.mc.atlas.util.Log;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.storage.WorldSavedData;
 import net.minecraftforge.common.util.Constants;
 
 import java.util.*;
+import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -201,7 +200,15 @@ public class MarkersData extends WorldSavedData {
 	public Marker loadMarker(Marker marker) {
 		if (!idMap.containsKey(marker.getId())) {
 			idMap.put(marker.getId(), marker);
-			getMarkersDataInDimension(marker.getDimension()).insertMarker(marker);
+			int totalMarkers = 0;
+			for (Entry<Integer, DimensionMarkersData> e: dimensionMap.entrySet()){
+				totalMarkers += e.getValue().getAllMarkers().size();
+			}
+			if (totalMarkers < SettingsConfig.performance.markerLimit){
+				getMarkersDataInDimension(marker.getDimension()).insertMarker(marker);
+			} else {
+				Log.warn("Could not add new marker. Atlas is at it's limit of %d markers", SettingsConfig.performance.markerLimit);
+			}
 		}
 		return marker;
 	}

@@ -52,8 +52,8 @@ public class DimensionData implements ITileStorage {
 		Map<ShortVec2, Tile> chunks = new ConcurrentHashMap<ShortVec2, Tile>(2, 0.75f, 2);
 		Tile t = null;
 		for (Map.Entry<ShortVec2, TileGroup> entry: tileGroups.entrySet()){
-			int basex = entry.getKey().x;
-			int basey = entry.getKey().y;
+			int basex = entry.getValue().getScope().minX;
+			int basey = entry.getValue().getScope().minY;
 			for (int x = basex; x < basex+TileGroup.CHUNK_STEP; x++){
 				for (int y = basey; y < basey+TileGroup.CHUNK_STEP; y++){
 					t = entry.getValue().getTile(x, y);
@@ -156,6 +156,19 @@ public class DimensionData implements ITileStorage {
 		return data;
 	}
 
+	public void addData(DimensionData other){
+		for (Entry<ShortVec2, TileGroup> e:other.tileGroups.entrySet()){
+			TileGroup group = e.getValue();
+			Rect s = group.getScope();
+			for (int x = s.minX; x <= s.maxX; x++){
+				for (int y = s.minY; y <= s.maxY; y++){
+					Tile tile = group.getTile(x, y);
+					if (tile != null) setTile(x, y, tile);
+				}
+			}
+		}
+	}
+	
 	public NBTTagList writeToNBT() {
 		NBTTagList tileGroupList = new NBTTagList();
 		for (Entry<ShortVec2, TileGroup> entry : tileGroups.entrySet()) {

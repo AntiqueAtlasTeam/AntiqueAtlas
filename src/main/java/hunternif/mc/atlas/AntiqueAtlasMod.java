@@ -3,6 +3,14 @@ package hunternif.mc.atlas;
 import hunternif.mc.atlas.core.AtlasDataHandler;
 import hunternif.mc.atlas.core.PlayerEventHandler;
 import hunternif.mc.atlas.ext.*;
+import hunternif.mc.atlas.ext.watcher.*;
+import hunternif.mc.atlas.ext.watcher.impl.StructureWatcherFortress;
+import hunternif.mc.atlas.ext.watcher.impl.StructureWatcherGeneric;
+import hunternif.mc.atlas.ext.watcher.impl.StructureWatcherVillage;
+import hunternif.mc.atlas.item.ItemAtlas;
+import hunternif.mc.atlas.item.ItemEmptyAtlas;
+import hunternif.mc.atlas.item.RecipeAtlasCloning;
+import hunternif.mc.atlas.item.RecipeAtlasCombining;
 import hunternif.mc.atlas.marker.GlobalMarkersDataHandler;
 import hunternif.mc.atlas.marker.MarkersDataHandler;
 import hunternif.mc.atlas.marker.NetherPortalWatcher;
@@ -10,6 +18,10 @@ import hunternif.mc.atlas.network.PacketDispatcher;
 import hunternif.mc.atlas.registry.MarkerRegistry;
 import hunternif.mc.atlas.registry.MarkerTypes;
 import hunternif.mc.atlas.util.Log;
+import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.init.Items;
+import net.minecraft.item.ItemStack;
+import net.minecraft.world.DimensionType;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
@@ -63,10 +75,12 @@ public class AntiqueAtlasMod {
 
 		MinecraftForge.EVENT_BUS.register(new DeathWatcher());
 
-		MinecraftForge.EVENT_BUS.register(new StructureWatcher("EndCity", 1, MarkerTypes.END_CITY_FAR, "gui.antiqueatlas.marker.endcity").setTileMarker(MarkerTypes.END_CITY, "gui.antiqueatlas.marker.endcity"));
-		MinecraftForge.EVENT_BUS.register(new VillageWatcher());
-		MinecraftForge.EVENT_BUS.register(new NetherFortressWatcher());
 		MinecraftForge.EVENT_BUS.register(new NetherPortalWatcher());
+
+		// Structure Watchers
+        new StructureWatcherVillage();
+        new StructureWatcherFortress();
+		new StructureWatcherGeneric("EndCity", DimensionType.THE_END, MarkerTypes.END_CITY_FAR, "gui.antiqueatlas.marker.endcity").setTileMarker(MarkerTypes.END_CITY, "gui.antiqueatlas.marker.endcity");
 	}
 
 	@EventHandler
