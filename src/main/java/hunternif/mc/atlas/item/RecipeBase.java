@@ -18,10 +18,10 @@ abstract class RecipeBase extends IForgeRegistryEntry.Impl<IRecipe> implements I
         return aitemstack;
     }
 
-    @Override
-    public boolean isHidden() {
-        return true;
-    }
+//    @Override
+//    public boolean isHidden() {
+//        return true;
+//    }
 
     @Override
     public String getGroup() {

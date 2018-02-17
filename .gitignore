@@ -1,38 +1,22 @@
-# Build dirs:
+# eclipse
 bin
-release
-dist
-build
-run
-classes
-
-# Gradle
-.gradle
-
-## IDE
-
-# IntelliJ IDEA
-out
-*.iml
-*.ipr
-*.iws
-.idea
-
-# Eclipse
 *.launch
 .settings
 .metadata
 .classpath
 .project
+
+# idea
+out
+*.ipr
+*.iws
+*.iml
+.idea
+
+# gradle
+build
+.gradle
+
+# other
 eclipse
-
-# NetBeans
-nbproject
-
-# ViM
-.*.sw[a-p]
-
-# Garbage
-Thumbs.db
-*.log
-*.bak
+run

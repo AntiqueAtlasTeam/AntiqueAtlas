@@ -1,30 +1,16 @@
 [
-  {
-    "modid": "antiqueatlas",
-    "name": "Antique Atlas",
-    "description": "Antique Atlas is a book that acts like a map featuring infinite scrolling, zoom and custom labeled markers. The map is generated around the player by calculating the average biome in each 16x16 chunk.",
-    "version": "${version}",
-    "mcversion": "${mcversion}",
-    "logoFile": "/antiqueatlas_logo.png",
-    "url": "http://www.minecraftforum.net/topic/2045745",
-    "updateUrl": "",
-    "authorList": ["Hunternif"],
-    "credits": "Hunternif, coolAlias, Kenkron, TheCodeWarrior. Localizations by crafteverywhere, CapoFantasma97, Mazdallier, mankra, Zerotiger.",
-    "screenshots": [],
-    "dependencies": []
-  },
-  {
-    "modid": "antiqueatlasoverlay",
-    "name": "Antique Atlas Overlay",
-    "description": "Antique Atlas Overlay is an extension of Antique Atlas that displays the map while holding the book. Now included in Antique Atlas itself.",
-    "version": "${version}",
-    "mcversion": "${mcversion}",
-    "logoFile": "/antiqueatlas_logo.png",
-    "url": "http://www.minecraftforum.net/topic/2045745",
-    "updateUrl": "",
-    "authorList": ["Kenkron"],
-    "credits": "",
-    "screenshots": [],
-    "dependencies": []
-  }
+{
+  "modid": "examplemod",
+  "name": "Example Mod",
+  "description": "Example placeholder mod.",
+  "version": "${version}",
+  "mcversion": "${mcversion}",
+  "url": "",
+  "updateUrl": "",
+  "authorList": ["ExampleDude"],
+  "credits": "The Forge and FML guys, for making this example",
+  "logoFile": "",
+  "screenshots": [],
+  "dependencies": []
+}
 ]
