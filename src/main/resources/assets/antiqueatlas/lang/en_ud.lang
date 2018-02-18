@@ -1,0 +1,36 @@
+item.antiqueAtlas.name=sɐꞁʇⱯ ǝnbᴉʇuⱯ
+item.emptyAntiqueAtlas.name=sɐꞁʇⱯ ǝnbᴉʇuⱯ ʎʇdɯƎ
+
+gui.antiqueatlas.scalebar=sʞɔoꞁq uᴉ ǝꞁɐɔS
+gui.antiqueatlas.addMarker=ɹǝʞɹɐɯ ppⱯ
+gui.antiqueatlas.delMarker=ɹǝʞɹɐɯ ǝʇǝꞁǝᗡ
+gui.antiqueatlas.followPlayer=ɹǝʎɐꞁd ʍoꞁꞁoℲ
+gui.antiqueatlas.exportImage=ǝᵷɐɯᴉ ʇɹodxƎ
+gui.antiqueatlas.hideMarkers=sɹǝʞɹɐɯ ǝpᴉH
+gui.antiqueatlas.showMarkers=sɹǝʞɹɐɯ ʍoɥS
+
+gui.antiqueatlas.marker.label=:ꞁǝqɐꞀ
+gui.antiqueatlas.marker.type=:ǝdʎ⟘
+gui.antiqueatlas.marker.village=ǝᵷɐꞁꞁᴉᴧ
+gui.antiqueatlas.marker.netherPortal=ꞁɐʇɹoԀ ɹǝɥʇǝN
+gui.antiqueatlas.marker.tomb=%s
+
+gui.antiqueatlas.export.opening=˙˙˙ᵷoꞁɐᴉp ɯǝʇsʎs ǝꞁᴉɟ ᵷuᴉuǝdO
+gui.antiqueatlas.export.selectFile=oʇ ǝʌɐs oʇ ǝꞁᴉɟ ⅁NԀ ʇɔǝꞁǝS
+gui.antiqueatlas.export.tooLarge=˙ǝzᴉs dɐǝɥ ɐʌɐՐ ᵷuᴉsɐǝɹɔuᴉ ʎɹʇ 'ɹǝpuǝɹ oʇ ǝᵷɹɐꞁ ooʇ sᴉ ǝᵷɐɯᴉ ǝɥ⟘ ¡ʎɹɹoS
+
+gui.antiqueatlas.export.setup=˙˙˙dn ᵷuᴉʇʇǝS
+gui.antiqueatlas.export.rendering=˙˙˙ᵷuᴉɹǝpuǝᴚ
+gui.antiqueatlas.export.writing=˙˙˙ǝꞁᴉɟ oʇ ᵷuᴉʇᴉɹM
+gui.antiqueatlas.export.loadingtextures=˙˙˙sǝɹnʇxǝʇ ᵷuᴉpɐoꞀ
+gui.antiqueatlas.export.makingbuffer=˙˙˙ɹǝɟɟnq ǝᵷɐɯᴉ %2$dx%1$d ᵷuᴉʇɐɔoꞁꞁⱯ
+
+gui.antiqueatlas.export.renderstripe=˙˙˙%2$d/%1$d ǝɔᴉꞁs ᵷuᴉɹǝpuǝᴚ
+gui.antiqueatlas.export.writestripe=˙˙˙ǝɔᴉꞁs ᵷuᴉʇᴉɹM
+
+gui.antiqueatlas.export.rendering.background=punoɹᵷʞɔɐq dɐɯ ᵷuᴉɹǝpuǝᴚ
+gui.antiqueatlas.export.rendering.map=sǝꞁᴉʇ dɐɯ ᵷuᴉɹǝpuǝᴚ
+gui.antiqueatlas.export.rendering.markers=sɹǝʞɹɐɯ ᵷuᴉɹǝpuǝᴚ
+
+key.openatlas.desc=sɐꞁʇⱯ uǝdO
+key.antiqueatlas.category=sɐꞁʇⱯ ǝnbᴉʇuⱯ
