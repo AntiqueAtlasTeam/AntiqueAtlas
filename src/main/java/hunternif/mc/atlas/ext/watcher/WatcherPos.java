@@ -2,7 +2,12 @@ package hunternif.mc.atlas.ext.watcher;
 
 import net.minecraft.util.math.BlockPos;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 public class WatcherPos {
+
+    public static final Pattern POS_PATTERN = Pattern.compile("\\[([-\\d]+),([-\\d]+)\\]");
 
     private final int x;
     private final int z;
@@ -18,12 +23,12 @@ public class WatcherPos {
 
     // format = [x, y]
     public WatcherPos(String coords) {
-        String[] coordSplit = coords.substring(1, coords.length() - 1).split(",");
-        if (coordSplit.length != 2)
+        Matcher matcher = POS_PATTERN.matcher(coords);
+        if (!matcher.matches())
             throw new IllegalArgumentException("Improper coordinate format provided: " + coords);
 
-        this.x = Integer.parseInt(coordSplit[0].trim());
-        this.z = Integer.parseInt(coordSplit[1].trim());
+        this.x = Integer.parseInt(matcher.group(1));
+        this.z = Integer.parseInt(matcher.group(2));
     }
 
     public int getX() {
