@@ -78,6 +78,9 @@ public class StructureWatcherFortress implements IStructureWatcher {
         Set<Pair<WatcherPos, String>> visits = Sets.newHashSet();
         Set<String> tagSet = structureTag.getKeySet();
         for (String coords : tagSet) {
+            if (!WatcherPos.POS_PATTERN.matcher(coords).matches())
+                continue; // Some other kind of data got stuffed in here. It's irrelevant to us
+
             WatcherPos pos = new WatcherPos(coords);
             if (!visited.contains(pos)) {
                 NBTTagCompound tag = structureTag.getCompoundTag(coords);
