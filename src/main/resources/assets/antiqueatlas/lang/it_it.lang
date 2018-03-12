@@ -12,10 +12,25 @@ gui.antiqueatlas.showMarkers=Mostra marcatori
 gui.antiqueatlas.marker.label=Etichetta:
 gui.antiqueatlas.marker.type=Tipo:
 gui.antiqueatlas.marker.village=Villaggio
-gui.antiqueatlas.marker.netherPortal=Portale degli Inferi
+gui.antiqueatlas.marker.netherPortal=Portale del Nether
+gui.antiqueatlas.marker.tomb=Qui giace %s
 
 gui.antiqueatlas.export.opening=Aprendo la pagina di dialogo...
 gui.antiqueatlas.export.selectFile=Seleziona dove salvare il file PNG
 gui.antiqueatlas.export.tooLarge=Spiacenti! L'immagine è troppo grande da renderizzare, prova a incrementare la dimensione della memoria heap di Java.
+
+gui.antiqueatlas.export.setup=Inizializzando...
 gui.antiqueatlas.export.rendering=Renderizzando...
 gui.antiqueatlas.export.writing=Scrivendo il file...
+gui.antiqueatlas.export.loadingtextures=Caricando textures...
+gui.antiqueatlas.export.makingbuffer=Allocando %dx%d buffer d'immagine...
+
+gui.antiqueatlas.export.renderstripe=Renderizzando fetta %d/%d...
+gui.antiqueatlas.export.writestripe=Scrivendo fetta...
+
+gui.antiqueatlas.export.rendering.background=Renderizzando lo sfondo della mappa
+gui.antiqueatlas.export.rendering.map=Renderizzando le tiles della mappa
+gui.antiqueatlas.export.rendering.markers=Renderizzando marcatori
+
+key.openatlas.desc=Apri atlante
+key.antiqueatlas.category=Antique Atlas
