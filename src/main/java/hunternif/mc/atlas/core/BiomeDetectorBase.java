@@ -10,10 +10,7 @@ import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.common.BiomeDictionary.Type;
 
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Detects the 256 vanilla biomes, water pools and lava pools.
@@ -100,16 +97,19 @@ public class BiomeDetectorBase implements IBiomeDetector {
 			}
 		}
 
-		Map.Entry<Integer, Integer> meanBiome = Collections.max(biomeOccurrences.entrySet(), Comparator.comparingInt(Map.Entry::getValue));
-		int meanBiomeId = meanBiome.getKey();
-		int meanBiomeOccurrences = meanBiome.getValue();
+		try {
+			Map.Entry<Integer, Integer> meanBiome = Collections.max(biomeOccurrences.entrySet(), Comparator.comparingInt(Map.Entry::getValue));
+			int meanBiomeId = meanBiome.getKey();
+			int meanBiomeOccurrences = meanBiome.getValue();
 
+			// The following important pseudo-biomes don't have IDs:
+			if (meanBiomeOccurrences < lavaOccurrences) {
+				return ExtTileIdMap.instance().getPseudoBiomeID(ExtTileIdMap.TILE_LAVA);
+			}
 
-		// The following important pseudo-biomes don't have IDs:
-		if (meanBiomeOccurrences < lavaOccurrences) {
-			return ExtTileIdMap.instance().getPseudoBiomeID(ExtTileIdMap.TILE_LAVA);
+			return meanBiomeId;
+		} catch(NoSuchElementException e){
+			return Biome.getIdForBiome(Biomes.DEFAULT);
 		}
-
-		return meanBiomeId;
 	}
 }
