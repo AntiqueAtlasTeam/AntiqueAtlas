@@ -34,7 +34,10 @@ import org.lwjgl.opengl.GL11;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 public class GuiAtlas extends GuiComponent {
@@ -50,6 +53,8 @@ public class GuiAtlas extends GuiComponent {
 	private static final int PLAYER_ICON_HEIGHT = 8;
 
 	public static final int MARKER_SIZE = 32;
+
+	private static final DateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd_HH.mm.ss");
 
 	/** If the map scale goes below this value, the tiles will not scale down
 	 * visually, but will instead span greater area. */
@@ -408,7 +413,25 @@ public class GuiAtlas extends GuiComponent {
 		state.switchTo(EXPORTING_IMAGE);
 		// Default file name is "Atlas <N>.png"
 		ExportImageUtil.isExporting = true;
-		File file = ExportImageUtil.selectPngFileToSave("Atlas " + atlasID);
+		
+		String atlaspath = Minecraft.getMinecraft().mcDataDir+"/screenshots/";
+		String outputname = "atlas-"+ DATE_FORMAT.format(new Date()).toString();
+		int i = 1;
+		
+		File file;
+		
+		while (true) {
+			file = new File(atlaspath, outputname + (i == 1 ? "" : "_" + i) + ".png");
+			
+			if (!file.exists()) {
+				break;
+			}
+			
+			++i;
+		}
+		
+		
+		//File file = ExportImageUtil.selectPngFileToSave("Atlas " + atlasID);
 		if (file != null) {
 			try {
 				Log.info("Exporting image from Atlas #%d to file %s", atlasID, file.getAbsolutePath());
