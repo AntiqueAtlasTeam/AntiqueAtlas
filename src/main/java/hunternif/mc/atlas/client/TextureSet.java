@@ -272,7 +272,7 @@ public class TextureSet implements Comparable<TextureSet> {
 	
 	/** Add other texture sets that this texture set will be stitched to
 	 * (but the opposite may be false, in case of asymmetric stitching.) */
-    private TextureSet stitchTo(TextureSet... textureSets) {
+	public TextureSet stitchTo(TextureSet... textureSets) {
 		Collections.addAll(stitchTo, textureSets);
 		return this;
 	}
@@ -285,12 +285,12 @@ public class TextureSet implements Comparable<TextureSet> {
 		return this;
 	}
 	
-	private TextureSet stitchToHorizontal(TextureSet... textureSets) {
+	public TextureSet stitchToHorizontal(TextureSet... textureSets) {
 		this.anisotropicStitching = true;
 		Collections.addAll(stitchToHorizontal, textureSets);
 		return this;
 	}
-	private TextureSet stitchToVertical(TextureSet... textureSets) {
+	public TextureSet stitchToVertical(TextureSet... textureSets) {
 		this.anisotropicStitching = true;
 		Collections.addAll(stitchToVertical, textureSets);
 		return this;
