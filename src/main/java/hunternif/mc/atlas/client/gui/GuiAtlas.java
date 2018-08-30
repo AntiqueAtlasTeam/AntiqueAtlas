@@ -8,6 +8,8 @@ import hunternif.mc.atlas.client.gui.core.*;
 import hunternif.mc.atlas.client.gui.core.GuiStates.IState;
 import hunternif.mc.atlas.client.gui.core.GuiStates.SimpleState;
 import hunternif.mc.atlas.core.DimensionData;
+import hunternif.mc.atlas.event.MarkerClickedEvent;
+import hunternif.mc.atlas.event.MarkerHoveredEvent;
 import hunternif.mc.atlas.marker.DimensionMarkersData;
 import hunternif.mc.atlas.marker.Marker;
 import hunternif.mc.atlas.marker.MarkersData;
@@ -28,6 +30,7 @@ import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.MathHelper;
+import net.minecraftforge.common.MinecraftForge;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
@@ -197,7 +200,7 @@ public class GuiAtlas extends GuiComponent {
 	private DimensionMarkersData globalMarkersData;
 	/** The marker highlighted by the eraser. Even though multiple markers may
 	 * be highlighted at the same time, only one of them will be deleted. */
-	private Marker toDelete;
+	private Marker hoveredMarker;
 	
 	private final GuiMarkerFinalizer markerFinalizer = new GuiMarkerFinalizer();
 	/** Displayed where the marker is about to be placed when the Finalizer GUI is on. */
@@ -387,17 +390,19 @@ public class GuiAtlas extends GuiComponent {
 				KeyBinding.unPressAllKeys();
 
 			} else if (state.is(DELETING_MARKER) // If clicked on a marker, delete it:
-					&& toDelete != null && isMouseOverMap && mouseState == 0) {
+					&& hoveredMarker != null && !hoveredMarker.isGlobal() && isMouseOverMap && mouseState == 0) {
 				AtlasAPI.markers.deleteMarker(player.getEntityWorld(),
-                        atlasID, toDelete.getId());
+                        atlasID, hoveredMarker.getId());
 			}
 			state.switchTo(NORMAL);
 		} else if (isMouseOverMap && selectedButton == null) {
-			isDragging = true;
-			dragMouseX = mouseX;
-			dragMouseY = mouseY;
-			dragMapOffsetX = mapOffsetX;
-			dragMapOffsetY = mapOffsetY;
+			if(hoveredMarker == null || !MinecraftForge.EVENT_BUS.post(new MarkerClickedEvent(hoveredMarker))) {
+				isDragging = true;
+				dragMouseX = mouseX;
+				dragMouseY = mouseY;
+				dragMapOffsetX = mapOffsetX;
+				dragMapOffsetY = mapOffsetY;
+			}
 		}
 	}
 
@@ -844,22 +849,21 @@ public class GuiAtlas extends GuiComponent {
 		boolean mouseIsOverMarker = type.shouldHover((getMouseX()-(markerX+info.x))/info.width, (getMouseY()-(markerY+info.y))/info.height);
 		type.resetMip();
 
+		if (mouseIsOverMarker) {
+			GlStateManager.color(0.5f, 0.5f, 0.5f, 1);
+			hoveredMarker = marker;
+			MinecraftForge.EVENT_BUS.post(new MarkerHoveredEvent(marker));
+		} else {
+			GlStateManager.color(1, 1, 1, 1);
+			if (hoveredMarker == marker) {
+				hoveredMarker = null;
+			}
+		}
+
 		if (state.is(PLACING_MARKER)) {
 			GlStateManager.color(1, 1, 1, 0.5f);
-		} else if (state.is(DELETING_MARKER)) {
-			if (marker.isGlobal()) {
-				GlStateManager.color(1, 1, 1, 0.5f);
-			} else {
-				if (mouseIsOverMarker) {
-					GlStateManager.color(0.5f, 0.5f, 0.5f, 1);
-					toDelete = marker;
-				} else {
-					GlStateManager.color(1, 1, 1, 1);
-					if (toDelete == marker) {
-						toDelete = null;
-					}
-				}
-			}
+		} else if (state.is(DELETING_MARKER) && marker.isGlobal()) {
+			GlStateManager.color(1, 1, 1, 0.5f);
 		} else {
 			GlStateManager.color(1, 1, 1, 1);
 		}
