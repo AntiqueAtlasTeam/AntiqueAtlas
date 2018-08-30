@@ -19,14 +19,15 @@ public class MarkerApiImpl implements MarkerAPI {
 	private static final int GLOBAL = -1;
 	
 	@Override
-	public void putMarker(World world, boolean visibleAhead, int atlasID, String markerType, String label, int x, int z) {
-		doPutMarker(world, visibleAhead, atlasID, markerType, label, x, z);
+	public int putMarker(World world, boolean visibleAhead, int atlasID, String markerType, String label, int x, int z) {
+		return doPutMarker(world, visibleAhead, atlasID, markerType, label, x, z);
 	}
 	@Override
-	public void putGlobalMarker(World world, boolean visibleAhead, String markerType, String label, int x, int z) {
-		doPutMarker(world, visibleAhead, GLOBAL, markerType, label, x, z);
+	public int putGlobalMarker(World world, boolean visibleAhead, String markerType, String label, int x, int z) {
+		return doPutMarker(world, visibleAhead, GLOBAL, markerType, label, x, z);
 	}
-	private void doPutMarker(World world, boolean visibleAhead, int atlasID, String markerType, String label, int x, int z) {
+	private int doPutMarker(World world, boolean visibleAhead, int atlasID, String markerType, String label, int x, int z) {
+		Marker marker = null;
 		if (world.isRemote) {
 			if (atlasID == GLOBAL) {
 				Log.warn("Client tried to add a global marker!");
@@ -37,14 +38,15 @@ public class MarkerApiImpl implements MarkerAPI {
 		} else {
 			if (atlasID == GLOBAL) {
 				MarkersData data = AntiqueAtlasMod.globalMarkersData.getData();
-				Marker marker = data.createAndSaveMarker(markerType, label, world.provider.getDimension(), x, z, visibleAhead);
+				marker = data.createAndSaveMarker(markerType, label, world.provider.getDimension(), x, z, visibleAhead);
 				PacketDispatcher.sendToAll(new MarkersPacket(world.provider.getDimension(), marker));
 			} else {
 				MarkersData data = AntiqueAtlasMod.markersData.getMarkersData(atlasID, world);
-				Marker marker = data.createAndSaveMarker(markerType, label, world.provider.getDimension(), x, z, visibleAhead);
+				marker = data.createAndSaveMarker(markerType, label, world.provider.getDimension(), x, z, visibleAhead);
 				PacketDispatcher.sendToAll(new MarkersPacket(atlasID, world.provider.getDimension(), marker));
 			}
 		}
+		return marker != null ? marker.getId() : -1;
 	}
 	
 	@Override

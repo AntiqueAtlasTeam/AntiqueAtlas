@@ -33,8 +33,10 @@ public interface MarkerAPI {
 	 * @param label			text label to be displayed on mouseover.
 	 * @param x				block coordinate
 	 * @param z				block coordinate
+	 *
+	 * @return returns the marker id. -1 if failed or client
 	 */
-	void putMarker(World world, boolean visibleAhead, int atlasID,
+	int putMarker(World world, boolean visibleAhead, int atlasID,
 			String markerType, String label, int x, int z);
 	
 	/**
@@ -47,8 +49,10 @@ public interface MarkerAPI {
 	 * @param label			text label to be displayed on mouseover.
 	 * @param x				block coordinate
 	 * @param z				block coordinate
+	 *
+	 * @return returns the marker id. -1 if failed or client
 	 */
-	void putGlobalMarker(World world, boolean visibleAhead,
+	int putGlobalMarker(World world, boolean visibleAhead,
 			String markerType, String label, int x, int z);
 	
 	/**
