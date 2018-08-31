@@ -396,7 +396,7 @@ public class GuiAtlas extends GuiComponent {
 			}
 			state.switchTo(NORMAL);
 		} else if (isMouseOverMap && selectedButton == null) {
-			if(hoveredMarker == null || !MinecraftForge.EVENT_BUS.post(new MarkerClickedEvent(hoveredMarker))) {
+			if(hoveredMarker == null || !MinecraftForge.EVENT_BUS.post(new MarkerClickedEvent(player, hoveredMarker, mouseState))) {
 				isDragging = true;
 				dragMouseX = mouseX;
 				dragMouseY = mouseY;
@@ -852,7 +852,7 @@ public class GuiAtlas extends GuiComponent {
 		if (mouseIsOverMarker) {
 			GlStateManager.color(0.5f, 0.5f, 0.5f, 1);
 			hoveredMarker = marker;
-			MinecraftForge.EVENT_BUS.post(new MarkerHoveredEvent(marker));
+			MinecraftForge.EVENT_BUS.post(new MarkerHoveredEvent(player, marker));
 		} else {
 			GlStateManager.color(1, 1, 1, 1);
 			if (hoveredMarker == marker) {
