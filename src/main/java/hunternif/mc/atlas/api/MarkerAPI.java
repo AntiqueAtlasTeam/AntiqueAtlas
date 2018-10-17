@@ -1,8 +1,12 @@
 package hunternif.mc.atlas.api;
 
+import hunternif.mc.atlas.marker.Marker;
 import net.minecraft.world.World;
 
 import hunternif.mc.atlas.registry.MarkerType;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * API for putting custom markers to the atlases. Set the textures on the
@@ -33,9 +37,12 @@ public interface MarkerAPI {
 	 * @param label			text label to be displayed on mouseover.
 	 * @param x				block coordinate
 	 * @param z				block coordinate
+	 *
+	 * @return returns the marker. null if failed or client
 	 */
-	void putMarker(World world, boolean visibleAhead, int atlasID,
-			String markerType, String label, int x, int z);
+	@Nullable
+	Marker putMarker(@Nonnull World world, boolean visibleAhead, int atlasID,
+					 String markerType, String label, int x, int z);
 	
 	/**
 	 * Put a marker in all atlases in the world at specified block coordinates.
@@ -47,8 +54,11 @@ public interface MarkerAPI {
 	 * @param label			text label to be displayed on mouseover.
 	 * @param x				block coordinate
 	 * @param z				block coordinate
+	 *
+	 * @return returns the marker. null if failed or client
 	 */
-	void putGlobalMarker(World world, boolean visibleAhead,
+	@Nullable
+	Marker putGlobalMarker(@Nonnull World world, boolean visibleAhead,
 			String markerType, String label, int x, int z);
 	
 	/**
@@ -61,7 +71,7 @@ public interface MarkerAPI {
 	 * @param atlasID
 	 * @param markerID
 	 */
-	void deleteMarker(World world, int atlasID, int markerID);
+	void deleteMarker(@Nonnull World world, int atlasID, int markerID);
 	
 	/**
 	 * Delete a global marker from all atlases. Server side only!
@@ -69,5 +79,5 @@ public interface MarkerAPI {
 	 * @param markerID
 	 */
 
-	void deleteGlobalMarker(World world, int markerID);
+	void deleteGlobalMarker(@Nonnull World world, int markerID);
 }

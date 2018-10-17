@@ -14,19 +14,25 @@ import hunternif.mc.atlas.registry.MarkerRegistry;
 import hunternif.mc.atlas.registry.MarkerType;
 import hunternif.mc.atlas.util.Log;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 public class MarkerApiImpl implements MarkerAPI {
 	/** Used in place of atlasID to signify that the marker is global. */
 	private static final int GLOBAL = -1;
-	
+
+	@Nullable
 	@Override
-	public void putMarker(World world, boolean visibleAhead, int atlasID, String markerType, String label, int x, int z) {
-		doPutMarker(world, visibleAhead, atlasID, markerType, label, x, z);
+	public Marker putMarker(@Nonnull World world, boolean visibleAhead, int atlasID, String markerType, String label, int x, int z) {
+		return doPutMarker(world, visibleAhead, atlasID, markerType, label, x, z);
 	}
+	@Nullable
 	@Override
-	public void putGlobalMarker(World world, boolean visibleAhead, String markerType, String label, int x, int z) {
-		doPutMarker(world, visibleAhead, GLOBAL, markerType, label, x, z);
+	public Marker putGlobalMarker(@Nonnull World world, boolean visibleAhead, String markerType, String label, int x, int z) {
+		return doPutMarker(world, visibleAhead, GLOBAL, markerType, label, x, z);
 	}
-	private void doPutMarker(World world, boolean visibleAhead, int atlasID, String markerType, String label, int x, int z) {
+	private Marker doPutMarker(World world, boolean visibleAhead, int atlasID, String markerType, String label, int x, int z) {
+		Marker marker = null;
 		if (world.isRemote) {
 			if (atlasID == GLOBAL) {
 				Log.warn("Client tried to add a global marker!");
@@ -37,22 +43,23 @@ public class MarkerApiImpl implements MarkerAPI {
 		} else {
 			if (atlasID == GLOBAL) {
 				MarkersData data = AntiqueAtlasMod.globalMarkersData.getData();
-				Marker marker = data.createAndSaveMarker(markerType, label, world.provider.getDimension(), x, z, visibleAhead);
+				marker = data.createAndSaveMarker(markerType, label, world.provider.getDimension(), x, z, visibleAhead);
 				PacketDispatcher.sendToAll(new MarkersPacket(world.provider.getDimension(), marker));
 			} else {
 				MarkersData data = AntiqueAtlasMod.markersData.getMarkersData(atlasID, world);
-				Marker marker = data.createAndSaveMarker(markerType, label, world.provider.getDimension(), x, z, visibleAhead);
+				marker = data.createAndSaveMarker(markerType, label, world.provider.getDimension(), x, z, visibleAhead);
 				PacketDispatcher.sendToAll(new MarkersPacket(atlasID, world.provider.getDimension(), marker));
 			}
 		}
+		return marker;
 	}
 	
 	@Override
-	public void deleteMarker(World world, int atlasID, int markerID) {
+	public void deleteMarker(@Nonnull World world, int atlasID, int markerID) {
 		doDeleteMarker(world, atlasID, markerID);
 	}
 	@Override
-	public void deleteGlobalMarker(World world, int markerID) {
+	public void deleteGlobalMarker(@Nonnull World world, int markerID) {
 		doDeleteMarker(world, GLOBAL, markerID);
 	}
 	private void doDeleteMarker(World world, int atlasID, int markerID) {
