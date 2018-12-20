@@ -23,6 +23,7 @@ import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import org.apache.logging.log4j.Logger;
 
 @Mod(modid=AntiqueAtlasMod.ID, name=AntiqueAtlasMod.NAME, version=AntiqueAtlasMod.VERSION, dependencies="after:forge@[14.23.2.2611,);")
 public class AntiqueAtlasMod {
@@ -45,7 +46,7 @@ public class AntiqueAtlasMod {
 
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent event) {
-		Log.setModID(ID);
+		Log.setModLogger(event.getModLog());
 		MarkerRegistry.INSTANCE.getClass(); // load the class
 		MarkerTypes.INSTANCE.getClass(); // ...
 		proxy.preInit(event);

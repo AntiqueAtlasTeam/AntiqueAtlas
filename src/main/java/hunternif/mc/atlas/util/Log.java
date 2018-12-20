@@ -1,25 +1,27 @@
 package hunternif.mc.atlas.util;
 
-import net.minecraftforge.fml.common.FMLLog;
+import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.Logger;
 
 /**
- * A simple logging helper that is not directly dependent on any mod classes.
- * Make sure to call {@link #setModID(String modID)} during the mod's init.
- * @author Hunternif
+ * The Logger is provided by Forge during the PreInit event {@link FMLPreInitializationEvent#getModLog()}
  */
 public class Log {
-	private static String modID;
-	
-	public static void setModID(String modID) {
-		Log.modID = modID;
+	private static Logger modLogger;
+
+	public static void setModLogger(Logger modLogger) {
+		Log.modLogger = modLogger;
 	}
-	
+
 	private static void log(Level level, Throwable ex, String msg, Object... data) {
-		if (modID != null) {
-			FMLLog.log(modID, level, ex, msg, data);
+		if (data != null)
+			msg = String.format(msg, data);
+
+		if (ex != null) {
+			modLogger.log(level, msg, ex);
 		} else {
-			FMLLog.log(level, ex, msg, data);
+			modLogger.log(level, msg);
 		}
 	}
 	
