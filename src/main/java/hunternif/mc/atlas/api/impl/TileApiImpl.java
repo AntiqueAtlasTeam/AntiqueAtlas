@@ -70,7 +70,7 @@ public class TileApiImpl implements TileAPI {
 	public void setBiomeTexture(int biomeID, String textureSetName, ResourceLocation... textures) {
 		TextureSet set = new TextureSet(textureSetName, textures);
 		TextureSetMap.instance().register(set);
-		BiomeTextureMap.instance().setTexture(biomeID, set);
+		BiomeTextureMap.instance().setTexture(Biome.getBiomeForId(biomeID), set);
 	}
 	
 	@Override
@@ -80,7 +80,7 @@ public class TileApiImpl implements TileAPI {
 	
 	@Override
 	public void setBiomeTexture(int biomeID, TextureSet textureSet) {
-		BiomeTextureMap.instance().setTexture(biomeID, textureSet);
+		BiomeTextureMap.instance().setTexture(Biome.getBiomeForId(biomeID), textureSet);
 	}
 	
 	@Override
