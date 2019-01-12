@@ -414,24 +414,19 @@ public class GuiAtlas extends GuiComponent {
 		// Default file name is "Atlas <N>.png"
 		ExportImageUtil.isExporting = true;
 		
-		String atlaspath = Minecraft.getMinecraft().mcDataDir+"/screenshots/";
-		String outputname = "atlas-"+ DATE_FORMAT.format(new Date()).toString();
-		int i = 1;
-		
-		File file;
-		
-		while (true) {
-			file = new File(atlaspath, outputname + (i == 1 ? "" : "_" + i) + ".png");
-			
-			if (!file.exists()) {
-				break;
-			}
-			
-			++i;
+		File screenshot_folder = new File(Minecraft.getMinecraft().mcDataDir, "screenshots");
+		if(!screenshot_folder.isDirectory())
+		{
+			screenshot_folder.mkdir();
 		}
-		
-		
-		//File file = ExportImageUtil.selectPngFileToSave("Atlas " + atlasID);
+
+		String outputname = "atlas-" + DATE_FORMAT.format(new Date());
+
+		File file = new File(screenshot_folder, outputname + ".png");
+		for (int i = 1; file.exists(); i++) {
+			file = new File(screenshot_folder, outputname + "_" + i + ".png");
+		}
+
 		if (file != null) {
 			try {
 				Log.info("Exporting image from Atlas #%d to file %s", atlasID, file.getAbsolutePath());
