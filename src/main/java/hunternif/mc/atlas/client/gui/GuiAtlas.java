@@ -20,6 +20,7 @@ import hunternif.mc.atlas.registry.MarkerRenderInfo;
 import hunternif.mc.atlas.registry.MarkerType;
 import hunternif.mc.atlas.util.*;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
@@ -286,6 +287,29 @@ public class GuiAtlas extends GuiComponent {
                 } else {
                     selectedButton = button;
                     state.switchTo(PLACING_MARKER);
+
+					// While holding shift, we create a marker on the player's position
+					if (GuiScreen.isShiftKeyDown()) {
+						markerFinalizer.setMarkerData(player.getEntityWorld(),
+								getAtlasID(), player.dimension,
+								(int) player.posX, (int) player.posZ);
+						addChild(markerFinalizer);
+
+						blinkingIcon.setTexture(markerFinalizer.selectedType.getIcon(),
+								MARKER_SIZE, MARKER_SIZE);
+						addChildBehind(markerFinalizer, blinkingIcon)
+								.setRelativeCoords(worldXToScreenX((int) player.posX) - getGuiX() - MARKER_SIZE / 2,
+										worldZToScreenY((int) player.posZ) - getGuiY() - MARKER_SIZE / 2);
+
+						// Need to intercept keyboard events to type in the label:
+						setInterceptKeyboard(true);
+
+						// Un-press all keys to prevent player from walking infinitely:
+						KeyBinding.unPressAllKeys();
+
+						selectedButton = null;
+						state.switchTo(NORMAL);
+					}
                 }
             }
         });
