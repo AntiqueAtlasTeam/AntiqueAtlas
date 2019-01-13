@@ -11,9 +11,7 @@ import hunternif.mc.atlas.marker.GlobalMarkersDataHandler;
 import hunternif.mc.atlas.marker.MarkersDataHandler;
 import hunternif.mc.atlas.marker.NetherPortalWatcher;
 import hunternif.mc.atlas.network.PacketDispatcher;
-import hunternif.mc.atlas.registry.MarkerRegistry;
 import hunternif.mc.atlas.registry.MarkerTypes;
-import hunternif.mc.atlas.util.Log;
 import net.minecraft.world.DimensionType;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
@@ -34,6 +32,8 @@ public class AntiqueAtlasMod {
 	@Instance(ID)
 	public static AntiqueAtlasMod instance;
 
+	public boolean jeidPresent = false;
+
 	@SidedProxy(clientSide="hunternif.mc.atlas.ClientProxy", serverSide="hunternif.mc.atlas.CommonProxy")
 	public static CommonProxy proxy;
 
@@ -45,9 +45,6 @@ public class AntiqueAtlasMod {
 
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent event) {
-		Log.setModID(ID);
-		MarkerRegistry.INSTANCE.getClass(); // load the class
-		MarkerTypes.INSTANCE.getClass(); // ...
 		proxy.preInit(event);
 	}
 

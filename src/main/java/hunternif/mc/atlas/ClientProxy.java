@@ -76,13 +76,6 @@ public class ClientProxy extends CommonProxy implements IResourceManagerReloadLi
 			biomeTextureConfigFile.renameTo(new File(configDir, "biome_textures.json"));
 		}
 
-		biomeTextureMap = BiomeTextureMap.instance();
-		biomeTextureConfig = new BiomeTextureConfig(new File(configDir, "biome_textures.json"), textureSetMap);
-		biomeTextureConfig.load(biomeTextureMap);
-		// Prevent rewriting of the config while no changes have been made:
-		biomeTextureMap.setDirty(false);
-		assignVanillaBiomeTextures();
-
 		tileTextureMap = ExtTileTextureMap.instance();
 		tileTextureConfig = new ExtTileTextureConfig(new File(configDir, "tile_textures.json"), textureSetMap);
 		tileTextureConfig.load(tileTextureMap);
@@ -98,6 +91,14 @@ public class ClientProxy extends CommonProxy implements IResourceManagerReloadLi
 	@Override
 	public void init(FMLInitializationEvent event) {
 		super.init(event);
+
+		biomeTextureMap = BiomeTextureMap.instance();
+		biomeTextureConfig = new BiomeTextureConfig(new File(configDir, "biome_textures.json"), textureSetMap);
+		biomeTextureConfig.load(biomeTextureMap);
+		// Prevent rewriting of the config while no changes have been made:
+		biomeTextureMap.setDirty(false);
+		assignVanillaBiomeTextures();
+
 		markerTextureConfig = new MarkerTextureConfig(new File(configDir, "markers.json"));
 		markerTextureConfig.load(MarkerRegistry.INSTANCE);
 		// Prevent rewriting of the config while no changes have been made:
@@ -305,13 +306,10 @@ public class ClientProxy extends CommonProxy implements IResourceManagerReloadLi
 	}
 	/** Only applies the change if no texture is registered for this biome.
 	 * This prevents overwriting of the config when there is no real change. */
-	private void setBiomeTextureIfNone(int biomeID, TextureSet textureSet) {
-		if (!biomeTextureMap.isRegistered(biomeID)) {
-			biomeTextureMap.setTexture(biomeID, textureSet);
-		}
-	}
 	private void setBiomeTextureIfNone(Biome biome, TextureSet textureSet) {
-		setBiomeTextureIfNone(Biome.getIdForBiome(biome), textureSet);
+		if(!biomeTextureMap.isRegistered(biome)) {
+			biomeTextureMap.setTexture(biome, textureSet);
+		}
 	}
 
 	/** Assign default textures to the pseudo-biomes used for vanilla Minecraft.

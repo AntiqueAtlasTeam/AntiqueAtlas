@@ -22,7 +22,7 @@ public class ItemAtlas extends Item {
 	static final String WORLD_ATLAS_DATA_ID = "aAtlas";
 
 	public ItemAtlas() {
-	    setUnlocalizedName("antiqueAtlas");
+	    setTranslationKey("antiqueAtlas");
 		setHasSubtypes(true);
 	}
 

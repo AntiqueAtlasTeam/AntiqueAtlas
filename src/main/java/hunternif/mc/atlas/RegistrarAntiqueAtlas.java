@@ -56,9 +56,9 @@ public class RegistrarAntiqueAtlas {
     @SubscribeEvent
     public static void handleMissingMapping(RegistryEvent.MissingMappings<Item> event) {
         for (RegistryEvent.MissingMappings.Mapping<Item> mapping : event.getMappings()) {
-            if (mapping.key.getResourcePath().equalsIgnoreCase("antiqueatlas"))
+            if (mapping.key.getPath().equalsIgnoreCase("antiqueatlas"))
                 mapping.remap(ATLAS);
-            else if (mapping.key.getResourcePath().equalsIgnoreCase("emptyantiqueatlas"))
+            else if (mapping.key.getPath().equalsIgnoreCase("emptyantiqueatlas"))
                 mapping.remap(EMPTY_ATLAS);
         }
     }

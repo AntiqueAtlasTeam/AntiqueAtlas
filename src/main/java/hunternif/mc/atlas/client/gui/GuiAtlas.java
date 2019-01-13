@@ -419,7 +419,7 @@ public class GuiAtlas extends GuiComponent {
 		// Default file name is "Atlas <N>.png"
 		ExportImageUtil.isExporting = true;
 		
-		File screenshot_folder = new File(Minecraft.getMinecraft().mcDataDir, "screenshots");
+		File screenshot_folder = new File(Minecraft.getMinecraft().gameDir, "screenshots");
 		if(!screenshot_folder.isDirectory())
 		{
 			screenshot_folder.mkdir();

@@ -18,7 +18,7 @@ import net.minecraftforge.common.ForgeHooks;
 public class ItemEmptyAtlas extends Item {
 
 	public ItemEmptyAtlas() {
-	    setUnlocalizedName("emptyAntiqueAtlas");
+	    setTranslationKey("emptyAntiqueAtlas");
         setCreativeTab(CreativeTabs.TOOLS);
 	}
 

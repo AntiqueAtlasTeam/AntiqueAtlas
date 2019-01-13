@@ -1,5 +1,6 @@
 package hunternif.mc.atlas.core;
 
+import hunternif.mc.atlas.AntiqueAtlasMod;
 import net.minecraft.block.Block;
 import net.minecraft.init.Biomes;
 import net.minecraft.init.Blocks;
@@ -8,6 +9,8 @@ import net.minecraft.world.chunk.Chunk;
 
 import hunternif.mc.atlas.ext.ExtTileIdMap;
 import hunternif.mc.atlas.util.ByteUtil;
+
+import java.lang.reflect.InvocationTargetException;
 
 /**
  * Detects seas of lava, cave ground and cave walls in the Nether.
@@ -18,7 +21,11 @@ public class BiomeDetectorEnd extends BiomeDetectorBase implements IBiomeDetecto
 	@Override
 	public int getBiomeID(Chunk chunk) {
 		int biomesCount = Biome.REGISTRY.getKeys().size();
-		int[] chunkBiomes = ByteUtil.unsignedByteToIntArray(chunk.getBiomeArray());
+		int[] chunkBiomes;
+		try {
+			chunkBiomes = ByteUtil.unsignedByteToIntArray(biomeArrayMethod.invoke(chunk));
+		}
+		catch (IllegalAccessException | InvocationTargetException e) { throw new RuntimeException(e); }
 		int[] biomeOccurrences = new int[biomesCount];
 		
 		// The following pseudo-biomes don't have IDs:

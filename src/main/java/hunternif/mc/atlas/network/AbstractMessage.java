@@ -1,4 +1,4 @@
-/**
+/*
     Copyright (C) <2014> <coolAlias>
 
     This file is part of coolAlias' Zelda Sword Skills Minecraft Mod; as such,
@@ -79,7 +79,7 @@ public abstract class AbstractMessage<T extends AbstractMessage<T>> implements I
 		try {
 			read(new PacketBuffer(buffer));
 		} catch (IOException e) {
-			throw Throwables.propagate(e);
+			throw new RuntimeException(e);
 		}
 	}
 
@@ -88,7 +88,7 @@ public abstract class AbstractMessage<T extends AbstractMessage<T>> implements I
 		try {
 			write(new PacketBuffer(buffer));
 		} catch (IOException e) {
-			throw Throwables.propagate(e);
+			throw new RuntimeException(e);
 		}
 	}
 

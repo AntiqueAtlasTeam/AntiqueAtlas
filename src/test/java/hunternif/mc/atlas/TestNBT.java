@@ -3,6 +3,7 @@ package hunternif.mc.atlas;
 
 import static org.junit.Assert.*;
 
+
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -15,7 +16,6 @@ import hunternif.mc.atlas.core.DimensionData;
 import hunternif.mc.atlas.core.Tile;
 import hunternif.mc.atlas.core.TileGroup;
 import hunternif.mc.atlas.network.server.BrowsingPositionPacket;
-import hunternif.mc.atlas.util.Log;
 import hunternif.mc.atlas.util.ShortVec2;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -67,7 +67,6 @@ public class TestNBT {
 	
 	@Test
 	public void testTileGroupBounds() {
-		Log.setModID(AntiqueAtlasMod.ID);
 		tg.setTile(15,15, new Tile(1));
 		tg.setTile(32,32, new Tile(1));
 		assertEquals(null, tg.getTile(15, 15));
