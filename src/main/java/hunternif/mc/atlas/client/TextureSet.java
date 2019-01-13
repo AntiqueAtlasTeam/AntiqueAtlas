@@ -168,6 +168,7 @@ public class TextureSet implements Comparable<TextureSet> {
 	// Misc. stuff:
 	MUSHROOM   = standard("MUSHROOM", TILE_MUSHROOM, TILE_MUSHROOM2),
 	CAVE_WALLS = standard("CAVE_WALLS", TILE_CAVE_WALLS),
+	RAVINE     = standard("RAVINE", TILE_RAVINE),
 	
 	// Village:
 	HOUSE          = standard("HOUSE", TILE_HOUSE),

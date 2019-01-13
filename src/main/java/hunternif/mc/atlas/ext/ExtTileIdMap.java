@@ -36,7 +36,9 @@ public class ExtTileIdMap extends SaveData {
 	TILE_VILLAGE_SMALL_HOUSE = "npcVillageSmallHouse",
 	TILE_VILLAGE_BUTCHERS_SHOP = "npcVillageButchersShop",
 	TILE_VILLAGE_CHURCH = "npcVillageChurch",
-	
+
+	TILE_RAVINE = "ravine",
+
 	// Nether & Nether Fortress:
 	TILE_LAVA = "lava",
 	TILE_LAVA_SHORE = "lavaShore",
@@ -55,7 +57,7 @@ public class ExtTileIdMap extends SaveData {
 	TILE_END_ISLAND = "endIsland",
 	TILE_END_ISLAND_PLANTS = "endIslandPlants",
 	TILE_END_VOID = "endVoid";
-	
+
 	public static final int NOT_FOUND = -1;
 	
 	/** Set initially to -1 because that is reserved for when no biome is found

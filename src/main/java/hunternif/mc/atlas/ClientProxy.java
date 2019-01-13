@@ -203,6 +203,7 @@ public class ClientProxy extends CommonProxy implements IResourceManagerReloadLi
 		map.register(LAVA);
 		map.register(LAVA_SHORE);
 		map.register(CAVE_WALLS);
+		map.register(RAVINE);
 
 		map.register(HOUSE);
 		map.register(FENCE);
@@ -348,6 +349,8 @@ public class ClientProxy extends CommonProxy implements IResourceManagerReloadLi
 		setCustomTileTextureIfNone(ExtTileIdMap.TILE_END_ISLAND, END_ISLAND);
 		setCustomTileTextureIfNone(ExtTileIdMap.TILE_END_ISLAND_PLANTS, END_ISLAND_PLANTS);
 		setCustomTileTextureIfNone(ExtTileIdMap.TILE_END_VOID, END_VOID);
+
+		setCustomTileTextureIfNone(ExtTileIdMap.TILE_RAVINE, RAVINE);
 	}
 	/** Only applies the change if no texture is registered for this tile name.
 	 * This prevents overwriting of the config when there is no real change. */

@@ -87,6 +87,8 @@ public class CommonProxy {
 		extTileIdMap.getOrCreatePseudoBiomeID(ExtTileIdMap.TILE_END_ISLAND);
 		extTileIdMap.getOrCreatePseudoBiomeID(ExtTileIdMap.TILE_END_ISLAND_PLANTS);
 		extTileIdMap.getOrCreatePseudoBiomeID(ExtTileIdMap.TILE_END_VOID);
+
+		extTileIdMap.getOrCreatePseudoBiomeID(ExtTileIdMap.TILE_RAVINE);
 	}
 
 	public void openAtlasGUI(ItemStack stack) {}

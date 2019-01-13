@@ -22,12 +22,16 @@ import java.util.*;
  */
 public class BiomeDetectorBase implements IBiomeDetector {
 	private boolean doScanPonds = true;
+	private boolean doScanRavines = true;
 
 	/** Biome used for occasional pools of water. */
 	private static final int waterPoolBiomeID = Biome.getIdForBiome(Biomes.RIVER);
 	/** Increment the counter for water biomes by this much during iteration.
 	 * This is done so that water pools are more visible. */
-	private static final int priorityWaterPool = 3, prioritylavaPool = 6;
+	private static final int priorityRavine = 12, priorityWaterPool = 3, prioritylavaPool = 6;
+
+	/** Minimum depth in the ground to be considered a ravine */
+	private static final int ravineMinDepth = 7;
 
 	/** Set to true for biome IDs that return true for BiomeDictionary.isBiomeOfType(WATER) */
 	private static final Set<Biome> waterBiomes = new HashSet<>();
@@ -41,7 +45,7 @@ public class BiomeDetectorBase implements IBiomeDetector {
 
 	/** Scan all registered biomes to mark biomes of certain types that will be
 	 * given higher priority when identifying mean biome ID for a chunk.
-	 * (Currently WATER and BEACH) */
+	 * (Currently WATER, BEACH and SWAMP) */
 	public static void scanBiomeTypes() {
 		waterBiomes.addAll(BiomeDictionary.getBiomes(Type.WATER));
 		beachBiomes.addAll(BiomeDictionary.getBiomes(Type.BEACH));
@@ -62,6 +66,10 @@ public class BiomeDetectorBase implements IBiomeDetector {
 
 	public void setScanPonds(boolean value) {
 		this.doScanPonds = value;
+	}
+
+	public void setScanRavines(boolean value) {
+		this.doScanRavines = value;
 	}
 
 	int priorityForBiome(Biome biome) {
@@ -90,6 +98,7 @@ public class BiomeDetectorBase implements IBiomeDetector {
 
 		// The following important pseudo-biomes don't have IDs:
 		int lavaOccurrences = 0;
+		int ravineOccurences = 0;
 
 		for (int x = 0; x < 16; x++) {
 			for (int z = 0; z < 16; z++) {
@@ -110,6 +119,11 @@ public class BiomeDetectorBase implements IBiomeDetector {
 						}
 					}
 				}
+				if (doScanRavines) {
+					if(chunk.getHeightValue(x, z) < chunk.getWorld().provider.getAverageGroundLevel() - ravineMinDepth)	{
+						ravineOccurences += priorityRavine;
+					}
+				}
 				if (biomeID >= 0 && Biome.getBiomeForId(biomeID) != null) {
 					int occurrence = biomeOccurrences.getOrDefault(biomeID, 0) + priorityForBiome(Biome.getBiomeForId(biomeID));
 					biomeOccurrences.put(biomeID, occurrence);
@@ -123,6 +137,9 @@ public class BiomeDetectorBase implements IBiomeDetector {
 			int meanBiomeOccurrences = meanBiome.getValue();
 
 			// The following important pseudo-biomes don't have IDs:
+			if (meanBiomeOccurrences < ravineOccurences) {
+				return ExtTileIdMap.instance().getPseudoBiomeID(ExtTileIdMap.TILE_RAVINE);
+			}
 			if (meanBiomeOccurrences < lavaOccurrences) {
 				return ExtTileIdMap.instance().getPseudoBiomeID(ExtTileIdMap.TILE_LAVA);
 			}

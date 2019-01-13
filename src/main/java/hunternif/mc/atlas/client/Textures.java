@@ -206,6 +206,7 @@ public class Textures {
 	TILE_PLATEAU_SAVANNA2 = tile("plateau_savanna2.png"),
 	TILE_PLATEAU_SAVANNA3 = tile("plateau_savanna3.png"),
 	TILE_CAVE_WALLS = tile("cave_walls.png"),
+	TILE_RAVINE = tile("ravine.png"),
 	TILE_LAVA = tile("lava.png"),
 	TILE_LAVA2 = tile("lava2.png"),
 	TILE_LAVA_SHORE = tile("lava_shore.png"),

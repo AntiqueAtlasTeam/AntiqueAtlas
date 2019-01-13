@@ -66,6 +66,8 @@ public class SettingsConfig {
         public int markerLimit = 1024;
         @Config.Comment({"Whether to perform additional scanning to locate small ponds of water or lava.", "Disable for better performance."})
         public boolean doScanPonds = true;
+        @Config.Comment({"Whether to perform additional scanning to locate ravines.", "Disable for better performance."})
+        public boolean doScanRavines = true;
         @Config.Comment({"If true, map render time will be output."})
         public boolean debugRender = false;
     }

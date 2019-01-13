@@ -53,6 +53,7 @@ public class AtlasData extends WorldSavedData {
 		super(key);
 
 		biomeDetectorOverworld.setScanPonds(SettingsConfig.performance.doScanPonds);
+		biomeDetectorOverworld.setScanRavines(SettingsConfig.performance.doScanRavines);
 		setBiomeDetectorForDimension(0, biomeDetectorOverworld);
 		setBiomeDetectorForDimension(-1, biomeDetectorNether);
 		setBiomeDetectorForDimension(1, biomeDetectorEnd);
