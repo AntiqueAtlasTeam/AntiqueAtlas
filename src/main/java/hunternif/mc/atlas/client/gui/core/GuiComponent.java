@@ -5,6 +5,7 @@ import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
+import net.minecraftforge.fml.client.config.GuiUtils;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.input.Keyboard;
@@ -442,66 +443,12 @@ public class GuiComponent extends GuiScreen {
 	 * component's dimensions (i.e. if it won't fit in when drawn to the left
 	 * of the cursor, it will be drawn to the right instead). */
     private void drawHoveringText2(List<String> lines, int x, int y, FontRenderer font) {
-		if (!lines.isEmpty()) {
-			// Stencil test is used by VScrollingComponent to hide the content
-			// that is currently outside the viewport; that shouldn't affect
-			// hovering text though.
-			boolean stencilEnabled = GL11.glIsEnabled(GL11.GL_STENCIL_TEST);
-			if (stencilEnabled) GL11.glDisable(GL11.GL_STENCIL_TEST);
-			RenderHelper.disableStandardItemLighting();
+		boolean stencilEnabled = GL11.glIsEnabled(GL11.GL_STENCIL_TEST);
+		if (stencilEnabled) GL11.glDisable(GL11.GL_STENCIL_TEST);
 
-			int k = 0;
-			for (String s : lines) {
-				int l = font.getStringWidth(s);
+		GuiUtils.drawHoveringText(lines, x, y, width, height, -1, font);
 
-				if (l > k) {
-					k = l;
-				}
-			}
-
-			int i1 = x + 12;
-			int j1 = y - 12;
-			int k1 = 8;
-
-			if (lines.size() > 1) {
-				k1 += 2 + (lines.size() - 1) * 10;
-			}
-
-			if (i1 + k > width) {
-				i1 -= 28 + k;
-			}
-
-			if (j1 + k1 + 6 > height) {
-				j1 = height - k1 - 6;
-			}
-
-			int l1 = -267386864;
-			this.drawGradientRect(i1 - 3, j1 - 4, i1 + k + 3, j1 - 3, l1, l1);
-			this.drawGradientRect(i1 - 3, j1 + k1 + 3, i1 + k + 3, j1 + k1 + 4, l1, l1);
-			this.drawGradientRect(i1 - 3, j1 - 3, i1 + k + 3, j1 + k1 + 3, l1, l1);
-			this.drawGradientRect(i1 - 4, j1 - 3, i1 - 3, j1 + k1 + 3, l1, l1);
-			this.drawGradientRect(i1 + k + 3, j1 - 3, i1 + k + 4, j1 + k1 + 3, l1, l1);
-			int i2 = 1347420415;
-			int j2 = (i2 & 16711422) >> 1 | i2 & -16777216;
-			this.drawGradientRect(i1 - 3, j1 - 3 + 1, i1 - 3 + 1, j1 + k1 + 3 - 1, i2, j2);
-			this.drawGradientRect(i1 + k + 2, j1 - 3 + 1, i1 + k + 3, j1 + k1 + 3 - 1, i2, j2);
-			this.drawGradientRect(i1 - 3, j1 - 3, i1 + k + 3, j1 - 3 + 1, i2, i2);
-			this.drawGradientRect(i1 - 3, j1 + k1 + 2, i1 + k + 3, j1 + k1 + 3, j2, j2);
-
-			for (int k2 = 0; k2 < lines.size(); ++k2) {
-				String s1 = lines.get(k2);
-				font.drawStringWithShadow(s1, i1, j1, -1);
-
-				if (k2 == 0) {
-					j1 += 2;
-				}
-
-				j1 += 10;
-			}
-			if (stencilEnabled) GL11.glEnable(GL11.GL_STENCIL_TEST);
-			RenderHelper.enableStandardItemLighting();
-			GlStateManager.enableBlend();
-		}
+		if (stencilEnabled) GL11.glEnable(GL11.GL_STENCIL_TEST);
 	}
 
 	/** Returns the top level parent of this component, or itself if it has no
