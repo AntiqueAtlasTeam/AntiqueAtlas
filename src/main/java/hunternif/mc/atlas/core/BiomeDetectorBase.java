@@ -10,6 +10,8 @@ import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.common.BiomeDictionary.Type;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.*;
 
 /**
@@ -28,20 +30,34 @@ public class BiomeDetectorBase implements IBiomeDetector {
 	private static final int priorityWaterPool = 3, prioritylavaPool = 6;
 
 	/** Set to true for biome IDs that return true for BiomeDictionary.isBiomeOfType(WATER) */
-	private static final boolean[] waterBiomes = new boolean[256];
+	private static final Set<Biome> waterBiomes = new HashSet<>();
 	/** Set to true for biome IDs that return true for BiomeDictionary.isBiomeOfType(BEACH) */
-	private static final boolean[] beachBiomes = new boolean[256];
+	private static final Set<Biome> beachBiomes = new HashSet<>();
+
+	private static final Set<Biome> swampBiomes = new HashSet<>();
+
+
+	protected static Method biomeArrayMethod;
 
 	/** Scan all registered biomes to mark biomes of certain types that will be
 	 * given higher priority when identifying mean biome ID for a chunk.
 	 * (Currently WATER and BEACH) */
 	public static void scanBiomeTypes() {
-		for (Biome biome : BiomeDictionary.getBiomes(Type.WATER)) {
-			waterBiomes[Biome.getIdForBiome(biome)] = true;
+		waterBiomes.addAll(BiomeDictionary.getBiomes(Type.WATER));
+		beachBiomes.addAll(BiomeDictionary.getBiomes(Type.BEACH));
+		swampBiomes.addAll(BiomeDictionary.getBiomes(Type.SWAMP));
+	}
+
+	public static void setBiomeArrayMethod(boolean jeidPresent) {
+		try {
+			if (jeidPresent) {
+				biomeArrayMethod = Chunk.class.getMethod("getIntBiomeArray");
+			}
+			else {
+				biomeArrayMethod = Chunk.class.getMethod("getBiomeArray");
+			}
 		}
-		for (Biome biome : BiomeDictionary.getBiomes(Type.BEACH)) {
-			beachBiomes[Biome.getIdForBiome(biome)] = true;
-		}
+		catch (NoSuchMethodException e) { throw new RuntimeException(e); }
 	}
 
 	public void setScanPonds(boolean value) {
@@ -49,9 +65,9 @@ public class BiomeDetectorBase implements IBiomeDetector {
 	}
 
 	int priorityForBiome(Biome biome) {
-		if (waterBiomes[Biome.getIdForBiome(biome)]) {
+		if (waterBiomes.contains(biome)) {
 			return 4;
-		} else if (beachBiomes[Biome.getIdForBiome(biome)]) {
+		} else if (beachBiomes.contains(biome)) {
 			return 3;
 		} else {
 			return 1;
@@ -63,7 +79,13 @@ public class BiomeDetectorBase implements IBiomeDetector {
 	public int getBiomeID(Chunk chunk) {
 		int biomeCount = Biome.REGISTRY.getKeys().size();
 
-		int[] chunkBiomes = ByteUtil.unsignedByteToIntArray(chunk.getBiomeArray());
+		int[] chunkBiomes;
+		try {
+			chunkBiomes = ByteUtil.unsignedByteToIntArray(biomeArrayMethod.invoke(chunk));
+		}
+		catch (IllegalAccessException | InvocationTargetException e) { throw new RuntimeException(e); }
+
+
 		Map<Integer, Integer> biomeOccurrences = new HashMap<>(biomeCount);
 
 		// The following important pseudo-biomes don't have IDs:
@@ -80,9 +102,7 @@ public class BiomeDetectorBase implements IBiomeDetector {
 						// TODO: check if 1.8 fixes this!
 						Block topBlock2 = chunk.getBlockState(x, y, z).getBlock();
 						// Check if there's surface of water at (x, z), but not swamp
-						if (topBlock == Blocks.WATER &&
-								biomeID != Biome.getIdForBiome(Biomes.SWAMPLAND) &&
-								biomeID != Biome.getIdForBiome(Biomes.MUTATED_SWAMPLAND)) {
+						if (topBlock == Blocks.WATER && !swampBiomes.contains(Biome.getBiomeForId(biomeID))) {
 							int occurrence = biomeOccurrences.getOrDefault(waterPoolBiomeID, 0) + priorityWaterPool;
 							biomeOccurrences.put(waterPoolBiomeID, occurrence);
 						} else if (topBlock2 == Blocks.LAVA) {

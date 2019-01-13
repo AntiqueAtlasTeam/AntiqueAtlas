@@ -8,7 +8,6 @@ import hunternif.mc.atlas.core.TileInfo;
 import hunternif.mc.atlas.marker.MarkersData;
 import hunternif.mc.atlas.network.PacketDispatcher;
 import hunternif.mc.atlas.network.client.DimensionUpdatePacket;
-import jline.internal.Log;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -22,7 +21,7 @@ public class ItemAtlas extends Item {
 	static final String WORLD_ATLAS_DATA_ID = "aAtlas";
 
 	public ItemAtlas() {
-	    setUnlocalizedName("antiqueAtlas");
+	    setTranslationKey("antiqueAtlas");
 		setHasSubtypes(true);
 	}
 

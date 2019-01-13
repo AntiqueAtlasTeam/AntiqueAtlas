@@ -8,6 +8,7 @@ import hunternif.mc.atlas.ext.TileIdRegisteredEvent;
 import hunternif.mc.atlas.network.AbstractMessage.AbstractClientMessage;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.world.biome.Biome;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.relauncher.Side;
@@ -72,7 +73,7 @@ public class TileNameIDPacket extends AbstractClientMessage<TileNameIDPacket>
 			// Remove old texture mapping
 			int oldID = ExtTileIdMap.instance().getPseudoBiomeID(tileName);
 			if (oldID != ExtTileIdMap.NOT_FOUND && oldID != id) {
-				BiomeTextureMap.instance().setTexture(oldID, null);
+				BiomeTextureMap.instance().setTexture(Biome.getBiomeForId(oldID), null);
 			}
 			ExtTileIdMap.instance().setPseudoBiomeID(tileName, id);
 			// Register new texture mapping

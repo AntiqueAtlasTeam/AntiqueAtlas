@@ -25,6 +25,8 @@ public class SettingsConfig {
         public boolean autoDeathMarker = true;
         @Config.Comment({"Whether to add global markers for NPC villages."})
         public boolean autoVillageMarkers = true;
+        @Config.Comment({"Whether to add global markers for Nether Portals."})
+        public boolean autoNetherPortalMarkers = true;
         @Config.Comment({"Player will need to craft atlas item to use atlas."})
         @Config.RequiresMcRestart
         public boolean itemNeeded = true;
