@@ -1,7 +1,7 @@
 package hunternif.mc.atlas.marker;
 
+import hunternif.mc.atlas.util.Log;
 import hunternif.mc.atlas.util.ShortVec2;
-import jline.internal.Log;
 import net.minecraft.client.resources.I18n;
 
 /**
