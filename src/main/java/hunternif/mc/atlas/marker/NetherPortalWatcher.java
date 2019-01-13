@@ -10,14 +10,15 @@ import hunternif.mc.atlas.util.Log;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.world.DimensionType;
 import net.minecraft.world.World;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.registry.ForgeRegistries;
 
-import java.util.Collections;
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -35,7 +36,7 @@ public class NetherPortalWatcher extends DummyWorldAccess {
 	 * detection doesn't work for some reason. But we can detect his arrival
 	 * by checking if this set contains the player's ID!
 	 */
-	private final Set<Integer> teleportingPlayerIDs = Collections.newSetFromMap(new ConcurrentHashMap<Integer, Boolean>());
+	private final Map<Integer, Integer> teleportingPlayersOrigin = new ConcurrentHashMap<Integer, Integer>();
 	
 	@SubscribeEvent
 	public void onWorldLoad(WorldEvent.Load event) {
@@ -55,13 +56,18 @@ public class NetherPortalWatcher extends DummyWorldAccess {
 	public void onEntityAdded(Entity entity) {
 		if (entity instanceof EntityPlayer) {
 			EntityPlayer player = (EntityPlayer) entity;
-			if (teleportingPlayerIDs.remove(entity.getEntityId())) {
+			if (teleportingPlayersOrigin.containsKey(entity.getEntityId())) {
+				int origin = teleportingPlayersOrigin.remove(entity.getEntityId());
 				Log.info("Entering");
 				// player.dimension is the destination dimension
 				int dimension = player.dimension;
-				Log.info("Player %s teleported to the %s", player.getGameProfile().getName(),
-						dimension == 0 ? "Overworld" : "Nether");
-				addPortalMarkerIfNone(player, dimension);
+
+				// Only look for portals into and out of the Nether
+				if(origin == DimensionType.NETHER.getId() || dimension == DimensionType.NETHER.getId()) {
+					Log.info("Player %s teleported to the %s", player.getGameProfile().getName(),
+							 DimensionType.getById(dimension).getName());
+					addPortalMarkerIfNone(player, dimension);
+				}
 			}
 		}
 	}
@@ -73,11 +79,12 @@ public class NetherPortalWatcher extends DummyWorldAccess {
 			if (isEntityInPortal(entity)) {
 				Log.info("Exiting");
 				// player.worldObj.provider.dimensionId is the dimension of origin
-				int dimension = player.getEntityWorld().provider.getDimension();
+				int originDimension = player.getEntityWorld().provider.getDimension();
 				Log.info("Player %s left the %s", player.getGameProfile().getName(),
-						dimension == 0 ? "Overworld" : "Nether");
-				teleportingPlayerIDs.add(entity.getEntityId());
-				addPortalMarkerIfNone(player, dimension);
+						 DimensionType.getById(originDimension).getName());
+				teleportingPlayersOrigin.put(entity.getEntityId(), originDimension);
+				// TODO Check what is the target dimension
+				addPortalMarkerIfNone(player, originDimension);
 			}
 		}
 	}
@@ -85,6 +92,10 @@ public class NetherPortalWatcher extends DummyWorldAccess {
 	/** Put the Portal marker at the player's current coordinates into all
 	 * atlases that he is carrying, if the same marker is not already there. */
 	private void addPortalMarkerIfNone(EntityPlayer player, int dimension) {
+		if(!SettingsConfig.gameplay.autoNetherPortalMarkers) {
+			return;
+		}
+
 		// Due to switching dimensions this player entity's worldObj is lagging.
 		// We need the very specific dimension each time.
 		World world = AntiqueAtlasMod.proxy.getServer().getWorld(dimension);
