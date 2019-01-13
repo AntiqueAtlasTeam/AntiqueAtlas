@@ -252,7 +252,7 @@ public class BiomeTextureMap extends SaveData {
 		if (tile.biomeID >= 0) {
 			Biome biome = Biome.getBiomeForId(tile.biomeID);
 			checkRegistration(biome);
-			return biomeTextureMap.get(biome);
+			return biomeTextureMap.getOrDefault(biome, defaultTexture);
 		}
 		else {
 			checkRegistration(tile.biomeID);
