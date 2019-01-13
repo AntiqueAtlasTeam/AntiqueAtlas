@@ -26,7 +26,7 @@ public class AtlasData extends WorldSavedData {
 	public static final String TAG_DIMENSION_MAP_LIST = "qDimensionMap";
 	public static final String TAG_DIMENSION_ID = "qDimensionID";
 	public static final String TAG_VISITED_CHUNKS = "qVisitedChunks";
-	
+
 	// Navigation
 	public static final String TAG_BROWSING_X = "qBrowseX";
 	public static final String TAG_BROWSING_Y = "qBrowseY";
@@ -43,10 +43,10 @@ public class AtlasData extends WorldSavedData {
 	 * CAREFUL! Don't modify chunk coordinates that are already put in the map! */
 	private final Map<Integer /*dimension ID*/, DimensionData> dimensionMap =
 			new ConcurrentHashMap<>(2, 0.75f, 2);
-	
+
 	/** Set of players this Atlas data has been sent to. */
 	private final Set<EntityPlayer> playersSentTo = new HashSet<>();
-	
+
 	private NBTTagCompound nbt;
 
 	public AtlasData(String key) {
@@ -81,7 +81,7 @@ public class AtlasData extends WorldSavedData {
 					dimTag.getInteger(TAG_BROWSING_Y), zoom);
 		}
 	}
-	
+
 	/**Reads from NBT version 2. This is designed to allow easy upgrading to version 3.*/
 	public void readFromNBT2(NBTTagCompound compound) {
 		this.nbt = compound;
@@ -115,7 +115,7 @@ public class AtlasData extends WorldSavedData {
 	public NBTTagCompound writeToNBT(NBTTagCompound compound) {
 		return writeToNBT(compound, true);
 	}
-	
+
 	public NBTTagCompound writeToNBT(NBTTagCompound compound, boolean includeTileData) {
 		NBTTagList dimensionMapList = new NBTTagList();
 		compound.setInteger(TAG_VERSION, VERSION);
@@ -132,7 +132,7 @@ public class AtlasData extends WorldSavedData {
 			dimensionMapList.appendTag(dimTag);
 		}
 		compound.setTag(TAG_DIMENSION_MAP_LIST, dimensionMapList);
-		
+
 		return compound;
 	}
 
@@ -148,14 +148,14 @@ public class AtlasData extends WorldSavedData {
 	}
 
 	/**Updates map data around player
-	 * 
+	 *
 	 * @return A set of the new tiles, mostly so the server can synch those with relavent clients.*/
 	public ArrayList<TileInfo> updateMapAroundPlayer(EntityPlayer player) {
 		// Update the actual map only so often:
 		ArrayList<TileInfo> updatedTiles = new ArrayList<TileInfo>();
 		int newScanInterval = Math.round(SettingsConfig.performance.newScanInterval * 20);
 		int rescanInterval = newScanInterval * SettingsConfig.performance.rescanRate;
-		
+
 		if (player.ticksExisted % newScanInterval != 0) {
 			return updatedTiles;//no new tiles
 		}
@@ -165,6 +165,8 @@ public class AtlasData extends WorldSavedData {
 		ITileStorage seenChunks = this.getDimensionData(player.dimension);
 		IBiomeDetector biomeDetector = getBiomeDetectorForDimension(player.dimension);
 		int scanRadius = SettingsConfig.performance.scanRadius;
+
+		final boolean rescanRequired = SettingsConfig.performance.doRescan && player.ticksExisted % rescanInterval == 0;
 
 		// Look at chunks around in a circular area:
 		for (double dx = -scanRadius; dx <= scanRadius; dx++) {
@@ -183,6 +185,11 @@ public class AtlasData extends WorldSavedData {
 
 				// If there's no custom tile, check the actual chunk:
 				if (biomeId == -1) {
+					// If the chunk has been scanned previously, only re-scan it so often:
+					if (oldTile != null && !rescanRequired) {
+						continue;
+					}
+
 					Chunk chunk = player.getEntityWorld().getChunkProvider().getLoadedChunk(x, z);
 					// Force loading of chunk, if required:
 
@@ -196,11 +203,8 @@ public class AtlasData extends WorldSavedData {
 					}
 
 					if (oldTile != null) {
-						// If the chunk has been scanned previously, only re-scan it so often:
-						if (!SettingsConfig.performance.doRescan || player.ticksExisted % rescanInterval != 0) {
-							continue;
-						}
 						biomeId = biomeDetector.getBiomeID(chunk);
+
 						if (biomeId == IBiomeDetector.NOT_FOUND) {
 							// If the new tile is empty, remove the old one:
 							this.removeTile(player.dimension, x, z);
@@ -230,24 +234,24 @@ public class AtlasData extends WorldSavedData {
 		}
 		return updatedTiles;
 	}
-	
+
 	/** Puts a given tile into given map at specified coordinates and,
 	 * if tileStitcher is present, sets appropriate sectors on adjacent tiles. */
 	public void setTile(int dimension, int x, int y, Tile tile) {
 		DimensionData dimData = getDimensionData(dimension);
 		dimData.setTile(x, y, tile);
 	}
-	
+
 	/** Returns the Tile previously set at given coordinates. */
     private Tile removeTile(int dimension, int x, int y) {
 		DimensionData dimData = getDimensionData(dimension);
 		return dimData.removeTile(x, y);
 	}
-	
+
 	public Set<Integer> getVisitedDimensions() {
 		return dimensionMap.keySet();
 	}
-	
+
 	/* TODO: Packet Rework
 	 *   Dimension data should check the server for updates*/
 	/** If this dimension is not yet visited, empty DimensionData will be created. */
@@ -258,7 +262,7 @@ public class AtlasData extends WorldSavedData {
 	public Map<ShortVec2, Tile> getSeenChunksInDimension(int dimension) {
 		return getDimensionData(dimension).getSeenChunks();
 	}
-	
+
 	/** The set of players this AtlasData has already been sent to. */
 	public Collection<EntityPlayer> getSyncedPlayers() {
 		return Collections.unmodifiableCollection(playersSentTo);
@@ -279,11 +283,11 @@ public class AtlasData extends WorldSavedData {
 		// Do not include dimension tile data.  This will happen later.
 		writeToNBT(nbt, false);
 		PacketDispatcher.sendTo(new MapDataPacket(atlasID, nbt), (EntityPlayerMP) player);
-		
+
 		for (Integer i: dimensionMap.keySet()){
 			dimensionMap.get(i).syncOnPlayer(atlasID, player);
 		}
-		
+
 		Log.info("Sent Atlas #%d data to player %s", atlasID, player.getName());
 		playersSentTo.add(player);
 	}
@@ -291,7 +295,7 @@ public class AtlasData extends WorldSavedData {
 	public boolean isEmpty() {
 		return dimensionMap.isEmpty();
 	}
-	
+
 	@Override
 	public boolean equals(Object obj) {
 		if (!(obj instanceof AtlasData)) return false;
