@@ -12,22 +12,25 @@ import hunternif.mc.atlas.marker.MarkersDataHandler;
 import hunternif.mc.atlas.marker.NetherPortalWatcher;
 import hunternif.mc.atlas.network.PacketDispatcher;
 import hunternif.mc.atlas.registry.MarkerTypes;
+import hunternif.mc.atlas.util.Log;
 import net.minecraft.world.DimensionType;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.Mod.Instance;
 import net.minecraftforge.fml.common.SidedProxy;
+import net.minecraftforge.fml.common.event.FMLFingerprintViolationEvent;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 
-@Mod(modid=AntiqueAtlasMod.ID, name=AntiqueAtlasMod.NAME, version=AntiqueAtlasMod.VERSION, dependencies="after:forge@[14.23.2.2611,);")
+@Mod(modid=AntiqueAtlasMod.ID, certificateFingerprint = AntiqueAtlasMod.SHA_HASH, name=AntiqueAtlasMod.NAME, version=AntiqueAtlasMod.VERSION, dependencies="after:forge@[14.23.2.2611,);")
 public class AntiqueAtlasMod {
 	public static final String ID = "antiqueatlas";
 	public static final String NAME = "Antique Atlas";
 	public static final String CHANNEL = ID;
 	public static final String VERSION = "@VERSION@";
+	public static final String SHA_HASH = "@FINGERPRINT@";
 
 	@Instance(ID)
 	public static AntiqueAtlasMod instance;
@@ -76,5 +79,10 @@ public class AntiqueAtlasMod {
 	@EventHandler
 	public void postInit(FMLPostInitializationEvent event) {
 		proxy.postInit(event);
+	}
+
+	@Mod.EventHandler
+	public void onFingerprintViolation(FMLFingerprintViolationEvent event) {
+		Log.warn("Invalid fingerprint detected! The file " + event.getSource().getName() + " may have been tampered with. This version will NOT be supported by the author!");
 	}
 }
