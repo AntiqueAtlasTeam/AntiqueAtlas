@@ -9,6 +9,7 @@ import net.minecraft.world.biome.Biome;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.common.BiomeDictionary.Type;
+import net.minecraftforge.fml.relauncher.ReflectionHelper;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -58,7 +59,7 @@ public class BiomeDetectorBase implements IBiomeDetector {
 				biomeArrayMethod = Chunk.class.getMethod("getIntBiomeArray");
 			}
 			else {
-				biomeArrayMethod = Chunk.class.getMethod("getBiomeArray");
+				biomeArrayMethod = ReflectionHelper.findMethod(Chunk.class, "getBiomeArray", "func_76605_m");
 			}
 		}
 		catch (NoSuchMethodException e) { throw new RuntimeException(e); }
