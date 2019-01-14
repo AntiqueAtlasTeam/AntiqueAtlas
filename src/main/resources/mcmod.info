@@ -9,7 +9,7 @@
     "updateUrl": "",
     "authorList": ["Hunternif"],
     "credits": "Hunternif, coolAlias, Kenkron, TheCodeWarrior. Localizations by crafteverywhere, CapoFantasma97, Mazdallier, mankra, Zerotiger, tyra314.",
-    "logoFile": "/antiqueatlas_logo.png",
+    "logoFile": "antiqueatlas_logo.png",
     "screenshots": [],
     "dependencies": []
   },
@@ -23,7 +23,7 @@
     "updateUrl": "",
     "authorList": ["Kenkron"],
     "credits": "",
-    "logoFile": "/antiqueatlas_logo.png",
+    "logoFile": "antiqueatlas_logo.png",
     "screenshots": [],
     "dependencies": []
   }
