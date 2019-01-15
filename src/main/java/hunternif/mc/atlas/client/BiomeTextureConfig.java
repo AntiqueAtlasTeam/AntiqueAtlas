@@ -13,6 +13,10 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 import java.util.Map.Entry;
 
 /**
@@ -79,10 +83,14 @@ public class BiomeTextureConfig extends AbstractJSONConfig<BiomeTextureMap> {
 	
 	@Override
 	protected void saveData(JsonObject json, BiomeTextureMap data) {
-		for(Entry<Biome, TextureSet> entry : data.biomeTextureMap.entrySet()) {
-			int biomeID = Biome.getIdForBiome(entry.getKey());
+		// Sort resource locations by name
+		List<Biome> keys = new ArrayList<Biome>(data.biomeTextureMap.keySet());
+		Collections.sort(keys, Comparator.comparing(Biome::getRegistryName));
+
+		for(Biome key : keys) {
+			int biomeID = Biome.getIdForBiome(key);
 			if (biomeID >= 0 && (AntiqueAtlasMod.instance.jeidPresent || biomeID < 256)) {
-				json.addProperty(entry.getKey().getRegistryName().toString(), entry.getValue().name);
+				json.addProperty(key.getRegistryName().toString(), data.biomeTextureMap.get(key).name);
 			}
 		}
 	}
