@@ -224,7 +224,7 @@ public class BiomeTextureMap extends SaveData {
 	}
 
 	/** Auto-registers the biome if it is not registered. */
-	private void checkRegistration(Biome biome) {
+	public void checkRegistration(Biome biome) {
 		if (!isRegistered(biome)) {
 			autoRegister(biome);
 			markDirty();

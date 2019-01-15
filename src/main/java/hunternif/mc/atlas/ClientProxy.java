@@ -304,7 +304,13 @@ public class ClientProxy extends CommonProxy implements IResourceManagerReloadLi
 		setBiomeTextureIfNone(Biomes.MUTATED_MESA_ROCK, PLATEAU_MESA_TREES_LOW);
 		setBiomeTextureIfNone(Biomes.SAVANNA_PLATEAU, PLATEAU_SAVANNA);
 		setBiomeTextureIfNone(Biomes.MUTATED_SAVANNA_ROCK, PLATEAU_SAVANNA_M);
+
+		// Now let's register every other biome, they'll come from other mods
+		for(Biome biome : Biome.REGISTRY) {
+			BiomeTextureMap.instance().checkRegistration(biome);
+		}
 	}
+
 	/** Only applies the change if no texture is registered for this biome.
 	 * This prevents overwriting of the config when there is no real change. */
 	private void setBiomeTextureIfNone(Biome biome, TextureSet textureSet) {
