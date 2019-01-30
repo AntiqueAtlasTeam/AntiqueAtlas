@@ -70,6 +70,8 @@ public class SettingsConfig {
         public boolean doScanRavines = true;
         @Config.Comment({"If true, map render time will be output."})
         public boolean debugRender = false;
+        @Config.Comment({"If true, to get more detailed data about visited marker "})
+        public boolean useExtendedVisitedMarkerLogging = true;
     }
 
     @SubscribeEvent

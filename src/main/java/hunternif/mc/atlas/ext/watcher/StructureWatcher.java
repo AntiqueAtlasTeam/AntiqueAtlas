@@ -1,6 +1,8 @@
 package hunternif.mc.atlas.ext.watcher;
 
 import com.google.common.collect.Sets;
+
+import hunternif.mc.atlas.SettingsConfig;
 import hunternif.mc.atlas.util.Log;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
@@ -42,8 +44,14 @@ public class StructureWatcher {
                 NBTTagCompound structureData = watcher.getStructureData(world);
                 if (structureData != null) {
                     Set<Pair<WatcherPos, String>> visited = watcher.visitStructure(world, structureData);
-                    for (Pair<WatcherPos, String> visit : visited)
-                        Log.info("Visited %s in dimension %d at %s", visit.getRight(), world.provider.getDimension(), visit.getLeft().toString());
+                                        
+                    if (SettingsConfig.performance.useExtendedVisitedMarkerLogging) {
+                    	for (Pair<WatcherPos, String> visit : visited)
+                    		Log.info("Visited %s in dimension %d at %s", visit.getRight(), world.provider.getDimension(), visit.getLeft().toString());
+                    }
+                    else if(visited != null){
+                    	Log.info("Loaded %d Visited Markers for dimension %d", visited.size(), world.provider.getDimension());
+                    }
                 }
             }
     }
