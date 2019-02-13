@@ -104,10 +104,10 @@ public class ClientProxy extends CommonProxy implements IResourceManagerReloadLi
 		// Prevent rewriting of the config while no changes have been made:
 		MarkerRegistry.INSTANCE.setDirty(true);
 
+		guiAtlas = new GuiAtlas();
 		for (MarkerType type : MarkerRegistry.getValues()) {
 			type.initMips();
 		}
-		guiAtlas = new GuiAtlas();
 
 		if (!SettingsConfig.gameplay.itemNeeded) {
             KeyHandler.registerBindings();
