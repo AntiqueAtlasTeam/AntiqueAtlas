@@ -2,7 +2,7 @@ package hunternif.mc.atlas.network;
 
 import hunternif.mc.atlas.AntiqueAtlasMod;
 import hunternif.mc.atlas.network.bidirectional.DeleteMarkerPacket;
-import hunternif.mc.atlas.network.bidirectional.PutBiomeTilePacket;
+import hunternif.mc.atlas.network.bidirectional.PutTilePacket;
 import hunternif.mc.atlas.network.client.*;
 import hunternif.mc.atlas.network.server.AddMarkerPacket;
 import hunternif.mc.atlas.network.server.BrowsingPositionPacket;
@@ -31,7 +31,7 @@ public class PacketDispatcher
 	public static void registerPackets() {
 		// Bi-directional messages
 		registerMessage(DeleteMarkerPacket.class);
-		registerMessage(PutBiomeTilePacket.class);
+		registerMessage(PutTilePacket.class);
 
 		// Messages sent to CLIENT
 		registerMessage(MapDataPacket.class);

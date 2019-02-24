@@ -5,6 +5,8 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import hunternif.mc.atlas.RegistrarAntiqueAtlas;
 import net.minecraft.item.ItemStack;
+import net.minecraft.server.world.ServerWorld;
+import net.minecraft.world.PersistentStateManager;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.network.FMLNetworkEvent.ClientConnectedToServerEvent;
@@ -32,21 +34,14 @@ public class MarkersDataHandler {
 	/** Loads data for the given atlas ID or creates a new one. */
 	public MarkersData getMarkersData(int atlasID, World world) {
 		String key = getMarkersDataKey(atlasID);
-		MarkersData data = null;
 		if (world.isClient) {
 			// Since atlas data doesn't really belong to a single world-dimension,
 			// it can be cached. This should fix #67
-			data = markersDataClientCache.get(key);
+			return markersDataClientCache.computeIfAbsent(key, MarkersData::new);
+		} else {
+			PersistentStateManager manager = ((ServerWorld) world).getPersistentStateManager();
+			return manager.getOrCreate(() -> new MarkersData(key), key);
 		}
-		if (data == null) {
-			data = (MarkersData) world.XX_1_12_2_a_XX(MarkersData.class, key);
-			if (data == null) {
-				data = new MarkersData(key);
-				world.XX_1_13_a_XX(key, data);
-			}
-			if (world.isClient) markersDataClientCache.put(key, data);
-		}
-		return data;
 	}
 	
 	private String getMarkersDataKey(int atlasID) {
@@ -62,8 +57,9 @@ public class MarkersDataHandler {
 	 * form post, the latter event isn't actually fired on the client.
 	 * </p>
 	 */
-	@SubscribeEvent
+	// TODO FABRIC
+	/* @SubscribeEvent
 	public void onClientConnectedToServer(ClientConnectedToServerEvent event) {
 		markersDataClientCache.clear();
-	}
+	} */
 }

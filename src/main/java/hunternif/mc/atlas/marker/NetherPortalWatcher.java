@@ -4,6 +4,7 @@ import hunternif.mc.atlas.AntiqueAtlasMod;
 import hunternif.mc.atlas.RegistrarAntiqueAtlas;
 import hunternif.mc.atlas.SettingsConfig;
 import hunternif.mc.atlas.api.AtlasAPI;
+import hunternif.mc.atlas.mixinhooks.EntityHooksAA;
 import hunternif.mc.atlas.registry.MarkerRegistry;
 import hunternif.mc.atlas.registry.MarkerTypes;
 import hunternif.mc.atlas.util.DummyBlockView;
@@ -11,6 +12,7 @@ import hunternif.mc.atlas.util.Log;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.registry.Registry;
 import net.minecraft.world.World;
 import net.minecraft.world.dimension.DimensionType;
 import net.minecraftforge.event.world.WorldEvent;
@@ -27,8 +29,6 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author Hunternif
  */
 public class NetherPortalWatcher extends DummyBlockView {
-	private static final String[] inPortalFieldNames = {"bX"};
-
 	/**
 	 * When a player teleports, he is removed from the source dimension, where
 	 * portal detection works well, and his ID is placed in this set.
@@ -36,7 +36,7 @@ public class NetherPortalWatcher extends DummyBlockView {
 	 * detection doesn't work for some reason. But we can detect his arrival
 	 * by checking if this set contains the player's ID!
 	 */
-	private final Map<Integer, Integer> teleportingPlayersOrigin = new ConcurrentHashMap<Integer, Integer>();
+	private final Map<Integer, DimensionType> teleportingPlayersOrigin = new ConcurrentHashMap<>();
 	
 	@SubscribeEvent
 	public void onWorldLoad(WorldEvent.Load event) {
@@ -79,10 +79,10 @@ public class NetherPortalWatcher extends DummyBlockView {
 			if (isEntityInPortal(entity)) {
 				Log.info("Exiting");
 				// player.worldObj.provider.dimensionId is the dimension of origin
-				int originDimension = player.getEntityWorld().s.getType();
+				DimensionType originDimension = player.getEntityWorld().getDimension().getType();
 				Log.info("Player %s left the %s", player.getCommandSource().getName(),
-						 bnu.a(originDimension).b());
-				teleportingPlayersOrigin.put(entity.Q(), originDimension);
+						Registry.DIMENSION.getId(originDimension));
+				teleportingPlayersOrigin.put(entity.getEntityId(), originDimension);
 				// TODO Check what is the target dimension
 				addPortalMarkerIfNone(player, originDimension);
 			}
@@ -98,7 +98,7 @@ public class NetherPortalWatcher extends DummyBlockView {
 
 		// Due to switching dimensions this player entity's worldObj is lagging.
 		// We need the very specific dimension each time.
-		World world = AntiqueAtlasMod.proxy.getServer().getDim(dimension);
+		World world = AntiqueAtlasMod.proxy.getServer().getWorld(dimension);
 
 		if (!SettingsConfig.gameplay.itemNeeded) {
 			addPortalMarkerIfNone(player, world, dimension, player.getUuid().hashCode());
@@ -112,7 +112,7 @@ public class NetherPortalWatcher extends DummyBlockView {
 		}
 	}
 
-	private void addPortalMarkerIfNone(PlayerEntity player, World world, int dimension, int atlasID) {
+	private void addPortalMarkerIfNone(PlayerEntity player, World world, DimensionType dimension, int atlasID) {
 		// Can't use entity.dimension here, because its value has already been updated!
 		DimensionMarkersData data = AntiqueAtlasMod.markersData.getMarkersData(atlasID, world)
 				.getMarkersDataInDimension(dimension);
@@ -136,6 +136,6 @@ public class NetherPortalWatcher extends DummyBlockView {
 	}
 	
 	private static boolean isEntityInPortal(Entity entity) {
-		return ObfuscationReflectionHelper.getPrivateValue(Entity.class, entity, inPortalFieldNames);
+		return ((EntityHooksAA) entity).antiqueAtlas_isInPortal();
 	}
 }

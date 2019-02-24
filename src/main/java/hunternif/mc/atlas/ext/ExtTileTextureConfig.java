@@ -6,7 +6,8 @@ import hunternif.mc.atlas.client.TextureSetConfig;
 import hunternif.mc.atlas.client.TextureSetMap;
 import hunternif.mc.atlas.util.AbstractJSONConfig;
 import hunternif.mc.atlas.util.Log;
-
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 
 
 import java.io.File;

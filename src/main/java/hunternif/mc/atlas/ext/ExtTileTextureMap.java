@@ -4,7 +4,8 @@ import hunternif.mc.atlas.client.BiomeTextureMap;
 import hunternif.mc.atlas.client.TextureSet;
 import hunternif.mc.atlas.util.Log;
 import hunternif.mc.atlas.util.SaveData;
-
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 
 
 import java.util.HashMap;

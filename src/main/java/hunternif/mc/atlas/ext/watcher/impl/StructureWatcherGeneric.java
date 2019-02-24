@@ -15,6 +15,7 @@ import hunternif.mc.atlas.util.Log;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.world.World;
+import net.minecraft.world.dimension.DimensionType;
 import net.minecraftforge.common.DimensionManager;
 import none.XX_1_12_2_none_bbw_XX;
 import none.XX_1_13_none_bnu_XX;
@@ -34,19 +35,15 @@ public class StructureWatcherGeneric implements IStructureWatcher {
 	private MarkerType tileMarker;
 	private String markerLabel;
 	private String tileMarkerLabel;
-	private final XX_1_13_none_bnu_XX dimension;
+	private final DimensionType dimension;
 
-    public StructureWatcherGeneric(String datFileName, XX_1_13_none_bnu_XX dimType, MarkerType marker, String label) {
+    public StructureWatcherGeneric(String datFileName, DimensionType dimType, MarkerType marker, String label) {
         this.marker = marker;
         this.markerLabel = label;
         this.dimension = dimType;
         this.datFileName = datFileName;
 
         StructureWatcher.INSTANCE.addWatcher(this);
-    }
-
-    public StructureWatcherGeneric(String datFileName, int dimension, MarkerType marker, String label) {
-        this(datFileName, DimensionManager.getProviderType(dimension), marker, label);
     }
 
     @Nonnull
@@ -56,8 +53,8 @@ public class StructureWatcherGeneric implements IStructureWatcher {
     }
 
     @Override
-    public boolean isDimensionValid(XX_1_13_none_bnu_XX type) {
-        return type.a() == dimension.a(); // Only in provided dimension
+    public boolean isDimensionValid(DimensionType type) {
+    	return this.dimension == type;
     }
 
     @Nullable

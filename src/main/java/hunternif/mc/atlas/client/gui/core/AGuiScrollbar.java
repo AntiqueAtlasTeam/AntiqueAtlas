@@ -111,19 +111,20 @@ public abstract class AGuiScrollbar extends GuiComponent {
 	}
 	
 	@Override
-	public void k() throws IOException {
-		super.k();
+	public boolean mouseScrolled(double wheelMove) {
 		if (usesWheel) {
-			int wheelMove = Mouse.getEventDWheel();
 			if (wheelMove != 0 && this.visible) {
 				wheelMove = wheelMove > 0 ? -1 : 1;
-				doSetScrollPos(scrollPos + wheelMove * scrollStep);
+				doSetScrollPos((int) (scrollPos + wheelMove * scrollStep));
+				return true;
 			}
 		}
+
+		return super.mouseScrolled(wheelMove);
 	}
 	
 	@Override
-	public void a(int mouseX, int mouseY, float partialTick) {
+	public void draw(int mouseX, int mouseY, float partialTick) {
 		// Don't draw the anchor if there's nothing to scroll:
 		if (!visible) {
 			isDragged = false;
@@ -150,7 +151,7 @@ public abstract class AGuiScrollbar extends GuiComponent {
 		GlStateManager.enableTexture();
 		GlStateManager.enableBlend();
 		GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-		GlStateManager.texCoordPointer(1, 1, 1, 1);
+		GlStateManager.color4f(1, 1, 1, 1);
 		
 		drawAnchor();
 		

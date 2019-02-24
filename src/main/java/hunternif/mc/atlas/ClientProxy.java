@@ -10,6 +10,7 @@ import hunternif.mc.atlas.marker.MarkerTextureConfig;
 import hunternif.mc.atlas.registry.MarkerRegistry;
 import hunternif.mc.atlas.registry.MarkerType;
 import hunternif.mc.atlas.util.Log;
+import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.fabricmc.fabric.api.resource.SimpleSynchronousResourceReloadListener;
 import net.minecraft.client.MinecraftClient;
 
@@ -18,20 +19,12 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.resource.ReloadableResourceManager;
 import net.minecraft.resource.ResourceManager;
 import net.minecraft.resource.ResourceReloadListener;
+import net.minecraft.resource.ResourceType;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.Biomes;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.client.FMLClientHandler;
-import net.minecraftforge.fml.common.event.FMLInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.gameevent.TickEvent.ClientTickEvent;
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
-import none.TODO_1_13_2_none_acv;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
@@ -50,15 +43,9 @@ public class ClientProxy extends CommonProxy implements SimpleSynchronousResourc
 	private GuiAtlas guiAtlas;
 
 	@Override
-	public MinecraftServer getServer() {
-		return FMLClientHandler.instance().getServer();
-	}
-
-	@Override
-	public void preInit(FMLPreInitializationEvent event) {
-		super.preInit(event);
-
-		MinecraftForge.EVENT_BUS.register(ExportProgressOverlay.INSTANCE);
+	public void init() {
+		// TODO FABRIC
+		// MinecraftForge.EVENT_BUS.register(ExportProgressOverlay.INSTANCE);
 
 		//TODO Enforce texture config loading process as follows:
 		// 1. pre-init: Antique Atlas defaults are loaded, config files are read.
@@ -87,14 +74,9 @@ public class ClientProxy extends CommonProxy implements SimpleSynchronousResourc
 		tileTextureMap.setDirty(false);
 		registerVanillaCustomTileTextures();
 
-		if(MinecraftClient.getInstance().getResourceManager() instanceof ReloadableResourceManager) {
-			((ReloadableResourceManager)MinecraftClient.getInstance().getResourceManager()).registerListener(this);
-		}
-	}
+		ResourceManagerHelper.get(ResourceType.ASSETS).registerReloadListener(this);
 
-	@Override
-	public void init(FMLInitializationEvent event) {
-		super.init(event);
+		// init
 
 		biomeTextureMap = BiomeTextureMap.instance();
 		biomeTextureConfig = new BiomeTextureConfig(new File(configDir, "biome_textures.json"), textureSetMap);
@@ -115,16 +97,10 @@ public class ClientProxy extends CommonProxy implements SimpleSynchronousResourc
 
 		if (!SettingsConfig.gameplay.itemNeeded) {
             KeyHandler.registerBindings();
-            MinecraftForge.EVENT_BUS.register(new KeyHandler());
+            // TODO FABRIC
+            // MinecraftForge.EVENT_BUS.register(new KeyHandler());
         }
 
-		MinecraftForge.EVENT_BUS.register(this);
-	}
-
-
-	@Override
-	public void postInit(FMLPostInitializationEvent event) {
-		super.postInit(event);
 		guiAtlas.setMapScale(SettingsConfig.userInterface.defaultScale);
 	}
 
@@ -370,23 +346,12 @@ public class ClientProxy extends CommonProxy implements SimpleSynchronousResourc
 		}
 	}
 
-	@Override
-	public PlayerEntity getPlayerEntity(MessageContext ctx) {
-		return (ctx.side.isClient() ? MinecraftClient.getInstance().player : super.getPlayerEntity(ctx));
-	}
-
-	@Override
-	public TODO_1_13_2_none_acv getThreadFromContext(MessageContext ctx) {
-		return (ctx.side.isClient() ? MinecraftClient.getInstance() : super.getThreadFromContext(ctx));
-	}
-
 	public File getConfigDir(){
 		return configDir;
 	}
 
 	/** Checks if any of the configs's data has been marked dirty and saves it. */
-	@SubscribeEvent
-	public void onClientTick(ClientTickEvent event) {
+	public void onClientTick(MinecraftClient client) {
 		if (textureSetMap.isDirty()) {
 			Log.info("Saving texture set config");
 			textureSetConfig.save(textureSetMap);

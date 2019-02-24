@@ -13,7 +13,7 @@ public class PlayerEventHandler {
     public void onPlayerLogin(PlayerEvent.PlayerLoggedInEvent event) {
         PlayerEntity player = event.player;
         World world = player.world;
-        int atlasID = player.getUniqueID().hashCode();
+        int atlasID = player.getUuid().hashCode();
 
         AtlasData data = AntiqueAtlasMod.atlasData.getAtlasData(atlasID, world);
         // On the player join send the map from the server to the client:

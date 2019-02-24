@@ -9,6 +9,7 @@ import hunternif.mc.atlas.ext.watcher.StructureWatcher;
 import hunternif.mc.atlas.ext.watcher.WatcherPos;
 import hunternif.mc.atlas.util.MathUtil;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.world.dimension.DimensionType;
 import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nonnull;
@@ -59,8 +60,8 @@ public class StructureWatcherFortress implements IStructureWatcher {
     }
 
     @Override
-    public boolean isDimensionValid(XX_1_13_none_bnu_XX type) {
-        return type.a() == -1; // Only nether
+    public boolean isDimensionValid(DimensionType type) {
+        return type == DimensionType.THE_NETHER;
     }
 
     @Nullable

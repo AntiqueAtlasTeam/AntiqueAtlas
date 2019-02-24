@@ -41,14 +41,14 @@ public class GuiViewport extends GuiComponent {
 	}
 	
 	@Override
-	public void a(int mouseX, int mouseY, float par3) {
+	public void draw(int mouseX, int mouseY, float par3) {
 		GL11.glEnable(GL11.GL_SCISSOR_TEST);
 		GL11.glScissor( getGuiX()*screenScale,
 				mc.e - (getGuiY() + properHeight)*screenScale,
 				properWidth*screenScale, properHeight*screenScale);
 		
 		// Draw the content (child GUIs):
-		super.a(mouseX, mouseY, par3);
+		super.draw(mouseX, mouseY, par3);
 		
 		GL11.glDisable(GL11.GL_SCISSOR_TEST);
 	}

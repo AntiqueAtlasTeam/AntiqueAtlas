@@ -8,6 +8,7 @@ import hunternif.mc.atlas.util.SaveData;
 import java.util.Map;
 import net.minecraft.client.network.packet.LoginSuccessS2CPacket;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.server.network.ServerPlayerEntity;
 
 
 /** Maps unique names of external tiles to pseudo-biome IDs. Set on the server,
@@ -110,6 +111,6 @@ public class ExtTileIdMap extends SaveData {
 	
 	/** Send all name-biomeID pairs to the player. */
 	public void syncOnPlayer(PlayerEntity player) {
-		PacketDispatcher.sendTo(new TileNameIDPacket(nameToIdMap), (LoginSuccessS2CPacket) player);
+		PacketDispatcher.sendTo(new TileNameIDPacket(nameToIdMap), (ServerPlayerEntity) player);
 	}
 }

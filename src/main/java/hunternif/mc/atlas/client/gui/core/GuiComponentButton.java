@@ -30,12 +30,14 @@ public class GuiComponentButton extends GuiComponent {
 	}
 	
 	@Override
-	protected void a(int x, int y, int mouseButton) throws IOException {
-		super.mouseClicked(x, y, mouseButton);
+	public boolean mouseClicked(double x, double y, int mouseButton) {
 		if (mouseButton == 0 /*left-click*/ && enabled && isMouseOver) {
 			onClick();
 			mouseHasBeenHandled();
+			return true;
 		}
+
+		return super.mouseClicked(x, y, mouseButton);
 	}
 	
 	/** Called when the user left-clicks on this component. */

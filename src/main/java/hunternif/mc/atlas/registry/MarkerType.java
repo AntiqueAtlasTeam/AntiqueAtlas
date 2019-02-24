@@ -6,6 +6,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import hunternif.mc.atlas.util.BitMatrix;
 import hunternif.mc.atlas.util.Log;
+import net.minecraft.client.texture.NativeImage;
 import net.minecraft.client.texture.SpriteAtlasTexture;
 import net.minecraft.client.texture.TextureManager;
 import net.minecraft.util.Identifier;
@@ -174,18 +175,20 @@ public class MarkerType {
 			if (icons[i] == null) {
 				Log.warn("Marker %s -- Texture location is null at index %d!", MarkerRegistry.getId(this).toString(), i);
 			}
+
 			Resource iresource = null;
+			NativeImage bufferedimage = null;
 
 			try {
 				iresource = MinecraftClient.getInstance().getResourceManager().getResource(icons[i]);
-				BufferedImage bufferedimage = TODO.a(iresource.getInputStream());
+				bufferedimage = NativeImage.fromInputStream(iresource.getInputStream());
 				iconSizes[i] = Math.min(bufferedimage.getWidth(), bufferedimage.getHeight());
 				BitMatrix matrix = new BitMatrix(bufferedimage.getWidth(), bufferedimage.getHeight(), false);
 				
 				for (int x = 0; x < bufferedimage.getWidth(); x++) {
 					for (int y = 0; y < bufferedimage.getHeight(); y++) {
 						
-						int color = bufferedimage.getRGB(x, y);
+						int color = bufferedimage.getPixelRGBA(x, y);
 						int alpha = (color >> 24) & 0xff;
 						
 						if(alpha >= ALPHA_THRESHOLD) {
@@ -205,12 +208,15 @@ public class MarkerType {
 						}
 					}
 				}
+
 				iconPixels[i] = matrix;
-				
 			} catch (IOException e) {
 				Log.warn(e, "Marker %s -- Error getting texture size data for index %d - %s",
 						MarkerRegistry.getId(this).toString(), i, icons[i].toString());
 			} finally {
+				if (bufferedimage != null) {
+					bufferedimage.close();
+				}
 				IOUtils.closeQuietly(iresource);
 			}
 		}

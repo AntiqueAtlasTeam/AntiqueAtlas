@@ -38,7 +38,7 @@ public class StructureWatcher {
             return;
 
         for (IStructureWatcher watcher : structureWatchers)
-            if (watcher.isDimensionValid(world.dimension.XX_1_13_q_XX())) {
+            if (watcher.isDimensionValid(world.dimension.getType())) {
                 CompoundTag structureData = watcher.getStructureData(world);
                 if (structureData != null) {
                     Set<Pair<WatcherPos, String>> visited = watcher.visitStructure(world, structureData);

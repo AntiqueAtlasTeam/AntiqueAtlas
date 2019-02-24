@@ -6,13 +6,8 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.Screen;
 import net.minecraft.client.gui.ScreenComponent;
-import net.minecraftforge.fml.client.config.GuiUtils;
 
 
-import none.XX_1_12_2_none_bip_XX;
-import none.XX_1_12_2_none_blk_XX;
-import org.lwjgl.input.Keyboard;
-import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
 import java.io.IOException;
@@ -182,8 +177,8 @@ public class GuiComponent extends Screen {
 		}
 		child.parent = this;
 		child.setGuiCoords(guiX, guiY);
-		if (mc != null) {
-			child.a(mc, width, height);
+		if (client != null) {
+			child.onScaleChanged(client, width, height);
 		}
 		invalidateSize();
 	}
@@ -324,11 +319,11 @@ public class GuiComponent extends Screen {
 
 	/** Render this GUI and its children. */
 	@Override
-	public void a(int mouseX, int mouseY, float partialTick) {
-		super.a(mouseX, mouseY, partialTick);
+	public void draw(int mouseX, int mouseY, float partialTick) {
+		super.draw(mouseX, mouseY, partialTick);
 		for (GuiComponent child : children) {
 			if (!child.isClipped) {
-				child.a(mouseX, mouseY, partialTick);
+				child.draw(mouseX, mouseY, partialTick);
 			}
 		}
 		// Draw any hovering text requested by child components:
@@ -340,32 +335,32 @@ public class GuiComponent extends Screen {
 
 	/** Called when the GUI is unloaded, called for each child as well. */
 	@Override
-	public void m() {
+	public void onClosed() {
 		for (GuiComponent child : children) {
-			child.m();
+			child.onClosed();
 		}
-		super.m();
+		super.onClosed();
 	}
 
 	/** Called each in-game tick for this GUI and its children. If this GUI's
 	 * size has been invalidated, it will be validated on the next update. */
 	@Override
-	public void e() {
+	public void update() {
 		for (GuiComponent child : children) {
-			child.e();
+			child.update();
 		}
 
-		super.e();
+		super.update();
 		if (sizeIsInvalid) {
 			validateSize();
 		}
 	}
 
 	@Override
-	public void a(MinecraftClient mc, int width, int height) {
-		super.a(mc, width, height);
+	public void onScaleChanged(MinecraftClient mc, int width, int height) {
+		super.onScaleChanged(mc, width, height);
 		for (GuiComponent child : children) {
-			child.a(mc, width, height);
+			child.onScaleChanged(mc, width, height);
 		}
 	}
 
@@ -445,7 +440,7 @@ public class GuiComponent extends Screen {
 	/** Draws a standard Minecraft hovering text window, constrained by this
 	 * component's dimensions (i.e. if it won't fit in when drawn to the left
 	 * of the cursor, it will be drawn to the right instead). */
-    private void drawHoveringText2(List<String> lines, int x, int y, XX_1_12_2_none_bip_XX font) {
+    private void drawHoveringText2(List<String> lines, int x, int y, TextRenderer font) {
 		boolean stencilEnabled = GL11.glIsEnabled(GL11.GL_STENCIL_TEST);
 		if (stencilEnabled) GL11.glDisable(GL11.GL_STENCIL_TEST);
 
@@ -467,7 +462,7 @@ public class GuiComponent extends Screen {
 	/**
 	 * Draws a text tooltip at mouse coordinates.
 	 * <p>
-	 * Same as {@link #drawHoveringText2(List, int, int, FontRenderer)}, but
+	 * Same as {@link #drawHoveringText2(List, int, int, TextRenderer)}, but
 	 * the text is drawn on the top level parent component, after all its child
 	 * components have finished drawing. This allows the hovering text to be
 	 * unobscured by other components.
@@ -513,8 +508,12 @@ public class GuiComponent extends Screen {
 
 	/** Draw a text string centered horizontally, using this GUI's FontRenderer. */
 	protected void drawCenteredString(String text, int y, int color, boolean dropShadow) {
-		int length = fontRenderer.a(text);
-		fontRenderer.a(text, (this.width - length)/2, y, color, dropShadow);
+		int length = fontRenderer.getStringWidth(text);
+		if (dropShadow) {
+			fontRenderer.drawWithShadow(text, (this.width - length) / 2, y, color);
+		} else {
+			fontRenderer.draw(text, (this.width - length) / 2, y, color);
+		}
 	}
 
 	protected int getMouseX() {

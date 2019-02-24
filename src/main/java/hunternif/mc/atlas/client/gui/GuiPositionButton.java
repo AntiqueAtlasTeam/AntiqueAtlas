@@ -20,7 +20,7 @@ public class GuiPositionButton extends GuiComponentButton {
 	}
 
 	@Override
-	public void a(int mouseX, int mouseY, float partialTick) {
+	public void draw(int mouseX, int mouseY, float partialTick) {
 		if (isEnabled()) {
 			GuiLighting.disable();
 			GlStateManager.enableBlend();

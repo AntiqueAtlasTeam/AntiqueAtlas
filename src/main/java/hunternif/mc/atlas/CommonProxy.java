@@ -4,20 +4,16 @@ import hunternif.mc.atlas.core.BiomeDetectorBase;
 import hunternif.mc.atlas.ext.ExtTileConfig;
 import hunternif.mc.atlas.ext.ExtTileIdMap;
 import hunternif.mc.atlas.util.Log;
+import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
+import net.fabricmc.fabric.api.resource.SimpleSynchronousResourceReloadListener;
 import net.fabricmc.loader.FabricLoader;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.resource.ResourceManager;
+import net.minecraft.resource.ResourceReloadListener;
+import net.minecraft.resource.ResourceType;
 import net.minecraft.server.MinecraftServer;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.world.WorldEvent;
-import net.minecraftforge.fml.common.Loader;
-import net.minecraftforge.fml.common.event.FMLInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
-import net.minecraftforge.fml.server.FMLServerHandler;
-import none.XX_1_13_2_none_acv_XX;
+import net.minecraft.util.Identifier;
 import java.io.File;
 
 public class CommonProxy {
@@ -30,23 +26,28 @@ public class CommonProxy {
 		return FabricLoader.INSTANCE.getEnvironmentHandler().getServerInstance();
 	}
 
-	public void preInit(FMLPreInitializationEvent event) {
-		configDir = new File(event.getModConfigurationDirectory(), "antiqueatlas");
+	public void init() {
+		configDir = new File(net.fabricmc.loader.api.FabricLoader.getInstance().getConfigDirectory(), "antiqueatlas");
 		configDir.mkdir();
 		extTileIdMap = ExtTileIdMap.instance();
 		extTileConfig = new ExtTileConfig(new File(configDir, "tileids.json"));
 		extTileConfig.load(extTileIdMap);
+
 		// Assign default values AFTER the config file loads, so that the old saved values are kept:
 		registerVanillaCustomTiles();
 		checkSaveConfig();
-	}
 
-	public void init(FMLInitializationEvent event) {
-		MinecraftForge.EVENT_BUS.register(this);
-	}
+		ResourceManagerHelper.get(ResourceType.DATA).registerReloadListener(new SimpleSynchronousResourceReloadListener() {
+			@Override
+			public Identifier getFabricId() {
+				return new Identifier("antiqueatlas:scanbiometypes");
+			}
 
-	public void postInit(FMLPostInitializationEvent event) {
-		BiomeDetectorBase.scanBiomeTypes();
+			@Override
+			public void apply(ResourceManager var1) {
+				BiomeDetectorBase.scanBiomeTypes();
+			}
+		});
 	}
 
 	/** Register IDs for the pseudo-biomes used for vanilla Minecraft.
@@ -97,26 +98,12 @@ public class CommonProxy {
 		return configDir;
 	}
 
-	/**
-	 * Returns a side-appropriate EntityPlayer for use during message handling
-	 */
-	public PlayerEntity getPlayerEntity(MessageContext ctx) {
-		return ctx.getServerHandler().b;
-	}
-
-	/**
-	 * Returns the current thread based on side during message handling,
-	 * used for ensuring that the message is being handled by the main thread
-	 */
-	public XX_1_13_2_none_acv_XX getThreadFromContext(MessageContext ctx) {
-		return ctx.getServerHandler().b.getServer();
-	}
-
 	/** When a world is saved, so is the custom tile id config. */
-	@SubscribeEvent
+	// TODO FABRIC
+	/* @SubscribeEvent
 	public void onWorldSave(WorldEvent.Save event) {
 		checkSaveConfig();
-	}
+	} */
 
 	private void checkSaveConfig() {
 		if (extTileIdMap.isDirty()) {

@@ -12,6 +12,8 @@ import hunternif.mc.atlas.ext.watcher.StructureWatcher;
 import hunternif.mc.atlas.ext.watcher.WatcherPos;
 import hunternif.mc.atlas.marker.Marker;
 import hunternif.mc.atlas.marker.MarkersData;
+import hunternif.mc.atlas.registry.MarkerRegistry;
+import hunternif.mc.atlas.registry.MarkerType;
 import hunternif.mc.atlas.registry.MarkerTypes;
 import hunternif.mc.atlas.util.Log;
 import hunternif.mc.atlas.util.MathUtil;
@@ -101,8 +103,8 @@ public class StructureWatcherVillage implements IStructureWatcher {
     }
 
     @Override
-    public boolean isDimensionValid(XX_1_13_none_bnu_XX type) {
-        return type.a() == 0; // Only overworld
+    public boolean isDimensionValid(DimensionType type) {
+    	return type == DimensionType.OVERWORLD;
     }
 
     @Nullable
@@ -172,7 +174,7 @@ public class StructureWatcherVillage implements IStructureWatcher {
 					}
 				}
 				if (!foundMarker && SettingsConfig.gameplay.autoVillageMarkers) {
-					AtlasAPI.markers.putGlobalMarker(world, false, MarkerTypes.VILLAGE.getRegistryName().XX_1_12_2_toString_XX(), "gui.antiqueatlas.marker.village", x, z);
+					AtlasAPI.markers.putGlobalMarker(world, false, MarkerRegistry.getId(MarkerTypes.VILLAGE).toString(), "gui.antiqueatlas.marker.village", x, z);
 				}
 			}
 //			String tileName = null;

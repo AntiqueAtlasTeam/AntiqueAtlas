@@ -49,7 +49,7 @@ public class GuiBookmarkButton extends GuiToggleButton {
 	}
 
 	@Override
-	public void a(int mouseX, int mouseY, float partialTick) {
+	public void draw(int mouseX, int mouseY, float partialTick) {
 		GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
 		GuiLighting.disable();
 

@@ -1,13 +1,13 @@
 package hunternif.mc.atlas.ext.watcher;
 
+import java.util.Set;
+import net.minecraft.world.dimension.DimensionType;
 import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.World;
-import none.XX_1_13_none_bnu_XX;
-import java.util.Set;
 
 public interface IStructureWatcher {
 
@@ -22,7 +22,7 @@ public interface IStructureWatcher {
     /**
      * @return if the dimension is valid for this watcher
      */
-    boolean isDimensionValid(XX_1_13_none_bnu_XX type);
+    boolean isDimensionValid(DimensionType type);
 
     /**
      * Return null if a structure should not be attempted to be visited.

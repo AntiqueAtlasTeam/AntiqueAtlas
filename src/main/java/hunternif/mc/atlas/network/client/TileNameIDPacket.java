@@ -4,7 +4,7 @@ import hunternif.mc.atlas.client.BiomeTextureMap;
 import hunternif.mc.atlas.client.TextureSet;
 import hunternif.mc.atlas.ext.ExtTileIdMap;
 import hunternif.mc.atlas.ext.ExtTileTextureMap;
-import hunternif.mc.atlas.ext.TileIdRegisteredEvent;
+import hunternif.mc.atlas.ext.TileIdRegisteredCallback;
 import hunternif.mc.atlas.network.AbstractMessage.AbstractClientMessage;
 
 import net.fabricmc.api.EnvType;
@@ -80,7 +80,6 @@ public class TileNameIDPacket extends AbstractClientMessage<TileNameIDPacket>
 			TextureSet texture = ExtTileTextureMap.instance().getTexture(tileName);
 			BiomeTextureMap.instance().setTexture(id, texture);
 		}
-		// TODO FABRIC
-		// MinecraftForge.EVENT_BUS.post(new TileIdRegisteredEvent(nameToIdMap));
+		TileIdRegisteredCallback.EVENT.invoker().onTileIDsReceived(nameToIdMap);
 	}
 }

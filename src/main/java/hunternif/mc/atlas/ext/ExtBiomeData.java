@@ -15,7 +15,6 @@ import net.minecraft.util.registry.Registry;
 import net.minecraft.world.PersistentState;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.dimension.DimensionType;
-import net.minecraftforge.common.util.Constants;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;

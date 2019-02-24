@@ -16,6 +16,7 @@ import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.client.resource.language.I18n;
 import net.minecraft.world.World;
+import net.minecraft.world.dimension.DimensionType;
 
 /**
  * This GUI is used select marker icon and enter a label.
@@ -27,7 +28,7 @@ public class GuiMarkerFinalizer extends GuiComponent {
 
 	private World world;
 	private int atlasID;
-	private int dimension;
+	private DimensionType dimension;
 	private int x;
 	private int z;
 
@@ -53,7 +54,7 @@ public class GuiMarkerFinalizer extends GuiComponent {
 		this.addChild(scroller);
 	}
 
-	void setMarkerData(World world, int atlasID, int dimension, int markerX, int markerZ) {
+	void setMarkerData(World world, int atlasID, DimensionType dimension, int markerX, int markerZ) {
 		this.world = world;
 		this.atlasID = atlasID;
 		this.dimension = dimension;
@@ -75,12 +76,22 @@ public class GuiMarkerFinalizer extends GuiComponent {
 	}
 
 	@Override
-	public void b() {
-		buttonList.add(btnDone = new ButtonWidget(0, this.width/2 - BUTTON_WIDTH - BUTTON_SPACING/2, this.height/2 + 40, BUTTON_WIDTH, 20, I18n.translate("gui.done")));
-		buttonList.add(btnCancel = new ButtonWidget(0, this.width/2 + BUTTON_SPACING/2, this.height/2 + 40, BUTTON_WIDTH, 20, I18n.translate("gui.cancel")));
-		textField = new TextFieldWidget(0, MinecraftClient.getInstance().XX_1_12_2_k_XX, (this.width - 200)/2, this.height/2 - 81, 200, 20);
-		textField.XX_1_12_2_b_XX(true);
+	protected void onInitialized() {
+		super.onInitialized();
+
+		buttons.add(btnDone = new ButtonWidget(this.width/2 - BUTTON_WIDTH - BUTTON_SPACING/2, this.height/2 + 40, BUTTON_WIDTH, 20, I18n.translate("gui.done")) {
+
+		});
+		buttons.add(btnCancel = new ButtonWidget(this.width/2 + BUTTON_SPACING/2, this.height/2 + 40, BUTTON_WIDTH, 20, I18n.translate("gui.cancel")) {
+
+		});
+		textField = new TextFieldWidget(MinecraftClient.getInstance().textRenderer, (this.width - 200)/2, this.height/2 - 81, 200, 20);
+		textField.setHasFocus(true);
+		textField.setIsEditable(true);
 		textField.setText("");
+
+		// TODO fabric
+		//getInputListeners().add(textField);
 
 		scroller.removeAllContent();
 		int typeCount = 0;
@@ -115,18 +126,6 @@ public class GuiMarkerFinalizer extends GuiComponent {
 		}
 	}
 
-	@Override
-	protected void a(int par1, int par2, int par3) throws IOException {
-		super.mouseClicked(par1, par2, par3);
-		textField.XX_1_12_2_a_XX(par1, par2, par3);
-	}
-
-	@Override
-	protected void a(char par1, int par2) throws IOException {
-		super.a(par1, par2);
-		textField.XX_1_12_2_a_XX(par1, par2);
-	}
-
 	protected void a(ButtonWidget button) {
 		if (button == btnDone) {
 			AtlasAPI.markers.putMarker(world, true, atlasID, MarkerRegistry.getId(selectedType).toString(), textField.getText(), x, z);
@@ -141,7 +140,7 @@ public class GuiMarkerFinalizer extends GuiComponent {
 	public void a(int mouseX, int mouseY, float partialTick) {
 		this.drawBackground();
 		drawCenteredString(I18n.translate("gui.antiqueatlas.marker.label"), this.height/2 - 97, 0xffffff, true);
-		textField.XX_1_12_2_g_XX();
+		textField.draw(mouseX, mouseY, partialTick);
 		drawCenteredString(I18n.translate("gui.antiqueatlas.marker.type"), this.height/2 - 44, 0xffffff, true);
 
 		// Darkrer background for marker type selector
