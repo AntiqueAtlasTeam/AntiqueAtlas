@@ -2,7 +2,8 @@ package hunternif.mc.atlas.marker;
 
 import hunternif.mc.atlas.util.Log;
 import hunternif.mc.atlas.util.ShortVec2;
-import net.minecraft.client.resources.I18n;
+import net.minecraft.client.resource.language.I18n;
+import net.minecraft.world.dimension.DimensionType;
 
 /**
  * Marker on the map in an atlas. Has a type and a text label.
@@ -20,13 +21,14 @@ public class Marker {
 	private final int id;
 	private final String type;
 	private final String label;
-	private final int dim, x, z;
+	private final DimensionType dim;
+	private final int x, z;
 	private final boolean visibleAhead;
 	private boolean isGlobal;
 	
 	//TODO make an option for the marker to disappear at a certain scale.
 	
-	public Marker(int id, String type, String label, int dimension, int x, int z, boolean visibleAhead) {
+	public Marker(int id, String type, String label, DimensionType dimension, int x, int z, boolean visibleAhead) {
 		this.id = id;
 		if (type.length() > TYPE_LIMIT){
 			type = type.substring(0, TYPE_LIMIT);
@@ -64,20 +66,20 @@ public class Marker {
 		// string parameter, i.e. player's name.
 		int whitespaceIndex = label.indexOf(' ');
 		if (whitespaceIndex == -1) {
-			return I18n.format(label);
+			return I18n.translate(label);
 		} else {
 			String key = label.substring(0, whitespaceIndex);
 			String param = label.substring(whitespaceIndex + 1);
-			String translated = I18n.format(key);
+			String translated = I18n.translate(key);
 			if (!key.equals(translated)) { // Make sure translation succeeded
-				return String.format(I18n.format(key), param);
+				return String.format(I18n.translate(key), param);
 			} else {
 				return label;
 			}
 		}
 	}
 	
-	public int getDimension() {
+	public DimensionType getDimension() {
 		return dim;
 	}
 	

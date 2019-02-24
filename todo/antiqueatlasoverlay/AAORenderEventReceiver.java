@@ -1,5 +1,6 @@
 package kenkron.antiqueatlasoverlay;
 
+import com.mojang.blaze3d.platform.GlStateManager;
 import hunternif.mc.atlas.AntiqueAtlasMod;
 import hunternif.mc.atlas.RegistrarAntiqueAtlas;
 import hunternif.mc.atlas.SettingsConfig;
@@ -14,17 +15,16 @@ import hunternif.mc.atlas.registry.MarkerRenderInfo;
 import hunternif.mc.atlas.registry.MarkerType;
 import hunternif.mc.atlas.util.AtlasRenderHelper;
 import hunternif.mc.atlas.util.Rect;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.EntityPlayerSP;
-import net.minecraft.client.gui.ScaledResolution;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.network.ClientPlayerEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import none.XX_1_12_2_none_bit_XX;
 import org.lwjgl.opengl.GL11;
 
 import java.util.List;
@@ -42,27 +42,27 @@ public class AAORenderEventReceiver {
      */
     private static int screenScale = 1;
 
-    private static ScaledResolution res;
+    private static XX_1_12_2_none_bit_XX res;
 
     /**
      * Convenience method that returns the first atlas ID for all atlas items
      * the player is currently carrying in the hotbar/offhand. Returns null if
      * there are none. Offhand gets priority.
      **/
-    private static Integer getPlayerAtlas(EntityPlayer player) {
+    private static Integer getPlayerAtlas(PlayerEntity player) {
         if (!SettingsConfig.gameplay.itemNeeded) {
             return player.getUniqueID().hashCode();
         }
 
         ItemStack stack = player.getHeldItemOffhand();
         if (!stack.isEmpty() && stack.getItem() == RegistrarAntiqueAtlas.ATLAS) {
-            return stack.getItemDamage();
+            return stack.getDamage();
         }
 
         for (int i = 0; i < 9; i++) {
-            stack = player.inventory.getStackInSlot(i);
+            stack = player.inventory.getInvStack(i);
             if (!stack.isEmpty() && stack.getItem() == RegistrarAntiqueAtlas.ATLAS) {
-                return stack.getItemDamage();
+                return stack.getDamage();
             }
         }
 
@@ -80,11 +80,11 @@ public class AAORenderEventReceiver {
         }
 
         // Overlay must close if Atlas GUI is opened
-        if (Minecraft.getMinecraft().currentScreen instanceof GuiAtlas) {
+        if (MinecraftClient.getInstance().XX_1_12_2_m_XX instanceof GuiAtlas) {
             return;
         }
 
-        EntityPlayerSP player = Minecraft.getMinecraft().player;
+        ClientPlayerEntity player = MinecraftClient.getInstance().player;
         Integer atlas = null;
 
         if (AAOConfig.appearance.requiresHold) {
@@ -92,17 +92,17 @@ public class AAORenderEventReceiver {
             ItemStack stack2 = player.getHeldItemOffhand();
 
             if (!stack.isEmpty() && stack.getItem() == RegistrarAntiqueAtlas.ATLAS) {
-                atlas = stack.getItemDamage();
+                atlas = stack.getDamage();
             } else if (!stack2.isEmpty() && stack2.getItem() == RegistrarAntiqueAtlas.ATLAS) {
-                atlas = stack2.getItemDamage();
+                atlas = stack2.getDamage();
             }
         } else {
             atlas = getPlayerAtlas(player);
         }
 
         if (atlas != null) {
-            int gameWidth = event.getResolution().getScaledWidth();
-            int gameHeight = event.getResolution().getScaledHeight();
+            int gameWidth = event.getResolution().a();
+            int gameHeight = event.getResolution().b();
             // remember, y=0 is at the top
             Rect bounds = new Rect().setOrigin(AAOConfig.position.xPosition, AAOConfig.position.yPosition);
             if (AAOConfig.position.alignRight) {
@@ -120,10 +120,10 @@ public class AAORenderEventReceiver {
 
     private static void drawMinimap(Rect shape, int atlasID, Vec3d position, float rotation,
                              int dimension) {
-        screenScale = new ScaledResolution(Minecraft.getMinecraft()).getScaleFactor();
-        GlStateManager.color(1, 1, 1, 1);
+        screenScale = new XX_1_12_2_none_bit_XX(MinecraftClient.getInstance()).e();
+        GlStateManager.texCoordPointer(1, 1, 1, 1);
         GlStateManager.enableBlend();
-        GlStateManager.alphaFunc(GL11.GL_GREATER, 0); // So light detail on tiles is
+        GlStateManager.texGenMode(GL11.GL_GREATER, 0); // So light detail on tiles is
         // visible
         AtlasRenderHelper.drawFullTexture(Textures.BOOK, shape.minX,
                 shape.minY, shape.getWidth(), shape.getHeight());
@@ -143,7 +143,7 @@ public class AAORenderEventReceiver {
         }
 
         // Overlay the frame so that edges of the map are smooth:
-        GlStateManager.color(1, 1, 1, 1);
+        GlStateManager.texCoordPointer(1, 1, 1, 1);
         AtlasRenderHelper.drawFullTexture(Textures.BOOK_FRAME, shape.minX,
                 shape.minY, shape.getWidth(), shape.getHeight());
         GlStateManager.disableBlend();
@@ -159,7 +159,7 @@ public class AAORenderEventReceiver {
         GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
         DimensionData biomeData = AntiqueAtlasMod.atlasData.getAtlasData(
-                atlasID, Minecraft.getMinecraft().world).getDimensionData(dimension);
+                atlasID, MinecraftClient.getInstance().XX_1_12_2_f_XX).getDimensionData(dimension);
 
         TileRenderIterator iter = new TileRenderIterator(biomeData);
         Rect iteratorScope = getChunkCoverage(position, shape);
@@ -199,7 +199,7 @@ public class AAORenderEventReceiver {
         renderer.draw();
         // get GL back to normal
         GL11.glDisable(GL11.GL_SCISSOR_TEST);
-        GlStateManager.color(1, 1, 1, 1);
+        GlStateManager.texCoordPointer(1, 1, 1, 1);
     }
 
     private static void drawMarkers(Rect shape, int atlasID, Vec3d position,
@@ -212,7 +212,7 @@ public class AAORenderEventReceiver {
 
         // biomeData needed to prevent undiscovered markers from appearing
         DimensionData biomeData = AntiqueAtlasMod.atlasData.getAtlasData(
-                atlasID, Minecraft.getMinecraft().world).getDimensionData(
+                atlasID, MinecraftClient.getInstance().XX_1_12_2_f_XX).getDimensionData(
                 dimension);
         DimensionMarkersData globalMarkersData = AntiqueAtlasMod.globalMarkersData
                 .getData().getMarkersDataInDimension(dimension);
@@ -221,7 +221,7 @@ public class AAORenderEventReceiver {
         drawMarkersData(globalMarkersData, shape, biomeData, position);
 
         MarkersData markersData = AntiqueAtlasMod.markersData.getMarkersData(
-                atlasID, Minecraft.getMinecraft().world);
+                atlasID, MinecraftClient.getInstance().XX_1_12_2_f_XX);
         DimensionMarkersData localMarkersData = null;
         if (markersData != null) {
             localMarkersData = markersData.getMarkersDataInDimension(dimension);
@@ -232,19 +232,19 @@ public class AAORenderEventReceiver {
 
         // get GL back to normal
         GL11.glDisable(GL11.GL_SCISSOR_TEST);
-        GlStateManager.color(1, 1, 1, 1);
+        GlStateManager.texCoordPointer(1, 1, 1, 1);
     }
 
     private static void drawPlayer(float x, float y, float rotation) {
         // Draw player icon:
 
         GlStateManager.pushMatrix();
-        GlStateManager.translate(x, y, 0);
-        GlStateManager.rotate(180 + rotation, 0, 0, 1);
-        GlStateManager.translate(-AAOConfig.appearance.playerIconWidth / 2, -AAOConfig.appearance.playerIconHeight / 2, 0);
+        GlStateManager.translatef(x, y, 0);
+        GlStateManager.rotatef(180 + rotation, 0, 0, 1);
+        GlStateManager.getTexLevelParameter(-AAOConfig.appearance.playerIconWidth / 2, -AAOConfig.appearance.playerIconHeight / 2, 0);
         AtlasRenderHelper.drawFullTexture(Textures.PLAYER, 0, 0, AAOConfig.appearance.playerIconWidth, AAOConfig.appearance.playerIconHeight);
         GlStateManager.popMatrix();
-        GlStateManager.color(1, 1, 1, 1);
+        GlStateManager.texCoordPointer(1, 1, 1, 1);
     }
 
     private static void drawMarkersData(DimensionMarkersData markersData,
@@ -292,7 +292,7 @@ public class AAORenderEventReceiver {
                 && !biomeData.hasTileAt(marker.getChunkX(), marker.getChunkZ())) {
             return;
         }
-        GlStateManager.color(1, 1, 1, 1);
+        GlStateManager.texCoordPointer(1, 1, 1, 1);
         MarkerType m = MarkerRegistry.find(marker.getType());
         if (m == null){
         	AntiqueAtlasOverlayMod.LOGGER.warn("Could not find marker type for {}", marker.getId());
@@ -324,10 +324,10 @@ public class AAORenderEventReceiver {
     private static void glScissorGUI(Rect shape) {
         // glScissor uses the default window coordinates,
         // the display window does not. We need to fix this
-        int mcHeight = Minecraft.getMinecraft().displayHeight;
-        float scissorScaleX = Minecraft.getMinecraft().displayWidth * 1.0f
-                / res.getScaledWidth();
-        float scissorScaleY = mcHeight * 1.0f / res.getScaledHeight();
+        int mcHeight = MinecraftClient.getInstance().XX_1_12_2_e_XX;
+        float scissorScaleX = MinecraftClient.getInstance().XX_1_12_2_d_XX * 1.0f
+                / res.a();
+        float scissorScaleY = mcHeight * 1.0f / res.b();
         GL11.glScissor((int) (shape.minX * scissorScaleX),
                 (int) (mcHeight - shape.maxY * scissorScaleY),
                 (int) (shape.getWidth() * scissorScaleX),

@@ -6,13 +6,13 @@ import hunternif.mc.atlas.ext.ExtTileIdMap;
 import hunternif.mc.atlas.ext.ExtTileTextureMap;
 import hunternif.mc.atlas.ext.TileIdRegisteredEvent;
 import hunternif.mc.atlas.network.AbstractMessage.AbstractClientMessage;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.world.biome.Biome;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.common.network.ByteBufUtils;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.util.PacketByteBuf;
+import net.minecraft.util.registry.Registry;
+
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -42,10 +42,10 @@ public class TileNameIDPacket extends AbstractClientMessage<TileNameIDPacket>
 	}
 
 	@Override
-	public void read(PacketBuffer buffer) throws IOException {
+	public void read(PacketByteBuf buffer) throws IOException {
 		int size = buffer.readVarInt();
 		for (int i = 0; i < size; i++) {
-			String name = ByteBufUtils.readUTF8String(buffer);
+			String name = buffer.readString(512);
 			// Reading negative value to save on traffic, because custom biome
 			// IDs are always negative.
 			int biomeID = -buffer.readVarInt();
@@ -54,10 +54,10 @@ public class TileNameIDPacket extends AbstractClientMessage<TileNameIDPacket>
 	}
 
 	@Override
-	public void write(PacketBuffer buffer) throws IOException {
+	public void write(PacketByteBuf buffer) throws IOException {
 		buffer.writeVarInt(nameToIdMap.size());
 		for (Entry<String, Integer> entry : nameToIdMap.entrySet()) {
-			ByteBufUtils.writeUTF8String(buffer, entry.getKey());
+			buffer.writeString(entry.getKey());
 			// Writing negative value to save on traffic, because custom biome
 			// IDs are always negative.
 			buffer.writeVarInt(-entry.getValue());
@@ -65,21 +65,22 @@ public class TileNameIDPacket extends AbstractClientMessage<TileNameIDPacket>
 	}
 
 	@Override
-	@SideOnly(Side.CLIENT)
-	protected void process(EntityPlayer player, Side side) {
+	@Environment(EnvType.CLIENT)
+	protected void process(PlayerEntity player, EnvType side) {
 		for (Entry<String, Integer> entry : nameToIdMap.entrySet()) {
 			String tileName = entry.getKey();
 			int id = entry.getValue();
 			// Remove old texture mapping
 			int oldID = ExtTileIdMap.instance().getPseudoBiomeID(tileName);
 			if (oldID != ExtTileIdMap.NOT_FOUND && oldID != id) {
-				BiomeTextureMap.instance().setTexture(Biome.getBiomeForId(oldID), null);
+				BiomeTextureMap.instance().setTexture(Registry.BIOME.get(oldID), null);
 			}
 			ExtTileIdMap.instance().setPseudoBiomeID(tileName, id);
 			// Register new texture mapping
 			TextureSet texture = ExtTileTextureMap.instance().getTexture(tileName);
 			BiomeTextureMap.instance().setTexture(id, texture);
 		}
-		MinecraftForge.EVENT_BUS.post(new TileIdRegisteredEvent(nameToIdMap));
+		// TODO FABRIC
+		// MinecraftForge.EVENT_BUS.post(new TileIdRegisteredEvent(nameToIdMap));
 	}
 }

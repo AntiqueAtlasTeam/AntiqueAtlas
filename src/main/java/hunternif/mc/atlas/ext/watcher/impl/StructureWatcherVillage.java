@@ -15,16 +15,18 @@ import hunternif.mc.atlas.marker.MarkersData;
 import hunternif.mc.atlas.registry.MarkerTypes;
 import hunternif.mc.atlas.util.Log;
 import hunternif.mc.atlas.util.MathUtil;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
-import net.minecraft.world.DimensionType;
-import net.minecraft.world.World;
-import net.minecraft.world.gen.structure.MapGenStructureData;
-import net.minecraft.world.gen.structure.StructureBoundingBox;
+import net.minecraft.server.world.ServerWorld;
+import net.minecraft.world.dimension.DimensionType;
 import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.util.math.MutableIntBoundingBox;
+import net.minecraft.world.World;
+import none.XX_1_12_2_none_bbw_XX;
+import none.XX_1_13_none_bnu_XX;
 import java.util.*;
 
 public class StructureWatcherVillage implements IStructureWatcher {
@@ -99,24 +101,24 @@ public class StructureWatcherVillage implements IStructureWatcher {
     }
 
     @Override
-    public boolean isDimensionValid(DimensionType type) {
-        return type.getId() == 0; // Only overworld
+    public boolean isDimensionValid(XX_1_13_none_bnu_XX type) {
+        return type.a() == 0; // Only overworld
     }
 
     @Nullable
     @Override
-    public NBTTagCompound getStructureData(@Nonnull World world) {
-        MapGenStructureData data = (MapGenStructureData)world.getPerWorldStorage().getOrLoadData(MapGenStructureData.class, "Village");
+    public CompoundTag getStructureData(@Nonnull World world) {
+        XX_1_12_2_none_bbw_XX data = ((ServerWorld) world).getPersistentStateManager().a(XX_1_12_2_none_bbw_XX.class, "Village");
         if (data == null)
             return null;
 
-        return data.getTagCompound();
+        return data.a();
     }
 
     @Nonnull
     @Override
-    public Set<Pair<WatcherPos, String>> visitStructure(@Nonnull World world, @Nonnull NBTTagCompound structureTag) {
-        Set<String> tagSet = structureTag.getKeySet();
+    public Set<Pair<WatcherPos, String>> visitStructure(@Nonnull World world, @Nonnull CompoundTag structureTag) {
+        Set<String> tagSet = structureTag.getKeys();
         Set<Pair<WatcherPos, String>> visits = Sets.newHashSet();
         for (String coords : tagSet) {
             if (!WatcherPos.POS_PATTERN.matcher(coords).matches())
@@ -124,7 +126,7 @@ public class StructureWatcherVillage implements IStructureWatcher {
 
             WatcherPos pos = new WatcherPos(coords);
             if (!visited.contains(pos)) {
-                NBTTagCompound tag = structureTag.getCompoundTag(coords);
+                CompoundTag tag = structureTag.getCompound(coords);
                 visitVillage(world, tag);
                 visited.add(pos);
                 visits.add(Pair.of(pos, "Village"));
@@ -134,18 +136,18 @@ public class StructureWatcherVillage implements IStructureWatcher {
     }
 
 	/** Put all child parts of the fortress on the map as global custom tiles. */
-	private void visitVillage(World world, NBTTagCompound tag) {
+	private void visitVillage(World world, CompoundTag tag) {
 		if (!tag.getBoolean("Valid")) {
 			// The village was not actually generated and should not be mapped.
 			// Remove legacy marker and custom tile:
 			removeVillage(world, tag);
 			return;
 		}
-		NBTTagList children = tag.getTagList("Children", 10);
-		for (int i = 0; i < children.tagCount(); i++) {
-			NBTTagCompound child = children.getCompoundTagAt(i);
+		ListTag children = tag.getList("Children", 10);
+		for (int i = 0; i < children.size(); i++) {
+			CompoundTag child = children.getCompoundTag(i);
 			String childID = child.getString("id");
-			StructureBoundingBox boundingBox = new StructureBoundingBox(child.getIntArray("BB"));
+			MutableIntBoundingBox boundingBox = new MutableIntBoundingBox(child.getIntArray("BB"));
 			int x = MathUtil.getCenter(boundingBox).getX();
 			int z = MathUtil.getCenter(boundingBox).getZ();
 			int chunkX = x >> 4;
@@ -158,7 +160,7 @@ public class StructureWatcherVillage implements IStructureWatcher {
 				for (int j = -1; j <= 1; j++) {
 					for (int k = -1; k <= 1; k++) {
 						List<Marker> markers = AntiqueAtlasMod.globalMarkersData.getData()
-								.getMarkersAtChunk(world.provider.getDimension(), j + chunkX / MarkersData.CHUNK_STEP, k + chunkZ / MarkersData.CHUNK_STEP);
+								.getMarkersAtChunk(world.dimension.getType(), j + chunkX / MarkersData.CHUNK_STEP, k + chunkZ / MarkersData.CHUNK_STEP);
 						if (markers != null) {
 							for (Marker marker : markers) {
 								if (marker.getType().equals(MarkerTypes.VILLAGE)) {
@@ -170,7 +172,7 @@ public class StructureWatcherVillage implements IStructureWatcher {
 					}
 				}
 				if (!foundMarker && SettingsConfig.gameplay.autoVillageMarkers) {
-					AtlasAPI.markers.putGlobalMarker(world, false, MarkerTypes.VILLAGE.getRegistryName().toString(), "gui.antiqueatlas.marker.village", x, z);
+					AtlasAPI.markers.putGlobalMarker(world, false, MarkerTypes.VILLAGE.getRegistryName().XX_1_12_2_toString_XX(), "gui.antiqueatlas.marker.village", x, z);
 				}
 			}
 //			String tileName = null;
@@ -200,24 +202,24 @@ public class StructureWatcherVillage implements IStructureWatcher {
 	}
 
 	private static String tileAt(int chunkX, int chunkZ) {
-		int biomeID = AntiqueAtlasMod.extBiomeData.getData().getBiomeIdAt(0, chunkX, chunkZ);
+		int biomeID = AntiqueAtlasMod.extBiomeData.getData().getBiomeAt(DimensionType.OVERWORLD, chunkX, chunkZ);
 		return ExtTileIdMap.instance().getPseudoBiomeName(biomeID);
 	}
 
 	/** Delete the marker and custom tile data about the village. */
-	private static void removeVillage(World world, NBTTagCompound tag) {
-		NBTTagList children = tag.getTagList("Children", 10);
-		for (int i = 0; i < children.tagCount(); i++) {
-			NBTTagCompound child = children.getCompoundTagAt(i);
+	private static void removeVillage(World world, CompoundTag tag) {
+		ListTag children = tag.getList("Children", 10);
+		for (int i = 0; i < children.size(); i++) {
+			CompoundTag child = children.getCompoundTag(i);
 			String childID = child.getString("id");
-			StructureBoundingBox boundingBox = new StructureBoundingBox(child.getIntArray("BB"));
+			MutableIntBoundingBox boundingBox = new MutableIntBoundingBox(child.getIntArray("BB"));
 			int x = MathUtil.getCenter(boundingBox).getX();
 			int z = MathUtil.getCenter(boundingBox).getZ();
 			int chunkX = x >> 4;
 			int chunkZ = z >> 4;
 			if (START.equals(childID)) {
 				List<Marker> markers = AntiqueAtlasMod.globalMarkersData.getData()
-						.getMarkersAtChunk(world.provider.getDimension(), chunkX / MarkersData.CHUNK_STEP, chunkZ / MarkersData.CHUNK_STEP);
+						.getMarkersAtChunk(world.dimension.getType(), chunkX / MarkersData.CHUNK_STEP, chunkZ / MarkersData.CHUNK_STEP);
 				if (markers != null) {
 					for (Marker marker : markers) {
 						if (marker.getType().equals(MarkerTypes.VILLAGE)) {

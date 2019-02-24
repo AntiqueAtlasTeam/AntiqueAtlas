@@ -1,6 +1,6 @@
 package hunternif.mc.atlas.client;
 
-import hunternif.mc.atlas.core.Tile;
+import hunternif.mc.atlas.core.TileKind;
 
 /**
  * A quarter of a tile, containing the following information:
@@ -16,7 +16,7 @@ import hunternif.mc.atlas.core.Tile;
  * @author Hunternif
  */
 public class SubTile {
-	public Tile tile;
+	public TileKind tile;
 	/** coordinates of the subtile on the grid, measured in subtiles,
 	 * starting from (0,0) in the top left corner. */
 	public int x, y;

@@ -4,10 +4,10 @@ import hunternif.mc.atlas.core.BiomeDetectorBase;
 import hunternif.mc.atlas.ext.ExtTileConfig;
 import hunternif.mc.atlas.ext.ExtTileIdMap;
 import hunternif.mc.atlas.util.Log;
-import net.minecraft.entity.player.EntityPlayer;
+import net.fabricmc.loader.FabricLoader;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.IThreadListener;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.common.Loader;
@@ -17,7 +17,7 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.server.FMLServerHandler;
-
+import none.XX_1_13_2_none_acv_XX;
 import java.io.File;
 
 public class CommonProxy {
@@ -27,7 +27,7 @@ public class CommonProxy {
 	private ExtTileConfig extTileConfig;
 
 	public MinecraftServer getServer() {
-		return FMLServerHandler.instance().getServer();
+		return FabricLoader.INSTANCE.getEnvironmentHandler().getServerInstance();
 	}
 
 	public void preInit(FMLPreInitializationEvent event) {
@@ -46,8 +46,6 @@ public class CommonProxy {
 	}
 
 	public void postInit(FMLPostInitializationEvent event) {
-		AntiqueAtlasMod.instance.jeidPresent = Loader.isModLoaded("jeid");
-		BiomeDetectorBase.setBiomeArrayMethod(AntiqueAtlasMod.instance.jeidPresent);
 		BiomeDetectorBase.scanBiomeTypes();
 	}
 
@@ -102,16 +100,16 @@ public class CommonProxy {
 	/**
 	 * Returns a side-appropriate EntityPlayer for use during message handling
 	 */
-	public EntityPlayer getPlayerEntity(MessageContext ctx) {
-		return ctx.getServerHandler().player;
+	public PlayerEntity getPlayerEntity(MessageContext ctx) {
+		return ctx.getServerHandler().b;
 	}
 
 	/**
 	 * Returns the current thread based on side during message handling,
 	 * used for ensuring that the message is being handled by the main thread
 	 */
-	public IThreadListener getThreadFromContext(MessageContext ctx) {
-		return ctx.getServerHandler().player.getServer();
+	public XX_1_13_2_none_acv_XX getThreadFromContext(MessageContext ctx) {
+		return ctx.getServerHandler().b.getServer();
 	}
 
 	/** When a world is saved, so is the custom tile id config. */

@@ -1,12 +1,13 @@
 package hunternif.mc.atlas.api;
 
 import hunternif.mc.atlas.marker.Marker;
-import net.minecraft.world.World;
-
 import hunternif.mc.atlas.registry.MarkerType;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+
+import net.minecraft.util.Identifier;
+import net.minecraft.world.World;
 
 /**
  * API for putting custom markers to the atlases. Set the textures on the
@@ -18,7 +19,7 @@ public interface MarkerAPI {
 	/**
 	 * Registers the marker type, this should be called in PreInit, as config file overrides are loaded in Init.
 	 */
-	void registerMarker(MarkerType markerType);
+	void registerMarker(Identifier identifier, MarkerType markerType);
 	
 	/**
 	 * Put a marker in the specified Atlas instance at specified block

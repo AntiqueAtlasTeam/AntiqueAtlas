@@ -3,11 +3,9 @@ package hunternif.mc.atlas.api;
 import hunternif.mc.atlas.SettingsConfig;
 import hunternif.mc.atlas.api.impl.MarkerApiImpl;
 import hunternif.mc.atlas.api.impl.TileApiImpl;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.fml.common.registry.GameRegistry;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -20,8 +18,7 @@ public class AtlasAPI {
 	private static final int VERSION = 3;
 	public static final TileAPI tiles = new TileApiImpl();
 	public static final MarkerAPI markers = new MarkerApiImpl();
-	@GameRegistry.ObjectHolder("antiqueatlas:antique_atlas")
-	public static final Item ATLAS_ITEM = new Item();
+	public static Item ATLAS_ITEM; // TODO FABRIC
 	
 	/** Version of the API, meaning only this particular class. You might
 	 * want to check static field VERSION in the specific API interfaces. */
@@ -41,15 +38,15 @@ public class AtlasAPI {
 	
 	/** Convenience method that returns a list of atlas IDs for all atlas items
 	 * the player is currently carrying. **/
-	public static List<Integer> getPlayerAtlases(EntityPlayer player) {
+	public static List<Integer> getPlayerAtlases(PlayerEntity player) {
 		if (!SettingsConfig.gameplay.itemNeeded) {
-			return Collections.singletonList(player.getUniqueID().hashCode());
+			return Collections.singletonList(player.getUuid().hashCode());
 		}
 
 		List<Integer> list = new ArrayList<>();
-		for (ItemStack stack : player.inventory.mainInventory) {
+		for (ItemStack stack : player.inventory.main) {
 			if (!stack.isEmpty() && stack.getItem() == ATLAS_ITEM) {
-				list.add(stack.getItemDamage());
+				list.add(stack.getDamage());
 			}
 		}
 

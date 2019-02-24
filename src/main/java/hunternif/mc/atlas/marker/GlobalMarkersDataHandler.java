@@ -25,12 +25,12 @@ public class GlobalMarkersDataHandler {
 
 	@SubscribeEvent(priority=EventPriority.HIGHEST)
 	public void onWorldLoad(WorldEvent.Load event) {
-		if (!event.getWorld().isRemote && event.getWorld().provider.getDimension() == 0) {
-			data = (GlobalMarkersData) event.getWorld().loadData(GlobalMarkersData.class, DATA_KEY);
+		if (!event.getWorld().G && event.getWorld().s.getType() == 0) {
+			data = (GlobalMarkersData) event.getWorld().a(GlobalMarkersData.class, DATA_KEY);
 			if (data == null) {
 				data = new GlobalMarkersData(DATA_KEY);
 				data.markDirty();
-				event.getWorld().setData(DATA_KEY, data);
+				event.getWorld().a(DATA_KEY, data);
 			}
 		}
 	}

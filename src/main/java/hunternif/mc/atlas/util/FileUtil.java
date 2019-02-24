@@ -6,7 +6,7 @@ import java.io.*;
 
 class FileUtil {
 	private static final JsonParser parser = new JsonParser();
-	private static final Gson gson = new GsonBuilder().setPrettyPrinting().create();
+	private static final com.google.gson.Gson gson = new GsonBuilder().setPrettyPrinting().create();
 	
 	/** Parse the specified file. Returns null if the file is not found or
 	 * cannot be parsed correctly. */

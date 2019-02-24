@@ -3,14 +3,18 @@ package hunternif.mc.atlas.core;
 import hunternif.mc.atlas.ext.ExtTileIdMap;
 import hunternif.mc.atlas.util.ByteUtil;
 import net.minecraft.block.Block;
-import net.minecraft.init.Biomes;
-import net.minecraft.init.Blocks;
-import net.minecraft.world.biome.Biome;
-import net.minecraft.world.chunk.Chunk;
-import net.minecraftforge.common.BiomeDictionary;
-import net.minecraftforge.common.BiomeDictionary.Type;
-import net.minecraftforge.fml.relauncher.ReflectionHelper;
 
+import net.minecraft.block.Blocks;
+import net.minecraft.util.Identifier;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.registry.Registry;
+import net.minecraft.world.ViewableWorld;
+import net.minecraft.world.World;
+import net.minecraft.world.biome.Biome;
+import net.minecraft.world.biome.Biomes;
+import net.minecraft.world.chunk.Chunk;
+import net.minecraft.world.chunk.WorldChunk;
+import net.minecraft.world.gen.Heightmap;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.*;
@@ -26,7 +30,7 @@ public class BiomeDetectorBase implements IBiomeDetector {
 	private boolean doScanRavines = true;
 
 	/** Biome used for occasional pools of water. */
-	private static final int waterPoolBiomeID = Biome.getIdForBiome(Biomes.RIVER);
+	private static final Biome waterPoolBiome = null; // TODO FABRIC
 	/** Increment the counter for water biomes by this much during iteration.
 	 * This is done so that water pools are more visible. */
 	private static final int priorityRavine = 12, priorityWaterPool = 3, prioritylavaPool = 6;
@@ -41,28 +45,14 @@ public class BiomeDetectorBase implements IBiomeDetector {
 
 	private static final Set<Biome> swampBiomes = new HashSet<>();
 
-
-	protected static Method biomeArrayMethod;
-
 	/** Scan all registered biomes to mark biomes of certain types that will be
 	 * given higher priority when identifying mean biome ID for a chunk.
 	 * (Currently WATER, BEACH and SWAMP) */
 	public static void scanBiomeTypes() {
-		waterBiomes.addAll(BiomeDictionary.getBiomes(Type.WATER));
+		// TODO FABRIC
+		/* waterBiomes.addAll(BiomeDictionary.getBiomes(Type.WATER));
 		beachBiomes.addAll(BiomeDictionary.getBiomes(Type.BEACH));
-		swampBiomes.addAll(BiomeDictionary.getBiomes(Type.SWAMP));
-	}
-
-	public static void setBiomeArrayMethod(boolean jeidPresent) {
-		try {
-			if (jeidPresent) {
-				biomeArrayMethod = Chunk.class.getMethod("getIntBiomeArray");
-			}
-			else {
-				biomeArrayMethod = ReflectionHelper.findMethod(Chunk.class, "getBiomeArray", "func_76605_m");
-			}
-		}
-		catch (NoSuchMethodException e) { throw new RuntimeException(e); }
+		swampBiomes.addAll(BiomeDictionary.getBiomes(Type.SWAMP)); */
 	}
 
 	public void setScanPonds(boolean value) {
@@ -83,19 +73,11 @@ public class BiomeDetectorBase implements IBiomeDetector {
 		}
 	}
 
-	/** If no valid biome ID is found, returns {@link IBiomeDetector#NOT_FOUND}. */
+	/** If no valid biome ID is found, returns null. */
 	@Override
-	public int getBiomeID(Chunk chunk) {
-		int biomeCount = Biome.REGISTRY.getKeys().size();
-
-		int[] chunkBiomes;
-		try {
-			chunkBiomes = ByteUtil.unsignedByteToIntArray(biomeArrayMethod.invoke(chunk));
-		}
-		catch (IllegalAccessException | InvocationTargetException e) { throw new RuntimeException(e); }
-
-
-		Map<Integer, Integer> biomeOccurrences = new HashMap<>(biomeCount);
+	public TileKind getBiomeID(Chunk chunk) {
+		Biome[] chunkBiomes = chunk.getBiomeArray();
+		Map<Biome, Integer> biomeOccurrences = new HashMap<>(Registry.BIOME.getIds().size());
 
 		// The following important pseudo-biomes don't have IDs:
 		int lavaOccurrences = 0;
@@ -103,51 +85,52 @@ public class BiomeDetectorBase implements IBiomeDetector {
 
 		for (int x = 0; x < 16; x++) {
 			for (int z = 0; z < 16; z++) {
-				int biomeID = chunkBiomes[x << 4 | z];
+				Biome biomeID = chunkBiomes[x << 4 | z];
 				if (doScanPonds) {
-					int y = chunk.getHeightValue(x, z);
+					int y = chunk instanceof WorldChunk ? ((WorldChunk) chunk).getHeightmap(Heightmap.Type.MOTION_BLOCKING_NO_LEAVES).get(x, z) : chunk.getHeight() - 1;
 					if (y > 0) {
-						Block topBlock = chunk.getBlockState(x, y-1, z).getBlock();
+						// TODO FABRIC
+						Block topBlock = chunk.getBlockState(new BlockPos(x, y-1, z)).getBlock();
 						// For some reason lava doesn't count in height value
 						// TODO: check if 1.8 fixes this!
-						Block topBlock2 = chunk.getBlockState(x, y, z).getBlock();
+						Block topBlock2 = chunk.getBlockState(new BlockPos(x, y, z)).getBlock();
 						// Check if there's surface of water at (x, z), but not swamp
-						if (topBlock == Blocks.WATER && !swampBiomes.contains(Biome.getBiomeForId(biomeID))) {
-							int occurrence = biomeOccurrences.getOrDefault(waterPoolBiomeID, 0) + priorityWaterPool;
-							biomeOccurrences.put(waterPoolBiomeID, occurrence);
+						if (topBlock == Blocks.WATER && !swampBiomes.contains(biomeID)) {
+							int occurrence = biomeOccurrences.getOrDefault(waterPoolBiome, 0) + priorityWaterPool;
+							biomeOccurrences.put(waterPoolBiome, occurrence);
 						} else if (topBlock2 == Blocks.LAVA) {
 							lavaOccurrences += prioritylavaPool;
 						}
 					}
 				}
 				if (doScanRavines) {
-					if(chunk.getHeightValue(x, z) < chunk.getWorld().provider.getAverageGroundLevel() - ravineMinDepth)	{
+					// TODO FABRIC
+					/* if(chunk.XX_1_12_2_b_XX(x, z) < chunk.XX_1_12_2_q_XX().t.XX_1_12_2_i_XX() - ravineMinDepth)	{
 						ravineOccurences += priorityRavine;
-					}
+					} */
 				}
-				if (biomeID >= 0 && Biome.getBiomeForId(biomeID) != null) {
-					int occurrence = biomeOccurrences.getOrDefault(biomeID, 0) + priorityForBiome(Biome.getBiomeForId(biomeID));
-					biomeOccurrences.put(biomeID, occurrence);
-				}
+
+				int occurrence = biomeOccurrences.getOrDefault(biomeID, 0) + priorityForBiome(biomeID);
+				biomeOccurrences.put(biomeID, occurrence);
 			}
 		}
 
 		try {
-			Map.Entry<Integer, Integer> meanBiome = Collections.max(biomeOccurrences.entrySet(), Comparator.comparingInt(Map.Entry::getValue));
-			int meanBiomeId = meanBiome.getKey();
+			Map.Entry<Biome, Integer> meanBiome = Collections.max(biomeOccurrences.entrySet(), Comparator.comparingInt(Map.Entry::getValue));
+			Biome meanBiomeId = meanBiome.getKey();
 			int meanBiomeOccurrences = meanBiome.getValue();
 
 			// The following important pseudo-biomes don't have IDs:
 			if (meanBiomeOccurrences < ravineOccurences) {
-				return ExtTileIdMap.instance().getPseudoBiomeID(ExtTileIdMap.TILE_RAVINE);
+				return TileKindFactory.get(ExtTileIdMap.TILE_RAVINE);
 			}
 			if (meanBiomeOccurrences < lavaOccurrences) {
-				return ExtTileIdMap.instance().getPseudoBiomeID(ExtTileIdMap.TILE_LAVA);
+				return TileKindFactory.get(ExtTileIdMap.TILE_LAVA);
 			}
 
-			return meanBiomeId;
+			return TileKindFactory.get(meanBiomeId);
 		} catch(NoSuchElementException e){
-			return Biome.getIdForBiome(Biomes.DEFAULT);
+			return TileKindFactory.get(Biomes.DEFAULT);
 		}
 	}
 }

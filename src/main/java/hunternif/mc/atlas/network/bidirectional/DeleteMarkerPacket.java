@@ -7,10 +7,9 @@ import hunternif.mc.atlas.api.AtlasAPI;
 import hunternif.mc.atlas.marker.MarkersData;
 import hunternif.mc.atlas.network.AbstractMessage;
 import hunternif.mc.atlas.util.Log;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
-import net.minecraft.network.PacketBuffer;
-import net.minecraftforge.fml.relauncher.Side;
+import net.fabricmc.api.EnvType;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.util.PacketByteBuf;
 
 import java.io.IOException;
 
@@ -40,13 +39,13 @@ public class DeleteMarkerPacket extends AbstractMessage<DeleteMarkerPacket> {
 	}
 
 	@Override
-	public void read(PacketBuffer buffer) throws IOException {
+	public void read(PacketByteBuf buffer) throws IOException {
 		atlasID = buffer.readVarInt();
 		markerID = buffer.readVarInt();
 	}
 
 	@Override
-	public void write(PacketBuffer buffer) throws IOException {
+	public void write(PacketByteBuf buffer) throws IOException {
 		buffer.writeVarInt(atlasID);
 		buffer.writeVarInt(markerID);
 	}
@@ -56,13 +55,12 @@ public class DeleteMarkerPacket extends AbstractMessage<DeleteMarkerPacket> {
 	}
 
 	@Override
-	protected void process(EntityPlayer player, Side side) {
-		if (side.isServer()) {
+	protected void process(PlayerEntity player, EnvType side) {
+		if (side == EnvType.SERVER) {
 			// Make sure it's this player's atlas :^)
-			if (side.isServer() && SettingsConfig.gameplay.itemNeeded
-					&& !player.inventory.hasItemStack(new ItemStack(RegistrarAntiqueAtlas.ATLAS, 1, atlasID))) {
+			if (SettingsConfig.gameplay.itemNeeded && !player.bB.h(new ata(RegistrarAntiqueAtlas.ATLAS, 1, atlasID))) {
 				Log.warn("Player %s attempted to delete marker from someone else's Atlas #%d",
-						player.getGameProfile().getName(), atlasID);
+						player.getCommandSource().getName(), atlasID);
 				return;
 			}
 			if (isGlobal()) {

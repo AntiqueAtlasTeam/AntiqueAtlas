@@ -9,11 +9,12 @@ import hunternif.mc.atlas.network.AbstractMessage.AbstractServerMessage;
 import hunternif.mc.atlas.network.PacketDispatcher;
 import hunternif.mc.atlas.network.client.MarkersPacket;
 import hunternif.mc.atlas.util.Log;
-import net.minecraft.entity.player.EntityPlayer;
+import net.fabricmc.api.EnvType;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.network.PacketBuffer;
-import net.minecraftforge.fml.common.network.ByteBufUtils;
-import net.minecraftforge.fml.relauncher.Side;
+import net.minecraft.util.PacketByteBuf;
+import net.minecraft.util.registry.Registry;
+import net.minecraft.world.dimension.DimensionType;
 
 import java.io.IOException;
 
@@ -24,7 +25,7 @@ import java.io.IOException;
  */
 public class AddMarkerPacket extends AbstractServerMessage<AddMarkerPacket> {
 	private int atlasID;
-	private int dimension;
+	private DimensionType dimension;
 	private String type;
 	private String label;
 	private int x, y;
@@ -33,7 +34,7 @@ public class AddMarkerPacket extends AbstractServerMessage<AddMarkerPacket> {
 	public AddMarkerPacket() {}
 
 	/** Use this constructor when creating a <b>local</b> marker. */
-	public AddMarkerPacket(int atlasID, int dimension, String type, String label, int x, int y, boolean visibleAhead) {
+	public AddMarkerPacket(int atlasID, DimensionType dimension, String type, String label, int x, int y, boolean visibleAhead) {
 		this.atlasID = atlasID;
 		this.dimension = dimension;
 		this.type = type;
@@ -44,33 +45,34 @@ public class AddMarkerPacket extends AbstractServerMessage<AddMarkerPacket> {
 	}
 
 	@Override
-	public void read(PacketBuffer buffer) throws IOException {
+	public void read(PacketByteBuf buffer) throws IOException {
 		atlasID = buffer.readVarInt();
-		dimension = buffer.readVarInt();
-		type = ByteBufUtils.readUTF8String(buffer);
-		label = ByteBufUtils.readUTF8String(buffer);
+		dimension = Registry.DIMENSION.get(buffer.readVarInt());
+		type = buffer.readString(512);
+		label = buffer.readString(512);
 		x = buffer.readInt();
 		y = buffer.readInt();
 		visibleAhead = buffer.readBoolean();
 	}
 
 	@Override
-	public void write(PacketBuffer buffer) throws IOException {
+	public void write(PacketByteBuf buffer) throws IOException {
 		buffer.writeVarInt(atlasID);
-		buffer.writeVarInt(dimension);
-		ByteBufUtils.writeUTF8String(buffer, type);
-		ByteBufUtils.writeUTF8String(buffer, label);
+		buffer.writeVarInt(Registry.DIMENSION.getRawId(dimension));
+		buffer.writeString(type);
+		buffer.writeString(label);
 		buffer.writeInt(x);
 		buffer.writeInt(y);
 		buffer.writeBoolean(visibleAhead);
 	}
 
 	@Override
-	protected void process(EntityPlayer player, Side side) {
+	protected void process(PlayerEntity player, EnvType side) {
 		// Make sure it's this player's atlas :^)
-		if (SettingsConfig.gameplay.itemNeeded && !player.inventory.hasItemStack(new ItemStack(RegistrarAntiqueAtlas.ATLAS, 1, atlasID))) {
+		// TODO Fabric
+		if (SettingsConfig.gameplay.itemNeeded /*  */&& !player.inventory.containsStack(new ItemStack(RegistrarAntiqueAtlas.ATLAS, 1, atlasID))) {
 			Log.warn("Player %s attempted to put marker into someone else's Atlas #%d",
-					player.getGameProfile().getName(), atlasID);
+					player.getCommandSource().getName(), atlasID);
 			return;
 		}
 		MarkersData markersData = AntiqueAtlasMod.markersData.getMarkersData(atlasID, player.getEntityWorld());

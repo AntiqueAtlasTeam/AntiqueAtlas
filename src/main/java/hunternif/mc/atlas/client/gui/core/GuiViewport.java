@@ -1,9 +1,9 @@
 package hunternif.mc.atlas.client.gui.core;
 
-import net.minecraft.client.gui.ScaledResolution;
 import org.lwjgl.opengl.GL11;
 
 import java.io.IOException;
+import none.XX_1_12_2_none_bit_XX;
 
 /**
  * The children of this component are rendered and process input only inside
@@ -35,28 +35,28 @@ public class GuiViewport extends GuiComponent {
 	}
 	
 	@Override
-	public void initGui() {
-		super.initGui();
-		screenScale = new ScaledResolution(mc).getScaleFactor();
+	public void onInitialized() {
+		super.onInitialized();
+		screenScale = new XX_1_12_2_none_bit_XX(mc).e();
 	}
 	
 	@Override
-	public void drawScreen(int mouseX, int mouseY, float par3) {
+	public void a(int mouseX, int mouseY, float par3) {
 		GL11.glEnable(GL11.GL_SCISSOR_TEST);
 		GL11.glScissor( getGuiX()*screenScale,
-				mc.displayHeight - (getGuiY() + properHeight)*screenScale,
+				mc.e - (getGuiY() + properHeight)*screenScale,
 				properWidth*screenScale, properHeight*screenScale);
 		
 		// Draw the content (child GUIs):
-		super.drawScreen(mouseX, mouseY, par3);
+		super.a(mouseX, mouseY, par3);
 		
 		GL11.glDisable(GL11.GL_SCISSOR_TEST);
 	}
 	
 	@Override
-	public void handleMouseInput() throws IOException {
+	public void k() throws IOException {
 		if (isMouseInRegion(getGuiX(), getGuiY(), properWidth, properHeight)) {
-			super.handleMouseInput();
+			super.k();
 		}
 	}
 	

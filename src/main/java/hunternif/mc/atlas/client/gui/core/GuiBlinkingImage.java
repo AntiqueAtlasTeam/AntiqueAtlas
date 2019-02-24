@@ -1,8 +1,9 @@
 package hunternif.mc.atlas.client.gui.core;
 
+import com.mojang.blaze3d.platform.GlStateManager;
 import hunternif.mc.atlas.util.AtlasRenderHelper;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.util.ResourceLocation;
+
+import net.minecraft.util.Identifier;
 import org.lwjgl.opengl.GL11;
 
 /** Displays a texture that changes alpha at regular intervals.
@@ -11,7 +12,7 @@ import org.lwjgl.opengl.GL11;
  * @author Hunternif
  */
 public class GuiBlinkingImage extends GuiComponent {
-	private ResourceLocation texture;
+	private Identifier texture;
 	/** The number of milliseconds the icon spends visible or invisible. */
 	private long blinkTime = 500;
 	private float visibleAlpha = 1;
@@ -21,7 +22,7 @@ public class GuiBlinkingImage extends GuiComponent {
 	/** The flag that switches value every "blink". */
 	private boolean isVisible;
 	
-	public void setTexture(ResourceLocation texture, int width, int height) {
+	public void setTexture(Identifier texture, int width, int height) {
 		this.texture = texture;
 		setSize(width, height);
 		// Set up the timer so that the image appears visible at the first moment:
@@ -43,13 +44,13 @@ public class GuiBlinkingImage extends GuiComponent {
 	}
 	
 	@Override
-	public void drawScreen(int mouseX, int mouseY, float partialTick) {
+	public void a(int mouseX, int mouseY, float partialTick) {
 		long currentTime = System.currentTimeMillis();
 		if (lastTickTime + blinkTime < currentTime) {
 			lastTickTime = currentTime;
 			isVisible = !isVisible;
 		}
-		GlStateManager.color(1, 1, 1, isVisible ? visibleAlpha : invisibleAlpha);
+		GlStateManager.color4f(1, 1, 1, isVisible ? visibleAlpha : invisibleAlpha);
 		GlStateManager.enableBlend();
 		GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 		drawImage();

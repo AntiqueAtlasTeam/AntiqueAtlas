@@ -6,10 +6,11 @@ import hunternif.mc.atlas.AntiqueAtlasMod;
 import hunternif.mc.atlas.marker.Marker;
 import hunternif.mc.atlas.marker.MarkersData;
 import hunternif.mc.atlas.network.AbstractMessage.AbstractClientMessage;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.network.PacketBuffer;
-import net.minecraftforge.fml.common.network.ByteBufUtils;
-import net.minecraftforge.fml.relauncher.Side;
+import net.fabricmc.api.EnvType;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.util.PacketByteBuf;
+import net.minecraft.util.registry.Registry;
+import net.minecraft.world.dimension.DimensionType;
 
 import java.io.IOException;
 import java.util.List;
@@ -25,13 +26,13 @@ public class MarkersPacket extends AbstractClientMessage<MarkersPacket> {
 	/** Used in place of atlasID to signify that the marker is global. */
 	private static final int GLOBAL = -1;
 	private int atlasID;
-	private int dimension;
+	private DimensionType dimension;
 	private final ListMultimap<String, Marker> markersByType = ArrayListMultimap.create();
 
 	public MarkersPacket() {}
 
 	/** Use this constructor when creating a <b>local</b> marker. */
-	public MarkersPacket(int atlasID, int dimension, Marker... markers) {
+	public MarkersPacket(int atlasID, DimensionType dimension, Marker... markers) {
 		this.atlasID = atlasID;
 		this.dimension = dimension;
 		for (Marker marker : markers) {
@@ -40,7 +41,7 @@ public class MarkersPacket extends AbstractClientMessage<MarkersPacket> {
 	}
 
 	/** Use this constructor when creating a <b>global</b> marker. */
-	public MarkersPacket(int dimension, Marker... markers) {
+	public MarkersPacket(DimensionType dimension, Marker... markers) {
 		this(GLOBAL, dimension, markers);
 	}
 
@@ -54,16 +55,16 @@ public class MarkersPacket extends AbstractClientMessage<MarkersPacket> {
 	}
 
 	@Override
-	public void read(PacketBuffer buffer) throws IOException {
+	public void read(PacketByteBuf buffer) throws IOException {
 		atlasID = buffer.readVarInt();
-		dimension = buffer.readVarInt();
+		dimension = Registry.DIMENSION.get(buffer.readVarInt());
 		int typesLength = buffer.readVarInt();
 		for (int i = 0; i < typesLength; i++) {
-			String type = ByteBufUtils.readUTF8String(buffer);
+			String type = buffer.readString(512);
 			int markersLength = buffer.readVarInt();
 			for (int j = 0; j < markersLength; j++) {
 				Marker marker = new Marker(buffer.readVarInt(),
-						type, ByteBufUtils.readUTF8String(buffer),
+						type, buffer.readString(512),
 						dimension, buffer.readInt(), buffer.readInt(),
 						buffer.readBoolean());
 				markersByType.put(type, marker);
@@ -72,18 +73,18 @@ public class MarkersPacket extends AbstractClientMessage<MarkersPacket> {
 	}
 
 	@Override
-	public void write(PacketBuffer buffer) throws IOException {
+	public void write(PacketByteBuf buffer) throws IOException {
 		buffer.writeVarInt(atlasID);
-		buffer.writeVarInt(dimension);
+		buffer.writeVarInt(Registry.DIMENSION.getRawId(dimension));
 		Set<String> types = markersByType.keySet();
 		buffer.writeVarInt(types.size());
 		for (String type : types) {
-			ByteBufUtils.writeUTF8String(buffer, type);
+			buffer.writeString(type);
 			List<Marker> markers = markersByType.get(type);
 			buffer.writeVarInt(markers.size());
 			for (Marker marker : markers) {
 				buffer.writeVarInt(marker.getId());
-				ByteBufUtils.writeUTF8String(buffer, marker.getLabel());
+				buffer.writeString(marker.getLabel());
 				buffer.writeInt(marker.getX());
 				buffer.writeInt(marker.getZ());
 				buffer.writeBoolean(marker.isVisibleAhead());
@@ -92,7 +93,7 @@ public class MarkersPacket extends AbstractClientMessage<MarkersPacket> {
 	}
 
 	@Override
-	protected void process(EntityPlayer player, Side side) {
+	protected void process(PlayerEntity player, EnvType side) {
 		MarkersData markersData = isGlobal() ?
 				AntiqueAtlasMod.globalMarkersData.getData() :
 					AntiqueAtlasMod.markersData.getMarkersData(atlasID, player.getEntityWorld());

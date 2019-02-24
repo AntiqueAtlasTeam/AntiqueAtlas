@@ -5,52 +5,52 @@ import hunternif.mc.atlas.RegistrarAntiqueAtlas;
 import hunternif.mc.atlas.SettingsConfig;
 import hunternif.mc.atlas.core.AtlasData;
 import hunternif.mc.atlas.marker.MarkersData;
-import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ActionResult;
-import net.minecraft.util.EnumActionResult;
-import net.minecraft.util.EnumHand;
+import net.minecraft.util.Hand;
+import net.minecraft.util.TypedActionResult;
 import net.minecraft.world.World;
-import net.minecraftforge.common.ForgeHooks;
 
 public class ItemEmptyAtlas extends Item {
-
-	public ItemEmptyAtlas() {
-	    setTranslationKey("emptyAntiqueAtlas");
-        setCreativeTab(CreativeTabs.TOOLS);
+	public ItemEmptyAtlas(Item.Settings settings) {
+		super(settings);
 	}
 
 	@Override
-	public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player,
-			EnumHand hand) {
-		ItemStack stack = player.getHeldItem(hand);
-		if (world.isRemote)
-			return new ActionResult<>(EnumActionResult.SUCCESS, stack);
-		
-		int atlasID = world.getUniqueDataId(ItemAtlas.WORLD_ATLAS_DATA_ID);
-		ItemStack atlasStack = new ItemStack(RegistrarAntiqueAtlas.ATLAS, 1, atlasID);
+	public TypedActionResult<ItemStack> use(World world, PlayerEntity player,
+			Hand hand) {
+		ItemStack stack = player.getStackInHand(hand);
+		if (world.isClient)
+			return new TypedActionResult<>(ActionResult.SUCCESS, stack);
+
+		int atlasID = AntiqueAtlasMod.getGlobalAtlasData(world).getNextAtlasId();
+		ItemStack atlasStack = new ItemStack(RegistrarAntiqueAtlas.ATLAS);
+
+		atlasStack.getOrCreateTag().putInt("atlasID", atlasID);
 
         AtlasData atlasData = AntiqueAtlasMod.atlasData.getAtlasData(atlasID, world);
         atlasData.getDimensionData(player.dimension).setBrowsingPosition(
-                (int)Math.round(-player.posX * SettingsConfig.userInterface.defaultScale),
-                (int)Math.round(-player.posZ * SettingsConfig.userInterface.defaultScale),
+                (int)Math.round(-player.x * SettingsConfig.userInterface.defaultScale),
+                (int)Math.round(-player.z * SettingsConfig.userInterface.defaultScale),
                 SettingsConfig.userInterface.defaultScale);
         atlasData.markDirty();
 
         MarkersData markersData = AntiqueAtlasMod.markersData.getMarkersData(atlasID, world);
         markersData.markDirty();
 		
-		stack.shrink(1);
+		stack.subtractAmount(1);
 		if (stack.isEmpty()) {
-			return new ActionResult<>(EnumActionResult.SUCCESS, atlasStack);
+			return new TypedActionResult<>(ActionResult.SUCCESS, atlasStack);
 		} else {
-			if (!player.inventory.addItemStackToInventory(atlasStack.copy())) {
-				ForgeHooks.onPlayerTossEvent(player, atlasStack, false);
+			if (!player.inventory.insertStack(atlasStack.copy())) {
+				// TODO FABRIC
+				// ForgeHooks.onPlayerTossEvent(player, atlasStack, false);
 			}
 
-			return new ActionResult<>(EnumActionResult.SUCCESS, stack);
+			return new TypedActionResult<>(ActionResult.SUCCESS, stack);
 		}
 	}
 }

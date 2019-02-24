@@ -3,59 +3,56 @@ package hunternif.mc.atlas.registry;
 import java.util.List;
 import java.util.Set;
 
-import net.minecraft.util.ResourceLocation;
-
 import hunternif.mc.atlas.AntiqueAtlasMod;
 import hunternif.mc.atlas.util.SaveData;
+import net.minecraft.util.Identifier;
+import net.minecraft.util.registry.DefaultedRegistry;
+import net.minecraft.util.registry.MutableRegistry;
 
 public class MarkerRegistry extends SaveData {
 	public static final MarkerRegistry INSTANCE = new MarkerRegistry();
 
-	private static final ResourceLocation DEFAULT_LOC = new ResourceLocation("antiqueatlas:red_x_small");
-	
-	private final MarkerRegistryImpl<MarkerType> registry;
+	private final MutableRegistry<MarkerType> registry;
 	
 	private MarkerRegistry() {
-		registry = new MarkerRegistryImpl<>(DEFAULT_LOC);
+		registry = new DefaultedRegistry<>("antiqueatlas:red_x_small");
 	}
 	
-	public static void register(ResourceLocation location, MarkerType type) {
-		type.setRegistryName(location);
-		register(type);
+	public static void register(Identifier location, MarkerType type) {
+		INSTANCE.registry.add(location, type);
 	}
 	
-	public static void register(MarkerType type) {
-		INSTANCE.registry.register(type);
-		INSTANCE.markDirty();
-	}
-	
-	public static ResourceLocation getLoc(String type) {
+	public static Identifier getLoc(String type) {
 		if(!type.contains(":"))
 			type = AntiqueAtlasMod.ID + ":" + type;
-		return new ResourceLocation(type);
+		return new Identifier(type);
 	}
 	
 	public static MarkerType find(String type) {
 		return find(getLoc(type));
 	}
 	
-	public static MarkerType find(ResourceLocation type) {
-		return INSTANCE.registry.getObject(type);
+	public static MarkerType find(Identifier type) {
+		return INSTANCE.registry.get(type);
 	}
 	
 	public static boolean hasKey(String type) {
 		return hasKey(getLoc(type));
 	}
 	
-	public static boolean hasKey(ResourceLocation loc) {
-		return INSTANCE.registry.containsKey(loc);
+	public static boolean hasKey(Identifier loc) {
+		return INSTANCE.registry.containsId(loc);
 	}
 	
-	public static List<MarkerType> getValues() {
-		return INSTANCE.registry.getValues();
+	public static Iterable<MarkerType> iterable() {
+		return INSTANCE.registry;
 	}
 	
-	public static Set<ResourceLocation> getKeys() {
-		return INSTANCE.registry.getKeys();
+	public static Set<Identifier> getKeys() {
+		return INSTANCE.registry.getIds();
+	}
+
+	public static Identifier getId(MarkerType type) {
+		return INSTANCE.registry.getId(type);
 	}
 }

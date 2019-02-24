@@ -8,16 +8,17 @@ import hunternif.mc.atlas.ext.watcher.IStructureWatcher;
 import hunternif.mc.atlas.ext.watcher.StructureWatcher;
 import hunternif.mc.atlas.ext.watcher.WatcherPos;
 import hunternif.mc.atlas.util.MathUtil;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
-import net.minecraft.world.DimensionType;
-import net.minecraft.world.World;
-import net.minecraft.world.gen.structure.MapGenStructureData;
-import net.minecraft.world.gen.structure.StructureBoundingBox;
+import net.minecraft.server.world.ServerWorld;
 import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.util.math.MutableIntBoundingBox;
+import net.minecraft.world.World;
+import none.XX_1_12_2_none_bbw_XX;
+import none.XX_1_13_none_bnu_XX;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -58,32 +59,32 @@ public class StructureWatcherFortress implements IStructureWatcher {
     }
 
     @Override
-    public boolean isDimensionValid(DimensionType type) {
-        return type.getId() == -1; // Only nether
+    public boolean isDimensionValid(XX_1_13_none_bnu_XX type) {
+        return type.a() == -1; // Only nether
     }
 
     @Nullable
     @Override
-    public NBTTagCompound getStructureData(@Nonnull World world) {
-        MapGenStructureData data = (MapGenStructureData)world.getPerWorldStorage().getOrLoadData(MapGenStructureData.class, "Fortress");
+    public CompoundTag getStructureData(@Nonnull World world) {
+        XX_1_12_2_none_bbw_XX data = ((ServerWorld) world).getPersistentStateManager().a(XX_1_12_2_none_bbw_XX.class, "Fortress");
         if (data == null)
             return null;
 
-        return data.getTagCompound();
+        return data.a();
     }
 
     @Nonnull
     @Override
-    public Set<Pair<WatcherPos, String>> visitStructure(@Nonnull World world, @Nonnull NBTTagCompound structureTag) {
+    public Set<Pair<WatcherPos, String>> visitStructure(@Nonnull World world, @Nonnull CompoundTag structureTag) {
         Set<Pair<WatcherPos, String>> visits = Sets.newHashSet();
-        Set<String> tagSet = structureTag.getKeySet();
+        Set<String> tagSet = structureTag.getKeys();
         for (String coords : tagSet) {
             if (!WatcherPos.POS_PATTERN.matcher(coords).matches())
                 continue; // Some other kind of data got stuffed in here. It's irrelevant to us
 
             WatcherPos pos = new WatcherPos(coords);
             if (!visited.contains(pos)) {
-                NBTTagCompound tag = structureTag.getCompoundTag(coords);
+                CompoundTag tag = structureTag.getCompound(coords);
                 visitFortress(world, tag);
                 visited.add(pos);
                 visits.add(Pair.of(pos, "Nether Fortress"));
@@ -94,14 +95,14 @@ public class StructureWatcherFortress implements IStructureWatcher {
     }
 
 	/** Put all child parts of the fortress on the map as global custom tiles. */
-	private void visitFortress(World world, NBTTagCompound tag) {
-		NBTTagList children = tag.getTagList("Children", 10);
-		for (int i = 0; i < children.tagCount(); i++) {
-			NBTTagCompound child = children.getCompoundTagAt(i);
+	private void visitFortress(World world, CompoundTag tag) {
+		ListTag children = tag.getList("Children", 10);
+		for (int i = 0; i < children.size(); i++) {
+			CompoundTag child = children.getCompoundTag(i);
 			String childID = child.getString("id");
-			StructureBoundingBox boundingBox = new StructureBoundingBox(child.getIntArray("BB"));
+			MutableIntBoundingBox boundingBox = new MutableIntBoundingBox(child.getIntArray("BB"));
 			if (BRIDGE.equals(childID)) { // Straight open bridge segment. Is allowed to span several chunks.
-				if (boundingBox.getXSize() > 16) {
+				if (boundingBox.getBlockCountX() > 16) {
 					String tileName = ExtTileIdMap.TILE_NETHER_BRIDGE_X;
 
 					int chunkZ = MathUtil.getCenter(boundingBox).getZ() >> 4;
@@ -125,7 +126,7 @@ public class StructureWatcherFortress implements IStructureWatcher {
 			} else if (BRIDGE_END.equals(childID)) { // End of a straight open bridge segment
 				String tileName;
 				int chunkX, chunkZ;
-				if (boundingBox.getXSize() > boundingBox.getZSize()) {
+				if (boundingBox.getBlockCountX() > boundingBox.getBlockCountZ()) {
 					tileName = ExtTileIdMap.TILE_NETHER_BRIDGE_END_X;
 					chunkX = boundingBox.minX >> 4;
 					chunkZ = MathUtil.getCenter(boundingBox).getZ() >> 4;
@@ -170,6 +171,6 @@ public class StructureWatcherFortress implements IStructureWatcher {
 	}
 
 	private static boolean noTileAt(World world, int chunkX, int chunkZ) {
-		return AntiqueAtlasMod.extBiomeData.getData().getBiomeIdAt(world.provider.getDimension(), chunkX, chunkZ) == -1;
+		return AntiqueAtlasMod.extBiomeData.getData().getBiomeAt(world.dimension.getType(), chunkX, chunkZ) == -1;
 	}
 }

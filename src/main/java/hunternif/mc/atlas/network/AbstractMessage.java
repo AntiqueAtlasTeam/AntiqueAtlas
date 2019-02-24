@@ -20,49 +20,44 @@ package hunternif.mc.atlas.network;
 import com.google.common.base.Throwables;
 import hunternif.mc.atlas.AntiqueAtlasMod;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.IThreadListener;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
-import net.minecraftforge.fml.relauncher.Side;
-
+import net.fabricmc.api.EnvType;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.util.PacketByteBuf;
 import java.io.IOException;
 
 /**
  *
  * A wrapper much like the vanilla packet class, allowing use of PacketBuffer's many
  * useful methods as well as implementing a final version of IMessageHandler which
- * calls {@link #process(EntityPlayer, Side)} on each received message, letting the
+ * calls {@link #process(PlayerEntity, EnvType)} on each received message, letting the
  * message handle itself rather than having to add an extra class in each one.
  *
  */
-public abstract class AbstractMessage<T extends AbstractMessage<T>> implements IMessage, IMessageHandler <T, IMessage>
+public abstract class AbstractMessage<T extends AbstractMessage<T>>
 {
 	/**
 	 * Some PacketBuffer methods throw IOException - default handling propagates the exception.
 	 * If an IOException is expected but should not be fatal, handle it within this method.
 	 */
-	protected abstract void read(PacketBuffer buffer) throws IOException;
+	protected abstract void read(PacketByteBuf buffer) throws IOException;
 
 	/**
 	 * Some PacketBuffer methods throw IOException - default handling propagates the exception.
 	 * If an IOException is expected but should not be fatal, handle it within this method.
 	 */
-	protected abstract void write(PacketBuffer buffer) throws IOException;
+	protected abstract void write(PacketByteBuf buffer) throws IOException;
 
 	/**
 	 * Called on whichever side the message is received;
 	 * for bidirectional packets, be sure to check side
 	 */
-	protected abstract void process(EntityPlayer player, Side side);
+	protected abstract void process(PlayerEntity player, EnvType side);
 
 	/**
 	 * If message is sent to the wrong side, an exception will be thrown during handling
 	 * @return True if the message is allowed to be handled on the given side
 	 */
-	boolean isValidOnSide(Side side) {
+	boolean isValidOnSide(EnvType side) {
 		return true;
 	}
 
@@ -74,24 +69,24 @@ public abstract class AbstractMessage<T extends AbstractMessage<T>> implements I
 		return true;
 	}
 
-	@Override
 	public void fromBytes(ByteBuf buffer) {
 		try {
-			read(new PacketBuffer(buffer));
+			read(new PacketByteBuf(buffer));
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
 	}
 
-	@Override
 	public void toBytes(ByteBuf buffer) {
 		try {
-			write(new PacketBuffer(buffer));
+			write(new PacketByteBuf(buffer));
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
 	}
 
+	// TODO FABRIC
+	/*
 	@Override
 	public final IMessage onMessage(T msg, MessageContext ctx) {
 		if (!msg.isValidOnSide(ctx.side)) {
@@ -102,25 +97,26 @@ public abstract class AbstractMessage<T extends AbstractMessage<T>> implements I
 			msg.process(AntiqueAtlasMod.proxy.getPlayerEntity(ctx), ctx.side);
 		}
 		return null;
-	}
+	} */
 
 	/**
 	 * Ensures that the message is being handled on the main thread
 	 */
+	/*
 	private static <T extends AbstractMessage<T>> void checkThreadAndEnqueue(final AbstractMessage<T> msg, final MessageContext ctx) {
-		IThreadListener thread = AntiqueAtlasMod.proxy.getThreadFromContext(ctx);
-		if (!thread.isCallingFromMinecraftThread()) {
-			thread.addScheduledTask(() -> msg.process(AntiqueAtlasMod.proxy.getPlayerEntity(ctx), ctx.side));
+		XX_1_13_2_none_acv_XX thread = AntiqueAtlasMod.proxy.getThreadFromContext(ctx);
+		if (!thread.av()) {
+			thread.a(() -> msg.process(AntiqueAtlasMod.proxy.getPlayerEntity(ctx), ctx.side));
 		}
-	}
+	} */
 
 	/**
 	 * Messages that can only be sent from the server to the client should use this class
 	 */
 	public static abstract class AbstractClientMessage<T extends AbstractClientMessage<T>> extends AbstractMessage<T> {
 		@Override
-		protected final boolean isValidOnSide(Side side) {
-			return side.isClient();
+		protected final boolean isValidOnSide(EnvType side) {
+			return side == EnvType.CLIENT;
 		}
 	}
 
@@ -129,8 +125,8 @@ public abstract class AbstractMessage<T extends AbstractMessage<T>> implements I
 	 */
 	public static abstract class AbstractServerMessage<T extends AbstractServerMessage<T>> extends AbstractMessage<T> {
 		@Override
-		protected final boolean isValidOnSide(Side side) {
-			return side.isServer();
+		protected final boolean isValidOnSide(EnvType side) {
+			return side == EnvType.SERVER;
 		}
 	}
 }

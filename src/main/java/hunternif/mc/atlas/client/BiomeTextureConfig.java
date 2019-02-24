@@ -6,11 +6,13 @@ import com.google.gson.JsonObject;
 import hunternif.mc.atlas.AntiqueAtlasMod;
 import hunternif.mc.atlas.util.AbstractJSONConfig;
 import hunternif.mc.atlas.util.Log;
-import net.minecraft.util.ResourceLocation;
+
+
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
+import net.minecraft.util.Identifier;
+import net.minecraft.util.registry.Registry;
 import net.minecraft.world.biome.Biome;
-import net.minecraftforge.fml.common.registry.ForgeRegistries;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -24,7 +26,7 @@ import java.util.Map.Entry;
  * <p>Must be loaded after {@link TextureSetConfig}!</p>
  * @author Hunternif
  */
-@SideOnly(Side.CLIENT)
+@Environment(EnvType.CLIENT)
 public class BiomeTextureConfig extends AbstractJSONConfig<BiomeTextureMap> {
 	private static final int VERSION = 2;
 	private final TextureSetMap textureSetMap;
@@ -52,7 +54,7 @@ public class BiomeTextureConfig extends AbstractJSONConfig<BiomeTextureMap> {
 			return;
 		}
 		for (Entry<String, JsonElement> entry : json.entrySet()) {
-			Biome biome = ForgeRegistries.BIOMES.getValue(new ResourceLocation(entry.getKey()));
+			Biome biome = Registry.BIOME.get(new Identifier(entry.getKey()));
 			if (biome == null) {
 				Log.warn("Unknown biome in texture map: %s", entry.getKey());
 				continue;
@@ -60,22 +62,22 @@ public class BiomeTextureConfig extends AbstractJSONConfig<BiomeTextureMap> {
 			if (entry.getValue().isJsonArray()) {
 				// List of textures: (this should be gone as of VERSION > 1)
 				JsonArray array = entry.getValue().getAsJsonArray();
-				ResourceLocation[] textures = new ResourceLocation[array.size()];
+				Identifier[] textures = new Identifier[array.size()];
 				for (int i = 0; i < array.size(); i++) {
 					String path = array.get(i).getAsString();
-					textures[i] = new ResourceLocation(path);
+					textures[i] = new Identifier(path);
 				}
 				data.setTexture(biome, new TextureSet(null, textures));
 				Log.info("Registered %d custom texture(s) for biome %s",
-						textures.length, biome.getRegistryName().toString());
+						textures.length, entry.getKey());
 			} else {
 				// Texture set:
 				String name = entry.getValue().getAsString();
 				if (textureSetMap.isRegistered(name)) {
 					data.setTexture(biome, textureSetMap.getByName(name));
-					Log.info("Registered texture set %s for biome %s", name, biome.getRegistryName().toString());
+					Log.info("Registered texture set %s for biome %s", name, entry.getKey());
 				} else {
-					Log.warn("Unknown texture set %s for biome %s", name, biome.getRegistryName().toString());
+					Log.warn("Unknown texture set %s for biome %s", name, entry.getKey());
 				}
 			}
 		}
@@ -84,14 +86,11 @@ public class BiomeTextureConfig extends AbstractJSONConfig<BiomeTextureMap> {
 	@Override
 	protected void saveData(JsonObject json, BiomeTextureMap data) {
 		// Sort resource locations by name
-		List<Biome> keys = new ArrayList<Biome>(data.biomeTextureMap.keySet());
-		Collections.sort(keys, Comparator.comparing(Biome::getRegistryName));
+		List<Biome> keys = new ArrayList<>(data.biomeTextureMap.keySet());
+		Collections.sort(keys, Comparator.comparing((b) -> Registry.BIOME.getId(b).toString()));
 
 		for(Biome key : keys) {
-			int biomeID = Biome.getIdForBiome(key);
-			if (biomeID >= 0 && (AntiqueAtlasMod.instance.jeidPresent || biomeID < 256)) {
-				json.addProperty(key.getRegistryName().toString(), data.biomeTextureMap.get(key).name);
-			}
+			json.addProperty(Registry.BIOME.getId(key).toString(), data.biomeTextureMap.get(key).name);
 		}
 	}
 }

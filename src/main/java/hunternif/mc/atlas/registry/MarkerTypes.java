@@ -2,7 +2,8 @@ package hunternif.mc.atlas.registry;
 
 import hunternif.mc.atlas.AntiqueAtlasMod;
 import hunternif.mc.atlas.client.Textures;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.Identifier;
+
 
 public class MarkerTypes {
 	
@@ -47,14 +48,10 @@ public class MarkerTypes {
 		END_CITY_FAR.setSize(1).setClip(-1000, -2).setIsTechnical(true);
 	}
 	
-	private MarkerType marker(String name, ResourceLocation... textures) {
-		MarkerType type = new MarkerType(new ResourceLocation(AntiqueAtlasMod.ID, name), textures);
-		reg(type);
+	private MarkerType marker(String name, Identifier... textures) {
+		MarkerType type = new MarkerType(textures);
+		MarkerRegistry.register(new Identifier(AntiqueAtlasMod.ID, name), type);
 		return type;
-	}
-	
-	private void reg(MarkerType type) {
-		MarkerRegistry.register(type);
 	}
 
 }

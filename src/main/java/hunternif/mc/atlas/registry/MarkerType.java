@@ -6,21 +6,21 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import hunternif.mc.atlas.util.BitMatrix;
 import hunternif.mc.atlas.util.Log;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.texture.TextureMap;
-import net.minecraft.client.renderer.texture.TextureUtil;
-import net.minecraft.client.resources.IResource;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.client.texture.SpriteAtlasTexture;
+import net.minecraft.client.texture.TextureManager;
+import net.minecraft.util.Identifier;
 import org.apache.commons.io.IOUtils;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.resource.Resource;
 
-public class MarkerType extends IRegistryEntry.Impl {
+public class MarkerType {
 
-	private ResourceLocation[] icons;
+	private Identifier[] icons;
 	private BitMatrix[] iconPixels;
 	private int[] iconSizes = null;
 
@@ -39,9 +39,7 @@ public class MarkerType extends IRegistryEntry.Impl {
 	
 	private final JSONData data = new JSONData(this);
 	
-	public MarkerType(ResourceLocation loc, ResourceLocation... icons) {
-		if (loc == null) throw new IllegalArgumentException("MarkerType registry name can't be null");
-		setRegistryName(loc);
+	public MarkerType(Identifier... icons) {
 		this.icons = icons;
 	}
 
@@ -115,11 +113,11 @@ public class MarkerType extends IRegistryEntry.Impl {
 	/**
 	 * Get the icon for the marker
 	 */
-	public ResourceLocation getIcon() {
-		return icons.length == 0 || iconIndex < 0 ? TextureMap.LOCATION_MISSING_TEXTURE : icons[iconIndex];
+	public Identifier getIcon() {
+		return icons.length == 0 || iconIndex < 0 ? new Identifier("missingno") /* TODO FABRIC */ : icons[iconIndex];
 	}
 	
-	public ResourceLocation[] getAllIcons() {
+	public Identifier[] getAllIcons() {
 		return icons;
 	}
 	
@@ -162,7 +160,7 @@ public class MarkerType extends IRegistryEntry.Impl {
 		int x = -(int) (size * getCenterX());
 		int y = -(int) (size * getCenterY());
 
-		ResourceLocation icon = getIcon();
+		Identifier icon = getIcon();
 
 		return new MarkerRenderInfo(icon, x, y, size, size);
 	}
@@ -174,13 +172,13 @@ public class MarkerType extends IRegistryEntry.Impl {
 		for (int i = 0; i < icons.length; i++) {
 			iconSizes[i] = -1;
 			if (icons[i] == null) {
-				Log.warn("Marker %s -- Texture location is null at index %d!", getRegistryName().toString(), i);
+				Log.warn("Marker %s -- Texture location is null at index %d!", MarkerRegistry.getId(this).toString(), i);
 			}
-			IResource iresource = null;
+			Resource iresource = null;
 
 			try {
-				iresource = Minecraft.getMinecraft().getResourceManager().getResource(icons[i]);
-				BufferedImage bufferedimage = TextureUtil.readBufferedImage(iresource.getInputStream());
+				iresource = MinecraftClient.getInstance().getResourceManager().getResource(icons[i]);
+				BufferedImage bufferedimage = TODO.a(iresource.getInputStream());
 				iconSizes[i] = Math.min(bufferedimage.getWidth(), bufferedimage.getHeight());
 				BitMatrix matrix = new BitMatrix(bufferedimage.getWidth(), bufferedimage.getHeight(), false);
 				
@@ -211,7 +209,7 @@ public class MarkerType extends IRegistryEntry.Impl {
 				
 			} catch (IOException e) {
 				Log.warn(e, "Marker %s -- Error getting texture size data for index %d - %s",
-						getRegistryName().toString(), i, icons[i].toString());
+						MarkerRegistry.getId(this).toString(), i, icons[i].toString());
 			} finally {
 				IOUtils.closeQuietly(iresource);
 			}
@@ -278,7 +276,7 @@ public class MarkerType extends IRegistryEntry.Impl {
 		
 		private final MarkerType type;
 		
-		ResourceLocation[] icons;
+		Identifier[] icons;
 		Integer viewSize = null, clipMin = null, clipMax = null;
 		Boolean alwaysShow = null, isTile = null, isTechnical = null;
 		Double centerX = null, centerY = null;
@@ -292,7 +290,7 @@ public class MarkerType extends IRegistryEntry.Impl {
 				
 				JsonArray arr = new JsonArray();
 				
-				for (ResourceLocation loc : icons) {
+				for (Identifier loc : icons) {
 					arr.add(new JsonPrimitive(loc.toString()));
 				}
 				
@@ -336,22 +334,22 @@ public class MarkerType extends IRegistryEntry.Impl {
 			if(object.entrySet().size() == 0)
 				return;
 			
-			String typeName = type.getRegistryName().toString();
+			String typeName = MarkerRegistry.getId(type).toString();
 			String workingOn = NONE;
 			try {
 				if(object.has(ICONS) && object.get(ICONS).isJsonArray()) {
 					workingOn = ICONS;
-					List<ResourceLocation> list = new ArrayList<>();
+					List<Identifier> list = new ArrayList<>();
 					int i = 0;
 					for (JsonElement elem : object.get(ICONS).getAsJsonArray()) {
 						if (elem.isJsonPrimitive()) {
-							list.add(new ResourceLocation(elem.getAsString()));
+							list.add(new Identifier(elem.getAsString()));
 						} else {
 							Log.warn("Loading marker %s from JSON: Texture item %d isn't a primitive", typeName, i);
 						}
 						i++;
 					}
-					icons = list.toArray(new ResourceLocation[0]);
+					icons = list.toArray(new Identifier[0]);
 					workingOn = NONE;
 				}
 				

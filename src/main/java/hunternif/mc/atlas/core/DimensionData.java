@@ -6,20 +6,21 @@ import hunternif.mc.atlas.network.client.TileGroupsPacket;
 import hunternif.mc.atlas.util.Log;
 import hunternif.mc.atlas.util.Rect;
 import hunternif.mc.atlas.util.ShortVec2;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
-
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
+import net.minecraft.client.network.packet.LoginSuccessS2CPacket;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.world.dimension.DimensionType;
 
 /** All tiles seen in dimension. Thread-safe (probably) */
 public class DimensionData implements ITileStorage {
 	public final AtlasData parent;
-	public final int dimension;
+	public final DimensionType dimension;
 
 	private int browsingX, browsingY;
 	private double browsingZoom = 0.5;
@@ -40,7 +41,7 @@ public class DimensionData implements ITileStorage {
 	/** Limits of explored area, in chunks. */
 	private final Rect scope = new Rect();
 
-	public DimensionData(AtlasData parent, int dimension) {
+	public DimensionData(AtlasData parent, DimensionType dimension) {
 		this.parent = parent;
 		this.dimension = dimension;
 	}
@@ -48,9 +49,9 @@ public class DimensionData implements ITileStorage {
 	/**
 	 * This function has to create a new map on each call since the packet rework
 	 */
-	public Map<ShortVec2, Tile> getSeenChunks() {
-		Map<ShortVec2, Tile> chunks = new ConcurrentHashMap<ShortVec2, Tile>(2, 0.75f, 2);
-		Tile t = null;
+	public Map<ShortVec2, TileKind> getSeenChunks() {
+		Map<ShortVec2, TileKind> chunks = new ConcurrentHashMap<ShortVec2, TileKind>(2, 0.75f, 2);
+		TileKind t = null;
 		for (Map.Entry<ShortVec2, TileGroup> entry: tileGroups.entrySet()){
 			int basex = entry.getValue().getScope().minX;
 			int basey = entry.getValue().getScope().minY;
@@ -96,7 +97,7 @@ public class DimensionData implements ITileStorage {
 	}
 
 	@Override
-	public void setTile(int x, int y, Tile tile) {
+	public void setTile(int x, int y, TileKind tile) {
 		ShortVec2 groupPos = getKey().set((int)Math.floor(x / (float) TileGroup.CHUNK_STEP),
 				(int)Math.floor(y / (float) TileGroup.CHUNK_STEP));
 		TileGroup tg = tileGroups.get(groupPos);
@@ -117,7 +118,7 @@ public class DimensionData implements ITileStorage {
 	}
 	
 	@Override
-	public Tile removeTile(int x, int y) {
+	public TileKind removeTile(int x, int y) {
 		//TODO
 		// since scope is not modified, I assume this was never really used
 		// Tile oldTile = tileGroups.remove(getKey().set(x, y));
@@ -127,7 +128,7 @@ public class DimensionData implements ITileStorage {
 	}
 
 	@Override
-	public Tile getTile(int x, int y) {
+	public TileKind getTile(int x, int y) {
 		ShortVec2 groupPos = getKey().set((int)Math.floor(x / (float) TileGroup.CHUNK_STEP),
 				(int)Math.floor(y / (float) TileGroup.CHUNK_STEP));
 		TileGroup tg = tileGroups.get(groupPos);
@@ -162,19 +163,19 @@ public class DimensionData implements ITileStorage {
 			Rect s = group.getScope();
 			for (int x = s.minX; x <= s.maxX; x++){
 				for (int y = s.minY; y <= s.maxY; y++){
-					Tile tile = group.getTile(x, y);
+					TileKind tile = group.getTile(x, y);
 					if (tile != null) setTile(x, y, tile);
 				}
 			}
 		}
 	}
 	
-	public NBTTagList writeToNBT() {
-		NBTTagList tileGroupList = new NBTTagList();
+	public ListTag writeToNBT() {
+		ListTag tileGroupList = new ListTag();
 		for (Entry<ShortVec2, TileGroup> entry : tileGroups.entrySet()) {
-			NBTTagCompound newbie = new NBTTagCompound();
+			CompoundTag newbie = new CompoundTag();
 			entry.getValue().writeToNBT(newbie);
-			tileGroupList.appendTag(newbie);
+			tileGroupList.add(newbie);
 		}
 		return tileGroupList;
 	}
@@ -189,19 +190,19 @@ public class DimensionData implements ITileStorage {
 		}
 	}
 	
-	public void readFromNBT(NBTTagList me){
+	public void readFromNBT(ListTag me){
 		if (me == null){
 			return;
 		}
-		for (int d = 0; d < me.tagCount(); d++) {
-			NBTTagCompound tgTag = me.getCompoundTagAt(d);
+		for (int d = 0; d < me.size(); d++) {
+			CompoundTag tgTag = me.getCompoundTag(d);
 			TileGroup tg = new TileGroup(0, 0);
 			tg.readFromNBT(tgTag);
 			putTileGroup(tg);
 		}
 	}
 	
-	public void syncOnPlayer(int atlasID, EntityPlayer player){
+	public void syncOnPlayer(int atlasID, PlayerEntity player){
 		Log.info("Sending dimension #%d", dimension);
 		ArrayList<TileGroup> tgs = new ArrayList<TileGroup>(TileGroupsPacket.TILE_GROUPS_PER_PACKET);
 		int count = 0;
@@ -212,14 +213,14 @@ public class DimensionData implements ITileStorage {
 			total++;
 			if (count >= TileGroupsPacket.TILE_GROUPS_PER_PACKET){
 				TileGroupsPacket p = new TileGroupsPacket(tgs, atlasID, dimension);
-				PacketDispatcher.sendTo(p, (EntityPlayerMP) player);
+				PacketDispatcher.sendTo(p, (ServerPlayerEntity) player);
 				tgs.clear();
 				count = 0;
 			}
 		}
 		if (count > 0){
 			TileGroupsPacket p = new TileGroupsPacket(tgs, atlasID, dimension);
-			PacketDispatcher.sendTo(p, (EntityPlayerMP) player);
+			PacketDispatcher.sendTo(p, (ServerPlayerEntity) player);
 		}
 		Log.info("Sent dimension #%d (%d tiles)", dimension, total);
 	}

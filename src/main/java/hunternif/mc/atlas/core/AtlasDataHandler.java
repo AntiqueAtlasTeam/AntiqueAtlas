@@ -2,10 +2,9 @@ package hunternif.mc.atlas.core;
 
 import hunternif.mc.atlas.RegistrarAntiqueAtlas;
 import net.minecraft.item.ItemStack;
+import net.minecraft.server.world.ServerWorld;
+import net.minecraft.world.PersistentStateManager;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.network.FMLNetworkEvent.ClientConnectedToServerEvent;
-
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -23,7 +22,7 @@ public class AtlasDataHandler {
 	/** Loads data for the given atlas ID or creates a new one. */
 	public AtlasData getAtlasData(ItemStack stack, World world) {
 		if (stack.getItem() == RegistrarAntiqueAtlas.ATLAS) {
-			return getAtlasData(stack.getItemDamage(), world);
+			return getAtlasData(stack.getDamage(), world);
 		} else {
 			return null;
 		}
@@ -32,20 +31,14 @@ public class AtlasDataHandler {
 	/** Loads data for the given atlas or creates a new one. */
 	public AtlasData getAtlasData(int atlasID, World world) {
 		String key = getAtlasDataKey(atlasID);
-		AtlasData data = null;
-		if (world.isRemote) {
+		AtlasData data;
+		if (world.isClient) {
 			// Since atlas data doesn't really belong to a single world-dimension,
 			// it can be cached. This should fix #67
-			data = atlasDataClientCache.get(key);
-		}
-		
-		if (data == null) {
-			data = (AtlasData) world.loadData(AtlasData.class, key);
-			if (data == null) {
-				data = new AtlasData(key);
-				world.setData(key, data);
-			}
-			if (world.isRemote) atlasDataClientCache.put(key, data);
+			data = atlasDataClientCache.computeIfAbsent(key, AtlasData::new);
+		} else {
+			PersistentStateManager manager = ((ServerWorld) world).getPersistentStateManager();
+			data = manager.getOrCreate(() -> new AtlasData(key), key);
 		}
 		return data;
 	}

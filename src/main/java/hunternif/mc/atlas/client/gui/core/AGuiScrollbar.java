@@ -1,14 +1,13 @@
 package hunternif.mc.atlas.client.gui.core;
 
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.util.ResourceLocation;
-import org.lwjgl.input.Mouse;
+import net.minecraft.util.Identifier;
 import org.lwjgl.opengl.GL11;
-
+import com.mojang.blaze3d.platform.GlStateManager;
 import java.io.IOException;
 
+
 public abstract class AGuiScrollbar extends GuiComponent {
-	ResourceLocation texture;
+	Identifier texture;
 	int textureWidth;
     int textureHeight;
 	/** Length of the non-scaling caps at the beginning and end of the anchor. */
@@ -53,7 +52,7 @@ public abstract class AGuiScrollbar extends GuiComponent {
 	 * @param height	height of the texture image
 	 * @param capLength	length of the non-scaling caps at the beginning and end of the anchor
 	 */
-	public void setTexture(ResourceLocation texture, int width, int height, int capLength) {
+	public void setTexture(Identifier texture, int width, int height, int capLength) {
 		this.texture = texture;
 		this.textureWidth = width;
 		this.textureHeight = height;
@@ -112,8 +111,8 @@ public abstract class AGuiScrollbar extends GuiComponent {
 	}
 	
 	@Override
-	public void handleMouseInput() throws IOException {
-		super.handleMouseInput();
+	public void k() throws IOException {
+		super.k();
 		if (usesWheel) {
 			int wheelMove = Mouse.getEventDWheel();
 			if (wheelMove != 0 && this.visible) {
@@ -124,7 +123,7 @@ public abstract class AGuiScrollbar extends GuiComponent {
 	}
 	
 	@Override
-	public void drawScreen(int mouseX, int mouseY, float partialTick) {
+	public void a(int mouseX, int mouseY, float partialTick) {
 		// Don't draw the anchor if there's nothing to scroll:
 		if (!visible) {
 			isDragged = false;
@@ -148,10 +147,10 @@ public abstract class AGuiScrollbar extends GuiComponent {
 					/ (float) (getScrollbarLength() - anchorSize));
 		}
 		
-		GlStateManager.enableTexture2D();
+		GlStateManager.enableTexture();
 		GlStateManager.enableBlend();
 		GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-		GlStateManager.color(1, 1, 1, 1);
+		GlStateManager.texCoordPointer(1, 1, 1, 1);
 		
 		drawAnchor();
 		

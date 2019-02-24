@@ -12,12 +12,12 @@ public class ExtBiomeDataHandler {
 
 	@SubscribeEvent(priority=EventPriority.HIGHEST)
 	public void onWorldLoad(WorldEvent.Load event) {
-		if (!event.getWorld().isRemote) {
-			data = (ExtBiomeData) event.getWorld().loadData(ExtBiomeData.class, DATA_KEY);
+		if (!event.getWorld().G) {
+			data = (ExtBiomeData) event.getWorld().a(ExtBiomeData.class, DATA_KEY);
 			if (data == null) {
 				data = new ExtBiomeData(DATA_KEY);
 				data.markDirty();
-				event.getWorld().setData(DATA_KEY, data);
+				event.getWorld().a(DATA_KEY, data);
 			}
 		}
 	}

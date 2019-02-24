@@ -1,6 +1,7 @@
 package hunternif.mc.atlas;
 
 import hunternif.mc.atlas.core.AtlasDataHandler;
+import hunternif.mc.atlas.core.GlobalAtlasData;
 import hunternif.mc.atlas.core.PlayerEventHandler;
 import hunternif.mc.atlas.ext.*;
 import hunternif.mc.atlas.ext.watcher.*;
@@ -12,7 +13,8 @@ import hunternif.mc.atlas.marker.MarkersDataHandler;
 import hunternif.mc.atlas.marker.NetherPortalWatcher;
 import hunternif.mc.atlas.network.PacketDispatcher;
 import hunternif.mc.atlas.registry.MarkerTypes;
-import net.minecraft.world.DimensionType;
+import net.minecraft.server.world.ServerWorld;
+import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
@@ -21,6 +23,7 @@ import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import none.XX_1_13_none_bnu_XX;
 
 @Mod(modid=AntiqueAtlasMod.ID, name=AntiqueAtlasMod.NAME, version=AntiqueAtlasMod.VERSION, dependencies="after:forge@[14.23.2.2611,);")
 public class AntiqueAtlasMod {
@@ -32,8 +35,6 @@ public class AntiqueAtlasMod {
 	@Instance(ID)
 	public static AntiqueAtlasMod instance;
 
-	public boolean jeidPresent = false;
-
 	@SidedProxy(clientSide="hunternif.mc.atlas.ClientProxy", serverSide="hunternif.mc.atlas.CommonProxy")
 	public static CommonProxy proxy;
 
@@ -42,6 +43,16 @@ public class AntiqueAtlasMod {
 
 	public static final ExtBiomeDataHandler extBiomeData = new ExtBiomeDataHandler();
 	public static final GlobalMarkersDataHandler globalMarkersData = new GlobalMarkersDataHandler();
+
+	private static final GlobalAtlasData clientAtlasData = new GlobalAtlasData();
+
+	public static GlobalAtlasData getGlobalAtlasData(World world) {
+		if (world instanceof ServerWorld) {
+			return ((ServerWorld) world).getPersistentStateManager().getOrCreate(() -> new GlobalAtlasData("antiqueatlas:global_atlas_data"), "antiqueatlas:global_atlas_data");
+		} else {
+			return clientAtlasData;
+		}
+	}
 
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent event) {
@@ -70,7 +81,7 @@ public class AntiqueAtlasMod {
 		// Structure Watchers
         new StructureWatcherVillage();
         new StructureWatcherFortress();
-		new StructureWatcherGeneric("EndCity", DimensionType.THE_END, MarkerTypes.END_CITY_FAR, "gui.antiqueatlas.marker.endcity").setTileMarker(MarkerTypes.END_CITY, "gui.antiqueatlas.marker.endcity");
+		new StructureWatcherGeneric("EndCity", XX_1_13_none_bnu_XX.c, MarkerTypes.END_CITY_FAR, "gui.antiqueatlas.marker.endcity").setTileMarker(MarkerTypes.END_CITY, "gui.antiqueatlas.marker.endcity");
 	}
 
 	@EventHandler

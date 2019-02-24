@@ -8,10 +8,9 @@ import java.util.Map.Entry;
 import java.util.PriorityQueue;
 import java.util.Queue;
 
-import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
+import net.minecraft.util.Identifier;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -20,7 +19,7 @@ import com.google.gson.JsonPrimitive;
 /**
  * Saves texture set names with the lists of texture variations.
  */
-@SideOnly(Side.CLIENT)
+@Environment(EnvType.CLIENT)
 public class TextureSetConfig extends AbstractJSONConfig<TextureSetMap> {
 	private static final int VERSION = 1;
 
@@ -37,10 +36,10 @@ public class TextureSetConfig extends AbstractJSONConfig<TextureSetMap> {
 		for (Entry<String, JsonElement> entry : json.entrySet()) {
 			String name = entry.getKey();
 			JsonArray array = entry.getValue().getAsJsonArray();
-			ResourceLocation[] textures = new ResourceLocation[array.size()];
+			Identifier[] textures = new Identifier[array.size()];
 			for (int i = 0; i < array.size(); i++) {
 				String path = array.get(i).getAsString();
-				textures[i] = new ResourceLocation(path);
+				textures[i] = new Identifier(path);
 			}
 			data.register(new TextureSet(name, textures));
 			Log.info("Loaded texture set %s with %d custom texture(s)", name, textures.length);
@@ -54,7 +53,7 @@ public class TextureSetConfig extends AbstractJSONConfig<TextureSetMap> {
 		while (!queue.isEmpty()) {
 			TextureSet set = queue.poll();
 			JsonArray paths = new JsonArray();
-			for (ResourceLocation texture : set.textures) {
+			for (Identifier texture : set.textures) {
 				paths.add(new JsonPrimitive(texture.toString()));
 			}
 			json.add(set.name, paths);

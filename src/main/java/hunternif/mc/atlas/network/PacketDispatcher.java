@@ -7,14 +7,9 @@ import hunternif.mc.atlas.network.client.*;
 import hunternif.mc.atlas.network.server.AddMarkerPacket;
 import hunternif.mc.atlas.network.server.BrowsingPositionPacket;
 import hunternif.mc.atlas.network.server.RegisterTileIdPacket;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
-import net.minecraftforge.fml.common.network.NetworkRegistry;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
-import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
-import net.minecraftforge.fml.relauncher.Side;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.server.network.ServerPlayerEntity;
+
 
 /**
  * 
@@ -56,7 +51,7 @@ public class PacketDispatcher
 	/**
 	 * Registers an {@link AbstractMessage} to the appropriate side(s)
 	 */
-	private static <T extends AbstractMessage<T> & IMessageHandler<T, IMessage>> void registerMessage(Class<T> clazz) {
+	private static <T extends AbstractMessage<T>> void registerMessage(Class<T> clazz) {
 		if (AbstractMessage.AbstractClientMessage.class.isAssignableFrom(clazz)) {
 			PacketDispatcher.dispatcher.registerMessage(clazz, clazz, packetId++, Side.CLIENT);
 		} else if (AbstractMessage.AbstractServerMessage.class.isAssignableFrom(clazz)) {
@@ -69,55 +64,55 @@ public class PacketDispatcher
 
 	/**
 	 * Send this message to everyone.
-	 * See {@link SimpleNetworkWrapper#sendToAll(IMessage)}
+	 * See {@link SimpleNetworkWrapper#sendToAll(AbstractMessage<?>)}
 	 */
-	public static void sendToAll(IMessage message) {
+	public static void sendToAll(AbstractMessage<?> message) {
 		PacketDispatcher.dispatcher.sendToAll(message);
 	}
 
 	/**
 	 * Send this message to the specified player.
-	 * See {@link SimpleNetworkWrapper#sendTo(IMessage, EntityPlayerMP)}
+	 * See {@link SimpleNetworkWrapper#sendTo(AbstractMessage<?>, ServerPlayerEntity)}
 	 */
-	public static void sendTo(IMessage message, EntityPlayerMP player) {
+	public static void sendTo(AbstractMessage<?> message, ServerPlayerEntity player) {
 		PacketDispatcher.dispatcher.sendTo(message, player);
 	}
 
 	/**
 	 * Send this message to everyone within a certain range of a point.
-	 * See {@link SimpleNetworkWrapper#sendToAllAround(IMessage, NetworkRegistry.TargetPoint)}
+	 * See {@link SimpleNetworkWrapper#sendToAllAround(AbstractMessage<?>, NetworkRegistry.TargetPoint)}
 	 */
-	private static void sendToAllAround(IMessage message, NetworkRegistry.TargetPoint point) {
+	private static void sendToAllAround(AbstractMessage<?> message, NetworkRegistry.TargetPoint point) {
 		PacketDispatcher.dispatcher.sendToAllAround(message, point);
 	}
 
 	/**
 	 * Sends a message to everyone within a certain range of the coordinates in the same dimension.
 	 */
-	private static void sendToAllAround(IMessage message, int dimension, double x, double y, double z, double range) {
+	private static void sendToAllAround(AbstractMessage<?> message, int dimension, double x, double y, double z, double range) {
 		PacketDispatcher.sendToAllAround(message, new NetworkRegistry.TargetPoint(dimension, x, y, z, range));
 	}
 
 	/**
 	 * Sends a message to everyone within a certain range of the player provided.
 	 */
-	public static void sendToAllAround(IMessage message, EntityPlayer player, double range) {
-		PacketDispatcher.sendToAllAround(message, player.getEntityWorld().provider.getDimension(), player.posX, player.posY, player.posZ, range);
+	public static void sendToAllAround(AbstractMessage<?> message, PlayerEntity player, double range) {
+		PacketDispatcher.sendToAllAround(message, player.getEntityWorld().s.getType(), player.x, player.y, player.z, range);
 	}
 
 	/**
 	 * Send this message to everyone within the supplied dimension.
-	 * See {@link SimpleNetworkWrapper#sendToDimension(IMessage, int)}
+	 * See {@link SimpleNetworkWrapper#sendToDimension(AbstractMessage<?>, int)}
 	 */
-	public static void sendToDimension(IMessage message, int dimensionId) {
+	public static void sendToDimension(AbstractMessage<?> message, int dimensionId) {
 		PacketDispatcher.dispatcher.sendToDimension(message, dimensionId);
 	}
 
 	/**
 	 * Send this message to the server.
-	 * See {@link SimpleNetworkWrapper#sendToServer(IMessage)}
+	 * See {@link SimpleNetworkWrapper#sendToServer(AbstractMessage<?>)}
 	 */
-	public static void sendToServer(IMessage message) {
+	public static void sendToServer(AbstractMessage<?> message) {
 		PacketDispatcher.dispatcher.sendToServer(message);
 	}
 }

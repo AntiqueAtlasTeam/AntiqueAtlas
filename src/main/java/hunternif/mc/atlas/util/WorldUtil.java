@@ -1,25 +1,27 @@
 package hunternif.mc.atlas.util;
 
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.village.Village;
-import net.minecraft.village.VillageDoorInfo;
-import net.minecraft.world.chunk.Chunk;
-
 import java.util.List;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.village.VillageDoor;
+import net.minecraft.village.VillageProperties;
+import net.minecraft.world.ViewableWorld;
+import net.minecraft.world.World;
+import net.minecraft.world.chunk.Chunk;
 
 class WorldUtil {
 	
 	/**
 	 * Returns the village if the specified chunk overlays its territory.
 	 */
-	public static Village getVillageInChunk(Chunk chunk) {
-		int centerX = (chunk.x << 4) + 8;
-		int centerZ = (chunk.z << 4) + 8;
-		List<Village> villages = chunk.getWorld().villageCollection.getVillageList();
-		for (Village village : villages) {
+	public static VillageProperties getVillageInChunk(World world, Chunk chunk) {
+		int centerX = (chunk.getPos().x << 4) + 8;
+		int centerZ = (chunk.getPos().z << 4) + 8;
+		// TODO FABRIC: Optimize? No more per-chunk villages...
+		List<VillageProperties> villages = world.getVillageManager().getVillages();
+		for (VillageProperties village : villages) {
 			BlockPos coords = village.getCenter();
 			if ((centerX - coords.getX())*(centerX - coords.getX()) + (centerZ - coords.getZ())*(centerZ - coords.getZ())
-					<= village.getVillageRadius()*village.getVillageRadius()) {
+					<= village.getRadius()*village.getRadius()) {
 				return village;
 			}
 		}
@@ -29,14 +31,14 @@ class WorldUtil {
 	/**
 	 * Returns true if the village has a door in the specified chunk.
 	 */
-	public static boolean isVillageDoorInChunk(Village village, Chunk chunk) {
-		int centerX = (chunk.x << 4) + 8;
-		int centerZ = (chunk.z << 4) + 8;
-		if (village.isAnnihilated()) {
+	public static boolean isVillageDoorInChunk(VillageProperties village, Chunk chunk) {
+		int centerX = (chunk.getPos().x << 4) + 8;
+		int centerZ = (chunk.getPos().z << 4) + 8;
+		if (village.hasNoDoors()) {
 			return true;
 		}
-		for (Object doorInfo : village.getVillageDoorInfoList()) {
-			BlockPos door = ((VillageDoorInfo) doorInfo).getDoorBlockPos();
+		for (Object doorInfo : village.getDoors()) {
+			BlockPos door = ((VillageDoor) doorInfo).getPosition();
 			if ((centerX - door.getX())*(centerX - door.getX()) + (centerZ - door.getZ())*(centerZ - door.getZ())
 					<= 10*10) {
 				return true;

@@ -1,8 +1,8 @@
 package hunternif.mc.atlas.util;
 
-import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.gen.structure.StructureBoundingBox;
+import net.minecraft.util.math.BoundingBox;
+import net.minecraft.util.math.MutableIntBoundingBox;
 
 public class MathUtil {
 	/** Returns the nearest number to a multiple of a given number. */
@@ -20,11 +20,11 @@ public class MathUtil {
 		}
 	}
 
-	public static AxisAlignedBB toAABB(StructureBoundingBox box) {
-		return new AxisAlignedBB(box.minX, box.minY, box.minZ, box.maxX, box.maxY, box.maxZ);
+	public static BoundingBox toAABB(MutableIntBoundingBox box) {
+		return new BoundingBox(box.minX, box.minY, box.minZ, box.maxX, box.maxY, box.maxZ);
 	}
 
-	public static BlockPos getCenter(StructureBoundingBox box) {
-		return new BlockPos(box.minX + (box.getXSize() / 2), box.minY + (box.getYSize() / 2), box.minZ + (box.getZSize() / 2));
+	public static BlockPos getCenter(MutableIntBoundingBox box) {
+		return new BlockPos(box.minX + (box.getBlockCountX() / 2), box.minY + (box.getBlockCountY() / 2), box.minZ + (box.getBlockCountZ() / 2));
 	}
 }

@@ -1,16 +1,24 @@
 package hunternif.mc.atlas.core;
 
 import hunternif.mc.atlas.AntiqueAtlasMod;
-import net.minecraft.block.Block;
-import net.minecraft.init.Biomes;
-import net.minecraft.init.Blocks;
-import net.minecraft.world.biome.Biome;
-import net.minecraft.world.chunk.Chunk;
-
 import hunternif.mc.atlas.ext.ExtTileIdMap;
 import hunternif.mc.atlas.util.ByteUtil;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.HashMap;
+import java.util.Map;
+
+import net.minecraft.block.Block;
+
+import net.minecraft.block.BlockState;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.registry.Registry;
+import net.minecraft.world.ViewableWorld;
+import net.minecraft.world.biome.Biome;
+import net.minecraft.world.biome.Biomes;
+import net.minecraft.world.chunk.Chunk;
+import net.minecraft.world.chunk.WorldChunk;
+import net.minecraft.world.gen.Heightmap;
 
 /**
  * Detects seas of lava, cave ground and cave walls in the Nether.
@@ -19,65 +27,63 @@ import java.lang.reflect.InvocationTargetException;
 public class BiomeDetectorEnd extends BiomeDetectorBase implements IBiomeDetector {
 	
 	@Override
-	public int getBiomeID(Chunk chunk) {
-		int biomesCount = Biome.REGISTRY.getKeys().size();
-		int[] chunkBiomes;
-		try {
-			chunkBiomes = ByteUtil.unsignedByteToIntArray(biomeArrayMethod.invoke(chunk));
-		}
-		catch (IllegalAccessException | InvocationTargetException e) { throw new RuntimeException(e); }
-		int[] biomeOccurrences = new int[biomesCount];
+	public TileKind getBiomeID(Chunk chunk) {
+		Biome[] chunkBiomes = chunk.getBiomeArray();
+		Map<Biome, Integer> biomeOccurrences = new HashMap<>(Registry.BIOME.getIds().size());
 		
 		// The following pseudo-biomes don't have IDs:
 		int islandOccurences = 0;
 		int plantOccurences = 0;
 		int voidOccurences = 0;
 		
-		int endID = Biome.getIdForBiome(Biomes.SKY);
+		Biome endID = Biomes.THE_END;
 		
 		for (int x = 0; x < 16; x++) {
 			for (int z = 0; z < 16; z++) {
-				int biomeID = chunkBiomes[x << 4 | z];
+				Biome biomeID = chunkBiomes[x << 4 | z];
 				if (biomeID == endID) {
 					// The End!
-					int top = chunk.getHeightValue(x, z);
-					Block topBlock = chunk.getBlockState(x, top-1, z).getBlock();
+					// TODO FABRIC
+					int top = ((WorldChunk) chunk).getHeightmap(Heightmap.Type.MOTION_BLOCKING_NO_LEAVES).get(x, z);
+					BlockState topBlock = chunk.getBlockState(new BlockPos(x, top-1, z));
 					
-					if(topBlock == Blocks.END_STONE) {
+					/* if(topBlock == bdy.XX_1_13_2_eg_XX) {
 						islandOccurences++;
-						Block rootBlock = chunk.getBlockState(x, top, z).getBlock();
-						if(rootBlock == Blocks.CHORUS_FLOWER || rootBlock == Blocks.CHORUS_PLANT) {
+						Block rootBlock = chunk.XX_1_12_2_a_XX(x, top, z).c();
+						if(rootBlock == bdy.XX_1_13_2_hZ_XX || rootBlock == bdy.XX_1_13_2_hY_XX) {
 							plantOccurences++;
 						}
-					}
-					if(topBlock == Blocks.AIR) {
+					} */
+					if(topBlock.isAir()) {
 						voidOccurences++;
 					}
 				} else {
 					// In case there are custom biomes "modded in":
-					if (biomeID >= 0 && biomeID < biomesCount && Biome.getBiomeForId(biomeID) != null) {
-						biomeOccurrences[biomeID] += priorityForBiome(Biome.getBiomeForId(biomeID));
-					}
+					biomeOccurrences.put(biomeID,
+						biomeOccurrences.getOrDefault(biomeID, 0) + priorityForBiome(biomeID)
+					);
 				}
 			}
 		}
-		int meanBiomeId = NOT_FOUND;
+
+		TileKind meanBiomeId = null;
 		int meanBiomeOccurences = 0;
-		for (int i = 0; i < biomeOccurrences.length; i++) {
-			if (biomeOccurrences[i] > meanBiomeOccurences) {
-				meanBiomeId = i;
-				meanBiomeOccurences = biomeOccurrences[i];
+		for (Biome biome : biomeOccurrences.keySet()) {
+			int occ = biomeOccurrences.get(biome);
+			if (biomeOccurrences.get(biome) > meanBiomeOccurences) {
+				meanBiomeId = TileKindFactory.get(biome);
+				meanBiomeOccurences = occ;
 			}
 		}
 		
 		// The following important pseudo-biomes don't have IDs:
 		if (meanBiomeOccurences < islandOccurences) {
 			if(plantOccurences == 0)
-				meanBiomeId = ExtTileIdMap.instance().getPseudoBiomeID(ExtTileIdMap.TILE_END_ISLAND);
+				meanBiomeId = TileKindFactory.get(ExtTileIdMap.TILE_END_ISLAND);
 			else
-				meanBiomeId = ExtTileIdMap.instance().getPseudoBiomeID(ExtTileIdMap.TILE_END_ISLAND_PLANTS);
+				meanBiomeId = TileKindFactory.get(ExtTileIdMap.TILE_END_ISLAND_PLANTS);
 		} else if (meanBiomeOccurences < voidOccurences) {
-			meanBiomeId = ExtTileIdMap.instance().getPseudoBiomeID(ExtTileIdMap.TILE_END_VOID); 
+			meanBiomeId = TileKindFactory.get(ExtTileIdMap.TILE_END_VOID);
 		}
 		
 		return meanBiomeId;

@@ -1,7 +1,6 @@
 package hunternif.mc.atlas;
 
 import hunternif.mc.atlas.client.*;
-import hunternif.mc.atlas.client.TextureSet;
 import hunternif.mc.atlas.client.gui.ExportProgressOverlay;
 import hunternif.mc.atlas.client.gui.GuiAtlas;
 import hunternif.mc.atlas.ext.ExtTileIdMap;
@@ -11,16 +10,19 @@ import hunternif.mc.atlas.marker.MarkerTextureConfig;
 import hunternif.mc.atlas.registry.MarkerRegistry;
 import hunternif.mc.atlas.registry.MarkerType;
 import hunternif.mc.atlas.util.Log;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.resources.IReloadableResourceManager;
-import net.minecraft.client.resources.IResourceManager;
-import net.minecraft.client.resources.IResourceManagerReloadListener;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Biomes;
+import net.fabricmc.fabric.api.resource.SimpleSynchronousResourceReloadListener;
+import net.minecraft.client.MinecraftClient;
+
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.resource.ReloadableResourceManager;
+import net.minecraft.resource.ResourceManager;
+import net.minecraft.resource.ResourceReloadListener;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.IThreadListener;
+import net.minecraft.util.Identifier;
+import net.minecraft.util.registry.Registry;
 import net.minecraft.world.biome.Biome;
+import net.minecraft.world.biome.Biomes;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.client.FMLClientHandler;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
@@ -29,12 +31,14 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.ClientTickEvent;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
-
+import none.TODO_1_13_2_none_acv;
 import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
 
 import static hunternif.mc.atlas.client.TextureSet.*;
 
-public class ClientProxy extends CommonProxy implements IResourceManagerReloadListener {
+public class ClientProxy extends CommonProxy implements SimpleSynchronousResourceReloadListener {
 	private TextureSetMap textureSetMap;
 	private TextureSetConfig textureSetConfig;
 	private BiomeTextureMap biomeTextureMap;
@@ -83,8 +87,8 @@ public class ClientProxy extends CommonProxy implements IResourceManagerReloadLi
 		tileTextureMap.setDirty(false);
 		registerVanillaCustomTileTextures();
 
-		if(Minecraft.getMinecraft().getResourceManager() instanceof IReloadableResourceManager) {
-			((IReloadableResourceManager)Minecraft.getMinecraft().getResourceManager()).registerReloadListener(this);
+		if(MinecraftClient.getInstance().getResourceManager() instanceof ReloadableResourceManager) {
+			((ReloadableResourceManager)MinecraftClient.getInstance().getResourceManager()).registerListener(this);
 		}
 	}
 
@@ -105,7 +109,7 @@ public class ClientProxy extends CommonProxy implements IResourceManagerReloadLi
 		MarkerRegistry.INSTANCE.setDirty(true);
 
 		guiAtlas = new GuiAtlas();
-		for (MarkerType type : MarkerRegistry.getValues()) {
+		for (MarkerType type : MarkerRegistry.iterable()) {
 			type.initMips();
 		}
 
@@ -135,10 +139,10 @@ public class ClientProxy extends CommonProxy implements IResourceManagerReloadLi
     }
 
     private void openAtlasGUI(GuiAtlas gui) {
-        Minecraft mc = Minecraft.getMinecraft();
+        MinecraftClient mc = MinecraftClient.getInstance();
         if (mc.currentScreen == null) { // In-game screen
             guiAtlas.updateL18n();
-            mc.displayGuiScreen(gui);
+            mc.openScreen(gui);
         }
     }
 	
@@ -242,71 +246,71 @@ public class ClientProxy extends CommonProxy implements IResourceManagerReloadLi
 	 * only if the biome was not in the config. This prevents unnecessary
 	 * overwriting, to aid people who manually modify the config. */
 	private void assignVanillaBiomeTextures() {
-		setBiomeTextureIfNone(Biomes.OCEAN, WATER);
-		setBiomeTextureIfNone(Biomes.DEEP_OCEAN, WATER);
-		setBiomeTextureIfNone(Biomes.RIVER, WATER); //
-		setBiomeTextureIfNone(Biomes.FROZEN_OCEAN, ICE);
-		setBiomeTextureIfNone(Biomes.FROZEN_RIVER, ICE);
-		setBiomeTextureIfNone(Biomes.BEACH, SHORE);
-		setBiomeTextureIfNone(Biomes.COLD_BEACH, SHORE);
-		setBiomeTextureIfNone(Biomes.STONE_BEACH, ROCK_SHORE);
-		setBiomeTextureIfNone(Biomes.DESERT, DESERT);
-		setBiomeTextureIfNone(Biomes.MUTATED_DESERT, DESERT);
-		setBiomeTextureIfNone(Biomes.DESERT_HILLS, DESERT_HILLS);
-		setBiomeTextureIfNone(Biomes.PLAINS, PLAINS);
-		setBiomeTextureIfNone(Biomes.MUTATED_PLAINS, SUNFLOWERS);
-		setBiomeTextureIfNone(Biomes.ICE_PLAINS, SNOW);
-		setBiomeTextureIfNone(Biomes.MUTATED_ICE_FLATS, ICE_SPIKES); // this is a biome mutation
-		setBiomeTextureIfNone(Biomes.ICE_MOUNTAINS, SNOW_HILLS);
-		setBiomeTextureIfNone(Biomes.EXTREME_HILLS, MOUNTAINS);
-		setBiomeTextureIfNone(Biomes.EXTREME_HILLS_EDGE, MOUNTAINS);
-		setBiomeTextureIfNone(Biomes.MUTATED_EXTREME_HILLS, MOUNTAINS_SNOW_CAPS);
-		setBiomeTextureIfNone(Biomes.EXTREME_HILLS_WITH_TREES, MOUNTAINS_ALL);
-		setBiomeTextureIfNone(Biomes.MUTATED_EXTREME_HILLS_WITH_TREES, MOUNTAINS_SNOW_CAPS);
-		setBiomeTextureIfNone(Biomes.FOREST, FOREST);
-		setBiomeTextureIfNone(Biomes.MUTATED_FOREST, FOREST_FLOWERS);
-		setBiomeTextureIfNone(Biomes.FOREST_HILLS, FOREST_HILLS);
-		setBiomeTextureIfNone(Biomes.ROOFED_FOREST, DENSE_FOREST);
-		setBiomeTextureIfNone(Biomes.MUTATED_ROOFED_FOREST, DENSE_FOREST_HILLS); //TODO roofed forest M has steeper cliffs
-		setBiomeTextureIfNone(Biomes.BIRCH_FOREST, BIRCH);
-		setBiomeTextureIfNone(Biomes.MUTATED_BIRCH_FOREST, TALL_BIRCH);
-		setBiomeTextureIfNone(Biomes.BIRCH_FOREST_HILLS, BIRCH_HILLS);
-		setBiomeTextureIfNone(Biomes.MUTATED_BIRCH_FOREST_HILLS, TALL_BIRCH_HILLS);
-		setBiomeTextureIfNone(Biomes.JUNGLE, JUNGLE);
-		setBiomeTextureIfNone(Biomes.MUTATED_JUNGLE, JUNGLE_CLIFFS);
-		setBiomeTextureIfNone(Biomes.JUNGLE_HILLS, JUNGLE_HILLS);
-		setBiomeTextureIfNone(Biomes.JUNGLE_EDGE, JUNGLE_EDGE);
-		setBiomeTextureIfNone(Biomes.MUTATED_JUNGLE_EDGE, JUNGLE_EDGE_HILLS);
-		setBiomeTextureIfNone(Biomes.TAIGA, PINES);
-		setBiomeTextureIfNone(Biomes.MUTATED_TAIGA, PINES_HILLS);
-		setBiomeTextureIfNone(Biomes.TAIGA_HILLS, PINES_HILLS);
-		setBiomeTextureIfNone(Biomes.COLD_TAIGA, SNOW_PINES);
-		setBiomeTextureIfNone(Biomes.MUTATED_TAIGA_COLD, SNOW_PINES_HILLS);
-		setBiomeTextureIfNone(Biomes.COLD_TAIGA_HILLS, SNOW_PINES_HILLS);
-		setBiomeTextureIfNone(Biomes.REDWOOD_TAIGA, MEGA_TAIGA);
-		setBiomeTextureIfNone(Biomes.MUTATED_REDWOOD_TAIGA, MEGA_SPRUCE);
-		setBiomeTextureIfNone(Biomes.REDWOOD_TAIGA_HILLS, MEGA_TAIGA_HILLS);
-		setBiomeTextureIfNone(Biomes.MUTATED_REDWOOD_TAIGA_HILLS, MEGA_SPRUCE_HILLS);
-		setBiomeTextureIfNone(Biomes.SWAMPLAND, SWAMP);
-		setBiomeTextureIfNone(Biomes.MUTATED_SWAMPLAND, SWAMP_HILLS);
-		setBiomeTextureIfNone(Biomes.SKY, SHORE);
-		setBiomeTextureIfNone(Biomes.HELL, CAVE_WALLS);
-		setBiomeTextureIfNone(Biomes.VOID, END_VOID);
-		setBiomeTextureIfNone(Biomes.MUSHROOM_ISLAND, MUSHROOM);
-		setBiomeTextureIfNone(Biomes.MUSHROOM_ISLAND_SHORE, SHORE);
-		setBiomeTextureIfNone(Biomes.SAVANNA, SAVANNA);
-		setBiomeTextureIfNone(Biomes.MUTATED_SAVANNA, SAVANNA_CLIFFS);
-		setBiomeTextureIfNone(Biomes.MESA, MESA);
-		setBiomeTextureIfNone(Biomes.MUTATED_MESA, BRYCE);
-		setBiomeTextureIfNone(Biomes.MESA_CLEAR_ROCK, PLATEAU_MESA);
-		setBiomeTextureIfNone(Biomes.MESA_ROCK, PLATEAU_MESA_TREES);
-		setBiomeTextureIfNone(Biomes.MUTATED_MESA_CLEAR_ROCK, PLATEAU_MESA_LOW);
-		setBiomeTextureIfNone(Biomes.MUTATED_MESA_ROCK, PLATEAU_MESA_TREES_LOW);
-		setBiomeTextureIfNone(Biomes.SAVANNA_PLATEAU, PLATEAU_SAVANNA);
-		setBiomeTextureIfNone(Biomes.MUTATED_SAVANNA_ROCK, PLATEAU_SAVANNA_M);
+		/* setBiomeTextureIfNone(ays.TODO_1_12_2_a, WATER);
+		setBiomeTextureIfNone(ays.TODO_1_12_2_z, WATER);
+		setBiomeTextureIfNone(ays.TODO_1_12_2_i, WATER); //
+		setBiomeTextureIfNone(ays.TODO_1_12_2_l, ICE);
+		setBiomeTextureIfNone(ays.TODO_1_12_2_m, ICE);
+		setBiomeTextureIfNone(ays.TODO_1_12_2_r, SHORE);
+		setBiomeTextureIfNone(ays.TODO_1_12_2_B, SHORE);
+		setBiomeTextureIfNone(ays.TODO_1_12_2_A, ROCK_SHORE);
+		setBiomeTextureIfNone(ays.TODO_1_12_2_d, DESERT);
+		setBiomeTextureIfNone(ays.TODO_1_12_2_R, DESERT);
+		setBiomeTextureIfNone(ays.TODO_1_12_2_s, DESERT_HILLS);
+		setBiomeTextureIfNone(ays.TODO_1_12_2_c, PLAINS);
+		setBiomeTextureIfNone(ays.TODO_1_12_2_Q, SUNFLOWERS);
+		setBiomeTextureIfNone(ays.TODO_1_12_2_n, SNOW);
+		setBiomeTextureIfNone(ays.TODO_1_12_2_W, ICE_SPIKES); // this is a biome mutation
+		setBiomeTextureIfNone(ays.TODO_1_12_2_o, SNOW_HILLS);
+		setBiomeTextureIfNone(ays.TODO_1_12_2_e, MOUNTAINS);
+		setBiomeTextureIfNone(ays.TODO_1_12_2_v, MOUNTAINS);
+		setBiomeTextureIfNone(ays.TODO_1_12_2_S, MOUNTAINS_SNOW_CAPS);
+		setBiomeTextureIfNone(ays.TODO_1_12_2_J, MOUNTAINS_ALL);
+		setBiomeTextureIfNone(ays.TODO_1_12_2_af, MOUNTAINS_SNOW_CAPS);
+		setBiomeTextureIfNone(ays.TODO_1_12_2_f, FOREST);
+		setBiomeTextureIfNone(ays.TODO_1_12_2_T, FOREST_FLOWERS);
+		setBiomeTextureIfNone(ays.TODO_1_12_2_t, FOREST_HILLS);
+		setBiomeTextureIfNone(ays.TODO_1_12_2_E, DENSE_FOREST);
+		setBiomeTextureIfNone(ays.TODO_1_12_2_ab, DENSE_FOREST_HILLS); //TODO roofed forest M has steeper cliffs
+		setBiomeTextureIfNone(ays.TODO_1_12_2_C, BIRCH);
+		setBiomeTextureIfNone(ays.TODO_1_12_2_Z, TALL_BIRCH);
+		setBiomeTextureIfNone(ays.TODO_1_12_2_D, BIRCH_HILLS);
+		setBiomeTextureIfNone(ays.TODO_1_12_2_aa, TALL_BIRCH_HILLS);
+		setBiomeTextureIfNone(ays.TODO_1_12_2_w, JUNGLE);
+		setBiomeTextureIfNone(ays.TODO_1_12_2_X, JUNGLE_CLIFFS);
+		setBiomeTextureIfNone(ays.TODO_1_12_2_x, JUNGLE_HILLS);
+		setBiomeTextureIfNone(ays.TODO_1_12_2_y, JUNGLE_EDGE);
+		setBiomeTextureIfNone(ays.TODO_1_12_2_Y, JUNGLE_EDGE_HILLS);
+		setBiomeTextureIfNone(ays.TODO_1_12_2_g, PINES);
+		setBiomeTextureIfNone(ays.TODO_1_12_2_U, PINES_HILLS);
+		setBiomeTextureIfNone(ays.TODO_1_12_2_u, PINES_HILLS);
+		setBiomeTextureIfNone(ays.TODO_1_12_2_F, SNOW_PINES);
+		setBiomeTextureIfNone(ays.TODO_1_12_2_ac, SNOW_PINES_HILLS);
+		setBiomeTextureIfNone(ays.TODO_1_12_2_G, SNOW_PINES_HILLS);
+		setBiomeTextureIfNone(ays.TODO_1_12_2_H, MEGA_TAIGA);
+		setBiomeTextureIfNone(ays.TODO_1_12_2_ad, MEGA_SPRUCE);
+		setBiomeTextureIfNone(ays.TODO_1_12_2_I, MEGA_TAIGA_HILLS);
+		setBiomeTextureIfNone(ays.TODO_1_12_2_ae, MEGA_SPRUCE_HILLS);
+		setBiomeTextureIfNone(ays.TODO_1_12_2_h, SWAMP);
+		setBiomeTextureIfNone(ays.TODO_1_12_2_V, SWAMP_HILLS);
+		setBiomeTextureIfNone(ays.TODO_1_12_2_k, SHORE);
+		setBiomeTextureIfNone(ays.TODO_1_12_2_j, CAVE_WALLS);
+		setBiomeTextureIfNone(ays.TODO_1_12_2_P, END_VOID);
+		setBiomeTextureIfNone(ays.TODO_1_12_2_p, MUSHROOM);
+		setBiomeTextureIfNone(ays.TODO_1_12_2_q, SHORE);
+		setBiomeTextureIfNone(ays.TODO_1_12_2_K, SAVANNA);
+		setBiomeTextureIfNone(ays.TODO_1_12_2_ag, SAVANNA_CLIFFS);
+		setBiomeTextureIfNone(ays.TODO_1_12_2_M, MESA);
+		setBiomeTextureIfNone(ays.TODO_1_12_2_ai, BRYCE);
+		setBiomeTextureIfNone(ays.TODO_1_12_2_O, PLATEAU_MESA);
+		setBiomeTextureIfNone(ays.TODO_1_12_2_N, PLATEAU_MESA_TREES);
+		setBiomeTextureIfNone(ays.TODO_1_12_2_ak, PLATEAU_MESA_LOW);
+		setBiomeTextureIfNone(ays.TODO_1_12_2_aj, PLATEAU_MESA_TREES_LOW);
+		setBiomeTextureIfNone(ays.TODO_1_12_2_L, PLATEAU_SAVANNA);
+		setBiomeTextureIfNone(ays.TODO_1_12_2_ah, PLATEAU_SAVANNA_M); */
 
 		// Now let's register every other biome, they'll come from other mods
-		for(Biome biome : Biome.REGISTRY) {
+		for (Biome biome : Registry.BIOME) {
 			BiomeTextureMap.instance().checkRegistration(biome);
 		}
 	}
@@ -367,13 +371,13 @@ public class ClientProxy extends CommonProxy implements IResourceManagerReloadLi
 	}
 
 	@Override
-	public EntityPlayer getPlayerEntity(MessageContext ctx) {
-		return (ctx.side.isClient() ? Minecraft.getMinecraft().player : super.getPlayerEntity(ctx));
+	public PlayerEntity getPlayerEntity(MessageContext ctx) {
+		return (ctx.side.isClient() ? MinecraftClient.getInstance().player : super.getPlayerEntity(ctx));
 	}
 
 	@Override
-	public IThreadListener getThreadFromContext(MessageContext ctx) {
-		return (ctx.side.isClient() ? Minecraft.getMinecraft() : super.getThreadFromContext(ctx));
+	public TODO_1_13_2_none_acv getThreadFromContext(MessageContext ctx) {
+		return (ctx.side.isClient() ? MinecraftClient.getInstance() : super.getThreadFromContext(ctx));
 	}
 
 	public File getConfigDir(){
@@ -406,8 +410,13 @@ public class ClientProxy extends CommonProxy implements IResourceManagerReloadLi
 	}
 
 	@Override
-	public void onResourceManagerReload(IResourceManager resourceManager) {
-		for (MarkerType type : MarkerRegistry.getValues()) {
+	public Identifier getFabricId() {
+		return new Identifier("antiqueatlas:proxy");
+	}
+
+	@Override
+	public void apply(ResourceManager var1) {
+		for (MarkerType type : MarkerRegistry.iterable()) {
 			type.initMips();
 		}
 	}

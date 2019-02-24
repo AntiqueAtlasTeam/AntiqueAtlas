@@ -1,10 +1,11 @@
 package hunternif.mc.atlas.client;
 
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.Identifier;
 
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
+
 
 import static hunternif.mc.atlas.client.Textures.*;
 
@@ -236,7 +237,7 @@ public class TextureSet implements Comparable<TextureSet> {
 	public final String name; 
 	
 	/** The actual textures in this set. */
-	public final ResourceLocation[] textures;
+	public final Identifier[] textures;
 	
 	/** Texture sets that a tile rendered with this set can be stitched to,
 	 * excluding itself. */
@@ -251,17 +252,17 @@ public class TextureSet implements Comparable<TextureSet> {
 	private boolean stitchesToNull = false;
 	private boolean anisotropicStitching = false;
 	
-	private static TextureSet standard(String name, ResourceLocation ... textures) {
+	private static TextureSet standard(String name, Identifier ... textures) {
 		return new TextureSet(true, name, textures);
 	}
 	
-	private TextureSet(boolean isStandard, String name, ResourceLocation ... textures) {
+	private TextureSet(boolean isStandard, String name, Identifier ... textures) {
 		this.isStandard = isStandard;
 		this.name = name;
 		this.textures = textures;
 	}
 	/** Name has to be unique, it is used for equals() tests. */
-	public TextureSet(String name, ResourceLocation ... textures) {
+	public TextureSet(String name, Identifier ... textures) {
 		this(false, name, textures);
 	}
 	
@@ -324,7 +325,7 @@ public class TextureSet implements Comparable<TextureSet> {
 	/** A special texture set that is stitched to everything except water. */
 	private static class TextureSetShore extends TextureSet {
 		private final TextureSet water;
-		TextureSetShore(String name, TextureSet water, ResourceLocation ... textures) {
+		TextureSetShore(String name, TextureSet water, Identifier... textures) {
 			super(true, name, textures);
 			this.water = water;
 		}

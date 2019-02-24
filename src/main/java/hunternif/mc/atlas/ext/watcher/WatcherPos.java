@@ -1,9 +1,8 @@
 package hunternif.mc.atlas.ext.watcher;
 
-import net.minecraft.util.math.BlockPos;
-
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import net.minecraft.util.math.BlockPos;
 
 public class WatcherPos {
 

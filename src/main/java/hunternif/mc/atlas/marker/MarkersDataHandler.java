@@ -23,7 +23,7 @@ public class MarkersDataHandler {
 	/** Loads data for the given atlas or creates a new one. */
 	public MarkersData getMarkersData(ItemStack stack, World world) {
 		if (stack.getItem() == RegistrarAntiqueAtlas.ATLAS) {
-			return getMarkersData(stack.getItemDamage(), world);
+			return getMarkersData(stack.getDamage(), world);
 		} else {
 			return null;
 		}
@@ -33,18 +33,18 @@ public class MarkersDataHandler {
 	public MarkersData getMarkersData(int atlasID, World world) {
 		String key = getMarkersDataKey(atlasID);
 		MarkersData data = null;
-		if (world.isRemote) {
+		if (world.isClient) {
 			// Since atlas data doesn't really belong to a single world-dimension,
 			// it can be cached. This should fix #67
 			data = markersDataClientCache.get(key);
 		}
 		if (data == null) {
-			data = (MarkersData) world.loadData(MarkersData.class, key);
+			data = (MarkersData) world.XX_1_12_2_a_XX(MarkersData.class, key);
 			if (data == null) {
 				data = new MarkersData(key);
-				world.setData(key, data);
+				world.XX_1_13_a_XX(key, data);
 			}
-			if (world.isRemote) markersDataClientCache.put(key, data);
+			if (world.isClient) markersDataClientCache.put(key, data);
 		}
 		return data;
 	}

@@ -1,11 +1,16 @@
 package hunternif.mc.atlas.client.gui.core;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.gui.GuiScreen;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.font.TextRenderer;
+import net.minecraft.client.gui.Screen;
+import net.minecraft.client.gui.ScreenComponent;
 import net.minecraftforge.fml.client.config.GuiUtils;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+
+
+import none.XX_1_12_2_none_bip_XX;
+import none.XX_1_12_2_none_blk_XX;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
@@ -21,8 +26,8 @@ import java.util.concurrent.CopyOnWriteArrayList;
  * keyboard events, window resize and will be moved around together with the
  * parent component.
  */
-@SideOnly(Side.CLIENT)
-public class GuiComponent extends GuiScreen {
+@Environment(EnvType.CLIENT)
+public class GuiComponent extends Screen {
 	private GuiComponent parent = null;
 	private final List<GuiComponent> children = new CopyOnWriteArrayList<>();
 
@@ -178,7 +183,7 @@ public class GuiComponent extends GuiScreen {
 		child.parent = this;
 		child.setGuiCoords(guiX, guiY);
 		if (mc != null) {
-			child.setWorldAndResolution(mc, width, height);
+			child.a(mc, width, height);
 		}
 		invalidateSize();
 	}
@@ -218,26 +223,26 @@ public class GuiComponent extends GuiScreen {
 	}
 
 	@Override
-	public void handleInput() throws IOException {
+	public void q() throws IOException {
 		// Traverse children backwards, because the topmost child should be the
 		// first to process input:
 		ListIterator<GuiComponent> iter = children.listIterator(children.size());
 		while(iter.hasPrevious()) {
 			GuiComponent child = iter.previous();
 			if (child.blocksScreen) {
-				child.handleInput();
+				child.q();
 				isMouseOver = false;
 				return;
 			}
 		}
 		if (interceptsMouse) {
 			while (Mouse.next()) {
-				this.handleMouseInput();
+				this.k();
 			}
 		}
 		if (interceptsKeyboard) {
 			while (Keyboard.next()) {
-				this.handleKeyboardInput();
+				this.l();
 			}
 		}
 	}
@@ -262,7 +267,7 @@ public class GuiComponent extends GuiScreen {
 
 	/** Handle mouse input for this GUI and its children. */
 	@Override
-	public void handleMouseInput() throws IOException {
+	public void k() throws IOException {
 		boolean handled = false;
 		isMouseOver = false;
 		// Traverse children backwards, because the topmost child should be the
@@ -270,7 +275,7 @@ public class GuiComponent extends GuiScreen {
 		ListIterator<GuiComponent> iter = children.listIterator(children.size());
 		while(iter.hasPrevious()) {
 			GuiComponent child = iter.previous();
-			child.handleMouseInput();
+			child.k();
 			if (child.hasHandledMouse) {
 				child.hasHandledMouse = false;
 				handled = true;
@@ -278,20 +283,20 @@ public class GuiComponent extends GuiScreen {
 		}
 		if (!handled) {
 			isMouseOver = isMouseInRegion(getGuiX(), getGuiY(), getWidth(), getHeight());
-			super.handleMouseInput();
+			super.k();
 		}
 	}
 
 	/** Handle keyboard input for this GUI and its children. */
 	@Override
-	public void handleKeyboardInput() throws IOException {
+	public void l() throws IOException {
 		boolean handled = false;
 		// Traverse children backwards, because the topmost child should be the
 		// first to process input:
 		ListIterator<GuiComponent> iter = children.listIterator(children.size());
 		while(iter.hasPrevious()) {
 			GuiComponent child = iter.previous();
-			child.handleKeyboardInput();
+			child.l();
 			if (child.hasHandledKeyboard) {
 				child.hasHandledKeyboard = false;
 				handled = true;
@@ -299,31 +304,31 @@ public class GuiComponent extends GuiScreen {
 		}
 		if (!handled) {
 			if (Keyboard.getEventKeyState()) {
-				this.keyTyped(Keyboard.getEventCharacter(), Keyboard.getEventKey());
+				this.a(Keyboard.getEventCharacter(), Keyboard.getEventKey());
 			}
 		}
 	}
 
 	@Override
-	protected void keyTyped(char typedChar, int keyCode) throws IOException {
-		if (keyCode == 1 && mc.currentScreen != null)
+	protected void a(char typedChar, int keyCode) throws IOException {
+		if (keyCode == 1 && mc.m != null)
         {
-            this.mc.displayGuiScreen((GuiScreen)null);
+            this.client.openScreen(null);
 
-            if (this.mc.currentScreen == null)
+            if (this.mc.m == null)
             {
-                this.mc.setIngameFocus();
+                this.mc.o();
             }
         }
 	}
 
 	/** Render this GUI and its children. */
 	@Override
-	public void drawScreen(int mouseX, int mouseY, float partialTick) {
-		super.drawScreen(mouseX, mouseY, partialTick);
+	public void a(int mouseX, int mouseY, float partialTick) {
+		super.a(mouseX, mouseY, partialTick);
 		for (GuiComponent child : children) {
 			if (!child.isClipped) {
-				child.drawScreen(mouseX, mouseY, partialTick);
+				child.a(mouseX, mouseY, partialTick);
 			}
 		}
 		// Draw any hovering text requested by child components:
@@ -335,32 +340,32 @@ public class GuiComponent extends GuiScreen {
 
 	/** Called when the GUI is unloaded, called for each child as well. */
 	@Override
-	public void onGuiClosed() {
+	public void m() {
 		for (GuiComponent child : children) {
-			child.onGuiClosed();
+			child.m();
 		}
-		super.onGuiClosed();
+		super.m();
 	}
 
 	/** Called each in-game tick for this GUI and its children. If this GUI's
 	 * size has been invalidated, it will be validated on the next update. */
 	@Override
-	public void updateScreen() {
+	public void e() {
 		for (GuiComponent child : children) {
-			child.updateScreen();
+			child.e();
 		}
 
-		super.updateScreen();
+		super.e();
 		if (sizeIsInvalid) {
 			validateSize();
 		}
 	}
 
 	@Override
-	public void setWorldAndResolution(Minecraft mc, int width, int height) {
-		super.setWorldAndResolution(mc, width, height);
+	public void a(MinecraftClient mc, int width, int height) {
+		super.a(mc, width, height);
 		for (GuiComponent child : children) {
-			child.setWorldAndResolution(mc, width, height);
+			child.a(mc, width, height);
 		}
 	}
 
@@ -440,7 +445,7 @@ public class GuiComponent extends GuiScreen {
 	/** Draws a standard Minecraft hovering text window, constrained by this
 	 * component's dimensions (i.e. if it won't fit in when drawn to the left
 	 * of the cursor, it will be drawn to the right instead). */
-    private void drawHoveringText2(List<String> lines, int x, int y, FontRenderer font) {
+    private void drawHoveringText2(List<String> lines, int x, int y, XX_1_12_2_none_bip_XX font) {
 		boolean stencilEnabled = GL11.glIsEnabled(GL11.GL_STENCIL_TEST);
 		if (stencilEnabled) GL11.glDisable(GL11.GL_STENCIL_TEST);
 
@@ -472,7 +477,7 @@ public class GuiComponent extends GuiScreen {
 	 * from several components which occupy the same position on the screen.
 	 * </p>
 	 * */
-	protected void drawTooltip(List<String> lines, FontRenderer font) {
+	protected void drawTooltip(List<String> lines, TextRenderer font) {
 		GuiComponent topLevel = getTopLevelParent();
 		topLevel.hoveringTextInfo.lines = lines;
 		topLevel.hoveringTextInfo.x = getMouseX();
@@ -488,7 +493,7 @@ public class GuiComponent extends GuiScreen {
 	private static class HoveringTextInfo {
 		List<String> lines;
 		int x, y;
-		FontRenderer font;
+		TextRenderer font;
 		/** Whether to draw this hovering text during rendering current frame.
 		 * This flag is reset to false after rendering finishes. */
 		boolean shouldDraw = false;
@@ -499,7 +504,7 @@ public class GuiComponent extends GuiScreen {
 		if (parent != null) {
 			parent.removeChild(this); // This sets parent to null
 		} else {
-			Minecraft.getMinecraft().displayGuiScreen(null);
+			MinecraftClient.getInstance().openScreen(null);
 		}
 	}
 
@@ -508,14 +513,14 @@ public class GuiComponent extends GuiScreen {
 
 	/** Draw a text string centered horizontally, using this GUI's FontRenderer. */
 	protected void drawCenteredString(String text, int y, int color, boolean dropShadow) {
-		int length = fontRenderer.getStringWidth(text);
-		fontRenderer.drawString(text, (this.width - length)/2, y, color, dropShadow);
+		int length = fontRenderer.a(text);
+		fontRenderer.a(text, (this.width - length)/2, y, color, dropShadow);
 	}
 
 	protected int getMouseX() {
-		return Mouse.getX() * width / mc.displayWidth;
+		return Mouse.getX() * width / mc.d;
 	}
 	protected int getMouseY() {
-		return height - Mouse.getY() * height / mc.displayHeight - 1;
+		return height - Mouse.getY() * height / mc.e - 1;
 	}
 }

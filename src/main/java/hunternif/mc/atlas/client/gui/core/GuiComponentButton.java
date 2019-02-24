@@ -1,12 +1,11 @@
 package hunternif.mc.atlas.client.gui.core;
 
-import net.minecraft.client.audio.PositionedSoundRecord;
-import net.minecraft.init.SoundEvents;
-import net.minecraft.util.SoundEvent;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import net.minecraft.client.audio.PositionedSoundInstance;
+import net.minecraft.sound.SoundEvent;
+import net.minecraft.sound.SoundEvents;
 
 /** A GuiComponent that can act like a button. */
 public class GuiComponentButton extends GuiComponent {
@@ -31,7 +30,7 @@ public class GuiComponentButton extends GuiComponent {
 	}
 	
 	@Override
-	protected void mouseClicked(int x, int y, int mouseButton) throws IOException {
+	protected void a(int x, int y, int mouseButton) throws IOException {
 		super.mouseClicked(x, y, mouseButton);
 		if (mouseButton == 0 /*left-click*/ && enabled && isMouseOver) {
 			onClick();
@@ -43,7 +42,8 @@ public class GuiComponentButton extends GuiComponent {
 	@SuppressWarnings("unchecked")
     void onClick() {
 		if (clickSound != null) {
-			mc.getSoundHandler().playSound(PositionedSoundRecord.getMasterRecord(clickSound, 1.0F));//.playSound(new PositionedSoundRecord(clickSound, 1.0F));
+			// TODO FABRIC gui instead of master??
+			client.getSoundLoader().play(PositionedSoundInstance.master(clickSound, 1.0F));
 		}
 		for (IButtonListener listener : listeners) {
 			listener.onClick(this);

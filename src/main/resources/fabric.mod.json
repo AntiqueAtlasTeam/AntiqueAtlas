@@ -1,0 +1,17 @@
+{
+  "id": "modid",
+  "name": "Example Mod",
+  "description": "This is an example description! Tell everyone what your mod is about!",
+  "version": "${version}",
+  "side": "universal",
+  "initializers": [
+    "net.fabricmc.example.ExampleMod"
+  ],
+  "requires": {
+    "fabric": "*"
+  },
+  "mixins": {
+    "client": "modid.client.json",
+    "common": "modid.common.json"
+  }
+}

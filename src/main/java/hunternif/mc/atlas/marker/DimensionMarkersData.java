@@ -2,6 +2,7 @@ package hunternif.mc.atlas.marker;
 
 import hunternif.mc.atlas.util.ListMapValueIterator;
 import hunternif.mc.atlas.util.ShortVec2;
+import net.minecraft.world.dimension.DimensionType;
 
 import java.util.AbstractCollection;
 import java.util.Collection;
@@ -13,7 +14,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 public class DimensionMarkersData {
 	private final MarkersData parent;
-	private final int dimension;
+	private final DimensionType dimension;
 	
 	private int size = 0;
 	
@@ -30,12 +31,12 @@ public class DimensionMarkersData {
 		return thread2KeyMap.computeIfAbsent(Thread.currentThread(), k -> new ShortVec2(0, 0));
 	}
 	
-	public DimensionMarkersData(MarkersData parent, int dimension) {
+	public DimensionMarkersData(MarkersData parent, DimensionType dimension) {
 		this.parent = parent;
 		this.dimension = dimension;
 	}
 	
-	public int getDimension() {
+	public DimensionType getDimension() {
 		return dimension;
 	}
 	

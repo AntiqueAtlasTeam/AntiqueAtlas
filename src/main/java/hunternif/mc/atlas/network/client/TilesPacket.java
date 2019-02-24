@@ -5,9 +5,11 @@ import hunternif.mc.atlas.ext.ExtBiomeData;
 import hunternif.mc.atlas.network.AbstractMessage.AbstractClientMessage;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.network.PacketBuffer;
-import net.minecraftforge.fml.relauncher.Side;
+import net.fabricmc.api.EnvType;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.util.PacketByteBuf;
+import net.minecraft.util.registry.Registry;
+import net.minecraft.world.dimension.DimensionType;
 
 import java.io.IOException;
 
@@ -17,15 +19,15 @@ import java.io.IOException;
  */
 public class TilesPacket extends AbstractClientMessage<TilesPacket> {
 	/** Size of one entry in the map in bytes. */
-	private static final int ENTRY_SIZE_BYTES = 2 + 2 + 2;
+	private static final int ENTRY_SIZE_BYTES = 2 + 2 + 4;
 
-	private int dimension;
+	private DimensionType dimension;
 	private int tileCount;
 	private ByteBuf tileData;
 
 	public TilesPacket() {}
 
-	public TilesPacket(int dimension) {
+	public TilesPacket(DimensionType dimension) {
 		this.dimension = dimension;
 		tileCount = 0;
 		tileData = Unpooled.buffer();
@@ -34,7 +36,7 @@ public class TilesPacket extends AbstractClientMessage<TilesPacket> {
 	public TilesPacket addTile(int x, int y, int biomeID) {
 		tileData.writeShort(x);
 		tileData.writeShort(y);
-		tileData.writeShort(biomeID);
+		tileData.writeInt(biomeID);
 		tileCount++;
 		return this;
 	}
@@ -44,24 +46,29 @@ public class TilesPacket extends AbstractClientMessage<TilesPacket> {
 	}
 
 	@Override
-	public void read(PacketBuffer buffer) throws IOException {
-		dimension = buffer.readVarInt();
+	public void read(PacketByteBuf buffer) throws IOException {
+		dimension = Registry.DIMENSION.get(buffer.readVarInt());
 		tileCount = buffer.readVarInt();
 		tileData = buffer.readBytes(tileCount * ENTRY_SIZE_BYTES);
 	}
 
 	@Override
-	public void write(PacketBuffer buffer) throws IOException {
-		buffer.writeVarInt(dimension);
+	public void write(PacketByteBuf buffer) throws IOException {
+		buffer.writeVarInt(Registry.DIMENSION.getRawId(dimension));
 		buffer.writeVarInt(tileCount);
 		buffer.writeBytes(tileData);
 	}
 
 	@Override
-	protected void process(EntityPlayer player, Side side) {
+	protected void process(PlayerEntity player, EnvType side) {
+		if (dimension == null) {
+			// TODO FABRIC
+			return;
+		}
+
 		ExtBiomeData data = AntiqueAtlasMod.extBiomeData.getData();
 		for (int i = 0; i < tileCount; i++) {
-			data.setBiomeIdAt(dimension, tileData.readShort(), tileData.readShort(), tileData.readShort());
+			data.setBiomeAt(dimension, tileData.readShort(), tileData.readShort(), tileData.readInt());
 		}
 	}
 }

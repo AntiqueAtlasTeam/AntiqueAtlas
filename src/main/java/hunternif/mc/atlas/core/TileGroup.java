@@ -2,7 +2,7 @@ package hunternif.mc.atlas.core;
 
 import hunternif.mc.atlas.util.Log;
 import hunternif.mc.atlas.util.Rect;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundTag;
 
 /** Represents a group of tiles that may be sent/stored as a single NBT */
 public class TileGroup implements ITileStorage {
@@ -17,7 +17,7 @@ public class TileGroup implements ITileStorage {
 	Rect scope = new Rect(0, 0, CHUNK_STEP, CHUNK_STEP);
 
 	/** The tiles in this scope */
-	Tile[][] tiles = new Tile[CHUNK_STEP][CHUNK_STEP];
+	TileKind[][] tiles = new TileKind[CHUNK_STEP][CHUNK_STEP];
 	
 	public TileGroup(int x, int y) {
 		scope.minX = x;
@@ -26,7 +26,7 @@ public class TileGroup implements ITileStorage {
 		scope.maxY = scope.minY + CHUNK_STEP - 1;
 	}
 
-	public void readFromNBT(NBTTagCompound compound) {
+	public void readFromNBT(CompoundTag compound) {
 		scope.minX = compound.getIntArray(TAG_POSITION)[0];
 		scope.minY = compound.getIntArray(TAG_POSITION)[1];
 		scope.maxX = scope.minX + CHUNK_STEP - 1;
@@ -41,13 +41,13 @@ public class TileGroup implements ITileStorage {
 				if (tileArray[x + y * CHUNK_STEP] == -1) {
 					tiles[x][y] = null;
 				} else {
-					tiles[x][y] = new Tile(tileArray[x + y * CHUNK_STEP]);
+					tiles[x][y] = TileKindFactory.get(tileArray[x + y * CHUNK_STEP]);
 				}
 			}
 		}
 	}
 
-	public NBTTagCompound writeToNBT(NBTTagCompound compound) {
+	public CompoundTag writeToNBT(CompoundTag compound) {
 		int[] tileArray = new int[CHUNK_STEP * CHUNK_STEP];
 		int[] pos = { scope.minX, scope.minY };
 		for (int y = 0; y < CHUNK_STEP; y++) {
@@ -59,17 +59,17 @@ public class TileGroup implements ITileStorage {
 				if (tiles[x][y] == null) {
 					tileArray[x + y * CHUNK_STEP] = -1;
 				} else {
-					tileArray[x + y * CHUNK_STEP] = tiles[x][y].biomeID;
+					tileArray[x + y * CHUNK_STEP] = tiles[x][y].getId();
 				}
 			}
 		}
-		compound.setIntArray(TAG_POSITION, pos);
-		compound.setIntArray(TAG_TILES, tileArray);
+		compound.putIntArray(TAG_POSITION, pos);
+		compound.putIntArray(TAG_TILES, tileArray);
 		return compound;
 	}
 
 	@Override
-	public void setTile(int x, int y, Tile tile) {
+	public void setTile(int x, int y, TileKind tile) {
 		if (x >= scope.minX && y >= scope.minY && x <= scope.maxX && y <= scope.maxY) {
 			int rx = x - scope.minX;
 			int ry = y - scope.minY;
@@ -82,14 +82,14 @@ public class TileGroup implements ITileStorage {
 	}
 
 	@Override
-	public Tile removeTile(int x, int y) {
-		Tile tmp = getTile(x,y);
+	public TileKind removeTile(int x, int y) {
+		TileKind tmp = getTile(x,y);
 		setTile(x,y,null);
 		return tmp;
 	}
 
 	@Override
-	public Tile getTile(int x, int y) {
+	public TileKind getTile(int x, int y) {
 		if (x >= scope.minX && y >= scope.minY && x <= scope.maxX && y <= scope.maxY) {
 			int rx = x - scope.minX;
 			int ry = y - scope.minY;
@@ -119,8 +119,8 @@ public class TileGroup implements ITileStorage {
 		int b;
 		for (int y = 0; y < CHUNK_STEP; y++) {
 			for (int x = 0; x < CHUNK_STEP; x++) {
-				a = (this.tiles[x][y] == null)? -1:this.tiles[x][y].biomeID;
-				b = (other.tiles[x][y] == null)? -1:other.tiles[x][y].biomeID;
+				a = (this.tiles[x][y] == null)? -1:this.tiles[x][y].getId();
+				b = (other.tiles[x][y] == null)? -1:other.tiles[x][y].getId();
 				if (a!=b)
 					return false;
 			}

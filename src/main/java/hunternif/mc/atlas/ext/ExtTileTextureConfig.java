@@ -6,8 +6,8 @@ import hunternif.mc.atlas.client.TextureSetConfig;
 import hunternif.mc.atlas.client.TextureSetMap;
 import hunternif.mc.atlas.util.AbstractJSONConfig;
 import hunternif.mc.atlas.util.Log;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+
+
 
 import java.io.File;
 import java.util.Map.Entry;
@@ -19,7 +19,7 @@ import java.util.Queue;
  * <p>Must be loaded after {@link TextureSetConfig}!</p>
  * @author Hunternif
  */
-@SideOnly(Side.CLIENT)
+@Environment(EnvType.CLIENT)
 public class ExtTileTextureConfig extends AbstractJSONConfig<ExtTileTextureMap> {
 	private static final int VERSION = 1;
 	private final TextureSetMap textureSetMap;

@@ -1,17 +1,18 @@
 package hunternif.mc.atlas.network.bidirectional;
 
 import hunternif.mc.atlas.AntiqueAtlasMod;
-import hunternif.mc.atlas.RegistrarAntiqueAtlas;
 import hunternif.mc.atlas.SettingsConfig;
 import hunternif.mc.atlas.api.AtlasAPI;
 import hunternif.mc.atlas.core.AtlasData;
-import hunternif.mc.atlas.core.Tile;
+import hunternif.mc.atlas.core.TileKindFactory;
 import hunternif.mc.atlas.network.AbstractMessage;
 import hunternif.mc.atlas.util.Log;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
-import net.minecraft.network.PacketBuffer;
-import net.minecraftforge.fml.relauncher.Side;
+import net.fabricmc.api.EnvType;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.util.PacketByteBuf;
+import net.minecraft.util.registry.Registry;
+import net.minecraft.world.biome.Biome;
+import net.minecraft.world.dimension.DimensionType;
 
 import java.io.IOException;
 
@@ -21,11 +22,13 @@ import java.io.IOException;
  * @author Hunternif
  */
 public class PutBiomeTilePacket extends AbstractMessage<PutBiomeTilePacket> {
-	private int atlasID, dimension, x, z, biomeID;
+	private int atlasID, x, z;
+	private DimensionType dimension;
+	private Biome biomeID;
 	
 	public PutBiomeTilePacket() {}
 	
-	public PutBiomeTilePacket(int atlasID, int dimension, int x, int z, int biomeID) {
+	public PutBiomeTilePacket(int atlasID, DimensionType dimension, int x, int z, Biome biomeID) {
 		this.atlasID = atlasID;
 		this.dimension = dimension;
 		this.x = x;
@@ -34,37 +37,38 @@ public class PutBiomeTilePacket extends AbstractMessage<PutBiomeTilePacket> {
 	}
 	
 	@Override
-	protected void read(PacketBuffer buffer) throws IOException {
+	protected void read(PacketByteBuf buffer) throws IOException {
 		atlasID = buffer.readVarInt();
-		dimension = buffer.readVarInt();
+		dimension = Registry.DIMENSION.get(buffer.readVarInt());
 		x = buffer.readVarInt();
 		z = buffer.readVarInt();
-		biomeID = buffer.readVarInt();
+		biomeID = Registry.BIOME.get(buffer.readVarInt());
 	}
 
 	@Override
-	protected void write(PacketBuffer buffer) throws IOException {
+	protected void write(PacketByteBuf buffer) throws IOException {
 		buffer.writeVarInt(atlasID);
-		buffer.writeVarInt(dimension);
+		buffer.writeVarInt(Registry.DIMENSION.getRawId(dimension));
 		buffer.writeVarInt(x);
 		buffer.writeVarInt(z);
-		buffer.writeVarInt(biomeID);
+		buffer.writeVarInt(Registry.BIOME.getRawId(biomeID));
 	}
 
 	@Override
-	protected void process(EntityPlayer player, Side side) {
-		if (side.isServer()) {
+	protected void process(PlayerEntity player, EnvType side) {
+		if (side == EnvType.SERVER) {
 			// Make sure it's this player's atlas :^)
-			if (SettingsConfig.gameplay.itemNeeded &&
-					!player.inventory.hasItemStack(new ItemStack(RegistrarAntiqueAtlas.ATLAS, 1, atlasID))) {
+			// TODO Fabric
+			if (SettingsConfig.gameplay.itemNeeded /* &&
+					!player.bB.h(new ata(RegistrarAntiqueAtlas.ATLAS, 1, atlasID)) */) {
 				Log.warn("Player %s attempted to modify someone else's Atlas #%d",
-						player.getGameProfile().getName(), atlasID);
+						player.getCommandSource().getName(), atlasID);
 				return;
 			}
 			AtlasAPI.tiles.putBiomeTile(player.getEntityWorld(), atlasID, biomeID, x, z);
 		} else {
 			AtlasData data = AntiqueAtlasMod.atlasData.getAtlasData(atlasID, player.getEntityWorld());
-			data.setTile(dimension, x, z, new Tile(biomeID));
+			data.setTile(dimension, x, z, TileKindFactory.get(biomeID));
 		}
 	}
 

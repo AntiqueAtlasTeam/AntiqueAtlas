@@ -5,12 +5,12 @@ import com.google.common.collect.ImmutableMap.Builder;
 import hunternif.mc.atlas.client.Textures;
 import hunternif.mc.atlas.client.gui.core.GuiComponent;
 import hunternif.mc.atlas.util.AtlasRenderHelper;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.resources.I18n;
-import net.minecraft.util.ResourceLocation;
-
 import java.util.Collections;
 import java.util.Map;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.resource.language.I18n;
+import net.minecraft.util.Identifier;
+
 
 /**
  * A scale bar that displays pixel-to-block ratio. To fit into the overall
@@ -20,9 +20,9 @@ public class GuiScaleBar extends GuiComponent {
 	private static final int WIDTH = 20;
 	private static final int HEIGHT = 8;
 
-	private static final Map<Double, ResourceLocation> textureMap;
+	private static final Map<Double, Identifier> textureMap;
 	static {
-		Builder<Double, ResourceLocation> builder = ImmutableMap.builder();
+		Builder<Double, Identifier> builder = ImmutableMap.builder();
 		builder.put(0.0625, Textures.SCALEBAR_512);
 		builder.put(0.125, Textures.SCALEBAR_256);
 		builder.put(0.25, Textures.SCALEBAR_128);
@@ -45,19 +45,19 @@ public class GuiScaleBar extends GuiComponent {
 	}
 
 	/** Returns the background texture depending on the scale. */
-	private ResourceLocation getTexture() {
+	private Identifier getTexture() {
 		return textureMap.get(mapScale);
 	}
 
 	@Override
-	public void drawScreen(int mouseX, int mouseY, float partialTick) {
-		ResourceLocation texture = getTexture();
+	public void a(int mouseX, int mouseY, float partialTick) {
+		Identifier texture = getTexture();
 		if (texture == null) return;
 
 		AtlasRenderHelper.drawFullTexture(texture, getGuiX(), getGuiY(), WIDTH, HEIGHT);
 
 		if (isMouseOver) {
-			drawTooltip(Collections.singletonList(I18n.format("gui.antiqueatlas.scalebar")), Minecraft.getMinecraft().fontRenderer);
+			drawTooltip(Collections.singletonList(I18n.translate("gui.antiqueatlas.scalebar")), MinecraftClient.getInstance().textRenderer);
 		}
 	}
 }

@@ -4,8 +4,8 @@ import hunternif.mc.atlas.client.BiomeTextureMap;
 import hunternif.mc.atlas.client.TextureSet;
 import hunternif.mc.atlas.util.Log;
 import hunternif.mc.atlas.util.SaveData;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+
+
 
 import java.util.HashMap;
 import java.util.Map;
@@ -16,7 +16,7 @@ import java.util.Map;
  * re-registered into {@link BiomeTextureMap}.
  * @author Hunternif
  */
-@SideOnly(Side.CLIENT)
+@Environment(EnvType.CLIENT)
 public class ExtTileTextureMap extends SaveData {
 	private static final ExtTileTextureMap INSTANCE = new ExtTileTextureMap();
 	public static ExtTileTextureMap instance() {

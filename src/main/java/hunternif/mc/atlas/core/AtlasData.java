@@ -7,20 +7,25 @@ import hunternif.mc.atlas.network.client.MapDataPacket;
 import hunternif.mc.atlas.network.server.BrowsingPositionPacket;
 import hunternif.mc.atlas.util.Log;
 import hunternif.mc.atlas.util.ShortVec2;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
+import net.fabricmc.fabric.api.util.NbtType;
+import net.minecraft.client.network.packet.LoginSuccessS2CPacket;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.registry.Registry;
+import net.minecraft.world.PersistentState;
+import net.minecraft.world.ViewableWorld;
+import net.minecraft.world.biome.Biome;
 import net.minecraft.world.chunk.Chunk;
-import net.minecraft.world.storage.WorldSavedData;
-import net.minecraftforge.common.util.Constants;
-
+import net.minecraft.world.dimension.DimensionType;
 import java.util.*;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class AtlasData extends WorldSavedData {
+public class AtlasData extends PersistentState {
 	public static final int VERSION = 3;
 	public static final String TAG_VERSION = "aaVersion";
 	public static final String TAG_DIMENSION_MAP_LIST = "qDimensionMap";
@@ -33,7 +38,7 @@ public class AtlasData extends WorldSavedData {
 	public static final String TAG_BROWSING_ZOOM = "qBrowseZoom";
 
 	/** Maps dimension ID to biomeAnalyzer. */
-	private final Map<Integer, IBiomeDetector> biomeAnalyzers = new HashMap<>();
+	private final Map<DimensionType, IBiomeDetector> biomeAnalyzers = new HashMap<>();
 	private final BiomeDetectorBase biomeDetectorOverworld = new BiomeDetectorBase();
 	private final BiomeDetectorNether biomeDetectorNether = new BiomeDetectorNether();
 	private final BiomeDetectorEnd biomeDetectorEnd = new BiomeDetectorEnd();
@@ -41,108 +46,119 @@ public class AtlasData extends WorldSavedData {
 	/** This map contains, for each dimension, a map of chunks the player
 	 * has seen. This map is thread-safe.
 	 * CAREFUL! Don't modify chunk coordinates that are already put in the map! */
-	private final Map<Integer /*dimension ID*/, DimensionData> dimensionMap =
+	private final Map<DimensionType /*dimension ID*/, DimensionData> dimensionMap =
 			new ConcurrentHashMap<>(2, 0.75f, 2);
 
 	/** Set of players this Atlas data has been sent to. */
-	private final Set<EntityPlayer> playersSentTo = new HashSet<>();
+	private final Set<PlayerEntity> playersSentTo = new HashSet<>();
 
-	private NBTTagCompound nbt;
+	private CompoundTag nbt;
 
 	public AtlasData(String key) {
 		super(key);
 
 		biomeDetectorOverworld.setScanPonds(SettingsConfig.performance.doScanPonds);
 		biomeDetectorOverworld.setScanRavines(SettingsConfig.performance.doScanRavines);
-		setBiomeDetectorForDimension(0, biomeDetectorOverworld);
-		setBiomeDetectorForDimension(-1, biomeDetectorNether);
-		setBiomeDetectorForDimension(1, biomeDetectorEnd);
+		setBiomeDetectorForDimension(DimensionType.OVERWORLD, biomeDetectorOverworld);
+		setBiomeDetectorForDimension(DimensionType.THE_NETHER, biomeDetectorNether);
+		setBiomeDetectorForDimension(DimensionType.THE_END, biomeDetectorEnd);
 	}
 
 	@Override
-	public void readFromNBT(NBTTagCompound compound) {
+	public void fromTag(CompoundTag compound) {
 		this.nbt = compound;
-		int version = compound.getInteger(TAG_VERSION);
+		int version = compound.getInt(TAG_VERSION);
 		if (version < VERSION) {
 			Log.warn("Outdated atlas data format! Was %d but current is %d. Updating.", version, VERSION);
 			readFromNBT2(compound);
 			return;
 		}
 
-		NBTTagList dimensionMapList = compound.getTagList(TAG_DIMENSION_MAP_LIST, Constants.NBT.TAG_COMPOUND);
-		for (int d = 0; d < dimensionMapList.tagCount(); d++) {
-			NBTTagCompound dimTag = dimensionMapList.getCompoundTagAt(d);
-			int dimensionID = dimTag.getInteger(TAG_DIMENSION_ID);
-			NBTTagList dimensionTag = (NBTTagList) dimTag.getTag(TAG_VISITED_CHUNKS);
+		ListTag dimensionMapList = compound.getList(TAG_DIMENSION_MAP_LIST, NbtType.COMPOUND);
+		for (int d = 0; d < dimensionMapList.size(); d++) {
+			CompoundTag dimTag = dimensionMapList.getCompoundTag(d);
+			DimensionType dimensionID;
+			if (dimTag.containsKey(TAG_DIMENSION_ID, NbtType.NUMBER)) {
+				dimensionID = Registry.DIMENSION.get(dimTag.getInt(TAG_DIMENSION_ID));
+			} else {
+				dimensionID = Registry.DIMENSION.get(new Identifier(dimTag.getString(TAG_DIMENSION_ID)));
+			}
+			ListTag dimensionTag = (ListTag) dimTag.getTag(TAG_VISITED_CHUNKS);
 			DimensionData dimData = getDimensionData(dimensionID);
 			dimData.readFromNBT(dimensionTag);
-			double zoom = (double)dimTag.getInteger(TAG_BROWSING_ZOOM) / BrowsingPositionPacket.ZOOM_SCALE_FACTOR;
+			double zoom = (double)dimTag.getInt(TAG_BROWSING_ZOOM) / BrowsingPositionPacket.ZOOM_SCALE_FACTOR;
 			if (zoom == 0) zoom = 0.5;
-			dimData.setBrowsingPosition(dimTag.getInteger(TAG_BROWSING_X),
-					dimTag.getInteger(TAG_BROWSING_Y), zoom);
+			dimData.setBrowsingPosition(dimTag.getInt(TAG_BROWSING_X),
+					dimTag.getInt(TAG_BROWSING_Y), zoom);
 		}
 	}
 
 	/**Reads from NBT version 2. This is designed to allow easy upgrading to version 3.*/
-	public void readFromNBT2(NBTTagCompound compound) {
+	public void readFromNBT2(CompoundTag compound) {
 		this.nbt = compound;
-		int version = compound.getInteger(TAG_VERSION);
+		int version = compound.getInt(TAG_VERSION);
 		if (version < 2) {
 			Log.warn("Loading map with version 2 failed");
 			this.markDirty();
 			return;
 		}
-		NBTTagList dimensionMapList = compound.getTagList(TAG_DIMENSION_MAP_LIST, Constants.NBT.TAG_COMPOUND);
-		for (int d = 0; d < dimensionMapList.tagCount(); d++) {
-			NBTTagCompound dimTag = dimensionMapList.getCompoundTagAt(d);
-			int dimensionID = dimTag.getInteger(TAG_DIMENSION_ID);
+		ListTag dimensionMapList = compound.getList(TAG_DIMENSION_MAP_LIST, NbtType.COMPOUND);
+		for (int d = 0; d < dimensionMapList.size(); d++) {
+			CompoundTag dimTag = dimensionMapList.getCompoundTag(d);
+			DimensionType dimensionID;
+			if (dimTag.containsKey(TAG_DIMENSION_ID, NbtType.NUMBER)) {
+				dimensionID = Registry.DIMENSION.get(dimTag.getInt(TAG_DIMENSION_ID));
+			} else {
+				dimensionID = Registry.DIMENSION.get(new Identifier(dimTag.getString(TAG_DIMENSION_ID)));
+			}
 			int[] intArray = dimTag.getIntArray(TAG_VISITED_CHUNKS);
 			DimensionData dimData = getDimensionData(dimensionID);
 			for (int i = 0; i < intArray.length; i += 3) {
 				if (dimData.getTile(intArray[i], intArray[i+1]) != null){
 					Log.warn("Duplicate tile at "+ intArray[i] + ", " + intArray[i]);
 				}
-				dimData.setTile(intArray[i], intArray[i+1], new Tile(intArray[i+2]));
+				// TODO FABRIC remove int
+				dimData.setTile(intArray[i], intArray[i+1], TileKindFactory.get(intArray[i + 2]));
 			}
 			Log.info("Updated " + intArray.length/3 + " chunks");
-			double zoom = (double)dimTag.getInteger(TAG_BROWSING_ZOOM) / BrowsingPositionPacket.ZOOM_SCALE_FACTOR;
+			double zoom = (double)dimTag.getInt(TAG_BROWSING_ZOOM) / BrowsingPositionPacket.ZOOM_SCALE_FACTOR;
 			if (zoom == 0) zoom = 0.5;
-			dimData.setBrowsingPosition(dimTag.getInteger(TAG_BROWSING_X),
-					dimTag.getInteger(TAG_BROWSING_Y), zoom);
+			dimData.setBrowsingPosition(dimTag.getInt(TAG_BROWSING_X),
+					dimTag.getInt(TAG_BROWSING_Y), zoom);
 		}
 	}
 
 	@Override
-	public NBTTagCompound writeToNBT(NBTTagCompound compound) {
+	public CompoundTag toTag(CompoundTag compound) {
 		return writeToNBT(compound, true);
 	}
 
-	public NBTTagCompound writeToNBT(NBTTagCompound compound, boolean includeTileData) {
-		NBTTagList dimensionMapList = new NBTTagList();
-		compound.setInteger(TAG_VERSION, VERSION);
-		for (Entry<Integer, DimensionData> dimensionEntry : dimensionMap.entrySet()) {
-			NBTTagCompound dimTag = new NBTTagCompound();
-			dimTag.setInteger(TAG_DIMENSION_ID, dimensionEntry.getKey());
+	public CompoundTag writeToNBT(CompoundTag compound, boolean includeTileData) {
+		ListTag dimensionMapList = new ListTag();
+		compound.putInt(TAG_VERSION, VERSION);
+		for (Entry<DimensionType, DimensionData> dimensionEntry : dimensionMap.entrySet()) {
+			CompoundTag dimTag = new CompoundTag();
+			dimTag.putString(TAG_DIMENSION_ID, Registry.DIMENSION.getId(dimensionEntry.getKey()).toString());
 			DimensionData dimData = dimensionEntry.getValue();
 			if (includeTileData){
-				dimTag.setTag(TAG_VISITED_CHUNKS, dimData.writeToNBT());
+				dimTag.put(TAG_VISITED_CHUNKS, dimData.writeToNBT());
 			}
-			dimTag.setInteger(TAG_BROWSING_X, dimData.getBrowsingX());
-			dimTag.setInteger(TAG_BROWSING_Y, dimData.getBrowsingY());
-			dimTag.setInteger(TAG_BROWSING_ZOOM, (int)Math.round(dimData.getBrowsingZoom() * BrowsingPositionPacket.ZOOM_SCALE_FACTOR));
-			dimensionMapList.appendTag(dimTag);
+			dimTag.putInt(TAG_BROWSING_X, dimData.getBrowsingX());
+			dimTag.putInt(TAG_BROWSING_Y, dimData.getBrowsingY());
+			dimTag.putInt(TAG_BROWSING_ZOOM, (int)Math.round(dimData.getBrowsingZoom() * BrowsingPositionPacket.ZOOM_SCALE_FACTOR));
+			dimensionMapList.add(dimTag);
 		}
-		compound.setTag(TAG_DIMENSION_MAP_LIST, dimensionMapList);
+		compound.put(TAG_DIMENSION_MAP_LIST, dimensionMapList);
 
 		return compound;
 	}
 
-	private void setBiomeDetectorForDimension(int dimension, IBiomeDetector biomeAnalyzer) {
+	private void setBiomeDetectorForDimension(DimensionType dimension, IBiomeDetector biomeAnalyzer) {
 		biomeAnalyzers.put(dimension, biomeAnalyzer);
 	}
 
 	/** If not found, returns the analyzer for overworld. */
-	private IBiomeDetector getBiomeDetectorForDimension(int dimension) {
+	private IBiomeDetector getBiomeDetectorForDimension(DimensionType dimension) {
 		IBiomeDetector biomeAnalyzer = biomeAnalyzers.get(dimension);
 
 		return biomeAnalyzer == null ? biomeDetectorOverworld : biomeAnalyzer;
@@ -151,23 +167,23 @@ public class AtlasData extends WorldSavedData {
 	/**Updates map data around player
 	 *
 	 * @return A set of the new tiles, mostly so the server can synch those with relavent clients.*/
-	public ArrayList<TileInfo> updateMapAroundPlayer(EntityPlayer player) {
+	public ArrayList<TileInfo> updateMapAroundPlayer(PlayerEntity player) {
 		// Update the actual map only so often:
 		ArrayList<TileInfo> updatedTiles = new ArrayList<TileInfo>();
 		int newScanInterval = Math.round(SettingsConfig.performance.newScanInterval * 20);
 		int rescanInterval = newScanInterval * SettingsConfig.performance.rescanRate;
 
-		if (player.ticksExisted % newScanInterval != 0) {
+		if (player.getEntityWorld().getTime() % newScanInterval != 0) {
 			return updatedTiles;//no new tiles
 		}
 
-		int playerX = MathHelper.floor(player.posX) >> 4;
-		int playerZ = MathHelper.floor(player.posZ) >> 4;
+		int playerX = MathHelper.floor(player.x) >> 4;
+		int playerZ = MathHelper.floor(player.z) >> 4;
 		ITileStorage seenChunks = this.getDimensionData(player.dimension);
 		IBiomeDetector biomeDetector = getBiomeDetectorForDimension(player.dimension);
 		int scanRadius = SettingsConfig.performance.scanRadius;
 
-		final boolean rescanRequired = SettingsConfig.performance.doRescan && player.ticksExisted % rescanInterval == 0;
+		final boolean rescanRequired = SettingsConfig.performance.doRescan && player.getEntityWorld().getTime() % rescanInterval == 0;
 
 		// Look at chunks around in a circular area:
 		for (double dx = -scanRadius; dx <= scanRadius; dx++) {
@@ -178,25 +194,29 @@ public class AtlasData extends WorldSavedData {
 
 				int x = (int)(playerX + dx);
 				int z = (int)(playerZ + dz);
-				Tile oldTile = seenChunks.getTile(x, z);
+				TileKind oldTile = seenChunks.getTile(x, z);
+				TileKind tile = null;
 
 				// Check if there's a custom tile at the location:
-				int biomeId = AntiqueAtlasMod.extBiomeData.getData().getBiomeIdAt(player.dimension, x, z);
 				// Custom tiles overwrite even the chunks already seen.
+				int customTileId = AntiqueAtlasMod.extBiomeData.getData().getBiomeAt(player.dimension, x, z);
+				if (customTileId != -1) {
+					tile = TileKindFactory.get(customTileId);
+				}
 
 				// If there's no custom tile, check the actual chunk:
-				if (biomeId == -1) {
+				if (tile == null) {
 					// If the chunk has been scanned previously, only re-scan it so often:
 					if (oldTile != null && !rescanRequired) {
 						continue;
 					}
 
-					Chunk chunk = player.getEntityWorld().getChunkProvider().getLoadedChunk(x, z);
+					Chunk chunk = player.getEntityWorld().getChunk(x, z);
 					// Force loading of chunk, if required:
-
-					if (SettingsConfig.performance.forceChunkLoading && chunk == null) {
-						chunk = player.getEntityWorld().getChunkProvider().provideChunk(x, z);
-					}
+					// TODO FABRIC
+					/* if (SettingsConfig.performance.forceChunkLoading && chunk == null) {
+						chunk = player.getEntityWorld().B().c(x, z);
+					} */
 
 					// Skip chunk if it hasn't loaded yet:
 					if (chunk == null) {
@@ -204,29 +224,29 @@ public class AtlasData extends WorldSavedData {
 					}
 
 					if (oldTile != null) {
-						biomeId = biomeDetector.getBiomeID(chunk);
+						tile = biomeDetector.getBiomeID(chunk);
 
-						if (biomeId == IBiomeDetector.NOT_FOUND) {
+						if (tile == null) {
 							// If the new tile is empty, remove the old one:
 							this.removeTile(player.dimension, x, z);
-						} else if (oldTile.biomeID != biomeId) {
+						} else if (oldTile != tile) {
 							// Only update if the old tile's biome ID doesn't match the new one:
-							this.setTile(player.dimension, x, z, new Tile(biomeId));
-							updatedTiles.add(new TileInfo(x, z, biomeId));
+							this.setTile(player.dimension, x, z, tile);
+							updatedTiles.add(new TileInfo(x, z, tile));
 						}
 					} else {
 						// Scanning new chunk:
-						biomeId = biomeDetector.getBiomeID(chunk);
-						if (biomeId != IBiomeDetector.NOT_FOUND) {
-							this.setTile(player.dimension, x, z, new Tile(biomeId));
-							updatedTiles.add(new TileInfo(x, z, biomeId));
+						tile = biomeDetector.getBiomeID(chunk);
+						if (tile != null) {
+							this.setTile(player.dimension, x, z, tile);
+							updatedTiles.add(new TileInfo(x, z, tile));
 						}
 					}
 				} else {
 					// Only update the custom tile if it doesn't rewrite itself:
-					if (oldTile == null || oldTile.biomeID != biomeId) {
-						this.setTile(player.dimension, x, z, new Tile(biomeId));
-						updatedTiles.add(new TileInfo(x, z, biomeId));
+					if (oldTile == null || oldTile != tile) {
+						this.setTile(player.dimension, x, z, tile);
+						updatedTiles.add(new TileInfo(x, z, tile));
 						this.markDirty();
 					}
 				}
@@ -238,58 +258,58 @@ public class AtlasData extends WorldSavedData {
 
 	/** Puts a given tile into given map at specified coordinates and,
 	 * if tileStitcher is present, sets appropriate sectors on adjacent tiles. */
-	public void setTile(int dimension, int x, int y, Tile tile) {
+	public void setTile(DimensionType dimension, int x, int y, TileKind tile) {
 		DimensionData dimData = getDimensionData(dimension);
 		dimData.setTile(x, y, tile);
 	}
 
 	/** Returns the Tile previously set at given coordinates. */
-    private Tile removeTile(int dimension, int x, int y) {
+    private TileKind removeTile(DimensionType dimension, int x, int y) {
 		DimensionData dimData = getDimensionData(dimension);
 		return dimData.removeTile(x, y);
 	}
 
-	public Set<Integer> getVisitedDimensions() {
+	public Set<DimensionType> getVisitedDimensions() {
 		return dimensionMap.keySet();
 	}
 
 	/* TODO: Packet Rework
 	 *   Dimension data should check the server for updates*/
 	/** If this dimension is not yet visited, empty DimensionData will be created. */
-	public DimensionData getDimensionData(int dimension) {
+	public DimensionData getDimensionData(DimensionType dimension) {
 		return dimensionMap.computeIfAbsent(dimension, k -> new DimensionData(this, dimension));
 	}
 
-	public Map<ShortVec2, Tile> getSeenChunksInDimension(int dimension) {
+	public Map<ShortVec2, TileKind> getSeenChunksInDimension(DimensionType dimension) {
 		return getDimensionData(dimension).getSeenChunks();
 	}
 
 	/** The set of players this AtlasData has already been sent to. */
-	public Collection<EntityPlayer> getSyncedPlayers() {
+	public Collection<PlayerEntity> getSyncedPlayers() {
 		return Collections.unmodifiableCollection(playersSentTo);
 	}
 
 	/** Whether this AtlasData has already been sent to the specified player. */
-	public boolean isSyncedOnPlayer(EntityPlayer player) {
+	public boolean isSyncedOnPlayer(PlayerEntity player) {
 		return playersSentTo.contains(player);
 	}
 
 	/** Send all data to the player in several zipped packets. Called once
 	 * during the first run of ItemAtals.onUpdate(). */
-	public void syncOnPlayer(int atlasID, EntityPlayer player) {
+	public void syncOnPlayer(int atlasID, PlayerEntity player) {
 		if (nbt == null) {
-			nbt = new NBTTagCompound();
+			nbt = new CompoundTag();
 		}
 		// Before syncing make sure the changes are written to the nbt.
 		// Do not include dimension tile data.  This will happen later.
 		writeToNBT(nbt, false);
-		PacketDispatcher.sendTo(new MapDataPacket(atlasID, nbt), (EntityPlayerMP) player);
+		PacketDispatcher.sendTo(new MapDataPacket(atlasID, nbt), (ServerPlayerEntity) player);
 
-		for (Integer i: dimensionMap.keySet()){
+		for (DimensionType i : dimensionMap.keySet()){
 			dimensionMap.get(i).syncOnPlayer(atlasID, player);
 		}
 
-		Log.info("Sent Atlas #%d data to player %s", atlasID, player.getName());
+		Log.info("Sent Atlas #%d data to player %s", atlasID, player.getCommandSource().getName());
 		playersSentTo.add(player);
 	}
 
@@ -301,8 +321,9 @@ public class AtlasData extends WorldSavedData {
 	public boolean equals(Object obj) {
 		if (!(obj instanceof AtlasData)) return false;
 		AtlasData other = (AtlasData) obj;
+		// TODO: This doesn't handle disjoint DimensionType keysets of equal size
 		if (other.dimensionMap.size()!=dimensionMap.size()) return false;
-		for (Integer key: dimensionMap.keySet()){
+		for (DimensionType key : dimensionMap.keySet()){
 			if (!dimensionMap.get(key).equals(other.dimensionMap.get(key))) return false;
 		}
 		return true;

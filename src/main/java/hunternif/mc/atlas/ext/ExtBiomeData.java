@@ -4,13 +4,18 @@ import hunternif.mc.atlas.network.PacketDispatcher;
 import hunternif.mc.atlas.network.client.TilesPacket;
 import hunternif.mc.atlas.util.Log;
 import hunternif.mc.atlas.util.ShortVec2;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
-import net.minecraft.world.storage.WorldSavedData;
+import net.fabricmc.fabric.api.util.NbtType;
+import net.minecraft.client.network.packet.LoginSuccessS2CPacket;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.util.Identifier;
+import net.minecraft.util.registry.Registry;
+import net.minecraft.world.PersistentState;
+import net.minecraft.world.biome.Biome;
+import net.minecraft.world.dimension.DimensionType;
 import net.minecraftforge.common.util.Constants;
-
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
@@ -20,7 +25,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * Atlases check with it when updating themselves.
  * @author Hunternif
  */
-public class ExtBiomeData extends WorldSavedData {
+public class ExtBiomeData extends PersistentState {
 	private static final int VERSION = 1;
 	private static final String TAG_VERSION = "aaVersion";
 	private static final String TAG_DIMENSION_MAP_LIST = "dimMap";
@@ -31,38 +36,42 @@ public class ExtBiomeData extends WorldSavedData {
 		super(key);
 	}
 	
-	private final Map<Integer /*dimension ID*/, Map<ShortVec2, Integer /*biome ID*/>> dimensionMap =
+	private final Map<DimensionType /*dimension ID*/, Map<ShortVec2, Integer>> dimensionMap =
             new ConcurrentHashMap<>(2, 0.75f, 2);
 	
 	private final ShortVec2 tempCoords = new ShortVec2(0, 0);
 
 	@Override
-	public void readFromNBT(NBTTagCompound compound) {
-		int version = compound.getInteger(TAG_VERSION);
+	public void fromTag(CompoundTag compound) {
+		int version = compound.getInt(TAG_VERSION);
 		if (version < VERSION) {
 			Log.warn("Outdated atlas data format! Was %d but current is %d", version, VERSION);
 			this.markDirty();
 		}
-		NBTTagList dimensionMapList = compound.getTagList(TAG_DIMENSION_MAP_LIST, Constants.NBT.TAG_COMPOUND);
-		for (int d = 0; d < dimensionMapList.tagCount(); d++) {
-			NBTTagCompound tag = dimensionMapList.getCompoundTagAt(d);
-			int dimensionID = tag.getInteger(TAG_DIMENSION_ID);
+		ListTag dimensionMapList = compound.getList(TAG_DIMENSION_MAP_LIST, NbtType.COMPOUND);
+		for (int d = 0; d < dimensionMapList.size(); d++) {
+			CompoundTag tag = dimensionMapList.getCompoundTag(d);
+			DimensionType dimensionID;
+			if (tag.containsKey(TAG_DIMENSION_ID, NbtType.NUMBER)) {
+				dimensionID = Registry.DIMENSION.get(tag.getInt(TAG_DIMENSION_ID));
+			} else {
+				dimensionID = Registry.DIMENSION.get(new Identifier(tag.getString(TAG_DIMENSION_ID)));
+			}
 			Map<ShortVec2, Integer> biomeMap = getBiomesInDimension(dimensionID);
 			int[] intArray = tag.getIntArray(TAG_BIOME_IDS);
 			for (int i = 0; i < intArray.length; i += 3) {
 				ShortVec2 coords = new ShortVec2(intArray[i], intArray[i+1]);
 				biomeMap.put(coords, intArray[i + 2]);
-			}
-		}
+			}}
 	}
 
 	@Override
-	public NBTTagCompound writeToNBT(NBTTagCompound compound) {
-		compound.setInteger(TAG_VERSION, VERSION);
-		NBTTagList dimensionMapList = new NBTTagList();
-		for (Integer dimension : dimensionMap.keySet()) {
-			NBTTagCompound tag = new NBTTagCompound();
-			tag.setInteger(TAG_DIMENSION_ID, dimension);
+	public CompoundTag toTag(CompoundTag compound) {
+		compound.putInt(TAG_VERSION, VERSION);
+		ListTag dimensionMapList = new ListTag();
+		for (DimensionType dimension : dimensionMap.keySet()) {
+			CompoundTag tag = new CompoundTag();
+			tag.putString(TAG_DIMENSION_ID, Registry.DIMENSION.getId(dimension).toString());
 			Map<ShortVec2, Integer> biomeMap = getBiomesInDimension(dimension);
 			int[] intArray = new int[biomeMap.size()*3];
 			int i = 0;
@@ -71,47 +80,47 @@ public class ExtBiomeData extends WorldSavedData {
 				intArray[i++] = entry.getKey().y;
 				intArray[i++] = entry.getValue();
 			}
-			tag.setIntArray(TAG_BIOME_IDS, intArray);
-			dimensionMapList.appendTag(tag);
+			tag.putIntArray(TAG_BIOME_IDS, intArray);
+			dimensionMapList.add(tag);
 		}
-		compound.setTag(TAG_DIMENSION_MAP_LIST, dimensionMapList);
+		compound.put(TAG_DIMENSION_MAP_LIST, dimensionMapList);
 		
 		return compound;
 	}
 	
-	private Map<ShortVec2, Integer> getBiomesInDimension(int dimension) {
+	private Map<ShortVec2, Integer> getBiomesInDimension(DimensionType dimension) {
 		return dimensionMap.computeIfAbsent(dimension,
 				k -> new ConcurrentHashMap<>(2, 0.75f, 2));
 	}
 	
 	/** If no custom tile is set at the specified coordinates, returns -1. */
-	public int getBiomeIdAt(int dimension, int x, int z) {
-		Integer biomeID = getBiomesInDimension(dimension).get(tempCoords.set(x, z));
-		return biomeID == null ? -1 : biomeID;
+	public int getBiomeAt(DimensionType dimension, int x, int z) {
+		Integer i = getBiomesInDimension(dimension).get(tempCoords.set(x, z));
+		return i != null ? i : -1;
 	}
 	
 	/** If setting biome on the server, a packet should be sent to all players. */
-	public void setBiomeIdAt(int dimension, int x, int z, int biomeID) {
-		getBiomesInDimension(dimension).put(new ShortVec2(x, z), biomeID);
+	public void setBiomeAt(DimensionType dimension, int x, int z, int biome) {
+		getBiomesInDimension(dimension).put(new ShortVec2(x, z), biome);
 		markDirty();
 	}
 	
-	public void removeBiomeAt(int dimension, int x, int z) {
+	public void removeBiomeAt(DimensionType dimension, int x, int z) {
 		getBiomesInDimension(dimension).remove(tempCoords.set(x, z));
 		markDirty();
 	}
 	
 	/** Send all data to player in several zipped packets. */
-	public void syncOnPlayer(EntityPlayer player) {
-		for (Integer dimension : dimensionMap.keySet()) {
+	public void syncOnPlayer(PlayerEntity player) {
+		for (DimensionType dimension : dimensionMap.keySet()) {
 			TilesPacket packet = new TilesPacket(dimension);
 			Map<ShortVec2, Integer> biomes = getBiomesInDimension(dimension);
 			for (Entry<ShortVec2, Integer> entry : biomes.entrySet()) {
 				packet.addTile(entry.getKey().x, entry.getKey().y, entry.getValue());
 			}
-			PacketDispatcher.sendTo(packet, (EntityPlayerMP) player);
+			PacketDispatcher.sendTo(packet, (ServerPlayerEntity) player);
 		}
-		Log.info("Sent custom biome data to player %s", player.getName());
+		Log.info("Sent custom biome data to player %s", player.getCommandSource().getName());
 	}
 
 }

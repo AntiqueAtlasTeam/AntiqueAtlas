@@ -5,13 +5,13 @@ import hunternif.mc.atlas.SettingsConfig;
 import hunternif.mc.atlas.client.gui.GuiAtlas;
 import hunternif.mc.atlas.core.AtlasData;
 import hunternif.mc.atlas.network.AbstractMessage.AbstractClientMessage;
-import net.minecraft.client.Minecraft;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.network.PacketBuffer;
-import net.minecraftforge.fml.common.network.ByteBufUtils;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.util.PacketByteBuf;
+
 
 import java.io.IOException;
 
@@ -21,38 +21,38 @@ import java.io.IOException;
  */
 public class MapDataPacket extends AbstractClientMessage<MapDataPacket> {
 	private int atlasID;
-	private NBTTagCompound data;
+	private CompoundTag data;
 
 	public MapDataPacket() {}
 
-	public MapDataPacket(int atlasID, NBTTagCompound data) {
+	public MapDataPacket(int atlasID, CompoundTag data) {
 		this.atlasID = atlasID;
 		this.data = data;
 	}
 
 	@Override
-	public void read(PacketBuffer buffer) throws IOException {
+	public void read(PacketByteBuf buffer) throws IOException {
 		atlasID = buffer.readVarInt();
-		data = ByteBufUtils.readTag(buffer);
+		data = buffer.readCompoundTag();
 	}
 
 	@Override
-	public void write(PacketBuffer buffer) throws IOException {
+	public void write(PacketByteBuf buffer) throws IOException {
 		buffer.writeVarInt(atlasID);
-		ByteBufUtils.writeTag(buffer, data);
+		buffer.writeCompoundTag(data);
 	}
 
 
 	@Override
-	@SideOnly(Side.CLIENT)
-	protected void process(EntityPlayer player, Side side) {
+	@Environment(EnvType.CLIENT)
+	protected void process(PlayerEntity player, EnvType side) {
 		if (data == null) return; // Atlas is empty
 		AtlasData atlasData = AntiqueAtlasMod.atlasData.getAtlasData(atlasID, player.getEntityWorld());
-		atlasData.readFromNBT(data);
+		atlasData.fromTag(data);
 		// GuiAtlas may already be opened at (0, 0) browsing position, force load saved position:
 		if (SettingsConfig.gameplay.doSaveBrowsingPos &&
-				Minecraft.getMinecraft().currentScreen instanceof GuiAtlas) {
-			((GuiAtlas)Minecraft.getMinecraft().currentScreen).loadSavedBrowsingPosition();
+				MinecraftClient.getInstance().currentScreen instanceof GuiAtlas) {
+			((GuiAtlas)MinecraftClient.getInstance().currentScreen).loadSavedBrowsingPosition();
 		}
 	}
 }

@@ -1,6 +1,9 @@
 package hunternif.mc.atlas.client;
 
 import hunternif.mc.atlas.util.SaveData;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
+import net.minecraft.util.Identifier;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -9,15 +12,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-
 /**
  * Maps texture sets to their names.
  * @author Hunternif
  */
-@SideOnly(Side.CLIENT)
+@Environment(EnvType.CLIENT)
 public class TextureSetMap extends SaveData {
 	private static final TextureSetMap INSTANCE = new TextureSetMap();
 	public static TextureSetMap instance() {
@@ -36,7 +35,7 @@ public class TextureSetMap extends SaveData {
 	}
 	
 	/** Legacy support. Creates a new texture set with a UUID-based name. */
-	public TextureSet createAndRegister(ResourceLocation ... textures) {
+	public TextureSet createAndRegister(Identifier... textures) {
 		TextureSet set = new TextureSet(UUID.randomUUID().toString(), textures);
 		register(set);
 		return set;

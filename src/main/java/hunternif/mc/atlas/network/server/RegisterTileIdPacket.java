@@ -7,10 +7,10 @@ import hunternif.mc.atlas.network.client.TileNameIDPacket;
 
 import java.io.IOException;
 
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.network.PacketBuffer;
-import net.minecraftforge.fml.common.network.ByteBufUtils;
-import net.minecraftforge.fml.relauncher.Side;
+import net.fabricmc.api.EnvType;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.util.PacketByteBuf;
+
 
 /**
  * Sent from client to server to register a new
@@ -27,17 +27,17 @@ public class RegisterTileIdPacket extends AbstractServerMessage<RegisterTileIdPa
 	}
 	
 	@Override
-	protected void read(PacketBuffer buffer) throws IOException {
-		name = ByteBufUtils.readUTF8String(buffer);
+	protected void read(PacketByteBuf buffer) throws IOException {
+		name = buffer.readString(512);
 	}
 
 	@Override
-	protected void write(PacketBuffer buffer) throws IOException {
-		ByteBufUtils.writeUTF8String(buffer, name);
+	protected void write(PacketByteBuf buffer) throws IOException {
+		buffer.writeString(name);
 	}
 
 	@Override
-	protected void process(EntityPlayer player, Side side) {
+	protected void process(PlayerEntity player, EnvType side) {
 		// Register the new tile id:
 		int biomeID = ExtTileIdMap.instance().getOrCreatePseudoBiomeID(name);
 		// Send it to all clients:

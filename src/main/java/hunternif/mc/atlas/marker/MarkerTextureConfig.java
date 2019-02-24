@@ -8,11 +8,9 @@ import java.util.Map.Entry;
 import java.util.PriorityQueue;
 import java.util.Queue;
 
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-
-import net.minecraft.util.ResourceLocation;
-
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
+import net.minecraft.util.Identifier;
 import org.apache.commons.io.IOUtils;
 
 import com.google.gson.JsonElement;
@@ -28,7 +26,7 @@ import hunternif.mc.atlas.util.Log;
  * Maps marker type to texture.
  * @author Hunternif
  */
-@SideOnly(Side.CLIENT)
+@Environment(EnvType.CLIENT)
 public class MarkerTextureConfig extends AbstractJSONConfig<MarkerRegistry> {
 	private static final int VERSION = 1;
 	
@@ -64,26 +62,26 @@ public class MarkerTextureConfig extends AbstractJSONConfig<MarkerRegistry> {
 			}
 			JsonObject object = (JsonObject) entry.getValue();
 			
-			ResourceLocation key = MarkerRegistry.getLoc(markerType);
+			Identifier key = MarkerRegistry.getLoc(markerType);
 			if(MarkerRegistry.hasKey(key)) {
 				MarkerRegistry.find(key).getJSONData().readFrom(object);
 			} else {
 				MarkerType type = new MarkerType(key);
 				type.getJSONData().readFrom(object);
 				type.setIsFromJson(true);
-				MarkerRegistry.register(type);
+				MarkerRegistry.register(key, type);
 			}
 		}
 	}
 
 	@Override
 	protected void saveData(JsonObject json, MarkerRegistry data) {
-		Queue<ResourceLocation> queue = new PriorityQueue<>(Comparator.comparing(ResourceLocation::toString));
+		Queue<Identifier> queue = new PriorityQueue<>(Comparator.comparing(Identifier::toString));
 		queue.addAll(MarkerRegistry.getKeys());
 
 		json.add(EXAMPLE_LOC, EXAMPLE_JSON);
 		while (!queue.isEmpty()) {
-			ResourceLocation key = queue.poll();
+			Identifier key = queue.poll();
 			JsonObject value = new JsonObject();
 			MarkerRegistry.find(key).getJSONData().saveTo(value);
 			json.add(key.toString(), value);
