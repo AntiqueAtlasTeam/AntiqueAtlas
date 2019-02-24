@@ -58,7 +58,8 @@ public class DeleteMarkerPacket extends AbstractMessage<DeleteMarkerPacket> {
 	protected void process(PlayerEntity player, EnvType side) {
 		if (side == EnvType.SERVER) {
 			// Make sure it's this player's atlas :^)
-			if (SettingsConfig.gameplay.itemNeeded && !player.bB.h(new ata(RegistrarAntiqueAtlas.ATLAS, 1, atlasID))) {
+			// TODO FABRIC
+			if (SettingsConfig.gameplay.itemNeeded /* && !player.bB.h(new ata(RegistrarAntiqueAtlas.ATLAS, 1, atlasID)) */) {
 				Log.warn("Player %s attempted to delete marker from someone else's Atlas #%d",
 						player.getCommandSource().getName(), atlasID);
 				return;

@@ -2,13 +2,12 @@ package hunternif.mc.atlas.client;
 
 import hunternif.mc.atlas.AntiqueAtlasMod;
 import hunternif.mc.atlas.client.gui.GuiAtlas;
+import net.fabricmc.fabric.api.client.keybinding.FabricKeyBinding;
+import net.fabricmc.fabric.api.client.keybinding.KeyBindingRegistry;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.options.KeyBinding;
-import net.minecraftforge.fml.client.registry.ClientRegistry;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.gameevent.InputEvent;
-import none.XX_1_12_2_none_blk_XX;
-import org.lwjgl.input.Keyboard;
+import net.minecraft.client.util.InputUtil;
+import net.minecraft.util.Identifier;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,14 +17,14 @@ public class KeyHandler {
     private static final int KEY_ATLAS = 0;
 
     /** List of bindings (at this moment with only one binding) */
-    private static List<KeyBinding> bindings = new ArrayList<>(1);
+    private static List<FabricKeyBinding> bindings = new ArrayList<>(1);
 
     public static void registerBindings() {
         // Initialisation of bindings
-        bindings.add(KEY_ATLAS, new KeyBinding("key.openatlas.desc", Keyboard.KEY_M, "key.antiqueatlas.category"));
+        bindings.add(KEY_ATLAS, FabricKeyBinding.Builder.create(new Identifier("antiqueatlas:openatlas"), InputUtil.Type.KEY_KEYBOARD, 77, "key.antiqueatlas.category").build());
 
         // Registering all binding
-        bindings.forEach(ClientRegistry::registerKeyBinding);
+        bindings.forEach(KeyBindingRegistry.INSTANCE::register);
     }
 
     @SubscribeEvent(receiveCanceled = true)

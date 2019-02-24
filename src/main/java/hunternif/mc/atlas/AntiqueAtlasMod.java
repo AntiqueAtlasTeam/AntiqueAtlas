@@ -16,6 +16,8 @@ import hunternif.mc.atlas.registry.MarkerTypes;
 import net.fabricmc.api.ModInitializer;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.world.World;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class AntiqueAtlasMod implements ModInitializer {
 	public static final String ID = "antiqueatlas";
@@ -24,6 +26,7 @@ public class AntiqueAtlasMod implements ModInitializer {
 	public static final String VERSION = "@VERSION@";
 
 	public static AntiqueAtlasMod instance;
+	public static Logger logger = LogManager.getLogger();
 
 	public static CommonProxy proxy;
 

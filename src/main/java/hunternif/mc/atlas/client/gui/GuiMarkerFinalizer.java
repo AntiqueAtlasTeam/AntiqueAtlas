@@ -137,7 +137,7 @@ public class GuiMarkerFinalizer extends GuiComponent {
 	}
 
 	@Override
-	public void a(int mouseX, int mouseY, float partialTick) {
+	public void draw(int mouseX, int mouseY, float partialTick) {
 		this.drawBackground();
 		drawCenteredString(I18n.translate("gui.antiqueatlas.marker.label"), this.height/2 - 97, 0xffffff, true);
 		textField.draw(mouseX, mouseY, partialTick);
@@ -148,7 +148,7 @@ public class GuiMarkerFinalizer extends GuiComponent {
 				scroller.getGuiX() + scroller.getWidth() + TYPE_BG_FRAME,
 				scroller.getGuiY() + scroller.getHeight() + TYPE_BG_FRAME,
 				0x88101010, 0x99101010);
-		super.a(mouseX, mouseY, partialTick);
+		super.draw(mouseX, mouseY, partialTick);
 	}
 
 	interface IMarkerTypeSelectListener {

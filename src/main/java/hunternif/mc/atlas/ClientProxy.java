@@ -10,6 +10,9 @@ import hunternif.mc.atlas.marker.MarkerTextureConfig;
 import hunternif.mc.atlas.registry.MarkerRegistry;
 import hunternif.mc.atlas.registry.MarkerType;
 import hunternif.mc.atlas.util.Log;
+import net.fabricmc.fabric.api.network.ClientSidePacketRegistry;
+import net.fabricmc.fabric.api.network.PacketConsumer;
+import net.fabricmc.fabric.api.network.ServerSidePacketRegistry;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.fabricmc.fabric.api.resource.SimpleSynchronousResourceReloadListener;
 import net.minecraft.client.MinecraftClient;
@@ -28,6 +31,8 @@ import net.minecraft.world.biome.Biomes;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
+import java.util.function.Function;
 
 import static hunternif.mc.atlas.client.TextureSet.*;
 
@@ -43,7 +48,14 @@ public class ClientProxy extends CommonProxy implements SimpleSynchronousResourc
 	private GuiAtlas guiAtlas;
 
 	@Override
+	public void registerPackets(Set<Identifier> clientPackets, Set<Identifier> serverPackets, Function<Identifier, PacketConsumer> consumer) {
+		super.registerPackets(clientPackets, serverPackets, consumer);
+		clientPackets.forEach((id) -> ClientSidePacketRegistry.INSTANCE.register(id, consumer.apply(id)));
+	}
+
+	@Override
 	public void init() {
+		super.init();
 		// TODO FABRIC
 		// MinecraftForge.EVENT_BUS.register(ExportProgressOverlay.INSTANCE);
 

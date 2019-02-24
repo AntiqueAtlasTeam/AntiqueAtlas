@@ -70,7 +70,7 @@ public class AddMarkerPacket extends AbstractServerMessage<AddMarkerPacket> {
 	protected void process(PlayerEntity player, EnvType side) {
 		// Make sure it's this player's atlas :^)
 		// TODO Fabric
-		if (SettingsConfig.gameplay.itemNeeded /*  */&& !player.inventory.containsStack(new ItemStack(RegistrarAntiqueAtlas.ATLAS, 1, atlasID))) {
+		if (SettingsConfig.gameplay.itemNeeded /* && !player.inventory.containsStack(new ItemStack(RegistrarAntiqueAtlas.ATLAS, 1, atlasID)) */) {
 			Log.warn("Player %s attempted to put marker into someone else's Atlas #%d",
 					player.getCommandSource().getName(), atlasID);
 			return;

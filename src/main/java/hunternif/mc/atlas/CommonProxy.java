@@ -4,6 +4,8 @@ import hunternif.mc.atlas.core.BiomeDetectorBase;
 import hunternif.mc.atlas.ext.ExtTileConfig;
 import hunternif.mc.atlas.ext.ExtTileIdMap;
 import hunternif.mc.atlas.util.Log;
+import net.fabricmc.fabric.api.network.PacketConsumer;
+import net.fabricmc.fabric.api.network.ServerSidePacketRegistry;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.fabricmc.fabric.api.resource.SimpleSynchronousResourceReloadListener;
 import net.fabricmc.loader.FabricLoader;
@@ -15,6 +17,8 @@ import net.minecraft.resource.ResourceType;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.Identifier;
 import java.io.File;
+import java.util.Set;
+import java.util.function.Function;
 
 public class CommonProxy {
 	File configDir;
@@ -111,5 +115,9 @@ public class CommonProxy {
 			extTileConfig.save(extTileIdMap);
 			extTileIdMap.setDirty(false);
 		}
+	}
+
+	public void registerPackets(Set<Identifier> clientPackets, Set<Identifier> serverPackets, Function<Identifier, PacketConsumer> consumer) {
+		serverPackets.forEach((id) -> ServerSidePacketRegistry.INSTANCE.register(id, consumer.apply(id)));
 	}
 }
