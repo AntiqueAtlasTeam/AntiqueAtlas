@@ -312,12 +312,9 @@ public class BiomeTextureMap extends SaveData {
 		}
 	}
 
-	public Identifier getTexture(int x, int y, TileKind tile) {
+	public Identifier getTexture(int variationNumber, TileKind tile) {
 		TextureSet set = getTextureSet(tile);
-
-		int i = MathHelper.floor((float)(tile.getVariationNumber(x, y))
-				/ (float)(Short.MAX_VALUE) * (float)(set.textures.length));
-		return set.textures[i];
+		return set.textures[variationNumber % set.textures.length];
 	}
 
 	public List<Identifier> getAllTextures() {

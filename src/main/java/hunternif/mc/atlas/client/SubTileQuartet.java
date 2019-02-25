@@ -2,6 +2,7 @@ package hunternif.mc.atlas.client;
 
 import hunternif.mc.atlas.client.SubTile.Part;
 import hunternif.mc.atlas.util.ArrayIterator;
+import net.minecraft.util.math.MathHelper;
 
 import java.util.Iterator;
 
@@ -21,6 +22,7 @@ public class SubTileQuartet implements Iterable<SubTile> {
 	 * 2 3
 	 */
 	private final SubTile[] array;
+	private int variationNumber;
 	
 	public SubTileQuartet() {
 		this(new SubTile(Part.BOTTOM_RIGHT), new SubTile(Part.BOTTOM_LEFT),
@@ -33,7 +35,7 @@ public class SubTileQuartet implements Iterable<SubTile> {
 	public SubTile get(int i) {
 		return array[i];
 	}
-	
+
 	/** Set the coordinates for the top left subtile, and the rest of them
 	 * have their coordinates updated respectively. */
 	public void setCoords(int x, int y) {
@@ -50,5 +52,15 @@ public class SubTileQuartet implements Iterable<SubTile> {
 	@Override
 	public Iterator<SubTile> iterator() {
 		return new ArrayIterator<>(array);
+	}
+
+	public void setChunkCoords(int chunkX, int chunkY, int step) {
+		chunkX *= 2;
+		chunkY *= 2;
+
+		array[0].variationNumber = (int) MathHelper.hashCode(chunkX, chunkY, 0) & 0x7FFFFFFF;
+		array[1].variationNumber = (int) MathHelper.hashCode(chunkX + step, chunkY, 0) & 0x7FFFFFFF;
+		array[2].variationNumber = (int) MathHelper.hashCode(chunkX, chunkY + step, 0) & 0x7FFFFFFF;
+		array[3].variationNumber = (int) MathHelper.hashCode(chunkX + step, chunkY + step, 0) & 0x7FFFFFFF;
 	}
 }

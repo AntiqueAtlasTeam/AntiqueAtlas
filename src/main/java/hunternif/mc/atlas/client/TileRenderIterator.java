@@ -94,7 +94,8 @@ public class TileRenderIterator implements Iterator<SubTileQuartet> {
 		j = tiles.getTile(chunkX + step, chunkY);
 		k = l;
 		l = tiles.getTile(chunkX, chunkY + step);
-		
+
+		quartet.setChunkCoords(chunkX, chunkY, step);
 		quartet.setCoords(subtileX, subtileY);
 		_d.tile = d;
 		_e.tile = e;
@@ -212,13 +213,13 @@ public class TileRenderIterator implements Iterator<SubTileQuartet> {
 	 * to another subtile. It doesn't matter if it's top or bottom. */
 	private static void stitchVertically(SubTile subtile) {
 		if (subtile.shape == Shape.HORIZONTAL) subtile.shape = Shape.CONCAVE;
-		if (subtile.shape == Shape.CONVEX) subtile.shape = Shape.VERTICAL;
+		else if (subtile.shape == Shape.CONVEX) subtile.shape = Shape.VERTICAL;
 	}
 	/** Change the shape of the subtile in order to stitch it horizontally
 	 * to another subtile. It doesn't matter if it's left or right. */
 	private static void stitchHorizontally(SubTile subtile) {
 		if (subtile.shape == Shape.VERTICAL) subtile.shape = Shape.CONCAVE;
-		if (subtile.shape == Shape.CONVEX) subtile.shape = Shape.HORIZONTAL;
+		else if (subtile.shape == Shape.CONVEX) subtile.shape = Shape.HORIZONTAL;
 	}
 	
 	@Override

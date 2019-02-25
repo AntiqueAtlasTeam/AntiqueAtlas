@@ -20,6 +20,7 @@ import net.minecraft.world.PersistentState;
 import net.minecraft.world.ViewableWorld;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.chunk.Chunk;
+import net.minecraft.world.chunk.ChunkStatus;
 import net.minecraft.world.dimension.DimensionType;
 import java.util.*;
 import java.util.Map.Entry;
@@ -184,11 +185,12 @@ public class AtlasData extends PersistentState {
 		int scanRadius = SettingsConfig.performance.scanRadius;
 
 		final boolean rescanRequired = SettingsConfig.performance.doRescan && player.getEntityWorld().getTime() % rescanInterval == 0;
+		int scanRadiusSq = scanRadius*scanRadius;
 
 		// Look at chunks around in a circular area:
 		for (double dx = -scanRadius; dx <= scanRadius; dx++) {
 			for (double dz = -scanRadius; dz <= scanRadius; dz++) {
-				if (dx*dx + dz*dz > scanRadius*scanRadius) {
+				if (dx*dx + dz*dz > scanRadiusSq) {
 					continue; // Outside the circle
 				}
 
@@ -211,12 +213,8 @@ public class AtlasData extends PersistentState {
 						continue;
 					}
 
-					Chunk chunk = player.getEntityWorld().getChunk(x, z);
-					// Force loading of chunk, if required:
-					// TODO FABRIC
-					/* if (SettingsConfig.performance.forceChunkLoading && chunk == null) {
-						chunk = player.getEntityWorld().B().c(x, z);
-					} */
+					// TODO FABRIC: forceChunkLoading crashes here
+					Chunk chunk = player.getEntityWorld().getChunk(x, z, ChunkStatus.FULL, SettingsConfig.performance.forceChunkLoading);
 
 					// Skip chunk if it hasn't loaded yet:
 					if (chunk == null) {

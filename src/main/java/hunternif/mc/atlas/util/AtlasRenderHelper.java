@@ -39,7 +39,7 @@ public class AtlasRenderHelper {
 	public static void drawFullTexture(Identifier texture, double x, double y, int width, int height) {
 		drawFullTexture(texture, x, y, width, height, 1, 1);
 	}
-	
+
 	public static void drawAutotileCorner(Identifier texture, int x, int y, double u, double v, int tileHalfSize) {
 		MinecraftClient.getInstance().getTextureManager().bindTexture(texture);
 		double minU =  u / 4;

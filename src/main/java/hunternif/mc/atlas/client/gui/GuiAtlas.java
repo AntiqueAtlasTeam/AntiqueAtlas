@@ -715,13 +715,14 @@ public class GuiAtlas extends GuiComponent {
 		iter.setScope(new Rect().setOrigin(mapStartX, mapStartZ).
 				set(mapStartX, mapStartZ, mapEndX, mapEndZ));
 		iter.setStep(tile2ChunkScale);
+		int v = 1;
 		while (iter.hasNext()) {
 			SubTileQuartet subtiles = iter.next();
 			for (SubTile subtile : subtiles) {
 				if (subtile == null || subtile.tile == null) continue;
 				AtlasRenderHelper.drawAutotileCorner(
 						// TODO FABRIC this should use chunk x/y pos? + stitch handling
-						BiomeTextureMap.instance().getTexture(subtile.x, subtile.y, subtile.tile),
+						BiomeTextureMap.instance().getTexture(subtile.variationNumber, subtile.tile),
 						mapStartScreenX + subtile.x * tileHalfSize,
 						mapStartScreenY + subtile.y * tileHalfSize,
 						subtile.getTextureU(), subtile.getTextureV(), tileHalfSize);

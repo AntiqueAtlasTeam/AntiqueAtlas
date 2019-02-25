@@ -11,8 +11,4 @@ public interface TileKind {
 	Biome getBiome();
 	@Nullable
 	String getExtTile();
-
-	default short getVariationNumber(int x, int y) {
-		return (short) (MathHelper.hashCode(x, y, 0) & 32767);
-	}
 }

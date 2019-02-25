@@ -49,10 +49,19 @@ public class BiomeDetectorBase implements IBiomeDetector {
 	 * given higher priority when identifying mean biome ID for a chunk.
 	 * (Currently WATER, BEACH and SWAMP) */
 	public static void scanBiomeTypes() {
-		// TODO FABRIC
-		/* waterBiomes.addAll(BiomeDictionary.getBiomes(Type.WATER));
-		beachBiomes.addAll(BiomeDictionary.getBiomes(Type.BEACH));
-		swampBiomes.addAll(BiomeDictionary.getBiomes(Type.SWAMP)); */
+		for (Biome biome : Registry.BIOME) {
+			switch (biome.getCategory()) {
+				case BEACH:
+					beachBiomes.add(biome);
+					break;
+				case OCEAN:
+					waterBiomes.add(biome);
+					break;
+				case SWAMP:
+					swampBiomes.add(biome);
+					break;
+			}
+		}
 	}
 
 	public void setScanPonds(boolean value) {
