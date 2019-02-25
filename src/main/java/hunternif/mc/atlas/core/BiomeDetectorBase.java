@@ -96,7 +96,7 @@ public class BiomeDetectorBase implements IBiomeDetector {
 			for (int z = 0; z < 16; z++) {
 				Biome biomeID = chunkBiomes[x << 4 | z];
 				if (doScanPonds) {
-					int y = chunk instanceof WorldChunk ? ((WorldChunk) chunk).getHeightmap(Heightmap.Type.MOTION_BLOCKING_NO_LEAVES).get(x, z) : chunk.getHeight() - 1;
+					int y = chunk.getHeightmap(Heightmap.Type.MOTION_BLOCKING_NO_LEAVES).get(x, z);
 					if (y > 0) {
 						// TODO FABRIC
 						Block topBlock = chunk.getBlockState(new BlockPos(x, y-1, z)).getBlock();

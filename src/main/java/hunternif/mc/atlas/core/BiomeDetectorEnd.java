@@ -11,6 +11,7 @@ import java.util.Map;
 import net.minecraft.block.Block;
 
 import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.ViewableWorld;
@@ -43,18 +44,16 @@ public class BiomeDetectorEnd extends BiomeDetectorBase implements IBiomeDetecto
 				Biome biomeID = chunkBiomes[x << 4 | z];
 				if (biomeID == endID) {
 					// The End!
-					// TODO FABRIC
-					int top = ((WorldChunk) chunk).getHeightmap(Heightmap.Type.MOTION_BLOCKING_NO_LEAVES).get(x, z);
+					int top = chunk.getHeightmap(Heightmap.Type.MOTION_BLOCKING_NO_LEAVES).get(x, z);
 					BlockState topBlock = chunk.getBlockState(new BlockPos(x, top-1, z));
-					
-					/* if(topBlock == bdy.XX_1_13_2_eg_XX) {
+
+					if (topBlock.getBlock() == Blocks.END_STONE) {
 						islandOccurences++;
-						Block rootBlock = chunk.XX_1_12_2_a_XX(x, top, z).c();
-						if(rootBlock == bdy.XX_1_13_2_hZ_XX || rootBlock == bdy.XX_1_13_2_hY_XX) {
+						BlockState rootBlock = chunk.getBlockState(new BlockPos(x, top, z));
+						if(rootBlock.getBlock() == Blocks.CHORUS_FLOWER || rootBlock.getBlock() == Blocks.CHORUS_PLANT) {
 							plantOccurences++;
 						}
-					} */
-					if(topBlock.isAir()) {
+					} else if (topBlock.isAir()) {
 						voidOccurences++;
 					}
 				} else {
