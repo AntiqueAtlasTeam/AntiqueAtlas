@@ -1,17 +1,18 @@
 {
-  "id": "modid",
-  "name": "Example Mod",
-  "description": "This is an example description! Tell everyone what your mod is about!",
+  "id": "antiqueatlas",
+  "name": "Antique Atlas",
+  "description": "Antique Atlas is a book that acts like a map featuring infinite scrolling, zoom and custom labeled markers. The map is generated around the player by calculating the average biome in each 16x16 chunk.",
   "version": "${version}",
   "side": "universal",
   "initializers": [
-    "net.fabricmc.example.ExampleMod"
+    "hunternif.mc.atlas.AntiqueAtlasModClient",
+    "hunternif.mc.atlas.AntiqueAtlasMod"
   ],
   "requires": {
-    "fabric": "*"
+    "fabric": ">=0.2.3"
   },
   "mixins": {
-    "client": "modid.client.json",
-    "common": "modid.common.json"
+    "client": "antiqueatlas.mixins.client.json",
+    "common": "antiqueatlas.mixins.common.json"
   }
 }

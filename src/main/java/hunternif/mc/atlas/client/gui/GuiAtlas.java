@@ -29,11 +29,7 @@ import net.minecraft.client.resource.language.I18n;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.MathHelper;
-import net.minecraftforge.common.MinecraftForge;
-import none.XX_1_12_2_none_bit_XX;
-import none.XX_1_12_2_none_blk_XX;
-import org.lwjgl.input.Keyboard;
-import org.lwjgl.input.Mouse;
+import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL11;
 
 import java.io.File;
@@ -109,13 +105,13 @@ public class GuiAtlas extends GuiComponent {
 	private final IState DELETING_MARKER = new IState() {
 		@Override
 		public void onEnterState() {
-			GuiComponent.v.a();
+			// GuiComponent.v.a();
 			addChild(eraser);
 			btnDelMarker.setSelected(true);
 		}
 		@Override
 		public void onExitState() {
-			mc.v.b();
+			// mc.v.b();
 			removeChild(eraser);
 			btnDelMarker.setSelected(false);
 		}
@@ -175,7 +171,7 @@ public class GuiAtlas extends GuiComponent {
 	/** Set to true when dragging the map view. */
 	private boolean isDragging = false;
 	/** The starting cursor position when dragging. */
-	private int dragMouseX, dragMouseY;
+	private double dragMouseX, dragMouseY;
 	/** Map offset at the beginning of drag. */
 	private int dragMapOffsetX, dragMapOffsetY;
 
@@ -219,7 +215,7 @@ public class GuiAtlas extends GuiComponent {
 	private DimensionData biomeData;
 
 	/** Coordinate scale factor relative to the actual screen size. */
-	private int screenScale;
+	private double screenScale;
 
 	/** Progress bar for exporting images. */
 	private final ProgressBarOverlay progressBar = new ProgressBarOverlay(100, 2);
@@ -379,16 +375,17 @@ public class GuiAtlas extends GuiComponent {
             state.switchTo(NORMAL); //TODO: his causes the Export PNG progress bar to disappear when resizing game window
         }
 
-		Keyboard.enableRepeatEvents(true);
-		screenScale = new XX_1_12_2_none_bit_XX(mc).e();
+		// TODO FABRIC
+		// Keyboard.enableRepeatEvents(true);
+		screenScale = MinecraftClient.getInstance().window.getScaleFactor();
 		setCentered();
 	}
 
 	@Override
-	protected void a(int mouseX, int mouseY, int mouseState) throws IOException {
-		super.mouseClicked(mouseX, mouseY, mouseState);
+	public boolean mouseClicked(double mouseX, double mouseY, int mouseState) {
+		boolean result = super.mouseClicked(mouseX, mouseY, mouseState);
 		if (state.is(EXPORTING_IMAGE)) {
-			return; // Don't remove the progress bar.
+			return result;
 		}
 
 		// If clicked on the map, start dragging
@@ -403,14 +400,14 @@ public class GuiAtlas extends GuiComponent {
 					&& isMouseOverMap && mouseState == 0 /* left click */) {
 				markerFinalizer.setMarkerData(player.getEntityWorld(),
                         atlasID, player.dimension,
-						screenXToWorldX(mouseX), screenYToWorldZ(mouseY));
+						screenXToWorldX((int) mouseX), screenYToWorldZ((int) mouseY));
 				addChild(markerFinalizer);
 
 				blinkingIcon.setTexture(markerFinalizer.selectedType.getIcon(),
 						MARKER_SIZE, MARKER_SIZE);
 				addChildBehind(markerFinalizer, blinkingIcon)
-					.setRelativeCoords(mouseX - getGuiX() - MARKER_SIZE/2,
-									   mouseY - getGuiY() - MARKER_SIZE/2);
+					.setRelativeCoords((int) mouseX - getGuiX() - MARKER_SIZE/2,
+							(int) mouseY - getGuiY() - MARKER_SIZE/2);
 
 				// Need to intercept keyboard events to type in the label:
 				setInterceptKeyboard(true);
@@ -418,6 +415,7 @@ public class GuiAtlas extends GuiComponent {
 				// Un-press all keys to prevent player from walking infinitely:
 				KeyBinding.unpressAll();
 
+				return true;
 			} else if (state.is(DELETING_MARKER) // If clicked on a marker, delete it:
 					&& hoveredMarker != null && !hoveredMarker.isGlobal() && isMouseOverMap && mouseState == 0) {
 				AtlasAPI.markers.deleteMarker(player.getEntityWorld(),
@@ -431,8 +429,11 @@ public class GuiAtlas extends GuiComponent {
 				dragMouseY = mouseY;
 				dragMapOffsetX = mapOffsetX;
 				dragMapOffsetY = mapOffsetY;
+				return true;
 			}
 		}
+
+		return result;
 	}
 
 	/** Opens a dialog window to select which file to save to, then performs
@@ -484,54 +485,50 @@ public class GuiAtlas extends GuiComponent {
 	}
 
 	@Override
-	public void l() throws IOException {
-		super.l();
-		if (Keyboard.getEventKeyState()) {
-			int key = Keyboard.getEventKey();
-			if (key == Keyboard.KEY_UP) {
-				navigateMap(0, navigateStep);
-			} else if (key == Keyboard.KEY_DOWN) {
-				navigateMap(0, -navigateStep);
-			} else if (key == Keyboard.KEY_LEFT) {
-				navigateMap(navigateStep, 0);
-			} else if (key == Keyboard.KEY_RIGHT) {
-				navigateMap(-navigateStep, 0);
-			} else if (key == Keyboard.KEY_ADD || key == Keyboard.KEY_EQUALS) {
-				setMapScale(mapScale * 2);
-			} else if (key == Keyboard.KEY_SUBTRACT || key == Keyboard.KEY_MINUS) {
-				setMapScale(mapScale / 2);
-			} else if (key == mc.t.aa.j()){
-				close();
-			}
-			// Close the GUI if a hotbar key is pressed
-			else {
-				KeyBinding[] hotbarKeys = mc.t.ap;
-				for (KeyBinding bind : hotbarKeys) {
-					if (key == bind.XX_1_12_2_j_XX()) {
-						close();
-						break;
-					}
+	public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+		if (keyCode == GLFW.GLFW_KEY_UP) {
+			navigateMap(0, navigateStep);
+		} else if (keyCode == GLFW.GLFW_KEY_DOWN) {
+			navigateMap(0, -navigateStep);
+		} else if (keyCode == GLFW.GLFW_KEY_LEFT) {
+			navigateMap(navigateStep, 0);
+		} else if (keyCode == GLFW.GLFW_KEY_RIGHT) {
+			navigateMap(-navigateStep, 0);
+		} else if (keyCode == GLFW.GLFW_KEY_EQUAL || keyCode == GLFW.GLFW_KEY_KP_ADD) {
+			setMapScale(mapScale * 2);
+		} else if (keyCode == GLFW.GLFW_KEY_MINUS || keyCode == GLFW.GLFW_KEY_KP_SUBTRACT) {
+			setMapScale(mapScale / 2);
+		} else if (keyCode == GLFW.GLFW_KEY_ESCAPE) {
+			close();
+		} else {
+			KeyBinding[] hotbarKeys = client.options.keysHotbar;
+			for (KeyBinding bind : hotbarKeys) {
+				if (bind.matchesKey(keyCode, scanCode)) {
+					close();
+					return true;
 				}
 			}
+
+			return super.keyPressed(keyCode, scanCode, modifiers);
 		}
+
+		return true;
 	}
 
 	@Override
-	public void k() throws IOException {
-		super.k();
-
-		int wheelMove = Mouse.getEventDWheel();
+	public boolean mouseScrolled(double wheelMove) {
+		double origWheelMove = wheelMove;
 		if (wheelMove != 0) {
 			wheelMove = wheelMove > 0 ? 1 : -1;
 			if (SettingsConfig.userInterface.doReverseWheelZoom) {
 			    wheelMove *= -1;
             }
 
-			int mouseOffsetX = mc.d / screenScale / 2 - getMouseX();
-			int mouseOffsetY = mc.e / screenScale / 2 - getMouseY();
+			double mouseOffsetX = client.window.getFramebufferWidth() / screenScale / 2 - getMouseX();
+			double mouseOffsetY = client.window.getFramebufferHeight() / screenScale / 2 - getMouseY();
 			double newScale = mapScale * Math.pow(2, wheelMove);
-            int addOffsetX = 0;
-            int addOffsetY = 0;
+            double addOffsetX = 0;
+            double addOffsetY = 0;
             if (Math.abs(mouseOffsetX) < MAP_WIDTH / 2 && Math.abs(mouseOffsetY) < MAP_HEIGHT / 2) {
                 addOffsetX = mouseOffsetX * wheelMove;
                 addOffsetY = mouseOffsetY * wheelMove;
@@ -542,39 +539,44 @@ public class GuiAtlas extends GuiComponent {
                 }
             }
 
-			setMapScale(newScale, addOffsetX, addOffsetY);
+			setMapScale(newScale, (int) addOffsetX, (int) addOffsetY);
 		}
+		return super.mouseScrolled(origWheelMove) || (origWheelMove != 0);
 	}
 
     @Override
-	protected void b(int mouseX, int mouseY, int mouseState) {
-		super.mouseReleased(mouseX, mouseY, mouseState);
+	public boolean mouseReleased(double mouseX, double mouseY, int mouseState) {
+		boolean result = false;
 		if (mouseState != -1) {
+			result = selectedButton != null || isDragging;
 			selectedButton = null;
 			isDragging = false;
 		}
+		return super.mouseReleased(mouseX, mouseY, mouseState) || result;
 	}
 
 	@Override
-	protected void a(int mouseX, int mouseY, int lastMouseButton, long timeSinceMouseClick) {
-		super.mouseClickMove(mouseX, mouseY, lastMouseButton, timeSinceMouseClick);
+	public boolean mouseDragged(double mouseX, double mouseY, int lastMouseButton, double deltaX, double deltaY) {
+		boolean result = false;
 		if (isDragging) {
 			followPlayer = false;
 			btnPosition.setEnabled(true);
-			mapOffsetX = dragMapOffsetX + mouseX - dragMouseX;
-			mapOffsetY = dragMapOffsetY + mouseY - dragMouseY;
+			mapOffsetX = dragMapOffsetX + (int) deltaX;
+			mapOffsetY = dragMapOffsetY + (int) deltaY;
+			result = true;
 		}
+		return super.mouseDragged(mouseX, mouseY, lastMouseButton, deltaX, deltaY) || result;
 	}
 
 	@Override
-	public void e() {
-		super.e();
+	public void update() {
+		super.update();
 		if (player == null) return;
 		if (followPlayer) {
 			mapOffsetX = (int)(-player.x * mapScale);
 			mapOffsetY = (int)(-player.z * mapScale);
 		}
-		if (player.getEntityWorld().R() > timeButtonPressed + BUTTON_PAUSE) {
+		if (player.getEntityWorld().getTime() > timeButtonPressed + BUTTON_PAUSE) {
 			navigateByButton(selectedButton);
 		}
 
@@ -664,7 +666,7 @@ public class GuiAtlas extends GuiComponent {
     }
 
 	@Override
-	public void a(int mouseX, int mouseY, float par3) {
+	public void draw(int mouseX, int mouseY, float par3) {
 		long currentMillis = System.currentTimeMillis();
 		long deltaMillis = currentMillis - lastUpdateMillis;
 		lastUpdateMillis = currentMillis;
@@ -692,9 +694,10 @@ public class GuiAtlas extends GuiComponent {
 			GlStateManager.color4f(1, 1, 1, 0.5f);
 		}
 		GL11.glEnable(GL11.GL_SCISSOR_TEST);
-		GL11.glScissor((getGuiX() + CONTENT_X) * screenScale,
-				mc.e - (getGuiY() + CONTENT_Y + MAP_HEIGHT)*screenScale,
-				MAP_WIDTH * screenScale, MAP_HEIGHT*screenScale);
+		GL11.glScissor(
+				(int) ((getGuiX() + CONTENT_X) * screenScale),
+				(int) ((client.window.getFramebufferWidth() - (getGuiY() + CONTENT_Y + MAP_HEIGHT)*screenScale)),
+				(int) (MAP_WIDTH * screenScale), (int) (MAP_HEIGHT*screenScale));
 		GlStateManager.enableBlend();
 		GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 		// Find chunk coordinates of the top left corner of the map.
@@ -785,7 +788,7 @@ public class GuiAtlas extends GuiComponent {
 		}
 
 		// Draw buttons:
-		super.a(mouseX, mouseY, par3);
+		super.draw(mouseX, mouseY, par3);
 
 		// Draw the semi-transparent marker attached to the cursor when placing a new marker:
 		GlStateManager.enableBlend();
@@ -924,17 +927,18 @@ public class GuiAtlas extends GuiComponent {
 		}
 	}
 
-	@Override
+	// TODO FABRIC
+	/* @Override
 	public boolean d() {
 		return false;
-	}
+	} */
 
 	@Override
-	public void m() {
-		super.m();
+	public void onClosed() {
+		super.onClosed();
 		removeChild(markerFinalizer);
 		removeChild(blinkingIcon);
-		Keyboard.enableRepeatEvents(false);
+		// Keyboard.enableRepeatEvents(false);
 		biomeData.setBrowsingPosition(mapOffsetX, mapOffsetY, mapScale);
 
 		PacketDispatcher.sendToServer(new BrowsingPositionPacket(getAtlasID(), player.dimension, mapOffsetX, mapOffsetY, mapScale));

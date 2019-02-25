@@ -18,8 +18,6 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.util.math.MutableIntBoundingBox;
 import net.minecraft.world.World;
-import none.XX_1_12_2_none_bbw_XX;
-import none.XX_1_13_none_bnu_XX;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -67,11 +65,13 @@ public class StructureWatcherFortress implements IStructureWatcher {
     @Nullable
     @Override
     public CompoundTag getStructureData(@Nonnull World world) {
-        XX_1_12_2_none_bbw_XX data = ((ServerWorld) world).getPersistentStateManager().a(XX_1_12_2_none_bbw_XX.class, "Fortress");
+        /* XX_1_12_2_none_bbw_XX data = ((ServerWorld) world).getPersistentStateManager().a(XX_1_12_2_none_bbw_XX.class, "Fortress");
         if (data == null)
             return null;
 
-        return data.a();
+        return data.a(); */
+        // TODO FABRIC
+		return null;
     }
 
     @Nonnull

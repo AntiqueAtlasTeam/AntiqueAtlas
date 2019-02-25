@@ -69,7 +69,7 @@ public class PacketDispatcher {
 			try {
 				AbstractMessage<?> message = (AbstractMessage<?>) c.getDeclaredConstructor().newInstance();
 				message.read(buffer);
-				message.process(context.getPlayer(), context.getPacketEnvironment());
+				context.getTaskQueue().execute(() -> message.process(context.getPlayer(), context.getPacketEnvironment()));
 			} catch (Exception e) {
 				AntiqueAtlasMod.logger.warn("Error receiving packet " + id + "!", e);
 			}

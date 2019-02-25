@@ -1,10 +1,8 @@
 package hunternif.mc.atlas.marker;
 
-import net.minecraftforge.event.world.WorldEvent;
-import net.minecraftforge.fml.common.eventhandler.EventPriority;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
-import net.minecraftforge.fml.common.network.FMLNetworkEvent.ClientConnectedToServerEvent;
+import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.world.ServerWorld;
+import net.minecraft.world.dimension.DimensionType;
 
 /**
  * Handles the world-saved data with global markers.
@@ -14,7 +12,7 @@ import net.minecraftforge.fml.common.network.FMLNetworkEvent.ClientConnectedToSe
  * </p>
  * <p>
  * When connecting to a remote server, data has to be reset, see
- * {@link #onClientConnectedToServer(ClientConnectedToServerEvent)}
+ * {@link #onClientConnectedToServer(boolean)}
  * </p>
  * @author Hunternif
  */
@@ -23,15 +21,13 @@ public class GlobalMarkersDataHandler {
 
 	private GlobalMarkersData data;
 
-	@SubscribeEvent(priority=EventPriority.HIGHEST)
-	public void onWorldLoad(WorldEvent.Load event) {
-		if (!event.getWorld().G && event.getWorld().s.getType() == 0) {
-			data = (GlobalMarkersData) event.getWorld().a(GlobalMarkersData.class, DATA_KEY);
-			if (data == null) {
-				data = new GlobalMarkersData(DATA_KEY);
+	public void onWorldLoad(ServerWorld world) {
+		if (world.getDimension().getType() == DimensionType.OVERWORLD) {
+			data = world.getPersistentStateManager().getOrCreate(() -> {
+				GlobalMarkersData data = new GlobalMarkersData(DATA_KEY);
 				data.markDirty();
-				event.getWorld().a(DATA_KEY, data);
-			}
+				return data;
+			}, DATA_KEY);
 		}
 	}
 
@@ -44,9 +40,8 @@ public class GlobalMarkersDataHandler {
 	 * form post, the latter event isn't actually fired on the client.
 	 * </p>
 	 */
-	@SubscribeEvent
-	public void onClientConnectedToServer(ClientConnectedToServerEvent event) {
-		if (!event.isLocal()) { // make sure it's not an integrated server
+	public void onClientConnectedToServer(boolean isRemote) {
+		if (isRemote) { // make sure it's not an integrated server
 			data = null;
 		}
 	}
@@ -59,9 +54,8 @@ public class GlobalMarkersDataHandler {
 	}
 
 	/** Synchronizes global markers with the connecting client. */
-	@SubscribeEvent
-	public void onPlayerLogin(PlayerLoggedInEvent event) {
-		data.syncOnPlayer(event.player);
+	public void onPlayerLogin(ServerPlayerEntity player) {
+		data.syncOnPlayer(player);
 	}
 
 }

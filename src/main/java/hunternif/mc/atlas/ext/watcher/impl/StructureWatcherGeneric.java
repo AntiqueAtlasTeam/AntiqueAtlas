@@ -16,9 +16,6 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.world.World;
 import net.minecraft.world.dimension.DimensionType;
-import net.minecraftforge.common.DimensionManager;
-import none.XX_1_12_2_none_bbw_XX;
-import none.XX_1_13_none_bnu_XX;
 import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nonnull;
@@ -60,11 +57,14 @@ public class StructureWatcherGeneric implements IStructureWatcher {
     @Nullable
     @Override
     public CompoundTag getStructureData(@Nonnull World world) {
-        XX_1_12_2_none_bbw_XX data = ((ServerWorld) world).getPersistentStateManager().a(XX_1_12_2_none_bbw_XX.class, datFileName);
+        /* XX_1_12_2_none_bbw_XX data = ((ServerWorld) world).getPersistentStateManager().a(XX_1_12_2_none_bbw_XX.class, datFileName);
         if (data == null)
             return null;
 
-        return data.a();
+        return data.a(); */
+
+        // TODO FABRIC
+        return null;
     }
 
     @Nonnull

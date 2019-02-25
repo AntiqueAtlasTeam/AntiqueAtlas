@@ -1,0 +1,14 @@
+{
+  "required": true,
+  "package": "hunternif.mc.atlas.mixin",
+  "compatibilityLevel": "JAVA_8",
+  "mixins": [
+    "MixinEntity",
+    "MixinPlayerEntity",
+    "MixinPlayerManager",
+    "MixinServerWorld"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

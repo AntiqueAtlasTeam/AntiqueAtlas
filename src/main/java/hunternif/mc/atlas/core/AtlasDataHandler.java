@@ -56,8 +56,7 @@ public class AtlasDataHandler {
 	 * form post, the latter event isn't actually fired on the client.
 	 * </p>
 	 */
-	@SubscribeEvent
-	public void onClientConnectedToServer(ClientConnectedToServerEvent event) {
+	public void onClientConnectedToServer(boolean isRemote) {
 		atlasDataClientCache.clear();
 	}
 }

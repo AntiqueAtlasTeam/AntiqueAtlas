@@ -10,6 +10,7 @@ import hunternif.mc.atlas.marker.MarkerTextureConfig;
 import hunternif.mc.atlas.registry.MarkerRegistry;
 import hunternif.mc.atlas.registry.MarkerType;
 import hunternif.mc.atlas.util.Log;
+import net.fabricmc.fabric.api.event.client.ClientTickCallback;
 import net.fabricmc.fabric.api.network.ClientSidePacketRegistry;
 import net.fabricmc.fabric.api.network.PacketConsumer;
 import net.fabricmc.fabric.api.network.ServerSidePacketRegistry;
@@ -37,15 +38,15 @@ import java.util.function.Function;
 import static hunternif.mc.atlas.client.TextureSet.*;
 
 public class ClientProxy extends CommonProxy implements SimpleSynchronousResourceReloadListener {
-	private TextureSetMap textureSetMap;
-	private TextureSetConfig textureSetConfig;
-	private BiomeTextureMap biomeTextureMap;
-	private BiomeTextureConfig biomeTextureConfig;
-	private ExtTileTextureMap tileTextureMap;
-	private ExtTileTextureConfig tileTextureConfig;
-	private MarkerTextureConfig markerTextureConfig;
+	private static TextureSetMap textureSetMap;
+	private static TextureSetConfig textureSetConfig;
+	private static BiomeTextureMap biomeTextureMap;
+	private static BiomeTextureConfig biomeTextureConfig;
+	private static ExtTileTextureMap tileTextureMap;
+	private static ExtTileTextureConfig tileTextureConfig;
+	private static MarkerTextureConfig markerTextureConfig;
 
-	private GuiAtlas guiAtlas;
+	private static GuiAtlas guiAtlas;
 
 	@Override
 	public void registerPackets(Set<Identifier> clientPackets, Set<Identifier> serverPackets, Function<Identifier, PacketConsumer> consumer) {
@@ -53,9 +54,7 @@ public class ClientProxy extends CommonProxy implements SimpleSynchronousResourc
 		clientPackets.forEach((id) -> ClientSidePacketRegistry.INSTANCE.register(id, consumer.apply(id)));
 	}
 
-	@Override
-	public void init() {
-		super.init();
+	public void initClient() {
 		// TODO FABRIC
 		// MinecraftForge.EVENT_BUS.register(ExportProgressOverlay.INSTANCE);
 
@@ -102,28 +101,33 @@ public class ClientProxy extends CommonProxy implements SimpleSynchronousResourc
 		// Prevent rewriting of the config while no changes have been made:
 		MarkerRegistry.INSTANCE.setDirty(true);
 
-		guiAtlas = new GuiAtlas();
 		for (MarkerType type : MarkerRegistry.iterable()) {
 			type.initMips();
 		}
 
 		if (!SettingsConfig.gameplay.itemNeeded) {
             KeyHandler.registerBindings();
-            // TODO FABRIC
-            // MinecraftForge.EVENT_BUS.register(new KeyHandler());
+			ClientTickCallback.EVENT.register(KeyHandler::onClientTick);
         }
 
-		guiAtlas.setMapScale(SettingsConfig.userInterface.defaultScale);
+	}
+
+	private GuiAtlas getAtlasGUI() {
+		if (guiAtlas == null) {
+			guiAtlas = new GuiAtlas();
+			guiAtlas.setMapScale(SettingsConfig.userInterface.defaultScale);
+		}
+		return guiAtlas;
 	}
 
 	@Override
 	public void openAtlasGUI(ItemStack stack) {
-	    openAtlasGUI(guiAtlas.prepareToOpen(stack));
+	    openAtlasGUI(getAtlasGUI().prepareToOpen(stack));
 	}
 
 	@Override
 	public void openAtlasGUI() {
-	    openAtlasGUI(guiAtlas.prepareToOpen());
+	    openAtlasGUI(getAtlasGUI().prepareToOpen());
     }
 
     private void openAtlasGUI(GuiAtlas gui) {
@@ -234,6 +238,9 @@ public class ClientProxy extends CommonProxy implements SimpleSynchronousResourc
 	 * only if the biome was not in the config. This prevents unnecessary
 	 * overwriting, to aid people who manually modify the config. */
 	private void assignVanillaBiomeTextures() {
+		setBiomeTextureIfNone(Biomes.ICE_SPIKES, ICE_SPIKES); // this is a biome mutation
+		setBiomeTextureIfNone(Biomes.SUNFLOWER_PLAINS, SUNFLOWERS);
+
 		/* setBiomeTextureIfNone(ays.TODO_1_12_2_a, WATER);
 		setBiomeTextureIfNone(ays.TODO_1_12_2_z, WATER);
 		setBiomeTextureIfNone(ays.TODO_1_12_2_i, WATER); //
@@ -246,9 +253,7 @@ public class ClientProxy extends CommonProxy implements SimpleSynchronousResourc
 		setBiomeTextureIfNone(ays.TODO_1_12_2_R, DESERT);
 		setBiomeTextureIfNone(ays.TODO_1_12_2_s, DESERT_HILLS);
 		setBiomeTextureIfNone(ays.TODO_1_12_2_c, PLAINS);
-		setBiomeTextureIfNone(ays.TODO_1_12_2_Q, SUNFLOWERS);
 		setBiomeTextureIfNone(ays.TODO_1_12_2_n, SNOW);
-		setBiomeTextureIfNone(ays.TODO_1_12_2_W, ICE_SPIKES); // this is a biome mutation
 		setBiomeTextureIfNone(ays.TODO_1_12_2_o, SNOW_HILLS);
 		setBiomeTextureIfNone(ays.TODO_1_12_2_e, MOUNTAINS);
 		setBiomeTextureIfNone(ays.TODO_1_12_2_v, MOUNTAINS);

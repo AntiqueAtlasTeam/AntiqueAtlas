@@ -21,10 +21,10 @@ import java.util.Set;
 import java.util.function.Function;
 
 public class CommonProxy {
-	File configDir;
+	static File configDir;
 
-	private ExtTileIdMap extTileIdMap;
-	private ExtTileConfig extTileConfig;
+	private static ExtTileIdMap extTileIdMap;
+	private static ExtTileConfig extTileConfig;
 
 	public MinecraftServer getServer() {
 		return FabricLoader.INSTANCE.getEnvironmentHandler().getServerInstance();

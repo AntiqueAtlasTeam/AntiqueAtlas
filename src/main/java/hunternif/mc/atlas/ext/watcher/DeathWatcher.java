@@ -1,19 +1,11 @@
 package hunternif.mc.atlas.ext.watcher;
 
-import hunternif.mc.atlas.SettingsConfig;
-import hunternif.mc.atlas.api.AtlasAPI;
-import hunternif.mc.atlas.registry.MarkerRegistry;
-import hunternif.mc.atlas.registry.MarkerTypes;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraftforge.event.entity.living.LivingDeathEvent;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-
 /**
  * Puts an skull marker to the player's death spot.
  * @author Hunternif
  */
 public class DeathWatcher {
-	@SubscribeEvent
+	/* @SubscribeEvent
 	public void onPlayerDeath(LivingDeathEvent event) {
 		if (event.getEntity() instanceof PlayerEntity && SettingsConfig.gameplay.autoDeathMarker) {
 			PlayerEntity player = (PlayerEntity) event.getEntity();
@@ -23,5 +15,6 @@ public class DeathWatcher {
 						(int)player.x, (int)player.z);
 			}
 		}
-	}
+	} */
+	// TODO FABRIC
 }

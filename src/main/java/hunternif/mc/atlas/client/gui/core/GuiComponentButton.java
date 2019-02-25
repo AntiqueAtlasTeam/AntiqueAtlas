@@ -33,7 +33,6 @@ public class GuiComponentButton extends GuiComponent {
 	public boolean mouseClicked(double x, double y, int mouseButton) {
 		if (mouseButton == 0 /*left-click*/ && enabled && isMouseOver) {
 			onClick();
-			mouseHasBeenHandled();
 			return true;
 		}
 

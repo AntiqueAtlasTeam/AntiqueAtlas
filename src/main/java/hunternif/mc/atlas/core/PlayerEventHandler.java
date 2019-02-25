@@ -2,16 +2,14 @@ package hunternif.mc.atlas.core;
 
 import hunternif.mc.atlas.AntiqueAtlasMod;
 import hunternif.mc.atlas.marker.MarkersData;
+import hunternif.mc.atlas.mixinhooks.NewPlayerConnectionCallback;
+import hunternif.mc.atlas.mixinhooks.NewServerConnectionCallback;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.gameevent.PlayerEvent;
-import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 public class PlayerEventHandler {
-    @SubscribeEvent
-    public void onPlayerLogin(PlayerEvent.PlayerLoggedInEvent event) {
-        PlayerEntity player = event.player;
+    public static void onPlayerLogin(ServerPlayerEntity player) {
         World world = player.world;
         int atlasID = player.getUuid().hashCode();
 
@@ -28,12 +26,11 @@ public class PlayerEventHandler {
         }
     }
 
-    @SubscribeEvent
-    public void onPlayerTick(TickEvent.PlayerTickEvent event) {
+    public static void onPlayerTick(PlayerEntity player) {
         AtlasData data = AntiqueAtlasMod.atlasData.getAtlasData(
-                event.player.getUniqueID().hashCode(), event.player.world);
+                player.getUuid().hashCode(), player.world);
 
         // Updating map around player
-        data.updateMapAroundPlayer(event.player);
+        data.updateMapAroundPlayer(player);
     }
 }

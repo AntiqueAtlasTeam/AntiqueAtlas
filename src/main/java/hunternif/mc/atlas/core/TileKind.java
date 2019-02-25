@@ -13,6 +13,6 @@ public interface TileKind {
 	String getExtTile();
 
 	default short getVariationNumber(int x, int y) {
-		return (short) (MathHelper.hashCode(x, y, 0) % 32767);
+		return (short) (MathHelper.hashCode(x, y, 0) & 32767);
 	}
 }

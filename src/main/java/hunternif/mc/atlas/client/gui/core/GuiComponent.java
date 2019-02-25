@@ -3,6 +3,7 @@ package hunternif.mc.atlas.client.gui.core;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.Mouse;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.Screen;
 import net.minecraft.client.gui.ScreenComponent;
@@ -14,6 +15,8 @@ import java.io.IOException;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.function.BooleanSupplier;
+import java.util.function.Predicate;
 
 /**
  * Core visual component class, which facilitates hierarchy. You can add child
@@ -23,6 +26,11 @@ import java.util.concurrent.CopyOnWriteArrayList;
  */
 @Environment(EnvType.CLIENT)
 public class GuiComponent extends Screen {
+	@FunctionalInterface
+	interface UiCall {
+		boolean call(GuiComponent c);
+	}
+
 	private GuiComponent parent = null;
 	private final List<GuiComponent> children = new CopyOnWriteArrayList<>();
 
@@ -45,10 +53,6 @@ public class GuiComponent extends Screen {
 	/** If true, pressing keyboard keys will affect this GUI, it's children,
 	 * and the in-game controller. */
 	private boolean interceptsKeyboard = true;
-	/** These flags are set temporarily when this GUI has finished handling
-	 * input and won't let the parent handle it, after which they are reset.
-	 * This won't prevent the sibling children of this GUI from handling input.*/
-	private boolean hasHandledKeyboard = false, hasHandledMouse = false;
 	/** If true, no input is handled by the parent or any sibling GUIs. */
 	private boolean blocksScreen = false;
 
@@ -178,7 +182,7 @@ public class GuiComponent extends Screen {
 		child.parent = this;
 		child.setGuiCoords(guiX, guiY);
 		if (client != null) {
-			child.onScaleChanged(client, width, height);
+			child.initialize(client, width, height);
 		}
 		invalidateSize();
 	}
@@ -208,113 +212,104 @@ public class GuiComponent extends Screen {
 	 * else they will only affect the in-game controller. */
 	public void setInterceptMouse(boolean value) {
 		this.interceptsMouse = value;
-		this.allowUserInput = !interceptsMouse | !interceptsKeyboard;
 	}
 	/** If true, pressing keyboard keys will affect this GUI, it's children,
 	 * and the in-game controller. */
     protected void setInterceptKeyboard(boolean value) {
 		this.interceptsKeyboard = value;
-		this.allowUserInput = !interceptsMouse | !interceptsKeyboard;
 	}
 
-	@Override
-	public void q() throws IOException {
-		// Traverse children backwards, because the topmost child should be the
-		// first to process input:
-		ListIterator<GuiComponent> iter = children.listIterator(children.size());
-		while(iter.hasPrevious()) {
-			GuiComponent child = iter.previous();
-			if (child.blocksScreen) {
-				child.q();
-				isMouseOver = false;
-				return;
-			}
-		}
-		if (interceptsMouse) {
-			while (Mouse.next()) {
-				this.k();
-			}
-		}
-		if (interceptsKeyboard) {
-			while (Keyboard.next()) {
-				this.l();
-			}
-		}
-	}
-
-	/** Call this method from within {@link #handleMouseInput()} (or other
-	 * mouse-processing methods) if the input has been handled by this GUI
-	 * andshouldn't be handled by its parents.
-	 * This won't prevent the sibling children of this GUI from handling input. */
-    void mouseHasBeenHandled() {
-		this.hasHandledMouse = true;
-	}
-	/** Call this method from within {@link #handleKeyboardInput()} if the input
-	 * has been handled by this GUI and shouldn't be handled by its parents.
-	 * This won't prevent the sibling children of this GUI from handling input. */
-	protected void keyboardHasBeenHandled() {
-		this.hasHandledKeyboard = true;
-	}
 	/** If true, no input is handled by the parent or any sibling GUIs. */
 	protected void setBlocksScreen(boolean value) {
 		this.blocksScreen = value;
 	}
 
-	/** Handle mouse input for this GUI and its children. */
-	@Override
-	public void k() throws IOException {
-		boolean handled = false;
-		isMouseOver = false;
+	private boolean iterateInput(UiCall callMethod) {
 		// Traverse children backwards, because the topmost child should be the
 		// first to process input:
 		ListIterator<GuiComponent> iter = children.listIterator(children.size());
 		while(iter.hasPrevious()) {
 			GuiComponent child = iter.previous();
-			child.k();
-			if (child.hasHandledMouse) {
-				child.hasHandledMouse = false;
-				handled = true;
+			if (callMethod.call(child)) {
+				// TODO Fabric should this return? Original code ran on all children first
+				return true;
 			}
 		}
-		if (!handled) {
+
+		return false;
+	}
+
+	boolean iterateMouseInput(UiCall callMethod) {
+		if (!iterateInput(callMethod)) {
 			isMouseOver = isMouseInRegion(getGuiX(), getGuiY(), getWidth(), getHeight());
-			super.k();
+			return false;
+		} else {
+			isMouseOver = false;
+			return true;
+		}
+	}
+
+	/** Handle mouse input for this GUI and its children. */
+	@Override
+	public boolean mouseClicked(double mx, double my, int mb) {
+		if (!iterateMouseInput((c) -> c.mouseClicked(mx, my, mb))) {
+			return super.mouseClicked(mx, my, mb);
+		} else {
+			return true;
+		}
+	}
+
+	@Override
+	public boolean mouseReleased(double mx, double my, int mb) {
+		if (!iterateMouseInput((c) -> c.mouseReleased(mx, my, mb))) {
+			return super.mouseReleased(mx, my, mb);
+		} else {
+			return true;
+		}
+	}
+
+	@Override
+	public boolean mouseDragged(double mx, double my, int mb, double mx2, double my2) {
+		if (!iterateMouseInput((c) -> c.mouseDragged(mx, my, mb, mx2, my2))) {
+			return super.mouseClicked(mx, my, mb);
+		} else {
+			return true;
+		}
+	}
+
+	@Override
+	public boolean mouseScrolled(double dy) {
+		if (!iterateMouseInput((c) -> c.mouseScrolled(dy))) {
+			return super.mouseScrolled(dy);
+		} else {
+			return true;
+		}
+	}
+
+	@Override
+	public void mouseMoved(double mx, double my) {
+		if (!iterateMouseInput((c) -> {c.mouseMoved(mx, my); return false;})) {
+			super.mouseMoved(mx, my);
 		}
 	}
 
 	/** Handle keyboard input for this GUI and its children. */
 	@Override
-	public void l() throws IOException {
-		boolean handled = false;
-		// Traverse children backwards, because the topmost child should be the
-		// first to process input:
-		ListIterator<GuiComponent> iter = children.listIterator(children.size());
-		while(iter.hasPrevious()) {
-			GuiComponent child = iter.previous();
-			child.l();
-			if (child.hasHandledKeyboard) {
-				child.hasHandledKeyboard = false;
-				handled = true;
-			}
-		}
-		if (!handled) {
-			if (Keyboard.getEventKeyState()) {
-				this.a(Keyboard.getEventCharacter(), Keyboard.getEventKey());
-			}
+	public boolean keyPressed(int a, int b, int c) {
+		if (!iterateInput((cpt) -> cpt.keyPressed(a, b, c))) {
+			return super.keyPressed(a, b, c);
+		} else {
+			return true;
 		}
 	}
 
 	@Override
-	protected void a(char typedChar, int keyCode) throws IOException {
-		if (keyCode == 1 && mc.m != null)
-        {
-            this.client.openScreen(null);
-
-            if (this.mc.m == null)
-            {
-                this.mc.o();
-            }
-        }
+	public boolean keyReleased(int a, int b, int c) {
+		if (!iterateInput((cpt) -> cpt.keyReleased(a, b, c))) {
+			return super.keyReleased(a, b, c);
+		}  else {
+			return true;
+		}
 	}
 
 	/** Render this GUI and its children. */
@@ -357,10 +352,10 @@ public class GuiComponent extends Screen {
 	}
 
 	@Override
-	public void onScaleChanged(MinecraftClient mc, int width, int height) {
-		super.onScaleChanged(mc, width, height);
+	public void initialize(MinecraftClient mc, int width, int height) {
+		super.initialize(mc, width, height);
 		for (GuiComponent child : children) {
-			child.onScaleChanged(mc, width, height);
+			child.initialize(mc, width, height);
 		}
 	}
 
@@ -420,8 +415,8 @@ public class GuiComponent extends Screen {
 	/** Returns true, if the mouse cursor is within the specified bounds.
 	 * Note: left and top are absolute. */
     boolean isMouseInRegion(int left, int top, int width, int height) {
-		int mouseX = getMouseX();
-		int mouseY = getMouseY();
+		double mouseX = getMouseX();
+		double mouseY = getMouseY();
 		return mouseX >= left && mouseX < left + width && mouseY >= top && mouseY < top + height;
 	}
 	/**
@@ -432,19 +427,20 @@ public class GuiComponent extends Screen {
 	 * @param radius half the side of the box
 	 */
 	protected boolean isMouseInRadius(int x, int y, int radius) {
-		int mouseX = getMouseX();
-		int mouseY = getMouseY();
+		double mouseX = getMouseX();
+		double mouseY = getMouseY();
 		return mouseX >= x - radius && mouseX < x + radius && mouseY >= y - radius && mouseY < y + radius;
 	}
 
 	/** Draws a standard Minecraft hovering text window, constrained by this
 	 * component's dimensions (i.e. if it won't fit in when drawn to the left
 	 * of the cursor, it will be drawn to the right instead). */
-    private void drawHoveringText2(List<String> lines, int x, int y, TextRenderer font) {
+    private void drawHoveringText2(List<String> lines, double x, double y, TextRenderer font) {
 		boolean stencilEnabled = GL11.glIsEnabled(GL11.GL_STENCIL_TEST);
 		if (stencilEnabled) GL11.glDisable(GL11.GL_STENCIL_TEST);
 
-		GuiUtils.drawHoveringText(lines, x, y, width, height, -1, font);
+		// TODO FABRIC
+		// GuiUtils.drawHoveringText(lines, x, y, width, height, -1, font);
 
 		if (stencilEnabled) GL11.glEnable(GL11.GL_STENCIL_TEST);
 	}
@@ -487,7 +483,7 @@ public class GuiComponent extends Screen {
 	private final HoveringTextInfo hoveringTextInfo = new HoveringTextInfo();
 	private static class HoveringTextInfo {
 		List<String> lines;
-		int x, y;
+		double x, y;
 		TextRenderer font;
 		/** Whether to draw this hovering text during rendering current frame.
 		 * This flag is reset to false after rendering finishes. */
@@ -499,7 +495,7 @@ public class GuiComponent extends Screen {
 		if (parent != null) {
 			parent.removeChild(this); // This sets parent to null
 		} else {
-			MinecraftClient.getInstance().openScreen(null);
+			client.openScreen(null);
 		}
 	}
 
@@ -516,10 +512,12 @@ public class GuiComponent extends Screen {
 		}
 	}
 
-	protected int getMouseX() {
-		return Mouse.getX() * width / mc.d;
+	@Deprecated
+	protected double getMouseX() {
+		return client.mouse.getX() * width / client.window.getFramebufferWidth();
 	}
-	protected int getMouseY() {
-		return height - Mouse.getY() * height / mc.e - 1;
+	@Deprecated
+	protected double getMouseY() {
+		return client.mouse.getY() * height / client.window.getFramebufferHeight();
 	}
 }

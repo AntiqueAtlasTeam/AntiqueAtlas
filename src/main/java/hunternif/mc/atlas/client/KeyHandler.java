@@ -5,6 +5,7 @@ import hunternif.mc.atlas.client.gui.GuiAtlas;
 import net.fabricmc.fabric.api.client.keybinding.FabricKeyBinding;
 import net.fabricmc.fabric.api.client.keybinding.KeyBindingRegistry;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.Screen;
 import net.minecraft.client.options.KeyBinding;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.util.Identifier;
@@ -27,12 +28,11 @@ public class KeyHandler {
         bindings.forEach(KeyBindingRegistry.INSTANCE::register);
     }
 
-    @SubscribeEvent(receiveCanceled = true)
-    public void onKeyEvent(InputEvent.KeyInputEvent event) {
+    public static void onClientTick(MinecraftClient client) {
         if (bindings.get(KEY_ATLAS).wasPressed()) {
-            XX_1_12_2_none_blk_XX currentScreen = MinecraftClient.getInstance().XX_1_12_2_m_XX;
+            Screen currentScreen = MinecraftClient.getInstance().currentScreen;
             if (currentScreen instanceof GuiAtlas) {
-                ((GuiAtlas) currentScreen).close();
+                currentScreen.close();
             } else {
                 AntiqueAtlasMod.proxy.openAtlasGUI();
             }

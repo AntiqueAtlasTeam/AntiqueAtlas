@@ -7,7 +7,6 @@ import hunternif.mc.atlas.api.AtlasAPI;
 import hunternif.mc.atlas.mixinhooks.EntityHooksAA;
 import hunternif.mc.atlas.registry.MarkerRegistry;
 import hunternif.mc.atlas.registry.MarkerTypes;
-import hunternif.mc.atlas.util.DummyBlockView;
 import hunternif.mc.atlas.util.Log;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -15,10 +14,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.World;
 import net.minecraft.world.dimension.DimensionType;
-import net.minecraftforge.event.world.WorldEvent;
-import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -28,7 +23,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * marker in the atlases he is carrying.
  * @author Hunternif
  */
-public class NetherPortalWatcher extends DummyBlockView {
+public class NetherPortalWatcher {
 	/**
 	 * When a player teleports, he is removed from the source dimension, where
 	 * portal detection works well, and his ID is placed in this set.
@@ -37,8 +32,9 @@ public class NetherPortalWatcher extends DummyBlockView {
 	 * by checking if this set contains the player's ID!
 	 */
 	private final Map<Integer, DimensionType> teleportingPlayersOrigin = new ConcurrentHashMap<>();
-	
-	@SubscribeEvent
+
+	// TODO FABRIC
+	/* @SubscribeEvent
 	public void onWorldLoad(WorldEvent.Load event) {
 		if (!event.getWorld().G) {
 			event.getWorld().a(this);
@@ -87,7 +83,7 @@ public class NetherPortalWatcher extends DummyBlockView {
 				addPortalMarkerIfNone(player, originDimension);
 			}
 		}
-	}
+	} */
 	
 	/** Put the Portal marker at the player's current coordinates into all
 	 * atlases that he is carrying, if the same marker is not already there. */

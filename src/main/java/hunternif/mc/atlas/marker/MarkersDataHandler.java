@@ -8,8 +8,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.world.PersistentStateManager;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.network.FMLNetworkEvent.ClientConnectedToServerEvent;
 
 /**
  * Provides access to {@link MarkersData}. Maintains a cache on the client side,
@@ -57,9 +55,7 @@ public class MarkersDataHandler {
 	 * form post, the latter event isn't actually fired on the client.
 	 * </p>
 	 */
-	// TODO FABRIC
-	/* @SubscribeEvent
-	public void onClientConnectedToServer(ClientConnectedToServerEvent event) {
+	public void onClientConnectedToServer(boolean isRemote) {
 		markersDataClientCache.clear();
-	} */
+	}
 }

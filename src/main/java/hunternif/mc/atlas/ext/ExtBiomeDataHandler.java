@@ -1,25 +1,19 @@
 package hunternif.mc.atlas.ext;
 
-import net.minecraftforge.event.world.WorldEvent;
-import net.minecraftforge.fml.common.eventhandler.EventPriority;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
+import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.world.ServerWorld;
 
 public class ExtBiomeDataHandler {
 	private static final String DATA_KEY = "aAtlasExtTiles";
 
 	private ExtBiomeData data;
 
-	@SubscribeEvent(priority=EventPriority.HIGHEST)
-	public void onWorldLoad(WorldEvent.Load event) {
-		if (!event.getWorld().G) {
-			data = (ExtBiomeData) event.getWorld().a(ExtBiomeData.class, DATA_KEY);
-			if (data == null) {
-				data = new ExtBiomeData(DATA_KEY);
-				data.markDirty();
-				event.getWorld().a(DATA_KEY, data);
-			}
-		}
+	public void onWorldLoad(ServerWorld world) {
+		data = world.getPersistentStateManager().getOrCreate(() -> {
+			data = new ExtBiomeData(DATA_KEY);
+			data.markDirty();
+			return data;
+		}, DATA_KEY);
 	}
 
 	public ExtBiomeData getData() {
@@ -29,10 +23,9 @@ public class ExtBiomeDataHandler {
 		return data;
 	}
 
-	@SubscribeEvent
-	public void onPlayerLogin(PlayerLoggedInEvent event) {
-		ExtTileIdMap.instance().syncOnPlayer(event.player);
-		data.syncOnPlayer(event.player);
+	public void onPlayerLogin(ServerPlayerEntity player) {
+		ExtTileIdMap.instance().syncOnPlayer(player);
+		data.syncOnPlayer(player);
 	}
 
 }

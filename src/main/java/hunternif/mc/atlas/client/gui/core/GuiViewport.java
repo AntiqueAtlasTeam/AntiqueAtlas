@@ -2,9 +2,6 @@ package hunternif.mc.atlas.client.gui.core;
 
 import org.lwjgl.opengl.GL11;
 
-import java.io.IOException;
-import none.XX_1_12_2_none_bit_XX;
-
 /**
  * The children of this component are rendered and process input only inside
  * the viewport frame. Use {@link #setSize(int, int)} to set its bounds.
@@ -15,7 +12,7 @@ public class GuiViewport extends GuiComponent {
 	final GuiComponent content = new GuiComponent();
 	
 	/** Coordinate scale factor relative to the actual screen size. */
-	private int screenScale;
+	private double screenScale;
 	
 	public GuiViewport() {
 		this.addChild(content);
@@ -37,15 +34,15 @@ public class GuiViewport extends GuiComponent {
 	@Override
 	public void onInitialized() {
 		super.onInitialized();
-		screenScale = new XX_1_12_2_none_bit_XX(mc).e();
+		screenScale = client.window.getScaleFactor();
 	}
 	
 	@Override
 	public void draw(int mouseX, int mouseY, float par3) {
 		GL11.glEnable(GL11.GL_SCISSOR_TEST);
-		GL11.glScissor( getGuiX()*screenScale,
-				mc.e - (getGuiY() + properHeight)*screenScale,
-				properWidth*screenScale, properHeight*screenScale);
+		GL11.glScissor((int) (getGuiX()*screenScale),
+				(int) (client.window.getFramebufferHeight() - (getGuiY() + properHeight)*screenScale),
+				(int) (properWidth*screenScale), (int) (properHeight*screenScale));
 		
 		// Draw the content (child GUIs):
 		super.draw(mouseX, mouseY, par3);
@@ -54,9 +51,11 @@ public class GuiViewport extends GuiComponent {
 	}
 	
 	@Override
-	public void k() throws IOException {
+	boolean iterateMouseInput(UiCall callMethod) {
 		if (isMouseInRegion(getGuiX(), getGuiY(), properWidth, properHeight)) {
-			super.k();
+			return iterateMouseInput(callMethod);
+		} else {
+			return false;
 		}
 	}
 	

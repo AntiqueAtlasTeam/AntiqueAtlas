@@ -11,9 +11,13 @@ import hunternif.mc.atlas.ext.watcher.impl.StructureWatcherVillage;
 import hunternif.mc.atlas.marker.GlobalMarkersDataHandler;
 import hunternif.mc.atlas.marker.MarkersDataHandler;
 import hunternif.mc.atlas.marker.NetherPortalWatcher;
+import hunternif.mc.atlas.mixinhooks.NewPlayerConnectionCallback;
+import hunternif.mc.atlas.mixinhooks.NewServerConnectionCallback;
+import hunternif.mc.atlas.mixinhooks.ServerWorldLoadCallback;
 import hunternif.mc.atlas.network.PacketDispatcher;
 import hunternif.mc.atlas.registry.MarkerTypes;
 import net.fabricmc.api.ModInitializer;
+import net.minecraft.item.ItemGroup;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.world.World;
 import org.apache.logging.log4j.LogManager;
@@ -57,16 +61,22 @@ public class AntiqueAtlasMod implements ModInitializer {
 
 		proxy.init();
 
+		NewServerConnectionCallback.EVENT.register(atlasData::onClientConnectedToServer);
+		NewServerConnectionCallback.EVENT.register(markersData::onClientConnectedToServer);
+		NewServerConnectionCallback.EVENT.register(globalMarkersData::onClientConnectedToServer);
+
+		NewPlayerConnectionCallback.EVENT.register(globalMarkersData::onPlayerLogin);
+		NewPlayerConnectionCallback.EVENT.register(extBiomeData::onPlayerLogin);
+		NewPlayerConnectionCallback.EVENT.register(PlayerEventHandler::onPlayerLogin);
+
+		ServerWorldLoadCallback.EVENT.register(globalMarkersData::onWorldLoad);
+		ServerWorldLoadCallback.EVENT.register(extBiomeData::onWorldLoad);
+
 		/*
 		if (!SettingsConfig.gameplay.itemNeeded)
             MinecraftForge.EVENT_BUS.register(new PlayerEventHandler());
 
-		MinecraftForge.EVENT_BUS.register(atlasData);
-		MinecraftForge.EVENT_BUS.register(markersData);
-
 		MinecraftForge.EVENT_BUS.register(extBiomeData);
-
-		MinecraftForge.EVENT_BUS.register(globalMarkersData);
 
 		MinecraftForge.EVENT_BUS.register(new DeathWatcher());
 

@@ -203,7 +203,7 @@ public class DimensionData implements ITileStorage {
 	}
 	
 	public void syncOnPlayer(int atlasID, PlayerEntity player){
-		Log.info("Sending dimension #%d", dimension);
+		Log.info("Sending dimension #%s", dimension.toString());
 		ArrayList<TileGroup> tgs = new ArrayList<TileGroup>(TileGroupsPacket.TILE_GROUPS_PER_PACKET);
 		int count = 0;
 		int total = 0;
@@ -222,7 +222,7 @@ public class DimensionData implements ITileStorage {
 			TileGroupsPacket p = new TileGroupsPacket(tgs, atlasID, dimension);
 			PacketDispatcher.sendTo(p, (ServerPlayerEntity) player);
 		}
-		Log.info("Sent dimension #%d (%d tiles)", dimension, total);
+		Log.info("Sent dimension #%s (%d tiles)", dimension.toString(), total);
 	}
 	
 	@Override

@@ -122,7 +122,28 @@ public abstract class AGuiScrollbar extends GuiComponent {
 
 		return super.mouseScrolled(wheelMove);
 	}
-	
+
+	@Override
+	public boolean mouseClicked(double mouseX, double mouseY, int button) {
+		if (button == 0) {
+			if (!wasClicking && isMouseOver) {
+				isDragged = true;
+			}
+			wasClicking = true;
+		}
+		return super.mouseClicked(mouseX, mouseY, button);
+	}
+
+
+	@Override
+	public boolean mouseReleased(double mouseX, double mouseY, int button) {
+		if (button == 0) {
+			isDragged = false;
+			wasClicking = false;
+		}
+		return super.mouseReleased(mouseX, mouseY, button);
+	}
+
 	@Override
 	public void draw(int mouseX, int mouseY, float partialTick) {
 		// Don't draw the anchor if there's nothing to scroll:
@@ -130,19 +151,7 @@ public abstract class AGuiScrollbar extends GuiComponent {
 			isDragged = false;
 			return;
 		}
-		
-		// Check if dragging the anchor:
-		boolean mouseDown = Mouse.isButtonDown(0);
-		if (!wasClicking && mouseDown) {
-			if (isMouseOver) {
-				isDragged = true;
-			}
-		}
-		if (!mouseDown) {
-			isDragged = false;
-		}
-		wasClicking = mouseDown;
-		
+
 		if (isDragged) {
 			doSetScrollRatio((float) (getMousePos(mouseX, mouseY) - anchorSize / 2)
 					/ (float) (getScrollbarLength() - anchorSize));
