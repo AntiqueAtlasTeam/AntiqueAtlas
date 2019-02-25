@@ -33,7 +33,16 @@ public class MarkerRegistry extends SaveData {
 	}
 	
 	public static MarkerType find(Identifier type) {
-		return INSTANCE.registry.get(type);
+		return find(type, false);
+	}
+
+	public static MarkerType find(Identifier type, boolean fallback) {
+		MarkerType mt = INSTANCE.registry.get(type);
+		if (mt == null && fallback) {
+			return findDefault();
+		} else {
+			return mt;
+		}
 	}
 	
 	public static boolean hasKey(String type) {
@@ -54,5 +63,13 @@ public class MarkerRegistry extends SaveData {
 
 	public static Identifier getId(MarkerType type) {
 		return INSTANCE.registry.getId(type);
+	}
+
+	public static MarkerType findDefault() {
+		return find("antiqueatlas:red_x_small");
+	}
+
+	public static void clear() {
+		// TODO
 	}
 }

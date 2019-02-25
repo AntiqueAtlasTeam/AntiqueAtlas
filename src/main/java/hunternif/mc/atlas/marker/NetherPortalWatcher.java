@@ -6,12 +6,11 @@ import hunternif.mc.atlas.SettingsConfig;
 import hunternif.mc.atlas.api.AtlasAPI;
 import hunternif.mc.atlas.mixinhooks.EntityHooksAA;
 import hunternif.mc.atlas.registry.MarkerRegistry;
-import hunternif.mc.atlas.registry.MarkerTypes;
-import hunternif.mc.atlas.util.Log;
+import hunternif.mc.atlas.registry.MarkerType;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.registry.Registry;
+import net.minecraft.util.Identifier;
 import net.minecraft.world.World;
 import net.minecraft.world.dimension.DimensionType;
 import java.util.List;
@@ -109,6 +108,11 @@ public class NetherPortalWatcher {
 	}
 
 	private void addPortalMarkerIfNone(PlayerEntity player, World world, DimensionType dimension, int atlasID) {
+		MarkerType netherPortalType = MarkerRegistry.find(new Identifier("antiqueatlas:nether_portal"), false);
+		if (netherPortalType == null) {
+			return;
+		}
+
 		// Can't use entity.dimension here, because its value has already been updated!
 		DimensionMarkersData data = AntiqueAtlasMod.markersData.getMarkersData(atlasID, world)
 				.getMarkersDataInDimension(dimension);
@@ -120,7 +124,7 @@ public class NetherPortalWatcher {
 		List<Marker> markers = data.getMarkersAtChunk((x >> 4) / MarkersData.CHUNK_STEP, (z >> 4) / MarkersData.CHUNK_STEP);
 		if (markers != null) {
 			for (Marker marker : markers) {
-				if (marker.getType().equals(MarkerTypes.NETHER_PORTAL)) {
+				if (marker.getType().equals("antiqueatlas:nether_portal")) {
 					// Found the marker.
 					return;
 				}
@@ -128,7 +132,7 @@ public class NetherPortalWatcher {
 		}
 
 		// Marker not found, place new one:
-		AtlasAPI.markers.putMarker(world, false, atlasID, MarkerRegistry.getId(MarkerTypes.NETHER_PORTAL).toString(), "gui.antiqueatlas.marker.netherPortal", x, z);
+		AtlasAPI.markers.putMarker(world, false, atlasID, MarkerRegistry.getId(netherPortalType).toString(), "gui.antiqueatlas.marker.netherPortal", x, z);
 	}
 	
 	private static boolean isEntityInPortal(Entity entity) {

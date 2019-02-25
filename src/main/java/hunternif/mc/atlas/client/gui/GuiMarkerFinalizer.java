@@ -6,7 +6,6 @@ import hunternif.mc.atlas.client.gui.core.GuiScrollingContainer;
 import hunternif.mc.atlas.client.gui.core.ToggleGroup;
 import hunternif.mc.atlas.registry.MarkerRegistry;
 import hunternif.mc.atlas.registry.MarkerType;
-import hunternif.mc.atlas.registry.MarkerTypes;
 import hunternif.mc.atlas.util.Log;
 
 import java.util.ArrayList;
@@ -24,15 +23,13 @@ import net.minecraft.world.dimension.DimensionType;
  * @author Hunternif
  */
 public class GuiMarkerFinalizer extends GuiComponent {
-	private static final MarkerType defaultMarker = MarkerTypes.RED_X_SMALL;
-
 	private World world;
 	private int atlasID;
 	private DimensionType dimension;
 	private int markerX;
 	private int markerZ;
 
-	MarkerType selectedType = defaultMarker;
+	MarkerType selectedType = MarkerRegistry.findDefault();
 
 	private static final int BUTTON_WIDTH = 100;
 	private static final int BUTTON_SPACING = 4;
@@ -142,7 +139,7 @@ public class GuiMarkerFinalizer extends GuiComponent {
 		textField.draw(mouseX, mouseY, partialTick);
 		drawCenteredString(I18n.translate("gui.antiqueatlas.marker.type"), this.height/2 - 44, 0xffffff, true);
 
-		// Darkrer background for marker type selector
+		// Darker background for marker type selector
 		drawGradientRect(scroller.getGuiX() - TYPE_BG_FRAME, scroller.getGuiY() - TYPE_BG_FRAME,
 				scroller.getGuiX() + scroller.getWidth() + TYPE_BG_FRAME,
 				scroller.getGuiY() + scroller.getHeight() + TYPE_BG_FRAME,

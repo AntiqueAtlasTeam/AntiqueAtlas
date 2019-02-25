@@ -96,8 +96,9 @@ public class ClientProxy extends CommonProxy implements SimpleSynchronousResourc
 		biomeTextureMap.setDirty(false);
 		assignVanillaBiomeTextures();
 
-		markerTextureConfig = new MarkerTextureConfig(new File(configDir, "markers.json"));
-		markerTextureConfig.load(MarkerRegistry.INSTANCE);
+		markerTextureConfig = new MarkerTextureConfig();
+		ResourceManagerHelper.get(ResourceType.ASSETS).registerReloadListener(markerTextureConfig);
+
 		// Prevent rewriting of the config while no changes have been made:
 		MarkerRegistry.INSTANCE.setDirty(true);
 
@@ -383,11 +384,6 @@ public class ClientProxy extends CommonProxy implements SimpleSynchronousResourc
 			Log.info("Saving tile texture config");
 			tileTextureConfig.save(tileTextureMap);
 			tileTextureMap.setDirty(false);
-		}
-		if (MarkerRegistry.INSTANCE.isDirty()) {
-			Log.info("Saving marker config");
-			markerTextureConfig.save(MarkerRegistry.INSTANCE);
-			MarkerRegistry.INSTANCE.setDirty(false);
 		}
 	}
 

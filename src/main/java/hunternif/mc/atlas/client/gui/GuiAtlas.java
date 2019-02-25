@@ -878,7 +878,7 @@ public class GuiAtlas extends GuiComponent {
 	private void renderMarker(Marker marker, double scale) {
 		MarkerType type = MarkerRegistry.find(marker.getType());
 		if (type == null){
-			Log.warn("Could not find marker data for %d. Is it in the config file?\n", marker.getType());
+			Log.warn("Could not find marker data for %s. Is it in the config file?\n", marker.getType());
 			return;
 		}
 		if (type.shouldHide(state.is(HIDING_MARKERS), scaleClipIndex)) {

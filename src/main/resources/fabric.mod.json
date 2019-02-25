@@ -5,8 +5,8 @@
   "version": "${version}",
   "side": "universal",
   "initializers": [
-    "hunternif.mc.atlas.AntiqueAtlasModClient",
-    "hunternif.mc.atlas.AntiqueAtlasMod"
+    "hunternif.mc.atlas.AntiqueAtlasMod",
+    "hunternif.mc.atlas.AntiqueAtlasModClient"
   ],
   "requires": {
     "fabric": ">=0.2.3"
