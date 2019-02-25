@@ -8,7 +8,7 @@ import hunternif.mc.atlas.registry.MarkerRegistry;
 import hunternif.mc.atlas.registry.MarkerType;
 import hunternif.mc.atlas.registry.MarkerTypes;
 import hunternif.mc.atlas.util.Log;
-import java.io.IOException;
+
 import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.client.MinecraftClient;
@@ -29,8 +29,8 @@ public class GuiMarkerFinalizer extends GuiComponent {
 	private World world;
 	private int atlasID;
 	private DimensionType dimension;
-	private int x;
-	private int z;
+	private int markerX;
+	private int markerZ;
 
 	MarkerType selectedType = defaultMarker;
 
@@ -46,7 +46,7 @@ public class GuiMarkerFinalizer extends GuiComponent {
 	private final GuiScrollingContainer scroller;
 	private ToggleGroup<GuiMarkerInList> typeRadioGroup;
 
-	private final List<IMarkerTypeSelectListener> listeners = new ArrayList<>();
+	private final List<IMarkerTypeSelectListener> markerListeners = new ArrayList<>();
 
 	GuiMarkerFinalizer() {
 		scroller = new GuiScrollingContainer();
@@ -58,40 +58,49 @@ public class GuiMarkerFinalizer extends GuiComponent {
 		this.world = world;
 		this.atlasID = atlasID;
 		this.dimension = dimension;
-		this.x = markerX;
-		this.z = markerZ;
+		this.markerX = markerX;
+		this.markerZ = markerZ;
 		setBlocksScreen(true);
 	}
 
-	void addListener(IMarkerTypeSelectListener listener) {
-		listeners.add(listener);
+	void addMarkerListener(IMarkerTypeSelectListener listener) {
+		markerListeners.add(listener);
 	}
 
-	void removeListener(IMarkerTypeSelectListener listener) {
-		listeners.remove(listener);
+	void removeMarkerListener(IMarkerTypeSelectListener listener) {
+		markerListeners.remove(listener);
 	}
 
-	void removeAllListeners() {
-		listeners.clear();
+	void removeAllMarkerListeners() {
+		markerListeners.clear();
 	}
 
 	@Override
 	protected void onInitialized() {
 		super.onInitialized();
 
-		buttons.add(btnDone = new ButtonWidget(this.width/2 - BUTTON_WIDTH - BUTTON_SPACING/2, this.height/2 + 40, BUTTON_WIDTH, 20, I18n.translate("gui.done")) {
+		addButton(btnDone = new ButtonWidget(this.width/2 - BUTTON_WIDTH - BUTTON_SPACING/2, this.height/2 + 40, BUTTON_WIDTH, 20, I18n.translate("gui.done")) {
+			@Override
+			public void onPressed(double double_1, double double_2) {
+				super.onPressed(double_1, double_2);
+				AtlasAPI.markers.putMarker(world, true, atlasID, MarkerRegistry.getId(selectedType).toString(), textField.getText(), markerX, markerZ);
+				Log.info("Put marker in Atlas #%d \"%s\" at (%d, %d)", atlasID, textField.getText(), markerX, markerZ);
+				close();
+			}
 
 		});
-		buttons.add(btnCancel = new ButtonWidget(this.width/2 + BUTTON_SPACING/2, this.height/2 + 40, BUTTON_WIDTH, 20, I18n.translate("gui.cancel")) {
-
+		addButton(btnCancel = new ButtonWidget(this.width/2 + BUTTON_SPACING/2, this.height/2 + 40, BUTTON_WIDTH, 20, I18n.translate("gui.cancel")) {
+			@Override
+			public void onPressed(double double_1, double double_2) {
+				super.onPressed(double_1, double_2);
+				close();
+			}
 		});
 		textField = new TextFieldWidget(MinecraftClient.getInstance().textRenderer, (this.width - 200)/2, this.height/2 - 81, 200, 20);
 		textField.setHasFocus(true);
 		textField.setIsEditable(true);
 		textField.setText("");
-
-		// TODO fabric
-		//getInputListeners().add(textField);
+		this.listeners.add(textField);
 
 		scroller.removeAllContent();
 		int typeCount = 0;
@@ -108,7 +117,7 @@ public class GuiMarkerFinalizer extends GuiComponent {
 		typeRadioGroup = new ToggleGroup<>();
 		typeRadioGroup.addListener(button -> {
             selectedType = button.getMarkerType();
-            for (IMarkerTypeSelectListener listener : listeners) {
+            for (IMarkerTypeSelectListener listener : markerListeners) {
                 listener.onSelectMarkerType(button.getMarkerType());
             }
         });
@@ -123,16 +132,6 @@ public class GuiMarkerFinalizer extends GuiComponent {
 			}
 			scroller.addContent(markerGui).setRelativeX(contentX);
 			contentX += GuiMarkerInList.FRAME_SIZE + TYPE_SPACING;
-		}
-	}
-
-	protected void a(ButtonWidget button) {
-		if (button == btnDone) {
-			AtlasAPI.markers.putMarker(world, true, atlasID, MarkerRegistry.getId(selectedType).toString(), textField.getText(), x, z);
-			Log.info("Put marker in Atlas #%d \"%s\" at (%d, %d)", atlasID, textField.getText(), x, z);
-			close();
-		} else if (button == btnCancel) {
-			close();
 		}
 	}
 

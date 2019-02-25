@@ -1,0 +1,35 @@
+{
+  "item.antiqueatlas.antique_atlas": "Antiker Atlas",
+  "item.antiqueatlas.empty_antique_atlas": "Unbeschriebener Antiker Atlas",
+
+  "gui.antiqueatlas.scalebar": "Maßstab in Blöcken",
+  "gui.antiqueatlas.addMarker": "Markierung hinzufügen",
+  "gui.antiqueatlas.delMarker": "Markierung löschen",
+  "gui.antiqueatlas.followPlayer": "Spieler folgen",
+  "gui.antiqueatlas.exportImage": "Bild exportieren",
+  "gui.antiqueatlas.hideMarkers": "Markierungen verstecken",
+  "gui.antiqueatlas.showMarkers": "Markierungen zeigen",
+
+  "gui.antiqueatlas.marker.label": "Bezeichnung:",
+  "gui.antiqueatlas.marker.type": "Typ:",
+  "gui.antiqueatlas.marker.village": "Dorf",
+  "gui.antiqueatlas.marker.netherPortal": "Nether-Portal",
+  "gui.antiqueatlas.marker.tomb": "Hier ruht %s",
+
+  "gui.antiqueatlas.export.opening": "Öffne Datei-Dialogfeld...",
+  "gui.antiqueatlas.export.selectFile": "Wähle PNG-Datei zum Speichern aus",
+  "gui.antiqueatlas.export.tooLarge": "Sorry! Das Bild ist zu groß zum Rendern. Versuch die Java-Heap-Größe zu erhöhen.",
+
+  "gui.antiqueatlas.export.setup": "Starte...",
+  "gui.antiqueatlas.export.rendering": "Rendere...",
+  "gui.antiqueatlas.export.writing": "Schreibe Datei...",
+  "gui.antiqueatlas.export.loadingtextures": "Lade Texturen...",
+  "gui.antiqueatlas.export.makingbuffer": "Weise %dx%d Bildpuffer zu...",
+
+  "gui.antiqueatlas.export.renderstripe": "Rendere Abschnitt %d/%d...",
+  "gui.antiqueatlas.export.writestripe": "Schreibe Abschnitt...",
+
+  "gui.antiqueatlas.export.rendering.background": "Rendere Kartenhintergrund",
+  "gui.antiqueatlas.export.rendering.map": "Rendere Kartenabschnitte",
+  "gui.antiqueatlas.export.rendering.markers": "Rendere Markierungen"
+}

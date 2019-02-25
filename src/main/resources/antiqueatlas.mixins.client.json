@@ -3,7 +3,8 @@
   "package": "hunternif.mc.atlas.mixin",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
-    "MixinClientPlayNetworkHandler"
+    "MixinClientPlayNetworkHandler",
+    "MixinInGameHud"
   ],
   "injectors": {
     "defaultRequire": 1

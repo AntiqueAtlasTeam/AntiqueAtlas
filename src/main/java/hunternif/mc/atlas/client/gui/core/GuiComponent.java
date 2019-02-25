@@ -182,6 +182,8 @@ public class GuiComponent extends Screen {
 		child.parent = this;
 		child.setGuiCoords(guiX, guiY);
 		if (client != null) {
+			child.buttons.clear();
+			child.listeners.clear();
 			child.initialize(client, width, height);
 		}
 		invalidateSize();
@@ -224,7 +226,7 @@ public class GuiComponent extends Screen {
 		this.blocksScreen = value;
 	}
 
-	private boolean iterateInput(UiCall callMethod) {
+	boolean iterateInput(UiCall callMethod) {
 		// Traverse children backwards, because the topmost child should be the
 		// first to process input:
 		ListIterator<GuiComponent> iter = children.listIterator(children.size());

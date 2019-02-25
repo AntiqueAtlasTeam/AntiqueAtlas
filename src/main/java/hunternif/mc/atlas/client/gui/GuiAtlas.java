@@ -33,7 +33,6 @@ import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL11;
 
 import java.io.File;
-import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Collections;
@@ -339,7 +338,7 @@ public class GuiAtlas extends GuiComponent {
 		addChild(scaleBar).offsetGuiCoords(20, 198);
 		scaleBar.setMapScale(1);
 
-		markerFinalizer.addListener(blinkingIcon);
+		markerFinalizer.addMarkerListener(blinkingIcon);
 
 		eraser.setTexture(Textures.ERASER, 12, 14, 2, 11);
 	}
@@ -682,6 +681,8 @@ public class GuiAtlas extends GuiComponent {
 				System.out.printf("GuiAtlas avg. render time: %.3f\n", elapsed / renderTimes.length);
 			}
 		}
+
+		super.drawBackground();
 
 		GlStateManager.color4f(1, 1, 1, 1);
 		GlStateManager.alphaFunc(GL11.GL_GREATER, 0); // So light detail on tiles is visible

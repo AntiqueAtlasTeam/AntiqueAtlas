@@ -1,0 +1,38 @@
+{
+  "item.antiqueatlas.antique_atlas": "Atlas antigo",
+  "item.antiqueatlas.empty_antique_atlas": "Atlas antigo vazio",
+
+  "gui.antiqueatlas.scalebar": "Escala em blocos",
+  "gui.antiqueatlas.addMarker": "Adicionar marcador",
+  "gui.antiqueatlas.delMarker": "Excluir marcador",
+  "gui.antiqueatlas.followPlayer": "Centralizar no jogador",
+  "gui.antiqueatlas.exportImage": "Exportar imagem",
+  "gui.antiqueatlas.hideMarkers": "Ocultar marcadores",
+  "gui.antiqueatlas.showMarkers": "Mostrar marcadores",
+
+  "gui.antiqueatlas.marker.label": "Título:",
+  "gui.antiqueatlas.marker.type": "Tipo:",
+  "gui.antiqueatlas.marker.village": "Vila",
+  "gui.antiqueatlas.marker.netherPortal": "Portal do Nether",
+  "gui.antiqueatlas.marker.tomb": "Aqui jaz %s",
+
+  "gui.antiqueatlas.export.opening": "Abrindo diálogo de arquivo do sistema...",
+  "gui.antiqueatlas.export.selectFile": "Selecione um arquivo PNG para salvar",
+  "gui.antiqueatlas.export.tooLarge": "Desculpe, a imagem é grande demais. Tente aumentar o tamanho do heap do Java.",
+
+  "gui.antiqueatlas.export.setup": "Configurando...",
+  "gui.antiqueatlas.export.rendering": "Renderizando...",
+  "gui.antiqueatlas.export.writing": "Criando arquivo...",
+  "gui.antiqueatlas.export.loadingtextures": "Carregando texturas...",
+  "gui.antiqueatlas.export.makingbuffer": "Alocando %dx%d buffers de imagem...",
+
+  "gui.antiqueatlas.export.renderstripe": "Renderizando %d/%d...",
+  "gui.antiqueatlas.export.writestripe": "Criando...",
+
+  "gui.antiqueatlas.export.rendering.background": "Renderizando fundo do mapa",
+  "gui.antiqueatlas.export.rendering.map": "Renderizando blocos-entidades do mapa",
+  "gui.antiqueatlas.export.rendering.markers": "Renderizando marcadores",
+
+  "key.openatlas.desc": "Abrir atlas",
+  "key.antiqueatlas.category": "Antique Atlas"
+}

@@ -14,17 +14,15 @@ import org.lwjgl.opengl.GL11;
 public enum ExportProgressOverlay {
 	INSTANCE;
 
-	// TODO FABRIC
-
-	/* @SubscribeEvent
 	@Environment(EnvType.CLIENT)
-	public void draw(RenderGameOverlayEvent.Post event) {
-		int x = event.getResolution().a() - 40, y = event.getResolution().b() - 20, barWidth = 50, barHeight = 2;
+	public void draw(int scaledWidth, int scaledHeight, float partial) {
+		int x = scaledWidth - 40, y = scaledHeight - 20, barWidth = 50, barHeight = 2;
 
 		ExportUpdateListener l = ExportUpdateListener.INSTANCE;
 
-		if(event.getType() != ElementType.ALL || !ExportImageUtil.isExporting)
+		if (!ExportImageUtil.isExporting) {
 			return;
+		}
 
 		TextRenderer font = MinecraftClient.getInstance().textRenderer;
 		int s = 2;
@@ -36,7 +34,7 @@ public enum ExportProgressOverlay {
 		int statusWidth = font.getStringWidth(l.status);
 		font.draw(l.status, ( x )*s -statusWidth/2, ( y )*s, 0xffffff);
 
-		GlStateManager.texParameter(s, s, 1);
+		GlStateManager.scaled(s, s, 1);
 		y += 7;
 
 		x -= barWidth/2;
@@ -64,6 +62,5 @@ public enum ExportProgressOverlay {
 		tessellator.draw();
 
 		GlStateManager.enableTexture();
-	} */
-
+	}
 }
