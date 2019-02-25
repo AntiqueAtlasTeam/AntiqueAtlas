@@ -696,7 +696,7 @@ public class GuiAtlas extends GuiComponent {
 		GL11.glEnable(GL11.GL_SCISSOR_TEST);
 		GL11.glScissor(
 				(int) ((getGuiX() + CONTENT_X) * screenScale),
-				(int) ((client.window.getFramebufferWidth() - (getGuiY() + CONTENT_Y + MAP_HEIGHT)*screenScale)),
+				(int) ((client.window.getFramebufferHeight() - (getGuiY() + CONTENT_Y + MAP_HEIGHT)*screenScale)),
 				(int) (MAP_WIDTH * screenScale), (int) (MAP_HEIGHT*screenScale));
 		GlStateManager.enableBlend();
 		GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
