@@ -561,8 +561,8 @@ public class GuiAtlas extends GuiComponent {
 		if (isDragging) {
 			followPlayer = false;
 			btnPosition.setEnabled(true);
-			mapOffsetX = dragMapOffsetX + (int) deltaX;
-			mapOffsetY = dragMapOffsetY + (int) deltaY;
+			mapOffsetX += (int) deltaX;
+			mapOffsetY += (int) deltaY;
 			result = true;
 		}
 		return super.mouseDragged(mouseX, mouseY, lastMouseButton, deltaX, deltaY) || result;
@@ -720,6 +720,7 @@ public class GuiAtlas extends GuiComponent {
 			for (SubTile subtile : subtiles) {
 				if (subtile == null || subtile.tile == null) continue;
 				AtlasRenderHelper.drawAutotileCorner(
+						// TODO FABRIC this should use chunk x/y pos? + stitch handling
 						BiomeTextureMap.instance().getTexture(subtile.x, subtile.y, subtile.tile),
 						mapStartScreenX + subtile.x * tileHalfSize,
 						mapStartScreenY + subtile.y * tileHalfSize,

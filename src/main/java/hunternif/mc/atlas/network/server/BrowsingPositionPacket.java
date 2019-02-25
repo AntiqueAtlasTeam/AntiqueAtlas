@@ -3,6 +3,7 @@ package hunternif.mc.atlas.network.server;
 import hunternif.mc.atlas.AntiqueAtlasMod;
 import hunternif.mc.atlas.RegistrarAntiqueAtlas;
 import hunternif.mc.atlas.SettingsConfig;
+import hunternif.mc.atlas.api.AtlasAPI;
 import hunternif.mc.atlas.network.AbstractMessage.AbstractServerMessage;
 import hunternif.mc.atlas.util.Log;
 import net.fabricmc.api.EnvType;
@@ -56,9 +57,7 @@ public class BrowsingPositionPacket extends AbstractServerMessage<BrowsingPositi
 	@Override
 	protected void process(PlayerEntity player, EnvType side) {
 		// Make sure it's this player's atlas :^)
-		// TODO Fabric
-		if (SettingsConfig.gameplay.itemNeeded /* &&
-				!player.bB.h(new ata(RegistrarAntiqueAtlas.ATLAS, 1, atlasID)) */) {
+		if (SettingsConfig.gameplay.itemNeeded && !AtlasAPI.getPlayerAtlases(player).contains(atlasID)) {
 			Log.warn("Player %s attempted to put position marker into someone else's Atlas #%d",
 					player.getCommandSource().getName(), atlasID);
 			return;

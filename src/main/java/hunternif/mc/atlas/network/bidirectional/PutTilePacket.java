@@ -59,9 +59,7 @@ public class PutTilePacket extends AbstractMessage<PutTilePacket> {
 	protected void process(PlayerEntity player, EnvType side) {
 		if (side == EnvType.SERVER) {
 			// Make sure it's this player's atlas :^)
-			// TODO Fabric
-			if (SettingsConfig.gameplay.itemNeeded /* &&
-					!player.bB.h(new ata(RegistrarAntiqueAtlas.ATLAS, 1, atlasID)) */) {
+			if (SettingsConfig.gameplay.itemNeeded && !AtlasAPI.getPlayerAtlases(player).contains(atlasID)) {
 				Log.warn("Player %s attempted to modify someone else's Atlas #%d",
 						player.getCommandSource().getName(), atlasID);
 				return;

@@ -85,31 +85,6 @@ public abstract class AbstractMessage<T extends AbstractMessage<T>>
 		}
 	}
 
-	// TODO FABRIC
-	/*
-	@Override
-	public final IMessage onMessage(T msg, MessageContext ctx) {
-		if (!msg.isValidOnSide(ctx.side)) {
-			throw new RuntimeException("Invalid side " + ctx.side.name() + " for " + msg.getClass().getSimpleName());
-		} else if (msg.requiresMainThread()) {
-			checkThreadAndEnqueue(msg, ctx);
-		} else {
-			msg.process(AntiqueAtlasMod.proxy.getPlayerEntity(ctx), ctx.side);
-		}
-		return null;
-	} */
-
-	/**
-	 * Ensures that the message is being handled on the main thread
-	 */
-	/*
-	private static <T extends AbstractMessage<T>> void checkThreadAndEnqueue(final AbstractMessage<T> msg, final MessageContext ctx) {
-		XX_1_13_2_none_acv_XX thread = AntiqueAtlasMod.proxy.getThreadFromContext(ctx);
-		if (!thread.av()) {
-			thread.a(() -> msg.process(AntiqueAtlasMod.proxy.getPlayerEntity(ctx), ctx.side));
-		}
-	} */
-
 	/**
 	 * Messages that can only be sent from the server to the client should use this class
 	 */
