@@ -55,9 +55,6 @@ public class ClientProxy extends CommonProxy implements SimpleSynchronousResourc
 	}
 
 	public void initClient() {
-		// TODO FABRIC
-		// MinecraftForge.EVENT_BUS.register(ExportProgressOverlay.INSTANCE);
-
 		//TODO Enforce texture config loading process as follows:
 		// 1. pre-init: Antique Atlas defaults are loaded, config files are read.
 		// 2. init: mods set their custom textures. Those loaded from the config must not be overwritten!
@@ -239,62 +236,49 @@ public class ClientProxy extends CommonProxy implements SimpleSynchronousResourc
 	 * only if the biome was not in the config. This prevents unnecessary
 	 * overwriting, to aid people who manually modify the config. */
 	private void assignVanillaBiomeTextures() {
+		// Since biome categories are now vanilla, we only handle the
+		// "edge cases".
+
 		setBiomeTextureIfNone(Biomes.ICE_SPIKES, ICE_SPIKES); // this is a biome mutation
 		setBiomeTextureIfNone(Biomes.SUNFLOWER_PLAINS, SUNFLOWERS);
-
-		/* setBiomeTextureIfNone(ays.TODO_1_12_2_a, WATER);
-		setBiomeTextureIfNone(ays.TODO_1_12_2_z, WATER);
-		setBiomeTextureIfNone(ays.TODO_1_12_2_i, WATER); //
-		setBiomeTextureIfNone(ays.TODO_1_12_2_l, ICE);
-		setBiomeTextureIfNone(ays.TODO_1_12_2_m, ICE);
-		setBiomeTextureIfNone(ays.TODO_1_12_2_r, SHORE);
-		setBiomeTextureIfNone(ays.TODO_1_12_2_B, SHORE);
-		setBiomeTextureIfNone(ays.TODO_1_12_2_A, ROCK_SHORE);
-		setBiomeTextureIfNone(ays.TODO_1_12_2_d, DESERT);
-		setBiomeTextureIfNone(ays.TODO_1_12_2_R, DESERT);
-		setBiomeTextureIfNone(ays.TODO_1_12_2_s, DESERT_HILLS);
-		setBiomeTextureIfNone(ays.TODO_1_12_2_c, PLAINS);
-		setBiomeTextureIfNone(ays.TODO_1_12_2_n, SNOW);
-		setBiomeTextureIfNone(ays.TODO_1_12_2_o, SNOW_HILLS);
-		setBiomeTextureIfNone(ays.TODO_1_12_2_e, MOUNTAINS);
-		setBiomeTextureIfNone(ays.TODO_1_12_2_v, MOUNTAINS);
+		setBiomeTextureIfNone(Biomes.SNOWY_BEACH, SHORE);
+		setBiomeTextureIfNone(Biomes.STONE_SHORE, ROCK_SHORE);
+		/*
 		setBiomeTextureIfNone(ays.TODO_1_12_2_S, MOUNTAINS_SNOW_CAPS);
 		setBiomeTextureIfNone(ays.TODO_1_12_2_J, MOUNTAINS_ALL);
 		setBiomeTextureIfNone(ays.TODO_1_12_2_af, MOUNTAINS_SNOW_CAPS);
-		setBiomeTextureIfNone(ays.TODO_1_12_2_f, FOREST);
-		setBiomeTextureIfNone(ays.TODO_1_12_2_T, FOREST_FLOWERS);
-		setBiomeTextureIfNone(ays.TODO_1_12_2_t, FOREST_HILLS);
-		setBiomeTextureIfNone(ays.TODO_1_12_2_E, DENSE_FOREST);
-		setBiomeTextureIfNone(ays.TODO_1_12_2_ab, DENSE_FOREST_HILLS); //TODO roofed forest M has steeper cliffs
-		setBiomeTextureIfNone(ays.TODO_1_12_2_C, BIRCH);
-		setBiomeTextureIfNone(ays.TODO_1_12_2_Z, TALL_BIRCH);
-		setBiomeTextureIfNone(ays.TODO_1_12_2_D, BIRCH_HILLS);
-		setBiomeTextureIfNone(ays.TODO_1_12_2_aa, TALL_BIRCH_HILLS);
-		setBiomeTextureIfNone(ays.TODO_1_12_2_w, JUNGLE);
-		setBiomeTextureIfNone(ays.TODO_1_12_2_X, JUNGLE_CLIFFS);
-		setBiomeTextureIfNone(ays.TODO_1_12_2_x, JUNGLE_HILLS);
-		setBiomeTextureIfNone(ays.TODO_1_12_2_y, JUNGLE_EDGE);
-		setBiomeTextureIfNone(ays.TODO_1_12_2_Y, JUNGLE_EDGE_HILLS);
-		setBiomeTextureIfNone(ays.TODO_1_12_2_g, PINES);
+		 */
+		// setBiomeTextureIfNone(ays.TODO_1_12_2_f, FOREST);
+		setBiomeTextureIfNone(Biomes.FLOWER_FOREST, FOREST_FLOWERS);
+		// setBiomeTextureIfNone(ays.TODO_1_12_2_t, FOREST_HILLS);
+		/* setBiomeTextureIfNone(ays.TODO_1_12_2_E, DENSE_FOREST);
+		setBiomeTextureIfNone(ays.TODO_1_12_2_ab, DENSE_FOREST_HILLS); //TODO roofed forest M has steeper cliffs */
+		setBiomeTextureIfNone(Biomes.BIRCH_FOREST, BIRCH);
+		setBiomeTextureIfNone(Biomes.TALL_BIRCH_FOREST, TALL_BIRCH);
+		setBiomeTextureIfNone(Biomes.BIRCH_FOREST_HILLS, BIRCH_HILLS);
+		setBiomeTextureIfNone(Biomes.TALL_BIRCH_HILLS, TALL_BIRCH_HILLS);
+		setBiomeTextureIfNone(Biomes.JUNGLE, JUNGLE);
+		// setBiomeTextureIfNone(ays.TODO_1_12_2_X, JUNGLE_CLIFFS);
+		setBiomeTextureIfNone(Biomes.JUNGLE_HILLS, JUNGLE_HILLS);
+		setBiomeTextureIfNone(Biomes.JUNGLE_EDGE, JUNGLE_EDGE);
+		// setBiomeTextureIfNone(ays.TODO_1_12_2_Y, JUNGLE_EDGE_HILLS);
+		/* setBiomeTextureIfNone(ays.TODO_1_12_2_g, PINES);
 		setBiomeTextureIfNone(ays.TODO_1_12_2_U, PINES_HILLS);
 		setBiomeTextureIfNone(ays.TODO_1_12_2_u, PINES_HILLS);
 		setBiomeTextureIfNone(ays.TODO_1_12_2_F, SNOW_PINES);
 		setBiomeTextureIfNone(ays.TODO_1_12_2_ac, SNOW_PINES_HILLS);
-		setBiomeTextureIfNone(ays.TODO_1_12_2_G, SNOW_PINES_HILLS);
-		setBiomeTextureIfNone(ays.TODO_1_12_2_H, MEGA_TAIGA);
-		setBiomeTextureIfNone(ays.TODO_1_12_2_ad, MEGA_SPRUCE);
-		setBiomeTextureIfNone(ays.TODO_1_12_2_I, MEGA_TAIGA_HILLS);
-		setBiomeTextureIfNone(ays.TODO_1_12_2_ae, MEGA_SPRUCE_HILLS);
-		setBiomeTextureIfNone(ays.TODO_1_12_2_h, SWAMP);
-		setBiomeTextureIfNone(ays.TODO_1_12_2_V, SWAMP_HILLS);
-		setBiomeTextureIfNone(ays.TODO_1_12_2_k, SHORE);
-		setBiomeTextureIfNone(ays.TODO_1_12_2_j, CAVE_WALLS);
-		setBiomeTextureIfNone(ays.TODO_1_12_2_P, END_VOID);
-		setBiomeTextureIfNone(ays.TODO_1_12_2_p, MUSHROOM);
-		setBiomeTextureIfNone(ays.TODO_1_12_2_q, SHORE);
-		setBiomeTextureIfNone(ays.TODO_1_12_2_K, SAVANNA);
-		setBiomeTextureIfNone(ays.TODO_1_12_2_ag, SAVANNA_CLIFFS);
-		setBiomeTextureIfNone(ays.TODO_1_12_2_M, MESA);
+		setBiomeTextureIfNone(ays.TODO_1_12_2_G, SNOW_PINES_HILLS); */
+		setBiomeTextureIfNone(Biomes.GIANT_TREE_TAIGA, MEGA_TAIGA);
+		setBiomeTextureIfNone(Biomes.GIANT_SPRUCE_TAIGA, MEGA_SPRUCE);
+		setBiomeTextureIfNone(Biomes.GIANT_TREE_TAIGA_HILLS, MEGA_TAIGA_HILLS);
+		setBiomeTextureIfNone(Biomes.GIANT_SPRUCE_TAIGA_HILLS, MEGA_SPRUCE_HILLS);
+		setBiomeTextureIfNone(Biomes.NETHER, CAVE_WALLS);
+		setBiomeTextureIfNone(Biomes.THE_END, END_VOID);
+		setBiomeTextureIfNone(Biomes.MUSHROOM_FIELDS, MUSHROOM);
+		setBiomeTextureIfNone(Biomes.MUSHROOM_FIELD_SHORE, SHORE);
+/*		setBiomeTextureIfNone(ays.TODO_1_12_2_K, SAVANNA);
+		setBiomeTextureIfNone(ays.TODO_1_12_2_ag, SAVANNA_CLIFFS); */
+		/* setBiomeTextureIfNone(ays.TODO_1_12_2_M, MESA);
 		setBiomeTextureIfNone(ays.TODO_1_12_2_ai, BRYCE);
 		setBiomeTextureIfNone(ays.TODO_1_12_2_O, PLATEAU_MESA);
 		setBiomeTextureIfNone(ays.TODO_1_12_2_N, PLATEAU_MESA_TREES);
