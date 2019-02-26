@@ -170,10 +170,6 @@ public class GuiAtlas extends GuiComponent {
 
 	/** Set to true when dragging the map view. */
 	private boolean isDragging = false;
-	/** The starting cursor position when dragging. */
-	private double dragMouseX, dragMouseY;
-	/** Map offset at the beginning of drag. */
-	private int dragMapOffsetX, dragMapOffsetY;
 
 	/** Offset to the top left corner of the tile at (0, 0) from the center of
 	 * the map drawing area, in pixels. */
@@ -281,58 +277,57 @@ public class GuiAtlas extends GuiComponent {
 		btnMarker = new GuiBookmarkButton(0, Textures.ICON_ADD_MARKER, I18n.translate("gui.antiqueatlas.addMarker"));
 		addChild(btnMarker).offsetGuiCoords(300, 14);
 		btnMarker.addListener(button -> {
-            if (stack != null || !SettingsConfig.gameplay.itemNeeded) {
-                if (state.is(PLACING_MARKER)) {
-                    selectedButton = null;
-                    state.switchTo(NORMAL);
-                } else {
-                    selectedButton = button;
-                    state.switchTo(PLACING_MARKER);
+			if (state.is(PLACING_MARKER)) {
+				selectedButton = null;
+				state.switchTo(NORMAL);
+			} else if (stack != null || !SettingsConfig.gameplay.itemNeeded) {
+				selectedButton = button;
+				state.switchTo(PLACING_MARKER);
 
-					// While holding shift, we create a marker on the player's position
-					if (isShiftPressed()) {
-						markerFinalizer.setMarkerData(player.getEntityWorld(),
-								getAtlasID(), player.dimension,
-								(int) player.x, (int) player.z);
-						addChild(markerFinalizer);
+				// While holding shift, we create a marker on the player's position
+				if (isShiftPressed()) {
+					markerFinalizer.setMarkerData(player.getEntityWorld(),
+							getAtlasID(), player.dimension,
+							(int) player.x, (int) player.z);
+					addChild(markerFinalizer);
 
-						blinkingIcon.setTexture(markerFinalizer.selectedType.getIcon(),
-								MARKER_SIZE, MARKER_SIZE);
-						addChildBehind(markerFinalizer, blinkingIcon)
-								.setRelativeCoords(worldXToScreenX((int) player.x) - getGuiX() - MARKER_SIZE / 2,
-										worldZToScreenY((int) player.z) - getGuiY() - MARKER_SIZE / 2);
+					blinkingIcon.setTexture(markerFinalizer.selectedType.getIcon(),
+							MARKER_SIZE, MARKER_SIZE);
+					addChildBehind(markerFinalizer, blinkingIcon)
+							.setRelativeCoords(worldXToScreenX((int) player.x) - getGuiX() - MARKER_SIZE / 2,
+									worldZToScreenY((int) player.z) - getGuiY() - MARKER_SIZE / 2);
 
-						// Need to intercept keyboard events to type in the label:
-						setInterceptKeyboard(true);
+					// Need to intercept keyboard events to type in the label:
+					setInterceptKeyboard(true);
 
-						// Un-press all keys to prevent player from walking infinitely:
-						KeyBinding.unpressAll();
+					// Un-press all keys to prevent player from walking infinitely:
+					KeyBinding.unpressAll();
 
-						selectedButton = null;
-						state.switchTo(NORMAL);
-					}
+					selectedButton = null;
+					state.switchTo(NORMAL);
                 }
             }
         });
 		btnDelMarker = new GuiBookmarkButton(2, Textures.ICON_DELETE_MARKER, I18n.translate("gui.antiqueatlas.delMarker"));
 		addChild(btnDelMarker).offsetGuiCoords(300, 33);
 		btnDelMarker.addListener(button -> {
-            if (stack != null || !SettingsConfig.gameplay.itemNeeded) {
-                if (state.is(DELETING_MARKER)) {
-                    selectedButton = null;
-                    state.switchTo(NORMAL);
-                } else {
-                    selectedButton = button;
-                    state.switchTo(DELETING_MARKER);
-                }
+			if (state.is(DELETING_MARKER)) {
+				selectedButton = null;
+				state.switchTo(NORMAL);
+			} else if (stack != null || !SettingsConfig.gameplay.itemNeeded) {
+				selectedButton = button;
+				state.switchTo(DELETING_MARKER);
             }
         });
 		btnShowMarkers = new GuiBookmarkButton(3, Textures.ICON_HIDE_MARKERS, I18n.translate("gui.antiqueatlas.hideMarkers"));
 		addChild(btnShowMarkers).offsetGuiCoords(300, 52);
 		btnShowMarkers.addListener(button -> {
-            if (stack != null || !SettingsConfig.gameplay.itemNeeded) {
+			selectedButton = null;
+			if (state.is(HIDING_MARKERS)) {
+				state.switchTo(NORMAL);
+			} else if (stack != null || !SettingsConfig.gameplay.itemNeeded) {
                 selectedButton = null;
-                state.switchTo(state.is(HIDING_MARKERS) ? NORMAL : HIDING_MARKERS);
+                state.switchTo(HIDING_MARKERS);
             }
         });
 
@@ -429,10 +424,6 @@ public class GuiAtlas extends GuiComponent {
 		} else if (isMouseOverMap && selectedButton == null) {
 			if(hoveredMarker == null || !MarkerClickedCallback.EVENT.invoker().onClicked(player, hoveredMarker, mouseState)) {
 				isDragging = true;
-				dragMouseX = mouseX;
-				dragMouseY = mouseY;
-				dragMapOffsetX = mapOffsetX;
-				dragMapOffsetY = mapOffsetY;
 				return true;
 			}
 		}
@@ -656,9 +647,6 @@ public class GuiAtlas extends GuiComponent {
         scaleBar.setMapScale(mapScale * 2);
         mapOffsetX = (int) ((mapOffsetX + addOffsetX) * (mapScale / oldScale));
         mapOffsetY = (int) ((mapOffsetY + addOffsetY) * (mapScale / oldScale));
-        dragMapOffsetX *= mapScale / oldScale;
-        dragMapOffsetY *= mapScale / oldScale;
-        // 2^13 = 8192
         scaleClipIndex = MathHelper.log2((int)(mapScale * 8192)) + 1 - 13;
         zoomLevel = -scaleClipIndex + zoomLevelOne;
         scaleAlpha = 255;

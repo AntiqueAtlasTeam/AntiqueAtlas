@@ -230,10 +230,9 @@ public class GuiComponent extends Screen {
 		// Traverse children backwards, because the topmost child should be the
 		// first to process input:
 		ListIterator<GuiComponent> iter = children.listIterator(children.size());
-		while(iter.hasPrevious()) {
+		while (iter.hasPrevious()) {
 			GuiComponent child = iter.previous();
 			if (callMethod.call(child)) {
-				// TODO Fabric should this return? Original code ran on all children first
 				return true;
 			}
 		}
@@ -303,6 +302,15 @@ public class GuiComponent extends Screen {
 	public boolean keyPressed(int a, int b, int c) {
 		if (!iterateInput((cpt) -> cpt.keyPressed(a, b, c))) {
 			return super.keyPressed(a, b, c);
+		} else {
+			return true;
+		}
+	}
+
+	@Override
+	public boolean charTyped(char aa, int bb) {
+		if (!iterateInput((cpt) -> cpt.charTyped(aa, bb))) {
+			return super.charTyped(aa, bb);
 		} else {
 			return true;
 		}
@@ -444,8 +452,10 @@ public class GuiComponent extends Screen {
 		boolean stencilEnabled = GL11.glIsEnabled(GL11.GL_STENCIL_TEST);
 		if (stencilEnabled) GL11.glDisable(GL11.GL_STENCIL_TEST);
 
-		// TODO FABRIC
-		// GuiUtils.drawHoveringText(lines, x, y, width, height, -1, font);
+		TextRenderer old = this.fontRenderer;
+		this.fontRenderer = font;
+		drawTooltip(lines, (int) x, (int) y);
+		this.fontRenderer = old;
 
 		if (stencilEnabled) GL11.glEnable(GL11.GL_STENCIL_TEST);
 	}

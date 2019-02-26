@@ -146,6 +146,11 @@ public class GuiMarkerFinalizer extends GuiComponent {
 	}
 
 	@Override
+	public boolean charTyped(char aa, int bb) {
+		return textField.charTyped(aa, bb) || super.charTyped(aa, bb);
+	}
+
+	@Override
 	public boolean keyReleased(int aa, int bb, int cc) {
 		return textField.keyReleased(aa, bb, cc) || super.keyReleased(aa, bb, cc);
 	}

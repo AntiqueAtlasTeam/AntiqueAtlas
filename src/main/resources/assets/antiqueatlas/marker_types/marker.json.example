@@ -3,6 +3,7 @@
 		"Any of these values can be ommited. The mod will either use the default value or if it is already been registered it will keep the existing values",
 		"This example entry is never parsed, and if modified, will not persist"
 	],
+	"version": 1,
 	"textures": [
 		"List of icons at different resolutions",
 		"[Default: `antiqueatlas:textures/gui/markers/red_x_small.png`]"
