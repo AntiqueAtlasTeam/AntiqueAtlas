@@ -60,14 +60,13 @@ public class ClientProxy extends CommonProxy implements SimpleSynchronousResourc
 		// 2. init: mods set their custom textures. Those loaded from the config must not be overwritten!
 
 		textureSetMap = TextureSetMap.instance();
-		textureSetConfig = new TextureSetConfig(new File(configDir, "texture_sets.json"));
+		textureSetConfig = new TextureSetConfig(textureSetMap);
 		// Register default values before the config file loads, possibly overwriting the,:
 		registerDefaultTextureSets(textureSetMap);
-		textureSetConfig.load(textureSetMap);
 		// Prevent rewriting of the config while no changes have been made:
 		textureSetMap.setDirty(false);
-		// Register a texture set so that it provides an example for the config:
-		textureSetMap.register(TEST);
+
+		ResourceManagerHelper.get(ResourceType.ASSETS).registerReloadListener(textureSetConfig);
 
 		// Legacy file name:
 		File biomeTextureConfigFile = new File(configDir, "textures.json");
@@ -76,8 +75,8 @@ public class ClientProxy extends CommonProxy implements SimpleSynchronousResourc
 		}
 
 		tileTextureMap = ExtTileTextureMap.instance();
-		tileTextureConfig = new ExtTileTextureConfig(new File(configDir, "tile_textures.json"), textureSetMap);
-		tileTextureConfig.load(tileTextureMap);
+		tileTextureConfig = new ExtTileTextureConfig(tileTextureMap, textureSetMap);
+		ResourceManagerHelper.get(ResourceType.ASSETS).registerReloadListener(tileTextureConfig);
 		// Prevent rewriting of the config while no changes have been made:
 		tileTextureMap.setDirty(false);
 		registerVanillaCustomTileTextures();
@@ -85,10 +84,10 @@ public class ClientProxy extends CommonProxy implements SimpleSynchronousResourc
 		ResourceManagerHelper.get(ResourceType.ASSETS).registerReloadListener(this);
 
 		// init
-
 		biomeTextureMap = BiomeTextureMap.instance();
-		biomeTextureConfig = new BiomeTextureConfig(new File(configDir, "biome_textures.json"), textureSetMap);
-		biomeTextureConfig.load(biomeTextureMap);
+		biomeTextureConfig = new BiomeTextureConfig(biomeTextureMap, textureSetMap);
+		ResourceManagerHelper.get(ResourceType.ASSETS).registerReloadListener(biomeTextureConfig);
+
 		// Prevent rewriting of the config while no changes have been made:
 		biomeTextureMap.setDirty(false);
 		assignVanillaBiomeTextures();
@@ -342,7 +341,7 @@ public class ClientProxy extends CommonProxy implements SimpleSynchronousResourc
 	}
 	/** Only applies the change if no texture is registered for this tile name.
 	 * This prevents overwriting of the config when there is no real change. */
-	private void setCustomTileTextureIfNone(String tileName, TextureSet textureSet) {
+	private void setCustomTileTextureIfNone(Identifier tileName, TextureSet textureSet) {
 		if (!tileTextureMap.isRegistered(tileName)) {
 			tileTextureMap.setTexture(tileName, textureSet);
 		}
@@ -350,25 +349,6 @@ public class ClientProxy extends CommonProxy implements SimpleSynchronousResourc
 
 	public File getConfigDir(){
 		return configDir;
-	}
-
-	/** Checks if any of the configs's data has been marked dirty and saves it. */
-	public void onClientTick(MinecraftClient client) {
-		if (textureSetMap.isDirty()) {
-			Log.info("Saving texture set config");
-			textureSetConfig.save(textureSetMap);
-			textureSetMap.setDirty(false);
-		}
-		if (biomeTextureMap.isDirty()) {
-			Log.info("Saving biome texture config");
-			biomeTextureConfig.save(biomeTextureMap);
-			biomeTextureMap.setDirty(false);
-		}
-		if (tileTextureMap.isDirty()) {
-			Log.info("Saving tile texture config");
-			tileTextureConfig.save(tileTextureMap);
-			tileTextureMap.setDirty(false);
-		}
 	}
 
 	@Override

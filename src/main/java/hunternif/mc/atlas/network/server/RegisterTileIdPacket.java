@@ -10,6 +10,7 @@ import java.io.IOException;
 import net.fabricmc.api.EnvType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.PacketByteBuf;
 
 
@@ -19,22 +20,22 @@ import net.minecraft.util.PacketByteBuf;
  * @author Hunternif
  */
 public class RegisterTileIdPacket extends AbstractServerMessage<RegisterTileIdPacket> {
-	private String name;
+	private Identifier name;
 	
 	public RegisterTileIdPacket() {}
 	
-	public RegisterTileIdPacket(String uniqueTileName) {
+	public RegisterTileIdPacket(Identifier uniqueTileName) {
 		this.name = uniqueTileName;
 	}
 	
 	@Override
 	protected void read(PacketByteBuf buffer) throws IOException {
-		name = buffer.readString(512);
+		name = new Identifier(buffer.readString(512));
 	}
 
 	@Override
 	protected void write(PacketByteBuf buffer) throws IOException {
-		buffer.writeString(name);
+		buffer.writeString(name.toString());
 	}
 
 	@Override

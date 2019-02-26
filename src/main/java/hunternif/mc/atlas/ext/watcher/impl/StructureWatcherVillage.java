@@ -17,6 +17,7 @@ import hunternif.mc.atlas.registry.MarkerType;
 import hunternif.mc.atlas.util.Log;
 import hunternif.mc.atlas.util.MathUtil;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.util.Identifier;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.WorldChunk;
 import net.minecraft.world.dimension.DimensionType;
@@ -51,9 +52,9 @@ public class StructureWatcherVillage implements IStructureWatcher {
 	private static final String HOUSE_SMALL = "ViSH"; // Slightly larger than huts, sometimes with a fenced balcony on the roof and a ladder.
 	private static final String CHURCH = "ViST"; // The church.
 
-	private static final Map<String, String> partToTileMap;
+	private static final Map<String, Identifier> partToTileMap;
 	static {
-		ImmutableMap.Builder<String, String> builder = new Builder<>();
+		ImmutableMap.Builder<String, Identifier> builder = new Builder<>();
 		builder.put(LIBRARY, ExtTileIdMap.TILE_VILLAGE_LIBRARY);
 		builder.put(SMITHY, ExtTileIdMap.TILE_VILLAGE_SMITHY);
 		builder.put(L_HOUSE, ExtTileIdMap.TILE_VILLAGE_L_HOUSE);
@@ -70,9 +71,9 @@ public class StructureWatcherVillage implements IStructureWatcher {
 		partToTileMap = builder.build();
 	}
 	/** Tiles with the higher priority override tiles with lower priority at the same chunk. */
-	private static final Map<String, Integer> tilePriority;
+	private static final Map<Identifier, Integer> tilePriority;
 	static {
-		ImmutableMap.Builder<String, Integer> builder = new Builder<>();
+		ImmutableMap.Builder<Identifier, Integer> builder = new Builder<>();
 		builder.put(ExtTileIdMap.TILE_VILLAGE_LIBRARY, 5);
 		builder.put(ExtTileIdMap.TILE_VILLAGE_SMITHY, 6);
 		builder.put(ExtTileIdMap.TILE_VILLAGE_L_HOUSE, 5);
@@ -195,7 +196,7 @@ public class StructureWatcherVillage implements IStructureWatcher {
 //				}
 //			} else {
 //			}
-			String tileName = partToTileMap.get(childID);
+			Identifier tileName = partToTileMap.get(childID);
 			if (tileName != null) {
 				Integer curTilePriority = tilePriority.get(tileName);
 				Integer prevTilePriority = tilePriority.get(tileAt(chunkX, chunkZ));
@@ -210,7 +211,7 @@ public class StructureWatcherVillage implements IStructureWatcher {
 		}
 	}
 
-	private static String tileAt(int chunkX, int chunkZ) {
+	private static Identifier tileAt(int chunkX, int chunkZ) {
 		int biomeID = AntiqueAtlasMod.extBiomeData.getData().getBiomeAt(DimensionType.OVERWORLD, chunkX, chunkZ);
 		return ExtTileIdMap.instance().getPseudoBiomeName(biomeID);
 	}

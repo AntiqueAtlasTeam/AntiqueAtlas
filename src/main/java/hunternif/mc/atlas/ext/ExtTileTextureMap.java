@@ -6,6 +6,7 @@ import hunternif.mc.atlas.util.Log;
 import hunternif.mc.atlas.util.SaveData;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.minecraft.util.Identifier;
 
 
 import java.util.HashMap;
@@ -24,9 +25,9 @@ public class ExtTileTextureMap extends SaveData {
 		return INSTANCE;
 	}
 	
-	final Map<String, TextureSet> textureMap = new HashMap<>();
+	final Map<Identifier, TextureSet> textureMap = new HashMap<>();
 	
-	public void setTexture(String tileName, TextureSet textureSet) {
+	public void setTexture(Identifier tileName, TextureSet textureSet) {
 		if (textureSet == null) {
 			Log.error("Texture set is null!");
 			return;
@@ -44,12 +45,12 @@ public class ExtTileTextureMap extends SaveData {
 	
 	/** If a texture set is not found, returns the default one from
 	 * {@link BiomeTextureMap}. */
-	public TextureSet getTexture(String tileName) {
+	public TextureSet getTexture(Identifier tileName) {
 		TextureSet textureSet = textureMap.get(tileName);
 		return textureSet == null ? BiomeTextureMap.defaultTexture : textureSet;
 	}
 	
-	public boolean isRegistered(String tileName) {
+	public boolean isRegistered(Identifier tileName) {
 		return textureMap.containsKey(tileName);
 	}
 }

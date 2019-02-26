@@ -9,6 +9,7 @@ import hunternif.mc.atlas.ext.watcher.StructureWatcher;
 import hunternif.mc.atlas.ext.watcher.WatcherPos;
 import hunternif.mc.atlas.util.MathUtil;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.util.Identifier;
 import net.minecraft.world.dimension.DimensionType;
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -104,7 +105,7 @@ public class StructureWatcherFortress implements IStructureWatcher {
 			MutableIntBoundingBox boundingBox = new MutableIntBoundingBox(child.getIntArray("BB"));
 			if (BRIDGE.equals(childID)) { // Straight open bridge segment. Is allowed to span several chunks.
 				if (boundingBox.getBlockCountX() > 16) {
-					String tileName = ExtTileIdMap.TILE_NETHER_BRIDGE_X;
+					Identifier tileName = ExtTileIdMap.TILE_NETHER_BRIDGE_X;
 
 					int chunkZ = MathUtil.getCenter(boundingBox).getZ() >> 4;
 					for (int x = boundingBox.minX; x < boundingBox.maxX; x += 16) {
@@ -114,7 +115,7 @@ public class StructureWatcherFortress implements IStructureWatcher {
 						}
 					}
 				} else {//if (boundingBox.getZSize() > 16) {
-					String tileName = ExtTileIdMap.TILE_NETHER_BRIDGE_Z;
+					Identifier tileName = ExtTileIdMap.TILE_NETHER_BRIDGE_Z;
 
 					int chunkX = MathUtil.getCenter(boundingBox).getX() >> 4;
 					for (int z = boundingBox.minZ; z < boundingBox.maxZ; z += 16) {
@@ -125,7 +126,7 @@ public class StructureWatcherFortress implements IStructureWatcher {
 					}
 				}
 			} else if (BRIDGE_END.equals(childID)) { // End of a straight open bridge segment
-				String tileName;
+				Identifier tileName;
 				int chunkX, chunkZ;
 				if (boundingBox.getBlockCountX() > boundingBox.getBlockCountZ()) {
 					tileName = ExtTileIdMap.TILE_NETHER_BRIDGE_END_X;
@@ -142,7 +143,7 @@ public class StructureWatcherFortress implements IStructureWatcher {
 			} else {
 				int chunkX = MathUtil.getCenter(boundingBox).getX() >> 4;
 				int chunkZ = MathUtil.getCenter(boundingBox).getZ() >> 4;
-				String tileName;
+				Identifier tileName;
 				if (BRIDGE_GATE.equals(childID)) {
 					tileName = ExtTileIdMap.TILE_NETHER_BRIDGE_GATE;
 					AtlasAPI.tiles.putCustomGlobalTile(world, tileName, chunkX, chunkZ);

@@ -12,6 +12,7 @@ import hunternif.mc.atlas.mixinhooks.ServerWorldLoadCallback;
 import hunternif.mc.atlas.network.PacketDispatcher;
 import net.fabricmc.api.ModInitializer;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.util.Identifier;
 import net.minecraft.world.World;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -32,6 +33,14 @@ public class AntiqueAtlasMod implements ModInitializer {
 
 	public static final ExtBiomeDataHandler extBiomeData = new ExtBiomeDataHandler();
 	public static final GlobalMarkersDataHandler globalMarkersData = new GlobalMarkersDataHandler();
+
+	public static Identifier id(String name) {
+		if (name.indexOf(':') > 0) {
+			return new Identifier(name);
+		} else {
+			return new Identifier("antiqueatlas", name);
+		}
+	}
 
 	// TODO FABRIC cleanup
 	private static final GlobalAtlasData clientAtlasData = new GlobalAtlasData("antiqueatlas:global_atlas_data");

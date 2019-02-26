@@ -40,7 +40,7 @@ public class TileApiImpl implements TileAPI {
 	 * is put into this map to be later registered when the server sends the
 	 * packet with the pseudo-biome ID for the corresponding unique name.
 	 */
-	private final Map<String, TileData> pendingTiles = new HashMap<>();
+	private final Map<Identifier, TileData> pendingTiles = new HashMap<>();
 	private static class TileData {
 		final World world;
 		final int atlasID, x, z;
@@ -58,7 +58,7 @@ public class TileApiImpl implements TileAPI {
 	
 	
 	@Override
-	public TextureSet registerTextureSet(String name, Identifier... textures) {
+	public TextureSet registerTextureSet(Identifier name, Identifier... textures) {
 		TextureSet textureSet = new TextureSet(name, textures);
 		TextureSetMap.instance().register(textureSet);
 		return textureSet;
@@ -68,7 +68,7 @@ public class TileApiImpl implements TileAPI {
 	// Biome textures ==========================================================
 
 	@Override
-	public void setBiomeTexture(Biome biome, String textureSetName, Identifier... textures) {
+	public void setBiomeTexture(Biome biome, Identifier textureSetName, Identifier... textures) {
 		TextureSet set = new TextureSet(textureSetName, textures);
 		TextureSetMap.instance().register(set);
 		BiomeTextureMap.instance().setTexture(biome, set);
@@ -83,14 +83,14 @@ public class TileApiImpl implements TileAPI {
 	// Custom tile textures ====================================================
 	
 	@Override
-	public void setCustomTileTexture(String uniqueTileName, Identifier ... textures) {
+	public void setCustomTileTexture(Identifier uniqueTileName, Identifier ... textures) {
 		TextureSet set = new TextureSet(uniqueTileName, textures);
 		TextureSetMap.instance().register(set);
 		setCustomTileTexture(uniqueTileName, set);
 	}
 	
 	@Override
-	public void setCustomTileTexture(String uniqueTileName, TextureSet textureSet) {
+	public void setCustomTileTexture(Identifier uniqueTileName, TextureSet textureSet) {
 		ExtTileTextureMap.instance().setTexture(uniqueTileName, textureSet);
 	}
 	
@@ -120,7 +120,7 @@ public class TileApiImpl implements TileAPI {
 	// Custom tiles ============================================================
 	
 	@Override
-	public void putCustomTile(World world, int atlasID, String tileName, int chunkX, int chunkZ) {
+	public void putCustomTile(World world, int atlasID, Identifier tileName, int chunkX, int chunkZ) {
 		if (tileName == null) {
 			Log.error("Attempted to put custom tile with null name");
 			return;
@@ -146,7 +146,7 @@ public class TileApiImpl implements TileAPI {
 	}
 	
 	@Override
-	public void putCustomGlobalTile(World world, String tileName, int chunkX, int chunkZ) {
+	public void putCustomGlobalTile(World world, Identifier tileName, int chunkX, int chunkZ) {
 		if (tileName == null) {
 			Log.error("Attempted to put custom global tile with null name");
 			return;
@@ -171,8 +171,8 @@ public class TileApiImpl implements TileAPI {
 		PacketDispatcher.sendToAll(((ServerWorld) world).getServer(), packet);
 	}
 	
-	public void onTileIdRegistered(Map<String, Integer> nameToIdMap) {
-		for (Entry<String, Integer> entry : nameToIdMap.entrySet()) {
+	public void onTileIdRegistered(Map<Identifier, Integer> nameToIdMap) {
+		for (Entry<Identifier, Integer> entry : nameToIdMap.entrySet()) {
 			// Put pending tiles:
 			TileData tile = pendingTiles.remove(entry.getKey());
 			if (tile != null) {

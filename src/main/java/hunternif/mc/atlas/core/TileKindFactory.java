@@ -3,6 +3,7 @@ package hunternif.mc.atlas.core;
 import hunternif.mc.atlas.ext.ExtTileIdMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.biome.Biome;
 
@@ -35,7 +36,7 @@ public final class TileKindFactory {
 		return biomeKinds.computeIfAbsent(biome, BiomeKind::new);
 	}
 
-	public static TileKind get(String extTile) {
+	public static TileKind get(Identifier extTile) {
 		int id = ExtTileIdMap.instance().getOrCreatePseudoBiomeID(extTile);
 		return extKinds.computeIfAbsent(id, ExtKind::new);
 	}
@@ -60,7 +61,7 @@ public final class TileKindFactory {
 
 		@Nullable
 		@Override
-		public String getExtTile() {
+		public Identifier getExtTile() {
 			return ExtTileIdMap.instance().getPseudoBiomeName(id);
 		}
 
@@ -90,7 +91,7 @@ public final class TileKindFactory {
 
 		@Nullable
 		@Override
-		public String getExtTile() {
+		public Identifier getExtTile() {
 			return null;
 		}
 

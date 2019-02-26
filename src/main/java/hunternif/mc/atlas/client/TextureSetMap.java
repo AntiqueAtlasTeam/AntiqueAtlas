@@ -23,7 +23,7 @@ public class TextureSetMap extends SaveData {
 		return INSTANCE;
 	}
 	
-	private final Map<String, TextureSet> map = new HashMap<>();
+	private final Map<Identifier, TextureSet> map = new HashMap<>();
 	
 	public void register(TextureSet set) {
 		TextureSet old = map.put(set.name, set);
@@ -33,20 +33,13 @@ public class TextureSetMap extends SaveData {
 			markDirty();
 		}
 	}
-	
-	/** Legacy support. Creates a new texture set with a UUID-based name. */
-	public TextureSet createAndRegister(Identifier... textures) {
-		TextureSet set = new TextureSet(UUID.randomUUID().toString(), textures);
-		register(set);
-		return set;
-	}
-	
-	public TextureSet getByName(String name) {
+
+	public TextureSet getByName(Identifier name) {
 		return map.get(name);
 	}
 	
 	/** If the specified name is not registered, returns a "TEST" texture set. */
-	public TextureSet getByNameNonNull(String name) {
+	public TextureSet getByNameNonNull(Identifier name) {
 		TextureSet set = getByName(name);
 		return set == null ? TextureSet.TEST : set;
 	}

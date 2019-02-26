@@ -1,5 +1,6 @@
 package hunternif.mc.atlas.core;
 
+import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.biome.Biome;
 
@@ -10,5 +11,5 @@ public interface TileKind {
 	@Nullable
 	Biome getBiome();
 	@Nullable
-	String getExtTile();
+	Identifier getExtTile();
 }

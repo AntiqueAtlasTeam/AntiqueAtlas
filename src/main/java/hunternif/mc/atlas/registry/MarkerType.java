@@ -4,6 +4,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
+import hunternif.mc.atlas.AntiqueAtlasMod;
 import hunternif.mc.atlas.util.BitMatrix;
 import hunternif.mc.atlas.util.Log;
 import net.minecraft.client.texture.NativeImage;
@@ -349,7 +350,7 @@ public class MarkerType {
 					int i = 0;
 					for (JsonElement elem : object.get(ICONS).getAsJsonArray()) {
 						if (elem.isJsonPrimitive()) {
-							list.add(new Identifier(elem.getAsString()));
+							list.add(AntiqueAtlasMod.id(elem.getAsString()));
 						} else {
 							Log.warn("Loading marker %s from JSON: Texture item %d isn't a primitive", typeName, i);
 						}

@@ -34,7 +34,6 @@ import hunternif.mc.atlas.util.Log;
 @Environment(EnvType.CLIENT)
 public class MarkerTextureConfig implements SimpleResourceReloadListener<Map<Identifier, MarkerType>> {
 	private static final int VERSION = 1;
-	
 	private static final JsonParser parser = new JsonParser();
 
 	@Override

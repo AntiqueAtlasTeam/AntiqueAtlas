@@ -26,7 +26,7 @@ public interface TileAPI {
 	 * @return	the registered texture set
 	 */
 	@Environment(EnvType.CLIENT)
-	TextureSet registerTextureSet(String name, Identifier ... textures);
+	TextureSet registerTextureSet(Identifier name, Identifier ... textures);
 	
 	
 	// Biome textures ==========================================================
@@ -36,7 +36,7 @@ public interface TileAPI {
 	 * See {@link #registerTextureSet}
 	 */
 	@Environment(EnvType.CLIENT)
-	void setBiomeTexture(Biome biome, String textureSetName, Identifier ... textures);
+	void setBiomeTexture(Biome biome, Identifier textureSetName, Identifier ... textures);
 
 	/**
 	 * Assign one or more texture to biome ID, using an existing texture set.
@@ -54,11 +54,11 @@ public interface TileAPI {
 	 * See {@link #registerTextureSet}
 	 */
 	@Environment(EnvType.CLIENT)
-	void setCustomTileTexture(String uniqueTileName, Identifier ... textures);
+	void setCustomTileTexture(Identifier uniqueTileName, Identifier ... textures);
 	
 	/** Assign a texture set to a unique tile name. */
 	@Environment(EnvType.CLIENT)
-	void setCustomTileTexture(String uniqueTileName, TextureSet textureSet);
+	void setCustomTileTexture(Identifier uniqueTileName, TextureSet textureSet);
 	
 	
 	// Biome tiles =============================================================
@@ -119,7 +119,7 @@ public interface TileAPI {
 	 * @param chunkX	x chunk coordinate. (block coordinate >> 4)
 	 * @param chunkZ	z chunk coordinate. (block coordinate >> 4)
 	 */
-	void putCustomTile(World world, int atlasID, String tileName, int chunkX, int chunkZ);
+	void putCustomTile(World world, int atlasID, Identifier tileName, int chunkX, int chunkZ);
 	
 	/**
 	 * Put the specified custom tile at the specified chunk coordinates
@@ -135,7 +135,7 @@ public interface TileAPI {
 	 * @param chunkX	x chunk coordinate. (block coordinate >> 4)
 	 * @param chunkZ	z chunk coordinate. (block coordinate >> 4)
 	 */
-	void putCustomGlobalTile(World world, String tileName, int chunkX, int chunkZ);
+	void putCustomGlobalTile(World world, Identifier tileName, int chunkX, int chunkZ);
 	
 	/**
 	 * Delete the global tile at the specified chunk coordinates if a tile has

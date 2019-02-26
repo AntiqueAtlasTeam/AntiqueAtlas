@@ -2,7 +2,9 @@ package hunternif.mc.atlas.ext;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import hunternif.mc.atlas.AntiqueAtlasMod;
 import hunternif.mc.atlas.util.AbstractJSONConfig;
+import net.minecraft.util.Identifier;
 
 import java.io.File;
 import java.util.Map.Entry;
@@ -32,17 +34,17 @@ public class ExtTileConfig extends AbstractJSONConfig<ExtTileIdMap> {
 		for (Entry<String, JsonElement> entry : json.entrySet()) {
 			String name = entry.getKey();
 			int id = entry.getValue().getAsInt();
-			data.setPseudoBiomeID(name, id);
+			data.setPseudoBiomeID(AntiqueAtlasMod.id(name), id);
 		}
 	}
 	
 	@Override
 	protected void saveData(JsonObject json, ExtTileIdMap data) {
 		// Sort keys alphabetically
-		Queue<String> queue = new PriorityQueue<>(data.getMap().keySet());
+		Queue<Identifier> queue = new PriorityQueue<>(data.getMap().keySet());
 		while (!queue.isEmpty()) {
-			String tileName = queue.poll();
-			json.addProperty(tileName, data.getMap().get(tileName).intValue());
+			Identifier tileName = queue.poll();
+			json.addProperty(tileName.toString(), data.getMap().get(tileName));
 		}
 	}
 }

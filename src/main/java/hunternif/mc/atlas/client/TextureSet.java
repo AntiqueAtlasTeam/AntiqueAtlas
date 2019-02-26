@@ -4,6 +4,7 @@ import net.minecraft.util.Identifier;
 
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Locale;
 import java.util.Set;
 
 
@@ -12,7 +13,7 @@ import static hunternif.mc.atlas.client.Textures.*;
 public class TextureSet implements Comparable<TextureSet> {
 	public static final TextureSet
 	// This first texture set is meant to be an example for the cofig
-	TEST        = new TextureSet(false, "TEST", TILE_TEST, TILE_TEST),
+	TEST        = new TextureSet(false, new Identifier("test"), TILE_TEST, TILE_TEST),
 	
 	// Plains & wasteland stuff:
 	ICE         = standard("ICE", TILE_ICE_NOBORDER),
@@ -200,7 +201,7 @@ public class TextureSet implements Comparable<TextureSet> {
 	NETHER_HALL         = standard("NETHER_HALL", TILE_NETHER_HALL),
 	NETHER_FORT_STAIRS  = standard("NETHER_FORT_STAIRS", TILE_NETHER_FORT_STAIRS),
 	NETHER_THRONE       = standard("NETHER_THRONE", TILE_NETHER_THRONE);
-	
+
 	// Sophisticated stitching stuff:
 	static {
 		stitchMutually(PLAINS, SUNFLOWERS);
@@ -214,10 +215,10 @@ public class TextureSet implements Comparable<TextureSet> {
 		stitchMutually(PLATEAU_MESA, PLATEAU_MESA_TREES, PLATEAU_SAVANNA, PLATEAU_SAVANNA_M);
 		stitchMutually(PLATEAU_MESA_LOW, PLATEAU_MESA_TREES_LOW);
 		stitchMutually(END_ISLAND, END_ISLAND_PLANTS);
-		
+
 		// Village stuff:
 //		stitchMutually(VILLAGE_PATH_X, VILLAGE_PATH_Z);
-		
+
 		// Nether Fortress stuff:
 		LAVA.stitchTo(NETHER_BRIDGE, NETHER_BRIDGE_GATE, NETHER_TOWER, NETHER_WALL,
 				NETHER_HALL, NETHER_FORT_STAIRS,
@@ -234,7 +235,7 @@ public class TextureSet implements Comparable<TextureSet> {
 	}
 	
 	/** Name of the texture pack to write in the config file. */
-	public final String name; 
+	public final Identifier name;
 	
 	/** The actual textures in this set. */
 	public final Identifier[] textures;
@@ -253,16 +254,16 @@ public class TextureSet implements Comparable<TextureSet> {
 	private boolean anisotropicStitching = false;
 	
 	private static TextureSet standard(String name, Identifier ... textures) {
-		return new TextureSet(true, name, textures);
+		return new TextureSet(true, new Identifier("antiqueatlas", name.toLowerCase(Locale.ROOT)), textures);
 	}
 	
-	private TextureSet(boolean isStandard, String name, Identifier ... textures) {
+	private TextureSet(boolean isStandard, Identifier name, Identifier ... textures) {
 		this.isStandard = isStandard;
 		this.name = name;
 		this.textures = textures;
 	}
 	/** Name has to be unique, it is used for equals() tests. */
-	public TextureSet(String name, Identifier ... textures) {
+	public TextureSet(Identifier name, Identifier ... textures) {
 		this(false, name, textures);
 	}
 	
@@ -326,7 +327,7 @@ public class TextureSet implements Comparable<TextureSet> {
 	private static class TextureSetShore extends TextureSet {
 		private final TextureSet water;
 		TextureSetShore(String name, TextureSet water, Identifier... textures) {
-			super(true, name, textures);
+			super(true, new Identifier("antiqueatlas", name.toLowerCase(Locale.ROOT)), textures);
 			this.water = water;
 		}
 		@Override
