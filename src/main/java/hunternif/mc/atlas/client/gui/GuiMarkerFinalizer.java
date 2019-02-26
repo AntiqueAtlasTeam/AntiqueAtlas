@@ -94,10 +94,8 @@ public class GuiMarkerFinalizer extends GuiComponent {
 			}
 		});
 		textField = new TextFieldWidget(MinecraftClient.getInstance().textRenderer, (this.width - 200)/2, this.height/2 - 81, 200, 20);
-		textField.setHasFocus(true);
 		textField.setIsEditable(true);
 		textField.setText("");
-		this.listeners.add(textField);
 
 		scroller.removeAllContent();
 		int typeCount = 0;
@@ -130,6 +128,26 @@ public class GuiMarkerFinalizer extends GuiComponent {
 			scroller.addContent(markerGui).setRelativeX(contentX);
 			contentX += GuiMarkerInList.FRAME_SIZE + TYPE_SPACING;
 		}
+	}
+
+	@Override
+	public boolean mouseClicked(double mouseX, double mouseY, int button) {
+		return textField.mouseClicked(mouseX, mouseY, button) || super.mouseClicked(mouseX, mouseY, button);
+	}
+
+	@Override
+	public boolean mouseReleased(double mouseX, double mouseY, int button) {
+		return textField.mouseReleased(mouseX, mouseY, button) || super.mouseReleased(mouseX, mouseY, button);
+	}
+
+	@Override
+	public boolean keyPressed(int aa, int bb, int cc) {
+		return textField.keyPressed(aa, bb, cc) || super.keyPressed(aa, bb, cc);
+	}
+
+	@Override
+	public boolean keyReleased(int aa, int bb, int cc) {
+		return textField.keyReleased(aa, bb, cc) || super.keyReleased(aa, bb, cc);
 	}
 
 	@Override

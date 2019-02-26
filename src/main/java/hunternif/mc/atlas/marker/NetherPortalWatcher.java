@@ -4,6 +4,7 @@ import hunternif.mc.atlas.AntiqueAtlasMod;
 import hunternif.mc.atlas.RegistrarAntiqueAtlas;
 import hunternif.mc.atlas.SettingsConfig;
 import hunternif.mc.atlas.api.AtlasAPI;
+import hunternif.mc.atlas.item.ItemAtlas;
 import hunternif.mc.atlas.mixinhooks.EntityHooksAA;
 import hunternif.mc.atlas.registry.MarkerRegistry;
 import hunternif.mc.atlas.registry.MarkerType;
@@ -102,9 +103,9 @@ public class NetherPortalWatcher {
 		}
 
 		for (ItemStack stack : player.inventory.main) {
-			if (stack == null || stack.getItem() != RegistrarAntiqueAtlas.ATLAS) continue;
+			if (stack == null || !(stack.getItem() instanceof ItemAtlas)) continue;
 
-			addPortalMarkerIfNone(player, world, dimension, stack.getDamage());
+			addPortalMarkerIfNone(player, world, dimension, ((ItemAtlas) stack.getItem()).getAtlasID(stack));
 		}
 	}
 

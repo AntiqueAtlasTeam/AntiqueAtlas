@@ -242,8 +242,11 @@ public class GuiComponent extends Screen {
 	}
 
 	boolean iterateMouseInput(UiCall callMethod) {
-		if (!iterateInput(callMethod)) {
-			isMouseOver = isMouseInRegion(getGuiX(), getGuiY(), getWidth(), getHeight());
+		isMouseOver = isMouseInRegion(getGuiX(), getGuiY(), getWidth(), getHeight());
+		if (!iterateInput((c) -> {
+			c.isMouseOver = c.isMouseInRegion(c.getGuiX(), c.getGuiY(), c.getWidth(), c.getHeight());
+			return callMethod.call(c);
+		})) {
 			return false;
 		} else {
 			isMouseOver = false;

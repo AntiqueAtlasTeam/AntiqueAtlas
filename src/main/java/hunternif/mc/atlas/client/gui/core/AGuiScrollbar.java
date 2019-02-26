@@ -126,11 +126,15 @@ public abstract class AGuiScrollbar extends GuiComponent {
 	@Override
 	public boolean mouseClicked(double mouseX, double mouseY, int button) {
 		if (button == 0) {
-			if (!wasClicking && isMouseOver) {
-				isDragged = true;
+			if (isMouseOver) {
+				if (!wasClicking) {
+					isDragged = true;
+				}
+				wasClicking = true;
+				return true;
 			}
-			wasClicking = true;
 		}
+
 		return super.mouseClicked(mouseX, mouseY, button);
 	}
 
@@ -138,8 +142,11 @@ public abstract class AGuiScrollbar extends GuiComponent {
 	@Override
 	public boolean mouseReleased(double mouseX, double mouseY, int button) {
 		if (button == 0) {
-			isDragged = false;
-			wasClicking = false;
+			if (wasClicking) {
+				isDragged = false;
+				wasClicking = false;
+				return true;
+			}
 		}
 		return super.mouseReleased(mouseX, mouseY, button);
 	}

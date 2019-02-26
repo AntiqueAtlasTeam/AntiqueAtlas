@@ -13,7 +13,9 @@ public class GlobalAtlasData extends PersistentState {
 	}
 
 	public int getNextAtlasId() {
-		return nextId++;
+		int id = nextId++;
+		markDirty();
+		return id;
 	}
 
 	@Override

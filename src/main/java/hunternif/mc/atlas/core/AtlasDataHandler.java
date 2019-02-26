@@ -1,6 +1,7 @@
 package hunternif.mc.atlas.core;
 
 import hunternif.mc.atlas.RegistrarAntiqueAtlas;
+import hunternif.mc.atlas.item.ItemAtlas;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.world.PersistentStateManager;
@@ -21,8 +22,8 @@ public class AtlasDataHandler {
 
 	/** Loads data for the given atlas ID or creates a new one. */
 	public AtlasData getAtlasData(ItemStack stack, World world) {
-		if (stack.getItem() == RegistrarAntiqueAtlas.ATLAS) {
-			return getAtlasData(stack.getDamage(), world);
+		if (stack.getItem() instanceof ItemAtlas) {
+			return getAtlasData(((ItemAtlas) stack.getItem()).getAtlasID(stack), world);
 		} else {
 			return null;
 		}

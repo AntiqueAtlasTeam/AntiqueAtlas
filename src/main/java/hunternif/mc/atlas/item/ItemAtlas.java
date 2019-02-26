@@ -30,7 +30,7 @@ public class ItemAtlas extends Item {
 
 	/* @Override
 	public String i(ItemStack stack) {
-		return super.XX_1_13_i_XX(stack) + " #" + stack.getDamage();
+		return super.XX_1_13_i_XX(stack) + " #" + getAtlasID(stack);
 	} */
 
 	@Override
@@ -50,16 +50,18 @@ public class ItemAtlas extends Item {
 		AtlasData data = AntiqueAtlasMod.atlasData.getAtlasData(stack, world);
 		if (data == null || !(entity instanceof PlayerEntity)) return;
 
+		int atlasId = ((ItemAtlas) stack.getItem()).getAtlasID(stack);
+
 		// On the first run send the map from the server to the client:
 		PlayerEntity player = (PlayerEntity) entity;
 		if (!world.isClient && !data.isSyncedOnPlayer(player) && !data.isEmpty()) {
-			data.syncOnPlayer(stack.getDamage(), player);
+			data.syncOnPlayer(atlasId, player);
 		}
 
 		// Same thing with the local markers:
 		MarkersData markers = AntiqueAtlasMod.markersData.getMarkersData(stack, world);
 		if (!world.isClient && !markers.isSyncedOnPlayer(player) && !markers.isEmpty()) {
-			markers.syncOnPlayer(stack.getDamage(), player);
+			markers.syncOnPlayer(atlasId, player);
 		}
 
 		// Updating map around player
@@ -67,7 +69,7 @@ public class ItemAtlas extends Item {
 		
 		if (!world.isClient) {
 			if (newTiles.size() > 0) {
-				DimensionUpdatePacket packet = new DimensionUpdatePacket(stack.getDamage(), player.dimension);
+				DimensionUpdatePacket packet = new DimensionUpdatePacket(atlasId, player.dimension);
 				for (TileInfo t : newTiles) {
 					packet.addTile(t.x, t.z, t.biome);
 				}

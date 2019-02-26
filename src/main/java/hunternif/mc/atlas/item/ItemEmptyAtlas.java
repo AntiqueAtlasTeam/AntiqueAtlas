@@ -46,8 +46,7 @@ public class ItemEmptyAtlas extends Item {
 			return new TypedActionResult<>(ActionResult.SUCCESS, atlasStack);
 		} else {
 			if (!player.inventory.insertStack(atlasStack.copy())) {
-				// TODO FABRIC
-				// ForgeHooks.onPlayerTossEvent(player, atlasStack, false);
+				player.dropItem(atlasStack, true);
 			}
 
 			return new TypedActionResult<>(ActionResult.SUCCESS, stack);

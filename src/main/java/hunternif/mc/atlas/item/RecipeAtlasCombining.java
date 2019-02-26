@@ -56,11 +56,11 @@ public class RecipeAtlasCombining extends RecipeBase<CraftingInventory> {
 		for (int i = 0; i < inv.getInvSize(); ++i) {
 			ItemStack stack = inv.getInvStack(i);
 			if (!stack.isEmpty()) {
-				if (stack.getItem() == RegistrarAntiqueAtlas.ATLAS) {
+				if (stack.getItem() instanceof ItemAtlas) {
 					if (firstAtlas.isEmpty()) {
 						firstAtlas = stack;
 					} else {
-						atlasIds.add(stack.getDamage());
+						atlasIds.add(((ItemAtlas) stack.getItem()).getAtlasID(stack));
 					}
 				}
 			}

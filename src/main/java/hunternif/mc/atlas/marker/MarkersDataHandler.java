@@ -4,6 +4,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import hunternif.mc.atlas.RegistrarAntiqueAtlas;
+import hunternif.mc.atlas.item.ItemAtlas;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.world.PersistentStateManager;
@@ -22,8 +23,8 @@ public class MarkersDataHandler {
 	
 	/** Loads data for the given atlas or creates a new one. */
 	public MarkersData getMarkersData(ItemStack stack, World world) {
-		if (stack.getItem() == RegistrarAntiqueAtlas.ATLAS) {
-			return getMarkersData(stack.getDamage(), world);
+		if (stack.getItem() instanceof ItemAtlas) {
+			return getMarkersData(((ItemAtlas) stack.getItem()).getAtlasID(stack), world);
 		} else {
 			return null;
 		}

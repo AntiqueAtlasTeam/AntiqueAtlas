@@ -11,6 +11,7 @@ import hunternif.mc.atlas.client.gui.core.GuiStates.SimpleState;
 import hunternif.mc.atlas.core.DimensionData;
 import hunternif.mc.atlas.event.MarkerClickedCallback;
 import hunternif.mc.atlas.event.MarkerHoveredCallback;
+import hunternif.mc.atlas.item.ItemAtlas;
 import hunternif.mc.atlas.marker.DimensionMarkersData;
 import hunternif.mc.atlas.marker.Marker;
 import hunternif.mc.atlas.marker.MarkersData;
@@ -385,6 +386,10 @@ public class GuiAtlas extends GuiComponent {
 		boolean result = super.mouseClicked(mouseX, mouseY, mouseState);
 		if (state.is(EXPORTING_IMAGE)) {
 			return result;
+		}
+
+		if (result) {
+			return true;
 		}
 
 		// If clicked on the map, start dragging
@@ -984,6 +989,6 @@ public class GuiAtlas extends GuiComponent {
 
 	/** Returns atlas id based on "itemNeeded" option */
 	private int getAtlasID() {
-	    return SettingsConfig.gameplay.itemNeeded ? stack.getDamage() : player.getUuid().hashCode();
+	    return SettingsConfig.gameplay.itemNeeded ? ((ItemAtlas) stack.getItem()).getAtlasID(stack) : player.getUuid().hashCode();
     }
 }
