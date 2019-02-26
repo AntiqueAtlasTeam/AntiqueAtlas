@@ -13,6 +13,7 @@ import hunternif.mc.atlas.util.Log;
 import net.fabricmc.api.EnvType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.PacketByteBuf;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.dimension.DimensionType;
@@ -81,6 +82,6 @@ public class AddMarkerPacket extends AbstractServerMessage<AddMarkerPacket> {
 		// them to other players. Including the original sender, because he
 		// waits on the server to verify his marker.
 		MarkersPacket packetForClients = new MarkersPacket(atlasID, dimension, marker);
-		PacketDispatcher.sendToAll(packetForClients);
+		PacketDispatcher.sendToAll(((ServerWorld) player.getEntityWorld()).getServer(), packetForClients);
 	}
 }

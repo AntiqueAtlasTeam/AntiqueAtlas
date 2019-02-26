@@ -10,6 +10,7 @@ import hunternif.mc.atlas.registry.MarkerType;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.Identifier;
 import net.minecraft.world.World;
 import net.minecraft.world.dimension.DimensionType;
@@ -87,13 +88,13 @@ public class NetherPortalWatcher {
 	/** Put the Portal marker at the player's current coordinates into all
 	 * atlases that he is carrying, if the same marker is not already there. */
 	private void addPortalMarkerIfNone(PlayerEntity player, DimensionType dimension) {
-		if(!SettingsConfig.gameplay.autoNetherPortalMarkers) {
+		if (!SettingsConfig.gameplay.autoNetherPortalMarkers || player.getEntityWorld().isClient) {
 			return;
 		}
 
 		// Due to switching dimensions this player entity's worldObj is lagging.
 		// We need the very specific dimension each time.
-		World world = AntiqueAtlasMod.proxy.getServer().getWorld(dimension);
+		World world = ((ServerWorld) player.getEntityWorld()).getServer().getWorld(dimension);
 
 		if (!SettingsConfig.gameplay.itemNeeded) {
 			addPortalMarkerIfNone(player, world, dimension, player.getUuid().hashCode());

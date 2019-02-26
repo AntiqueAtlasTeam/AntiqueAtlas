@@ -15,6 +15,7 @@ import hunternif.mc.atlas.util.Log;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.Identifier;
 import net.minecraft.world.World;
 
@@ -45,11 +46,11 @@ public class MarkerApiImpl implements MarkerAPI {
 			if (atlasID == GLOBAL) {
 				MarkersData data = AntiqueAtlasMod.globalMarkersData.getData();
 				marker = data.createAndSaveMarker(markerType, label, world.dimension.getType(), x, z, visibleAhead);
-				PacketDispatcher.sendToAll(new MarkersPacket(world.dimension.getType(), marker));
+				PacketDispatcher.sendToAll(((ServerWorld) world).getServer(), new MarkersPacket(world.dimension.getType(), marker));
 			} else {
 				MarkersData data = AntiqueAtlasMod.markersData.getMarkersData(atlasID, world);
 				marker = data.createAndSaveMarker(markerType, label, world.dimension.getType(), x, z, visibleAhead);
-				PacketDispatcher.sendToAll(new MarkersPacket(atlasID, world.dimension.getType(), marker));
+				PacketDispatcher.sendToAll(((ServerWorld) world).getServer(), new MarkersPacket(atlasID, world.dimension.getType(), marker));
 			}
 		}
 		return marker;
@@ -78,7 +79,7 @@ public class MarkerApiImpl implements MarkerAPI {
 					AntiqueAtlasMod.globalMarkersData.getData() :
 					AntiqueAtlasMod.markersData.getMarkersData(atlasID, world);
 			data.removeMarker(markerID);
-			PacketDispatcher.sendToAll(packet);
+			PacketDispatcher.sendToAll(((ServerWorld) world).getServer(), packet);
 		}
 	}
 	

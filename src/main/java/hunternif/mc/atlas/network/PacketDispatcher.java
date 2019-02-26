@@ -18,11 +18,13 @@ import net.fabricmc.fabric.api.network.*;
 import net.fabricmc.fabric.api.server.PlayerStream;
 import net.fabricmc.fabric.impl.network.PacketRegistryImpl;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.PacketByteBuf;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.World;
 import net.minecraft.world.dimension.DimensionType;
 
 import java.io.IOException;
@@ -108,8 +110,8 @@ public class PacketDispatcher {
 	/**
 	 * Send this message to everyone.
 	 */
-	public static void sendToAll(AbstractMessage<?> message) {
-		PlayerStream.all(AntiqueAtlasMod.proxy.getServer()).forEach(p -> ServerSidePacketRegistry.INSTANCE.sendToPlayer(p,
+	public static void sendToAll(MinecraftServer server, AbstractMessage<?> message) {
+		PlayerStream.all(server).forEach(p -> ServerSidePacketRegistry.INSTANCE.sendToPlayer(p,
 				packets.inverse().get(message.getClass()),
 				toByteBuf(message)
 		));
@@ -128,9 +130,9 @@ public class PacketDispatcher {
 	/**
 	 * Sends a message to everyone within a certain range of the coordinates in the same dimension.
 	 */
-	private static void sendToAllAround(AbstractMessage<?> message, DimensionType dimension, double x, double y, double z, double range) {
+	private static void sendToAllAround(AbstractMessage<?> message, World world, double x, double y, double z, double range) {
 		PlayerStream.around(
-				AntiqueAtlasMod.proxy.getServer().getWorld(dimension),
+				world,
 				new Vec3d(x, y, z),
 				range
 		).forEach(p -> ServerSidePacketRegistry.INSTANCE.sendToPlayer(p,
@@ -143,14 +145,14 @@ public class PacketDispatcher {
 	 * Sends a message to everyone within a certain range of the player provided.
 	 */
 	public static void sendToAllAround(AbstractMessage<?> message, PlayerEntity player, double range) {
-		PacketDispatcher.sendToAllAround(message, player.getEntityWorld().getDimension().getType(), player.x, player.y, player.z, range);
+		PacketDispatcher.sendToAllAround(message, player.getEntityWorld(), player.x, player.y, player.z, range);
 	}
 
 	/**
 	 * Send this message to everyone within the supplied dimension.
 	 */
-	public static void sendToDimension(AbstractMessage<?> message, DimensionType type) {
-		PlayerStream.world(AntiqueAtlasMod.proxy.getServer().getWorld(type)).forEach(p -> ServerSidePacketRegistry.INSTANCE.sendToPlayer(p,
+	public static void sendToDimension(AbstractMessage<?> message, World world) {
+		PlayerStream.world(world).forEach(p -> ServerSidePacketRegistry.INSTANCE.sendToPlayer(p,
 				packets.inverse().get(message.getClass()),
 				toByteBuf(message)
 		));

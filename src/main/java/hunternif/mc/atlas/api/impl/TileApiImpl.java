@@ -11,6 +11,7 @@ import hunternif.mc.atlas.ext.TileIdRegisteredCallback;
 import net.minecraft.entity.player.PlayerEntity;
 
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.Identifier;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
@@ -138,7 +139,7 @@ public class TileApiImpl implements TileAPI {
 				biomeID = ExtTileIdMap.instance().getOrCreatePseudoBiomeID(tileName);
 				TileNameIDPacket packet = new TileNameIDPacket();
 				packet.put(tileName, biomeID);
-				PacketDispatcher.sendToAll(packet);
+				PacketDispatcher.sendToAll(((ServerWorld) world).getServer(), packet);
 			}
 			putTile(world, atlasID, TileKindFactory.get(biomeID), chunkX, chunkZ);
 		}
@@ -162,12 +163,12 @@ public class TileApiImpl implements TileAPI {
 		if (!isIdRegistered) {
 			TileNameIDPacket packet = new TileNameIDPacket();
 			packet.put(tileName, biomeID);
-			PacketDispatcher.sendToAll(packet);
+			PacketDispatcher.sendToAll(((ServerWorld) world).getServer(), packet);
 		}
 		// Send tile packet:
 		TilesPacket packet = new TilesPacket(world.dimension.getType());
 		packet.addTile(chunkX, chunkZ, biomeID);
-		PacketDispatcher.sendToAll(packet);
+		PacketDispatcher.sendToAll(((ServerWorld) world).getServer(), packet);
 	}
 	
 	public void onTileIdRegistered(Map<String, Integer> nameToIdMap) {
@@ -191,7 +192,7 @@ public class TileApiImpl implements TileAPI {
 		DimensionType dimension = world.dimension.getType();
 		if (data.getBiomeAt(dimension, chunkX, chunkZ) != -1) {
 			data.removeBiomeAt(dimension, chunkX, chunkZ);
-			PacketDispatcher.sendToAll(new DeleteCustomGlobalTilePacket(dimension, chunkX, chunkZ));
+			PacketDispatcher.sendToAll(((ServerWorld) world).getServer(), new DeleteCustomGlobalTilePacket(dimension, chunkX, chunkZ));
 		}
 	}
 }

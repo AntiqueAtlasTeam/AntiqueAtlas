@@ -9,6 +9,7 @@ import java.io.IOException;
 
 import net.fabricmc.api.EnvType;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.PacketByteBuf;
 
 
@@ -43,7 +44,7 @@ public class RegisterTileIdPacket extends AbstractServerMessage<RegisterTileIdPa
 		// Send it to all clients:
 		TileNameIDPacket packet = new TileNameIDPacket();
 		packet.put(name, biomeID);
-		PacketDispatcher.sendToAll(packet);
+		PacketDispatcher.sendToAll(((ServerWorld) player.getEntityWorld()).getServer(), packet);
 	}
 	
 }

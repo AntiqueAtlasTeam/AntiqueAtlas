@@ -26,10 +26,6 @@ public class CommonProxy {
 	private static ExtTileIdMap extTileIdMap;
 	private static ExtTileConfig extTileConfig;
 
-	public MinecraftServer getServer() {
-		return FabricLoader.INSTANCE.getEnvironmentHandler().getServerInstance();
-	}
-
 	public void init() {
 		configDir = new File(net.fabricmc.loader.api.FabricLoader.getInstance().getConfigDirectory(), "antiqueatlas");
 		configDir.mkdir();

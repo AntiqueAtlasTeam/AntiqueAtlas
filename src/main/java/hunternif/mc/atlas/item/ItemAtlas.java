@@ -5,6 +5,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
@@ -70,7 +71,7 @@ public class ItemAtlas extends Item {
 				for (TileInfo t : newTiles) {
 					packet.addTile(t.x, t.z, t.biome);
 				}
-				PacketDispatcher.sendToAll(packet);
+				PacketDispatcher.sendToAll(((ServerWorld) world).getServer(), packet);
 			}
 		}
 	}
