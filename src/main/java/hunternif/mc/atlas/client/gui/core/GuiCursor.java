@@ -41,7 +41,7 @@ public class GuiCursor extends GuiComponent {
 	}
 	
 	@Override
-	public void draw(int mouseX, int mouseY, float partialTick) {
+	public void render(int mouseX, int mouseY, float partialTick) {
 		AtlasRenderHelper.drawFullTexture(texture, mouseX - pointX, mouseY - pointY, textureWidth, textureHeight);
 	}
 }

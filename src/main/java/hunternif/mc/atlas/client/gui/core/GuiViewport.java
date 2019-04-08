@@ -1,5 +1,6 @@
 package hunternif.mc.atlas.client.gui.core;
 
+import net.minecraft.client.MinecraftClient;
 import org.lwjgl.opengl.GL11;
 
 /**
@@ -32,20 +33,20 @@ public class GuiViewport extends GuiComponent {
 	}
 	
 	@Override
-	public void onInitialized() {
-		super.onInitialized();
+	public void init(MinecraftClient client, int w, int h) {
+		super.init(client, w, h);
 		screenScale = client.window.getScaleFactor();
 	}
 	
 	@Override
-	public void draw(int mouseX, int mouseY, float par3) {
+	public void render(int mouseX, int mouseY, float par3) {
 		GL11.glEnable(GL11.GL_SCISSOR_TEST);
 		GL11.glScissor((int) (getGuiX()*screenScale),
-				(int) (client.window.getFramebufferHeight() - (getGuiY() + properHeight)*screenScale),
+				(int) (minecraft.window.getFramebufferHeight() - (getGuiY() + properHeight)*screenScale),
 				(int) (properWidth*screenScale), (int) (properHeight*screenScale));
 		
 		// Draw the content (child GUIs):
-		super.draw(mouseX, mouseY, par3);
+		super.render(mouseX, mouseY, par3);
 		
 		GL11.glDisable(GL11.GL_SCISSOR_TEST);
 	}

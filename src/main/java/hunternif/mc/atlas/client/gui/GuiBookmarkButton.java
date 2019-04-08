@@ -7,6 +7,8 @@ import hunternif.mc.atlas.util.AtlasRenderHelper;
 import java.util.Collections;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.GuiLighting;
+import net.minecraft.text.StringTextComponent;
+import net.minecraft.text.TextComponent;
 import net.minecraft.util.Identifier;
 
 
@@ -44,12 +46,12 @@ public class GuiBookmarkButton extends GuiToggleButton {
 		this.title = title;
 	}
 
-	String getTitle() {
-		return title;
+	public TextComponent getTitle() {
+		return new StringTextComponent(title);
 	}
 
 	@Override
-	public void draw(int mouseX, int mouseY, float partialTick) {
+	public void render(int mouseX, int mouseY, float partialTick) {
 		GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
 		GuiLighting.disable();
 

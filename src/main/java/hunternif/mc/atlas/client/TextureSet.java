@@ -364,6 +364,7 @@ public class TextureSet implements Comparable<TextureSet> {
 
 	@Override
 	public int compareTo(TextureSet textureSet) {
-		return name.compareTo(textureSet.name);
+		// TODO report to yarn
+		return name.toString().compareTo(textureSet.name.toString());
 	}
 }

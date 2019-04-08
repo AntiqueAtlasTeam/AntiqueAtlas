@@ -50,7 +50,7 @@ public class GuiScaleBar extends GuiComponent {
 	}
 
 	@Override
-	public void draw(int mouseX, int mouseY, float partialTick) {
+	public void render(int mouseX, int mouseY, float partialTick) {
 		Identifier texture = getTexture();
 		if (texture == null) return;
 

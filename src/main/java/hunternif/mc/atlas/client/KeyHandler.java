@@ -22,7 +22,7 @@ public class KeyHandler {
 
     public static void registerBindings() {
         // Initialisation of bindings
-        bindings.add(KEY_ATLAS, FabricKeyBinding.Builder.create(new Identifier("antiqueatlas:openatlas"), InputUtil.Type.KEY_KEYBOARD, 77, "key.antiqueatlas.category").build());
+        bindings.add(KEY_ATLAS, FabricKeyBinding.Builder.create(new Identifier("antiqueatlas:openatlas"), InputUtil.Type.KEYSYM, 77, "key.antiqueatlas.category").build());
 
         // Registering all binding
         bindings.forEach(KeyBindingRegistry.INSTANCE::register);
@@ -32,7 +32,7 @@ public class KeyHandler {
         if (bindings.get(KEY_ATLAS).wasPressed()) {
             Screen currentScreen = MinecraftClient.getInstance().currentScreen;
             if (currentScreen instanceof GuiAtlas) {
-                currentScreen.close();
+                currentScreen.onClose();
             } else {
                 AntiqueAtlasMod.proxy.openAtlasGUI();
             }

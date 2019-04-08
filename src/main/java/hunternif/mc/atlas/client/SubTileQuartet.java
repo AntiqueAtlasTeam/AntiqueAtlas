@@ -5,6 +5,7 @@ import hunternif.mc.atlas.util.ArrayIterator;
 import net.minecraft.util.math.MathHelper;
 
 import java.util.Iterator;
+import java.util.Random;
 
 /**
  * The 4 subtiles in a corner between 4 tiles, each subtile belonging to a
@@ -55,12 +56,9 @@ public class SubTileQuartet implements Iterable<SubTile> {
 	}
 
 	public void setChunkCoords(int chunkX, int chunkY, int step) {
-		chunkX *= 2;
-		chunkY *= 2;
-
-		array[0].variationNumber = (int) MathHelper.hashCode(chunkX, chunkY, 0) & 0x7FFFFFFF;
-		array[1].variationNumber = (int) MathHelper.hashCode(chunkX + step, chunkY, 0) & 0x7FFFFFFF;
-		array[2].variationNumber = (int) MathHelper.hashCode(chunkX, chunkY + step, 0) & 0x7FFFFFFF;
-		array[3].variationNumber = (int) MathHelper.hashCode(chunkX + step, chunkY + step, 0) & 0x7FFFFFFF;
+		array[0].variationNumber = (int) (MathHelper.hashCode(chunkX, chunkY, chunkX ^ chunkY) & 0x7FFFFFFF);
+		array[1].variationNumber = array[0].variationNumber;
+		array[2].variationNumber = array[0].variationNumber;
+		array[3].variationNumber = array[0].variationNumber;
 	}
 }

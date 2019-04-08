@@ -44,7 +44,7 @@ public class GuiBlinkingImage extends GuiComponent {
 	}
 	
 	@Override
-	public void draw(int mouseX, int mouseY, float partialTick) {
+	public void render(int mouseX, int mouseY, float partialTick) {
 		long currentTime = System.currentTimeMillis();
 		if (lastTickTime + blinkTime < currentTime) {
 			lastTickTime = currentTime;

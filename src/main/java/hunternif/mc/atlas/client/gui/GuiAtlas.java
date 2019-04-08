@@ -285,7 +285,7 @@ public class GuiAtlas extends GuiComponent {
 				state.switchTo(PLACING_MARKER);
 
 				// While holding shift, we create a marker on the player's position
-				if (isShiftPressed()) {
+				if (hasShiftDown()) {
 					markerFinalizer.setMarkerData(player.getEntityWorld(),
 							getAtlasID(), player.dimension,
 							(int) player.x, (int) player.z);
@@ -364,9 +364,9 @@ public class GuiAtlas extends GuiComponent {
 	}
 
 	@Override
-	public void onInitialized() {
-		super.onInitialized();
-		if(!state.equals(EXPORTING_IMAGE)) {
+	protected void init() {
+		super.init();
+		if(state.is(EXPORTING_IMAGE)) {
             state.switchTo(NORMAL); //TODO: his causes the Export PNG progress bar to disappear when resizing game window
         }
 
@@ -496,7 +496,7 @@ public class GuiAtlas extends GuiComponent {
 		} else if (keyCode == GLFW.GLFW_KEY_ESCAPE) {
 			close();
 		} else {
-			KeyBinding[] hotbarKeys = client.options.keysHotbar;
+			KeyBinding[] hotbarKeys = minecraft.options.keysHotbar;
 			for (KeyBinding bind : hotbarKeys) {
 				if (bind.matchesKey(keyCode, scanCode)) {
 					close();
@@ -511,7 +511,7 @@ public class GuiAtlas extends GuiComponent {
 	}
 
 	@Override
-	public boolean mouseScrolled(double wheelMove) {
+	public boolean mouseScrolled(double mx, double my, double wheelMove) {
 		double origWheelMove = wheelMove;
 		if (wheelMove != 0) {
 			wheelMove = wheelMove > 0 ? 1 : -1;
@@ -519,12 +519,12 @@ public class GuiAtlas extends GuiComponent {
 			    wheelMove *= -1;
             }
 
-			double mouseOffsetX = client.window.getFramebufferWidth() / screenScale / 2 - getMouseX();
-			double mouseOffsetY = client.window.getFramebufferHeight() / screenScale / 2 - getMouseY();
+			double mouseOffsetX = minecraft.window.getFramebufferWidth() / screenScale / 2 - getMouseX();
+			double mouseOffsetY = minecraft.window.getFramebufferHeight() / screenScale / 2 - getMouseY();
 			double newScale = mapScale * Math.pow(2, wheelMove);
             double addOffsetX = 0;
             double addOffsetY = 0;
-            if (Math.abs(mouseOffsetX) < MAP_WIDTH / 2 && Math.abs(mouseOffsetY) < MAP_HEIGHT / 2) {
+            if (Math.abs(mouseOffsetX) < MAP_WIDTH / 2f && Math.abs(mouseOffsetY) < MAP_HEIGHT / 2f) {
                 addOffsetX = mouseOffsetX * wheelMove;
                 addOffsetY = mouseOffsetY * wheelMove;
 
@@ -536,7 +536,7 @@ public class GuiAtlas extends GuiComponent {
 
 			setMapScale(newScale, (int) addOffsetX, (int) addOffsetY);
 		}
-		return super.mouseScrolled(origWheelMove) || (origWheelMove != 0);
+		return super.mouseScrolled(mx, my, origWheelMove) || (origWheelMove != 0);
 	}
 
     @Override
@@ -564,8 +564,8 @@ public class GuiAtlas extends GuiComponent {
 	}
 
 	@Override
-	public void update() {
-		super.update();
+	public void tick() {
+		super.tick();
 		if (player == null) return;
 		if (followPlayer) {
 			mapOffsetX = (int)(-player.x * mapScale);
@@ -658,7 +658,7 @@ public class GuiAtlas extends GuiComponent {
     }
 
 	@Override
-	public void draw(int mouseX, int mouseY, float par3) {
+	public void render(int mouseX, int mouseY, float par3) {
 		long currentMillis = System.currentTimeMillis();
 		long deltaMillis = currentMillis - lastUpdateMillis;
 		lastUpdateMillis = currentMillis;
@@ -675,7 +675,7 @@ public class GuiAtlas extends GuiComponent {
 			}
 		}
 
-		super.drawBackground();
+		super.renderBackground();
 
 		GlStateManager.color4f(1, 1, 1, 1);
 		GlStateManager.alphaFunc(GL11.GL_GREATER, 0); // So light detail on tiles is visible
@@ -690,7 +690,7 @@ public class GuiAtlas extends GuiComponent {
 		GL11.glEnable(GL11.GL_SCISSOR_TEST);
 		GL11.glScissor(
 				(int) ((getGuiX() + CONTENT_X) * screenScale),
-				(int) ((client.window.getFramebufferHeight() - (getGuiY() + CONTENT_Y + MAP_HEIGHT)*screenScale)),
+				(int) ((minecraft.window.getFramebufferHeight() - (getGuiY() + CONTENT_Y + MAP_HEIGHT)*screenScale)),
 				(int) (MAP_WIDTH * screenScale), (int) (MAP_HEIGHT*screenScale));
 		GlStateManager.enableBlend();
 		GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
@@ -784,7 +784,7 @@ public class GuiAtlas extends GuiComponent {
 		}
 
 		// Draw buttons:
-		super.draw(mouseX, mouseY, par3);
+		super.render(mouseX, mouseY, par3);
 
 		// Draw the semi-transparent marker attached to the cursor when placing a new marker:
 		GlStateManager.enableBlend();
@@ -803,7 +803,7 @@ public class GuiAtlas extends GuiComponent {
 
 		// Draw progress overlay:
 		if (state.is(EXPORTING_IMAGE)) {
-			drawBackground();
+			renderBackground();
 			progressBar.draw((width - 100)/2, height/2 - 34);
 		}
 	}
@@ -816,8 +816,8 @@ public class GuiAtlas extends GuiComponent {
 			int textWidth, xWidth;
 
 			text = "x";
-			xWidth = textWidth = fontRenderer.getStringWidth(text); xWidth++;
-			fontRenderer.draw(text, -textWidth, 0, scaleAlpha << 24);
+			xWidth = textWidth = font.getStringWidth(text); xWidth++;
+			font.draw(text, -textWidth, 0, scaleAlpha << 24);
 
 			text = zoomNames[zoomLevel];
 			if(text.contains("/")) {
@@ -825,32 +825,32 @@ public class GuiAtlas extends GuiComponent {
 				String[] parts = text.split("/");
 
 				text = parts[0];
-				int centerXtranslate = Math.max(fontRenderer.getStringWidth(parts[0]), fontRenderer.getStringWidth(parts[1]) )/2;
-				GlStateManager.translatef(-xWidth-centerXtranslate, -fontRenderer.fontHeight/2, 0);
+				int centerXtranslate = Math.max(font.getStringWidth(parts[0]), font.getStringWidth(parts[1]) )/2;
+				GlStateManager.translatef(-xWidth-centerXtranslate, -font.fontHeight/2, 0);
 
 				GlStateManager.disableTexture();
 				Tessellator t = Tessellator.getInstance();
 				BufferBuilder vb = t.getBufferBuilder();
                 vb.begin(GL11.GL_QUADS, VertexFormats.POSITION);
-                vb.vertex( centerXtranslate,   fontRenderer.fontHeight - 1, 0.0D).next();
-                vb.vertex(-centerXtranslate-1, fontRenderer.fontHeight - 1, 0.0D).next();
-                vb.vertex(-centerXtranslate-1, fontRenderer.fontHeight    , 0.0D).next();
-                vb.vertex( centerXtranslate,   fontRenderer.fontHeight    , 0.0D).next();
+                vb.vertex( centerXtranslate,   font.fontHeight - 1, 0.0D).next();
+                vb.vertex(-centerXtranslate-1, font.fontHeight - 1, 0.0D).next();
+                vb.vertex(-centerXtranslate-1, font.fontHeight    , 0.0D).next();
+                vb.vertex( centerXtranslate,   font.fontHeight    , 0.0D).next();
                 t.draw();
                 GlStateManager.enableTexture();
-				textWidth = fontRenderer.getStringWidth(text);
-				fontRenderer.draw(text, -textWidth/2, 0, scaleAlpha << 24);
+				textWidth = font.getStringWidth(text);
+				font.draw(text, -textWidth/2, 0, scaleAlpha << 24);
 
 				text = parts[1];
-				GlStateManager.translatef(0, fontRenderer.fontHeight + 1, 0);
+				GlStateManager.translatef(0, font.fontHeight + 1, 0);
 
-				textWidth = fontRenderer.getStringWidth(text);
-				fontRenderer.draw(text, -textWidth/2, 0, scaleAlpha << 24);
+				textWidth = font.getStringWidth(text);
+				font.draw(text, -textWidth/2, 0, scaleAlpha << 24);
 
-				GlStateManager.translatef(xWidth+centerXtranslate, ( -fontRenderer.fontHeight/2 ) -2, 0);
+				GlStateManager.translatef(xWidth+centerXtranslate, ( -font.fontHeight/2 ) -2, 0);
 			} else {
-				textWidth = fontRenderer.getStringWidth(text);
-				fontRenderer.draw(text, -textWidth-xWidth + 1, 1, scaleAlpha << 24);
+				textWidth = font.getStringWidth(text);
+				font.draw(text, -textWidth-xWidth + 1, 1, scaleAlpha << 24);
 			}
 
 			GlStateManager.translatef(-(getGuiX()+WIDTH-13), -(getGuiY()+12), 0);
@@ -919,7 +919,7 @@ public class GuiAtlas extends GuiComponent {
 				markerY + info.y,
 				info.width, info.height);
 		if (isMouseOver && mouseIsOverMarker && marker.getLabel().length() > 0) {
-			drawTooltip(Collections.singletonList(marker.getLocalizedLabel()), client.textRenderer);
+			drawTooltip(Collections.singletonList(marker.getLocalizedLabel()), minecraft.textRenderer);
 		}
 	}
 
@@ -930,8 +930,8 @@ public class GuiAtlas extends GuiComponent {
 	} */
 
 	@Override
-	public void onClosed() {
-		super.onClosed();
+	public void onClose() {
+		super.onClose();
 		removeChild(markerFinalizer);
 		removeChild(blinkingIcon);
 		// Keyboard.enableRepeatEvents(false);
@@ -950,10 +950,10 @@ public class GuiAtlas extends GuiComponent {
 	}
 
 	private int worldXToScreenX(int x) {
-		return (int)Math.round((double)x * mapScale + this.width/2 + mapOffsetX);
+		return (int)Math.round((double)x * mapScale + this.width/2f + mapOffsetX);
 	}
 	private int worldZToScreenY(int z) {
-		return (int)Math.round((double)z * mapScale + this.height/2 + mapOffsetY);
+		return (int)Math.round((double)z * mapScale + this.height/2f + mapOffsetY);
 	}
 
 	@Override

@@ -16,8 +16,8 @@ public class MixinPlayerEntity {
         DeathWatcher.onPlayerDeath((PlayerEntity) (Object) this);
     }
 
-    @Inject(at = @At("RETURN"), method = "update")
-    public void update(CallbackInfo info) {
+    @Inject(at = @At("RETURN"), method = "tick")
+    public void tick(CallbackInfo info) {
         PlayerEventHandler.onPlayerTick((PlayerEntity) (Object) this);
     }
 }

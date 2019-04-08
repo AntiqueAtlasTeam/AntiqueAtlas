@@ -6,9 +6,10 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.Mouse;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.Screen;
-import net.minecraft.client.gui.ScreenComponent;
 
 
+import net.minecraft.text.StringTextComponent;
+import net.minecraft.text.TextComponent;
 import org.lwjgl.opengl.GL11;
 
 import java.io.IOException;
@@ -58,6 +59,11 @@ public class GuiComponent extends Screen {
 
 	/** guiX and guiY are absolute coordinates on the screen. */
 	private int guiX = 0, guiY = 0;
+
+	// TODO
+	public GuiComponent() {
+		super(new StringTextComponent("component"));
+	}
 
 	/** Set absolute coordinates of the top left corner of this component on
 	 * the screen. If this GUI has a parent, its size will be invalidated. */
@@ -131,7 +137,7 @@ public class GuiComponent extends Screen {
 	}
 
 	/** Set this component's own size. This shouldn't affect the size or position of the children. */
-    protected void setSize(int width, int height) {
+    public void setSize(int width, int height) {
 		this.properWidth = width;
 		this.properHeight = height;
 		this.contentWidth = width;
@@ -181,10 +187,9 @@ public class GuiComponent extends Screen {
 		}
 		child.parent = this;
 		child.setGuiCoords(guiX, guiY);
-		if (client != null) {
+		if (minecraft != null) {
 			child.buttons.clear();
-			child.listeners.clear();
-			child.initialize(client, width, height);
+			child.init(minecraft, width, height);
 		}
 		invalidateSize();
 	}
@@ -282,9 +287,9 @@ public class GuiComponent extends Screen {
 	}
 
 	@Override
-	public boolean mouseScrolled(double dy) {
-		if (!iterateMouseInput((c) -> c.mouseScrolled(dy))) {
-			return super.mouseScrolled(dy);
+	public boolean mouseScrolled(double mx, double my, double dy) {
+		if (!iterateMouseInput((c) -> c.mouseScrolled(mx, my, dy))) {
+			return super.mouseScrolled(mx, my, dy);
 		} else {
 			return true;
 		}
@@ -327,11 +332,11 @@ public class GuiComponent extends Screen {
 
 	/** Render this GUI and its children. */
 	@Override
-	public void draw(int mouseX, int mouseY, float partialTick) {
-		super.draw(mouseX, mouseY, partialTick);
+	public void render(int mouseX, int mouseY, float partialTick) {
+		super.render(mouseX, mouseY, partialTick);
 		for (GuiComponent child : children) {
 			if (!child.isClipped) {
-				child.draw(mouseX, mouseY, partialTick);
+				child.render(mouseX, mouseY, partialTick);
 			}
 		}
 		// Draw any hovering text requested by child components:
@@ -343,32 +348,32 @@ public class GuiComponent extends Screen {
 
 	/** Called when the GUI is unloaded, called for each child as well. */
 	@Override
-	public void onClosed() {
+	public void onClose() {
 		for (GuiComponent child : children) {
-			child.onClosed();
+			child.onClose();
 		}
-		super.onClosed();
+		super.onClose();
 	}
 
 	/** Called each in-game tick for this GUI and its children. If this GUI's
 	 * size has been invalidated, it will be validated on the next update. */
 	@Override
-	public void update() {
+	public void tick() {
 		for (GuiComponent child : children) {
-			child.update();
+			child.tick();
 		}
 
-		super.update();
+		super.tick();
 		if (sizeIsInvalid) {
 			validateSize();
 		}
 	}
 
 	@Override
-	public void initialize(MinecraftClient mc, int width, int height) {
-		super.initialize(mc, width, height);
+	public void init(MinecraftClient mc, int width, int height) {
+		super.init(mc, width, height);
 		for (GuiComponent child : children) {
-			child.initialize(mc, width, height);
+			child.init(mc, width, height);
 		}
 	}
 
@@ -452,10 +457,10 @@ public class GuiComponent extends Screen {
 		boolean stencilEnabled = GL11.glIsEnabled(GL11.GL_STENCIL_TEST);
 		if (stencilEnabled) GL11.glDisable(GL11.GL_STENCIL_TEST);
 
-		TextRenderer old = this.fontRenderer;
-		this.fontRenderer = font;
-		drawTooltip(lines, (int) x, (int) y);
-		this.fontRenderer = old;
+		TextRenderer old = this.font;
+		this.font = font;
+		renderTooltip(lines, (int) x, (int) y);
+		this.font = old;
 
 		if (stencilEnabled) GL11.glEnable(GL11.GL_STENCIL_TEST);
 	}
@@ -510,29 +515,29 @@ public class GuiComponent extends Screen {
 		if (parent != null) {
 			parent.removeChild(this); // This sets parent to null
 		} else {
-			client.openScreen(null);
+			minecraft.openScreen(null);
 		}
 	}
 
 	/** Called when a child removes itself from this component. */
 	protected void onChildClosed(GuiComponent child) {}
 
-	/** Draw a text string centered horizontally, using this GUI's FontRenderer. */
+	/** Draw a text string centered horizontally, using this GUI's font. */
 	protected void drawCenteredString(String text, int y, int color, boolean dropShadow) {
-		int length = fontRenderer.getStringWidth(text);
+		int length = font.getStringWidth(text);
 		if (dropShadow) {
-			fontRenderer.drawWithShadow(text, (this.width - length) / 2, y, color);
+			font.drawWithShadow(text, (this.width - length) / 2, y, color);
 		} else {
-			fontRenderer.draw(text, (this.width - length) / 2, y, color);
+			font.draw(text, (this.width - length) / 2, y, color);
 		}
 	}
 
 	@Deprecated
 	protected double getMouseX() {
-		return client.mouse.getX() * width / client.window.getFramebufferWidth();
+		return minecraft.mouse.getX() * width / minecraft.window.getFramebufferWidth();
 	}
 	@Deprecated
 	protected double getMouseY() {
-		return client.mouse.getY() * height / client.window.getFramebufferHeight();
+		return minecraft.mouse.getY() * height / minecraft.window.getFramebufferHeight();
 	}
 }

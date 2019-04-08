@@ -73,26 +73,17 @@ public class GuiMarkerFinalizer extends GuiComponent {
 	}
 
 	@Override
-	protected void onInitialized() {
-		super.onInitialized();
+	protected void init() {
+		super.init();
 
-		addButton(btnDone = new ButtonWidget(this.width/2 - BUTTON_WIDTH - BUTTON_SPACING/2, this.height/2 + 40, BUTTON_WIDTH, 20, I18n.translate("gui.done")) {
-			@Override
-			public void onPressed(double double_1, double double_2) {
-				super.onPressed(double_1, double_2);
-				AtlasAPI.markers.putMarker(world, true, atlasID, MarkerRegistry.getId(selectedType).toString(), textField.getText(), markerX, markerZ);
-				Log.info("Put marker in Atlas #%d \"%s\" at (%d, %d)", atlasID, textField.getText(), markerX, markerZ);
-				close();
-			}
-
-		});
-		addButton(btnCancel = new ButtonWidget(this.width/2 + BUTTON_SPACING/2, this.height/2 + 40, BUTTON_WIDTH, 20, I18n.translate("gui.cancel")) {
-			@Override
-			public void onPressed(double double_1, double double_2) {
-				super.onPressed(double_1, double_2);
-				close();
-			}
-		});
+		addButton(btnDone = new ButtonWidget(this.width/2 - BUTTON_WIDTH - BUTTON_SPACING/2, this.height/2 + 40, BUTTON_WIDTH, 20, I18n.translate("gui.done"), (button) -> {
+			AtlasAPI.markers.putMarker(world, true, atlasID, MarkerRegistry.getId(selectedType).toString(), textField.getText(), markerX, markerZ);
+			Log.info("Put marker in Atlas #%d \"%s\" at (%d, %d)", atlasID, textField.getText(), markerX, markerZ);
+			close();
+		}));
+		addButton(btnCancel = new ButtonWidget(this.width/2 + BUTTON_SPACING/2, this.height/2 + 40, BUTTON_WIDTH, 20, I18n.translate("gui.cancel"), (button) -> {
+			close();
+		}));
 		textField = new TextFieldWidget(MinecraftClient.getInstance().textRenderer, (this.width - 200)/2, this.height/2 - 81, 200, 20);
 		textField.setIsEditable(true);
 		textField.setText("");
@@ -156,18 +147,18 @@ public class GuiMarkerFinalizer extends GuiComponent {
 	}
 
 	@Override
-	public void draw(int mouseX, int mouseY, float partialTick) {
-		this.drawBackground();
+	public void render(int mouseX, int mouseY, float partialTick) {
+		this.renderBackground();
 		drawCenteredString(I18n.translate("gui.antiqueatlas.marker.label"), this.height/2 - 97, 0xffffff, true);
-		textField.draw(mouseX, mouseY, partialTick);
+		textField.render(mouseX, mouseY, partialTick);
 		drawCenteredString(I18n.translate("gui.antiqueatlas.marker.type"), this.height/2 - 44, 0xffffff, true);
 
 		// Darker background for marker type selector
-		drawGradientRect(scroller.getGuiX() - TYPE_BG_FRAME, scroller.getGuiY() - TYPE_BG_FRAME,
+		fillGradient(scroller.getGuiX() - TYPE_BG_FRAME, scroller.getGuiY() - TYPE_BG_FRAME,
 				scroller.getGuiX() + scroller.getWidth() + TYPE_BG_FRAME,
 				scroller.getGuiY() + scroller.getHeight() + TYPE_BG_FRAME,
 				0x88101010, 0x99101010);
-		super.draw(mouseX, mouseY, partialTick);
+		super.render(mouseX, mouseY, partialTick);
 	}
 
 	interface IMarkerTypeSelectListener {

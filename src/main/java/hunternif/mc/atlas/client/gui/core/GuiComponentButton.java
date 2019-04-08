@@ -43,7 +43,7 @@ public class GuiComponentButton extends GuiComponent {
 	@SuppressWarnings("unchecked")
     void onClick() {
 		if (clickSound != null) {
-			client.getSoundLoader().play(PositionedSoundInstance.master(clickSound, 1.0F));
+			minecraft.getSoundManager().play(PositionedSoundInstance.master(clickSound, 1.0F));
 		}
 
 		for (IButtonListener listener : listeners) {

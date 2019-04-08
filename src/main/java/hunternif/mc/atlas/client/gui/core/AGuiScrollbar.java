@@ -111,7 +111,7 @@ public abstract class AGuiScrollbar extends GuiComponent {
 	}
 	
 	@Override
-	public boolean mouseScrolled(double wheelMove) {
+	public boolean mouseScrolled(double mx, double my, double wheelMove) {
 		if (usesWheel) {
 			if (wheelMove != 0 && this.visible) {
 				wheelMove = wheelMove > 0 ? -1 : 1;
@@ -120,7 +120,7 @@ public abstract class AGuiScrollbar extends GuiComponent {
 			}
 		}
 
-		return super.mouseScrolled(wheelMove);
+		return super.mouseScrolled(mx, my, wheelMove);
 	}
 
 	@Override
@@ -152,7 +152,7 @@ public abstract class AGuiScrollbar extends GuiComponent {
 	}
 
 	@Override
-	public void draw(int mouseX, int mouseY, float partialTick) {
+	public void render(int mouseX, int mouseY, float partialTick) {
 		// Don't draw the anchor if there's nothing to scroll:
 		if (!visible) {
 			isDragged = false;

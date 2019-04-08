@@ -1,6 +1,7 @@
 package hunternif.mc.atlas.util;
 
 import com.mojang.blaze3d.platform.GlStateManager;
+import hunternif.mc.atlas.client.BiomeTextureMap;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.BufferBuilder;
 import net.minecraft.client.render.Tessellator;
@@ -41,6 +42,10 @@ public class AtlasRenderHelper {
 	}
 
 	public static void drawAutotileCorner(Identifier texture, int x, int y, double u, double v, int tileHalfSize) {
+		/* if (texture.getPath().contains("forest")) {
+			texture = new Identifier("antiqueatlas:textures/gui/tiles/test.png");
+		} */
+
 		MinecraftClient.getInstance().getTextureManager().bindTexture(texture);
 		double minU =  u / 4;
 		double maxU = (u + 1) / 4;

@@ -2,18 +2,16 @@ package hunternif.mc.atlas.util;
 
 import java.util.List;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.village.VillageDoor;
-import net.minecraft.village.VillageProperties;
 import net.minecraft.world.ViewableWorld;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 
 class WorldUtil {
-	
+
 	/**
 	 * Returns the village if the specified chunk overlays its territory.
 	 */
-	public static VillageProperties getVillageInChunk(World world, Chunk chunk) {
+	/* public static VillageProperties getVillageInChunk(World world, Chunk chunk) {
 		int centerX = (chunk.getPos().x << 4) + 8;
 		int centerZ = (chunk.getPos().z << 4) + 8;
 		// TODO FABRIC: Optimize? No more per-chunk villages...
@@ -26,12 +24,12 @@ class WorldUtil {
 			}
 		}
 		return null;
-	}
+	} */
 	
 	/**
 	 * Returns true if the village has a door in the specified chunk.
 	 */
-	public static boolean isVillageDoorInChunk(VillageProperties village, Chunk chunk) {
+	/* public static boolean isVillageDoorInChunk(VillageProperties village, Chunk chunk) {
 		int centerX = (chunk.getPos().x << 4) + 8;
 		int centerZ = (chunk.getPos().z << 4) + 8;
 		if (village.hasNoDoors()) {
@@ -45,5 +43,5 @@ class WorldUtil {
 			}
 		}
 		return false;
-	}
+	} */
 }
