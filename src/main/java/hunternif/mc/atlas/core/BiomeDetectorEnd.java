@@ -14,12 +14,12 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.registry.Registry;
+import net.minecraft.world.Heightmap;
 import net.minecraft.world.ViewableWorld;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.Biomes;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.WorldChunk;
-import net.minecraft.world.gen.Heightmap;
 
 /**
  * Detects seas of lava, cave ground and cave walls in the Nether.

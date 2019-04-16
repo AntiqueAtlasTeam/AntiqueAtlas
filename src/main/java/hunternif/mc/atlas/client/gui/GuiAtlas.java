@@ -716,7 +716,7 @@ public class GuiAtlas extends GuiComponent {
 				if (subtile == null || subtile.tile == null) continue;
 				AtlasRenderHelper.drawAutotileCorner(
 						// TODO FABRIC this should use chunk x/y pos? + stitch handling
-						BiomeTextureMap.instance().getTexture(subtile.variationNumber, subtile.tile),
+						BiomeTextureMap.instance().getTexture(subtiles.variationNumber, subtile.tile),
 						mapStartScreenX + subtile.x * tileHalfSize,
 						mapStartScreenY + subtile.y * tileHalfSize,
 						subtile.getTextureU(), subtile.getTextureV(), tileHalfSize);
@@ -735,7 +735,7 @@ public class GuiAtlas extends GuiComponent {
 				List<Marker> markers = globalMarkersData.getMarkersAtChunk(x, z);
 				if (markers == null) continue;
 				for (Marker marker : markers) {
-					renderMarker(marker, iconScale);
+					renderMarker(mouseX, mouseY, marker, iconScale);
 				}
 			}
 		}
@@ -747,7 +747,7 @@ public class GuiAtlas extends GuiComponent {
 					List<Marker> markers = localMarkersData.getMarkersAtChunk(x, z);
 					if (markers == null) continue;
 					for (Marker marker : markers) {
-						renderMarker(marker, iconScale);
+						renderMarker(mouseX, mouseY, marker, iconScale);
 					}
 				}
 			}
@@ -868,7 +868,7 @@ public class GuiAtlas extends GuiComponent {
 		}
 	}
 
-	private void renderMarker(Marker marker, double scale) {
+	private void renderMarker(int mouseX, int mouseY, Marker marker, double scale) {
 		MarkerType type = MarkerRegistry.find(marker.getType());
 		if (type == null){
 			Log.warn("Could not find marker data for %s. Is it in the config file?\n", marker.getType());
@@ -919,7 +919,7 @@ public class GuiAtlas extends GuiComponent {
 				markerY + info.y,
 				info.width, info.height);
 		if (isMouseOver && mouseIsOverMarker && marker.getLabel().length() > 0) {
-			drawTooltip(Collections.singletonList(marker.getLocalizedLabel()), minecraft.textRenderer);
+			drawTooltip(Collections.singletonList(marker.getLocalizedLabel()), font);
 		}
 	}
 

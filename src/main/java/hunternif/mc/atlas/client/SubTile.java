@@ -20,7 +20,6 @@ public class SubTile {
 	/** coordinates of the subtile on the grid, measured in subtiles,
 	 * starting from (0,0) in the top left corner. */
 	public int x, y;
-	public int variationNumber;
 	
 	public enum Shape {
 		CONVEX, CONCAVE, HORIZONTAL, VERTICAL, FULL, SINGLE_OBJECT

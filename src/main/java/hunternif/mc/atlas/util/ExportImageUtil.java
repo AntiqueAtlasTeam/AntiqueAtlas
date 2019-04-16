@@ -347,7 +347,7 @@ public class ExportImageUtil {
 				if (subtile == null || subtile.tile == null) continue;
 				
 				// Load tile texture
-				Identifier texture = BiomeTextureMap.instance().getTexture(subtile.variationNumber, subtile.tile);
+				Identifier texture = BiomeTextureMap.instance().getTexture(subtiles.variationNumber, subtile.tile);
 				BufferedImage tileImage = textureImageMap.get(texture);
 				if (tileImage == null) continue;
 				

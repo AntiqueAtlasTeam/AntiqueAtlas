@@ -22,9 +22,9 @@ public class SubTileQuartet implements Iterable<SubTile> {
 	 * 0 1
 	 * 2 3
 	 */
+	public int variationNumber;
 	private final SubTile[] array;
-	private int variationNumber;
-	
+
 	public SubTileQuartet() {
 		this(new SubTile(Part.BOTTOM_RIGHT), new SubTile(Part.BOTTOM_LEFT),
 				   new SubTile(Part.TOP_RIGHT), new SubTile(Part.TOP_LEFT));
@@ -41,12 +41,13 @@ public class SubTileQuartet implements Iterable<SubTile> {
 	 * have their coordinates updated respectively. */
 	public void setCoords(int x, int y) {
 		array[0].x = x;
-		array[0].y = y;
 		array[1].x = x + 1;
-		array[1].y = y;
 		array[2].x = x;
-		array[2].y = y + 1;
 		array[3].x = x + 1;
+
+		array[0].y = y;
+		array[1].y = y;
+		array[2].y = y + 1;
 		array[3].y = y + 1;
 	}
 
@@ -56,9 +57,6 @@ public class SubTileQuartet implements Iterable<SubTile> {
 	}
 
 	public void setChunkCoords(int chunkX, int chunkY, int step) {
-		array[0].variationNumber = (int) (MathHelper.hashCode(chunkX, chunkY, chunkX ^ chunkY) & 0x7FFFFFFF);
-		array[1].variationNumber = array[0].variationNumber;
-		array[2].variationNumber = array[0].variationNumber;
-		array[3].variationNumber = array[0].variationNumber;
+		variationNumber = (int) (MathHelper.hashCode(chunkX, chunkY, chunkX * chunkY) & 0x7FFFFFFF);
 	}
 }

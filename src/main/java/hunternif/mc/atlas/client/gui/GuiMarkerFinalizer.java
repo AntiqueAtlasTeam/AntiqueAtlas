@@ -84,7 +84,7 @@ public class GuiMarkerFinalizer extends GuiComponent {
 		addButton(btnCancel = new ButtonWidget(this.width/2 + BUTTON_SPACING/2, this.height/2 + 40, BUTTON_WIDTH, 20, I18n.translate("gui.cancel"), (button) -> {
 			close();
 		}));
-		textField = new TextFieldWidget(MinecraftClient.getInstance().textRenderer, (this.width - 200)/2, this.height/2 - 81, 200, 20);
+		textField = new TextFieldWidget(MinecraftClient.getInstance().textRenderer, (this.width - 200)/2, this.height/2 - 81, 200, 20, I18n.translate("gui.antiqueatlas.marker.label"));
 		textField.setIsEditable(true);
 		textField.setText("");
 
