@@ -384,22 +384,22 @@ public class ClientProxy extends CommonProxy implements IResourceManagerReloadLi
 	@SubscribeEvent
 	public void onClientTick(ClientTickEvent event) {
 		if (textureSetMap.isDirty()) {
-			Log.info("Saving texture set config");
+			Log.debug("Saving texture set config");
 			textureSetConfig.save(textureSetMap);
 			textureSetMap.setDirty(false);
 		}
 		if (biomeTextureMap.isDirty()) {
-			Log.info("Saving biome texture config");
+			Log.debug("Saving biome texture config");
 			biomeTextureConfig.save(biomeTextureMap);
 			biomeTextureMap.setDirty(false);
 		}
 		if (tileTextureMap.isDirty()) {
-			Log.info("Saving tile texture config");
+			Log.debug("Saving tile texture config");
 			tileTextureConfig.save(tileTextureMap);
 			tileTextureMap.setDirty(false);
 		}
 		if (MarkerRegistry.INSTANCE.isDirty()) {
-			Log.info("Saving marker config");
+			Log.debug("Saving marker config");
 			markerTextureConfig.save(MarkerRegistry.INSTANCE);
 			MarkerRegistry.INSTANCE.setDirty(false);
 		}
