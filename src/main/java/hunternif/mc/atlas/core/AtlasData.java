@@ -168,15 +168,16 @@ public class AtlasData extends PersistentState {
 	/**Updates map data around player
 	 *
 	 * @return A set of the new tiles, mostly so the server can synch those with relavent clients.*/
-	public ArrayList<TileInfo> updateMapAroundPlayer(PlayerEntity player) {
+	public Collection<TileInfo> updateMapAroundPlayer(PlayerEntity player) {
 		// Update the actual map only so often:
-		ArrayList<TileInfo> updatedTiles = new ArrayList<TileInfo>();
 		int newScanInterval = Math.round(SettingsConfig.performance.newScanInterval * 20);
 		int rescanInterval = newScanInterval * SettingsConfig.performance.rescanRate;
 
 		if (player.getEntityWorld().getTime() % newScanInterval != 0) {
-			return updatedTiles;//no new tiles
+			return Collections.emptyList(); //no new tiles
 		}
+
+		ArrayList<TileInfo> updatedTiles = new ArrayList<TileInfo>();
 
 		int playerX = MathHelper.floor(player.x) >> 4;
 		int playerZ = MathHelper.floor(player.z) >> 4;

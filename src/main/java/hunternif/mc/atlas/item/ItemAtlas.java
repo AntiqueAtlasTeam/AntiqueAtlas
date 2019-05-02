@@ -1,6 +1,8 @@
 package hunternif.mc.atlas.item;
 
 import java.util.ArrayList;
+import java.util.Collection;
+
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
@@ -65,14 +67,11 @@ public class ItemAtlas extends Item {
 		}
 
 		// Updating map around player
-		ArrayList<TileInfo> newTiles = data.updateMapAroundPlayer(player);
+		Collection<TileInfo> newTiles = data.updateMapAroundPlayer(player);
 		
 		if (!world.isClient) {
-			if (newTiles.size() > 0) {
-				DimensionUpdatePacket packet = new DimensionUpdatePacket(atlasId, player.dimension);
-				for (TileInfo t : newTiles) {
-					packet.addTile(t.x, t.z, t.biome);
-				}
+			if (!newTiles.isEmpty()) {
+				DimensionUpdatePacket packet = new DimensionUpdatePacket(atlasId, player.dimension, newTiles);
 				PacketDispatcher.sendToAll(((ServerWorld) world).getServer(), packet);
 			}
 		}
