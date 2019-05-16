@@ -1,6 +1,7 @@
 package hunternif.mc.atlas.client;
 
 import hunternif.mc.atlas.core.TileKind;
+import net.minecraft.util.math.MathHelper;
 
 /**
  * A quarter of a tile, containing the following information:
@@ -20,7 +21,10 @@ public class SubTile {
 	/** coordinates of the subtile on the grid, measured in subtiles,
 	 * starting from (0,0) in the top left corner. */
 	public int x, y;
-	
+
+	/** The variationnumber of that tile, which is set in the TileRenderIterator */
+	public int variationNumber;
+
 	public enum Shape {
 		CONVEX, CONCAVE, HORIZONTAL, VERTICAL, FULL, SINGLE_OBJECT
 	}
@@ -65,5 +69,14 @@ public class SubTile {
 		case VERTICAL: return 4 - part.v;
 		default: return 0;
 		}
+	}
+
+	public void setChunkCoords(int chunkX, int chunkY, int step) {
+		variationNumber = generateVariationNumber(chunkX, chunkY, step);
+	}
+
+	public static int generateVariationNumber(int chunkX, int chunkY, int step)
+	{
+		return  (int) (MathHelper.hashCode(chunkX, chunkY, chunkX * chunkY) & 0x7FFFFFFF);
 	}
 }

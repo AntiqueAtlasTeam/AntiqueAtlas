@@ -715,8 +715,7 @@ public class GuiAtlas extends GuiComponent {
 			for (SubTile subtile : subtiles) {
 				if (subtile == null || subtile.tile == null) continue;
 				AtlasRenderHelper.drawAutotileCorner(
-						// TODO FABRIC this should use chunk x/y pos? + stitch handling
-						BiomeTextureMap.instance().getTexture(subtiles.variationNumber, subtile.tile),
+						BiomeTextureMap.instance().getTexture(subtile.variationNumber, subtile.tile),
 						mapStartScreenX + subtile.x * tileHalfSize,
 						mapStartScreenY + subtile.y * tileHalfSize,
 						subtile.getTextureU(), subtile.getTextureV(), tileHalfSize);

@@ -1,11 +1,8 @@
 package hunternif.mc.atlas.client;
 
-import hunternif.mc.atlas.client.SubTile.Part;
 import hunternif.mc.atlas.util.ArrayIterator;
-import net.minecraft.util.math.MathHelper;
 
 import java.util.Iterator;
-import java.util.Random;
 
 /**
  * The 4 subtiles in a corner between 4 tiles, each subtile belonging to a
@@ -25,10 +22,6 @@ public class SubTileQuartet implements Iterable<SubTile> {
 	public int variationNumber;
 	private final SubTile[] array;
 
-	public SubTileQuartet() {
-		this(new SubTile(Part.BOTTOM_RIGHT), new SubTile(Part.BOTTOM_LEFT),
-				   new SubTile(Part.TOP_RIGHT), new SubTile(Part.TOP_LEFT));
-	}
 	public SubTileQuartet(SubTile a, SubTile b, SubTile c, SubTile d) {
 		array = new SubTile[]{a, b, c, d};
 	}
@@ -56,7 +49,13 @@ public class SubTileQuartet implements Iterable<SubTile> {
 		return new ArrayIterator<>(array);
 	}
 
-	public void setChunkCoords(int chunkX, int chunkY, int step) {
-		variationNumber = (int) (MathHelper.hashCode(chunkX, chunkY, chunkX * chunkY) & 0x7FFFFFFF);
+	/** As SubTileQuartets aren't aligned with chunk boundaries, we'll just
+	 * delegating the coords down to the four SubTiles in this quartet*/
+	public void setChunkCoords(int chunkX, int chunkY, int step)
+	{
+		array[0].setChunkCoords(chunkX, chunkY, step);
+		array[1].setChunkCoords(chunkX + step, chunkY, step);
+		array[2].setChunkCoords(chunkX, chunkY + step, step);
+		array[3].setChunkCoords(chunkX + step, chunkY + step, step);
 	}
 }
