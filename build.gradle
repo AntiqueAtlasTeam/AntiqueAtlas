@@ -20,7 +20,7 @@ dependencies {
 	modCompile "net.fabricmc:fabric-loader:${project.loader_version}"
 
 	// Fabric API. This is technically optional, but you probably want it anyway.
-	modCompile "net.fabricmc:fabric:${project.fabric_version}"
+	modCompile "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
 	compile 'com.google.code.findbugs:jsr305:3.0.2'
 	testCompile "junit:junit:4.+"

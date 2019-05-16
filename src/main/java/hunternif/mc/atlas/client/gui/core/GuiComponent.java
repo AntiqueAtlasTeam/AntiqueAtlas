@@ -8,8 +8,7 @@ import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.Screen;
 
 
-import net.minecraft.text.StringTextComponent;
-import net.minecraft.text.TextComponent;
+import net.minecraft.network.chat.TextComponent;
 import org.lwjgl.opengl.GL11;
 
 import java.io.IOException;
@@ -62,7 +61,7 @@ public class GuiComponent extends Screen {
 
 	// TODO
 	public GuiComponent() {
-		super(new StringTextComponent("component"));
+		super(new TextComponent("component"));
 	}
 
 	/** Set absolute coordinates of the top left corner of this component on

@@ -3,7 +3,7 @@ package hunternif.mc.atlas.client.gui.core;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import net.minecraft.client.audio.PositionedSoundInstance;
+import net.minecraft.client.sound.PositionedSoundInstance;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
 

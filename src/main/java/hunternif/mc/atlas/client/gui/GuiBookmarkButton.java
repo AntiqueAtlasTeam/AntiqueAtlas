@@ -7,8 +7,8 @@ import hunternif.mc.atlas.util.AtlasRenderHelper;
 import java.util.Collections;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.GuiLighting;
-import net.minecraft.text.StringTextComponent;
-import net.minecraft.text.TextComponent;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
 import net.minecraft.util.Identifier;
 
 
@@ -46,8 +46,8 @@ public class GuiBookmarkButton extends GuiToggleButton {
 		this.title = title;
 	}
 
-	public TextComponent getTitle() {
-		return new StringTextComponent(title);
+	public Component getTitle() {
+		return new TextComponent(title);
 	}
 
 	@Override

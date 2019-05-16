@@ -37,7 +37,7 @@ public class CommonProxy {
 		registerVanillaCustomTiles();
 		checkSaveConfig();
 
-		ResourceManagerHelper.get(ResourceType.DATA).registerReloadListener(new SimpleSynchronousResourceReloadListener() {
+		ResourceManagerHelper.get(ResourceType.SERVER_DATA).registerReloadListener(new SimpleSynchronousResourceReloadListener() {
 			@Override
 			public Identifier getFabricId() {
 				return new Identifier("antiqueatlas:scanbiometypes");

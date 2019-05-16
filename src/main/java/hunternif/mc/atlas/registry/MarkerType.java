@@ -116,7 +116,7 @@ public class MarkerType {
 	 * Get the icon for the marker
 	 */
 	public Identifier getIcon() {
-		return icons.length == 0 || iconIndex < 0 ? TextureManager.field_5285 : icons[iconIndex];
+		return icons.length == 0 || iconIndex < 0 ? TextureManager.MISSING_IDENTIFIER : icons[iconIndex];
 	}
 	
 	public Identifier[] getAllIcons() {

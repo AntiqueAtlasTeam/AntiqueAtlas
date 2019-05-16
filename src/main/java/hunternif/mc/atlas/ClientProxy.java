@@ -66,7 +66,7 @@ public class ClientProxy extends CommonProxy implements SimpleSynchronousResourc
 		// Prevent rewriting of the config while no changes have been made:
 		textureSetMap.setDirty(false);
 
-		ResourceManagerHelper.get(ResourceType.ASSETS).registerReloadListener(textureSetConfig);
+		ResourceManagerHelper.get(ResourceType.CLIENT_RESOURCES).registerReloadListener(textureSetConfig);
 
 		// Legacy file name:
 		File biomeTextureConfigFile = new File(configDir, "textures.json");
@@ -76,24 +76,24 @@ public class ClientProxy extends CommonProxy implements SimpleSynchronousResourc
 
 		tileTextureMap = ExtTileTextureMap.instance();
 		tileTextureConfig = new ExtTileTextureConfig(tileTextureMap, textureSetMap);
-		ResourceManagerHelper.get(ResourceType.ASSETS).registerReloadListener(tileTextureConfig);
+		ResourceManagerHelper.get(ResourceType.CLIENT_RESOURCES).registerReloadListener(tileTextureConfig);
 		// Prevent rewriting of the config while no changes have been made:
 		tileTextureMap.setDirty(false);
 		registerVanillaCustomTileTextures();
 
-		ResourceManagerHelper.get(ResourceType.ASSETS).registerReloadListener(this);
+		ResourceManagerHelper.get(ResourceType.CLIENT_RESOURCES).registerReloadListener(this);
 
 		// init
 		biomeTextureMap = BiomeTextureMap.instance();
 		biomeTextureConfig = new BiomeTextureConfig(biomeTextureMap, textureSetMap);
-		ResourceManagerHelper.get(ResourceType.ASSETS).registerReloadListener(biomeTextureConfig);
+		ResourceManagerHelper.get(ResourceType.CLIENT_RESOURCES).registerReloadListener(biomeTextureConfig);
 
 		// Prevent rewriting of the config while no changes have been made:
 		biomeTextureMap.setDirty(false);
 		assignVanillaBiomeTextures();
 
 		markerTextureConfig = new MarkerTextureConfig();
-		ResourceManagerHelper.get(ResourceType.ASSETS).registerReloadListener(markerTextureConfig);
+		ResourceManagerHelper.get(ResourceType.CLIENT_RESOURCES).registerReloadListener(markerTextureConfig);
 
 		// Prevent rewriting of the config while no changes have been made:
 		MarkerRegistry.INSTANCE.setDirty(true);

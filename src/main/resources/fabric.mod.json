@@ -12,6 +12,7 @@
       "hunternif.mc.atlas.AntiqueAtlasModClient"
     ]
   },
+  "environment": "*",
   "contact": {
   },
   "icon": "antiqueatlas_icon.png",
