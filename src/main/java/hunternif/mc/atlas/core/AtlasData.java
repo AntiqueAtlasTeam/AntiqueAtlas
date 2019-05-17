@@ -8,7 +8,6 @@ import hunternif.mc.atlas.network.server.BrowsingPositionPacket;
 import hunternif.mc.atlas.util.Log;
 import hunternif.mc.atlas.util.ShortVec2;
 import net.fabricmc.fabric.api.util.NbtType;
-import net.minecraft.client.network.packet.LoginSuccessS2CPacket;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -17,8 +16,6 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.PersistentState;
-import net.minecraft.world.ViewableWorld;
-import net.minecraft.world.biome.Biome;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.ChunkStatus;
 import net.minecraft.world.dimension.DimensionType;
@@ -223,7 +220,7 @@ public class AtlasData extends PersistentState {
 					}
 
 					if (oldTile != null) {
-						tile = biomeDetector.getBiomeID(chunk);
+						tile = biomeDetector.getBiomeID(player.getEntityWorld(), chunk);
 
 						if (tile == null) {
 							// If the new tile is empty, remove the old one:
@@ -235,7 +232,7 @@ public class AtlasData extends PersistentState {
 						}
 					} else {
 						// Scanning new chunk:
-						tile = biomeDetector.getBiomeID(chunk);
+						tile = biomeDetector.getBiomeID(player.getEntityWorld(), chunk);
 						if (tile != null) {
 							this.setTile(player.dimension, x, z, tile);
 							updatedTiles.add(new TileInfo(x, z, tile));

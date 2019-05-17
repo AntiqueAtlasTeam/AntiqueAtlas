@@ -1,22 +1,17 @@
 package hunternif.mc.atlas.core;
 
 import hunternif.mc.atlas.ext.ExtTileIdMap;
-import hunternif.mc.atlas.util.ByteUtil;
 import net.minecraft.block.Block;
 
 import net.minecraft.block.Blocks;
-import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.Heightmap;
-import net.minecraft.world.ViewableWorld;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.Biomes;
 import net.minecraft.world.chunk.Chunk;
-import net.minecraft.world.chunk.WorldChunk;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
+
 import java.util.*;
 
 /**
@@ -84,7 +79,7 @@ public class BiomeDetectorBase implements IBiomeDetector {
 
 	/** If no valid biome ID is found, returns null. */
 	@Override
-	public TileKind getBiomeID(Chunk chunk) {
+	public TileKind getBiomeID(World world, Chunk chunk) {
 		Biome[] chunkBiomes = chunk.getBiomeArray();
 		Map<Biome, Integer> biomeOccurrences = new HashMap<>(Registry.BIOME.getIds().size());
 
@@ -113,10 +108,11 @@ public class BiomeDetectorBase implements IBiomeDetector {
 					}
 				}
 				if (doScanRavines) {
-					// TODO FABRIC
-					/* if(chunk.XX_1_12_2_b_XX(x, z) < chunk.XX_1_12_2_q_XX().t.XX_1_12_2_i_XX() - ravineMinDepth)	{
+					int height = chunk.getHeightmap(Heightmap.Type.MOTION_BLOCKING).get(x, z);
+
+					if(height < world.getSeaLevel() - ravineMinDepth)	{
 						ravineOccurences += priorityRavine;
-					} */
+					}
 				}
 
 				int occurrence = biomeOccurrences.getOrDefault(biomeID, 0) + priorityForBiome(biomeID);
