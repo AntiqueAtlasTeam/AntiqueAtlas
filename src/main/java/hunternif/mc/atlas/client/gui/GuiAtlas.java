@@ -922,11 +922,10 @@ public class GuiAtlas extends GuiComponent {
 		}
 	}
 
-	// TODO FABRIC
-	/* @Override
-	public boolean d() {
+	@Override
+	public boolean isPauseScreen() {
 		return false;
-	} */
+	}
 
 	@Override
 	public void onClose() {
