@@ -494,12 +494,12 @@ public class GuiAtlas extends GuiComponent {
 		} else if (keyCode == GLFW.GLFW_KEY_MINUS || keyCode == GLFW.GLFW_KEY_KP_SUBTRACT) {
 			setMapScale(mapScale / 2);
 		} else if (keyCode == GLFW.GLFW_KEY_ESCAPE) {
-			close();
+			onClose();
 		} else {
 			KeyBinding[] hotbarKeys = minecraft.options.keysHotbar;
 			for (KeyBinding bind : hotbarKeys) {
 				if (bind.matchesKey(keyCode, scanCode)) {
-					close();
+					onClose();
 					return true;
 				}
 			}
