@@ -11,9 +11,11 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.biome.Biome;
+import net.minecraft.world.gen.GenerationStep;
 
 import java.util.*;
 import java.util.Map.Entry;
+import java.util.stream.Stream;
 
 import static hunternif.mc.atlas.client.TextureSet.*;
 
@@ -39,6 +41,7 @@ public class BiomeTextureMap extends SaveData {
 
 	/** Assign texture set to biome. */
 	public void setTexture(Biome biome, TextureSet textureSet) {
+		Log.info("Register texture set %s for biome %s", textureSet.name, biome.getTranslationKey());
 		if (textureSet == null) {
 			if (biomeTextureMap.remove(biome) != null) {
 				Log.warn("Removing old texture for biome %s", Registry.BIOME.getId(biome));
@@ -98,7 +101,7 @@ public class BiomeTextureMap extends SaveData {
 				setTexture(biome, biome.getScale() >= 0.25f ? JUNGLE_HILLS : JUNGLE); // TODO JUNGLE_CLIFFS
 				break;
 			case SAVANNA:
-				setTexture(biome, biome.getScale() >= 0.25f ? SAVANNA_CLIFFS : SAVANNA);
+				setTexture(biome, biome.getDepth() >= 1.0f ? PLATEAU_SAVANNA : SAVANNA);
 				break;
 			case MESA:
 				setTexture(biome, PLATEAU_MESA); // TODO PLATEAU_MESA_TREES
@@ -116,7 +119,7 @@ public class BiomeTextureMap extends SaveData {
 				);
 				break;
 			case ICY:
-				setTexture(biome, ICE_SPIKES); // TODO also snowy mountains/tundra?
+				setTexture(biome,  biome.getScale() >= 0.25f ? MOUNTAINS_SNOW_CAPS : ICE_SPIKES); // TODO also snowy mountains/tundra?
 				break;
 			case DESERT:
 				setTexture(biome, biome.getScale() >= 0.25f ? DESERT_HILLS : DESERT);
@@ -125,7 +128,22 @@ public class BiomeTextureMap extends SaveData {
 				setTexture(biome, SNOW); // TODO
 				break;
 			case EXTREME_HILLS:
-				setTexture(biome, HILLS);
+				setTexture(biome, biome.getScale() >= 0.25f ? MOUNTAINS : HILLS);
+				break;
+			case THEEND:
+				final boolean[] hasPlants = {false};
+				Stream.of(biome.getFeaturesForStep(GenerationStep.Feature.VEGETAL_DECORATION)).forEach(
+						feature -> {
+							if(!feature.isEmpty()) hasPlants[0] = true;
+						});
+				if(hasPlants[0]) {
+					setTexture(biome, END_ISLAND_PLANTS);
+				} else {
+					setTexture(biome, END_ISLAND);
+				}
+				break;
+			case NONE:
+				setTexture(biome, END_VOID);
 				break;
 			default:
 				setTexture(biome, defaultTexture);
