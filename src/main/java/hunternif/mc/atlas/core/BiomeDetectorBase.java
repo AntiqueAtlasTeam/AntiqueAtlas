@@ -24,11 +24,13 @@ public class BiomeDetectorBase implements IBiomeDetector {
 	private boolean doScanPonds = true;
 	private boolean doScanRavines = true;
 
-	/** Biome used for occasional pools of water. */
-	private static final Biome waterPoolBiome = null; // TODO FABRIC
+	/** Biome used for occasional pools of water.
+	 * This used our own representation of biomes, but this was switched to Minecraft biomes.
+	 * So in absence of a better idea, this will just count as River from now on. */
+	private static final Biome waterPoolBiome = Biomes.RIVER;
 	/** Increment the counter for water biomes by this much during iteration.
 	 * This is done so that water pools are more visible. */
-	private static final int priorityRavine = 12, priorityWaterPool = 3, prioritylavaPool = 6;
+	private static final int priorityRavine = 12, priorityWaterPool = 4, prioritylavaPool = 6;
 
 	/** Minimum depth in the ground to be considered a ravine */
 	private static final int ravineMinDepth = 7;
@@ -91,18 +93,14 @@ public class BiomeDetectorBase implements IBiomeDetector {
 			for (int z = 0; z < 16; z++) {
 				Biome biomeID = chunkBiomes[x << 4 | z];
 				if (doScanPonds) {
-					int y = chunk.getHeightmap(Heightmap.Type.MOTION_BLOCKING_NO_LEAVES).get(x, z);
+					int y = chunk.getHeightmap(Heightmap.Type.MOTION_BLOCKING).get(x, z);
 					if (y > 0) {
-						// TODO FABRIC
 						Block topBlock = chunk.getBlockState(new BlockPos(x, y-1, z)).getBlock();
-						// For some reason lava doesn't count in height value
-						// TODO: check if 1.8 fixes this!
-						Block topBlock2 = chunk.getBlockState(new BlockPos(x, y, z)).getBlock();
 						// Check if there's surface of water at (x, z), but not swamp
 						if (topBlock == Blocks.WATER && !swampBiomes.contains(biomeID)) {
 							int occurrence = biomeOccurrences.getOrDefault(waterPoolBiome, 0) + priorityWaterPool;
 							biomeOccurrences.put(waterPoolBiome, occurrence);
-						} else if (topBlock2 == Blocks.LAVA) {
+						} else if (topBlock == Blocks.LAVA) {
 							lavaOccurrences += prioritylavaPool;
 						}
 					}
@@ -110,7 +108,7 @@ public class BiomeDetectorBase implements IBiomeDetector {
 				if (doScanRavines) {
 					int height = chunk.getHeightmap(Heightmap.Type.MOTION_BLOCKING).get(x, z);
 
-					if(height < world.getSeaLevel() - ravineMinDepth)	{
+					if(height > 0 && height < world.getSeaLevel() - ravineMinDepth)	{
 						ravineOccurences += priorityRavine;
 					}
 				}
