@@ -19,7 +19,6 @@ public class SubTileQuartet implements Iterable<SubTile> {
 	 * 0 1
 	 * 2 3
 	 */
-	public int variationNumber;
 	private final SubTile[] array;
 
 	public SubTileQuartet(SubTile a, SubTile b, SubTile c, SubTile d) {
