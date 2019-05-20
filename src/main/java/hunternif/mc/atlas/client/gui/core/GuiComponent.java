@@ -3,20 +3,16 @@ package hunternif.mc.atlas.client.gui.core;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.Mouse;
 import net.minecraft.client.font.TextRenderer;
-import net.minecraft.client.gui.Screen;
 
 
+import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.network.chat.TextComponent;
 import org.lwjgl.opengl.GL11;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.function.BooleanSupplier;
-import java.util.function.Predicate;
 
 /**
  * Core visual component class, which facilitates hierarchy. You can add child
