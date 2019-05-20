@@ -9,7 +9,8 @@
       "hunternif.mc.atlas.AntiqueAtlasMod"
     ],
     "client": [
-      "hunternif.mc.atlas.AntiqueAtlasModClient"
+      "hunternif.mc.atlas.AntiqueAtlasModClient",
+      "kenkron.antiqueatlasoverlay.AntiqueAtlasOverlayMod"
     ]
   },
   "environment": "*",
@@ -21,6 +22,7 @@
     "fabric": ">=0.2.6"
   },
   "mixins": [
-    "antiqueatlas.mixins.json"
+    "antiqueatlas.mixins.json",
+    "antiqueatlasoverlay.mixins.json"
   ]
 }

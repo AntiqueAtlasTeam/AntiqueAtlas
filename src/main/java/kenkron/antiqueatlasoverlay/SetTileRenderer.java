@@ -1,5 +1,8 @@
 package kenkron.antiqueatlasoverlay;
 
+import net.minecraft.client.render.VertexFormat;
+import net.minecraft.client.render.VertexFormats;
+import net.minecraft.util.Identifier;
 import org.lwjgl.opengl.GL11;
 
 import java.util.ArrayList;
@@ -7,7 +10,6 @@ import java.util.HashMap;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.BufferBuilder;
 import net.minecraft.client.render.Tessellator;
-import net.minecraft.server.network.packet.ResourcePackStatusC2SPacket;
 
 /**
  * The minimap render is a bit slow.  The function that really takes time is
@@ -17,27 +19,27 @@ import net.minecraft.server.network.packet.ResourcePackStatusC2SPacket;
  */
 class SetTileRenderer {
 
-    private final HashMap<ResourcePackStatusC2SPacket, ArrayList<TileCorner>> subjects = new HashMap<>();
+    private final HashMap<Identifier, ArrayList<TileCorner>> subjects = new HashMap<>();
     private int tileHalfSize = 8;
 
     public SetTileRenderer(int tileHalfSize) {
         this.tileHalfSize = tileHalfSize;
     }
 
-    public void addTileCorner(ResourcePackStatusC2SPacket texture, int x, int y, int u, int v) {
+    public void addTileCorner(Identifier texture, int x, int y, int u, int v) {
         ArrayList<TileCorner> set = subjects.computeIfAbsent(texture, k -> new ArrayList<>());
         set.add(new TileCorner(x, y, u, v));
     }
 
     public void draw() {
-        for (ResourcePackStatusC2SPacket key : subjects.keySet()) {
+        for (Identifier key : subjects.keySet()) {
             ArrayList<TileCorner> tca = subjects.get(key);
             //Effectively a call to GL11.glBindTexture(GL11.GL_TEXTURE_2D, p_94277_0_);
-            MinecraftClient.getInstance().textureManager.XX_1_12_2_a_XX(key);
+            MinecraftClient.getInstance().getTextureManager().bindTexture(key);
 
             Tessellator tessellator = Tessellator.getInstance();
             BufferBuilder renderer = tessellator.getBufferBuilder();
-            renderer.begin(GL11.GL_QUADS, ddk.XX_1_12_2_g_XX);
+            renderer.begin(GL11.GL_QUADS, VertexFormats.POSITION_UV);
             for (TileCorner tc : tca) {
                 drawInlineAutotileCorner(tc.x, tc.y, tc.u, tc.v);
             }
@@ -52,10 +54,10 @@ class SetTileRenderer {
         float maxV = (v + 1) / 6f;
         Tessellator tessellator = Tessellator.getInstance();
         BufferBuilder renderer = tessellator.getBufferBuilder();
-        renderer.postNormal(x + tileHalfSize, y + tileHalfSize, 0).a(maxU, maxV).d();
-        renderer.postNormal(x + tileHalfSize, y, 0).a(maxU, minV).d();
-        renderer.postNormal(x, y, 0).a(minU, minV).d();
-        renderer.postNormal(x, y + tileHalfSize, 0).a(minU, maxV).d();
+        renderer.vertex(x + tileHalfSize, y + tileHalfSize, 0).texture(maxU, maxV).next();
+        renderer.vertex(x + tileHalfSize, y, 0).texture(maxU, minV).next();
+        renderer.vertex(x, y, 0).texture(minU, minV).next();
+        renderer.vertex(x, y + tileHalfSize, 0).texture(minU, maxV).next();
     }
 
     public class TileCorner {

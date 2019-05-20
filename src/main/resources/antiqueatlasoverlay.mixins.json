@@ -1,0 +1,13 @@
+{
+  "required": true,
+  "package": "kenkron.antiqueatlasoverlay.mixin",
+  "compatibilityLevel": "JAVA_8",
+  "mixins": [
+  ],
+  "client": [
+    "MixinInGameHud"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

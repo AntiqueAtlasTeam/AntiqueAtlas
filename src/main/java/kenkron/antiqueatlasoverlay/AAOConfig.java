@@ -59,8 +59,8 @@ public class AAOConfig {
 
     // TODO - Remove when Forge fixes it's own syncing
     //@SubscribeEvent
-    public static void onConfigChanged(ConfigChangedEvent.OnConfigChangedEvent event) {
-        if (event.getModID().equals(AntiqueAtlasOverlayMod.MODID))
-            ConfigManager.sync(AntiqueAtlasOverlayMod.MODID, Config.Type.INSTANCE);
-    }
+//    public static void onConfigChanged(ConfigChangedEvent.OnConfigChangedEvent event) {
+//        if (event.getModID().equals(AntiqueAtlasOverlayMod.MODID))
+//            ConfigManager.sync(AntiqueAtlasOverlayMod.MODID, Config.Type.INSTANCE);
+//    }
 }

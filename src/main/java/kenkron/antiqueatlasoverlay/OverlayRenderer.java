@@ -7,6 +7,7 @@ import hunternif.mc.atlas.SettingsConfig;
 import hunternif.mc.atlas.client.*;
 import hunternif.mc.atlas.client.gui.GuiAtlas;
 import hunternif.mc.atlas.core.DimensionData;
+import hunternif.mc.atlas.item.ItemAtlas;
 import hunternif.mc.atlas.marker.DimensionMarkersData;
 import hunternif.mc.atlas.marker.Marker;
 import hunternif.mc.atlas.marker.MarkersData;
@@ -20,29 +21,18 @@ import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.Vec3d;
-import net.minecraftforge.client.event.RenderGameOverlayEvent;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.eventhandler.EventPriority;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import none.XX_1_12_2_none_bit_XX;
+import net.minecraft.world.dimension.DimensionType;
 import org.lwjgl.opengl.GL11;
 
 import java.util.List;
 
-@Mod.EventBusSubscriber(modid = AntiqueAtlasOverlayMod.MODID)
-public class AAORenderEventReceiver {
+public class OverlayRenderer
+{
     /**
      * Number of blocks per chunk in minecraft. This is certianly stored
      * somewhere else, but I couldn't be bothered to find it.
      */
     private static final int CHUNK_SIZE = 16;
-
-    /**
-     * new ScaledResolution(mc).getScaleFactor();
-     */
-    private static int screenScale = 1;
-
-    private static XX_1_12_2_none_bit_XX res;
 
     /**
      * Convenience method that returns the first atlas ID for all atlas items
@@ -51,10 +41,10 @@ public class AAORenderEventReceiver {
      **/
     private static Integer getPlayerAtlas(PlayerEntity player) {
         if (!SettingsConfig.gameplay.itemNeeded) {
-            return player.getUniqueID().hashCode();
+            return player.getUuid().hashCode();
         }
 
-        ItemStack stack = player.getHeldItemOffhand();
+        ItemStack stack = player.getOffHandStack();
         if (!stack.isEmpty() && stack.getItem() == RegistrarAntiqueAtlas.ATLAS) {
             return stack.getDamage();
         }
@@ -69,18 +59,14 @@ public class AAORenderEventReceiver {
         return null;
     }
 
-    @SubscribeEvent(priority = EventPriority.NORMAL)
-    public static void eventHandler(RenderGameOverlayEvent.Post event) {
-        if (event.getType() != RenderGameOverlayEvent.ElementType.ALL) {
-            return;
-        }
+    public static void drawOverlay(int gameWidth, int gameHeight) {
 
         if (!AAOConfig.appearance.enabled) {
             return;
         }
 
         // Overlay must close if Atlas GUI is opened
-        if (MinecraftClient.getInstance().XX_1_12_2_m_XX instanceof GuiAtlas) {
+        if (MinecraftClient.getInstance().currentScreen instanceof GuiAtlas) {
             return;
         }
 
@@ -88,21 +74,19 @@ public class AAORenderEventReceiver {
         Integer atlas = null;
 
         if (AAOConfig.appearance.requiresHold) {
-            ItemStack stack = player.getHeldItemMainhand();
-            ItemStack stack2 = player.getHeldItemOffhand();
+            ItemStack stack = player.getMainHandStack();
+            ItemStack stack2 = player.getOffHandStack();
 
             if (!stack.isEmpty() && stack.getItem() == RegistrarAntiqueAtlas.ATLAS) {
-                atlas = stack.getDamage();
+                atlas = ((ItemAtlas) stack.getItem()).getAtlasID(stack);
             } else if (!stack2.isEmpty() && stack2.getItem() == RegistrarAntiqueAtlas.ATLAS) {
-                atlas = stack2.getDamage();
+                atlas = ((ItemAtlas) stack.getItem()).getAtlasID(stack2);
             }
         } else {
             atlas = getPlayerAtlas(player);
         }
 
         if (atlas != null) {
-            int gameWidth = event.getResolution().a();
-            int gameHeight = event.getResolution().b();
             // remember, y=0 is at the top
             Rect bounds = new Rect().setOrigin(AAOConfig.position.xPosition, AAOConfig.position.yPosition);
             if (AAOConfig.position.alignRight) {
@@ -113,17 +97,15 @@ public class AAORenderEventReceiver {
             }
 
             bounds.setSize(AAOConfig.position.width, AAOConfig.position.height);
-            res = event.getResolution();
-            drawMinimap(bounds, atlas, player.getPositionVector(), player.getRotationYawHead(), player.dimension);
+            drawMinimap(bounds, atlas, player.getPos(), player.getHeadYaw(), player.dimension);
         }
     }
 
     private static void drawMinimap(Rect shape, int atlasID, Vec3d position, float rotation,
-                             int dimension) {
-        screenScale = new XX_1_12_2_none_bit_XX(MinecraftClient.getInstance()).e();
+                             DimensionType dimension) {
         GlStateManager.texCoordPointer(1, 1, 1, 1);
         GlStateManager.enableBlend();
-        GlStateManager.texGenMode(GL11.GL_GREATER, 0); // So light detail on tiles is
+        GlStateManager.alphaFunc(GL11.GL_GREATER, 0); // So light detail on tiles is
         // visible
         AtlasRenderHelper.drawFullTexture(Textures.BOOK, shape.minX,
                 shape.minY, shape.getWidth(), shape.getHeight());
@@ -150,16 +132,17 @@ public class AAORenderEventReceiver {
     }
 
     private static void drawTiles(Rect shape, int atlasID, Vec3d position,
-                           int dimension) {
+                           DimensionType dimension) {
         GL11.glEnable(GL11.GL_SCISSOR_TEST);
         // glScissor uses the default window coordinates,
         // the display window does not. We need to fix this
         glScissorGUI(shape);
+
         GlStateManager.enableBlend();
         GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
         DimensionData biomeData = AntiqueAtlasMod.atlasData.getAtlasData(
-                atlasID, MinecraftClient.getInstance().XX_1_12_2_f_XX).getDimensionData(dimension);
+                atlasID, MinecraftClient.getInstance().world).getDimensionData(dimension);
 
         TileRenderIterator iter = new TileRenderIterator(biomeData);
         Rect iteratorScope = getChunkCoverage(position, shape);
@@ -186,7 +169,7 @@ public class AAORenderEventReceiver {
                 float relativeChunkPositionY = (float) (subtile.y / 2.0
                         + iteratorScope.minY - chunkPosition.z);
                 renderer.addTileCorner(
-                        BiomeTextureMap.instance().getTexture(subtile.tile),
+                        BiomeTextureMap.instance().getTexture(subtile.variationNumber, subtile.tile),
                         shapeMiddleX
                                 + (int) Math.floor(relativeChunkPositionX
                                 * AAOConfig.appearance.tileSize),
@@ -203,7 +186,7 @@ public class AAORenderEventReceiver {
     }
 
     private static void drawMarkers(Rect shape, int atlasID, Vec3d position,
-                             int dimension) {
+                                    DimensionType dimension) {
 
         GL11.glEnable(GL11.GL_SCISSOR_TEST);
         // glScissor uses the default window coordinates,
@@ -212,7 +195,7 @@ public class AAORenderEventReceiver {
 
         // biomeData needed to prevent undiscovered markers from appearing
         DimensionData biomeData = AntiqueAtlasMod.atlasData.getAtlasData(
-                atlasID, MinecraftClient.getInstance().XX_1_12_2_f_XX).getDimensionData(
+                atlasID, MinecraftClient.getInstance().world).getDimensionData(
                 dimension);
         DimensionMarkersData globalMarkersData = AntiqueAtlasMod.globalMarkersData
                 .getData().getMarkersDataInDimension(dimension);
@@ -221,7 +204,7 @@ public class AAORenderEventReceiver {
         drawMarkersData(globalMarkersData, shape, biomeData, position);
 
         MarkersData markersData = AntiqueAtlasMod.markersData.getMarkersData(
-                atlasID, MinecraftClient.getInstance().XX_1_12_2_f_XX);
+                atlasID, MinecraftClient.getInstance().world);
         DimensionMarkersData localMarkersData = null;
         if (markersData != null) {
             localMarkersData = markersData.getMarkersDataInDimension(dimension);
@@ -241,7 +224,7 @@ public class AAORenderEventReceiver {
         GlStateManager.pushMatrix();
         GlStateManager.translatef(x, y, 0);
         GlStateManager.rotatef(180 + rotation, 0, 0, 1);
-        GlStateManager.getTexLevelParameter(-AAOConfig.appearance.playerIconWidth / 2, -AAOConfig.appearance.playerIconHeight / 2, 0);
+        GlStateManager.translatef(-AAOConfig.appearance.playerIconWidth / 2, -AAOConfig.appearance.playerIconHeight / 2, 0);
         AtlasRenderHelper.drawFullTexture(Textures.PLAYER, 0, 0, AAOConfig.appearance.playerIconWidth, AAOConfig.appearance.playerIconHeight);
         GlStateManager.popMatrix();
         GlStateManager.texCoordPointer(1, 1, 1, 1);
@@ -298,7 +281,8 @@ public class AAORenderEventReceiver {
         	AntiqueAtlasOverlayMod.LOGGER.warn("Could not find marker type for {}", marker.getId());
         	return;
         }
-        MarkerRenderInfo info = m.getRenderInfo(1, AAOConfig.appearance.tileSize, screenScale);
+        // TODO Fabric - Scale factor?
+        MarkerRenderInfo info = m.getRenderInfo(1, AAOConfig.appearance.tileSize, 1);
         AtlasRenderHelper.drawFullTexture(info.tex, x, y, AAOConfig.appearance.markerSize, AAOConfig.appearance.markerSize);
     }
 
@@ -324,10 +308,12 @@ public class AAORenderEventReceiver {
     private static void glScissorGUI(Rect shape) {
         // glScissor uses the default window coordinates,
         // the display window does not. We need to fix this
-        int mcHeight = MinecraftClient.getInstance().XX_1_12_2_e_XX;
-        float scissorScaleX = MinecraftClient.getInstance().XX_1_12_2_d_XX * 1.0f
-                / res.a();
-        float scissorScaleY = mcHeight * 1.0f / res.b();
+        float scissorScaleX = MinecraftClient.getInstance().window.getWidth() * 1.0f
+                / MinecraftClient.getInstance().window.getScaledWidth();
+
+        int mcHeight = MinecraftClient.getInstance().window.getHeight();
+        float scissorScaleY = mcHeight * 1.0f / MinecraftClient.getInstance().window.getScaledHeight();
+
         GL11.glScissor((int) (shape.minX * scissorScaleX),
                 (int) (mcHeight - shape.maxY * scissorScaleY),
                 (int) (shape.getWidth() * scissorScaleX),
