@@ -80,7 +80,7 @@ public class OverlayRenderer
             if (!stack.isEmpty() && stack.getItem() == RegistrarAntiqueAtlas.ATLAS) {
                 atlas = ((ItemAtlas) stack.getItem()).getAtlasID(stack);
             } else if (!stack2.isEmpty() && stack2.getItem() == RegistrarAntiqueAtlas.ATLAS) {
-                atlas = ((ItemAtlas) stack.getItem()).getAtlasID(stack2);
+                atlas = ((ItemAtlas) stack2.getItem()).getAtlasID(stack2);
             }
         } else {
             atlas = getPlayerAtlas(player);
