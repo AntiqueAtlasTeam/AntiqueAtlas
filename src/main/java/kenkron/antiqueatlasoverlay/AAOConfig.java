@@ -47,10 +47,10 @@ public class AAOConfig {
         public int playerIconHeight = 8;
         //@Config.Comment({ "The width of the map border on the left and right sides of the minimap tiles.", "Represented as a fraction of the image width.", "Below a certain threshold, this border will be overtaken by the map border graphic." })
         //@Config.RangeDouble(min = 0.0F, max = 0.5F)
-        public float borderX = 0.0F;
+        public float borderX = 0.05F;
         //@Config.Comment({ "The width of the map border on the top and bottom sides of the minimap tiles.", "Represented as a fraction of the image width.", "Below a certain threshold, this border will be overtaken by the map border graphic.\n" })
         //@Config.RangeDouble(min = 0.0F, max = 0.5F)
-        public float borderY = 0.0F;
+        public float borderY = 0.05F;
         //@Config.Comment({ "If true, the minimap will show the map of an atlas only while it is held.", "If false, the minimap will show the map of the first atlas in the hotbar." })
         public boolean requiresHold = true;
         //@Config.Comment({ "Set false to disable minimap" })
