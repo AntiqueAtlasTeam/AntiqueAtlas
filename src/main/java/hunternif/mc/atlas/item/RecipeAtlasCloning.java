@@ -1,16 +1,17 @@
 package hunternif.mc.atlas.item;
 
+import hunternif.mc.atlas.AntiqueAtlasMod;
 import hunternif.mc.atlas.RegistrarAntiqueAtlas;
 import net.minecraft.inventory.CraftingInventory;
-import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
+import net.minecraft.recipe.CraftingRecipe;
 import net.minecraft.recipe.RecipeSerializer;
 import net.minecraft.recipe.RecipeType;
 import net.minecraft.recipe.SpecialRecipeSerializer;
 import net.minecraft.util.Identifier;
 import net.minecraft.world.World;
 
-public class RecipeAtlasCloning extends RecipeBase {
+public class RecipeAtlasCloning implements CraftingRecipe {
 	public static final RecipeSerializer<?> SERIALIZER = new SpecialRecipeSerializer<>(RecipeAtlasCloning::new);
 	private final Identifier id;
 
@@ -19,7 +20,12 @@ public class RecipeAtlasCloning extends RecipeBase {
 	}
 
 	@Override
-	public boolean matches(Inventory inv, World world) {
+	public String getGroup() {
+		return AntiqueAtlasMod.ID + ":atlas";
+	}
+
+	@Override
+	public boolean matches(CraftingInventory inv, World world) {
 		int i = 0; // number of empty atlases
 		ItemStack filledAtlas = ItemStack.EMPTY;
 
@@ -45,7 +51,7 @@ public class RecipeAtlasCloning extends RecipeBase {
 	}
 
 	@Override
-	public ItemStack craft(Inventory inv) {
+	public ItemStack craft(CraftingInventory inv) {
 		int i = 0; // number of new copies
 		ItemStack filledAtlas = ItemStack.EMPTY;
 

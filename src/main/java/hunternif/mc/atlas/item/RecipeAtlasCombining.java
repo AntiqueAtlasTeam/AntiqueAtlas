@@ -8,10 +8,7 @@ import hunternif.mc.atlas.marker.MarkersData;
 import net.minecraft.inventory.CraftingInventory;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
-import net.minecraft.recipe.Recipe;
-import net.minecraft.recipe.RecipeSerializer;
-import net.minecraft.recipe.RecipeType;
-import net.minecraft.recipe.SpecialRecipeSerializer;
+import net.minecraft.recipe.*;
 import net.minecraft.util.Identifier;
 import net.minecraft.world.World;
 import net.minecraft.world.dimension.DimensionType;
@@ -23,13 +20,18 @@ import java.util.List;
  * All data is copied into a new atlas instance.
  * @author Hunternif
  */
-public class RecipeAtlasCombining extends RecipeBase<CraftingInventory> {
+public class RecipeAtlasCombining implements CraftingRecipe {
 	public static final RecipeSerializer<RecipeAtlasCombining> SERIALIZER = new SpecialRecipeSerializer<>(RecipeAtlasCombining::new);
 	private final Identifier id;
 
     public RecipeAtlasCombining(Identifier id) {
     	this.id = id;
     }
+
+	@Override
+	public String getGroup() {
+		return AntiqueAtlasMod.ID + ":atlas_combine";
+	}
 
     @Override
 	public boolean matches(CraftingInventory inv, World world) {
