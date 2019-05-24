@@ -103,7 +103,7 @@ public class OverlayRenderer
 
     private static void drawMinimap(Rect shape, int atlasID, Vec3d position, float rotation,
                              DimensionType dimension) {
-        GlStateManager.texCoordPointer(1, 1, 1, 1);
+        GlStateManager.color4f(1, 1, 1, 1);
         GlStateManager.enableBlend();
         GlStateManager.alphaFunc(GL11.GL_GREATER, 0); // So light detail on tiles is
         // visible
@@ -125,7 +125,7 @@ public class OverlayRenderer
         }
 
         // Overlay the frame so that edges of the map are smooth:
-        GlStateManager.texCoordPointer(1, 1, 1, 1);
+        GlStateManager.color4f(1, 1, 1, 1);
         AtlasRenderHelper.drawFullTexture(Textures.BOOK_FRAME, shape.minX,
                 shape.minY, shape.getWidth(), shape.getHeight());
         GlStateManager.disableBlend();
@@ -182,7 +182,7 @@ public class OverlayRenderer
         renderer.draw();
         // get GL back to normal
         GL11.glDisable(GL11.GL_SCISSOR_TEST);
-        GlStateManager.texCoordPointer(1, 1, 1, 1);
+        GlStateManager.color4f(1, 1, 1, 1);
     }
 
     private static void drawMarkers(Rect shape, int atlasID, Vec3d position,
@@ -215,7 +215,7 @@ public class OverlayRenderer
 
         // get GL back to normal
         GL11.glDisable(GL11.GL_SCISSOR_TEST);
-        GlStateManager.texCoordPointer(1, 1, 1, 1);
+        GlStateManager.color4f(1, 1, 1, 1);
     }
 
     private static void drawPlayer(float x, float y, float rotation) {
@@ -227,7 +227,7 @@ public class OverlayRenderer
         GlStateManager.translatef(-AAOConfig.appearance.playerIconWidth / 2, -AAOConfig.appearance.playerIconHeight / 2, 0);
         AtlasRenderHelper.drawFullTexture(Textures.PLAYER, 0, 0, AAOConfig.appearance.playerIconWidth, AAOConfig.appearance.playerIconHeight);
         GlStateManager.popMatrix();
-        GlStateManager.texCoordPointer(1, 1, 1, 1);
+        GlStateManager.color4f(1, 1, 1, 1);
     }
 
     private static void drawMarkersData(DimensionMarkersData markersData,
@@ -275,7 +275,7 @@ public class OverlayRenderer
                 && !biomeData.hasTileAt(marker.getChunkX(), marker.getChunkZ())) {
             return;
         }
-        GlStateManager.texCoordPointer(1, 1, 1, 1);
+        GlStateManager.color4f(1, 1, 1, 1);
         MarkerType m = MarkerRegistry.find(marker.getType());
         if (m == null){
         	AntiqueAtlasOverlayMod.LOGGER.warn("Could not find marker type for {}", marker.getId());
