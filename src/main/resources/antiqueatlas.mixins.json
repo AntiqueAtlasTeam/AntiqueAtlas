@@ -6,7 +6,8 @@
     "MixinEntity",
     "MixinPlayerEntity",
     "MixinPlayerManager",
-    "MixinServerWorld"
+    "MixinServerWorld",
+    "MixinCraftingResultSlot"
   ],
   "client": [
     "MixinClientPlayNetworkHandler",

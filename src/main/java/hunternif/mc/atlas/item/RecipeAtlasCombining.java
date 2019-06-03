@@ -95,12 +95,7 @@ public class RecipeAtlasCombining implements CraftingRecipe {
 		return RecipeType.CRAFTING;
 	}
 
-	// TODO FABRIC
-	public static ItemStack onCrafted(Recipe recipe, World world, Inventory inventory, ItemStack result) {
-		// Make sure it's the same recipe:
-		if (!(recipe instanceof RecipeAtlasCloning)) {
-			return result;
-		}
+	public ItemStack onCrafted(World world, Inventory inventory, ItemStack result) {
 		if (world.isClient) return result;
 		// Until the first update, on the client the returned atlas ID is the same as the first Atlas on the crafting grid.
 		int atlasID = AntiqueAtlasMod.getGlobalAtlasData(world).getNextAtlasId();
