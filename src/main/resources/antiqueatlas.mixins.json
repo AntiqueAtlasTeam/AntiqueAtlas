@@ -5,6 +5,7 @@
   "mixins": [
     "MixinEntity",
     "MixinPlayerEntity",
+    "MixinPlayerEntityDeath",
     "MixinPlayerManager",
     "MixinServerWorld",
     "MixinCraftingResultSlot"
