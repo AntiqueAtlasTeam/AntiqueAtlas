@@ -3,6 +3,8 @@ package hunternif.mc.atlas;
 import hunternif.mc.atlas.core.AtlasDataHandler;
 import hunternif.mc.atlas.core.GlobalAtlasData;
 import hunternif.mc.atlas.core.PlayerEventHandler;
+import hunternif.mc.atlas.event.RecipeCraftedCallback;
+import hunternif.mc.atlas.event.RecipeCraftedHandler;
 import hunternif.mc.atlas.ext.*;
 import hunternif.mc.atlas.marker.GlobalMarkersDataHandler;
 import hunternif.mc.atlas.marker.MarkersDataHandler;
@@ -33,6 +35,8 @@ public class AntiqueAtlasMod implements ModInitializer {
 
 	public static final ExtBiomeDataHandler extBiomeData = new ExtBiomeDataHandler();
 	public static final GlobalMarkersDataHandler globalMarkersData = new GlobalMarkersDataHandler();
+
+	public static final RecipeCraftedHandler craftedHandler = new RecipeCraftedHandler();
 
 	public static Identifier id(String name) {
 		if (name.indexOf(':') > 0) {
@@ -73,6 +77,8 @@ public class AntiqueAtlasMod implements ModInitializer {
 
 		ServerWorldLoadCallback.EVENT.register(globalMarkersData::onWorldLoad);
 		ServerWorldLoadCallback.EVENT.register(extBiomeData::onWorldLoad);
+
+		RecipeCraftedCallback.EVENT.register(craftedHandler::onCrafted);
 
 		/*
 		if (!SettingsConfig.gameplay.itemNeeded)
