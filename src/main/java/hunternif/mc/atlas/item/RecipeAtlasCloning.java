@@ -77,8 +77,8 @@ public class RecipeAtlasCloning implements CraftingRecipe {
 			ItemStack newAtlas = new ItemStack(RegistrarAntiqueAtlas.ATLAS, i + 1);
 			newAtlas.getOrCreateTag().putInt("atlasID", RegistrarAntiqueAtlas.ATLAS.getAtlasID(filledAtlas));
 
-			if (filledAtlas.hasDisplayName()) {
-				newAtlas.setDisplayName(filledAtlas.getDisplayName());
+			if (filledAtlas.hasCustomName()) {
+				newAtlas.setCustomName(filledAtlas.getName());
 			}
 
 			return newAtlas;

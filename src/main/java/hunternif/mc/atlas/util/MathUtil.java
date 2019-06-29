@@ -1,7 +1,7 @@
 package hunternif.mc.atlas.util;
 
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.BoundingBox;
+import net.minecraft.util.math.Box;
 import net.minecraft.util.math.MutableIntBoundingBox;
 
 public class MathUtil {
@@ -20,8 +20,8 @@ public class MathUtil {
 		}
 	}
 
-	public static BoundingBox toAABB(MutableIntBoundingBox box) {
-		return new BoundingBox(box.minX, box.minY, box.minZ, box.maxX, box.maxY, box.maxZ);
+	public static Box toAABB(MutableIntBoundingBox box) {
+		return new Box(box.minX, box.minY, box.minZ, box.maxX, box.maxY, box.maxZ);
 	}
 
 	public static BlockPos getCenter(MutableIntBoundingBox box) {

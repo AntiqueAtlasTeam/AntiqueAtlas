@@ -15,7 +15,7 @@ public class MixinInGameHud {
     @Shadow
     private int scaledHeight;
 
-    @Inject(at = @At("TAIL"), method = "draw")
+    @Inject(at = @At("TAIL"), method = "render")
     public void draw(float partial, CallbackInfo info) {
         ExportProgressOverlay.INSTANCE.draw(scaledWidth, scaledHeight, partial);
     }

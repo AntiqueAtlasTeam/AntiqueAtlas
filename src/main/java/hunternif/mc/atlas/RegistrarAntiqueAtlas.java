@@ -15,8 +15,8 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 
 public class RegistrarAntiqueAtlas {
-    public static final ItemEmptyAtlas EMPTY_ATLAS = new ItemEmptyAtlas(new Item.Settings().itemGroup(ItemGroup.MISC));
-    public static final ItemAtlas ATLAS = new ItemAtlas(new Item.Settings().stackSize(1));
+    public static final ItemEmptyAtlas EMPTY_ATLAS = new ItemEmptyAtlas(new Item.Settings().group(ItemGroup.MISC));
+    public static final ItemAtlas ATLAS = new ItemAtlas(new Item.Settings().maxCount(1));
 
     public static void register() {
         // TODO FABRIC

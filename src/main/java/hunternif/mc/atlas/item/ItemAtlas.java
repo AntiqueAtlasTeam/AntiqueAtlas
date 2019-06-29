@@ -1,6 +1,5 @@
 package hunternif.mc.atlas.item;
 
-import java.util.ArrayList;
 import java.util.Collection;
 
 import net.minecraft.entity.Entity;
@@ -8,6 +7,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
@@ -30,10 +30,10 @@ public class ItemAtlas extends Item {
 		return stack.getOrCreateTag().getInt("atlasID");
 	}
 
-	/* @Override
-	public String i(ItemStack stack) {
-		return super.XX_1_13_i_XX(stack) + " #" + getAtlasID(stack);
-	} */
+	@Override
+	public Text getName(ItemStack stack) {
+		return super.getName(stack).append(" #" + getAtlasID(stack));
+	}
 
 	@Override
 	public TypedActionResult<ItemStack> use(World world, PlayerEntity playerIn,
@@ -48,7 +48,7 @@ public class ItemAtlas extends Item {
 	}
 
 	@Override
-	public void onEntityTick(ItemStack stack, World world, Entity entity, int slot, boolean isEquipped) {
+	public void inventoryTick(ItemStack stack, World world, Entity entity, int slot, boolean isEquipped) {
 		AtlasData data = AntiqueAtlasMod.atlasData.getAtlasData(stack, world);
 		if (data == null || !(entity instanceof PlayerEntity)) return;
 

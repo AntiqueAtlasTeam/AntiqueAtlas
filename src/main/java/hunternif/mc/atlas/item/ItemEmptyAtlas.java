@@ -41,7 +41,7 @@ public class ItemEmptyAtlas extends Item {
         MarkersData markersData = AntiqueAtlasMod.markersData.getMarkersData(atlasID, world);
         markersData.markDirty();
 		
-		stack.subtractAmount(1);
+		stack.decrement(1);
 		if (stack.isEmpty()) {
 			return new TypedActionResult<>(ActionResult.SUCCESS, atlasStack);
 		} else {

@@ -7,7 +7,7 @@ import net.minecraft.client.font.TextRenderer;
 
 
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.network.chat.TextComponent;
+import net.minecraft.text.LiteralText;
 import org.lwjgl.opengl.GL11;
 
 import java.util.List;
@@ -57,7 +57,7 @@ public class GuiComponent extends Screen {
 
 	// TODO
 	public GuiComponent() {
-		super(new TextComponent("component"));
+		super(new LiteralText("component"));
 	}
 
 	/** Set absolute coordinates of the top left corner of this component on
