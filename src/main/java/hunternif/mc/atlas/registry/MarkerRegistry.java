@@ -19,7 +19,12 @@ public class MarkerRegistry extends SaveData {
 	}
 	
 	public static void register(Identifier location, MarkerType type) {
-		INSTANCE.registry.add(location, type);
+		if (INSTANCE.registry.containsId(location)) {
+			int oldId = INSTANCE.registry.getRawId(INSTANCE.registry.get(location));
+			INSTANCE.registry.set(oldId, location, type);
+		} else {
+			INSTANCE.registry.add(location, type);
+		}
 	}
 	
 	public static Identifier getLoc(String type) {
@@ -67,9 +72,5 @@ public class MarkerRegistry extends SaveData {
 
 	public static MarkerType findDefault() {
 		return find("antiqueatlas:red_x_small");
-	}
-
-	public static void clear() {
-		// TODO
 	}
 }
