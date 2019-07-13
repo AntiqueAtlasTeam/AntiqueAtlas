@@ -70,6 +70,8 @@ public class DimensionUpdatePacket extends AbstractClientMessage<DimensionUpdate
 		buffer.writeIdentifier(dimensionId);
 		buffer.writeVarInt(tileCount);
 		buffer.writeBytes(tileData);
+		// reset readerIndex, as this packet may gets send to multiple peers.
+		tileData.readerIndex(0);
 	}
 
 	@Override
