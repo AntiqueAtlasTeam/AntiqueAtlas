@@ -15,5 +15,6 @@ public class AntiqueAtlasOverlayMod implements ClientModInitializer
     @Override
     public void onInitializeClient()
     {
+        AAOConfig.loadConfig();
     }
 }

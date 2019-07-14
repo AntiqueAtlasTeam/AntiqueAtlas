@@ -13,6 +13,10 @@ group = project.maven_group
 minecraft {
 }
 
+repositories {
+	maven { url 'http://server.bbkr.space:8081/artifactory/libs-release' }
+}
+
 dependencies {
 	//to change the versions see the gradle.properties file
 	minecraft "com.mojang:minecraft:${project.minecraft_version}"
@@ -21,6 +25,10 @@ dependencies {
 
 	// Fabric API. This is technically optional, but you probably want it anyway.
 	modCompile "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+
+	// Cotton API for configs
+	modCompile "io.github.cottonmc.cotton:cotton-config:${project.cotton_version}"
+	include "io.github.cottonmc.cotton:cotton-config:${project.cotton_version}"
 
 	compile 'com.google.code.findbugs:jsr305:3.0.2'
 	testCompile "junit:junit:4.+"

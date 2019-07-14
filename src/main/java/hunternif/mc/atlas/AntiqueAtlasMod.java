@@ -62,6 +62,8 @@ public class AntiqueAtlasMod implements ModInitializer {
 		instance = this;
 		proxy = new CommonProxy();
 
+		SettingsConfig.loadConfig();
+
 		RegistrarAntiqueAtlas.register();
 		PacketDispatcher.registerPackets();
 
