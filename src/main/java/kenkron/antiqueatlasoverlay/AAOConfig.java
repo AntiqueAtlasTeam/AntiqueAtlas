@@ -19,7 +19,7 @@ public class AAOConfig {
     @ConfigFile(name="antiqueatlas/overlay_position")
     public static class Position {
         @Comment("If true, the map position's x axis will align 0 to the right\nof the screen, increasing towards the left.")
-        public boolean alignRight = true;
+        public boolean alignRight = false;
 
         @Comment("If true, the map position's y axis will align 0 to the bottom\nof the screen, increasing towards the top.")
         public boolean alignBottom = false;
