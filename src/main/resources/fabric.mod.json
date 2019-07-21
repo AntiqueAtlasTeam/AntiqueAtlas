@@ -17,7 +17,7 @@
   "contact": {
   },
   "icon": "antiqueatlas_icon.png",
-  "requires": {
+  "depends": {
     "fabricloader": ">=0.4.0",
     "fabric": ">=0.2.6"
   },
