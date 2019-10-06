@@ -56,8 +56,8 @@ public class AAOConfig {
         public float borderY = 0.0F;
         @Config.Comment({ "If true, the minimap will show the map of an atlas only while it is held.", "If false, the minimap will show the map of the first atlas in the hotbar." })
         public boolean requiresHold = true;
-        @Config.Comment({ "Set false to disable minimap" })
-        public boolean enabled = true;
+        @Config.Comment({ "Set true to enable minimap" })
+        public boolean enabled = false;
     }
 
     // TODO - Remove when Forge fixes it's own syncing
