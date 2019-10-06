@@ -10,14 +10,11 @@ import hunternif.mc.atlas.registry.MarkerRegistry;
 import hunternif.mc.atlas.registry.MarkerRenderInfo;
 import hunternif.mc.atlas.registry.MarkerType;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.imageio.ImageIO;
-import javax.swing.*;
-import javax.swing.filechooser.FileFilter;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
@@ -25,66 +22,21 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.*;
 import java.util.List;
+import java.util.*;
 
 @SideOnly(Side.CLIENT)
 public class ExportImageUtil {
 	public static final int TILE_SIZE = 16;
 	public static final int MARKER_SIZE = 32;
 	public static boolean isExporting = false;
-	
-	private static Frame frame;
-	private static final JFileChooser chooser = new JFileChooser();
+
 	private static ExportUpdateListener getListener() {
 		return ExportUpdateListener.INSTANCE;
 	}
 	
-	static {
-		chooser.setDialogTitle(I18n.format("gui.antiqueatlas.exportImage"));
-		chooser.setSelectedFile(new File("Atlas.png"));
-		chooser.setFileFilter(new FileFilter() {
-			@Override
-			public String getDescription() {
-				return "PNG Image";
-			}
-			@Override
-			public boolean accept(File file) {
-				// Accept all files so they are visible
-				return true;
-			}
-		});
-	}
-	
 	/** Beware that the background texture doesn't follow the Autotile format. */
 	private static final int BG_TILE_SIZE = 22;
-	
-	/** Opens a dialog and returns the file that was chosen, null if none or error. */
-	public static File selectPngFileToSave(String atlasName) {
-		getListener().setHeaderString("");
-		getListener().setStatusString("gui.antiqueatlas.export.opening");
-		getListener().setProgressMax(-1);
-		try {
-			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException e) {
-			Log.error(e, "Setting system Look&Feel for JFileChooser");
-		}
-
-		getListener().setStatusString("gui.antiqueatlas.export.selectFile");
-		frame = new Frame();
-		if (chooser.showSaveDialog(frame) == JFileChooser.APPROVE_OPTION) {
-			File file = chooser.getSelectedFile();
-			frame.dispose();
-			// Check file extension:
-			if (file.getName().length() < 4  || // No extension
-				!file.getName().substring(file.getName().length() - 4).equalsIgnoreCase(".png")) {
-				file = new File(file.getAbsolutePath() + ".png");
-			}
-			return file;
-		}
-		frame.dispose();
-		return null;
-	}
 	
 	/** Renders the map into file as PNG image. */
 	public static void exportPngImage(DimensionData biomeData, DimensionMarkersData globalMarkers,
