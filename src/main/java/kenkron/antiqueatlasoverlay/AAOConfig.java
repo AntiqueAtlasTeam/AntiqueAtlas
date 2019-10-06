@@ -70,7 +70,7 @@ public class AAOConfig {
         @Comment("If true, the minimap will show the map of an atlas only while it is held.\nIf false, the minimap will show the map of the first atlas in the hotbar.")
         public boolean requiresHold = true;
 
-        @Comment("Set false to disable minimap")
-        public boolean enabled = true;
+        @Comment("Set true to enable minimap")
+        public boolean enabled = false;
     }
 }
