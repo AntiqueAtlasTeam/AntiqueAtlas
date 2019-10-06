@@ -60,21 +60,19 @@ public class Marker {
 	}
 	public String getLocalizedLabel() {
 		// Assuming the beginning of the label string until a whitespace (or end)
-		// is a traslatable key. What comes after it is assumed to be a single
+		// is a translatable key. What comes after it is assumed to be a single
 		// string parameter, i.e. player's name.
-		int whitespaceIndex = label.indexOf(' ');
-		if (whitespaceIndex == -1) {
-			return I18n.format(label);
-		} else {
-			String key = label.substring(0, whitespaceIndex);
-			String param = label.substring(whitespaceIndex + 1);
-			String translated = I18n.format(key);
-			if (!key.equals(translated)) { // Make sure translation succeeded
-				return String.format(I18n.format(key), param);
-			} else {
-				return label;
+		String[] parts = label.split("\\s", 2);
+		String key = parts[0];
+		// formatting only applies when the first word is a valid i18n key
+		if (key.matches("([a-zA-Z_]\\.?)+")) {
+			String param = parts.length > 1 ? parts[1] : "";
+			String translated = I18n.format(key, param);
+			if (!key.equals(translated)) { // translation succeeded
+				return translated;
 			}
 		}
+		return label;
 	}
 	
 	public int getDimension() {
