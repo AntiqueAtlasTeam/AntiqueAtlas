@@ -1,5 +1,6 @@
 plugins {
-	id 'fabric-loom' version '0.2.2-SNAPSHOT'
+	id 'java-library'
+	id 'fabric-loom' version '0.2.5-SNAPSHOT'
 	id 'maven-publish'
 }
 
@@ -21,14 +22,13 @@ dependencies {
 	//to change the versions see the gradle.properties file
 	minecraft "com.mojang:minecraft:${project.minecraft_version}"
 	mappings "net.fabricmc:yarn:${project.yarn_mappings}"
-	modCompile "net.fabricmc:fabric-loader:${project.loader_version}"
+	modApi "net.fabricmc:fabric-loader:${project.loader_version}"
 
 	// Fabric API. This is technically optional, but you probably want it anyway.
-	modCompile "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+	modApi "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
 	// Cotton API for configs
-	modCompile "io.github.cottonmc.cotton:cotton-config:${project.cotton_version}"
-	include "io.github.cottonmc.cotton:cotton-config:${project.cotton_version}"
+	modApi "io.github.cottonmc.cotton:cotton-config:${project.cotton_version}"
 
 	compile 'com.google.code.findbugs:jsr305:3.0.2'
 	testCompile "junit:junit:4.+"

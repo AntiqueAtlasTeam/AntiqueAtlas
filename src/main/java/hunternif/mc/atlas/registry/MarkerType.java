@@ -13,7 +13,6 @@ import net.minecraft.client.texture.TextureManager;
 import net.minecraft.util.Identifier;
 import org.apache.commons.io.IOUtils;
 
-import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -182,7 +181,7 @@ public class MarkerType {
 
 			try {
 				iresource = MinecraftClient.getInstance().getResourceManager().getResource(icons[i]);
-				bufferedimage = NativeImage.fromInputStream(iresource.getInputStream());
+				bufferedimage = NativeImage.read(iresource.getInputStream());
 				iconSizes[i] = Math.min(bufferedimage.getWidth(), bufferedimage.getHeight());
 				BitMatrix matrix = new BitMatrix(bufferedimage.getWidth(), bufferedimage.getHeight(), false);
 				

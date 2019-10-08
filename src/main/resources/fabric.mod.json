@@ -18,8 +18,9 @@
   },
   "icon": "antiqueatlas_icon.png",
   "depends": {
-    "fabricloader": ">=0.4.0",
-    "fabric": ">=0.2.6"
+    "fabricloader": ">=0.6.0",
+    "fabric": ">=0.4.0",
+    "cotton-config": ">=1.0.0-rc.1"
   },
   "mixins": [
     "antiqueatlas.mixins.json",
