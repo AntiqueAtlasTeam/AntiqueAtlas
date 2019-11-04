@@ -247,15 +247,15 @@ public class TextureSet implements Comparable<TextureSet> {
 	/** Whether the texture set is part of the standard pack. Only true for
 	 * static constants in this class. */
 	final boolean isStandard;
-	
+
 	private boolean stitchesToNull = false;
 	private boolean anisotropicStitching = false;
 	
 	private static TextureSet standard(String name, ResourceLocation ... textures) {
 		return new TextureSet(true, name, textures);
 	}
-	
-	private TextureSet(boolean isStandard, String name, ResourceLocation ... textures) {
+
+	public TextureSet(boolean isStandard, String name, ResourceLocation ... textures) {
 		this.isStandard = isStandard;
 		this.name = name;
 		this.textures = textures;
@@ -265,7 +265,8 @@ public class TextureSet implements Comparable<TextureSet> {
 		this(false, name, textures);
 	}
 	
-	/** Allow this texture set to be stitched to empty space, i.e. edge of the map. */
+	/** Allow this texture set to be stitched to empty space, i.e. edge of the map.
+	 * BUG: Looks like this is not working. */
     TextureSet stitchesToNull() {
 		this.stitchesToNull = true;
 		return this;
@@ -273,7 +274,7 @@ public class TextureSet implements Comparable<TextureSet> {
 	
 	/** Add other texture sets that this texture set will be stitched to
 	 * (but the opposite may be false, in case of asymmetric stitching.) */
-    private TextureSet stitchTo(TextureSet... textureSets) {
+	public TextureSet stitchTo(TextureSet... textureSets) {
 		Collections.addAll(stitchTo, textureSets);
 		return this;
 	}
@@ -285,13 +286,13 @@ public class TextureSet implements Comparable<TextureSet> {
 		}
 		return this;
 	}
-	
-	private TextureSet stitchToHorizontal(TextureSet... textureSets) {
+
+	public TextureSet stitchToHorizontal(TextureSet... textureSets) {
 		this.anisotropicStitching = true;
 		Collections.addAll(stitchToHorizontal, textureSets);
 		return this;
 	}
-	private TextureSet stitchToVertical(TextureSet... textureSets) {
+	public TextureSet stitchToVertical(TextureSet... textureSets) {
 		this.anisotropicStitching = true;
 		Collections.addAll(stitchToVertical, textureSets);
 		return this;
@@ -322,7 +323,7 @@ public class TextureSet implements Comparable<TextureSet> {
 	}
 	
 	/** A special texture set that is stitched to everything except water. */
-	private static class TextureSetShore extends TextureSet {
+	public static class TextureSetShore extends TextureSet {
 		private final TextureSet water;
 		TextureSetShore(String name, TextureSet water, ResourceLocation ... textures) {
 			super(true, name, textures);
@@ -338,21 +339,21 @@ public class TextureSet implements Comparable<TextureSet> {
 	}
 	
 	/** Stitch provided texture sets mutually between each other. */
-	private static void stitchMutually(TextureSet... sets) {
+	public static void stitchMutually(TextureSet... sets) {
 		for (TextureSet set1 : sets) {
 			for (TextureSet set2 : sets) {
 				if (set1 != set2) set1.stitchTo(set2);
 			}
 		}
 	}
-	private static void stitchMutuallyHorizontally(TextureSet... sets) {
+	public static void stitchMutuallyHorizontally(TextureSet... sets) {
 		for (TextureSet set1 : sets) {
 			for (TextureSet set2 : sets) {
 				if (set1 != set2) set1.stitchToHorizontal(set2);
 			}
 		}
 	}
-	private static void stitchMutuallyVertically(TextureSet... sets) {
+	public static void stitchMutuallyVertically(TextureSet... sets) {
 		for (TextureSet set1 : sets) {
 			for (TextureSet set2 : sets) {
 				if (set1 != set2) set1.stitchToVertical(set2);

@@ -27,6 +27,15 @@ public interface TileAPI {
 	 */
 	@SideOnly(Side.CLIENT)
 	TextureSet registerTextureSet(String name, ResourceLocation ... textures);
+
+	/**
+	 * Register a texture set with the specified unique name and texture files.
+	 * The different textures in the set will be added as variations, and only
+	 * the name of the texture set will be saved in the biome/tile config file.
+	 * <p>If you extend {@link TextureSet}, you can add custom stitching logic.</p>
+	 */
+	@SideOnly(Side.CLIENT)
+	void registerTextureSet(TextureSet textureSet);
 	
 	
 	// Biome textures ==========================================================

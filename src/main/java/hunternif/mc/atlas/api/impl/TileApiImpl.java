@@ -62,6 +62,11 @@ public class TileApiImpl implements TileAPI {
 		TextureSetMap.instance().register(textureSet);
 		return textureSet;
 	}
+
+	@Override
+	public void registerTextureSet(TextureSet textureSet) {
+		TextureSetMap.instance().register(textureSet);
+	}
 	
 	
 	// Biome textures ==========================================================
