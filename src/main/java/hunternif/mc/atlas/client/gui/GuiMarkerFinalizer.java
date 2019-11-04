@@ -123,27 +123,17 @@ public class GuiMarkerFinalizer extends GuiComponent {
 
 	@Override
 	public boolean mouseClicked(double mouseX, double mouseY, int button) {
-		return textField.mouseClicked(mouseX, mouseY, button) || super.mouseClicked(mouseX, mouseY, button);
-	}
-
-	@Override
-	public boolean mouseReleased(double mouseX, double mouseY, int button) {
-		return textField.mouseReleased(mouseX, mouseY, button) || super.mouseReleased(mouseX, mouseY, button);
+		return super.mouseClicked(mouseX, mouseY, button) || textField.mouseClicked(mouseX, mouseY, button);
 	}
 
 	@Override
 	public boolean keyPressed(int aa, int bb, int cc) {
-		return textField.keyPressed(aa, bb, cc) || super.keyPressed(aa, bb, cc);
+		return super.keyPressed(aa, bb, cc) || textField.keyPressed(aa, bb, cc);
 	}
 
 	@Override
 	public boolean charTyped(char aa, int bb) {
-		return textField.charTyped(aa, bb) || super.charTyped(aa, bb);
-	}
-
-	@Override
-	public boolean keyReleased(int aa, int bb, int cc) {
-		return textField.keyReleased(aa, bb, cc) || super.keyReleased(aa, bb, cc);
+		return super.charTyped(aa, bb) || textField.charTyped(aa, bb);
 	}
 
 	@Override
