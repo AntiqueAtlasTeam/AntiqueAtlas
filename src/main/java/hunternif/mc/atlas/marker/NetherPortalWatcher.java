@@ -4,11 +4,16 @@ import hunternif.mc.atlas.AntiqueAtlasMod;
 import hunternif.mc.atlas.RegistrarAntiqueAtlas;
 import hunternif.mc.atlas.SettingsConfig;
 import hunternif.mc.atlas.api.AtlasAPI;
+import hunternif.mc.atlas.event.OptionalMarkerEvent;
+import hunternif.mc.atlas.network.PacketDispatcher;
+import hunternif.mc.atlas.network.client.OptionalMarkerPacket;
+import hunternif.mc.atlas.network.server.AddMarkerPacket;
 import hunternif.mc.atlas.registry.MarkerTypes;
 import hunternif.mc.atlas.util.DummyWorldAccess;
 import hunternif.mc.atlas.util.Log;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.DimensionType;
 import net.minecraft.world.World;
@@ -37,7 +42,15 @@ public class NetherPortalWatcher extends DummyWorldAccess {
 	 * by checking if this set contains the player's ID!
 	 */
 	private final Map<Integer, Integer> teleportingPlayersOrigin = new ConcurrentHashMap<Integer, Integer>();
-	
+
+	@SubscribeEvent
+	public void onOptionalMarker(OptionalMarkerEvent event) {
+		if (event.type == MarkerTypes.NETHER_PORTAL &&
+				!SettingsConfig.gameplay.autoNetherPortalMarkers) {
+			event.setCanceled(true);
+		}
+	}
+
 	@SubscribeEvent
 	public void onWorldLoad(WorldEvent.Load event) {
 		if (!event.getWorld().isRemote) {
@@ -54,8 +67,8 @@ public class NetherPortalWatcher extends DummyWorldAccess {
 	
 	@Override
 	public void onEntityAdded(Entity entity) {
-		if (entity instanceof EntityPlayer) {
-			EntityPlayer player = (EntityPlayer) entity;
+		if (entity instanceof EntityPlayerMP) {
+			EntityPlayerMP player = (EntityPlayerMP) entity;
 			if (teleportingPlayersOrigin.containsKey(entity.getEntityId())) {
 				int origin = teleportingPlayersOrigin.remove(entity.getEntityId());
 				Log.info("Entering");
@@ -74,8 +87,8 @@ public class NetherPortalWatcher extends DummyWorldAccess {
 	
 	@Override
 	public void onEntityRemoved(Entity entity) {
-		if (entity instanceof EntityPlayer) {
-			EntityPlayer player = (EntityPlayer) entity;
+		if (entity instanceof EntityPlayerMP) {
+			EntityPlayerMP player = (EntityPlayerMP) entity;
 			if (isEntityInPortal(entity)) {
 				Log.info("Exiting");
 				// player.worldObj.provider.dimensionId is the dimension of origin
@@ -91,11 +104,7 @@ public class NetherPortalWatcher extends DummyWorldAccess {
 	
 	/** Put the Portal marker at the player's current coordinates into all
 	 * atlases that he is carrying, if the same marker is not already there. */
-	private void addPortalMarkerIfNone(EntityPlayer player, int dimension) {
-		if(!SettingsConfig.gameplay.autoNetherPortalMarkers) {
-			return;
-		}
-
+	private void addPortalMarkerIfNone(EntityPlayerMP player, int dimension) {
 		// Due to switching dimensions this player entity's worldObj is lagging.
 		// We need the very specific dimension each time.
 		World world = AntiqueAtlasMod.proxy.getServer().getWorld(dimension);
@@ -112,7 +121,7 @@ public class NetherPortalWatcher extends DummyWorldAccess {
 		}
 	}
 
-	private void addPortalMarkerIfNone(EntityPlayer player, World world, int dimension, int atlasID) {
+	private void addPortalMarkerIfNone(EntityPlayerMP player, World world, int dimension, int atlasID) {
 		// Can't use entity.dimension here, because its value has already been updated!
 		DimensionMarkersData data = AntiqueAtlasMod.markersData.getMarkersData(atlasID, world)
 				.getMarkersDataInDimension(dimension);
@@ -132,7 +141,14 @@ public class NetherPortalWatcher extends DummyWorldAccess {
 		}
 
 		// Marker not found, place new one:
-		AtlasAPI.markers.putMarker(world, false, atlasID, MarkerTypes.NETHER_PORTAL, "gui.antiqueatlas.marker.netherPortal", x, z);
+		PacketDispatcher.sendTo(
+				new OptionalMarkerPacket(
+						atlasID,
+						world.provider.getDimension(),
+						MarkerTypes.NETHER_PORTAL,
+						"gui.antiqueatlas.marker.netherPortal",
+						x, z, false),
+				player);
 	}
 	
 	private static boolean isEntityInPortal(Entity entity) {

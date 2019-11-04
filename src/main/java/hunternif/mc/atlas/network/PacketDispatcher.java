@@ -49,6 +49,7 @@ public class PacketDispatcher
 		registerMessage(BrowsingPositionPacket.class);
 		registerMessage(IntTilesPacket.class);
 		registerMessage(IntDimensionUpdatePacket.class);
+		registerMessage(OptionalMarkerPacket.class);
 	}
 
 	/**
