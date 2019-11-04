@@ -6,6 +6,7 @@ import com.google.common.collect.Sets;
 import hunternif.mc.atlas.AntiqueAtlasMod;
 import hunternif.mc.atlas.SettingsConfig;
 import hunternif.mc.atlas.api.AtlasAPI;
+import hunternif.mc.atlas.event.OptionalMarkerEvent;
 import hunternif.mc.atlas.ext.ExtTileIdMap;
 import hunternif.mc.atlas.ext.watcher.IStructureWatcher;
 import hunternif.mc.atlas.ext.watcher.StructureWatcher;
@@ -21,6 +22,7 @@ import net.minecraft.world.DimensionType;
 import net.minecraft.world.World;
 import net.minecraft.world.gen.structure.MapGenStructureData;
 import net.minecraft.world.gen.structure.StructureBoundingBox;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nonnull;
@@ -102,6 +104,14 @@ public class StructureWatcherVillage implements IStructureWatcher {
     public boolean isDimensionValid(DimensionType type) {
         return type.getId() == 0; // Only overworld
     }
+
+	@SubscribeEvent
+	public void onOptionalMarker(OptionalMarkerEvent event) {
+		if (event.type == MarkerTypes.VILLAGE &&
+				!SettingsConfig.gameplay.autoVillageMarkers) {
+			event.setCanceled(true);
+		}
+	}
 
     @Nullable
     @Override

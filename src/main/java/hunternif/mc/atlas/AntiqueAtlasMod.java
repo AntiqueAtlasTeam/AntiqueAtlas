@@ -68,7 +68,7 @@ public class AntiqueAtlasMod {
 		MinecraftForge.EVENT_BUS.register(new NetherPortalWatcher());
 
 		// Structure Watchers
-        new StructureWatcherVillage();
+		MinecraftForge.EVENT_BUS.register(new StructureWatcherVillage()); // register for OptionalMarkerEvent
         new StructureWatcherFortress();
 		new StructureWatcherGeneric("EndCity", DimensionType.THE_END, MarkerTypes.END_CITY_FAR, "gui.antiqueatlas.marker.endcity").setTileMarker(MarkerTypes.END_CITY, "gui.antiqueatlas.marker.endcity");
 	}
