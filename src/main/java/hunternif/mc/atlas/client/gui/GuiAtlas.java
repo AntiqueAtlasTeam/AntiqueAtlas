@@ -499,9 +499,11 @@ public class GuiAtlas extends GuiComponent {
 		} else {
 			KeyBinding[] hotbarKeys = minecraft.options.keysHotbar;
 			for (KeyBinding bind : hotbarKeys) {
-				if (bind.matchesKey(keyCode, scanCode)) {
+				// only handle hotbarkeys when marker gui isn't shown1
+				if (bind.matchesKey(keyCode, scanCode) && this.markerFinalizer.getParent() == null) {
 					onClose();
-					return true;
+					// if we close the gui, then don't handle the event
+					return false;
 				}
 			}
 
