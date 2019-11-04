@@ -23,9 +23,9 @@ public class SettingsConfig {
         public boolean doSaveBrowsingPos = true;
         @Config.Comment({"Whether to add local marker for the spot where the player died."})
         public boolean autoDeathMarker = true;
-        @Config.Comment({"Whether to add global markers for NPC villages."})
+        @Config.Comment({"Whether to add local markers for NPC villages."})
         public boolean autoVillageMarkers = true;
-        @Config.Comment({"Whether to add global markers for Nether Portals."})
+        @Config.Comment({"Whether to add local markers for Nether Portals."})
         public boolean autoNetherPortalMarkers = true;
         @Config.Comment({"Player will need to craft atlas item to use atlas."})
         @Config.RequiresMcRestart

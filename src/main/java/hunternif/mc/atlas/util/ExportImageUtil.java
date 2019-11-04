@@ -39,7 +39,7 @@ public class ExportImageUtil {
 	private static final int BG_TILE_SIZE = 22;
 	
 	/** Renders the map into file as PNG image. */
-	public static void exportPngImage(DimensionData biomeData, DimensionMarkersData globalMarkers,
+	public static void exportPngImage(DimensionData biomeData,
 			DimensionMarkersData localMarkers, File file, boolean showMarkers) {
 		getListener().setHeaderString("gui.antiqueatlas.export.setup");
 		// Prepare output image
@@ -98,7 +98,7 @@ public class ExportImageUtil {
 				graphics,
 				bgTilesX, bgTilesY, outWidth, outHeight,
 				biomeData, textureImageMap,
-				globalMarkers, localMarkers,
+				localMarkers,
 				showMarkers, minX, minY,
 				scale, bg);
 		
@@ -113,7 +113,7 @@ public class ExportImageUtil {
 	}
 	
 	/** Renders the map into file as PNG image stripe by stripe in order to not have a OutOfMemoryError. */
-	public static void exportPngImageTooLarge(final DimensionData biomeData, final DimensionMarkersData globalMarkers,
+	public static void exportPngImageTooLarge(final DimensionData biomeData,
 			final DimensionMarkersData localMarkers, File file, final boolean showMarkers) {
 		getListener().setHeaderString("");
 		// Prepare output image
@@ -196,7 +196,7 @@ public class ExportImageUtil {
                     graphics,
                     bgTilesX, bgTilesY, outWidth, outHeight,
                     biomeData, textureImageMap,
-                    globalMarkers, localMarkers,
+                    localMarkers,
                     showMarkers, minX, minY,
                     scale, bg_);
             getListener().setStatusString("gui.antiqueatlas.export.writestripe");
@@ -225,7 +225,7 @@ public class ExportImageUtil {
 	private static void drawMapToGraphics(Graphics2D graphics,
 			int bgTilesX, int bgTilesY, int outWidth, int outHeight,
 			DimensionData biomeData, Map<ResourceLocation, BufferedImage> textureImageMap,
-			DimensionMarkersData globalMarkers, DimensionMarkersData localMarkers,
+			DimensionMarkersData localMarkers,
 			boolean showMarkers, int minX, int minY,
 			int scale, BufferedImage bg) {
 		getListener().setStatusString("gui.antiqueatlas.export.rendering.background");
@@ -334,10 +334,6 @@ public class ExportImageUtil {
 					z <= biomeData.getScope().maxY / MarkersData.CHUNK_STEP; z++) {
 				
 				markers.clear();
-				List<Marker> globalMarkersAt = globalMarkers.getMarkersAtChunk(x, z);
-				if (globalMarkersAt != null) {
-					markers.addAll(globalMarkers.getMarkersAtChunk(x, z));
-				}
 				if (localMarkers != null) {
 					List<Marker> localMarkersAt = localMarkers.getMarkersAtChunk(x, z);
 					if (localMarkersAt != null) {

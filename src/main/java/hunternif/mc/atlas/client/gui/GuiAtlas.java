@@ -202,8 +202,6 @@ public class GuiAtlas extends GuiComponent {
 
 	/** Local markers in the current dimension */
 	private DimensionMarkersData localMarkersData;
-	/** Global markers in the current dimension */
-	private DimensionMarkersData globalMarkersData;
 	/** The marker highlighted by the eraser. Even though multiple markers may
 	 * be highlighted at the same time, only one of them will be deleted. */
 	private Marker hoveredMarker;
@@ -459,12 +457,12 @@ public class GuiAtlas extends GuiComponent {
 		if (file != null) {
 			try {
 				Log.info("Exporting image from Atlas #%d to file %s", atlasID, file.getAbsolutePath());
-				ExportImageUtil.exportPngImage(biomeData, globalMarkersData, localMarkersData, file, showMarkers);
+				ExportImageUtil.exportPngImage(biomeData, localMarkersData, file, showMarkers);
 				Log.info("Finished exporting image");
 			} catch (OutOfMemoryError e) {
 				Log.warn(e, "Image is too large, trying to export in strips");
 				try {
-					ExportImageUtil.exportPngImageTooLarge(biomeData, globalMarkersData, localMarkersData, file, showMarkers);
+					ExportImageUtil.exportPngImageTooLarge(biomeData, localMarkersData, file, showMarkers);
 				} catch (OutOfMemoryError e2) {
 					int minX = (biomeData.getScope().minX - 1) * ExportImageUtil.TILE_SIZE;
 					int minY = (biomeData.getScope().minY - 1) * ExportImageUtil.TILE_SIZE;
@@ -581,16 +579,13 @@ public class GuiAtlas extends GuiComponent {
 		updateAtlasData();
 	}
 
-	/** Update {@link #biomeData}, {@link #localMarkersData},
-	 * {@link #globalMarkersData} */
+	/** Update {@link #biomeData}, {@link #localMarkersData} */
 	private void updateAtlasData() {
         int atlasID = getAtlasID();
         
 		biomeData = AntiqueAtlasMod.atlasData
 				.getAtlasData(atlasID, player.getEntityWorld())
 				.getDimensionData(player.dimension);
-		globalMarkersData = AntiqueAtlasMod.globalMarkersData.getData()
-				.getMarkersDataInDimension(player.dimension);
 		MarkersData markersData = AntiqueAtlasMod.markersData
 				.getMarkersData(atlasID, player.getEntityWorld());
 		if (markersData != null) {
@@ -730,16 +725,7 @@ public class GuiAtlas extends GuiComponent {
 		int markersEndZ = MathUtil.roundToBase(mapEndZ, MarkersData.CHUNK_STEP) / MarkersData.CHUNK_STEP + 1;
 		double iconScale = getIconScale();
 
-		// Draw global markers:
-		for (int x = markersStartX; x <= markersEndX; x++) {
-			for (int z = markersStartZ; z <= markersEndZ; z++) {
-				List<Marker> markers = globalMarkersData.getMarkersAtChunk(x, z);
-				if (markers == null) continue;
-				for (Marker marker : markers) {
-					renderMarker(marker, iconScale);
-				}
-			}
-		}
+		// Don't draw global markers! They will be added as local markers.
 
 		// Draw local markers:
 		if (localMarkersData != null) {

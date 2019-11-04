@@ -3,15 +3,22 @@ package hunternif.mc.atlas.network.client;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
 import hunternif.mc.atlas.AntiqueAtlasMod;
+import hunternif.mc.atlas.api.AtlasAPI;
+import hunternif.mc.atlas.event.OptionalMarkerEvent;
 import hunternif.mc.atlas.marker.Marker;
 import hunternif.mc.atlas.marker.MarkersData;
 import hunternif.mc.atlas.network.AbstractMessage.AbstractClientMessage;
+import hunternif.mc.atlas.registry.MarkerRegistry;
+import hunternif.mc.atlas.registry.MarkerType;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.network.PacketBuffer;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.relauncher.Side;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -93,11 +100,21 @@ public class MarkersPacket extends AbstractClientMessage<MarkersPacket> {
 
 	@Override
 	protected void process(EntityPlayer player, Side side) {
-		MarkersData markersData = isGlobal() ?
-				AntiqueAtlasMod.globalMarkersData.getData() :
-					AntiqueAtlasMod.markersData.getMarkersData(atlasID, player.getEntityWorld());
-		for (Marker marker : markersByType.values()) {
-			markersData.loadMarker(marker);
+		List<Integer> atlasIDs = isGlobal()
+				? AtlasAPI.getPlayerAtlases(player)
+				: Collections.singletonList(atlasID);
+		for (int atlasID : atlasIDs) {
+			MarkersData markersData = AntiqueAtlasMod.markersData.getMarkersData(atlasID, player.getEntityWorld());
+			for (Marker marker : markersByType.values()) {
+				MarkerType type = MarkerRegistry.find(marker.getType());
+				if (type == null) continue;
+				if (!MinecraftForge.EVENT_BUS.post(new OptionalMarkerEvent(
+						atlasID, dimension, type, marker.getLabel(),
+						marker.getX(), marker.getZ(), marker.isVisibleAhead()
+				))) {
+					markersData.loadMarker(marker);
+				}
+			}
 		}
 	}
 }

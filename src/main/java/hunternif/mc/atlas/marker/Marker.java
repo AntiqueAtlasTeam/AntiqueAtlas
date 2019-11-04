@@ -58,6 +58,7 @@ public class Marker {
 	}
 
 	public boolean isOfType(MarkerType type) {
+		if (getType() == null || type == null) return false;
 		return getType().equals(type.getRegistryName().toString());
 	}
 
