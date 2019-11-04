@@ -21,6 +21,7 @@ import hunternif.mc.atlas.registry.MarkerRegistry;
 import hunternif.mc.atlas.registry.MarkerRenderInfo;
 import hunternif.mc.atlas.registry.MarkerType;
 import hunternif.mc.atlas.util.*;
+import net.minecraft.client.Keyboard;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.options.KeyBinding;
 import net.minecraft.client.render.BufferBuilder;
@@ -370,8 +371,7 @@ public class GuiAtlas extends GuiComponent {
             state.switchTo(NORMAL); //TODO: his causes the Export PNG progress bar to disappear when resizing game window
         }
 
-		// TODO FABRIC
-		// Keyboard.enableRepeatEvents(true);
+		MinecraftClient.getInstance().keyboard.enableRepeatEvents(true);
 		screenScale = MinecraftClient.getInstance().window.getScaleFactor();
 		setCentered();
 	}
