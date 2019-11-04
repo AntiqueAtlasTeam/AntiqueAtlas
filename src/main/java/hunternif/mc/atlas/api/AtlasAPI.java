@@ -17,7 +17,7 @@ import java.util.List;
  * @author Hunternif
  */
 public class AtlasAPI {
-	private static final int VERSION = 3;
+	private static final int VERSION = 4;
 	public static final TileAPI tiles = new TileApiImpl();
 	public static final MarkerAPI markers = new MarkerApiImpl();
 	@GameRegistry.ObjectHolder("antiqueatlas:antique_atlas")
