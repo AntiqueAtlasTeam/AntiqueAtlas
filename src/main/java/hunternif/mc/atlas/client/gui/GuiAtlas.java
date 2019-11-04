@@ -514,7 +514,10 @@ public class GuiAtlas extends GuiComponent {
 	@Override
 	public boolean mouseScrolled(double mx, double my, double wheelMove) {
 		double origWheelMove = wheelMove;
-		if (wheelMove != 0) {
+
+		boolean handled = super.mouseScrolled(mx, my, origWheelMove);
+
+		if (!handled && wheelMove != 0) {
 			wheelMove = wheelMove > 0 ? 1 : -1;
 			if (SettingsConfig.userInterface.doReverseWheelZoom) {
 			    wheelMove *= -1;
@@ -536,8 +539,11 @@ public class GuiAtlas extends GuiComponent {
             }
 
 			setMapScale(newScale, (int) addOffsetX, (int) addOffsetY);
+
+            return true;
 		}
-		return super.mouseScrolled(mx, my, origWheelMove) || (origWheelMove != 0);
+
+		return handled;
 	}
 
     @Override
