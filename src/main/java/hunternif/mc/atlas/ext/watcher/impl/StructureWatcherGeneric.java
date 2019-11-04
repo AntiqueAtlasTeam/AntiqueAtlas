@@ -10,7 +10,6 @@ import hunternif.mc.atlas.ext.watcher.WatcherPos;
 import hunternif.mc.atlas.marker.Marker;
 import hunternif.mc.atlas.marker.MarkersData;
 import hunternif.mc.atlas.registry.MarkerType;
-import hunternif.mc.atlas.util.Log;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.DimensionType;
 import net.minecraft.world.World;
@@ -105,11 +104,11 @@ public class StructureWatcherGeneric implements IStructureWatcher {
 		if (markers != null) {
 			for (Marker marker : markers) {
 				if (!foundMarker && marker.getChunkX() == chunkX && marker.getChunkZ() == chunkZ &&
-				    marker.getType().equals(this.marker)) {
+				    marker.isOfType(this.marker)) {
 					foundMarker = true;
 				}
 				if (!foundTileMarker && tileMarker != null && marker.getChunkX() == chunkX && marker.getChunkZ() == chunkZ &&
-				    marker.getType().equals(tileMarker)) {
+				    marker.isOfType(tileMarker)) {
 					foundTileMarker = true;
 				}
 			}

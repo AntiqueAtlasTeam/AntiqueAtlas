@@ -35,7 +35,7 @@ public interface IRegistryEntry
 
         public final ResourceLocation getRegistryName()
         {
-            return registryName != null ? registryName : null;
+            return registryName;
         }
     }
 }

@@ -294,8 +294,7 @@ public class AAORenderEventReceiver {
         }
         GlStateManager.color(1, 1, 1, 1);
         MarkerType m = MarkerRegistry.find(marker.getType());
-        if (m == null){
-        	AntiqueAtlasOverlayMod.LOGGER.warn("Could not find marker type for {}", marker.getId());
+        if (m == null) {
         	return;
         }
         MarkerRenderInfo info = m.getRenderInfo(1, AAOConfig.appearance.tileSize, screenScale);

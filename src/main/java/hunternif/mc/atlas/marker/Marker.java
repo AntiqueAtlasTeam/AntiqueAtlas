@@ -1,5 +1,6 @@
 package hunternif.mc.atlas.marker;
 
+import hunternif.mc.atlas.registry.MarkerType;
 import hunternif.mc.atlas.util.Log;
 import hunternif.mc.atlas.util.ShortVec2;
 import net.minecraft.client.resources.I18n;
@@ -48,8 +49,16 @@ public class Marker {
 		return id;
 	}
 
+	/**
+	 * Note that this is only the string representation of the type, e.g.: "antiqueatlas:village".
+	 * To check marker type, better to use {@link #isOfType(MarkerType)}
+	 */
 	public String getType() {
 		return type;
+	}
+
+	public boolean isOfType(MarkerType type) {
+		return getType().equals(type.getRegistryName().toString());
 	}
 
 	/** The label "as is", it might be a placeholder in the format

@@ -33,7 +33,9 @@ public interface MarkerAPI {
 	 * 						the player hasn't yet discovered that area.
 	 * @param atlasID		the ID of the atlas you want to put marker in. Equal
 	 * 						to ItemStack damage for ItemAtlas.
-	 * @param markerType	name of your custom marker type.
+	 * @param markerType	name of your custom marker type. It must be unique,
+	 * 	                    so better to prefix it with your mod id, e.g.:
+	 * 	                    "antiqueatlas:village"
 	 * @param label			text label to be displayed on mouseover.
 	 * @param x				block coordinate
 	 * @param z				block coordinate
@@ -43,6 +45,12 @@ public interface MarkerAPI {
 	@Nullable
 	Marker putMarker(@Nonnull World world, boolean visibleAhead, int atlasID,
 					 String markerType, String label, int x, int z);
+
+
+	/** See {@link #putMarker(World, boolean, int, String, String, int, int)} */
+	@Nullable
+	Marker putMarker(@Nonnull World world, boolean visibleAhead, int atlasID,
+					 MarkerType markerType, String label, int x, int z);
 	
 	/**
 	 * Put a marker in all atlases in the world at specified block coordinates.
@@ -50,7 +58,9 @@ public interface MarkerAPI {
 	 * @param world
 	 * @param visibleAhead	whether the marker should appear visible even if
 	 * 						the player hasn't yet discovered that area.
-	 * @param markerType	name of your custom marker type.
+	 * @param markerType	name of your custom marker type. It must be unique,
+	 *                      so better to prefix it with your mod id, e.g.:
+	 *                      "antiqueatlas:village"
 	 * @param label			text label to be displayed on mouseover.
 	 * @param x				block coordinate
 	 * @param z				block coordinate
@@ -59,7 +69,12 @@ public interface MarkerAPI {
 	 */
 	@Nullable
 	Marker putGlobalMarker(@Nonnull World world, boolean visibleAhead,
-			String markerType, String label, int x, int z);
+						   String markerType, String label, int x, int z);
+
+	/** See {@link #putGlobalMarker(World, boolean, String, String, int, int)} */
+	@Nullable
+	Marker putGlobalMarker(@Nonnull World world, boolean visibleAhead,
+						   MarkerType markerType, String label, int x, int z);
 	
 	/**
 	 * Delete a marker from an atlas.

@@ -17,7 +17,7 @@ public class DeathWatcher {
 		if (event.getEntity() instanceof EntityPlayer && SettingsConfig.gameplay.autoDeathMarker) {
 			EntityPlayer player = (EntityPlayer) event.getEntity();
 			for (int atlasID : AtlasAPI.getPlayerAtlases(player)) {
-				AtlasAPI.markers.putMarker(player.getEntityWorld(), true, atlasID, MarkerTypes.TOMB.getRegistryName().toString(),
+				AtlasAPI.markers.putMarker(player.getEntityWorld(), true, atlasID, MarkerTypes.TOMB,
 						"gui.antiqueatlas.marker.tomb " + player.getName(),
 						(int)player.posX, (int)player.posZ);
 			}

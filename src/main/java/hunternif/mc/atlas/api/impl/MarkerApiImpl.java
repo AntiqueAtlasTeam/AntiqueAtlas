@@ -28,8 +28,18 @@ public class MarkerApiImpl implements MarkerAPI {
 	}
 	@Nullable
 	@Override
+	public Marker putMarker(@Nonnull World world, boolean visibleAhead, int atlasID, MarkerType markerType, String label, int x, int z) {
+		return doPutMarker(world, visibleAhead, atlasID, markerType.getRegistryName().toString(), label, x, z);
+	}
+	@Nullable
+	@Override
 	public Marker putGlobalMarker(@Nonnull World world, boolean visibleAhead, String markerType, String label, int x, int z) {
 		return doPutMarker(world, visibleAhead, GLOBAL, markerType, label, x, z);
+	}
+	@Nullable
+	@Override
+	public Marker putGlobalMarker(@Nonnull World world, boolean visibleAhead, MarkerType markerType, String label, int x, int z) {
+		return doPutMarker(world, visibleAhead, GLOBAL, markerType.getRegistryName().toString(), label, x, z);
 	}
 	private Marker doPutMarker(World world, boolean visibleAhead, int atlasID, String markerType, String label, int x, int z) {
 		Marker marker = null;

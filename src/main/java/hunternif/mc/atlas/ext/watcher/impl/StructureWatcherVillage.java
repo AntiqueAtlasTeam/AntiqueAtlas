@@ -161,7 +161,7 @@ public class StructureWatcherVillage implements IStructureWatcher {
 								.getMarkersAtChunk(world.provider.getDimension(), j + chunkX / MarkersData.CHUNK_STEP, k + chunkZ / MarkersData.CHUNK_STEP);
 						if (markers != null) {
 							for (Marker marker : markers) {
-								if (marker.getType().equals(MarkerTypes.VILLAGE)) {
+								if (marker.isOfType(MarkerTypes.VILLAGE)) {
 									foundMarker = true;
 									break;
 								}
@@ -170,7 +170,7 @@ public class StructureWatcherVillage implements IStructureWatcher {
 					}
 				}
 				if (!foundMarker && SettingsConfig.gameplay.autoVillageMarkers) {
-					AtlasAPI.markers.putGlobalMarker(world, false, MarkerTypes.VILLAGE.getRegistryName().toString(), "gui.antiqueatlas.marker.village", x, z);
+					AtlasAPI.markers.putGlobalMarker(world, false, MarkerTypes.VILLAGE, "gui.antiqueatlas.marker.village", x, z);
 				}
 			}
 //			String tileName = null;
@@ -220,7 +220,7 @@ public class StructureWatcherVillage implements IStructureWatcher {
 						.getMarkersAtChunk(world.provider.getDimension(), chunkX / MarkersData.CHUNK_STEP, chunkZ / MarkersData.CHUNK_STEP);
 				if (markers != null) {
 					for (Marker marker : markers) {
-						if (marker.getType().equals(MarkerTypes.VILLAGE)) {
+						if (marker.isOfType(MarkerTypes.VILLAGE)) {
 							AtlasAPI.markers.deleteGlobalMarker(world, marker.getId());
 							Log.info("Removed faux village marker");
 							break;
