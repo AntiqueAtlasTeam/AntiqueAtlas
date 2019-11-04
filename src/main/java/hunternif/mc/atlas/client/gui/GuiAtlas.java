@@ -414,6 +414,7 @@ public class GuiAtlas extends GuiComponent {
 				// Un-press all keys to prevent player from walking infinitely:
 				KeyBinding.unpressAll();
 
+				state.switchTo(NORMAL);
 				return true;
 			} else if (state.is(DELETING_MARKER) // If clicked on a marker, delete it:
 					&& hoveredMarker != null && !hoveredMarker.isGlobal() && isMouseOverMap && mouseState == 0) {
