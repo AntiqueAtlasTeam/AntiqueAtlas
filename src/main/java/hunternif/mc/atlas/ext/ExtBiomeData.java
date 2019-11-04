@@ -1,9 +1,12 @@
 package hunternif.mc.atlas.ext;
 
 import hunternif.mc.atlas.network.PacketDispatcher;
+import hunternif.mc.atlas.network.client.IntTilesPacket;
+import hunternif.mc.atlas.network.client.ShortTilesPacket;
 import hunternif.mc.atlas.network.client.TilesPacket;
 import hunternif.mc.atlas.util.IntVec2;
 import hunternif.mc.atlas.util.Log;
+import hunternif.mc.atlas.util.MathUtil;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
@@ -104,8 +107,9 @@ public class ExtBiomeData extends WorldSavedData {
 	/** Send all data to player in several zipped packets. */
 	public void syncOnPlayer(EntityPlayer player) {
 		for (Integer dimension : dimensionMap.keySet()) {
-			TilesPacket packet = new TilesPacket(dimension);
 			Map<IntVec2, Integer> biomes = getBiomesInDimension(dimension);
+			boolean useInt = biomes.keySet().stream().anyMatch(p -> MathUtil.exceedsShort(p.x, p.y));
+			TilesPacket packet = useInt ? new IntTilesPacket(dimension) : new ShortTilesPacket(dimension);
 			for (Entry<IntVec2, Integer> entry : biomes.entrySet()) {
 				packet.addTile(entry.getKey().x, entry.getKey().y, entry.getValue());
 			}

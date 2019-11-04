@@ -1,7 +1,5 @@
 package hunternif.mc.atlas.network.client;
 
-import java.io.IOException;
-
 import hunternif.mc.atlas.AntiqueAtlasMod;
 import hunternif.mc.atlas.core.AtlasData;
 import hunternif.mc.atlas.core.Tile;
@@ -12,29 +10,30 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fml.relauncher.Side;
 
-public class DimensionUpdatePacket extends AbstractClientMessage<DimensionUpdatePacket>{
+import java.io.IOException;
+
+public class IntDimensionUpdatePacket extends AbstractClientMessage<IntDimensionUpdatePacket> implements TilesPacket {
 	/** Size of one entry in the map in bytes. */
-	private static final int ENTRY_SIZE_BYTES = 2 + 2 + 2;
+	private static final int ENTRY_SIZE_BYTES = 4 + 4 + 2;
 
 	private int atlasID;
 	private int dimension;
 	private int tileCount;
 	private ByteBuf tileData;
 
-	public DimensionUpdatePacket() {}
+	public IntDimensionUpdatePacket() {}
 
-	public DimensionUpdatePacket(int atlasID, int dimension) {
+	public IntDimensionUpdatePacket(int atlasID, int dimension) {
 		this.dimension = dimension;
 		tileCount = 0;
 		tileData = Unpooled.buffer();
 	}
 
-	public DimensionUpdatePacket addTile(int x, int y, int biomeID) {
-		tileData.writeShort(x);
-		tileData.writeShort(y);
+	public void addTile(int x, int y, int biomeID) {
+		tileData.writeInt(x);
+		tileData.writeInt(y);
 		tileData.writeShort(biomeID);
 		tileCount++;
-		return this;
 	}
 
 	public boolean isEmpty() {
@@ -61,7 +60,7 @@ public class DimensionUpdatePacket extends AbstractClientMessage<DimensionUpdate
 	protected void process(EntityPlayer player, Side side) {
 		AtlasData data = AntiqueAtlasMod.atlasData.getAtlasData(atlasID, player.world);
 		for (int i = 0; i < tileCount; i++) {
-			data.getDimensionData(dimension).setTile(tileData.readShort(), tileData.readShort(), new Tile(tileData.readShort()));
+			data.getDimensionData(dimension).setTile(tileData.readInt(), tileData.readInt(), new Tile(tileData.readShort()));
 		}
 	}
 }

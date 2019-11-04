@@ -4,6 +4,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import hunternif.mc.atlas.network.client.*;
+import hunternif.mc.atlas.util.MathUtil;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
@@ -26,9 +28,6 @@ import hunternif.mc.atlas.ext.ExtTileTextureMap;
 import hunternif.mc.atlas.ext.TileIdRegisteredEvent;
 import hunternif.mc.atlas.network.PacketDispatcher;
 import hunternif.mc.atlas.network.bidirectional.PutBiomeTilePacket;
-import hunternif.mc.atlas.network.client.DeleteCustomGlobalTilePacket;
-import hunternif.mc.atlas.network.client.TileNameIDPacket;
-import hunternif.mc.atlas.network.client.TilesPacket;
 import hunternif.mc.atlas.network.server.RegisterTileIdPacket;
 import hunternif.mc.atlas.util.Log;
 
@@ -182,7 +181,9 @@ public class TileApiImpl implements TileAPI {
 			PacketDispatcher.sendToAll(packet);
 		}
 		// Send tile packet:
-		TilesPacket packet = new TilesPacket(world.provider.getDimension());
+		int dimension = world.provider.getDimension();
+		boolean useInt = MathUtil.exceedsShort(chunkX, chunkZ);
+		TilesPacket packet = useInt ? new IntTilesPacket(dimension) : new ShortTilesPacket(dimension);
 		packet.addTile(chunkX, chunkZ, biomeID);
 		PacketDispatcher.sendToAll(packet);
 	}

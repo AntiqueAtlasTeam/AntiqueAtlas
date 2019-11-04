@@ -34,23 +34,21 @@ public class PacketDispatcher
 	 *  Registers all packets and handlers - call this during {@link FMLPreInitializationEvent}
 	 */
 	public static void registerPackets() {
-		// Bi-directional messages
+		//ORDER IS IMPORTANT! DON'T INSERT IN THE MIDDLE!
 		registerMessage(DeleteMarkerPacket.class);
 		registerMessage(PutBiomeTilePacket.class);
-
-		// Messages sent to CLIENT
 		registerMessage(MapDataPacket.class);
 		registerMessage(TileGroupsPacket.class);
-		registerMessage(DimensionUpdatePacket.class);
+		registerMessage(ShortDimensionUpdatePacket.class);
 		registerMessage(TileNameIDPacket.class);
-		registerMessage(TilesPacket.class);
+		registerMessage(ShortTilesPacket.class);
 		registerMessage(MarkersPacket.class);
 		registerMessage(DeleteCustomGlobalTilePacket.class);
-
-		// Messages sent to SERVER
 		registerMessage(AddMarkerPacket.class);
 		registerMessage(RegisterTileIdPacket.class);
 		registerMessage(BrowsingPositionPacket.class);
+		registerMessage(IntTilesPacket.class);
+		registerMessage(IntDimensionUpdatePacket.class);
 	}
 
 	/**

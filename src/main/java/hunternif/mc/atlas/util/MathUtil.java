@@ -27,4 +27,9 @@ public class MathUtil {
 	public static BlockPos getCenter(StructureBoundingBox box) {
 		return new BlockPos(box.minX + (box.getXSize() / 2), box.minY + (box.getYSize() / 2), box.minZ + (box.getZSize() / 2));
 	}
+
+	public static boolean exceedsShort(int x, int z) {
+		return x <= Short.MIN_VALUE || x >= Short.MAX_VALUE ||
+				z <= Short.MIN_VALUE || z >= Short.MAX_VALUE;
+	}
 }

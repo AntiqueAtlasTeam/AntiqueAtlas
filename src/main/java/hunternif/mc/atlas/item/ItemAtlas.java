@@ -7,7 +7,8 @@ import hunternif.mc.atlas.core.AtlasData;
 import hunternif.mc.atlas.core.TileInfo;
 import hunternif.mc.atlas.marker.MarkersData;
 import hunternif.mc.atlas.network.PacketDispatcher;
-import hunternif.mc.atlas.network.client.DimensionUpdatePacket;
+import hunternif.mc.atlas.network.client.*;
+import hunternif.mc.atlas.util.MathUtil;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -64,7 +65,10 @@ public class ItemAtlas extends Item {
 		
 		if (!world.isRemote) {
 			if (newTiles.size() > 0) {
-				DimensionUpdatePacket packet = new DimensionUpdatePacket(stack.getItemDamage(), player.dimension);
+				boolean useInt = newTiles.stream().anyMatch(t -> MathUtil.exceedsShort(t.x, t.z));
+				TilesPacket packet = useInt
+						? new IntDimensionUpdatePacket(stack.getItemDamage(), player.dimension)
+						: new ShortDimensionUpdatePacket(stack.getItemDamage(), player.dimension);
 				for (TileInfo t : newTiles) {
 					packet.addTile(t.x, t.z, t.biome);
 				}
