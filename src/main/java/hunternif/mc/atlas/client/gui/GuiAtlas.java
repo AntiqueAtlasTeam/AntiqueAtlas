@@ -459,6 +459,11 @@ public class GuiAtlas extends GuiComponent {
 				Log.info("Exporting image from Atlas #%d to file %s", atlasID, file.getAbsolutePath());
 				ExportImageUtil.exportPngImage(biomeData, localMarkersData, file, showMarkers);
 				Log.info("Finished exporting image");
+			} catch (AtlasTooLargeException e) {
+				Log.warn(e, "Atlas is too large");
+				ExportUpdateListener.INSTANCE.setStatusString(I18n.format("gui.antiqueatlas.export.atlasTooLarge"));
+				ExportImageUtil.isExporting = false;
+				return; //Don't switch to normal state yet so that the error message can be read.
 			} catch (OutOfMemoryError e) {
 				Log.warn(e, "Image is too large, trying to export in strips");
 				try {

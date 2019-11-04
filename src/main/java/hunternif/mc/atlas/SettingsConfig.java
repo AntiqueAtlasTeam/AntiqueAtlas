@@ -63,13 +63,16 @@ public class SettingsConfig {
         public int rescanRate = 4;
         @Config.Comment({"The maximum number of markers a particular atlas can hold."})
         @Config.RangeInt(min = 0, max = 2147483647)
-        public int markerLimit = 1024;
+        public int markerLimit = 10000;
         @Config.Comment({"Whether to perform additional scanning to locate small ponds of water or lava.", "Disable for better performance."})
         public boolean doScanPonds = true;
         @Config.Comment({"Whether to perform additional scanning to locate ravines.", "Disable for better performance."})
         public boolean doScanRavines = true;
         @Config.Comment({"If true, map render time will be output."})
         public boolean debugRender = false;
+        @Config.Comment({"Maximum size of image for export. Larger atlases will not be exported to prevent crashes."})
+        @Config.RangeInt(min = 32)
+        public int exportSizeLimit = 40000;
     }
 
     @SubscribeEvent

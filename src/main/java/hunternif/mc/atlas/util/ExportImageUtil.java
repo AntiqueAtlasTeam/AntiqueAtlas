@@ -1,5 +1,6 @@
 package hunternif.mc.atlas.util;
 
+import hunternif.mc.atlas.SettingsConfig;
 import hunternif.mc.atlas.client.*;
 import hunternif.mc.atlas.client.gui.ExportUpdateListener;
 import hunternif.mc.atlas.core.DimensionData;
@@ -40,7 +41,7 @@ public class ExportImageUtil {
 	
 	/** Renders the map into file as PNG image. */
 	public static void exportPngImage(DimensionData biomeData,
-			DimensionMarkersData localMarkers, File file, boolean showMarkers) {
+			DimensionMarkersData localMarkers, File file, boolean showMarkers) throws AtlasTooLargeException {
 		getListener().setHeaderString("gui.antiqueatlas.export.setup");
 		// Prepare output image
 		// Leave padding of one row of map tiles on each side
@@ -48,6 +49,10 @@ public class ExportImageUtil {
 		int minY = (biomeData.getScope().minY - 1) * TILE_SIZE;
 		int outWidth = (biomeData.getScope().maxX + 2) * TILE_SIZE - minX;
 		int outHeight = (biomeData.getScope().maxY + 2) * TILE_SIZE - minY;
+		if (outWidth >= SettingsConfig.performance.exportSizeLimit ||
+				outHeight >= SettingsConfig.performance.exportSizeLimit) {
+			throw new AtlasTooLargeException();
+		}
 		Log.info("Image size: %dx%d", outWidth, outHeight);
 		getListener().setStatusString("gui.antiqueatlas.export.makingbuffer", outWidth, outHeight);
 		BufferedImage outImage = new BufferedImage(outWidth, outHeight, BufferedImage.TYPE_INT_ARGB);
