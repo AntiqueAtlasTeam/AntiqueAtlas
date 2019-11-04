@@ -56,6 +56,11 @@ public class AtlasAPI {
 				list.add(((ItemAtlas) stack.getItem()).getAtlasID(stack));
 			}
 		}
+		for (ItemStack stack : player.inventory.offHand) {
+			if (!stack.isEmpty() && stack.getItem() instanceof ItemAtlas) {
+				list.add(((ItemAtlas) stack.getItem()).getAtlasID(stack));
+			}
+		}
 
 		return list;
 	}
