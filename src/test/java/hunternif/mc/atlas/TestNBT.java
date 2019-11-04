@@ -8,6 +8,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import hunternif.mc.atlas.util.IntVec2;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -16,7 +17,6 @@ import hunternif.mc.atlas.core.DimensionData;
 import hunternif.mc.atlas.core.Tile;
 import hunternif.mc.atlas.core.TileGroup;
 import hunternif.mc.atlas.network.server.BrowsingPositionPacket;
-import hunternif.mc.atlas.util.ShortVec2;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 
@@ -39,10 +39,10 @@ public class TestNBT {
 			key = dimensionEntryKey.next().intValue();
 			dimTag.setInteger(AtlasData.TAG_DIMENSION_ID, key);
 			DimensionData dimData = atlasdata.getDimensionData(key);
-			Map<ShortVec2, Tile> seenChunks = dimData.getSeenChunks();
+			Map<IntVec2, Tile> seenChunks = dimData.getSeenChunks();
 			int[] intArray = new int[seenChunks.size()*3];
 			int i = 0;
-			for (Entry<ShortVec2, Tile> entry : seenChunks.entrySet()) {
+			for (Entry<IntVec2, Tile> entry : seenChunks.entrySet()) {
 				intArray[i++] = entry.getKey().x;
 				intArray[i++] = entry.getKey().y;
 				intArray[i++] = entry.getValue().biomeID;

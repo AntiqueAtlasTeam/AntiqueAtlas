@@ -2,7 +2,7 @@ package hunternif.mc.atlas.marker;
 
 import hunternif.mc.atlas.registry.MarkerType;
 import hunternif.mc.atlas.util.Log;
-import hunternif.mc.atlas.util.ShortVec2;
+import hunternif.mc.atlas.util.IntVec2;
 import net.minecraft.client.resources.I18n;
 
 /**
@@ -127,8 +127,8 @@ public class Marker {
 	}
 	
 	/** Returns the coordinates of the chunk this marker is located in. */
-	public ShortVec2 getChunkCoords() {
-		return new ShortVec2(x >> 4, z >> 4);
+	public IntVec2 getChunkCoords() {
+		return new IntVec2(x >> 4, z >> 4);
 	}
 	
 	@Override

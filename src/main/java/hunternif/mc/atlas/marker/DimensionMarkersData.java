@@ -1,7 +1,7 @@
 package hunternif.mc.atlas.marker;
 
+import hunternif.mc.atlas.util.IntVec2;
 import hunternif.mc.atlas.util.ListMapValueIterator;
-import hunternif.mc.atlas.util.ShortVec2;
 
 import java.util.AbstractCollection;
 import java.util.Collection;
@@ -17,17 +17,17 @@ public class DimensionMarkersData {
 	
 	private int size = 0;
 	
-	private final Map<ShortVec2 /*chunk coords*/, List<Marker>> chunkMap =
+	private final Map<IntVec2 /*chunk coords*/, List<Marker>> chunkMap =
 			new ConcurrentHashMap<>(2, 0.75f, 2);
 	
 	private final Values values = new Values();
 	
 	/** Maps threads to the temporary key for thread-safe access to chunkMap. */
-	private final Map<Thread, ShortVec2> thread2KeyMap = new ConcurrentHashMap<>(2, 0.75f, 2);
+	private final Map<Thread, IntVec2> thread2KeyMap = new ConcurrentHashMap<>(2, 0.75f, 2);
 	
 	/** Temporary key for thread-safe access to chunkMap. */
-	private ShortVec2 getKey() {
-		return thread2KeyMap.computeIfAbsent(Thread.currentThread(), k -> new ShortVec2(0, 0));
+	private IntVec2 getKey() {
+		return thread2KeyMap.computeIfAbsent(Thread.currentThread(), k -> new IntVec2(0, 0));
 	}
 	
 	public DimensionMarkersData(MarkersData parent, int dimension) {
@@ -48,7 +48,7 @@ public class DimensionMarkersData {
 	/** Insert marker into a list at chunk coordinates, maintaining the ordering
 	 * of the list by Z coordinate. */
 	public void insertMarker(Marker marker) {
-		ShortVec2 key = getKey().set(
+		IntVec2 key = getKey().set(
 				marker.getChunkX() / MarkersData.CHUNK_STEP,
 				marker.getChunkZ() / MarkersData.CHUNK_STEP);
 		List<Marker> list = chunkMap.get(key);

@@ -6,7 +6,7 @@ import hunternif.mc.atlas.network.PacketDispatcher;
 import hunternif.mc.atlas.network.client.MapDataPacket;
 import hunternif.mc.atlas.network.server.BrowsingPositionPacket;
 import hunternif.mc.atlas.util.Log;
-import hunternif.mc.atlas.util.ShortVec2;
+import hunternif.mc.atlas.util.IntVec2;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
@@ -260,7 +260,7 @@ public class AtlasData extends WorldSavedData {
 		return dimensionMap.computeIfAbsent(dimension, k -> new DimensionData(this, dimension));
 	}
 
-	public Map<ShortVec2, Tile> getSeenChunksInDimension(int dimension) {
+	public Map<IntVec2, Tile> getSeenChunksInDimension(int dimension) {
 		return getDimensionData(dimension).getSeenChunks();
 	}
 

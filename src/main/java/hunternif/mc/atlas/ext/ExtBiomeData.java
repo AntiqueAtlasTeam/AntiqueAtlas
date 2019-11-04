@@ -2,8 +2,8 @@ package hunternif.mc.atlas.ext;
 
 import hunternif.mc.atlas.network.PacketDispatcher;
 import hunternif.mc.atlas.network.client.TilesPacket;
+import hunternif.mc.atlas.util.IntVec2;
 import hunternif.mc.atlas.util.Log;
-import hunternif.mc.atlas.util.ShortVec2;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
@@ -31,10 +31,10 @@ public class ExtBiomeData extends WorldSavedData {
 		super(key);
 	}
 	
-	private final Map<Integer /*dimension ID*/, Map<ShortVec2, Integer /*biome ID*/>> dimensionMap =
+	private final Map<Integer /*dimension ID*/, Map<IntVec2, Integer /*biome ID*/>> dimensionMap =
             new ConcurrentHashMap<>(2, 0.75f, 2);
 	
-	private final ShortVec2 tempCoords = new ShortVec2(0, 0);
+	private final IntVec2 tempCoords = new IntVec2(0, 0);
 
 	@Override
 	public void readFromNBT(NBTTagCompound compound) {
@@ -47,10 +47,10 @@ public class ExtBiomeData extends WorldSavedData {
 		for (int d = 0; d < dimensionMapList.tagCount(); d++) {
 			NBTTagCompound tag = dimensionMapList.getCompoundTagAt(d);
 			int dimensionID = tag.getInteger(TAG_DIMENSION_ID);
-			Map<ShortVec2, Integer> biomeMap = getBiomesInDimension(dimensionID);
+			Map<IntVec2, Integer> biomeMap = getBiomesInDimension(dimensionID);
 			int[] intArray = tag.getIntArray(TAG_BIOME_IDS);
 			for (int i = 0; i < intArray.length; i += 3) {
-				ShortVec2 coords = new ShortVec2(intArray[i], intArray[i+1]);
+				IntVec2 coords = new IntVec2(intArray[i], intArray[i+1]);
 				biomeMap.put(coords, intArray[i + 2]);
 			}
 		}
@@ -63,10 +63,10 @@ public class ExtBiomeData extends WorldSavedData {
 		for (Integer dimension : dimensionMap.keySet()) {
 			NBTTagCompound tag = new NBTTagCompound();
 			tag.setInteger(TAG_DIMENSION_ID, dimension);
-			Map<ShortVec2, Integer> biomeMap = getBiomesInDimension(dimension);
+			Map<IntVec2, Integer> biomeMap = getBiomesInDimension(dimension);
 			int[] intArray = new int[biomeMap.size()*3];
 			int i = 0;
-			for (Entry<ShortVec2, Integer> entry : biomeMap.entrySet()) {
+			for (Entry<IntVec2, Integer> entry : biomeMap.entrySet()) {
 				intArray[i++] = entry.getKey().x;
 				intArray[i++] = entry.getKey().y;
 				intArray[i++] = entry.getValue();
@@ -79,7 +79,7 @@ public class ExtBiomeData extends WorldSavedData {
 		return compound;
 	}
 	
-	private Map<ShortVec2, Integer> getBiomesInDimension(int dimension) {
+	private Map<IntVec2, Integer> getBiomesInDimension(int dimension) {
 		return dimensionMap.computeIfAbsent(dimension,
 				k -> new ConcurrentHashMap<>(2, 0.75f, 2));
 	}
@@ -92,7 +92,7 @@ public class ExtBiomeData extends WorldSavedData {
 	
 	/** If setting biome on the server, a packet should be sent to all players. */
 	public void setBiomeIdAt(int dimension, int x, int z, int biomeID) {
-		getBiomesInDimension(dimension).put(new ShortVec2(x, z), biomeID);
+		getBiomesInDimension(dimension).put(new IntVec2(x, z), biomeID);
 		markDirty();
 	}
 	
@@ -105,8 +105,8 @@ public class ExtBiomeData extends WorldSavedData {
 	public void syncOnPlayer(EntityPlayer player) {
 		for (Integer dimension : dimensionMap.keySet()) {
 			TilesPacket packet = new TilesPacket(dimension);
-			Map<ShortVec2, Integer> biomes = getBiomesInDimension(dimension);
-			for (Entry<ShortVec2, Integer> entry : biomes.entrySet()) {
+			Map<IntVec2, Integer> biomes = getBiomesInDimension(dimension);
+			for (Entry<IntVec2, Integer> entry : biomes.entrySet()) {
 				packet.addTile(entry.getKey().x, entry.getKey().y, entry.getValue());
 			}
 			PacketDispatcher.sendTo(packet, (EntityPlayerMP) player);
