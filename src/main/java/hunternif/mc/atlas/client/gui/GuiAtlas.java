@@ -31,6 +31,10 @@ import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.util.text.event.ClickEvent;
 import net.minecraftforge.common.MinecraftForge;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
@@ -459,11 +463,11 @@ public class GuiAtlas extends GuiComponent {
 				Log.info("Exporting image from Atlas #%d to file %s", atlasID, file.getAbsolutePath());
 				ExportImageUtil.exportPngImage(biomeData, localMarkersData, file, showMarkers);
 				Log.info("Finished exporting image");
+				printSuccessToChat(file);
 			} catch (AtlasTooLargeException e) {
 				Log.warn(e, "Atlas is too large");
-				ExportUpdateListener.INSTANCE.setStatusString(I18n.format("gui.antiqueatlas.export.atlasTooLarge"));
+				printLocalizedMessageToChat("gui.antiqueatlas.export.atlasTooLarge");
 				ExportImageUtil.isExporting = false;
-				return; //Don't switch to normal state yet so that the error message can be read.
 			} catch (OutOfMemoryError e) {
 				Log.warn(e, "Image is too large, trying to export in strips");
 				try {
@@ -476,9 +480,8 @@ public class GuiAtlas extends GuiComponent {
 
 					Log.error(e2, "Image is STILL too large, how massive is this map?! Answer: (%dx%d)", outWidth, outHeight);
 
-					ExportUpdateListener.INSTANCE.setStatusString(I18n.format("gui.antiqueatlas.export.tooLarge"));
+					printLocalizedMessageToChat("gui.antiqueatlas.export.tooLarge");
 					ExportImageUtil.isExporting = false;
-					return; //Don't switch to normal state yet so that the error message can be read.
 				}
 			}
 		}
@@ -969,4 +972,22 @@ public class GuiAtlas extends GuiComponent {
 	private int getAtlasID() {
 	    return SettingsConfig.gameplay.itemNeeded ? stack.getItemDamage() : player.getUniqueID().hashCode();
     }
+
+	private static void printSuccessToChat(File file) {
+		ITextComponent text = new TextComponentString(file.getName());
+		String path;
+		try {
+			path = file.getCanonicalFile().getAbsolutePath();
+		} catch (IOException e) {
+			path = file.getAbsolutePath();
+		}
+		text.getStyle().setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_FILE, path));
+		text.getStyle().setUnderlined(true);
+		TextComponentTranslation post = new TextComponentTranslation("gui.antiqueatlas.export.success", text);
+		Minecraft.getMinecraft().ingameGUI.getChatGUI().printChatMessage(post);
+	}
+
+	private static void printLocalizedMessageToChat(String translationKey) {
+		Minecraft.getMinecraft().ingameGUI.getChatGUI().printChatMessage(new TextComponentTranslation(translationKey));
+	}
 }

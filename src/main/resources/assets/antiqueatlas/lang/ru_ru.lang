@@ -17,6 +17,7 @@ gui.antiqueatlas.marker.tomb=Здесь покоится %s
 
 gui.antiqueatlas.export.opening=Открывается диалоговое окно...
 gui.antiqueatlas.export.selectFile=Укажите PNG файл, куда сохранять изображение карты
+gui.antiqueatlas.export.success=Картинка сохранена как %s
 gui.antiqueatlas.export.tooLarge=Извините, картинка слишком большая. Попробуйте выделить больше памяти для Java.
 gui.antiqueatlas.export.atlasTooLarge=Извините, картинка слишком большая. Попробнйте увеличить "exportSizeLimit" в настройках.
 gui.antiqueatlas.export.rendering=Отрисовка...
