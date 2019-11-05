@@ -213,9 +213,7 @@ public class TextureSet implements Comparable<TextureSet> {
 		stitchMutually(PLATEAU_MESA, PLATEAU_MESA_TREES, PLATEAU_SAVANNA, PLATEAU_SAVANNA_M);
 		stitchMutually(PLATEAU_MESA_LOW, PLATEAU_MESA_TREES_LOW);
 		stitchMutually(END_ISLAND, END_ISLAND_PLANTS);
-
-		// plains-like textures don't need a border when there is a drastic change in height:
-		SNOW.stitchTo(RAVINE, LAVA, MOUNTAINS, MOUNTAINS_NAKED, MOUNTAINS_SNOW_CAPS, MOUNTAINS_ALL);
+		SNOW.stitchTo(RAVINE, LAVA);
 		
 		// Village stuff:
 //		stitchMutually(VILLAGE_PATH_X, VILLAGE_PATH_Z);
