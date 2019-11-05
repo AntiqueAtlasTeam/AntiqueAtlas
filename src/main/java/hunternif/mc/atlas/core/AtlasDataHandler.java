@@ -6,6 +6,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.network.FMLNetworkEvent.ClientConnectedToServerEvent;
 
+import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -48,6 +49,10 @@ public class AtlasDataHandler {
 			if (world.isRemote) atlasDataClientCache.put(key, data);
 		}
 		return data;
+	}
+
+	public Collection<AtlasData> getAllAtlasData() {
+		return atlasDataClientCache.values();
 	}
 
 	private String getAtlasDataKey(int atlasID) {

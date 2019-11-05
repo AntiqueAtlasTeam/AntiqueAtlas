@@ -1,5 +1,6 @@
 package hunternif.mc.atlas.marker;
 
+import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -47,6 +48,10 @@ public class MarkersDataHandler {
 			if (world.isRemote) markersDataClientCache.put(key, data);
 		}
 		return data;
+	}
+
+	public Collection<MarkersData> getAllMarkersData() {
+		return markersDataClientCache.values();
 	}
 	
 	private String getMarkersDataKey(int atlasID) {
