@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import hunternif.mc.atlas.AntiqueAtlasMod;
 import hunternif.mc.atlas.RegistrarAntiqueAtlas;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
@@ -45,12 +46,34 @@ public class MarkersDataHandler {
 				data = new MarkersData(key);
 				world.setData(key, data);
 			}
-			if (world.isRemote) markersDataClientCache.put(key, data);
+			if (world.isRemote) {
+				markersDataClientCache.put(key, data);
+				addGlobalMarkers(data);
+			}
 		}
 		return data;
 	}
 
-	public Collection<MarkersData> getAllMarkersData() {
+	/** client-side only! */
+	private void addGlobalMarkers(MarkersData data) {
+		MarkersData global = AntiqueAtlasMod.globalMarkersData.getData();
+		for (int dim : global.getVisitedDimensions()) {
+			for (Marker marker : global.getMarkersInDimension(dim)) {
+				// flip the id so that it doesn't conflict with the local markers:
+				Marker localCopy = new Marker(
+						-marker.getId(),
+						marker.getType(), marker.getLabel(),
+						marker.getDimension(),
+						marker.getX(), marker.getZ(),
+						marker.isVisibleAhead()
+				);
+				data.loadMarker(localCopy);
+			}
+		}
+	}
+
+	/** Returns only data from atlases that have been loaded. */
+	public Collection<MarkersData> getAllLoadedMarkersData() {
 		return markersDataClientCache.values();
 	}
 	

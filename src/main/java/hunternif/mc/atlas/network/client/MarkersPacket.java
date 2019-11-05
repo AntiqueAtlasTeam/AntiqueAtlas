@@ -98,6 +98,7 @@ public class MarkersPacket extends AbstractClientMessage<MarkersPacket> {
 	@Override
 	protected void process(EntityPlayer player, Side side) {
 		if (isGlobal()) {
+			MarkersData globalMarkersData = AntiqueAtlasMod.globalMarkersData.getData();
 			for (Marker marker : markersByType.values()) {
 				MarkerType type = MarkerRegistry.find(marker.getType());
 				if (type == null) continue;
@@ -105,8 +106,19 @@ public class MarkersPacket extends AbstractClientMessage<MarkersPacket> {
 						GLOBAL, dimension, type, marker.getLabel(),
 						marker.getX(), marker.getZ(), marker.isVisibleAhead()
 				))) {
-					for (MarkersData markersData : AntiqueAtlasMod.markersData.getAllMarkersData()) {
-						markersData.loadMarker(marker);
+					globalMarkersData.loadMarker(marker);
+					// Load this marker into all currently loaded atlases,
+					// this will only happen when a global marker is added mid-game.
+					for (MarkersData markersData : AntiqueAtlasMod.markersData.getAllLoadedMarkersData()) {
+						// flip the id so that it doesn't conflict with the local markers:
+						Marker localCopy = new Marker(
+								-marker.getId(),
+								marker.getType(), marker.getLabel(),
+								marker.getDimension(),
+								marker.getX(), marker.getZ(),
+								marker.isVisibleAhead()
+						);
+						markersData.loadMarker(localCopy);
 					}
 				}
 			}

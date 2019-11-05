@@ -51,7 +51,8 @@ public class AtlasDataHandler {
 		return data;
 	}
 
-	public Collection<AtlasData> getAllAtlasData() {
+	/** Returns only data from atlases that have been loaded. */
+	public Collection<AtlasData> getAllLoadedAtlasData() {
 		return atlasDataClientCache.values();
 	}
 
