@@ -1,5 +1,5 @@
-item.antiqueAtlas.name=復刻版地圖
-item.emptyAntiqueAtlas.name=空白復刻版地圖
+item.antiqueAtlas.name=古式地圖
+item.emptyAntiqueAtlas.name=空白古式地圖
 
 gui.antiqueatlas.scalebar=比例尺
 gui.antiqueatlas.addMarker=增加標記
@@ -17,6 +17,23 @@ gui.antiqueatlas.marker.tomb=%s在此長眠
 
 gui.antiqueatlas.export.opening=開啟系統資料夾...
 gui.antiqueatlas.export.selectFile=選擇PNG圖像並另存新檔
-gui.antiqueatlas.export.tooLarge=抱歉! 圖像太大，無法呈現，請嘗試增加Java內存空間。
+gui.antiqueatlas.export.success=將圖像導出為%s
+gui.antiqueatlas.export.tooLarge=抱歉! 圖像太大，無法渲染，請嘗試增加Java內存空間。
+gui.antiqueatlas.export.atlasTooLarge =對不起！圖片太大，無法渲染。嘗試在模組選項中增加“輸出尺寸”。
+
+gui.antiqueatlas.export.setup=設置中...
 gui.antiqueatlas.export.rendering=正在讀取...
 gui.antiqueatlas.export.writing=儲存中...
+gui.antiqueatlas.export.loadingtextures=載入材質...
+gui.antiqueatlas.export.makingbuffer=分配 %dx%d 圖像緩衝...
+
+
+gui.antiqueatlas.export.renderstripe=讀取中  %d/%d ...
+gui.antiqueatlas.export.writestripe=儲存中...
+
+gui.antiqueatlas.export.rendering.background=載入地圖背景
+gui.antiqueatlas.export.rendering.map=載入地圖方塊
+gui.antiqueatlas.export.rendering.markers=載入標記
+
+key.openatlas.desc=打開古式地圖
+key.antiqueatlas.category=古式地圖
