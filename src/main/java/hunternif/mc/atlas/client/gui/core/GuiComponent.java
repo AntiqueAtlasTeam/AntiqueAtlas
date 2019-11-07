@@ -529,10 +529,10 @@ public class GuiComponent extends Screen {
 
 	@Deprecated
 	protected double getMouseX() {
-		return minecraft.mouse.getX() * width / minecraft.window.getFramebufferWidth();
+		return minecraft.mouse.getX() * width / minecraft.window.getWidth();
 	}
 	@Deprecated
 	protected double getMouseY() {
-		return minecraft.mouse.getY() * height / minecraft.window.getFramebufferHeight();
+		return minecraft.mouse.getY() * height / minecraft.window.getHeight();
 	}
 }
