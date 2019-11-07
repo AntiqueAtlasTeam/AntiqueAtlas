@@ -12,7 +12,7 @@ import static hunternif.mc.atlas.client.Textures.*;
 
 public class TextureSet implements Comparable<TextureSet> {
 	public static final TextureSet
-	// This first texture set is meant to be an example for the cofig
+	// This first texture set is meant to be an example for the config
 	TEST        = new TextureSet(false, new Identifier("test"), TILE_TEST, TILE_TEST),
 	
 	// Plains & wasteland stuff:
@@ -364,7 +364,6 @@ public class TextureSet implements Comparable<TextureSet> {
 
 	@Override
 	public int compareTo(TextureSet textureSet) {
-		// TODO report to yarn
 		return name.toString().compareTo(textureSet.name.toString());
 	}
 }
