@@ -189,8 +189,6 @@ public class OverlayRenderer
                                     DimensionType dimension) {
 
         GL11.glEnable(GL11.GL_SCISSOR_TEST);
-        // glScissor uses the default window coordinates,
-        // the display window does not. We need to fix this
         glScissorGUI(shape);
 
         // biomeData needed to prevent undiscovered markers from appearing
@@ -308,15 +306,13 @@ public class OverlayRenderer
     private static void glScissorGUI(Rect shape) {
         // glScissor uses the default window coordinates,
         // the display window does not. We need to fix this
-        float scissorScaleX = MinecraftClient.getInstance().window.getWidth() * 1.0f
-                / MinecraftClient.getInstance().window.getScaledWidth();
+        float scissorScale = (float)MinecraftClient.getInstance().window.getScaleFactor();
 
-        int mcHeight = MinecraftClient.getInstance().window.getHeight();
-        float scissorScaleY = mcHeight * 1.0f / MinecraftClient.getInstance().window.getScaledHeight();
+        int mcHeight = MinecraftClient.getInstance().window.getFramebufferHeight();
 
-        GL11.glScissor((int) (shape.minX * scissorScaleX),
-                (int) (mcHeight - shape.maxY * scissorScaleY),
-                (int) (shape.getWidth() * scissorScaleX),
-                (int) (shape.getHeight() * scissorScaleY));
+        GL11.glScissor((int) (shape.minX * scissorScale),
+                (int) (mcHeight - shape.maxY * scissorScale),
+                (int) (shape.getWidth() * scissorScale),
+                (int) (shape.getHeight() * scissorScale));
     }
 }
