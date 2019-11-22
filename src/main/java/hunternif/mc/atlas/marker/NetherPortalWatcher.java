@@ -119,8 +119,8 @@ public class NetherPortalWatcher {
 		DimensionMarkersData data = AntiqueAtlasMod.markersData.getMarkersData(atlasID, world)
 				.getMarkersDataInDimension(dimension);
 
-		int x = (int)player.x;
-		int z = (int)player.z;
+		int x = (int)player.getX();
+		int z = (int)player.getZ();
 
 		// Check if the marker already exists:
 		List<Marker> markers = data.getMarkersAtChunk((x >> 4) / MarkersData.CHUNK_STEP, (z >> 4) / MarkersData.CHUNK_STEP);

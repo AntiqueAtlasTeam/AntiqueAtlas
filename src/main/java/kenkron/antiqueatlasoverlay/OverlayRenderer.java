@@ -306,9 +306,9 @@ public class OverlayRenderer
     private static void glScissorGUI(Rect shape) {
         // glScissor uses the default window coordinates,
         // the display window does not. We need to fix this
-        float scissorScale = (float)MinecraftClient.getInstance().window.getScaleFactor();
+        float scissorScale = (float)MinecraftClient.getInstance().getWindow().getScaleFactor();
 
-        int mcHeight = MinecraftClient.getInstance().window.getFramebufferHeight();
+        int mcHeight = MinecraftClient.getInstance().getWindow().getFramebufferHeight();
 
         GL11.glScissor((int) (shape.minX * scissorScale),
                 (int) (mcHeight - shape.maxY * scissorScale),

@@ -35,14 +35,14 @@ public class GuiViewport extends GuiComponent {
 	@Override
 	public void init(MinecraftClient client, int w, int h) {
 		super.init(client, w, h);
-		screenScale = client.window.getScaleFactor();
+		screenScale = client.getWindow().getScaleFactor();
 	}
 	
 	@Override
 	public void render(int mouseX, int mouseY, float par3) {
 		GL11.glEnable(GL11.GL_SCISSOR_TEST);
 		GL11.glScissor((int) (getGuiX()*screenScale),
-				(int) (minecraft.window.getFramebufferHeight() - (getGuiY() + properHeight)*screenScale),
+				(int) (minecraft.getWindow().getFramebufferHeight() - (getGuiY() + properHeight)*screenScale),
 				(int) (properWidth*screenScale), (int) (properHeight*screenScale));
 		
 		// Draw the content (child GUIs):

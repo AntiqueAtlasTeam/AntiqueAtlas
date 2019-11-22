@@ -16,7 +16,6 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.network.*;
 import net.fabricmc.fabric.api.server.PlayerStream;
-import net.fabricmc.fabric.impl.network.PacketRegistryImpl;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -145,7 +144,7 @@ public class PacketDispatcher {
 	 * Sends a message to everyone within a certain range of the player provided.
 	 */
 	public static void sendToAllAround(AbstractMessage<?> message, PlayerEntity player, double range) {
-		PacketDispatcher.sendToAllAround(message, player.getEntityWorld(), player.x, player.y, player.z, range);
+		PacketDispatcher.sendToAllAround(message, player.getEntityWorld(), player.getX(), player.getY(), player.getZ(), range);
 	}
 
 	/**

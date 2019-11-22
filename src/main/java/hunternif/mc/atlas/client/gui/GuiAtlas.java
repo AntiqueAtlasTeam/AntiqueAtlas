@@ -289,14 +289,14 @@ public class GuiAtlas extends GuiComponent {
 				if (hasShiftDown()) {
 					markerFinalizer.setMarkerData(player.getEntityWorld(),
 							getAtlasID(), player.dimension,
-							(int) player.x, (int) player.z);
+							(int) player.getX(), (int) player.getZ());
 					addChild(markerFinalizer);
 
 					blinkingIcon.setTexture(markerFinalizer.selectedType.getIcon(),
 							MARKER_SIZE, MARKER_SIZE);
 					addChildBehind(markerFinalizer, blinkingIcon)
-							.setRelativeCoords(worldXToScreenX((int) player.x) - getGuiX() - MARKER_SIZE / 2,
-									worldZToScreenY((int) player.z) - getGuiY() - MARKER_SIZE / 2);
+							.setRelativeCoords(worldXToScreenX((int) player.getX()) - getGuiX() - MARKER_SIZE / 2,
+									worldZToScreenY((int) player.getZ()) - getGuiY() - MARKER_SIZE / 2);
 
 					// Need to intercept keyboard events to type in the label:
 					setInterceptKeyboard(true);
@@ -372,7 +372,7 @@ public class GuiAtlas extends GuiComponent {
         }
 
 		MinecraftClient.getInstance().keyboard.enableRepeatEvents(true);
-		screenScale = MinecraftClient.getInstance().window.getScaleFactor();
+		screenScale = MinecraftClient.getInstance().getWindow().getScaleFactor();
 		setCentered();
 	}
 
@@ -525,8 +525,8 @@ public class GuiAtlas extends GuiComponent {
 			    wheelMove *= -1;
             }
 
-			double mouseOffsetX = minecraft.window.getFramebufferWidth() / screenScale / 2 - getMouseX();
-			double mouseOffsetY = minecraft.window.getFramebufferHeight() / screenScale / 2 - getMouseY();
+			double mouseOffsetX = minecraft.getWindow().getFramebufferWidth() / screenScale / 2 - getMouseX();
+			double mouseOffsetY = minecraft.getWindow().getFramebufferHeight() / screenScale / 2 - getMouseY();
 			double newScale = mapScale * Math.pow(2, wheelMove);
             double addOffsetX = 0;
             double addOffsetY = 0;
@@ -577,8 +577,8 @@ public class GuiAtlas extends GuiComponent {
 		super.tick();
 		if (player == null) return;
 		if (followPlayer) {
-			mapOffsetX = (int)(-player.x * mapScale);
-			mapOffsetY = (int)(-player.z * mapScale);
+			mapOffsetX = (int)(-player.getX() * mapScale);
+			mapOffsetY = (int)(-player.getZ() * mapScale);
 		}
 		if (player.getEntityWorld().getTime() > timeButtonPressed + BUTTON_PAUSE) {
 			navigateByButton(selectedButton);
@@ -699,7 +699,7 @@ public class GuiAtlas extends GuiComponent {
 		GL11.glEnable(GL11.GL_SCISSOR_TEST);
 		GL11.glScissor(
 				(int) ((getGuiX() + CONTENT_X) * screenScale),
-				(int) ((minecraft.window.getFramebufferHeight() - (getGuiY() + CONTENT_Y + MAP_HEIGHT)*screenScale)),
+				(int) ((minecraft.getWindow().getFramebufferHeight() - (getGuiY() + CONTENT_Y + MAP_HEIGHT)*screenScale)),
 				(int) (MAP_WIDTH * screenScale), (int) (MAP_HEIGHT*screenScale));
 		GlStateManager.enableBlend();
 		GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
@@ -772,8 +772,8 @@ public class GuiAtlas extends GuiComponent {
 		// Draw player icon:
 		if (!state.is(HIDING_MARKERS)) {
 			// How much the player has moved from the top left corner of the map, in pixels:
-			int playerOffsetX = (int)(player.x * mapScale) + mapOffsetX;
-			int playerOffsetZ = (int)(player.z * mapScale) + mapOffsetY;
+			int playerOffsetX = (int)(player.getX() * mapScale) + mapOffsetX;
+			int playerOffsetZ = (int)(player.getZ() * mapScale) + mapOffsetY;
 			if (playerOffsetX < -MAP_WIDTH/2) playerOffsetX = -MAP_WIDTH/2;
 			if (playerOffsetX > MAP_WIDTH/2) playerOffsetX = MAP_WIDTH/2;
 			if (playerOffsetZ < -MAP_HEIGHT/2) playerOffsetZ = -MAP_HEIGHT/2;
@@ -784,7 +784,7 @@ public class GuiAtlas extends GuiComponent {
 			GlStateManager.translatef(getGuiX() + WIDTH/2 + playerOffsetX, getGuiY() + HEIGHT/2 + playerOffsetZ, 0);
 			float playerRotation = (float) Math.round(player.yaw / 360f * PLAYER_ROTATION_STEPS) / PLAYER_ROTATION_STEPS * 360f;
 			GlStateManager.rotatef(180 + playerRotation, 0, 0, 1);
-			GlStateManager.translated(-PLAYER_ICON_WIDTH/2*iconScale, -PLAYER_ICON_HEIGHT/2*iconScale, 0);
+			GlStateManager.translatef((float)(-PLAYER_ICON_WIDTH/2*iconScale), (float)(-PLAYER_ICON_HEIGHT/2*iconScale), 0f);
 			AtlasRenderHelper.drawFullTexture(Textures.PLAYER, 0, 0,
 					(int)Math.round(PLAYER_ICON_WIDTH*iconScale), (int)Math.round(PLAYER_ICON_HEIGHT*iconScale));
 			GlStateManager.popMatrix();
@@ -838,7 +838,7 @@ public class GuiAtlas extends GuiComponent {
 
 				GlStateManager.disableTexture();
 				Tessellator t = Tessellator.getInstance();
-				BufferBuilder vb = t.getBufferBuilder();
+				BufferBuilder vb = t.getBuffer();
                 vb.begin(GL11.GL_QUADS, VertexFormats.POSITION);
                 vb.vertex( centerXtranslate,   font.fontHeight - 1, 0.0D).next();
                 vb.vertex(-centerXtranslate-1, font.fontHeight - 1, 0.0D).next();

@@ -85,7 +85,7 @@ public class GuiMarkerFinalizer extends GuiComponent {
 			close();
 		}));
 		textField = new TextFieldWidget(MinecraftClient.getInstance().textRenderer, (this.width - 200)/2, this.height/2 - 81, 200, 20, I18n.translate("gui.antiqueatlas.marker.label"));
-		textField.setIsEditable(true);
+		textField.setEditable(true);
 		textField.setText("");
 
 		scroller.removeAllContent();

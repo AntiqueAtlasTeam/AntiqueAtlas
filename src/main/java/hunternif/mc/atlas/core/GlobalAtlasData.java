@@ -20,7 +20,7 @@ public class GlobalAtlasData extends PersistentState {
 
 	@Override
 	public void fromTag(CompoundTag compound) {
-		if (compound.containsKey(TAG_NEXT_ID, NbtType.NUMBER)) {
+		if (compound.contains(TAG_NEXT_ID, NbtType.NUMBER)) {
 			nextId = compound.getInt(TAG_NEXT_ID);
 		} else {
 			nextId = 1;

@@ -11,15 +11,15 @@ import org.lwjgl.opengl.GL11;
 public class AtlasRenderHelper {
 	public static void drawTexturedRect(Identifier texture, double x, double y, double u, double v, int width, int height, int imageWidth, int imageHeight, double scaleX, double scaleY) {
 		MinecraftClient.getInstance().getTextureManager().bindTexture(texture);
-		double minU = u / imageWidth;
-		double maxU = (u + width) / imageWidth;
-		double minV = v / imageHeight;
-		double maxV = (v + height) / imageHeight;
+		float minU = (float)u / imageWidth;
+		float maxU = (float)(u + width) / imageWidth;
+		float minV = (float)v / imageHeight;
+		float maxV = (float)(v + height) / imageHeight;
 //		After testing, there is no noticeable time difference between raw OpenGL rendering,
 //		and using the WorldRenderere
 		Tessellator tessellator = Tessellator.getInstance();
-		BufferBuilder renderer = tessellator.getBufferBuilder();
-		renderer.begin(GL11.GL_QUADS, VertexFormats.POSITION_UV);
+		BufferBuilder renderer = tessellator.getBuffer();
+		renderer.begin(GL11.GL_QUADS, VertexFormats.POSITION_TEXTURE);
 		renderer.vertex((int)(x + scaleX*width), (int)(y + scaleY*height), 0).texture(maxU, maxV).next();
 		renderer.vertex((int)(x + scaleX*width), (int)y,                   0).texture(maxU, minV).next();
 		renderer.vertex((int)x,                  (int)y,                   0).texture(minU, minV).next();
@@ -41,13 +41,13 @@ public class AtlasRenderHelper {
 
 	public static void drawAutotileCorner(Identifier texture, int x, int y, double u, double v, int tileHalfSize) {
 		MinecraftClient.getInstance().getTextureManager().bindTexture(texture);
-		double minU =  u / 4;
-		double maxU = (u + 1) / 4;
-		double minV =  v / 6;
-		double maxV = (v + 1) / 6;
+		float minU = (float)u / 4;
+		float maxU = (float)(u + 1) / 4;
+		float minV = (float)v / 6;
+		float maxV = (float)(v + 1) / 6;
 		Tessellator tessellator = Tessellator.getInstance();
-		BufferBuilder renderer = tessellator.getBufferBuilder();
-		renderer.begin(GL11.GL_QUADS, VertexFormats.POSITION_UV);
+		BufferBuilder renderer = tessellator.getBuffer();
+		renderer.begin(GL11.GL_QUADS, VertexFormats.POSITION_TEXTURE);
 		renderer.vertex((x + tileHalfSize), (y + tileHalfSize), 0).texture(maxU, maxV).next();
 		renderer.vertex((x + tileHalfSize),  y,                 0).texture(maxU, minV).next();
 		renderer.vertex( x,                  y,                 0).texture(minU, minV).next();

@@ -13,6 +13,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
+import net.minecraft.world.biome.BiomeArray;
 import net.minecraft.world.biome.Biomes;
 import net.minecraft.world.chunk.Chunk;
 
@@ -33,7 +34,7 @@ public class BiomeDetectorNether extends BiomeDetectorBase implements IBiomeDete
 	@Override
 	public TileKind getBiomeID(World world, Chunk chunk) {
 		int biomesCount = Registry.BIOME.getIds().size();
-		Biome[] chunkBiomes = chunk.getBiomeArray();
+		BiomeArray chunkBiomes = chunk.getBiomeArray();
 		Map<Biome, Integer> biomeOccurrences = new HashMap<>(Registry.BIOME.getIds().size());
 		
 		// The following important pseudo-biomes don't have IDs:
@@ -44,7 +45,7 @@ public class BiomeDetectorNether extends BiomeDetectorBase implements IBiomeDete
 
 		for (int x = 0; x < 16; x++) {
 			for (int z = 0; z < 16; z++) {
-				Biome biomeID = chunkBiomes[x << 4 | z];
+				Biome biomeID = chunkBiomes.getStoredBiome(x, 0, z);
 				if (biomeID == hellID) {
 					// The Nether!
 					Block netherBlock = chunk.getBlockState(new BlockPos(x, lavaSeaLevel, z)).getBlock();

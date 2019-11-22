@@ -74,14 +74,14 @@ public class AtlasData extends PersistentState {
 
 		ListTag dimensionMapList = compound.getList(TAG_DIMENSION_MAP_LIST, NbtType.COMPOUND);
 		for (int d = 0; d < dimensionMapList.size(); d++) {
-			CompoundTag dimTag = dimensionMapList.getCompoundTag(d);
+			CompoundTag dimTag = dimensionMapList.getCompound(d);
 			DimensionType dimensionID;
-			if (dimTag.containsKey(TAG_DIMENSION_ID, NbtType.NUMBER)) {
+			if (dimTag.contains(TAG_DIMENSION_ID, NbtType.NUMBER)) {
 				dimensionID = Registry.DIMENSION.get(dimTag.getInt(TAG_DIMENSION_ID));
 			} else {
 				dimensionID = Registry.DIMENSION.get(new Identifier(dimTag.getString(TAG_DIMENSION_ID)));
 			}
-			ListTag dimensionTag = (ListTag) dimTag.getTag(TAG_VISITED_CHUNKS);
+			ListTag dimensionTag = (ListTag) dimTag.get(TAG_VISITED_CHUNKS);
 			DimensionData dimData = getDimensionData(dimensionID);
 			dimData.readFromNBT(dimensionTag);
 			double zoom = (double)dimTag.getInt(TAG_BROWSING_ZOOM) / BrowsingPositionPacket.ZOOM_SCALE_FACTOR;
@@ -102,9 +102,9 @@ public class AtlasData extends PersistentState {
 		}
 		ListTag dimensionMapList = compound.getList(TAG_DIMENSION_MAP_LIST, NbtType.COMPOUND);
 		for (int d = 0; d < dimensionMapList.size(); d++) {
-			CompoundTag dimTag = dimensionMapList.getCompoundTag(d);
+			CompoundTag dimTag = dimensionMapList.getCompound(d);
 			DimensionType dimensionID;
-			if (dimTag.containsKey(TAG_DIMENSION_ID, NbtType.NUMBER)) {
+			if (dimTag.contains(TAG_DIMENSION_ID, NbtType.NUMBER)) {
 				dimensionID = Registry.DIMENSION.get(dimTag.getInt(TAG_DIMENSION_ID));
 			} else {
 				dimensionID = Registry.DIMENSION.get(new Identifier(dimTag.getString(TAG_DIMENSION_ID)));
@@ -176,8 +176,8 @@ public class AtlasData extends PersistentState {
 
 		ArrayList<TileInfo> updatedTiles = new ArrayList<TileInfo>();
 
-		int playerX = MathHelper.floor(player.x) >> 4;
-		int playerZ = MathHelper.floor(player.z) >> 4;
+		int playerX = MathHelper.floor(player.getX()) >> 4;
+		int playerZ = MathHelper.floor(player.getZ()) >> 4;
 		ITileStorage seenChunks = this.getDimensionData(player.dimension);
 		IBiomeDetector biomeDetector = getBiomeDetectorForDimension(player.dimension);
 		int scanRadius = SettingsConfig.performance.scanRadius;

@@ -18,6 +18,7 @@ import hunternif.mc.atlas.util.Log;
 import hunternif.mc.atlas.util.MathUtil;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.BlockBox;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.WorldChunk;
 import net.minecraft.world.dimension.DimensionType;
@@ -27,7 +28,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
-import net.minecraft.util.math.MutableIntBoundingBox;
 import net.minecraft.world.World;
 import java.util.*;
 
@@ -155,9 +155,9 @@ public class StructureWatcherVillage implements IStructureWatcher {
 
 		ListTag children = tag.getList("Children", 10);
 		for (int i = 0; i < children.size(); i++) {
-			CompoundTag child = children.getCompoundTag(i);
+			CompoundTag child = children.getCompound(i);
 			String childID = child.getString("id");
-			MutableIntBoundingBox boundingBox = new MutableIntBoundingBox(child.getIntArray("BB"));
+			BlockBox boundingBox = new BlockBox(child.getIntArray("BB"));
 			int x = MathUtil.getCenter(boundingBox).getX();
 			int z = MathUtil.getCenter(boundingBox).getZ();
 			int chunkX = x >> 4;
@@ -220,9 +220,9 @@ public class StructureWatcherVillage implements IStructureWatcher {
 	private static void removeVillage(World world, CompoundTag tag) {
 		ListTag children = tag.getList("Children", 10);
 		for (int i = 0; i < children.size(); i++) {
-			CompoundTag child = children.getCompoundTag(i);
+			CompoundTag child = children.getCompound(i);
 			String childID = child.getString("id");
-			MutableIntBoundingBox boundingBox = new MutableIntBoundingBox(child.getIntArray("BB"));
+			BlockBox boundingBox = new BlockBox(child.getIntArray("BB"));
 			int x = MathUtil.getCenter(boundingBox).getX();
 			int z = MathUtil.getCenter(boundingBox).getZ();
 			int chunkX = x >> 4;

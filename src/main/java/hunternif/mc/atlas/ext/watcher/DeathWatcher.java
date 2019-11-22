@@ -15,7 +15,7 @@ public class DeathWatcher {
 			for (int atlasID : AtlasAPI.getPlayerAtlases(player)) {
 				AtlasAPI.markers.putMarker(player.getEntityWorld(), true, atlasID, "antiqueatlas:tomb",
 						new TranslatableText("gui.antiqueatlas.marker.tomb").append(player.getName()).getString(),
-						(int)player.x, (int)player.z);
+						(int)player.getX(), (int)player.getZ());
 			}
 		}
 	}

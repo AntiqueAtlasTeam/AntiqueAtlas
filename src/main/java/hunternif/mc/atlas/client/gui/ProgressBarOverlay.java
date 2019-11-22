@@ -44,7 +44,7 @@ class ProgressBarOverlay {
 
 		GlStateManager.disableTexture();
 		Tessellator tessellator = Tessellator.getInstance();
-		BufferBuilder vb = tessellator.getBufferBuilder();
+		BufferBuilder vb = tessellator.getBuffer();
 
 		vb.begin(GL11.GL_QUADS, VertexFormats.POSITION_COLOR);
 

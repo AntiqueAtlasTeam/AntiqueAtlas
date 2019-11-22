@@ -10,6 +10,7 @@ import hunternif.mc.atlas.ext.watcher.WatcherPos;
 import hunternif.mc.atlas.util.MathUtil;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.BlockBox;
 import net.minecraft.world.dimension.DimensionType;
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -17,7 +18,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
-import net.minecraft.util.math.MutableIntBoundingBox;
 import net.minecraft.world.World;
 import java.util.HashSet;
 import java.util.Set;
@@ -100,9 +100,9 @@ public class StructureWatcherFortress implements IStructureWatcher {
 	private void visitFortress(World world, CompoundTag tag) {
 		ListTag children = tag.getList("Children", 10);
 		for (int i = 0; i < children.size(); i++) {
-			CompoundTag child = children.getCompoundTag(i);
+			CompoundTag child = children.getCompound(i);
 			String childID = child.getString("id");
-			MutableIntBoundingBox boundingBox = new MutableIntBoundingBox(child.getIntArray("BB"));
+			BlockBox boundingBox = new BlockBox(child.getIntArray("BB"));
 			if (BRIDGE.equals(childID)) { // Straight open bridge segment. Is allowed to span several chunks.
 				if (boundingBox.getBlockCountX() > 16) {
 					Identifier tileName = ExtTileIdMap.TILE_NETHER_BRIDGE_X;

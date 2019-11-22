@@ -38,8 +38,8 @@ class SetTileRenderer {
             MinecraftClient.getInstance().getTextureManager().bindTexture(key);
 
             Tessellator tessellator = Tessellator.getInstance();
-            BufferBuilder renderer = tessellator.getBufferBuilder();
-            renderer.begin(GL11.GL_QUADS, VertexFormats.POSITION_UV);
+            BufferBuilder renderer = tessellator.getBuffer();
+            renderer.begin(GL11.GL_QUADS, VertexFormats.POSITION_TEXTURE);
             for (TileCorner tc : tca) {
                 drawInlineAutotileCorner(tc.x, tc.y, tc.u, tc.v);
             }
@@ -53,7 +53,7 @@ class SetTileRenderer {
         float minV = v / 6f;
         float maxV = (v + 1) / 6f;
         Tessellator tessellator = Tessellator.getInstance();
-        BufferBuilder renderer = tessellator.getBufferBuilder();
+        BufferBuilder renderer = tessellator.getBuffer();
         renderer.vertex(x + tileHalfSize, y + tileHalfSize, 0).texture(maxU, maxV).next();
         renderer.vertex(x + tileHalfSize, y, 0).texture(maxU, minV).next();
         renderer.vertex(x, y, 0).texture(minU, minV).next();

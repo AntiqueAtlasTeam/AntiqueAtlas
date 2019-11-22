@@ -49,9 +49,9 @@ public class ExtBiomeData extends PersistentState {
 		}
 		ListTag dimensionMapList = compound.getList(TAG_DIMENSION_MAP_LIST, NbtType.COMPOUND);
 		for (int d = 0; d < dimensionMapList.size(); d++) {
-			CompoundTag tag = dimensionMapList.getCompoundTag(d);
+			CompoundTag tag = dimensionMapList.getCompound(d);
 			DimensionType dimensionID;
-			if (tag.containsKey(TAG_DIMENSION_ID, NbtType.NUMBER)) {
+			if (tag.contains(TAG_DIMENSION_ID, NbtType.NUMBER)) {
 				dimensionID = Registry.DIMENSION.get(tag.getInt(TAG_DIMENSION_ID));
 			} else {
 				dimensionID = Registry.DIMENSION.get(new Identifier(tag.getString(TAG_DIMENSION_ID)));

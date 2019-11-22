@@ -195,7 +195,7 @@ public class DimensionData implements ITileStorage {
 			return;
 		}
 		for (int d = 0; d < me.size(); d++) {
-			CompoundTag tgTag = me.getCompoundTag(d);
+			CompoundTag tgTag = me.getCompound(d);
 			TileGroup tg = new TileGroup(0, 0);
 			tg.readFromNBT(tgTag);
 			putTileGroup(tg);
