@@ -1,13 +1,13 @@
 package hunternif.mc.atlas.ext.watcher;
 
-import java.util.Set;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.world.World;
 import net.minecraft.world.dimension.DimensionType;
 import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.world.World;
+import java.util.Set;
 
 public interface IStructureWatcher {
 
@@ -32,7 +32,7 @@ public interface IStructureWatcher {
      * @return the NBT tag to read structure data from
      */
     @Nullable
-    CompoundTag getStructureData(@Nonnull World world);
+    CompoundNBT getStructureData(@Nonnull World world);
 
     /**
      * Called when a world is loaded or a chunk is populated. The return value is used to log what has been visited and where.
@@ -42,5 +42,5 @@ public interface IStructureWatcher {
      * @return the locations that have been visited along with a name for it.
      */
     @Nonnull
-    Set<Pair<WatcherPos, String>> visitStructure(@Nonnull World world, @Nonnull CompoundTag structureTag);
+    Set<Pair<WatcherPos, String>> visitStructure(@Nonnull World world, @Nonnull CompoundNBT structureTag);
 }

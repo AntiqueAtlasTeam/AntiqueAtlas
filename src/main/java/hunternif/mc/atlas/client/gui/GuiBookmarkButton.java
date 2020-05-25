@@ -1,15 +1,16 @@
 package hunternif.mc.atlas.client.gui;
 
-import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.systems.RenderSystem;
 import hunternif.mc.atlas.client.Textures;
 import hunternif.mc.atlas.client.gui.core.GuiToggleButton;
 import hunternif.mc.atlas.util.AtlasRenderHelper;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.RenderHelper;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
+
 import java.util.Collections;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.render.GuiLighting;
-import net.minecraft.text.LiteralText;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
 
 
 /** Bookmark-button in the journal. When a bookmark is selected, it will not
@@ -23,7 +24,7 @@ public class GuiBookmarkButton extends GuiToggleButton {
 	private static final int ICON_HEIGHT = 16;
 
 	private final int colorIndex;
-	private Identifier iconTexture;
+	private ResourceLocation iconTexture;
 	private String title;
 
 	/**
@@ -31,14 +32,14 @@ public class GuiBookmarkButton extends GuiToggleButton {
 	 * @param iconTexture the path to the 16x16 texture to be drawn on top of the bookmark.
 	 * @param title hovering text.
 	 */
-	GuiBookmarkButton(int colorIndex, Identifier iconTexture, String title) {
+	GuiBookmarkButton(int colorIndex, ResourceLocation iconTexture, String title) {
 		this.colorIndex = colorIndex;
 		setIconTexture(iconTexture);
 		setTitle(title);
 		setSize(WIDTH, HEIGHT);
 	}
 
-	void setIconTexture(Identifier iconTexture) {
+	void setIconTexture(ResourceLocation iconTexture) {
 		this.iconTexture = iconTexture;
 	}
 
@@ -46,14 +47,15 @@ public class GuiBookmarkButton extends GuiToggleButton {
 		this.title = title;
 	}
 
-	public Text getTitle() {
-		return new LiteralText(title);
+	public ITextComponent getTitle() {
+		return new StringTextComponent(title);
 	}
 
 	@Override
 	public void render(int mouseX, int mouseY, float partialTick) {
-		GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
-		GuiLighting.disable();
+		RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
+		//GuiLighting.disable();
+		RenderHelper.disableStandardItemLighting();
 
 		// Render background:
 		int u = colorIndex * WIDTH;
@@ -66,7 +68,7 @@ public class GuiBookmarkButton extends GuiToggleButton {
 				getGuiY() + 1, ICON_WIDTH, ICON_HEIGHT);
 
 		if (isMouseOver) {
-			drawTooltip(Collections.singletonList(title), MinecraftClient.getInstance().textRenderer);
+			drawTooltip(Collections.singletonList(title), Minecraft.getInstance().fontRenderer);
 		}
 	}
 }

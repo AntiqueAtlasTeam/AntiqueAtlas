@@ -4,21 +4,12 @@ import hunternif.mc.atlas.core.BiomeDetectorBase;
 import hunternif.mc.atlas.ext.ExtTileConfig;
 import hunternif.mc.atlas.ext.ExtTileIdMap;
 import hunternif.mc.atlas.util.Log;
-import net.fabricmc.fabric.api.network.PacketConsumer;
-import net.fabricmc.fabric.api.network.ServerSidePacketRegistry;
-import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
-import net.fabricmc.fabric.api.resource.SimpleSynchronousResourceReloadListener;
-import net.fabricmc.loader.FabricLoader;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.resource.ResourceManager;
-import net.minecraft.resource.ResourceReloadListener;
-import net.minecraft.resource.ResourceType;
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.Identifier;
+import net.minecraftforge.event.world.WorldEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod;
+
 import java.io.File;
-import java.util.Set;
-import java.util.function.Function;
 
 public class CommonProxy {
 	static File configDir;
@@ -26,8 +17,8 @@ public class CommonProxy {
 	private static ExtTileIdMap extTileIdMap;
 	private static ExtTileConfig extTileConfig;
 
-	public void init() {
-		configDir = new File(net.fabricmc.loader.api.FabricLoader.getInstance().getConfigDirectory(), "antiqueatlas");
+	public CommonProxy() {
+		configDir = new File("./config", "antiqueatlas");
 		configDir.mkdir();
 		extTileIdMap = ExtTileIdMap.instance();
 		extTileConfig = new ExtTileConfig(new File(configDir, "tileids.json"));
@@ -37,17 +28,7 @@ public class CommonProxy {
 		registerVanillaCustomTiles();
 		checkSaveConfig();
 
-		ResourceManagerHelper.get(ResourceType.SERVER_DATA).registerReloadListener(new SimpleSynchronousResourceReloadListener() {
-			@Override
-			public Identifier getFabricId() {
-				return new Identifier("antiqueatlas:scanbiometypes");
-			}
-
-			@Override
-			public void apply(ResourceManager var1) {
-				BiomeDetectorBase.scanBiomeTypes();
-			}
-		});
+		BiomeDetectorBase.scanBiomeTypes();
 	}
 
 	/** Register IDs for the pseudo-biomes used for vanilla Minecraft.
@@ -100,10 +81,10 @@ public class CommonProxy {
 
 	/** When a world is saved, so is the custom tile id config. */
 	// TODO FABRIC
-	/* @SubscribeEvent
+	@SubscribeEvent
 	public void onWorldSave(WorldEvent.Save event) {
 		checkSaveConfig();
-	} */
+	}
 
 	private void checkSaveConfig() {
 		if (extTileIdMap.isDirty()) {
@@ -111,9 +92,5 @@ public class CommonProxy {
 			extTileConfig.save(extTileIdMap);
 			extTileIdMap.setDirty(false);
 		}
-	}
-
-	public void registerPackets(Set<Identifier> clientPackets, Set<Identifier> serverPackets, Function<Identifier, PacketConsumer> consumer) {
-		serverPackets.forEach((id) -> ServerSidePacketRegistry.INSTANCE.register(id, consumer.apply(id)));
 	}
 }

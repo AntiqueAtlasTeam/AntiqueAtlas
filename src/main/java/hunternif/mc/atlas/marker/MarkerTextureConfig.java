@@ -1,88 +1,84 @@
 package hunternif.mc.atlas.marker;
 
-import java.io.File;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.*;
-import java.util.Map.Entry;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Executor;
-
-import hunternif.mc.atlas.AntiqueAtlasMod;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-import net.fabricmc.fabric.api.resource.SimpleResourceReloadListener;
-import net.minecraft.resource.Resource;
-import net.minecraft.resource.ResourceManager;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.profiler.Profiler;
-import org.apache.commons.io.IOUtils;
-
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-
+import hunternif.mc.atlas.AntiqueAtlasMod;
 import hunternif.mc.atlas.registry.MarkerRegistry;
 import hunternif.mc.atlas.registry.MarkerType;
-import hunternif.mc.atlas.util.AbstractJSONConfig;
 import hunternif.mc.atlas.util.Log;
+import net.minecraft.resources.IResource;
+import net.minecraft.resources.IResourceManager;
+import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.resource.IResourceType;
+import net.minecraftforge.resource.ISelectiveResourceReloadListener;
+import net.minecraftforge.resource.VanillaResourceType;
+
+import javax.annotation.Nullable;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.function.Predicate;
 
 /**
  * Maps marker type to texture.
+ *
  * @author Hunternif
  */
-@Environment(EnvType.CLIENT)
-public class MarkerTextureConfig implements SimpleResourceReloadListener<Map<Identifier, MarkerType>> {
-	private static final int VERSION = 1;
-	private static final JsonParser parser = new JsonParser();
+@OnlyIn(Dist.CLIENT)
+public class MarkerTextureConfig implements ISelectiveResourceReloadListener {
+    private static final int VERSION = 1;
+    private static final JsonParser parser = new JsonParser();
 
-	@Override
-	public CompletableFuture<Map<Identifier, MarkerType>> load(ResourceManager manager, Profiler profiler, Executor executor) {
-		return CompletableFuture.supplyAsync(() -> {
-			Map<Identifier, MarkerType> typeMap = new HashMap<>();
 
-			for (Identifier id : manager.findResources("marker_types", (s) -> s.endsWith(".json"))) {
-				if (!id.getNamespace().equals("antiqueatlas")) {
-					continue;
-				}
+    @Override
+    public void onResourceManagerReload(IResourceManager resourceManager) {
+        Map<ResourceLocation, MarkerType> typeMap = new HashMap<>();
 
-				Identifier markerId = new Identifier(
-						id.getNamespace(),
-						id.getPath().replace("marker_types/", "").replace(".json", "")
-				);
+        for (ResourceLocation id : resourceManager.getAllResourceLocations("marker_types", (s) -> s.endsWith(".json"))) {
+            if (!id.getNamespace().equals("antiqueatlas")) {
+                continue;
+            }
 
-				try {
-					Resource resource = manager.getResource(id);
-					try (
-							InputStream stream = resource.getInputStream();
-							InputStreamReader reader = new InputStreamReader(stream)
-					) {
-						JsonObject object = parser.parse(reader).getAsJsonObject();
-						MarkerType markerType = new MarkerType(markerId);
-						markerType.getJSONData().readFrom(object);
-						markerType.setIsFromJson(true);
-						typeMap.put(markerId, markerType);
-					}
-				} catch (Exception e) {
-					AntiqueAtlasMod.logger.warn("Error reading marker " + markerId + "!", e);
-				}
-			}
+            ResourceLocation markerId = new ResourceLocation(
+                    id.getNamespace(),
+                    id.getPath().replace("marker_types/", "").replace(".json", "")
+            );
 
-			return typeMap;
-		});
-	}
+            try {
+                IResource resource = resourceManager.getResource(id);
+                try (
+                        InputStream stream = resource.getInputStream();
+                        InputStreamReader reader = new InputStreamReader(stream)
+                ) {
+                    JsonObject object = parser.parse(reader).getAsJsonObject();
+                    MarkerType markerType = new MarkerType(markerId);
+                    markerType.getJSONData().readFrom(object);
+                    markerType.setIsFromJson(true);
+                    typeMap.put(markerId, markerType);
+                }
+            } catch (Exception e) {
+                AntiqueAtlasMod.logger.warn("Error reading marker " + markerId + "!", e);
+            }
+        }
+        for (ResourceLocation markerId : typeMap.keySet()) {
+            MarkerRegistry.register(markerId, typeMap.get(markerId));
+        }
 
-	@Override
-	public CompletableFuture<Void> apply(Map<Identifier, MarkerType> data, ResourceManager manager, Profiler profiler, Executor executor) {
-		return CompletableFuture.runAsync(() -> {
-			for (Identifier markerId : data.keySet()) {
-				MarkerRegistry.register(markerId, data.get(markerId));
-			}
-		});
-	}
+    }
 
-	@Override
-	public Identifier getFabricId() {
-		return new Identifier("antiqueatlas:marker_types");
-	}
+    @Override
+    public void onResourceManagerReload(IResourceManager resourceManager, Predicate<IResourceType> resourcePredicate) {
+        if (resourcePredicate.test(getResourceType())) {
+            onResourceManagerReload(resourceManager);
+        }
+    }
+
+    @Nullable
+    @Override
+    public IResourceType getResourceType() {
+        return VanillaResourceType.TEXTURES;
+    }
 }

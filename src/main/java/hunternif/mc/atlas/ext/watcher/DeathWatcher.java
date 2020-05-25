@@ -3,7 +3,7 @@ package hunternif.mc.atlas.ext.watcher;
 import hunternif.mc.atlas.SettingsConfig;
 import hunternif.mc.atlas.api.AtlasAPI;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.text.TranslatableText;
+import net.minecraft.util.text.StringTextComponent;
 
 /**
  * Puts an skull marker to the player's death spot.
@@ -11,11 +11,11 @@ import net.minecraft.text.TranslatableText;
  */
 public class DeathWatcher {
 	public static void onPlayerDeath(PlayerEntity player) {
-		if (SettingsConfig.gameplay.autoDeathMarker) {
+		if (SettingsConfig.autoDeathMarker) {
 			for (int atlasID : AtlasAPI.getPlayerAtlases(player)) {
 				AtlasAPI.markers.putMarker(player.getEntityWorld(), true, atlasID, "antiqueatlas:tomb",
-						new TranslatableText("gui.antiqueatlas.marker.tomb").append(player.getName()).getString(),
-						(int)player.getX(), (int)player.getZ());
+						new StringTextComponent("gui.antiqueatlas.marker.tomb").appendSibling(player.getName()).getString(),
+						(int)player.getPosX(), (int)player.getPosZ());
 			}
 		}
 	}

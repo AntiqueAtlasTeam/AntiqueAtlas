@@ -1,6 +1,6 @@
 package hunternif.mc.atlas.client;
 
-import net.minecraft.util.Identifier;
+import net.minecraft.util.ResourceLocation;
 
 import java.util.Collections;
 import java.util.HashSet;
@@ -13,7 +13,7 @@ import static hunternif.mc.atlas.client.Textures.*;
 public class TextureSet implements Comparable<TextureSet> {
 	public static final TextureSet
 	// This first texture set is meant to be an example for the config
-	TEST        = new TextureSet(false, new Identifier("test"), TILE_TEST, TILE_TEST),
+	TEST        = new TextureSet(false, new ResourceLocation("test"), TILE_TEST, TILE_TEST),
 	
 	// Plains & wasteland stuff:
 	ICE         = standard("ICE", TILE_ICE_NOBORDER),
@@ -235,10 +235,10 @@ public class TextureSet implements Comparable<TextureSet> {
 	}
 	
 	/** Name of the texture pack to write in the config file. */
-	public final Identifier name;
+	public final ResourceLocation name;
 	
 	/** The actual textures in this set. */
-	public final Identifier[] textures;
+	public final ResourceLocation[] textures;
 	
 	/** Texture sets that a tile rendered with this set can be stitched to,
 	 * excluding itself. */
@@ -253,17 +253,17 @@ public class TextureSet implements Comparable<TextureSet> {
 	private boolean stitchesToNull = false;
 	private boolean anisotropicStitching = false;
 	
-	private static TextureSet standard(String name, Identifier ... textures) {
-		return new TextureSet(true, new Identifier("antiqueatlas", name.toLowerCase(Locale.ROOT)), textures);
+	private static TextureSet standard(String name, ResourceLocation ... textures) {
+		return new TextureSet(true, new ResourceLocation("antiqueatlas", name.toLowerCase(Locale.ROOT)), textures);
 	}
 	
-	private TextureSet(boolean isStandard, Identifier name, Identifier ... textures) {
+	private TextureSet(boolean isStandard, ResourceLocation name, ResourceLocation ... textures) {
 		this.isStandard = isStandard;
 		this.name = name;
 		this.textures = textures;
 	}
 	/** Name has to be unique, it is used for equals() tests. */
-	public TextureSet(Identifier name, Identifier ... textures) {
+	public TextureSet(ResourceLocation name, ResourceLocation ... textures) {
 		this(false, name, textures);
 	}
 	
@@ -326,8 +326,8 @@ public class TextureSet implements Comparable<TextureSet> {
 	/** A special texture set that is stitched to everything except water. */
 	private static class TextureSetShore extends TextureSet {
 		private final TextureSet water;
-		TextureSetShore(String name, TextureSet water, Identifier... textures) {
-			super(true, new Identifier("antiqueatlas", name.toLowerCase(Locale.ROOT)), textures);
+		TextureSetShore(String name, TextureSet water, ResourceLocation... textures) {
+			super(true, new ResourceLocation("antiqueatlas", name.toLowerCase(Locale.ROOT)), textures);
 			this.water = water;
 		}
 		@Override

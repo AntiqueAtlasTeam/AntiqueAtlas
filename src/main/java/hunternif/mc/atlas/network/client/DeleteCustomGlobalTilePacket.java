@@ -2,22 +2,19 @@ package hunternif.mc.atlas.network.client;
 
 import hunternif.mc.atlas.AntiqueAtlasMod;
 import hunternif.mc.atlas.ext.ExtBiomeData;
-import hunternif.mc.atlas.network.AbstractMessage.AbstractClientMessage;
-
-import java.io.IOException;
-
-import net.fabricmc.api.EnvType;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.PacketByteBuf;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.dimension.DimensionType;
+import net.minecraftforge.fml.network.NetworkEvent;
+
+import java.util.function.Supplier;
 
 
 /**
  * Sent from server to client to remove a custom global tile.
  * @author Hunternif
  */
-public class DeleteCustomGlobalTilePacket extends AbstractClientMessage<DeleteCustomGlobalTilePacket> {
+public class DeleteCustomGlobalTilePacket {
 	
 	private DimensionType dimension;
 	private int chunkX, chunkZ;
@@ -29,25 +26,23 @@ public class DeleteCustomGlobalTilePacket extends AbstractClientMessage<DeleteCu
 		this.chunkX = chunkX;
 		this.chunkZ = chunkZ;
 	}
-	
-	@Override
-	protected void read(PacketByteBuf buffer) throws IOException {
-		dimension = Registry.DIMENSION.get(buffer.readVarInt());
-		chunkX = buffer.readInt();
-		chunkZ = buffer.readInt();
+
+	public static DeleteCustomGlobalTilePacket read(PacketBuffer buffer) {
+		return new DeleteCustomGlobalTilePacket(Registry.DIMENSION_TYPE.getByValue(buffer.readVarInt()), buffer.readInt(), buffer.readInt());
 	}
 
-	@Override
-	protected void write(PacketByteBuf buffer) throws IOException {
-		buffer.writeVarInt(Registry.DIMENSION.getRawId(dimension));
-		buffer.writeInt(chunkX);
-		buffer.writeInt(chunkZ);
+	public static void write(DeleteCustomGlobalTilePacket msg, PacketBuffer buffer)  {
+		buffer.writeVarInt(Registry.DIMENSION_TYPE.getId(msg.dimension));
+		buffer.writeInt(msg.chunkX);
+		buffer.writeInt(msg.chunkZ);
 	}
 
-	@Override
-	protected void process(PlayerEntity player, EnvType side) {
-		ExtBiomeData data = AntiqueAtlasMod.extBiomeData.getData();
-		data.removeBiomeAt(dimension, chunkX, chunkZ);
+	public void process(Supplier<NetworkEvent.Context> ctx) {
+		ctx.get().enqueueWork(() -> {
+			ExtBiomeData data = AntiqueAtlasMod.extBiomeData.getData();
+			data.removeBiomeAt(dimension, chunkX, chunkZ);
+		});
+		ctx.get().setPacketHandled(true);
 	}
 
 }

@@ -1,22 +1,18 @@
 package hunternif.mc.atlas;
 
 
-import static org.junit.Assert.*;
+import hunternif.mc.atlas.core.*;
+import hunternif.mc.atlas.network.server.BrowsingPositionPacket;
+import hunternif.mc.atlas.util.ShortVec2;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.ListNBT;
+import net.minecraft.world.dimension.DimensionType;
+import org.junit.Before;
 
-
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import hunternif.mc.atlas.core.*;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.world.dimension.DimensionType;
-import org.junit.Before;
-import org.junit.Test;
-
-import hunternif.mc.atlas.network.server.BrowsingPositionPacket;
-import hunternif.mc.atlas.util.ShortVec2;
+import static org.junit.Assert.assertEquals;
 
 // TODO FABRIC: These tests won't run without Knot's access transformers, for now...
 public class TestNBT {
@@ -26,14 +22,14 @@ public class TestNBT {
 	TileGroup tg = new TileGroup(16, 16);
 	
 	/**Creates a pre-packet-rework AtlasData NBT tag*/
-	public void writeToNBTv2(AtlasData atlasdata, CompoundTag compound) {
+	public void writeToNBTv2(AtlasData atlasdata, CompoundNBT compound) {
 		compound.putInt(AtlasData.TAG_VERSION, 2);
-		ListTag dimensionMapList = new ListTag();
+		ListNBT dimensionMapList = new ListNBT();
 		DimensionType key;
 		for (DimensionType dimensionType : atlasdata.getVisitedDimensions()) {
-			CompoundTag dimTag = new CompoundTag();
+			CompoundNBT dimTag = new CompoundNBT();
 			key = dimensionType;
-			dimTag.putInt(AtlasData.TAG_DIMENSION_ID, dimensionType.getRawId() + 1);
+			dimTag.putInt(AtlasData.TAG_DIMENSION_ID, dimensionType.getId() + 1);
 			DimensionData dimData = atlasdata.getDimensionData(key);
 			Map<ShortVec2, TileKind> seenChunks = dimData.getSeenChunks();
 			int[] intArray = new int[seenChunks.size()*3];
@@ -73,13 +69,13 @@ public class TestNBT {
 	
 	// @Test
 	public void testNBT(){
-		CompoundTag tagTG = new CompoundTag();
+		CompoundNBT tagTG = new CompoundNBT();
 		tg.writeToNBT(tagTG);
 		TileGroup tg2 = new TileGroup(0,0);
 		tg2.readFromNBT(tagTG);
 		assertEquals(tg, tg2);
 		
-		ListTag tagDD = dd.writeToNBT();
+		ListNBT tagDD = dd.writeToNBT();
 		DimensionData dd2 = new DimensionData(null, DimensionType.OVERWORLD);
 		dd2.readFromNBT(tagDD);
 	}

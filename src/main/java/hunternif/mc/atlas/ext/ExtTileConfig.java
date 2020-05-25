@@ -4,7 +4,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import hunternif.mc.atlas.AntiqueAtlasMod;
 import hunternif.mc.atlas.util.AbstractJSONConfig;
-import net.minecraft.util.Identifier;
+import net.minecraft.util.ResourceLocation;
 
 import java.io.File;
 import java.util.Map.Entry;
@@ -41,9 +41,9 @@ public class ExtTileConfig extends AbstractJSONConfig<ExtTileIdMap> {
 	@Override
 	protected void saveData(JsonObject json, ExtTileIdMap data) {
 		// Sort keys alphabetically
-		Queue<Identifier> queue = new PriorityQueue<>(data.getMap().keySet());
+		Queue<ResourceLocation> queue = new PriorityQueue<>(data.getMap().keySet());
 		while (!queue.isEmpty()) {
-			Identifier tileName = queue.poll();
+			ResourceLocation tileName = queue.poll();
 			json.addProperty(tileName.toString(), data.getMap().get(tileName));
 		}
 	}

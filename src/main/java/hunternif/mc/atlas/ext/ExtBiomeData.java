@@ -4,17 +4,17 @@ import hunternif.mc.atlas.network.PacketDispatcher;
 import hunternif.mc.atlas.network.client.TilesPacket;
 import hunternif.mc.atlas.util.Log;
 import hunternif.mc.atlas.util.ShortVec2;
-import net.fabricmc.fabric.api.util.NbtType;
-import net.minecraft.client.network.packet.LoginSuccessS2CPacket;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.util.Identifier;
+import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.ListNBT;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.registry.Registry;
-import net.minecraft.world.PersistentState;
-import net.minecraft.world.biome.Biome;
 import net.minecraft.world.dimension.DimensionType;
+import net.minecraft.world.storage.WorldSavedData;
+import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.fml.network.PacketDistributor;
+
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
@@ -24,7 +24,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * Atlases check with it when updating themselves.
  * @author Hunternif
  */
-public class ExtBiomeData extends PersistentState {
+public class ExtBiomeData extends WorldSavedData {
 	private static final int VERSION = 1;
 	private static final String TAG_VERSION = "aaVersion";
 	private static final String TAG_DIMENSION_MAP_LIST = "dimMap";
@@ -41,20 +41,20 @@ public class ExtBiomeData extends PersistentState {
 	private final ShortVec2 tempCoords = new ShortVec2(0, 0);
 
 	@Override
-	public void fromTag(CompoundTag compound) {
+	public void read(CompoundNBT compound) {
 		int version = compound.getInt(TAG_VERSION);
 		if (version < VERSION) {
 			Log.warn("Outdated atlas data format! Was %d but current is %d", version, VERSION);
 			this.markDirty();
 		}
-		ListTag dimensionMapList = compound.getList(TAG_DIMENSION_MAP_LIST, NbtType.COMPOUND);
+		ListNBT dimensionMapList = compound.getList(TAG_DIMENSION_MAP_LIST, Constants.NBT.TAG_COMPOUND);
 		for (int d = 0; d < dimensionMapList.size(); d++) {
-			CompoundTag tag = dimensionMapList.getCompound(d);
+			CompoundNBT tag = dimensionMapList.getCompound(d);
 			DimensionType dimensionID;
-			if (tag.contains(TAG_DIMENSION_ID, NbtType.NUMBER)) {
-				dimensionID = Registry.DIMENSION.get(tag.getInt(TAG_DIMENSION_ID));
+			if (tag.contains(TAG_DIMENSION_ID, Constants.NBT.TAG_ANY_NUMERIC)) {
+				dimensionID = Registry.DIMENSION_TYPE.getByValue(tag.getInt(TAG_DIMENSION_ID));
 			} else {
-				dimensionID = Registry.DIMENSION.get(new Identifier(tag.getString(TAG_DIMENSION_ID)));
+				dimensionID = Registry.DIMENSION_TYPE.getOrDefault(new ResourceLocation(tag.getString(TAG_DIMENSION_ID)));
 			}
 			Map<ShortVec2, Integer> biomeMap = getBiomesInDimension(dimensionID);
 			int[] intArray = tag.getIntArray(TAG_BIOME_IDS);
@@ -65,12 +65,12 @@ public class ExtBiomeData extends PersistentState {
 	}
 
 	@Override
-	public CompoundTag toTag(CompoundTag compound) {
+	public CompoundNBT write(CompoundNBT compound) {
 		compound.putInt(TAG_VERSION, VERSION);
-		ListTag dimensionMapList = new ListTag();
+		ListNBT dimensionMapList = new ListNBT();
 		for (DimensionType dimension : dimensionMap.keySet()) {
-			CompoundTag tag = new CompoundTag();
-			tag.putString(TAG_DIMENSION_ID, Registry.DIMENSION.getId(dimension).toString());
+			CompoundNBT tag = new CompoundNBT();
+			tag.putString(TAG_DIMENSION_ID, Registry.DIMENSION_TYPE.getKey(dimension).toString());
 			Map<ShortVec2, Integer> biomeMap = getBiomesInDimension(dimension);
 			int[] intArray = new int[biomeMap.size()*3];
 			int i = 0;
@@ -117,7 +117,7 @@ public class ExtBiomeData extends PersistentState {
 			for (Entry<ShortVec2, Integer> entry : biomes.entrySet()) {
 				packet.addTile(entry.getKey().x, entry.getKey().y, entry.getValue());
 			}
-			PacketDispatcher.sendTo(packet, (ServerPlayerEntity) player);
+			PacketDispatcher.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) player), packet);
 		}
 		Log.info("Sent custom biome data to player %s", player.getCommandSource().getName());
 	}

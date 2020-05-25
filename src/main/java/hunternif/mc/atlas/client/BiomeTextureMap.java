@@ -3,15 +3,14 @@ package hunternif.mc.atlas.client;
 import hunternif.mc.atlas.core.TileKind;
 import hunternif.mc.atlas.util.Log;
 import hunternif.mc.atlas.util.SaveData;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-
-
-import net.minecraft.util.Identifier;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.biome.Biome;
-import net.minecraft.world.gen.GenerationStep;
+import net.minecraft.world.gen.GenerationStage;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.common.BiomeDictionary;
+import net.minecraftforge.common.BiomeDictionary.Type;
 
 import java.util.*;
 import java.util.Map.Entry;
@@ -25,7 +24,7 @@ import static hunternif.mc.atlas.client.TextureSet.*;
  * putting tile into Atlas.</p>
  * @author Hunternif
  */
-@Environment(EnvType.CLIENT)
+@OnlyIn(Dist.CLIENT)
 public class BiomeTextureMap extends SaveData {
 	private static final BiomeTextureMap INSTANCE = new BiomeTextureMap();
 	public static BiomeTextureMap instance() {
@@ -41,13 +40,13 @@ public class BiomeTextureMap extends SaveData {
 
 	/** Assign texture set to biome. */
 	public void setTexture(Biome biome, TextureSet textureSet) {
-		Log.info("Register texture set %s for biome %s", textureSet.name, biome.getTranslationKey());
 		if (textureSet == null) {
 			if (biomeTextureMap.remove(biome) != null) {
 				Log.warn("Removing old texture for biome %s", Registry.BIOME.getId(biome));
 			}
 			return;
 		}
+		Log.info("Register texture set %s for biome %s", textureSet.name, biome.getTranslationKey());
 		TextureSet previous = biomeTextureMap.put(biome, textureSet);
 		// If the old texture set is equal to the new one (i.e. has equal name
 		// and equal texture files), then there's no need to update the config.
@@ -92,7 +91,7 @@ public class BiomeTextureMap extends SaveData {
 				break;
 			case OCEAN:
 			case RIVER:
-				setTexture(biome, biome.getPrecipitation() == Biome.Precipitation.SNOW ? ICE : WATER);
+				setTexture(biome, biome.getPrecipitation() == Biome.RainType.SNOW ? ICE : WATER);
 				break;
 			case BEACH:
 				setTexture(biome, SHORE); // TODO ROCK_SHORE
@@ -107,13 +106,13 @@ public class BiomeTextureMap extends SaveData {
 				setTexture(biome, PLATEAU_MESA); // TODO PLATEAU_MESA_TREES
 				break;
 			case FOREST:
-				setTexture(biome, biome.getPrecipitation() == Biome.Precipitation.SNOW ?
+				setTexture(biome, biome.getPrecipitation() == Biome.RainType.SNOW ?
 						(biome.getScale() >= 0.25f ? SNOW_PINES_HILLS : SNOW_PINES) :
 						(biome.getScale() >= 0.25f ? FOREST_HILLS : FOREST)
 				);
 				break;
 			case PLAINS:
-				setTexture(biome, biome.getPrecipitation() == Biome.Precipitation.SNOW ?
+				setTexture(biome, biome.getPrecipitation() == Biome.RainType.SNOW ?
 						(biome.getScale() >= 0.25f ? SNOW_HILLS : SNOW) :
 						(biome.getScale() >= 0.25f ? HILLS : PLAINS)
 				);
@@ -132,7 +131,7 @@ public class BiomeTextureMap extends SaveData {
 				break;
 			case THEEND:
 				final boolean[] hasPlants = {false};
-				Stream.of(biome.getFeaturesForStep(GenerationStep.Feature.VEGETAL_DECORATION)).forEach(
+				Stream.of(biome.getFeatures(GenerationStage.Decoration.VEGETAL_DECORATION)).forEach(
 						feature -> {
 							if(!feature.isEmpty()) hasPlants[0] = true;
 						});
@@ -150,7 +149,7 @@ public class BiomeTextureMap extends SaveData {
 				break;
 		}
 
-		/* Set<Type> types = BiomeDictionary.getTypes(biome);
+		Set<Type> types = BiomeDictionary.getTypes(biome);
 		// 1. Swamp
 		if (types.contains(Type.SWAMP)) {
 			if (types.contains(Type.HILLS)) {
@@ -189,7 +188,7 @@ public class BiomeTextureMap extends SaveData {
 			} else if (types.contains(Type.HILLS)) {
 				setTexture(biome, JUNGLE_HILLS);
 			} else {
-				setTexture(biome, JUNGLE);
+				setTexture(biome, TextureSet.JUNGLE);
 			}
 		}
 		// 5. Savanna
@@ -288,9 +287,9 @@ public class BiomeTextureMap extends SaveData {
 			}
 		} else {
 			setTexture(biome, defaultTexture);
-		} */
+		}
 
-		Log.info("Auto-registered standard texture set for biome %s", Registry.BIOME.getId(biome).toString());
+		Log.info("Auto-registered standard texture set for biome %s", Registry.BIOME.getKey(biome).toString());
 	}
 
 	/** Auto-registers the biome if it is not registered. */
@@ -330,13 +329,13 @@ public class BiomeTextureMap extends SaveData {
 		}
 	}
 
-	public Identifier getTexture(int variationNumber, TileKind tile) {
+	public ResourceLocation getTexture(int variationNumber, TileKind tile) {
 		TextureSet set = getTextureSet(tile);
 		return set.textures[variationNumber % set.textures.length];
 	}
 
-	public List<Identifier> getAllTextures() {
-		List<Identifier> list = new ArrayList<>(biomeTextureMap.size());
+	public List<ResourceLocation> getAllTextures() {
+		List<ResourceLocation> list = new ArrayList<>(biomeTextureMap.size());
 		for (Entry<Biome, TextureSet> entry : biomeTextureMap.entrySet()) {
 			list.addAll(Arrays.asList(entry.getValue().textures));
 		}

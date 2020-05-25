@@ -1,13 +1,11 @@
 package hunternif.mc.atlas.client.gui.core;
 
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.font.TextRenderer;
-
-
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.text.LiteralText;
+import net.minecraft.util.text.StringTextComponent;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import org.lwjgl.opengl.GL11;
 
 import java.util.List;
@@ -20,7 +18,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
  * keyboard events, window resize and will be moved around together with the
  * parent component.
  */
-@Environment(EnvType.CLIENT)
+@OnlyIn(Dist.CLIENT)
 public class GuiComponent extends Screen {
 	@FunctionalInterface
 	interface UiCall {
@@ -57,7 +55,7 @@ public class GuiComponent extends Screen {
 
 	// TODO
 	public GuiComponent() {
-		super(new LiteralText("component"));
+		super(new StringTextComponent("component"));
 	}
 
 	/** Set absolute coordinates of the top left corner of this component on
@@ -365,7 +363,7 @@ public class GuiComponent extends Screen {
 	}
 
 	@Override
-	public void init(MinecraftClient mc, int width, int height) {
+	public void init(Minecraft mc, int width, int height) {
 		super.init(mc, width, height);
 		for (GuiComponent child : children) {
 			child.init(mc, width, height);
@@ -448,11 +446,11 @@ public class GuiComponent extends Screen {
 	/** Draws a standard Minecraft hovering text window, constrained by this
 	 * component's dimensions (i.e. if it won't fit in when drawn to the left
 	 * of the cursor, it will be drawn to the right instead). */
-    private void drawHoveringText2(List<String> lines, double x, double y, TextRenderer font) {
+    private void drawHoveringText2(List<String> lines, double x, double y, FontRenderer font) {
 		boolean stencilEnabled = GL11.glIsEnabled(GL11.GL_STENCIL_TEST);
 		if (stencilEnabled) GL11.glDisable(GL11.GL_STENCIL_TEST);
 
-		TextRenderer old = this.font;
+		FontRenderer old = this.font;
 		this.font = font;
 		renderTooltip(lines, (int) x, (int) y);
 		this.font = old;
@@ -473,7 +471,7 @@ public class GuiComponent extends Screen {
 	/**
 	 * Draws a text tooltip at mouse coordinates.
 	 * <p>
-	 * Same as {@link #drawHoveringText2(List, int, int, TextRenderer)}, but
+	 * Same as {@link #drawHoveringText2(List, int, int, FontRenderer)}, but
 	 * the text is drawn on the top level parent component, after all its child
 	 * components have finished drawing. This allows the hovering text to be
 	 * unobscured by other components.
@@ -483,7 +481,7 @@ public class GuiComponent extends Screen {
 	 * from several components which occupy the same position on the screen.
 	 * </p>
 	 * */
-	protected void drawTooltip(List<String> lines, TextRenderer font) {
+	protected void drawTooltip(List<String> lines, FontRenderer font) {
 		GuiComponent topLevel = getTopLevelParent();
 		topLevel.hoveringTextInfo.lines = lines;
 		topLevel.hoveringTextInfo.x = getMouseX();
@@ -499,7 +497,7 @@ public class GuiComponent extends Screen {
 	private static class HoveringTextInfo {
 		List<String> lines;
 		double x, y;
-		TextRenderer font;
+		FontRenderer font;
 		/** Whether to draw this hovering text during rendering current frame.
 		 * This flag is reset to false after rendering finishes. */
 		boolean shouldDraw = false;
@@ -510,7 +508,7 @@ public class GuiComponent extends Screen {
 		if (parent != null) {
 			parent.removeChild(this); // This sets parent to null
 		} else {
-			minecraft.openScreen(null);
+			minecraft.displayGuiScreen(null);
 		}
 	}
 
@@ -521,18 +519,18 @@ public class GuiComponent extends Screen {
 	protected void drawCenteredString(String text, int y, int color, boolean dropShadow) {
 		int length = font.getStringWidth(text);
 		if (dropShadow) {
-			font.drawWithShadow(text, (this.width - length) / 2, y, color);
+			font.drawStringWithShadow(text, (this.width - length) / 2, y, color);
 		} else {
-			font.draw(text, (this.width - length) / 2, y, color);
+			font.drawString(text, (this.width - length) / 2, y, color);
 		}
 	}
 
 	@Deprecated
 	protected double getMouseX() {
-		return minecraft.mouse.getX() * width / minecraft.getWindow().getWidth();
+		return minecraft.mouseHelper.getMouseX() * width / minecraft.getMainWindow().getWidth();
 	}
 	@Deprecated
 	protected double getMouseY() {
-		return minecraft.mouse.getY() * height / minecraft.getWindow().getHeight();
+		return minecraft.mouseHelper.getMouseY() * height / minecraft.getMainWindow().getHeight();
 	}
 }

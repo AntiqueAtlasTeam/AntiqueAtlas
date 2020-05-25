@@ -1,11 +1,12 @@
 package hunternif.mc.atlas.client.gui.core;
 
-import java.io.IOException;
+import net.minecraft.client.audio.SimpleSound;
+import net.minecraft.util.SoundEvent;
+import net.minecraft.util.SoundEvents;
+
 import java.util.ArrayList;
 import java.util.List;
-import net.minecraft.client.sound.PositionedSoundInstance;
-import net.minecraft.sound.SoundEvent;
-import net.minecraft.sound.SoundEvents;
+
 
 /** A GuiComponent that can act like a button. */
 public class GuiComponentButton extends GuiComponent {
@@ -43,7 +44,7 @@ public class GuiComponentButton extends GuiComponent {
 	@SuppressWarnings("unchecked")
     void onClick() {
 		if (clickSound != null) {
-			minecraft.getSoundManager().play(PositionedSoundInstance.master(clickSound, 1.0F));
+			minecraft.getSoundHandler().play(SimpleSound.master(clickSound, 1.0F));
 		}
 
 		for (IButtonListener listener : listeners) {

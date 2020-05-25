@@ -1,14 +1,13 @@
 package hunternif.mc.atlas.marker;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
-import hunternif.mc.atlas.RegistrarAntiqueAtlas;
 import hunternif.mc.atlas.item.ItemAtlas;
 import net.minecraft.item.ItemStack;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.world.PersistentStateManager;
 import net.minecraft.world.World;
+import net.minecraft.world.server.ServerWorld;
+import net.minecraft.world.storage.DimensionSavedDataManager;
+
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Provides access to {@link MarkersData}. Maintains a cache on the client side,
@@ -33,12 +32,12 @@ public class MarkersDataHandler {
 	/** Loads data for the given atlas ID or creates a new one. */
 	public MarkersData getMarkersData(int atlasID, World world) {
 		String key = getMarkersDataKey(atlasID);
-		if (world.isClient) {
+		if (world.isRemote) {
 			// Since atlas data doesn't really belong to a single world-dimension,
 			// it can be cached. This should fix #67
 			return markersDataClientCache.computeIfAbsent(key, MarkersData::new);
 		} else {
-			PersistentStateManager manager = ((ServerWorld) world).getPersistentStateManager();
+			DimensionSavedDataManager manager = ((ServerWorld) world).getSavedData();
 			return manager.getOrCreate(() -> new MarkersData(key), key);
 		}
 	}
@@ -56,7 +55,7 @@ public class MarkersDataHandler {
 	 * form post, the latter event isn't actually fired on the client.
 	 * </p>
 	 */
-	public void onClientConnectedToServer(boolean isRemote) {
+	public void onClientConnectedToServer() {
 		markersDataClientCache.clear();
 	}
 }

@@ -3,7 +3,7 @@ package hunternif.mc.atlas.core;
 import hunternif.mc.atlas.ext.ExtTileIdMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
-import net.minecraft.util.Identifier;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.biome.Biome;
 
@@ -23,7 +23,7 @@ public final class TileKindFactory {
 		if (id < 0) {
 			return extKinds.get(id);
 		} else {
-			Biome biome = Registry.BIOME.get(id);
+			Biome biome = Registry.BIOME.getByValue(id);
 			if (biome != null) {
 				return get(biome);
 			} else {
@@ -36,7 +36,7 @@ public final class TileKindFactory {
 		return biomeKinds.computeIfAbsent(biome, BiomeKind::new);
 	}
 
-	public static TileKind get(Identifier extTile) {
+	public static TileKind get(ResourceLocation extTile) {
 		int id = ExtTileIdMap.instance().getOrCreatePseudoBiomeID(extTile);
 		return extKinds.computeIfAbsent(id, ExtKind::new);
 	}
@@ -61,7 +61,7 @@ public final class TileKindFactory {
 
 		@Nullable
 		@Override
-		public Identifier getExtTile() {
+		public ResourceLocation getExtTile() {
 			return ExtTileIdMap.instance().getPseudoBiomeName(id);
 		}
 
@@ -80,7 +80,7 @@ public final class TileKindFactory {
 
 		@Override
 		public int getId() {
-			return Registry.BIOME.getRawId(biome);
+			return Registry.BIOME.getId(biome);
 		}
 
 		@Nullable
@@ -91,7 +91,7 @@ public final class TileKindFactory {
 
 		@Nullable
 		@Override
-		public Identifier getExtTile() {
+		public ResourceLocation getExtTile() {
 			return null;
 		}
 

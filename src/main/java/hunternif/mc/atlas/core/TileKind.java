@@ -1,6 +1,6 @@
 package hunternif.mc.atlas.core;
 
-import net.minecraft.util.Identifier;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.biome.Biome;
 
 import javax.annotation.Nullable;
@@ -10,5 +10,5 @@ public interface TileKind {
 	@Nullable
 	Biome getBiome();
 	@Nullable
-	Identifier getExtTile();
+	ResourceLocation getExtTile();
 }

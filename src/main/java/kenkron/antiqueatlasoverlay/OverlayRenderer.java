@@ -1,6 +1,6 @@
 package kenkron.antiqueatlasoverlay;
 
-import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.systems.RenderSystem;
 import hunternif.mc.atlas.AntiqueAtlasMod;
 import hunternif.mc.atlas.RegistrarAntiqueAtlas;
 import hunternif.mc.atlas.SettingsConfig;
@@ -16,16 +16,17 @@ import hunternif.mc.atlas.registry.MarkerRenderInfo;
 import hunternif.mc.atlas.registry.MarkerType;
 import hunternif.mc.atlas.util.AtlasRenderHelper;
 import hunternif.mc.atlas.util.Rect;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.network.ClientPlayerEntity;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.dimension.DimensionType;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import org.lwjgl.opengl.GL11;
 
 import java.util.List;
-
+@OnlyIn(Dist.CLIENT)
 public class OverlayRenderer
 {
     /**
@@ -40,17 +41,17 @@ public class OverlayRenderer
      * there are none. Offhand gets priority.
      **/
     private static Integer getPlayerAtlas(PlayerEntity player) {
-        if (!SettingsConfig.gameplay.itemNeeded) {
-            return player.getUuid().hashCode();
+        if (!SettingsConfig.itemNeeded) {
+            return player.getUniqueID().hashCode();
         }
 
-        ItemStack stack = player.getOffHandStack();
+        ItemStack stack = player.getHeldItemOffhand();
         if (!stack.isEmpty() && stack.getItem() == RegistrarAntiqueAtlas.ATLAS) {
             return stack.getDamage();
         }
 
         for (int i = 0; i < 9; i++) {
-            stack = player.inventory.getInvStack(i);
+            stack = player.inventory.getStackInSlot(i);
             if (!stack.isEmpty() && stack.getItem() == RegistrarAntiqueAtlas.ATLAS) {
                 return stack.getDamage();
             }
@@ -66,16 +67,15 @@ public class OverlayRenderer
         }
 
         // Overlay must close if Atlas GUI is opened
-        if (MinecraftClient.getInstance().currentScreen instanceof GuiAtlas) {
+        if (Minecraft.getInstance().currentScreen instanceof GuiAtlas) {
             return;
         }
 
-        ClientPlayerEntity player = MinecraftClient.getInstance().player;
         Integer atlas = null;
 
         if (AAOConfig.appearance.requiresHold) {
-            ItemStack stack = player.getMainHandStack();
-            ItemStack stack2 = player.getOffHandStack();
+            ItemStack stack = Minecraft.getInstance().player.getHeldItemMainhand();
+            ItemStack stack2 = Minecraft.getInstance().player.getHeldItemOffhand();
 
             if (!stack.isEmpty() && stack.getItem() == RegistrarAntiqueAtlas.ATLAS) {
                 atlas = ((ItemAtlas) stack.getItem()).getAtlasID(stack);
@@ -83,7 +83,7 @@ public class OverlayRenderer
                 atlas = ((ItemAtlas) stack2.getItem()).getAtlasID(stack2);
             }
         } else {
-            atlas = getPlayerAtlas(player);
+            atlas = getPlayerAtlas(Minecraft.getInstance().player);
         }
 
         if (atlas != null) {
@@ -97,15 +97,15 @@ public class OverlayRenderer
             }
 
             bounds.setSize(AAOConfig.position.width, AAOConfig.position.height);
-            drawMinimap(bounds, atlas, player.getPos(), player.getHeadYaw(), player.dimension);
+            drawMinimap(bounds, atlas, Minecraft.getInstance().player.getPositionVec(), Minecraft.getInstance().player.getRotationYawHead(), Minecraft.getInstance().player.dimension);
         }
     }
 
     private static void drawMinimap(Rect shape, int atlasID, Vec3d position, float rotation,
                              DimensionType dimension) {
-        GlStateManager.color4f(1, 1, 1, 1);
-        GlStateManager.enableBlend();
-        GlStateManager.alphaFunc(GL11.GL_GREATER, 0); // So light detail on tiles is
+        RenderSystem.color4f(1, 1, 1, 1);
+        RenderSystem.enableBlend();
+        RenderSystem.alphaFunc(GL11.GL_GREATER, 0); // So light detail on tiles is
         // visible
         AtlasRenderHelper.drawFullTexture(Textures.BOOK, shape.minX,
                 shape.minY, shape.getWidth(), shape.getHeight());
@@ -125,10 +125,10 @@ public class OverlayRenderer
         }
 
         // Overlay the frame so that edges of the map are smooth:
-        GlStateManager.color4f(1, 1, 1, 1);
+        RenderSystem.color4f(1, 1, 1, 1);
         AtlasRenderHelper.drawFullTexture(Textures.BOOK_FRAME, shape.minX,
                 shape.minY, shape.getWidth(), shape.getHeight());
-        GlStateManager.disableBlend();
+        RenderSystem.disableBlend();
     }
 
     private static void drawTiles(Rect shape, int atlasID, Vec3d position,
@@ -138,11 +138,11 @@ public class OverlayRenderer
         // the display window does not. We need to fix this
         glScissorGUI(shape);
 
-        GlStateManager.enableBlend();
-        GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+        RenderSystem.enableBlend();
+        RenderSystem.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
         DimensionData biomeData = AntiqueAtlasMod.atlasData.getAtlasData(
-                atlasID, MinecraftClient.getInstance().world).getDimensionData(dimension);
+                atlasID, Minecraft.getInstance().world).getDimensionData(dimension);
 
         TileRenderIterator iter = new TileRenderIterator(biomeData);
         Rect iteratorScope = getChunkCoverage(position, shape);
@@ -182,7 +182,7 @@ public class OverlayRenderer
         renderer.draw();
         // get GL back to normal
         GL11.glDisable(GL11.GL_SCISSOR_TEST);
-        GlStateManager.color4f(1, 1, 1, 1);
+        RenderSystem.color4f(1, 1, 1, 1);
     }
 
     private static void drawMarkers(Rect shape, int atlasID, Vec3d position,
@@ -193,7 +193,7 @@ public class OverlayRenderer
 
         // biomeData needed to prevent undiscovered markers from appearing
         DimensionData biomeData = AntiqueAtlasMod.atlasData.getAtlasData(
-                atlasID, MinecraftClient.getInstance().world).getDimensionData(
+                atlasID, Minecraft.getInstance().world).getDimensionData(
                 dimension);
         DimensionMarkersData globalMarkersData = AntiqueAtlasMod.globalMarkersData
                 .getData().getMarkersDataInDimension(dimension);
@@ -202,7 +202,7 @@ public class OverlayRenderer
         drawMarkersData(globalMarkersData, shape, biomeData, position);
 
         MarkersData markersData = AntiqueAtlasMod.markersData.getMarkersData(
-                atlasID, MinecraftClient.getInstance().world);
+                atlasID, Minecraft.getInstance().world);
         DimensionMarkersData localMarkersData = null;
         if (markersData != null) {
             localMarkersData = markersData.getMarkersDataInDimension(dimension);
@@ -213,19 +213,19 @@ public class OverlayRenderer
 
         // get GL back to normal
         GL11.glDisable(GL11.GL_SCISSOR_TEST);
-        GlStateManager.color4f(1, 1, 1, 1);
+        RenderSystem.color4f(1, 1, 1, 1);
     }
 
     private static void drawPlayer(float x, float y, float rotation) {
         // Draw player icon:
 
-        GlStateManager.pushMatrix();
-        GlStateManager.translatef(x, y, 0);
-        GlStateManager.rotatef(180 + rotation, 0, 0, 1);
-        GlStateManager.translatef(-AAOConfig.appearance.playerIconWidth / 2, -AAOConfig.appearance.playerIconHeight / 2, 0);
+        RenderSystem.pushMatrix();
+        RenderSystem.translatef(x, y, 0);
+        RenderSystem.rotatef(180 + rotation, 0, 0, 1);
+        RenderSystem.translatef(-AAOConfig.appearance.playerIconWidth / 2, -AAOConfig.appearance.playerIconHeight / 2, 0);
         AtlasRenderHelper.drawFullTexture(Textures.PLAYER, 0, 0, AAOConfig.appearance.playerIconWidth, AAOConfig.appearance.playerIconHeight);
-        GlStateManager.popMatrix();
-        GlStateManager.color4f(1, 1, 1, 1);
+        RenderSystem.popMatrix();
+        RenderSystem.color4f(1, 1, 1, 1);
     }
 
     private static void drawMarkersData(DimensionMarkersData markersData,
@@ -273,7 +273,7 @@ public class OverlayRenderer
                 && !biomeData.hasTileAt(marker.getChunkX(), marker.getChunkZ())) {
             return;
         }
-        GlStateManager.color4f(1, 1, 1, 1);
+        RenderSystem.color4f(1, 1, 1, 1);
         MarkerType m = MarkerRegistry.find(marker.getType());
         if (m == null){
         	AntiqueAtlasOverlayMod.LOGGER.warn("Could not find marker type for {}", marker.getId());
@@ -306,9 +306,9 @@ public class OverlayRenderer
     private static void glScissorGUI(Rect shape) {
         // glScissor uses the default window coordinates,
         // the display window does not. We need to fix this
-        float scissorScale = (float)MinecraftClient.getInstance().getWindow().getScaleFactor();
+        float scissorScale = (float)Minecraft.getInstance().getMainWindow().getGuiScaleFactor();
 
-        int mcHeight = MinecraftClient.getInstance().getWindow().getFramebufferHeight();
+        int mcHeight = Minecraft.getInstance().getMainWindow().getFramebufferHeight();
 
         GL11.glScissor((int) (shape.minX * scissorScale),
                 (int) (mcHeight - shape.maxY * scissorScale),

@@ -1,21 +1,19 @@
 package hunternif.mc.atlas.core;
 
 import hunternif.mc.atlas.ext.ExtTileIdMap;
-
-import java.util.HashMap;
-import java.util.Map;
-
 import net.minecraft.block.Block;
-
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
-import net.minecraft.world.biome.BiomeArray;
+import net.minecraft.world.biome.BiomeContainer;
 import net.minecraft.world.biome.Biomes;
-import net.minecraft.world.chunk.Chunk;
+import net.minecraft.world.chunk.IChunk;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Detects seas of lava, cave ground and cave walls in the Nether.
@@ -32,10 +30,10 @@ public class BiomeDetectorNether extends BiomeDetectorBase implements IBiomeDete
 	private static final int priorityLava = 1;
 	
 	@Override
-	public TileKind getBiomeID(World world, Chunk chunk) {
-		int biomesCount = Registry.BIOME.getIds().size();
-		BiomeArray chunkBiomes = chunk.getBiomeArray();
-		Map<Biome, Integer> biomeOccurrences = new HashMap<>(Registry.BIOME.getIds().size());
+	public TileKind getBiomeID(World world, IChunk chunk) {
+		int biomesCount = Registry.BIOME.keySet().size();
+		BiomeContainer chunkBiomes = chunk.getBiomes();
+		Map<Biome, Integer> biomeOccurrences = new HashMap<>(Registry.BIOME.keySet().size());
 		
 		// The following important pseudo-biomes don't have IDs:
 		int lavaOccurences = 0;
@@ -45,7 +43,7 @@ public class BiomeDetectorNether extends BiomeDetectorBase implements IBiomeDete
 
 		for (int x = 0; x < 16; x++) {
 			for (int z = 0; z < 16; z++) {
-				Biome biomeID = chunkBiomes.getStoredBiome(x, 0, z);
+				Biome biomeID = chunkBiomes.getNoiseBiome(x, 0, z);
 				if (biomeID == hellID) {
 					// The Nether!
 					Block netherBlock = chunk.getBlockState(new BlockPos(x, lavaSeaLevel, z)).getBlock();

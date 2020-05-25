@@ -77,6 +77,6 @@ public class SubTile {
 
 	public static int generateVariationNumber(int chunkX, int chunkY, int step)
 	{
-		return  (int) (MathHelper.hashCode(chunkX, chunkY, chunkX * chunkY) & 0x7FFFFFFF);
+		return Math.toIntExact(MathHelper.getCoordinateRandom(chunkX, chunkY, chunkX * chunkY) & 0x7FFFFFFF);
 	}
 }
