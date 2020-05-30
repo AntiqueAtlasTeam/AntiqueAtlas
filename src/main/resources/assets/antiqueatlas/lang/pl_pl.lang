@@ -1,0 +1,38 @@
+item.antiqueAtlas.name=Antyczny atlas
+item.emptyAntiqueAtlas.name=Pusty antyczny atlas
+
+gui.antiqueatlas.scalebar=Skala (w blokach)
+gui.antiqueatlas.addMarker=Dodaj znacznik
+gui.antiqueatlas.delMarker=Usuń znacznik
+gui.antiqueatlas.followPlayer=Podążaj za graczem
+gui.antiqueatlas.exportImage=Eksportuj obraz
+gui.antiqueatlas.hideMarkers=Ukryj znaczniki
+gui.antiqueatlas.showMarkers=Pokazuj znaczniki
+
+gui.antiqueatlas.marker.label=Etykieta:
+gui.antiqueatlas.marker.type=Rodzaj:
+gui.antiqueatlas.marker.village=Wioska
+gui.antiqueatlas.marker.netherPortal=Portal do Nether
+gui.antiqueatlas.marker.tomb=Tutaj spoczywa %s
+
+gui.antiqueatlas.export.opening=Otwieranie okna dialogowego systemu plików...
+gui.antiqueatlas.export.selectFile=Wybierz plik PNG, do którego chcesz zapisać
+gui.antiqueatlas.export.success=Obraz wyeksportowany jako %s
+gui.antiqueatlas.export.tooLarge=Przepraszamy! Obraz jest zbyt duży, by móc go wyrenderować. Spróbuj zwiększyć rozmiar sterty Java.
+gui.antiqueatlas.export.atlasTooLarge=Przepraszamy! Obraz jest zbyt duży, by móc go wyrenderować. Spróbuj zwiększyć paramentr „exportSizeLimit” w opcjach moda.
+
+gui.antiqueatlas.export.setup=Konfigurowanie...
+gui.antiqueatlas.export.rendering=Renderowanie...
+gui.antiqueatlas.export.writing=Zapisywanie do pliku...
+gui.antiqueatlas.export.loadingtextures=Ładowanie tekstur...
+gui.antiqueatlas.export.makingbuffer=Przydzielanie buforu obrazu %d×%d...
+
+gui.antiqueatlas.export.renderstripe=Renderowanie wycinka %d z %d...
+gui.antiqueatlas.export.writestripe=Zapisywanie wycinka...
+
+gui.antiqueatlas.export.rendering.background=Renderowanie tła mapy
+gui.antiqueatlas.export.rendering.map=Renderowanie fragmentów mapy
+gui.antiqueatlas.export.rendering.markers=Renderowanie znaczników
+
+key.openatlas.desc=Otówrz atlas
+key.antiqueatlas.category=Antique Atlas
