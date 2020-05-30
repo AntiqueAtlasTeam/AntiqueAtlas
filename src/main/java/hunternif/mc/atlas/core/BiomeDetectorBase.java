@@ -2,17 +2,19 @@ package hunternif.mc.atlas.core;
 
 import hunternif.mc.atlas.ext.ExtTileIdMap;
 import net.minecraft.block.Block;
-
 import net.minecraft.block.Blocks;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.registry.Registry;
-import net.minecraft.world.Heightmap;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
-import net.minecraft.world.biome.BiomeArray;
+import net.minecraft.world.biome.BiomeContainer;
 import net.minecraft.world.biome.Biomes;
 import net.minecraft.world.chunk.Chunk;
+import net.minecraft.world.chunk.IChunk;
+import net.minecraft.world.gen.Heightmap;
+import net.minecraftforge.registries.ForgeRegistries;
 
+import javax.annotation.Nullable;
 import java.util.*;
 
 /**
@@ -47,7 +49,7 @@ public class BiomeDetectorBase implements IBiomeDetector {
 	 * given higher priority when identifying mean biome ID for a chunk.
 	 * (Currently WATER, BEACH and SWAMP) */
 	public static void scanBiomeTypes() {
-		for (Biome biome : Registry.BIOME) {
+		for (Biome biome : ForgeRegistries.BIOMES) {
 			switch (biome.getCategory()) {
 				case BEACH:
 					beachBiomes.add(biome);
@@ -82,9 +84,9 @@ public class BiomeDetectorBase implements IBiomeDetector {
 
 	/** If no valid biome ID is found, returns null. */
 	@Override
-	public TileKind getBiomeID(World world, Chunk chunk) {
-		BiomeArray chunkBiomes = chunk.getBiomeArray();
-		Map<Biome, Integer> biomeOccurrences = new HashMap<>(Registry.BIOME.getIds().size());
+	public TileKind getBiomeID(World world, IChunk chunk) {
+		BiomeContainer chunkBiomes = chunk.getBiomes();
+		Map<Biome, Integer> biomeOccurrences = new HashMap<>(Registry.BIOME.keySet().size());
 
 		// The following important pseudo-biomes don't have IDs:
 		int lavaOccurrences = 0;
@@ -92,9 +94,9 @@ public class BiomeDetectorBase implements IBiomeDetector {
 
 		for (int x = 0; x < 16; x++) {
 			for (int z = 0; z < 16; z++) {
-				Biome biomeID = chunkBiomes.getStoredBiome(x, 0, z);
+				Biome biomeID = chunkBiomes.getNoiseBiome(x, 0, z);
 				if (doScanPonds) {
-					int y = chunk.getHeightmap(Heightmap.Type.MOTION_BLOCKING).get(x, z);
+					int y = chunk.getHeightmap(Heightmap.Type.MOTION_BLOCKING).getHeight(x, z);
 					if (y > 0) {
 						Block topBlock = chunk.getBlockState(new BlockPos(x, y-1, z)).getBlock();
 						// Check if there's surface of water at (x, z), but not swamp
@@ -107,7 +109,7 @@ public class BiomeDetectorBase implements IBiomeDetector {
 					}
 				}
 				if (doScanRavines) {
-					int height = chunk.getHeightmap(Heightmap.Type.MOTION_BLOCKING).get(x, z);
+					int height = chunk.getHeightmap(Heightmap.Type.MOTION_BLOCKING).getHeight(x, z);
 
 					if(height > 0 && height < world.getSeaLevel() - ravineMinDepth)	{
 						ravineOccurences += priorityRavine;

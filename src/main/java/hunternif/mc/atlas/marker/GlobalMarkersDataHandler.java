@@ -1,8 +1,8 @@
 package hunternif.mc.atlas.marker;
 
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.server.world.ServerWorld;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.world.dimension.DimensionType;
+import net.minecraft.world.server.ServerWorld;
 
 /**
  * Handles the world-saved data with global markers.
@@ -23,7 +23,7 @@ public class GlobalMarkersDataHandler {
 
 	public void onWorldLoad(ServerWorld world) {
 		if (world.getDimension().getType() == DimensionType.OVERWORLD) {
-			data = world.getPersistentStateManager().getOrCreate(() -> {
+			data = world.getSavedData().getOrCreate(() -> {
 				GlobalMarkersData data = new GlobalMarkersData(DATA_KEY);
 				data.markDirty();
 				return data;

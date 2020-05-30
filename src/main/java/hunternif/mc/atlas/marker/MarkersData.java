@@ -5,15 +5,17 @@ import hunternif.mc.atlas.api.MarkerAPI;
 import hunternif.mc.atlas.network.PacketDispatcher;
 import hunternif.mc.atlas.network.client.MarkersPacket;
 import hunternif.mc.atlas.util.Log;
-import net.fabricmc.fabric.api.util.NbtType;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.util.Identifier;
+import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.ListNBT;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.registry.Registry;
-import net.minecraft.world.PersistentState;
 import net.minecraft.world.dimension.DimensionType;
+import net.minecraft.world.storage.WorldSavedData;
+import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.fml.network.PacketDistributor;
+
 import java.util.*;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
@@ -28,7 +30,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * </p>
  * @author Hunternif
  */
-public class MarkersData extends PersistentState {
+public class MarkersData extends WorldSavedData {
 	private static final int VERSION = 3;
 	private static final String TAG_VERSION = "aaVersion";
 	private static final String TAG_DIMENSION_MAP_LIST = "dimMap";
@@ -40,20 +42,20 @@ public class MarkersData extends PersistentState {
 	private static final String TAG_MARKER_X = "x";
 	private static final String TAG_MARKER_Y = "y";
 	private static final String TAG_MARKER_VISIBLE_AHEAD = "visAh";
-	
+
 	/** Markers are stored in lists within square areas this many MC chunks
 	 * across. */
 	public static final int CHUNK_STEP = 8;
-	
+
 	/** Set of players this data has been sent to, only once after they connect. */
 	private final Set<PlayerEntity> playersSentTo = new HashSet<>();
-	
+
 	private final AtomicInteger largestID = new AtomicInteger(0);
-	
+
 	private int getNewID() {
 		return largestID.incrementAndGet();
 	}
-	
+
 	private final Map<Integer /*marker ID*/, Marker> idMap = new ConcurrentHashMap<>(2, 0.75f, 2);
 	/**
 	 * Maps a list of markers in a square to the square's coordinates, then to
@@ -67,31 +69,30 @@ public class MarkersData extends PersistentState {
 	 */
 	private final Map<DimensionType, DimensionMarkersData> dimensionMap =
 			new ConcurrentHashMap<>(2, 0.75f, 2);
-	
+
 	public MarkersData(String key) {
 		super(key);
 	}
 
-
 	@Override
-	public void fromTag(CompoundTag compound) {
-		int version = compound.getInt(TAG_VERSION);
+	public void read(CompoundNBT nbt) {
+		int version = nbt.getInt(TAG_VERSION);
 		if (version < VERSION) {
 			Log.warn("Outdated atlas data format! Was %d but current is %d", version, VERSION);
 			this.markDirty();
 		}
-		ListTag dimensionMapList = compound.getList(TAG_DIMENSION_MAP_LIST, NbtType.COMPOUND);
+		ListNBT dimensionMapList = nbt.getList(TAG_DIMENSION_MAP_LIST, Constants.NBT.TAG_COMPOUND);
 		for (int d = 0; d < dimensionMapList.size(); d++) {
-			CompoundTag tag = dimensionMapList.getCompound(d);
+			CompoundNBT tag = dimensionMapList.getCompound(d);
 			DimensionType dimensionID;
-			if (tag.contains(TAG_DIMENSION_ID, NbtType.NUMBER)) {
-				dimensionID = Registry.DIMENSION.get(tag.getInt(TAG_DIMENSION_ID));
+			if (tag.contains(TAG_DIMENSION_ID, Constants.NBT.TAG_ANY_NUMERIC)) {
+				dimensionID = Registry.DIMENSION_TYPE.getByValue(tag.getInt(TAG_DIMENSION_ID));
 			} else {
-				dimensionID = Registry.DIMENSION.get(new Identifier(tag.getString(TAG_DIMENSION_ID)));
+				dimensionID = Registry.DIMENSION_TYPE.getOrDefault(new ResourceLocation(tag.getString(TAG_DIMENSION_ID)));
 			}
-			ListTag tagList = tag.getList(TAG_MARKERS, NbtType.COMPOUND);
+			ListNBT tagList = tag.getList(TAG_MARKERS, Constants.NBT.TAG_COMPOUND);
 			for (int i = 0; i < tagList.size(); i++) {
-				CompoundTag markerTag = tagList.getCompound(i);
+				CompoundNBT markerTag = tagList.getCompound(i);
 				boolean visibleAhead = true;
 				if (version < 2) {
 					Log.warn("Marker is visible ahead by default");
@@ -112,7 +113,7 @@ public class MarkersData extends PersistentState {
 				if (largestID.intValue() < id) {
 					largestID.set(id);
 				}
-				
+
 				Marker marker = new Marker(
 						id,
 						markerTag.getString(TAG_MARKER_TYPE),
@@ -127,17 +128,17 @@ public class MarkersData extends PersistentState {
 	}
 
 	@Override
-	public CompoundTag toTag(CompoundTag compound) {
+	public CompoundNBT write(CompoundNBT compound) {
 		Log.info("Saving local markers data to NBT");
 		compound.putInt(TAG_VERSION, VERSION);
-		ListTag dimensionMapList = new ListTag();
+		ListNBT dimensionMapList = new ListNBT();
 		for (DimensionType dimension : dimensionMap.keySet()) {
-			CompoundTag tag = new CompoundTag();
-			tag.putString(TAG_DIMENSION_ID, Registry.DIMENSION.getId(dimension).toString());
+			CompoundNBT tag = new CompoundNBT();
+			tag.putString(TAG_DIMENSION_ID, Registry.DIMENSION_TYPE.getKey(dimension).toString());
 			DimensionMarkersData data = getMarkersDataInDimension(dimension);
-			ListTag tagList = new ListTag();
+			ListNBT tagList = new ListNBT();
 			for (Marker marker : data.getAllMarkers()) {
-				CompoundTag markerTag = new CompoundTag();
+				CompoundNBT markerTag = new CompoundNBT();
 				markerTag.putInt(TAG_MARKER_ID, marker.getId());
 				markerTag.putString(TAG_MARKER_TYPE, marker.getType());
 				markerTag.putString(TAG_MARKER_LABEL, marker.getLabel());
@@ -150,30 +151,30 @@ public class MarkersData extends PersistentState {
 			dimensionMapList.add(tag);
 		}
 		compound.put(TAG_DIMENSION_MAP_LIST, dimensionMapList);
-		
+
 		return compound;
 	}
-	
+
 	public Set<DimensionType> getVisitedDimensions() {
 		return dimensionMap.keySet();
 	}
-	
+
 	/** This method is rather inefficient, use it sparingly. */
 	public Collection<Marker> getMarkersInDimension(DimensionType dimension) {
 		return getMarkersDataInDimension(dimension).getAllMarkers();
 	}
-	
+
 	/** Creates a new instance of {@link DimensionMarkersData}, if necessary. */
 	public DimensionMarkersData getMarkersDataInDimension(DimensionType dimension) {
 		return dimensionMap.computeIfAbsent(dimension, k -> new DimensionMarkersData(this, dimension));
 	}
-	
+
 	/** The "chunk" here is {@link MarkersData#CHUNK_STEP} times larger than the
 	 * Minecraft 16x16 chunk! May return null. */
 	public List<Marker> getMarkersAtChunk(DimensionType dimension, int x, int z) {
 		return getMarkersDataInDimension(dimension).getMarkersAtChunk(x, z);
 	}
-	
+
 	private Marker getMarkerByID(int id) {
 		return idMap.get(id);
 	}
@@ -186,7 +187,7 @@ public class MarkersData extends PersistentState {
 		}
 		return marker;
 	}
-	
+
 	/** For internal use. Use the {@link MarkerAPI} to put markers! This method
 	 * creates a new marker from the given data, saves and returns it.
 	 * Server side only! */
@@ -198,7 +199,7 @@ public class MarkersData extends PersistentState {
 		markDirty();
 		return marker;
 	}
-	
+
 	/**
 	 * For internal use, when markers are loaded from NBT or sent from the
 	 * server. IF a marker's id is conflicting, the marker will not load!
@@ -211,19 +212,19 @@ public class MarkersData extends PersistentState {
 			for (Entry<DimensionType, DimensionMarkersData> e: dimensionMap.entrySet()){
 				totalMarkers += e.getValue().getAllMarkers().size();
 			}
-			if (totalMarkers < SettingsConfig.performance.markerLimit){
+			if (totalMarkers < SettingsConfig.markerLimit){
 				getMarkersDataInDimension(marker.getDimension()).insertMarker(marker);
 			} else {
-				Log.warn("Could not add new marker. Atlas is at it's limit of %d markers", SettingsConfig.performance.markerLimit);
+				Log.warn("Could not add new marker. Atlas is at it's limit of %d markers", SettingsConfig.markerLimit);
 			}
 		}
 		return marker;
 	}
-	
+
 	public boolean isSyncedOnPlayer(PlayerEntity player) {
 		return playersSentTo.contains(player);
 	}
-	
+
 	/** Send all data to the player in several packets. Called once during the
 	 * first run of ItemAtals.onUpdate(). */
 	public void syncOnPlayer(int atlasID, PlayerEntity player) {
@@ -233,19 +234,19 @@ public class MarkersData extends PersistentState {
 			for (Marker marker : data.getAllMarkers()) {
 				packet.putMarker(marker);
 			}
-			PacketDispatcher.sendTo(packet, (ServerPlayerEntity) player);
+			PacketDispatcher.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) player), packet);
 		}
 		Log.info("Sent markers data #%d to player %s", atlasID, player.getCommandSource().getName());
 		playersSentTo.add(player);
 	}
-	
+
 	/** To be overridden in GlobalMarkersData. */
 	MarkersPacket newMarkersPacket(int atlasID, DimensionType dimension) {
 		return new MarkersPacket(atlasID, dimension);
 	}
-	
+
 	public boolean isEmpty() {
 		return idMap.isEmpty();
 	}
-	
+
 }

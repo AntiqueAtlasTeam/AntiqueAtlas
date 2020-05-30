@@ -1,7 +1,6 @@
 package hunternif.mc.atlas;
 
 import hunternif.mc.atlas.client.*;
-import hunternif.mc.atlas.client.gui.ExportProgressOverlay;
 import hunternif.mc.atlas.client.gui.GuiAtlas;
 import hunternif.mc.atlas.ext.ExtTileIdMap;
 import hunternif.mc.atlas.ext.ExtTileTextureConfig;
@@ -9,35 +8,24 @@ import hunternif.mc.atlas.ext.ExtTileTextureMap;
 import hunternif.mc.atlas.marker.MarkerTextureConfig;
 import hunternif.mc.atlas.registry.MarkerRegistry;
 import hunternif.mc.atlas.registry.MarkerType;
-import hunternif.mc.atlas.util.Log;
-import net.fabricmc.fabric.api.event.client.ClientTickCallback;
-import net.fabricmc.fabric.api.network.ClientSidePacketRegistry;
-import net.fabricmc.fabric.api.network.PacketConsumer;
-import net.fabricmc.fabric.api.network.ServerSidePacketRegistry;
-import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
-import net.fabricmc.fabric.api.resource.SimpleSynchronousResourceReloadListener;
-import net.minecraft.client.MinecraftClient;
-
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.client.Minecraft;
 import net.minecraft.item.ItemStack;
-import net.minecraft.resource.ReloadableResourceManager;
-import net.minecraft.resource.ResourceManager;
-import net.minecraft.resource.ResourceReloadListener;
-import net.minecraft.resource.ResourceType;
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.Identifier;
+import net.minecraft.resources.IResourceManager;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.Biomes;
+import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.resource.IResourceType;
+import net.minecraftforge.resource.ISelectiveResourceReloadListener;
+
 import java.io.File;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
-import java.util.function.Function;
+import java.util.function.Predicate;
 
 import static hunternif.mc.atlas.client.TextureSet.*;
 
-public class ClientProxy extends CommonProxy implements SimpleSynchronousResourceReloadListener {
+public class ClientProxy extends CommonProxy implements ISelectiveResourceReloadListener {
 	private static TextureSetMap textureSetMap;
 	private static TextureSetConfig textureSetConfig;
 	private static BiomeTextureMap biomeTextureMap;
@@ -48,17 +36,7 @@ public class ClientProxy extends CommonProxy implements SimpleSynchronousResourc
 
 	private static GuiAtlas guiAtlas;
 
-	@Override
-	public void registerPackets(Set<Identifier> clientPackets, Set<Identifier> serverPackets, Function<Identifier, PacketConsumer> consumer) {
-		super.registerPackets(clientPackets, serverPackets, consumer);
-		clientPackets.forEach((id) -> ClientSidePacketRegistry.INSTANCE.register(id, consumer.apply(id)));
-	}
-
-	public void initClient() {
-		//TODO Enforce texture config loading process as follows:
-		// 1. pre-init: Antique Atlas defaults are loaded, config files are read.
-		// 2. init: mods set their custom textures. Those loaded from the config must not be overwritten!
-
+	public ClientProxy() {
 		textureSetMap = TextureSetMap.instance();
 		textureSetConfig = new TextureSetConfig(textureSetMap);
 		// Register default values before the config file loads, possibly overwriting the,:
@@ -66,7 +44,9 @@ public class ClientProxy extends CommonProxy implements SimpleSynchronousResourc
 		// Prevent rewriting of the config while no changes have been made:
 		textureSetMap.setDirty(false);
 
-		ResourceManagerHelper.get(ResourceType.CLIENT_RESOURCES).registerReloadListener(textureSetConfig);
+		//ResourceManagerHelper.get(ResourcePackType.CLIENT_RESOURCES).registerReloadListener(textureSetConfig);
+		Minecraft.getInstance().resourceManager.addReloadListener(textureSetConfig);
+
 
 		// Legacy file name:
 		File biomeTextureConfigFile = new File(configDir, "textures.json");
@@ -76,24 +56,25 @@ public class ClientProxy extends CommonProxy implements SimpleSynchronousResourc
 
 		tileTextureMap = ExtTileTextureMap.instance();
 		tileTextureConfig = new ExtTileTextureConfig(tileTextureMap, textureSetMap);
-		ResourceManagerHelper.get(ResourceType.CLIENT_RESOURCES).registerReloadListener(tileTextureConfig);
+		//ResourceManagerHelper.get(ResourcePackType.CLIENT_RESOURCES).registerReloadListener(tileTextureConfig);
+		Minecraft.getInstance().resourceManager.addReloadListener(tileTextureConfig);
 		// Prevent rewriting of the config while no changes have been made:
 		tileTextureMap.setDirty(false);
 		registerVanillaCustomTileTextures();
 
-		ResourceManagerHelper.get(ResourceType.CLIENT_RESOURCES).registerReloadListener(this);
+		Minecraft.getInstance().resourceManager.addReloadListener(this);
 
 		// init
 		biomeTextureMap = BiomeTextureMap.instance();
 		biomeTextureConfig = new BiomeTextureConfig(biomeTextureMap, textureSetMap);
-		ResourceManagerHelper.get(ResourceType.CLIENT_RESOURCES).registerReloadListener(biomeTextureConfig);
+		Minecraft.getInstance().resourceManager.addReloadListener(biomeTextureConfig);
 
 		// Prevent rewriting of the config while no changes have been made:
 		biomeTextureMap.setDirty(false);
 		assignVanillaBiomeTextures();
 
 		markerTextureConfig = new MarkerTextureConfig();
-		ResourceManagerHelper.get(ResourceType.CLIENT_RESOURCES).registerReloadListener(markerTextureConfig);
+		Minecraft.getInstance().resourceManager.addReloadListener(markerTextureConfig);
 
 		// Prevent rewriting of the config while no changes have been made:
 		MarkerRegistry.INSTANCE.setDirty(true);
@@ -102,17 +83,38 @@ public class ClientProxy extends CommonProxy implements SimpleSynchronousResourc
 			type.initMips();
 		}
 
-		if (!SettingsConfig.gameplay.itemNeeded) {
-            KeyHandler.registerBindings();
-			ClientTickCallback.EVENT.register(KeyHandler::onClientTick);
-        }
+		if (!SettingsConfig.itemNeeded) {
+			KeyHandler.registerBindings();
+			//ClientTickCallback.EVENT.register(KeyHandler::onClientTick);
+		}
+
+		for (MarkerType type : MarkerRegistry.iterable()) {
+			type.initMips();
+		}
+	}
+
+	@SubscribeEvent
+	public void clientConnect(ClientPlayerNetworkEvent.LoggedInEvent event) {
+		boolean isRemote = !Minecraft.getInstance().isIntegratedServerRunning();
+		AntiqueAtlasMod.atlasData.onClientConnectedToServer();
+		AntiqueAtlasMod.markersData.onClientConnectedToServer();
+		AntiqueAtlasMod.globalMarkersData.onClientConnectedToServer(isRemote);
+	}
+
+	public void initClient() {
+		//TODO Enforce texture config loading process as follows:
+		// 1. pre-init: Antique Atlas defaults are loaded, config files are read.
+		// 2. init: mods set their custom textures. Those loaded from the config must not be overwritten!
+
+		// why mojang
+		//Minecraft.getInstance().reloadResources();
 
 	}
 
 	private GuiAtlas getAtlasGUI() {
 		if (guiAtlas == null) {
 			guiAtlas = new GuiAtlas();
-			guiAtlas.setMapScale(SettingsConfig.userInterface.defaultScale);
+			guiAtlas.setMapScale(SettingsConfig.defaultScale);
 		}
 		return guiAtlas;
 	}
@@ -128,10 +130,10 @@ public class ClientProxy extends CommonProxy implements SimpleSynchronousResourc
     }
 
     private void openAtlasGUI(GuiAtlas gui) {
-        MinecraftClient mc = MinecraftClient.getInstance();
+        Minecraft mc = Minecraft.getInstance();
         if (mc.currentScreen == null) { // In-game screen
             guiAtlas.updateL18n();
-            mc.openScreen(gui);
+            mc.displayGuiScreen(gui);
         }
     }
 	
@@ -341,7 +343,7 @@ public class ClientProxy extends CommonProxy implements SimpleSynchronousResourc
 	}
 	/** Only applies the change if no texture is registered for this tile name.
 	 * This prevents overwriting of the config when there is no real change. */
-	private void setCustomTileTextureIfNone(Identifier tileName, TextureSet textureSet) {
+	private void setCustomTileTextureIfNone(ResourceLocation tileName, TextureSet textureSet) {
 		if (!tileTextureMap.isRegistered(tileName)) {
 			tileTextureMap.setTexture(tileName, textureSet);
 		}
@@ -352,14 +354,14 @@ public class ClientProxy extends CommonProxy implements SimpleSynchronousResourc
 	}
 
 	@Override
-	public Identifier getFabricId() {
-		return new Identifier("antiqueatlas:proxy");
-	}
-
-	@Override
-	public void apply(ResourceManager var1) {
+	public void onResourceManagerReload(IResourceManager resourceManager) {
 		for (MarkerType type : MarkerRegistry.iterable()) {
 			type.initMips();
 		}
+	}
+
+	@Override
+	public void onResourceManagerReload(IResourceManager resourceManager, Predicate<IResourceType> resourcePredicate) {
+		onResourceManagerReload(resourceManager);
 	}
 }

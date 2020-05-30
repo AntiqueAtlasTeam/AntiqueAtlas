@@ -5,11 +5,12 @@ import com.google.common.collect.HashBiMap;
 import hunternif.mc.atlas.network.PacketDispatcher;
 import hunternif.mc.atlas.network.client.TileNameIDPacket;
 import hunternif.mc.atlas.util.SaveData;
-import java.util.Map;
-import net.minecraft.client.network.packet.LoginSuccessS2CPacket;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.util.Identifier;
+import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.network.PacketDistributor;
+
+import java.util.Map;
 
 
 /** Maps unique names of external tiles to pseudo-biome IDs. Set on the server,
@@ -22,7 +23,7 @@ public class ExtTileIdMap extends SaveData {
 		return INSTANCE;
 	}
 	
-	public static final Identifier
+	public static final ResourceLocation
 	// Village:
 	TILE_VILLAGE_LIBRARY = id("npc_village_library"),
 	TILE_VILLAGE_SMITHY = id("npc_village_smithy"),
@@ -59,8 +60,8 @@ public class ExtTileIdMap extends SaveData {
 	TILE_END_ISLAND_PLANTS = id("end_island_plants"),
 	TILE_END_VOID = id("end_void");
 
-	private static final Identifier id(String s) {
-		return new Identifier("antiqueatlas", s);
+	private static final ResourceLocation id(String s) {
+		return new ResourceLocation("antiqueatlas", s);
 	}
 
 	public static final int NOT_FOUND = -1;
@@ -68,11 +69,11 @@ public class ExtTileIdMap extends SaveData {
 	/** Set initially to -1 because that is reserved for when no biome is found
 	 * or the chunk is not loaded. New IDs are obtained by decrementing lastID. */
 	private int lastID = NOT_FOUND;
-	private final BiMap<Identifier, Integer> nameToIdMap = HashBiMap.create();
+	private final BiMap<ResourceLocation, Integer> nameToIdMap = HashBiMap.create();
 	
 	/** Server should call this method when setting tiles.
 	 * Clients should not call this method! */
-	public int getOrCreatePseudoBiomeID(Identifier uniqueName) {
+	public int getOrCreatePseudoBiomeID(ResourceLocation uniqueName) {
 		Integer id = nameToIdMap.get(uniqueName);
 		if (id == null) {
 			id = findNewID();
@@ -84,12 +85,12 @@ public class ExtTileIdMap extends SaveData {
 	}
 	
 	/** If the name is not registered, returns {@link #NOT_FOUND} ({@value #NOT_FOUND}). */
-	public int getPseudoBiomeID(Identifier uniqueName) {
+	public int getPseudoBiomeID(ResourceLocation uniqueName) {
 		Integer id = nameToIdMap.get(uniqueName);
 		return id == null ? NOT_FOUND : id.intValue();
 	}
 	
-	public Identifier getPseudoBiomeName(int id) {
+	public ResourceLocation getPseudoBiomeName(int id) {
 		return nameToIdMap.inverse().get(id);
 	}
 	
@@ -105,17 +106,17 @@ public class ExtTileIdMap extends SaveData {
 	 *  when executing {@link TileNameIDPacket}.
 	 *  IDs set via this method should not be saved, or client config may become
 	 *  inconsistent! */
-	public void setPseudoBiomeID(Identifier uniqueName, int id) {
+	public void setPseudoBiomeID(ResourceLocation uniqueName, int id) {
 		nameToIdMap.forcePut(uniqueName, id);
 	}
 	
 	/** Map of tile names to biome ID, used for saving config file. */
-	Map<Identifier, Integer> getMap() {
+	Map<ResourceLocation, Integer> getMap() {
 		return nameToIdMap;
 	}
 	
 	/** Send all name-biomeID pairs to the player. */
 	public void syncOnPlayer(PlayerEntity player) {
-		PacketDispatcher.sendTo(new TileNameIDPacket(nameToIdMap), (ServerPlayerEntity) player);
+		PacketDispatcher.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) player),new TileNameIDPacket(nameToIdMap));
 	}
 }

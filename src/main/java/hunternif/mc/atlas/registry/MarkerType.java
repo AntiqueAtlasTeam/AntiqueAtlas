@@ -7,21 +7,20 @@ import com.google.gson.JsonPrimitive;
 import hunternif.mc.atlas.AntiqueAtlasMod;
 import hunternif.mc.atlas.util.BitMatrix;
 import hunternif.mc.atlas.util.Log;
-import net.minecraft.client.texture.NativeImage;
-import net.minecraft.client.texture.SpriteAtlasTexture;
-import net.minecraft.client.texture.TextureManager;
-import net.minecraft.util.Identifier;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.texture.NativeImage;
+import net.minecraft.client.renderer.texture.TextureManager;
+import net.minecraft.resources.IResource;
+import net.minecraft.util.ResourceLocation;
 import org.apache.commons.io.IOUtils;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.resource.Resource;
 
 public class MarkerType {
 
-	private Identifier[] icons;
+	private ResourceLocation[] icons;
 	private BitMatrix[] iconPixels;
 	private int[] iconSizes = null;
 
@@ -40,7 +39,7 @@ public class MarkerType {
 	
 	private final JSONData data = new JSONData(this);
 	
-	public MarkerType(Identifier... icons) {
+	public MarkerType(ResourceLocation... icons) {
 		this.icons = icons;
 	}
 
@@ -114,11 +113,11 @@ public class MarkerType {
 	/**
 	 * Get the icon for the marker
 	 */
-	public Identifier getIcon() {
-		return icons.length == 0 || iconIndex < 0 ? TextureManager.MISSING_IDENTIFIER : icons[iconIndex];
+	public ResourceLocation getIcon() {
+		return icons.length == 0 || iconIndex < 0 ? TextureManager.RESOURCE_LOCATION_EMPTY : icons[iconIndex];
 	}
 	
-	public Identifier[] getAllIcons() {
+	public ResourceLocation[] getAllIcons() {
 		return icons;
 	}
 	
@@ -161,7 +160,7 @@ public class MarkerType {
 		int x = -(int) (size * getCenterX());
 		int y = -(int) (size * getCenterY());
 
-		Identifier icon = getIcon();
+		ResourceLocation icon = getIcon();
 
 		return new MarkerRenderInfo(icon, x, y, size, size);
 	}
@@ -176,11 +175,11 @@ public class MarkerType {
 				Log.warn("Marker %s -- Texture location is null at index %d!", MarkerRegistry.getId(this).toString(), i);
 			}
 
-			Resource iresource = null;
+			IResource iresource = null;
 			NativeImage bufferedimage = null;
 
 			try {
-				iresource = MinecraftClient.getInstance().getResourceManager().getResource(icons[i]);
+				iresource = Minecraft.getInstance().getResourceManager().getResource(icons[i]);
 				bufferedimage = NativeImage.read(iresource.getInputStream());
 				iconSizes[i] = Math.min(bufferedimage.getWidth(), bufferedimage.getHeight());
 				BitMatrix matrix = new BitMatrix(bufferedimage.getWidth(), bufferedimage.getHeight(), false);
@@ -188,7 +187,7 @@ public class MarkerType {
 				for (int x = 0; x < bufferedimage.getWidth(); x++) {
 					for (int y = 0; y < bufferedimage.getHeight(); y++) {
 						
-						int color = bufferedimage.getPixelRgba(x, y);
+						int color = bufferedimage.getPixelRGBA(x, y);
 						int alpha = (color >> 24) & 0xff;
 						
 						if(alpha >= ALPHA_THRESHOLD) {
@@ -282,7 +281,7 @@ public class MarkerType {
 		
 		private final MarkerType type;
 		
-		Identifier[] icons;
+		ResourceLocation[] icons;
 		Integer viewSize = null, clipMin = null, clipMax = null;
 		Boolean alwaysShow = null, isTile = null, isTechnical = null;
 		Double centerX = null, centerY = null;
@@ -296,7 +295,7 @@ public class MarkerType {
 				
 				JsonArray arr = new JsonArray();
 				
-				for (Identifier loc : icons) {
+				for (ResourceLocation loc : icons) {
 					arr.add(new JsonPrimitive(loc.toString()));
 				}
 				
@@ -345,7 +344,7 @@ public class MarkerType {
 			try {
 				if(object.has(ICONS) && object.get(ICONS).isJsonArray()) {
 					workingOn = ICONS;
-					List<Identifier> list = new ArrayList<>();
+					List<ResourceLocation> list = new ArrayList<>();
 					int i = 0;
 					for (JsonElement elem : object.get(ICONS).getAsJsonArray()) {
 						if (elem.isJsonPrimitive()) {
@@ -355,7 +354,7 @@ public class MarkerType {
 						}
 						i++;
 					}
-					icons = list.toArray(new Identifier[0]);
+					icons = list.toArray(new ResourceLocation[0]);
 					workingOn = NONE;
 				}
 				

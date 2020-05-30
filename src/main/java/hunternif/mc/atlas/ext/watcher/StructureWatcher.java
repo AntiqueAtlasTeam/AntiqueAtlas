@@ -2,7 +2,7 @@ package hunternif.mc.atlas.ext.watcher;
 
 import com.google.common.collect.Sets;
 import hunternif.mc.atlas.util.Log;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.world.World;
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -29,12 +29,12 @@ public class StructureWatcher {
     } */
 
     private void handlePotential(World world) {
-        if (world.isClient)
+        if (world.isRemote)
             return;
 
         for (IStructureWatcher watcher : structureWatchers)
             if (watcher.isDimensionValid(world.dimension.getType())) {
-                CompoundTag structureData = watcher.getStructureData(world);
+                CompoundNBT structureData = watcher.getStructureData(world);
                 if (structureData != null) {
                     Set<Pair<WatcherPos, String>> visited = watcher.visitStructure(world, structureData);
                     for (Pair<WatcherPos, String> visit : visited)
@@ -49,7 +49,6 @@ public class StructureWatcher {
     }
 
     public void addWatcher(IStructureWatcher watcher) {
-        if (!structureWatchers.contains(watcher))
-            structureWatchers.add(watcher);
+        structureWatchers.add(watcher);
     }
 }

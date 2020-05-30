@@ -7,15 +7,15 @@ import hunternif.mc.atlas.client.gui.core.ToggleGroup;
 import hunternif.mc.atlas.registry.MarkerRegistry;
 import hunternif.mc.atlas.registry.MarkerType;
 import hunternif.mc.atlas.util.Log;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.widget.TextFieldWidget;
+import net.minecraft.client.gui.widget.button.Button;
+import net.minecraft.client.resources.I18n;
+import net.minecraft.world.World;
+import net.minecraft.world.dimension.DimensionType;
 
 import java.util.ArrayList;
 import java.util.List;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.gui.widget.TextFieldWidget;
-import net.minecraft.client.resource.language.I18n;
-import net.minecraft.world.World;
-import net.minecraft.world.dimension.DimensionType;
 
 /**
  * This GUI is used select marker icon and enter a label.
@@ -37,8 +37,8 @@ public class GuiMarkerFinalizer extends GuiComponent {
 	private static final int TYPE_SPACING = 1;
 	private static final int TYPE_BG_FRAME = 4;
 
-	private ButtonWidget btnDone;
-	private ButtonWidget btnCancel;
+	private Button btnDone;
+	private Button btnCancel;
 	private TextFieldWidget textField;
 	private final GuiScrollingContainer scroller;
 	private ToggleGroup<GuiMarkerInList> typeRadioGroup;
@@ -76,16 +76,16 @@ public class GuiMarkerFinalizer extends GuiComponent {
 	protected void init() {
 		super.init();
 
-		addButton(btnDone = new ButtonWidget(this.width/2 - BUTTON_WIDTH - BUTTON_SPACING/2, this.height/2 + 40, BUTTON_WIDTH, 20, I18n.translate("gui.done"), (button) -> {
+		addButton(btnDone = new Button(this.width/2 - BUTTON_WIDTH - BUTTON_SPACING/2, this.height/2 + 40, BUTTON_WIDTH, 20, I18n.format("gui.done"), (button) -> {
 			AtlasAPI.markers.putMarker(world, true, atlasID, MarkerRegistry.getId(selectedType).toString(), textField.getText(), markerX, markerZ);
 			Log.info("Put marker in Atlas #%d \"%s\" at (%d, %d)", atlasID, textField.getText(), markerX, markerZ);
 			close();
 		}));
-		addButton(btnCancel = new ButtonWidget(this.width/2 + BUTTON_SPACING/2, this.height/2 + 40, BUTTON_WIDTH, 20, I18n.translate("gui.cancel"), (button) -> {
+		addButton(btnCancel = new Button(this.width/2 + BUTTON_SPACING/2, this.height/2 + 40, BUTTON_WIDTH, 20, I18n.format("gui.cancel"), (button) -> {
 			close();
 		}));
-		textField = new TextFieldWidget(MinecraftClient.getInstance().textRenderer, (this.width - 200)/2, this.height/2 - 81, 200, 20, I18n.translate("gui.antiqueatlas.marker.label"));
-		textField.setEditable(true);
+		textField = new TextFieldWidget(Minecraft.getInstance().fontRenderer, (this.width - 200)/2, this.height/2 - 81, 200, 20, I18n.format("gui.antiqueatlas.marker.label"));
+		textField.setEnabled(true);
 		textField.setText("");
 
 		scroller.removeAllContent();
@@ -139,9 +139,9 @@ public class GuiMarkerFinalizer extends GuiComponent {
 	@Override
 	public void render(int mouseX, int mouseY, float partialTick) {
 		this.renderBackground();
-		drawCenteredString(I18n.translate("gui.antiqueatlas.marker.label"), this.height/2 - 97, 0xffffff, true);
+		drawCenteredString(I18n.format("gui.antiqueatlas.marker.label"), this.height/2 - 97, 0xffffff, true);
 		textField.render(mouseX, mouseY, partialTick);
-		drawCenteredString(I18n.translate("gui.antiqueatlas.marker.type"), this.height/2 - 44, 0xffffff, true);
+		drawCenteredString(I18n.format("gui.antiqueatlas.marker.type"), this.height/2 - 44, 0xffffff, true);
 
 		// Darker background for marker type selector
 		fillGradient(scroller.getGuiX() - TYPE_BG_FRAME, scroller.getGuiY() - TYPE_BG_FRAME,

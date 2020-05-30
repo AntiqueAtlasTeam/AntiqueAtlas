@@ -1,29 +1,33 @@
 package hunternif.mc.atlas.client;
 
-import com.google.gson.*;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import hunternif.mc.atlas.AntiqueAtlasMod;
 import hunternif.mc.atlas.util.Log;
+import net.minecraft.resources.IResource;
+import net.minecraft.resources.IResourceManager;
+import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.resource.IResourceType;
+import net.minecraftforge.resource.ISelectiveResourceReloadListener;
+import net.minecraftforge.resource.VanillaResourceType;
 
+import javax.annotation.Nullable;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map.Entry;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Executor;
-
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-import net.fabricmc.fabric.api.resource.SimpleResourceReloadListener;
-import net.minecraft.resource.Resource;
-import net.minecraft.resource.ResourceManager;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.profiler.Profiler;
+import java.util.function.Predicate;
 
 /**
  * Saves texture set names with the lists of texture variations.
  */
-@Environment(EnvType.CLIENT)
-public class TextureSetConfig implements SimpleResourceReloadListener<Collection<TextureSet>> {
+@OnlyIn(Dist.CLIENT)
+public class TextureSetConfig implements ISelectiveResourceReloadListener {
 	private static final int VERSION = 1;
 	private static final JsonParser PARSER = new JsonParser();
 	private final TextureSetMap textureSetMap;
@@ -33,59 +37,58 @@ public class TextureSetConfig implements SimpleResourceReloadListener<Collection
 	}
 
 	@Override
-	public CompletableFuture<Collection<TextureSet>> load(ResourceManager manager, Profiler profiler, Executor executor) {
-		return CompletableFuture.supplyAsync(() -> {
-			List<TextureSet> sets = new ArrayList<>();
+	public void onResourceManagerReload(IResourceManager resourceManager) {
+		List<TextureSet> sets = new ArrayList<>();
 
-			try {
-				for (Resource resource : manager.getAllResources(new Identifier("antiqueatlas:texture_sets.json"))) {
-					try (InputStream stream = resource.getInputStream(); InputStreamReader reader = new InputStreamReader(stream)) {
-						JsonElement element = PARSER.parse(reader);
-						if (element.isJsonObject()) {
-							JsonObject obj = element.getAsJsonObject();
-							if (!obj.has("version")) {
-								Log.warn("Invalid texture set file found!");
-							} else if (obj.get("version").getAsInt() < VERSION) {
-								Log.warn("Outdated texture set file version: " + obj.get("version").getAsInt());
-							} else {
-								for (Entry<String, JsonElement> entry : obj.get("data").getAsJsonObject().entrySet()) {
-									String name = entry.getKey();
-									JsonArray array = entry.getValue().getAsJsonArray();
-									Identifier[] textures = new Identifier[array.size()];
-									for (int i = 0; i < array.size(); i++) {
-										String path = array.get(i).getAsString();
-										textures[i] = new Identifier(path);
-									}
-									sets.add(new TextureSet(AntiqueAtlasMod.id(name), textures));
-								}
-							}
-						} else {
+		try {
+			for (IResource resource : resourceManager.getAllResources(new ResourceLocation("antiqueatlas:texture_sets.json"))) {
+				try (InputStream stream = resource.getInputStream(); InputStreamReader reader = new InputStreamReader(stream)) {
+					JsonElement element = PARSER.parse(reader);
+					if (element.isJsonObject()) {
+						JsonObject obj = element.getAsJsonObject();
+						if (!obj.has("version")) {
 							Log.warn("Invalid texture set file found!");
+						} else if (obj.get("version").getAsInt() < VERSION) {
+							Log.warn("Outdated texture set file version: " + obj.get("version").getAsInt());
+						} else {
+							for (Entry<String, JsonElement> entry : obj.get("data").getAsJsonObject().entrySet()) {
+								String name = entry.getKey();
+								JsonArray array = entry.getValue().getAsJsonArray();
+								ResourceLocation[] textures = new ResourceLocation[array.size()];
+								for (int i = 0; i < array.size(); i++) {
+									String path = array.get(i).getAsString();
+									textures[i] = new ResourceLocation(path);
+								}
+								sets.add(new TextureSet(AntiqueAtlasMod.id(name), textures));
+							}
 						}
-					} catch (Throwable e) {
-						Log.warn(e, "Failed to read texture set file!");
+					} else {
+						Log.warn("Invalid texture set file found!");
 					}
+				} catch (Throwable e) {
+					Log.warn(e, "Failed to read texture set file!");
 				}
-			} catch (Throwable e) {
-				Log.warn(e, "Failed to read texture sets!");
 			}
+		} catch (Throwable e) {
+			Log.warn(e, "Failed to read texture sets!");
+		}
 
-			return sets;
-		});
+		for (TextureSet set : sets) {
+			textureSetMap.register(set);
+			Log.info("Loaded texture set %s with %d custom texture(s)", set.name, set.textures.length);
+		}
+	}
+
+	@Nullable
+	@Override
+	public IResourceType getResourceType() {
+		return VanillaResourceType.TEXTURES;
 	}
 
 	@Override
-	public CompletableFuture<Void> apply(Collection<TextureSet> sets, ResourceManager manager, Profiler profiler, Executor executor) {
-		return CompletableFuture.runAsync(() -> {
-			for (TextureSet set : sets) {
-				textureSetMap.register(set);
-				Log.info("Loaded texture set %s with %d custom texture(s)", set.name, set.textures.length);
-			}
-		});
-	}
-
-	@Override
-	public Identifier getFabricId() {
-		return new Identifier("antiqueatlas:texture_sets");
+	public void onResourceManagerReload(IResourceManager resourceManager, Predicate<IResourceType> resourcePredicate) {
+		if (resourcePredicate.test(getResourceType())) {
+			onResourceManagerReload(resourceManager);
+		}
 	}
 }

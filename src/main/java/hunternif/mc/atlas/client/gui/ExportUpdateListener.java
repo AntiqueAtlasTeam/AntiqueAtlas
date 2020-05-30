@@ -1,6 +1,6 @@
 package hunternif.mc.atlas.client.gui;
 
-import net.minecraft.client.resource.language.I18n;
+import net.minecraft.client.resources.I18n;
 
 public enum ExportUpdateListener {
 	INSTANCE;
@@ -12,11 +12,11 @@ public enum ExportUpdateListener {
 	public String header;
 	
 	public void setStatusString(String status, Object... data) {
-		this.status = I18n.translate(status, data);
+		this.status = I18n.format(status, data);
 	}
 	
 	public void setHeaderString(String header, Object... data) {
-		this.header = I18n.translate(header, data);
+		this.header = I18n.format(header, data);
 	}
 
 	public void setProgressMax(int max) {

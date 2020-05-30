@@ -1,8 +1,8 @@
 package hunternif.mc.atlas.marker;
 
+import net.minecraft.client.resources.I18n;
 import hunternif.mc.atlas.util.Log;
 import hunternif.mc.atlas.util.ShortVec2;
-import net.minecraft.client.resource.language.I18n;
 import net.minecraft.world.dimension.DimensionType;
 
 /**
@@ -66,13 +66,13 @@ public class Marker {
 		// string parameter, i.e. player's name.
 		int whitespaceIndex = label.indexOf(' ');
 		if (whitespaceIndex == -1) {
-			return I18n.translate(label);
+			return I18n.format(label);
 		} else {
 			String key = label.substring(0, whitespaceIndex);
 			String param = label.substring(whitespaceIndex + 1);
-			String translated = I18n.translate(key);
+			String translated = I18n.format(key);
 			if (!key.equals(translated)) { // Make sure translation succeeded
-				return String.format(I18n.translate(key), param);
+				return String.format(I18n.format(key), param);
 			} else {
 				return label;
 			}

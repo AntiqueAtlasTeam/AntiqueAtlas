@@ -7,23 +7,27 @@ import hunternif.mc.atlas.network.client.MapDataPacket;
 import hunternif.mc.atlas.network.server.BrowsingPositionPacket;
 import hunternif.mc.atlas.util.Log;
 import hunternif.mc.atlas.util.ShortVec2;
-import net.fabricmc.fabric.api.util.NbtType;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.util.Identifier;
+import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.ListNBT;
+import net.minecraft.nbt.NBTTypes;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.registry.Registry;
-import net.minecraft.world.PersistentState;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.ChunkStatus;
+import net.minecraft.world.chunk.IChunk;
 import net.minecraft.world.dimension.DimensionType;
+import net.minecraft.world.storage.WorldSavedData;
+import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.fml.network.PacketDistributor;
+
 import java.util.*;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class AtlasData extends PersistentState {
+public class AtlasData extends WorldSavedData {
 	public static final int VERSION = 3;
 	public static final String TAG_VERSION = "aaVersion";
 	public static final String TAG_DIMENSION_MAP_LIST = "qDimensionMap";
@@ -50,20 +54,20 @@ public class AtlasData extends PersistentState {
 	/** Set of players this Atlas data has been sent to. */
 	private final Set<PlayerEntity> playersSentTo = new HashSet<>();
 
-	private CompoundTag nbt;
+	private CompoundNBT nbt;
 
 	public AtlasData(String key) {
 		super(key);
 
-		biomeDetectorOverworld.setScanPonds(SettingsConfig.performance.doScanPonds);
-		biomeDetectorOverworld.setScanRavines(SettingsConfig.performance.doScanRavines);
+		biomeDetectorOverworld.setScanPonds(SettingsConfig.doScanPonds);
+		biomeDetectorOverworld.setScanRavines(SettingsConfig.doScanRavines);
 		setBiomeDetectorForDimension(DimensionType.OVERWORLD, biomeDetectorOverworld);
 		setBiomeDetectorForDimension(DimensionType.THE_NETHER, biomeDetectorNether);
 		setBiomeDetectorForDimension(DimensionType.THE_END, biomeDetectorEnd);
 	}
 
 	@Override
-	public void fromTag(CompoundTag compound) {
+	public void read(CompoundNBT compound) {
 		this.nbt = compound;
 		int version = compound.getInt(TAG_VERSION);
 		if (version < VERSION) {
@@ -72,16 +76,16 @@ public class AtlasData extends PersistentState {
 			return;
 		}
 
-		ListTag dimensionMapList = compound.getList(TAG_DIMENSION_MAP_LIST, NbtType.COMPOUND);
+		ListNBT dimensionMapList = compound.getList(TAG_DIMENSION_MAP_LIST, Constants.NBT.TAG_COMPOUND);
 		for (int d = 0; d < dimensionMapList.size(); d++) {
-			CompoundTag dimTag = dimensionMapList.getCompound(d);
+			CompoundNBT dimTag = dimensionMapList.getCompound(d);
 			DimensionType dimensionID;
-			if (dimTag.contains(TAG_DIMENSION_ID, NbtType.NUMBER)) {
-				dimensionID = Registry.DIMENSION.get(dimTag.getInt(TAG_DIMENSION_ID));
+			if (dimTag.contains(TAG_DIMENSION_ID, Constants.NBT.TAG_ANY_NUMERIC)) {
+				dimensionID = Registry.DIMENSION_TYPE.getByValue(dimTag.getInt(TAG_DIMENSION_ID));
 			} else {
-				dimensionID = Registry.DIMENSION.get(new Identifier(dimTag.getString(TAG_DIMENSION_ID)));
+				dimensionID = Registry.DIMENSION_TYPE.getOrDefault(new ResourceLocation(dimTag.getString(TAG_DIMENSION_ID)));
 			}
-			ListTag dimensionTag = (ListTag) dimTag.get(TAG_VISITED_CHUNKS);
+			ListNBT dimensionTag = (ListNBT) dimTag.get(TAG_VISITED_CHUNKS);
 			DimensionData dimData = getDimensionData(dimensionID);
 			dimData.readFromNBT(dimensionTag);
 			double zoom = (double)dimTag.getInt(TAG_BROWSING_ZOOM) / BrowsingPositionPacket.ZOOM_SCALE_FACTOR;
@@ -92,7 +96,7 @@ public class AtlasData extends PersistentState {
 	}
 
 	/**Reads from NBT version 2. This is designed to allow easy upgrading to version 3.*/
-	public void readFromNBT2(CompoundTag compound) {
+	public void readFromNBT2(CompoundNBT compound) {
 		this.nbt = compound;
 		int version = compound.getInt(TAG_VERSION);
 		if (version < 2) {
@@ -100,14 +104,14 @@ public class AtlasData extends PersistentState {
 			this.markDirty();
 			return;
 		}
-		ListTag dimensionMapList = compound.getList(TAG_DIMENSION_MAP_LIST, NbtType.COMPOUND);
+		ListNBT dimensionMapList = compound.getList(TAG_DIMENSION_MAP_LIST, Constants.NBT.TAG_COMPOUND);
 		for (int d = 0; d < dimensionMapList.size(); d++) {
-			CompoundTag dimTag = dimensionMapList.getCompound(d);
+			CompoundNBT dimTag = dimensionMapList.getCompound(d);
 			DimensionType dimensionID;
-			if (dimTag.contains(TAG_DIMENSION_ID, NbtType.NUMBER)) {
-				dimensionID = Registry.DIMENSION.get(dimTag.getInt(TAG_DIMENSION_ID));
+			if (dimTag.contains(TAG_DIMENSION_ID, Constants.NBT.TAG_ANY_NUMERIC)) {
+				dimensionID = Registry.DIMENSION_TYPE.getByValue(dimTag.getInt(TAG_DIMENSION_ID));
 			} else {
-				dimensionID = Registry.DIMENSION.get(new Identifier(dimTag.getString(TAG_DIMENSION_ID)));
+				dimensionID = Registry.DIMENSION_TYPE.getOrDefault(new ResourceLocation(dimTag.getString(TAG_DIMENSION_ID)));
 			}
 			int[] intArray = dimTag.getIntArray(TAG_VISITED_CHUNKS);
 			DimensionData dimData = getDimensionData(dimensionID);
@@ -127,16 +131,16 @@ public class AtlasData extends PersistentState {
 	}
 
 	@Override
-	public CompoundTag toTag(CompoundTag compound) {
+	public CompoundNBT write(CompoundNBT compound) {
 		return writeToNBT(compound, true);
 	}
 
-	public CompoundTag writeToNBT(CompoundTag compound, boolean includeTileData) {
-		ListTag dimensionMapList = new ListTag();
+	public CompoundNBT writeToNBT(CompoundNBT compound, boolean includeTileData) {
+		ListNBT dimensionMapList = new ListNBT();
 		compound.putInt(TAG_VERSION, VERSION);
 		for (Entry<DimensionType, DimensionData> dimensionEntry : dimensionMap.entrySet()) {
-			CompoundTag dimTag = new CompoundTag();
-			dimTag.putString(TAG_DIMENSION_ID, Registry.DIMENSION.getId(dimensionEntry.getKey()).toString());
+			CompoundNBT dimTag = new CompoundNBT();
+			dimTag.putString(TAG_DIMENSION_ID, Registry.DIMENSION_TYPE.getKey(dimensionEntry.getKey()).toString());
 			DimensionData dimData = dimensionEntry.getValue();
 			if (includeTileData){
 				dimTag.put(TAG_VISITED_CHUNKS, dimData.writeToNBT());
@@ -164,25 +168,25 @@ public class AtlasData extends PersistentState {
 
 	/**Updates map data around player
 	 *
-	 * @return A set of the new tiles, mostly so the server can synch those with relavent clients.*/
+	 * @return A set of the new tiles, mostly so the server can synch those with relevant clients.*/
 	public Collection<TileInfo> updateMapAroundPlayer(PlayerEntity player) {
 		// Update the actual map only so often:
-		int newScanInterval = Math.round(SettingsConfig.performance.newScanInterval * 20);
-		int rescanInterval = newScanInterval * SettingsConfig.performance.rescanRate;
+		int newScanInterval = (int) Math.round(SettingsConfig.newScanInterval * 20);
+		int rescanInterval = newScanInterval * SettingsConfig.rescanRate;
 
-		if (player.getEntityWorld().getTime() % newScanInterval != 0) {
+		if (player.getEntityWorld().getGameTime() % newScanInterval != 0) {
 			return Collections.emptyList(); //no new tiles
 		}
 
 		ArrayList<TileInfo> updatedTiles = new ArrayList<TileInfo>();
 
-		int playerX = MathHelper.floor(player.getX()) >> 4;
-		int playerZ = MathHelper.floor(player.getZ()) >> 4;
+		int playerX = MathHelper.floor(player.getPosX()) >> 4;
+		int playerZ = MathHelper.floor(player.getPosZ()) >> 4;
 		ITileStorage seenChunks = this.getDimensionData(player.dimension);
 		IBiomeDetector biomeDetector = getBiomeDetectorForDimension(player.dimension);
-		int scanRadius = SettingsConfig.performance.scanRadius;
+		int scanRadius = SettingsConfig.scanRadius;
 
-		final boolean rescanRequired = SettingsConfig.performance.doRescan && player.getEntityWorld().getTime() % rescanInterval == 0;
+		final boolean rescanRequired = SettingsConfig.doRescan && player.getEntityWorld().getGameTime() % rescanInterval == 0;
 		int scanRadiusSq = scanRadius*scanRadius;
 
 		// Look at chunks around in a circular area:
@@ -212,7 +216,7 @@ public class AtlasData extends PersistentState {
 					}
 
 					// TODO FABRIC: forceChunkLoading crashes here
-					Chunk chunk = player.getEntityWorld().getChunk(x, z, ChunkStatus.FULL, SettingsConfig.performance.forceChunkLoading);
+					IChunk chunk = player.getEntityWorld().getChunk(x, z, ChunkStatus.FULL, SettingsConfig.forceChunkLoading);
 
 					// Skip chunk if it hasn't loaded yet:
 					if (chunk == null) {
@@ -294,12 +298,12 @@ public class AtlasData extends PersistentState {
 	 * during the first run of ItemAtals.onUpdate(). */
 	public void syncOnPlayer(int atlasID, PlayerEntity player) {
 		if (nbt == null) {
-			nbt = new CompoundTag();
+			nbt = new CompoundNBT();
 		}
 		// Before syncing make sure the changes are written to the nbt.
 		// Do not include dimension tile data.  This will happen later.
 		writeToNBT(nbt, false);
-		PacketDispatcher.sendTo(new MapDataPacket(atlasID, nbt), (ServerPlayerEntity) player);
+		PacketDispatcher.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) player), new MapDataPacket(atlasID, nbt));
 
 		for (DimensionType i : dimensionMap.keySet()){
 			dimensionMap.get(i).syncOnPlayer(atlasID, player);

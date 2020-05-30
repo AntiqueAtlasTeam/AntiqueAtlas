@@ -3,14 +3,15 @@ package hunternif.mc.atlas.item;
 import java.util.Collection;
 
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.text.Text;
+import net.minecraft.item.ItemUseContext;
 import net.minecraft.util.ActionResult;
+import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Hand;
-import net.minecraft.util.TypedActionResult;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.World;
 import hunternif.mc.atlas.AntiqueAtlasMod;
 import hunternif.mc.atlas.core.AtlasData;
@@ -18,12 +19,14 @@ import hunternif.mc.atlas.core.TileInfo;
 import hunternif.mc.atlas.marker.MarkersData;
 import hunternif.mc.atlas.network.PacketDispatcher;
 import hunternif.mc.atlas.network.client.DimensionUpdatePacket;
+import net.minecraft.world.server.ServerWorld;
+import net.minecraftforge.fml.network.PacketDistributor;
 
 public class ItemAtlas extends Item {
 	static final String WORLD_ATLAS_DATA_ID = "aAtlas";
 
-	public ItemAtlas(Item.Settings settings) {
-		super(settings);
+	public ItemAtlas(Item.Properties properties) {
+		super(properties);
 	}
 
 	public int getAtlasID(ItemStack stack) {
@@ -31,20 +34,18 @@ public class ItemAtlas extends Item {
 	}
 
 	@Override
-	public Text getName(ItemStack stack) {
-		return super.getName(stack).append(" #" + getAtlasID(stack));
+	public ITextComponent getDisplayName(ItemStack stack) {
+		return super.getDisplayName(stack).appendText(" #" + getAtlasID(stack));
 	}
 
 	@Override
-	public TypedActionResult<ItemStack> use(World world, PlayerEntity playerIn,
-			Hand hand) {
-		ItemStack stack = playerIn.getStackInHand(hand);
+	public ActionResult<ItemStack> onItemRightClick(World world, PlayerEntity player, Hand hand) {
+		ItemStack stack = player.getHeldItem(hand);
 
-		if (world.isClient) {
+		if (world.isRemote) {
 			AntiqueAtlasMod.proxy.openAtlasGUI(stack);
 		}
-
-		return new TypedActionResult<>(ActionResult.SUCCESS, stack);
+		return new ActionResult<>(ActionResultType.SUCCESS, stack);
 	}
 
 	@Override
@@ -56,23 +57,26 @@ public class ItemAtlas extends Item {
 
 		// On the first run send the map from the server to the client:
 		PlayerEntity player = (PlayerEntity) entity;
-		if (!world.isClient && !data.isSyncedOnPlayer(player) && !data.isEmpty()) {
+		if (!world.isRemote && !data.isSyncedOnPlayer(player) && !data.isEmpty()) {
 			data.syncOnPlayer(atlasId, player);
 		}
 
 		// Same thing with the local markers:
 		MarkersData markers = AntiqueAtlasMod.markersData.getMarkersData(stack, world);
-		if (!world.isClient && !markers.isSyncedOnPlayer(player) && !markers.isEmpty()) {
+		if (!world.isRemote && !markers.isSyncedOnPlayer(player) && !markers.isEmpty()) {
 			markers.syncOnPlayer(atlasId, player);
 		}
 
 		// Updating map around player
 		Collection<TileInfo> newTiles = data.updateMapAroundPlayer(player);
 		
-		if (!world.isClient) {
+		if (!world.isRemote) {
 			if (!newTiles.isEmpty()) {
 				DimensionUpdatePacket packet = new DimensionUpdatePacket(atlasId, player.dimension, newTiles);
-				PacketDispatcher.sendToAll(((ServerWorld) world).getServer(), packet);
+				for (TileInfo t : newTiles) {
+					packet.addTile(t.x, t.z, t.biome);
+				}
+				PacketDispatcher.INSTANCE.send(PacketDistributor.ALL.noArg(), packet);
 			}
 		}
 	}

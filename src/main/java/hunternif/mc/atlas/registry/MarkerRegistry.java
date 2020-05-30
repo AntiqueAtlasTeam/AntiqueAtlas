@@ -1,13 +1,12 @@
 package hunternif.mc.atlas.registry;
 
-import java.util.List;
-import java.util.Set;
-
 import hunternif.mc.atlas.AntiqueAtlasMod;
 import hunternif.mc.atlas.util.SaveData;
-import net.minecraft.util.Identifier;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.registry.DefaultedRegistry;
 import net.minecraft.util.registry.MutableRegistry;
+
+import java.util.Set;
 
 public class MarkerRegistry extends SaveData {
 	public static final MarkerRegistry INSTANCE = new MarkerRegistry();
@@ -18,31 +17,31 @@ public class MarkerRegistry extends SaveData {
 		registry = new DefaultedRegistry<>("antiqueatlas:red_x_small");
 	}
 	
-	public static void register(Identifier location, MarkerType type) {
-		if (INSTANCE.registry.containsId(location)) {
-			int oldId = INSTANCE.registry.getRawId(INSTANCE.registry.get(location));
-			INSTANCE.registry.set(oldId, location, type);
+	public static void register(ResourceLocation location, MarkerType type) {
+		if (INSTANCE.registry.containsKey(location)) {
+			int oldId = INSTANCE.registry.getId(INSTANCE.registry.getOrDefault(location));
+			INSTANCE.registry.register(oldId, location, type);
 		} else {
-			INSTANCE.registry.add(location, type);
+			INSTANCE.registry.register(location, type);
 		}
 	}
 	
-	public static Identifier getLoc(String type) {
+	public static ResourceLocation getLoc(String type) {
 		if(!type.contains(":"))
 			type = AntiqueAtlasMod.ID + ":" + type;
-		return new Identifier(type);
+		return new ResourceLocation(type);
 	}
 	
 	public static MarkerType find(String type) {
 		return find(getLoc(type));
 	}
 	
-	public static MarkerType find(Identifier type) {
+	public static MarkerType find(ResourceLocation type) {
 		return find(type, false);
 	}
 
-	public static MarkerType find(Identifier type, boolean fallback) {
-		MarkerType mt = INSTANCE.registry.get(type);
+	public static MarkerType find(ResourceLocation type, boolean fallback) {
+		MarkerType mt = INSTANCE.registry.getOrDefault(type);
 		if (mt == null && fallback) {
 			return findDefault();
 		} else {
@@ -54,20 +53,20 @@ public class MarkerRegistry extends SaveData {
 		return hasKey(getLoc(type));
 	}
 	
-	public static boolean hasKey(Identifier loc) {
-		return INSTANCE.registry.containsId(loc);
+	public static boolean hasKey(ResourceLocation loc) {
+		return INSTANCE.registry.containsKey(loc);
 	}
 	
 	public static Iterable<MarkerType> iterable() {
 		return INSTANCE.registry;
 	}
 	
-	public static Set<Identifier> getKeys() {
-		return INSTANCE.registry.getIds();
+	public static Set<ResourceLocation> getKeys() {
+		return INSTANCE.registry.keySet();
 	}
 
-	public static Identifier getId(MarkerType type) {
-		return INSTANCE.registry.getId(type);
+	public static ResourceLocation getId(MarkerType type) {
+		return INSTANCE.registry.getKey(type);
 	}
 
 	public static MarkerType findDefault() {

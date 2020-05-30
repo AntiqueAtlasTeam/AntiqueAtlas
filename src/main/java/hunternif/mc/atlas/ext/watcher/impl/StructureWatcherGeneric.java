@@ -11,9 +11,7 @@ import hunternif.mc.atlas.marker.Marker;
 import hunternif.mc.atlas.marker.MarkersData;
 import hunternif.mc.atlas.registry.MarkerRegistry;
 import hunternif.mc.atlas.registry.MarkerType;
-import hunternif.mc.atlas.util.Log;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.server.world.ServerWorld;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.world.World;
 import net.minecraft.world.dimension.DimensionType;
 import org.apache.commons.lang3.tuple.Pair;
@@ -28,9 +26,9 @@ public class StructureWatcherGeneric implements IStructureWatcher {
 
     private final Set<WatcherPos> visited = new HashSet<>();
 	private final String datFileName;
-	private MarkerType marker;
+	private final MarkerType marker;
 	private MarkerType tileMarker;
-	private String markerLabel;
+	private final String markerLabel;
 	private String tileMarkerLabel;
 	private final DimensionType dimension;
 
@@ -56,7 +54,7 @@ public class StructureWatcherGeneric implements IStructureWatcher {
 
     @Nullable
     @Override
-    public CompoundTag getStructureData(@Nonnull World world) {
+    public CompoundNBT getStructureData(@Nonnull World world) {
         /* XX_1_12_2_none_bbw_XX data = ((ServerWorld) world).getPersistentStateManager().a(XX_1_12_2_none_bbw_XX.class, datFileName);
         if (data == null)
             return null;
@@ -69,16 +67,16 @@ public class StructureWatcherGeneric implements IStructureWatcher {
 
     @Nonnull
     @Override
-    public Set<Pair<WatcherPos, String>> visitStructure(@Nonnull World world, @Nonnull CompoundTag structureTag) {
+    public Set<Pair<WatcherPos, String>> visitStructure(@Nonnull World world, @Nonnull CompoundNBT structureTag) {
         Set<Pair<WatcherPos, String>> visits = Sets.newHashSet();
-        Set<String> tagSet = structureTag.getKeys();
+        Set<String> tagSet = structureTag.keySet();
         for (String coords : tagSet) {
             if (!WatcherPos.POS_PATTERN.matcher(coords).matches())
                 continue; // Some other kind of data got stuffed in here. It's irrelevant to us
 
             WatcherPos pos = new WatcherPos(coords);
             if (!visited.contains(pos)) {
-                CompoundTag tag = structureTag.getCompound(coords);
+                CompoundNBT tag = structureTag.getCompound(coords);
                 visit(world, tag);
                 visited.add(pos);
                 visits.add(Pair.of(pos, datFileName));
@@ -93,7 +91,7 @@ public class StructureWatcherGeneric implements IStructureWatcher {
         return this;
     }
 	
-	private void visit(World world, CompoundTag tag) {
+	private void visit(World world, CompoundNBT tag) {
 		int chunkX = tag.getInt("ChunkX");
 		int chunkZ = tag.getInt("ChunkZ");
 		boolean foundMarker = false;
@@ -114,7 +112,7 @@ public class StructureWatcherGeneric implements IStructureWatcher {
 			}
 		}
 		
-		if (SettingsConfig.gameplay.autoVillageMarkers) {
+		if (SettingsConfig.autoVillageMarkers) {
 			if(!foundMarker)
 				AtlasAPI.markers.putGlobalMarker(world, false, MarkerRegistry.getId(marker).toString(), markerLabel, (chunkX << 4) + 8, (chunkZ << 4) + 8);
 			if(tileMarker != null && !foundTileMarker)

@@ -2,7 +2,7 @@ package hunternif.mc.atlas.core;
 
 import hunternif.mc.atlas.util.Log;
 import hunternif.mc.atlas.util.Rect;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.CompoundNBT;
 
 /** Represents a group of tiles that may be sent/stored as a single NBT */
 public class TileGroup implements ITileStorage {
@@ -26,7 +26,7 @@ public class TileGroup implements ITileStorage {
 		scope.maxY = scope.minY + CHUNK_STEP - 1;
 	}
 
-	public void readFromNBT(CompoundTag compound) {
+	public void readFromNBT(CompoundNBT compound) {
 		scope.minX = compound.getIntArray(TAG_POSITION)[0];
 		scope.minY = compound.getIntArray(TAG_POSITION)[1];
 		scope.maxX = scope.minX + CHUNK_STEP - 1;
@@ -47,7 +47,7 @@ public class TileGroup implements ITileStorage {
 		}
 	}
 
-	public CompoundTag writeToNBT(CompoundTag compound) {
+	public CompoundNBT writeToNBT(CompoundNBT compound) {
 		int[] tileArray = new int[CHUNK_STEP * CHUNK_STEP];
 		int[] pos = { scope.minX, scope.minY };
 		for (int y = 0; y < CHUNK_STEP; y++) {

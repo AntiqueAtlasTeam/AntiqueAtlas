@@ -1,7 +1,7 @@
 package hunternif.mc.atlas.ext;
 
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.server.world.ServerWorld;
+import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.world.server.ServerWorld;
 
 public class ExtBiomeDataHandler {
 	private static final String DATA_KEY = "aAtlasExtTiles";
@@ -9,7 +9,7 @@ public class ExtBiomeDataHandler {
 	private ExtBiomeData data;
 
 	public void onWorldLoad(ServerWorld world) {
-		data = world.getPersistentStateManager().getOrCreate(() -> {
+		data = world.getSavedData().getOrCreate(() -> {
 			data = new ExtBiomeData(DATA_KEY);
 			data.markDirty();
 			return data;

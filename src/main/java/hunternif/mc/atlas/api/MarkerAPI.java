@@ -6,7 +6,7 @@ import hunternif.mc.atlas.registry.MarkerType;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.minecraft.util.Identifier;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 
 /**
@@ -19,7 +19,7 @@ public interface MarkerAPI {
 	/**
 	 * Registers the marker type, this should be called in PreInit, as config file overrides are loaded in Init.
 	 */
-	void registerMarker(Identifier identifier, MarkerType markerType);
+	void registerMarker(ResourceLocation ResourceLocation, MarkerType markerType);
 	
 	/**
 	 * Put a marker in the specified Atlas instance at specified block

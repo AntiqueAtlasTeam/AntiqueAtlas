@@ -4,10 +4,9 @@ import hunternif.mc.atlas.client.BiomeTextureMap;
 import hunternif.mc.atlas.client.TextureSet;
 import hunternif.mc.atlas.util.Log;
 import hunternif.mc.atlas.util.SaveData;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-import net.minecraft.util.Identifier;
-
+import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -18,16 +17,16 @@ import java.util.Map;
  * re-registered into {@link BiomeTextureMap}.
  * @author Hunternif
  */
-@Environment(EnvType.CLIENT)
+@OnlyIn(Dist.CLIENT)
 public class ExtTileTextureMap extends SaveData {
 	private static final ExtTileTextureMap INSTANCE = new ExtTileTextureMap();
 	public static ExtTileTextureMap instance() {
 		return INSTANCE;
 	}
 	
-	final Map<Identifier, TextureSet> textureMap = new HashMap<>();
+	final Map<ResourceLocation, TextureSet> textureMap = new HashMap<>();
 	
-	public void setTexture(Identifier tileName, TextureSet textureSet) {
+	public void setTexture(ResourceLocation tileName, TextureSet textureSet) {
 		if (textureSet == null) {
 			Log.error("Texture set is null!");
 			return;
@@ -45,12 +44,12 @@ public class ExtTileTextureMap extends SaveData {
 	
 	/** If a texture set is not found, returns the default one from
 	 * {@link BiomeTextureMap}. */
-	public TextureSet getTexture(Identifier tileName) {
+	public TextureSet getTexture(ResourceLocation tileName) {
 		TextureSet textureSet = textureMap.get(tileName);
 		return textureSet == null ? BiomeTextureMap.defaultTexture : textureSet;
 	}
 	
-	public boolean isRegistered(Identifier tileName) {
+	public boolean isRegistered(ResourceLocation tileName) {
 		return textureMap.containsKey(tileName);
 	}
 }

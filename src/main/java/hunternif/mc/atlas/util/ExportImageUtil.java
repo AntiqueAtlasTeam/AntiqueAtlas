@@ -9,12 +9,12 @@ import hunternif.mc.atlas.marker.MarkersData;
 import hunternif.mc.atlas.registry.MarkerRegistry;
 import hunternif.mc.atlas.registry.MarkerRenderInfo;
 import hunternif.mc.atlas.registry.MarkerType;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.resource.language.I18n;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.resources.I18n;
+import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
-import net.minecraft.util.Identifier;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
@@ -25,10 +25,10 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.*;
 import java.util.List;
+import java.util.*;
 
-@Environment(EnvType.CLIENT)
+@OnlyIn(Dist.CLIENT)
 public class ExportImageUtil {
 	public static final int TILE_SIZE = 16;
 	public static final int MARKER_SIZE = 32;
@@ -41,7 +41,7 @@ public class ExportImageUtil {
 	}
 	
 	static {
-		chooser.setDialogTitle(I18n.translate("gui.antiqueatlas.exportImage"));
+		chooser.setDialogTitle(I18n.format("gui.antiqueatlas.exportImage"));
 		chooser.setSelectedFile(new File("Atlas.png"));
 		chooser.setFileFilter(new FileFilter() {
 			@Override
@@ -112,14 +112,14 @@ public class ExportImageUtil {
 		getListener().setStatusString("gui.antiqueatlas.export.loadingtextures");
 		getListener().setProgressMax(-1);
 		BufferedImage bg = null;
-		Map<Identifier, BufferedImage> textureImageMap = new HashMap<>();
+		Map<ResourceLocation, BufferedImage> textureImageMap = new HashMap<>();
 		try {
-			InputStream is = MinecraftClient.getInstance().getResourceManager().getResource(Textures.EXPORTED_BG).getInputStream();
+			InputStream is = Minecraft.getInstance().getResourceManager().getResource(Textures.EXPORTED_BG).getInputStream();
 			bg = ImageIO.read(is);
 			is.close();
 			
 			// Biome & Marker textures:
-			List<Identifier> allTextures = new ArrayList<>(64);
+			List<ResourceLocation> allTextures = new ArrayList<>(64);
 			allTextures.addAll(BiomeTextureMap.instance().getAllTextures());
 			if (showMarkers) {
 				for (MarkerType type : MarkerRegistry.iterable()) {
@@ -127,9 +127,9 @@ public class ExportImageUtil {
 //					allTextures.add(type.getIcon());
 				}
 			}
-			for (Identifier texture : allTextures) {
+			for (ResourceLocation texture : allTextures) {
 				try {
-					is = MinecraftClient.getInstance().getResourceManager().getResource(texture).getInputStream();
+					is = Minecraft.getInstance().getResourceManager().getResource(texture).getInputStream();
 					BufferedImage tileImage = ImageIO.read(is);
 					is.close();
 					textureImageMap.put(texture, tileImage);
@@ -182,14 +182,14 @@ public class ExportImageUtil {
 		getListener().setStatusString("gui.antiqueatlas.export.loadingtextures");
 		getListener().setProgressMax(-1);
 		BufferedImage bg = null;
-		final Map<Identifier, BufferedImage> textureImageMap = new HashMap<>();
+		final Map<ResourceLocation, BufferedImage> textureImageMap = new HashMap<>();
 		try {
-			InputStream is = MinecraftClient.getInstance().getResourceManager().getResource(Textures.EXPORTED_BG).getInputStream();
+			InputStream is = Minecraft.getInstance().getResourceManager().getResource(Textures.EXPORTED_BG).getInputStream();
 			bg = ImageIO.read(is);
 			is.close();
 			
 			// Biome & Marker textures:
-			List<Identifier> allTextures = new ArrayList<>(64);
+			List<ResourceLocation> allTextures = new ArrayList<>(64);
 			allTextures.addAll(BiomeTextureMap.instance().getAllTextures());
 			if (showMarkers) {
 				for (MarkerType type : MarkerRegistry.iterable()) {
@@ -197,9 +197,9 @@ public class ExportImageUtil {
 //					allTextures.add(type.getIcon());
 				}
 			}
-			for (Identifier texture : allTextures) {
+			for (ResourceLocation texture : allTextures) {
 				try {
-					is = MinecraftClient.getInstance().getResourceManager().getResource(texture).getInputStream();
+					is = Minecraft.getInstance().getResourceManager().getResource(texture).getInputStream();
 					BufferedImage tileImage = ImageIO.read(is);
 					is.close();
 					textureImageMap.put(texture, tileImage);
@@ -272,7 +272,7 @@ public class ExportImageUtil {
 	
 	private static void drawMapToGraphics(Graphics2D graphics,
 			int bgTilesX, int bgTilesY, int outWidth, int outHeight,
-			DimensionData biomeData, Map<Identifier, BufferedImage> textureImageMap,
+			DimensionData biomeData, Map<ResourceLocation, BufferedImage> textureImageMap,
 			DimensionMarkersData globalMarkers, DimensionMarkersData localMarkers,
 			boolean showMarkers, int minX, int minY,
 			int scale, BufferedImage bg) {
@@ -347,7 +347,7 @@ public class ExportImageUtil {
 				if (subtile == null || subtile.tile == null) continue;
 				
 				// Load tile texture
-				Identifier texture = BiomeTextureMap.instance().getTexture(subtile.variationNumber, subtile.tile);
+				ResourceLocation texture = BiomeTextureMap.instance().getTexture(subtile.variationNumber, subtile.tile);
 				BufferedImage tileImage = textureImageMap.get(texture);
 				if (tileImage == null) continue;
 				
@@ -414,7 +414,7 @@ public class ExportImageUtil {
 					type.resetMip();
 					
 					// Load marker texture
-					Identifier texture = info.tex;
+					ResourceLocation texture = info.tex;
 					BufferedImage markerImage = textureImageMap.get(texture);
 					if (markerImage == null)
 						continue;

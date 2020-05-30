@@ -1,6 +1,6 @@
 package hunternif.mc.atlas.client.gui.core;
 
-import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.Minecraft;
 import org.lwjgl.opengl.GL11;
 
 /**
@@ -33,16 +33,16 @@ public class GuiViewport extends GuiComponent {
 	}
 	
 	@Override
-	public void init(MinecraftClient client, int w, int h) {
+	public void init(Minecraft client, int w, int h) {
 		super.init(client, w, h);
-		screenScale = client.getWindow().getScaleFactor();
+		screenScale = client.getMainWindow().getGuiScaleFactor();
 	}
 	
 	@Override
 	public void render(int mouseX, int mouseY, float par3) {
 		GL11.glEnable(GL11.GL_SCISSOR_TEST);
 		GL11.glScissor((int) (getGuiX()*screenScale),
-				(int) (minecraft.getWindow().getFramebufferHeight() - (getGuiY() + properHeight)*screenScale),
+				(int) (minecraft.getMainWindow().getFramebufferHeight() - (getGuiY() + properHeight)*screenScale),
 				(int) (properWidth*screenScale), (int) (properHeight*screenScale));
 		
 		// Draw the content (child GUIs):
@@ -74,14 +74,10 @@ public class GuiViewport extends GuiComponent {
 		super.validateSize();
 		// Update the clipping flag on content's child components:
 		for (GuiComponent child : this.getChildren()) {
-			if (child.getGuiY() > getGuiY() + properHeight ||
-				child.getGuiY() + child.getHeight() < getGuiY() ||
-				child.getGuiX() > getGuiX() + properWidth ||
-				child.getGuiX() + child.getWidth() < getGuiX()) {
-				child.setClipped(true);
-			} else {
-				child.setClipped(false);
-			}
+			child.setClipped(child.getGuiY() > getGuiY() + properHeight ||
+					child.getGuiY() + child.getHeight() < getGuiY() ||
+					child.getGuiX() > getGuiX() + properWidth ||
+					child.getGuiX() + child.getWidth() < getGuiX());
 		}
 	}
 }

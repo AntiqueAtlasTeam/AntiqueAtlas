@@ -1,13 +1,13 @@
 package hunternif.mc.atlas.api;
 
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 
-
-import net.minecraft.util.Identifier;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import hunternif.mc.atlas.client.TextureSet;
 import net.minecraft.world.biome.Biome;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.api.distmarker.OnlyIns;
 
 /**
  * API for biome tiles and custom tiles (i.e. dungeons, towns etc.)
@@ -25,8 +25,8 @@ public interface TileAPI {
 	 * @param	textures
 	 * @return	the registered texture set
 	 */
-	@Environment(EnvType.CLIENT)
-	TextureSet registerTextureSet(Identifier name, Identifier ... textures);
+	@OnlyIn(Dist.CLIENT)
+	TextureSet registerTextureSet(ResourceLocation name, ResourceLocation ... textures);
 	
 	
 	// Biome textures ==========================================================
@@ -35,14 +35,14 @@ public interface TileAPI {
 	 * Assign one or more texture to biome ID, creating a new texture set.
 	 * See {@link #registerTextureSet}
 	 */
-	@Environment(EnvType.CLIENT)
-	void setBiomeTexture(Biome biome, Identifier textureSetName, Identifier ... textures);
+	@OnlyIn(Dist.CLIENT)
+	void setBiomeTexture(Biome biome, ResourceLocation textureSetName, ResourceLocation ... textures);
 
 	/**
 	 * Assign one or more texture to biome ID, using an existing texture set.
 	 * See {@link #registerTextureSet}
 	 */
-	@Environment(EnvType.CLIENT)
+	@OnlyIn(Dist.CLIENT)
 	void setBiomeTexture(Biome biome, TextureSet textureSet);
 	
 	
@@ -53,12 +53,12 @@ public interface TileAPI {
 	 * This creates a new texture set with the same name as the tile.
 	 * See {@link #registerTextureSet}
 	 */
-	@Environment(EnvType.CLIENT)
-	void setCustomTileTexture(Identifier uniqueTileName, Identifier ... textures);
+	@OnlyIn(Dist.CLIENT)
+	void setCustomTileTexture(ResourceLocation uniqueTileName, ResourceLocation ... textures);
 	
 	/** Assign a texture set to a unique tile name. */
-	@Environment(EnvType.CLIENT)
-	void setCustomTileTexture(Identifier uniqueTileName, TextureSet textureSet);
+	@OnlyIn(Dist.CLIENT)
+	void setCustomTileTexture(ResourceLocation uniqueTileName, TextureSet textureSet);
 	
 	
 	// Biome tiles =============================================================
@@ -119,7 +119,7 @@ public interface TileAPI {
 	 * @param chunkX	x chunk coordinate. (block coordinate >> 4)
 	 * @param chunkZ	z chunk coordinate. (block coordinate >> 4)
 	 */
-	void putCustomTile(World world, int atlasID, Identifier tileName, int chunkX, int chunkZ);
+	void putCustomTile(World world, int atlasID, ResourceLocation tileName, int chunkX, int chunkZ);
 	
 	/**
 	 * Put the specified custom tile at the specified chunk coordinates
@@ -135,7 +135,7 @@ public interface TileAPI {
 	 * @param chunkX	x chunk coordinate. (block coordinate >> 4)
 	 * @param chunkZ	z chunk coordinate. (block coordinate >> 4)
 	 */
-	void putCustomGlobalTile(World world, Identifier tileName, int chunkX, int chunkZ);
+	void putCustomGlobalTile(World world, ResourceLocation tileName, int chunkX, int chunkZ);
 	
 	/**
 	 * Delete the global tile at the specified chunk coordinates if a tile has

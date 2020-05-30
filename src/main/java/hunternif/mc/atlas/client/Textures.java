@@ -1,7 +1,7 @@
 package hunternif.mc.atlas.client;
 
 import hunternif.mc.atlas.AntiqueAtlasMod;
-import net.minecraft.util.Identifier;
+import net.minecraft.util.ResourceLocation;
 
 public class Textures {
 	private static final String MOD_PREFIX = AntiqueAtlasMod.ID + ":";
@@ -11,7 +11,7 @@ public class Textures {
 	private static final String GUI_MARKERS = GUI + "markers/";
 	private static final String GUI_SCALEBAR = GUI + "scalebar/";
 	
-	public static final Identifier
+	public static final ResourceLocation
 	BOOK = gui("book.png"),
 	EXPORTED_BG = gui("exported_bg.png"),
 	BOOK_FRAME = gui("book_frame.png"),
@@ -249,19 +249,19 @@ public class Textures {
 	TILE_NETHER_THRONE = tile("nether_throne.png");
 
 	// Constructor helpers:
-	private static Identifier gui(String fileName) {
-		return new Identifier(GUI + fileName);
+	private static ResourceLocation gui(String fileName) {
+		return new ResourceLocation(GUI + fileName);
 	}
-	private static Identifier scaleBar(String fileName) {
-		return new Identifier(GUI_SCALEBAR + fileName);
+	private static ResourceLocation scaleBar(String fileName) {
+		return new ResourceLocation(GUI_SCALEBAR + fileName);
 	}
-	private static Identifier marker(String fileName) {
-		return new Identifier(GUI_MARKERS + fileName);
+	private static ResourceLocation marker(String fileName) {
+		return new ResourceLocation(GUI_MARKERS + fileName);
 	}
-	private static Identifier tile(String fileName) {
-		return new Identifier(GUI_TILES + fileName);
+	private static ResourceLocation tile(String fileName) {
+		return new ResourceLocation(GUI_TILES + fileName);
 	}
-	private static Identifier icon(String fileName) {
-		return new Identifier(GUI_ICONS + fileName);
+	private static ResourceLocation icon(String fileName) {
+		return new ResourceLocation(GUI_ICONS + fileName);
 	}
 }

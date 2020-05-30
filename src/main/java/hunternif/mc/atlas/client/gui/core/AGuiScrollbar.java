@@ -1,13 +1,14 @@
 package hunternif.mc.atlas.client.gui.core;
 
-import net.minecraft.util.Identifier;
+import com.mojang.blaze3d.systems.RenderSystem;
+import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
 import com.mojang.blaze3d.platform.GlStateManager;
 import java.io.IOException;
 
 
 public abstract class AGuiScrollbar extends GuiComponent {
-	Identifier texture;
+	ResourceLocation texture;
 	int textureWidth;
     int textureHeight;
 	/** Length of the non-scaling caps at the beginning and end of the anchor. */
@@ -15,7 +16,7 @@ public abstract class AGuiScrollbar extends GuiComponent {
 	int textureBodyLength;
 	
 	/** In pixels. */
-	private static int scrollStep = 18;
+	private static final int scrollStep = 18;
 	
 	boolean visible = false;
 	/** True if the anchor is being dragged */
@@ -52,7 +53,7 @@ public abstract class AGuiScrollbar extends GuiComponent {
 	 * @param height	height of the texture image
 	 * @param capLength	length of the non-scaling caps at the beginning and end of the anchor
 	 */
-	public void setTexture(Identifier texture, int width, int height, int capLength) {
+	public void setTexture(ResourceLocation texture, int width, int height, int capLength) {
 		this.texture = texture;
 		this.textureWidth = width;
 		this.textureHeight = height;
@@ -163,15 +164,15 @@ public abstract class AGuiScrollbar extends GuiComponent {
 			doSetScrollRatio((float) (getMousePos(mouseX, mouseY) - anchorSize / 2)
 					/ (float) (getScrollbarLength() - anchorSize));
 		}
-		
-		GlStateManager.enableTexture();
-		GlStateManager.enableBlend();
-		GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-		GlStateManager.color4f(1, 1, 1, 1);
+
+		RenderSystem.enableTexture();
+		RenderSystem.enableBlend();
+		RenderSystem.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+		RenderSystem.color4f(1, 1, 1, 1);
 		
 		drawAnchor();
-		
-		GlStateManager.disableBlend();
+
+		RenderSystem.disableBlend();
 	}
 	
 	private void updateAnchorSize() {

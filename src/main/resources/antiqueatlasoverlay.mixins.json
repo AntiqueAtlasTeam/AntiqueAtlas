@@ -1,6 +1,7 @@
 {
   "required": true,
   "package": "kenkron.antiqueatlasoverlay.mixin",
+  "refmap": "antiqueatlas.refmap.json",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
   ],
