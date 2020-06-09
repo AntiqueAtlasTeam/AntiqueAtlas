@@ -25,9 +25,11 @@ import net.minecraft.client.render.BufferBuilder;
 import net.minecraft.client.render.Tessellator;
 import net.minecraft.client.render.VertexFormats;
 import net.minecraft.client.resource.language.I18n;
+import net.minecraft.client.sound.PositionedSoundInstance;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.math.MathHelper;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL11;
@@ -345,7 +347,9 @@ public class GuiAtlas extends GuiComponent {
     }
 
 	public GuiAtlas prepareToOpen() {
-        this.player = MinecraftClient.getInstance().player;
+		MinecraftClient.getInstance().getSoundManager().play(PositionedSoundInstance.master(SoundEvents.ITEM_BOOK_PAGE_TURN, 1.0F));
+
+		this.player = MinecraftClient.getInstance().player;
         updateAtlasData();
         if (!followPlayer && AntiqueAtlasMod.CONFIG.gameplay.doSaveBrowsingPos) {
             loadSavedBrowsingPosition();

@@ -14,8 +14,6 @@ import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.dimension.DimensionType;
 
-import java.io.IOException;
-
 /**
  * Puts biome tile into one atlas. When sent to server, forwards it to every
  * client that has this atlas' data synced.
@@ -25,9 +23,7 @@ public class PutTilePacket extends AbstractMessage<PutTilePacket> {
 	private int atlasID, x, z;
 	private RegistryKey<DimensionType> dimension;
 	private TileKind kind;
-	
-	public PutTilePacket() {}
-	
+
 	public PutTilePacket(int atlasID, RegistryKey<DimensionType> dimension, int x, int z, TileKind kind) {
 		this.atlasID = atlasID;
 		this.dimension = dimension;
@@ -37,7 +33,7 @@ public class PutTilePacket extends AbstractMessage<PutTilePacket> {
 	}
 	
 	@Override
-	protected void read(PacketByteBuf buffer) throws IOException {
+	protected void read(PacketByteBuf buffer) {
 		atlasID = buffer.readVarInt();
 		dimension = RegistryKey.of(Registry.DIMENSION_TYPE_KEY, buffer.readIdentifier());
 		x = buffer.readVarInt();
@@ -46,7 +42,7 @@ public class PutTilePacket extends AbstractMessage<PutTilePacket> {
 	}
 
 	@Override
-	protected void write(PacketByteBuf buffer) throws IOException {
+	protected void write(PacketByteBuf buffer) {
 		buffer.writeVarInt(atlasID);
 		buffer.writeIdentifier(dimension.getValue());
 		buffer.writeVarInt(x);

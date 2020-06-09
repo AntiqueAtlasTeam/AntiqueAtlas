@@ -2,11 +2,14 @@ package hunternif.mc.atlas.item;
 
 import java.util.Collection;
 
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.sound.PositionedSoundInstance;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.ActionResult;
@@ -37,9 +40,8 @@ public class ItemAtlas extends Item {
 	}
 
 	@Override
-	public TypedActionResult<ItemStack> use(World world, PlayerEntity playerIn,
-			Hand hand) {
-		ItemStack stack = playerIn.getStackInHand(hand);
+	public TypedActionResult<ItemStack> use(World world, PlayerEntity playerEntity, Hand hand) {
+		ItemStack stack = playerEntity.getStackInHand(hand);
 
 		if (world.isClient) {
 			AntiqueAtlasMod.proxy.openAtlasGUI(stack);

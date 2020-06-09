@@ -20,7 +20,7 @@ public class MixinInGameHud {
     private int scaledHeight;
 
     @Inject(at = @At("TAIL"), method = "render")
-    public void draw(MatrixStack matrices, float partial, CallbackInfo info) {
-        ExportProgressOverlay.INSTANCE.draw(matrices, scaledWidth, scaledHeight, partial);
+    public void draw(MatrixStack matrices, float f, CallbackInfo ci) {
+        ExportProgressOverlay.INSTANCE.draw(matrices, scaledWidth, scaledHeight);
     }
 }

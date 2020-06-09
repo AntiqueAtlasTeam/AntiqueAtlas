@@ -11,9 +11,6 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.PacketByteBuf;
 
-
-import java.io.IOException;
-
 /**
  * Used to sync atlas data from server to client.
  * @author Hunternif
@@ -30,13 +27,13 @@ public class MapDataPacket extends AbstractClientMessage<MapDataPacket> {
 	}
 
 	@Override
-	public void read(PacketByteBuf buffer) throws IOException {
+	public void read(PacketByteBuf buffer) {
 		atlasID = buffer.readVarInt();
 		data = buffer.readCompoundTag();
 	}
 
 	@Override
-	public void write(PacketByteBuf buffer) throws IOException {
+	public void write(PacketByteBuf buffer) {
 		buffer.writeVarInt(atlasID);
 		buffer.writeCompoundTag(data);
 	}

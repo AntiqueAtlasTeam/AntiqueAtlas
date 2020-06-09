@@ -34,9 +34,9 @@ class ProgressBarOverlay {
 		ExportUpdateListener l = ExportUpdateListener.INSTANCE;
 
 		int headerWidth = this.textRenderer.getWidth(l.header);
-		this.textRenderer.draw(matrices, l.header, x + (barWidth - headerWidth)/2, y-14, 0xffffff);
+		this.textRenderer.draw(matrices, l.header, x + (barWidth - headerWidth)/2F, y-14, 0xffffff);
 		int statusWidth = this.textRenderer.getWidth(l.status);
-		this.textRenderer.draw(matrices, l.status, x + (barWidth - statusWidth)/2, y, 0xffffff);
+		this.textRenderer.draw(matrices, l.status, x + (barWidth - statusWidth)/2F, y, 0xffffff);
 		y += 14;
 
 		double p = l.currentProgress/l.maxProgress;

@@ -24,9 +24,9 @@ public class BrowsingPositionPacket extends AbstractServerMessage<BrowsingPositi
 	private RegistryKey<DimensionType> dimension;
 	private int x, y;
 	private double zoom;
-	
+
 	public BrowsingPositionPacket() {}
-	
+
 	public BrowsingPositionPacket(int atlasID, RegistryKey<DimensionType> dimension, int x, int y, double zoom) {
 		this.atlasID = atlasID;
 		this.dimension = dimension;
@@ -36,7 +36,7 @@ public class BrowsingPositionPacket extends AbstractServerMessage<BrowsingPositi
 	}
 	
 	@Override
-	protected void read(PacketByteBuf buffer) throws IOException {
+	protected void read(PacketByteBuf buffer) {
 		atlasID = buffer.readVarInt();
 		dimension = RegistryKey.of(Registry.DIMENSION_TYPE_KEY, buffer.readIdentifier());
 		x = buffer.readVarInt();
@@ -45,7 +45,7 @@ public class BrowsingPositionPacket extends AbstractServerMessage<BrowsingPositi
 	}
 
 	@Override
-	protected void write(PacketByteBuf buffer) throws IOException {
+	protected void write(PacketByteBuf buffer) {
 		buffer.writeVarInt(atlasID);
 		buffer.writeIdentifier(dimension.getValue());
 		buffer.writeVarInt(x);

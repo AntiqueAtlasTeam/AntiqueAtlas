@@ -1,5 +1,7 @@
 package kenkron.antiqueatlasoverlay.mixin;
 
+import hunternif.mc.atlas.AntiqueAtlasMod;
+import hunternif.mc.atlas.RegistrarAntiqueAtlas;
 import kenkron.antiqueatlasoverlay.OverlayRenderer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -24,6 +26,8 @@ import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 @Environment(EnvType.CLIENT)
 @Mixin(HeldItemRenderer.class)
 public abstract class HeldItemRendererMixin {
+	private OverlayRenderer atlasOverlayRenderer = new OverlayRenderer();
+
 	@Shadow private ItemStack offHand;
 
 	@Shadow protected abstract void renderArm(MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, Arm arm);
@@ -34,12 +38,14 @@ public abstract class HeldItemRendererMixin {
 
 	@Shadow private ItemStack mainHand;
 
-	@Inject(method = "renderFirstPersonItem", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;isEmpty()Z", ordinal = 1), locals = LocalCapture.CAPTURE_FAILHARD)
+	@Inject(method = "renderFirstPersonItem", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;isEmpty()Z", ordinal = 0), locals = LocalCapture.CAPTURE_FAILHARD)
 	private void renderAtlas(AbstractClientPlayerEntity player, float tickDelta, float pitch, Hand hand, float swingProgress, ItemStack item, float equipProgress, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, CallbackInfo ci, boolean bl, Arm arm) {
-		if (bl && this.offHand.isEmpty()) {
-			renderAtlasInBothHands(matrices, vertexConsumers, light, pitch, equipProgress, swingProgress);
-		} else {
-			renderAtlasInOneHand(matrices, vertexConsumers, light, equipProgress, arm, swingProgress, item);
+		if (item.getItem() == RegistrarAntiqueAtlas.ATLAS && !AntiqueAtlasMod.CONFIG.appearance.enabled) {
+			if (bl && this.offHand.isEmpty()) {
+				renderAtlasInBothHands(matrices, vertexConsumers, light, pitch, equipProgress, swingProgress);
+			} else {
+				renderAtlasInOneHand(matrices, vertexConsumers, light, equipProgress, arm, swingProgress, item);
+			}
 		}
 	}
 
@@ -62,7 +68,7 @@ public abstract class HeldItemRendererMixin {
 
 		float j = MathHelper.sin(f * 3.1415927F);
 		matrices.multiply(Vector3f.POSITIVE_X.getDegreesQuaternion(j * 20.0F));
-		matrices.scale(2.0F, 2.0F, 2.0F);
+		matrices.scale(0.5F, 0.5F, 1.0F);
 
 		this.renderFirstPersonAtlas(matrices, vertexConsumers, light, this.mainHand);
 	}
@@ -71,6 +77,13 @@ public abstract class HeldItemRendererMixin {
 	}
 
 	private void renderFirstPersonAtlas(MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, ItemStack mainHand) {
-//		OverlayRenderer.drawOverlay(matrices, MinecraftClient.getInstance().inGameHud.get);
+		matrices.multiply(Vector3f.POSITIVE_Y.getDegreesQuaternion(180.0F));
+		matrices.multiply(Vector3f.POSITIVE_Z.getDegreesQuaternion(180.0F));
+
+		matrices.scale(0.38F, 0.38F, 0.38F);
+		matrices.translate(-1.8375D, -0.5D, 0.0D);
+		matrices.scale(0.0078125F, 0.0078125F, 0.0078125F);
+
+		atlasOverlayRenderer.drawOverlay(matrices);
 	}
 }

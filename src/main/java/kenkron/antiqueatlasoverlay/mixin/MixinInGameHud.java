@@ -17,10 +17,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Environment(EnvType.CLIENT)
 public class MixinInGameHud {
     private OverlayRenderer atlasOverlayRenderer = new OverlayRenderer();
-    @Shadow
-    private int scaledWidth;
-    @Shadow
-    private int scaledHeight;
 
     @Inject(at = @At("TAIL"), method = "render")
     public void draw(MatrixStack matrices, float partial, CallbackInfo info) {

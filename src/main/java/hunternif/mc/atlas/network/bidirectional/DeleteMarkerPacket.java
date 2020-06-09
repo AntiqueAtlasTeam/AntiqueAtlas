@@ -37,13 +37,13 @@ public class DeleteMarkerPacket extends AbstractMessage<DeleteMarkerPacket> {
 	}
 
 	@Override
-	public void read(PacketByteBuf buffer) throws IOException {
+	public void read(PacketByteBuf buffer) {
 		atlasID = buffer.readVarInt();
 		markerID = buffer.readVarInt();
 	}
 
 	@Override
-	public void write(PacketByteBuf buffer) throws IOException {
+	public void write(PacketByteBuf buffer) {
 		buffer.writeVarInt(atlasID);
 		buffer.writeVarInt(markerID);
 	}

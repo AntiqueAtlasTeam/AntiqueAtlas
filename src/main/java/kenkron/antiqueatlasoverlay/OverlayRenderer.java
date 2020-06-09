@@ -3,6 +3,7 @@ package kenkron.antiqueatlasoverlay;
 import com.mojang.blaze3d.platform.GlStateManager;
 import hunternif.mc.atlas.AntiqueAtlasMod;
 import hunternif.mc.atlas.RegistrarAntiqueAtlas;
+import hunternif.mc.atlas.SettingsConfig;
 import hunternif.mc.atlas.client.*;
 import hunternif.mc.atlas.client.gui.GuiAtlas;
 import hunternif.mc.atlas.core.AtlasData;
@@ -19,6 +20,7 @@ import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.network.ClientPlayerEntity;
+import net.minecraft.client.util.Window;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.client.util.math.Vector3f;
 import net.minecraft.entity.player.PlayerEntity;
@@ -101,6 +103,8 @@ public class OverlayRenderer extends DrawableHelper {
         if (atlasID != null) {
             drawMinimap(matrices);
         }
+
+        atlasID = null;
     }
 
     private void drawMinimap(MatrixStack matrices) {
@@ -122,12 +126,15 @@ public class OverlayRenderer extends DrawableHelper {
         matrices.push();
         matrices.scale(2, 2, 1);
         drawTiles(matrices);
-        matrices.pop();
-
         if (AntiqueAtlasMod.CONFIG.appearance.markerSize > 0) {
             drawMarkers(matrices);
-            drawPlayer(matrices);
         }
+
+        matrices.pop();
+
+
+        drawPlayer(matrices);
+
 
         // Overlay the frame so that edges of the map are smooth:
         GlStateManager.color4f(1, 1, 1, 1);
@@ -147,16 +154,19 @@ public class OverlayRenderer extends DrawableHelper {
     private void drawTiles(MatrixStack matrices) {
         GlStateManager.enableBlend();
         GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+        GL11.glEnable(GL11.GL_SCISSOR_TEST);
+        GL11.glScissor(20, 0, client.getWindow().getWidth(),
+                client.getWindow().getHeight() - 100);
 
         DimensionData biomeData = AntiqueAtlasMod.atlasData.getAtlasData(
                 atlasID, MinecraftClient.getInstance().world).getDimensionData(dimension);
 
         TileRenderIterator iter = new TileRenderIterator(biomeData);
-        Rect iteratorScope = getChunkCoverage(chunkPos);
+        Rect iteratorScope = getChunkCoverage(player.getPos());
         iter.setScope(iteratorScope);
 
         iter.setStep(1);
-        Vec3d chunkPosition = player.getPos();
+        Vec3d chunkPosition = player.getPos().multiply(1D / CHUNK_SIZE, 1D / CHUNK_SIZE, 1D / CHUNK_SIZE);
         int shapeMiddleX = (int) ((GuiAtlas.WIDTH * 1.5F) / 4F);
         int shapeMiddleY = (int) ((GuiAtlas.HEIGHT * 1.5F) / 4F);
         SetTileRenderer renderer = new SetTileRenderer(matrices, AntiqueAtlasMod.CONFIG.appearance.tileSize / 2);
@@ -169,9 +179,9 @@ public class OverlayRenderer extends DrawableHelper {
                 // Position of this subtile (measured in chunks) relative to the
                 // player
                 float relativeChunkPositionX = (float) (subtile.x / 2.0
-                       + iteratorScope.minX - chunkPosition.x);
+                        + iteratorScope.minX - chunkPosition.x);
                 float relativeChunkPositionY = (float) (subtile.y / 2.0
-                       + iteratorScope.minY - chunkPosition.z);
+                        + iteratorScope.minY - chunkPosition.z);
                 renderer.addTileCorner(
                         BiomeTextureMap.instance().getTexture(subtile.variationNumber, subtile.tile),
                         shapeMiddleX
@@ -227,31 +237,27 @@ public class OverlayRenderer extends DrawableHelper {
 
     private void drawMarkersData(MatrixStack matrices, DimensionMarkersData markersData, DimensionData biomeData) {
         //this will be large enough to include markers that are larger than tiles
-        Rect mcchunks = getChunkCoverage(this.chunkPos);
-        Rect chunks = new Rect((int) Math.floor(mcchunks.minX / MarkersData.CHUNK_STEP),
-                (int) Math.floor(mcchunks.minY / MarkersData.CHUNK_STEP),
-                (int) Math.ceil(mcchunks.maxX / MarkersData.CHUNK_STEP),
-                (int) Math.ceil(mcchunks.maxY / MarkersData.CHUNK_STEP));
+        Rect mcchunks = getChunkCoverage(player.getPos());
 
-        int shapeMiddleX = (int) ((GuiAtlas.WIDTH * 1.5F) / 2F);
-        int shapeMiddleY = (int) ((GuiAtlas.HEIGHT * 1.5F) / 2F);
+        int shapeMiddleX = (int) ((GuiAtlas.WIDTH * 1.5F) / 4F);
+        int shapeMiddleY = (int) ((GuiAtlas.HEIGHT * 1.5F) / 4F);
+        Vec3d chunkPosition = player.getPos().multiply(1D / CHUNK_SIZE, 1D / CHUNK_SIZE, 1D / CHUNK_SIZE);
 
-        for (int x = chunks.minX; x <= chunks.maxX; x++) {
-            for (int z = chunks.minY; z <= chunks.maxY; z++) {
+        for (int x = mcchunks.minX; x <= mcchunks.maxX; x++) {
+            for (int z = mcchunks.minY; z <= mcchunks.maxY; z++) {
                 //A marker chunk is greater than a Minecraft chunk
                 List<Marker> markers = markersData.getMarkersAtChunk(
-                        Math.round(x),
-                        Math.round(z));
+                        Math.round(x / MarkersData.CHUNK_STEP),
+                        Math.round(z / MarkersData.CHUNK_STEP));
                 if (markers == null)
                     continue;
                 for (Marker marker : markers) {
-                    // Position of this marker relative to the player
-                    // Rounded to the nearest even number
-                    int relativeChunkPositionX = (marker.getX() - this.chunkPos.x) / CHUNK_SIZE;
-                    int relativeChunkPositionY = (marker.getZ() - this.chunkPos.z) / CHUNK_SIZE;
-                    int guiX = (int) Math.floor(shapeMiddleX - AntiqueAtlasMod.CONFIG.appearance.markerSize / 2 + relativeChunkPositionX);
-                    int guiY = (int) Math.floor(shapeMiddleY - AntiqueAtlasMod.CONFIG.appearance.markerSize / 2 + relativeChunkPositionY);
-                    renderMarker(matrices, marker, guiX, guiY, biomeData);
+                    int relativeChunkPositionX = (int) (marker.getX() / 2.0
+                                                + mcchunks.minX - player.getX());
+                    int relativeChunkPositionY = (int) (marker.getZ() / 2.0
+                                                + mcchunks.minY - player.getZ());
+
+                    renderMarker(matrices, marker, relativeChunkPositionX, relativeChunkPositionY, biomeData);
                 }
             }
         }
@@ -267,8 +273,8 @@ public class OverlayRenderer extends DrawableHelper {
         MarkerRenderInfo info = type.getRenderInfo(1, AntiqueAtlasMod.CONFIG.appearance.tileSize, 1);
         MinecraftClient.getInstance().getTextureManager().bindTexture(info.tex);
         drawTexture(matrices,
-                x - GuiAtlas.MARKER_SIZE / 4,
-                y - GuiAtlas.MARKER_SIZE / 4,
+                x - GuiAtlas.MARKER_SIZE / 2,
+                y - GuiAtlas.MARKER_SIZE / 2,
                 0,
                 0,
                 GuiAtlas.MARKER_SIZE,
@@ -278,18 +284,18 @@ public class OverlayRenderer extends DrawableHelper {
 //        AtlasRenderHelper.drawFullTexture(matrices, info.tex, x, y, AntiqueAtlasMod.CONFIG.appearance.markerSize, AntiqueAtlasMod.CONFIG.appearance.markerSize);
     }
 
-    private static Rect getChunkCoverage(ChunkPos position) {
-        int minChunkX = (int) Math.floor(position.x
-                - AntiqueAtlasMod.CONFIG.position.width / (2f * AntiqueAtlasMod.CONFIG.appearance.tileSize));
-        minChunkX -= 1;// IDK
-        int minChunkY = (int) Math.floor(position.z
-                - AntiqueAtlasMod.CONFIG.position.height / (2f * AntiqueAtlasMod.CONFIG.appearance.tileSize));
-        minChunkY -= 1;// IDK
-        int maxChunkX = (int) Math.ceil(position.x
-                + AntiqueAtlasMod.CONFIG.position.width / (2f * AntiqueAtlasMod.CONFIG.appearance.tileSize));
-        maxChunkX += 1;
-        int maxChunkY = (int) Math.ceil(position.z
-                + AntiqueAtlasMod.CONFIG.position.height / (2f * AntiqueAtlasMod.CONFIG.appearance.tileSize));
+    private Rect getChunkCoverage(Vec3d position) {
+        int minChunkX = (int) Math.floor(position.x / CHUNK_SIZE
+                - (GuiAtlas.WIDTH) / (4f * AntiqueAtlasMod.CONFIG.appearance.tileSize));
+        minChunkX -= 4;
+        int minChunkY = (int) Math.floor(position.z / CHUNK_SIZE
+                - (GuiAtlas.HEIGHT) / (4f * AntiqueAtlasMod.CONFIG.appearance.tileSize));
+        minChunkY -= 2;
+        int maxChunkX = (int) Math.ceil(position.x / CHUNK_SIZE
+                + (GuiAtlas.WIDTH) / (4f * AntiqueAtlasMod.CONFIG.appearance.tileSize));
+        maxChunkX += 2;
+        int maxChunkY = (int) Math.ceil(position.z / CHUNK_SIZE
+                + (GuiAtlas.HEIGHT) / (4f * AntiqueAtlasMod.CONFIG.appearance.tileSize));
         maxChunkY += 1;
         return new Rect(minChunkX, minChunkY, maxChunkX, maxChunkY);
     }

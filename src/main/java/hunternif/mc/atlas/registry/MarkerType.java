@@ -58,12 +58,6 @@ public class MarkerType {
 		}
 	}
 
-	public static Identifier getLoc(String type) {
-		if(!type.contains(":"))
-			type = AntiqueAtlasMod.ID + ":" + type;
-		return new Identifier(type);
-	}
-
 	public boolean isTechnical() {
 		return isTechnical;
 	}

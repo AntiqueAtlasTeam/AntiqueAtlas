@@ -22,8 +22,6 @@
   "gui.antiqueatlas.export.rendering": "Rendu...",
   "gui.antiqueatlas.export.writing": "Ecriture au fichier...",
   "gui.antiqueatlas.export.setup": "Setting up...",
-  "gui.antiqueatlas.export.rendering": "Rendering...",
-  "gui.antiqueatlas.export.writing": "Writing to file...",
   "gui.antiqueatlas.export.loadingtextures": "Loading textures...",
   "gui.antiqueatlas.export.makingbuffer": "Allocating %dx%d image buffer...",
 
