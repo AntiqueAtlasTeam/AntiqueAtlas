@@ -2,12 +2,10 @@ package hunternif.mc.atlas.item;
 
 import hunternif.mc.atlas.AntiqueAtlasMod;
 import hunternif.mc.atlas.RegistrarAntiqueAtlas;
-import hunternif.mc.atlas.SettingsConfig;
 import hunternif.mc.atlas.core.AtlasData;
 import hunternif.mc.atlas.marker.MarkersData;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
@@ -32,10 +30,10 @@ public class ItemEmptyAtlas extends Item {
 		atlasStack.getOrCreateTag().putInt("atlasID", atlasID);
 
         AtlasData atlasData = AntiqueAtlasMod.atlasData.getAtlasData(atlasID, world);
-        atlasData.getDimensionData(player.dimension).setBrowsingPosition(
-                (int)Math.round(-player.getX() * SettingsConfig.userInterface.defaultScale),
-                (int)Math.round(-player.getZ() * SettingsConfig.userInterface.defaultScale),
-                SettingsConfig.userInterface.defaultScale);
+        atlasData.getDimensionData(player.getEntityWorld().getDimensionRegistryKey()).setBrowsingPosition(
+                (int)Math.round(-player.getX() * AntiqueAtlasMod.CONFIG.userInterface.defaultScale),
+                (int)Math.round(-player.getZ() * AntiqueAtlasMod.CONFIG.userInterface.defaultScale),
+								AntiqueAtlasMod.CONFIG.userInterface.defaultScale);
         atlasData.markDirty();
 
         MarkersData markersData = AntiqueAtlasMod.markersData.getMarkersData(atlasID, world);

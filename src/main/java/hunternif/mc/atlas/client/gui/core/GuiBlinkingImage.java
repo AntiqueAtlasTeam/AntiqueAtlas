@@ -3,12 +3,13 @@ package hunternif.mc.atlas.client.gui.core;
 import com.mojang.blaze3d.platform.GlStateManager;
 import hunternif.mc.atlas.util.AtlasRenderHelper;
 
+import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.Identifier;
 import org.lwjgl.opengl.GL11;
 
 /** Displays a texture that changes alpha at regular intervals.
  * By default the texture file is assumed to be full image, but that behavior
- * can be altered by overriding the method {@link #drawImage()}.
+ * can be altered by overriding the method {@link #drawImage(MatrixStack)}.
  * @author Hunternif
  */
 public class GuiBlinkingImage extends GuiComponent {
@@ -44,7 +45,7 @@ public class GuiBlinkingImage extends GuiComponent {
 	}
 	
 	@Override
-	public void render(int mouseX, int mouseY, float partialTick) {
+	public void render(MatrixStack matrices, int mouseX, int mouseY, float partialTick) {
 		long currentTime = System.currentTimeMillis();
 		if (lastTickTime + blinkTime < currentTime) {
 			lastTickTime = currentTime;
@@ -53,10 +54,10 @@ public class GuiBlinkingImage extends GuiComponent {
 		GlStateManager.color4f(1, 1, 1, isVisible ? visibleAlpha : invisibleAlpha);
 		GlStateManager.enableBlend();
 		GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-		drawImage();
+		drawImage(matrices);
 	}
 	
-	private void drawImage() {
-		AtlasRenderHelper.drawFullTexture(texture, getGuiX(), getGuiY(), getWidth(), getHeight());
+	private void drawImage(MatrixStack matrices) {
+		AtlasRenderHelper.drawFullTexture(matrices, texture, getGuiX(), getGuiY(), getWidth(), getHeight());
 	}
 }

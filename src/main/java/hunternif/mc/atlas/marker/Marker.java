@@ -2,7 +2,11 @@ package hunternif.mc.atlas.marker;
 
 import hunternif.mc.atlas.util.Log;
 import hunternif.mc.atlas.util.ShortVec2;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.client.resource.language.I18n;
+import net.minecraft.text.StringRenderable;
+import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.dimension.DimensionType;
 
 /**
@@ -21,14 +25,14 @@ public class Marker {
 	private final int id;
 	private final String type;
 	private final String label;
-	private final DimensionType dim;
+	private final RegistryKey<DimensionType> dimension;
 	private final int x, z;
 	private final boolean visibleAhead;
 	private boolean isGlobal;
 	
 	//TODO make an option for the marker to disappear at a certain scale.
 	
-	public Marker(int id, String type, String label, DimensionType dimension, int x, int z, boolean visibleAhead) {
+	public Marker(int id, String type, String label, RegistryKey<DimensionType> dimension, int x, int z, boolean visibleAhead) {
 		this.id = id;
 		if (type.length() > TYPE_LIMIT){
 			type = type.substring(0, TYPE_LIMIT);
@@ -40,7 +44,7 @@ public class Marker {
 			Log.warn("Marker type is to long. Trimming to %d characters. Type: %s", LABEL_LIMIT, label);
 		}
 		this.label = label == null ? "" : label;
-		this.dim = dimension;
+		this.dimension = dimension;
 		this.x = x;
 		this.z = z;
 		this.visibleAhead = visibleAhead;
@@ -60,27 +64,29 @@ public class Marker {
 	public String getLabel() {
 		return label;
 	}
-	public String getLocalizedLabel() {
+
+	@Environment(EnvType.CLIENT)
+	public StringRenderable getLocalizedLabel() {
 		// Assuming the beginning of the label string until a whitespace (or end)
 		// is a traslatable key. What comes after it is assumed to be a single
 		// string parameter, i.e. player's name.
 		int whitespaceIndex = label.indexOf(' ');
 		if (whitespaceIndex == -1) {
-			return I18n.translate(label);
+			return StringRenderable.plain(I18n.translate(label));
 		} else {
 			String key = label.substring(0, whitespaceIndex);
 			String param = label.substring(whitespaceIndex + 1);
 			String translated = I18n.translate(key);
 			if (!key.equals(translated)) { // Make sure translation succeeded
-				return String.format(I18n.translate(key), param);
+				return StringRenderable.plain(String.format(I18n.translate(key), param));
 			} else {
-				return label;
+				return StringRenderable.plain(label);
 			}
 		}
 	}
 	
-	public DimensionType getDimension() {
-		return dim;
+	public RegistryKey<DimensionType> getDimension() {
+		return dimension;
 	}
 	
 	public int getX() {

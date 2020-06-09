@@ -4,7 +4,6 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
 import com.google.common.collect.Sets;
 import hunternif.mc.atlas.AntiqueAtlasMod;
-import hunternif.mc.atlas.SettingsConfig;
 import hunternif.mc.atlas.api.AtlasAPI;
 import hunternif.mc.atlas.ext.ExtTileIdMap;
 import hunternif.mc.atlas.ext.watcher.IStructureWatcher;
@@ -12,15 +11,11 @@ import hunternif.mc.atlas.ext.watcher.StructureWatcher;
 import hunternif.mc.atlas.ext.watcher.WatcherPos;
 import hunternif.mc.atlas.marker.Marker;
 import hunternif.mc.atlas.marker.MarkersData;
-import hunternif.mc.atlas.registry.MarkerRegistry;
 import hunternif.mc.atlas.registry.MarkerType;
 import hunternif.mc.atlas.util.Log;
 import hunternif.mc.atlas.util.MathUtil;
-import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockBox;
-import net.minecraft.world.chunk.Chunk;
-import net.minecraft.world.chunk.WorldChunk;
 import net.minecraft.world.dimension.DimensionType;
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -104,7 +99,7 @@ public class StructureWatcherVillage implements IStructureWatcher {
 
     @Override
     public boolean isDimensionValid(DimensionType type) {
-    	return type == DimensionType.OVERWORLD;
+    	return type.isOverworld();
     }
 
     @Nullable
@@ -148,7 +143,7 @@ public class StructureWatcherVillage implements IStructureWatcher {
 			return;
 		}
 
-		MarkerType villageType = MarkerRegistry.find("antiqueatlas:village");
+		MarkerType villageType = MarkerType.REGISTRY.get(AntiqueAtlasMod.id("village"));
 		if (villageType == null) {
 			return;
 		}
@@ -170,7 +165,7 @@ public class StructureWatcherVillage implements IStructureWatcher {
 				for (int j = -1; j <= 1; j++) {
 					for (int k = -1; k <= 1; k++) {
 						List<Marker> markers = AntiqueAtlasMod.globalMarkersData.getData()
-								.getMarkersAtChunk(world.dimension.getType(), j + chunkX / MarkersData.CHUNK_STEP, k + chunkZ / MarkersData.CHUNK_STEP);
+								.getMarkersAtChunk(world.getDimensionRegistryKey(), j + chunkX / MarkersData.CHUNK_STEP, k + chunkZ / MarkersData.CHUNK_STEP);
 						if (markers != null) {
 							for (Marker marker : markers) {
 								if (marker.getType().equals(villageType)) {
@@ -181,8 +176,8 @@ public class StructureWatcherVillage implements IStructureWatcher {
 						}
 					}
 				}
-				if (!foundMarker && SettingsConfig.gameplay.autoVillageMarkers) {
-					AtlasAPI.markers.putGlobalMarker(world, false, MarkerRegistry.getId(villageType).toString(), "gui.antiqueatlas.marker.village", x, z);
+				if (!foundMarker && AntiqueAtlasMod.CONFIG.gameplay.autoVillageMarkers) {
+					AtlasAPI.markers.putGlobalMarker(world, false, MarkerType.REGISTRY.getId(villageType).toString(), "gui.antiqueatlas.marker.village", x, z);
 				}
 			}
 //			String tileName = null;
@@ -212,7 +207,7 @@ public class StructureWatcherVillage implements IStructureWatcher {
 	}
 
 	private static Identifier tileAt(int chunkX, int chunkZ) {
-		int biomeID = AntiqueAtlasMod.extBiomeData.getData().getBiomeAt(DimensionType.OVERWORLD, chunkX, chunkZ);
+		int biomeID = AntiqueAtlasMod.extBiomeData.getData().getBiomeAt(DimensionType.OVERWORLD_REGISTRY_KEY, chunkX, chunkZ);
 		return ExtTileIdMap.instance().getPseudoBiomeName(biomeID);
 	}
 
@@ -229,7 +224,7 @@ public class StructureWatcherVillage implements IStructureWatcher {
 			int chunkZ = z >> 4;
 			if (START.equals(childID)) {
 				List<Marker> markers = AntiqueAtlasMod.globalMarkersData.getData()
-						.getMarkersAtChunk(world.dimension.getType(), chunkX / MarkersData.CHUNK_STEP, chunkZ / MarkersData.CHUNK_STEP);
+						.getMarkersAtChunk(world.getDimensionRegistryKey(), chunkX / MarkersData.CHUNK_STEP, chunkZ / MarkersData.CHUNK_STEP);
 				if (markers != null) {
 					for (Marker marker : markers) {
 						if (marker.getType().equals("antiqueatlas:village")) {

@@ -9,6 +9,8 @@ import java.util.Collections;
 import java.util.Map;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.resource.language.I18n;
+import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.text.StringRenderable;
 import net.minecraft.util.Identifier;
 
 
@@ -50,14 +52,14 @@ public class GuiScaleBar extends GuiComponent {
 	}
 
 	@Override
-	public void render(int mouseX, int mouseY, float partialTick) {
+	public void render(MatrixStack matrices, int mouseX, int mouseY, float partialTick) {
 		Identifier texture = getTexture();
 		if (texture == null) return;
 
-		AtlasRenderHelper.drawFullTexture(texture, getGuiX(), getGuiY(), WIDTH, HEIGHT);
+		AtlasRenderHelper.drawFullTexture(matrices, texture, getGuiX(), getGuiY(), WIDTH, HEIGHT);
 
 		if (isMouseOver) {
-			drawTooltip(Collections.singletonList(I18n.translate("gui.antiqueatlas.scalebar")), MinecraftClient.getInstance().textRenderer);
+			drawTooltip(Collections.singletonList(StringRenderable.plain(I18n.translate("gui.antiqueatlas.scalebar"))), MinecraftClient.getInstance().textRenderer);
 		}
 	}
 }

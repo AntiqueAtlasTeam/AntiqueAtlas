@@ -1,15 +1,13 @@
 package hunternif.mc.atlas.network.bidirectional;
 
 import hunternif.mc.atlas.AntiqueAtlasMod;
-import hunternif.mc.atlas.RegistrarAntiqueAtlas;
-import hunternif.mc.atlas.SettingsConfig;
 import hunternif.mc.atlas.api.AtlasAPI;
 import hunternif.mc.atlas.marker.MarkersData;
 import hunternif.mc.atlas.network.AbstractMessage;
 import hunternif.mc.atlas.util.Log;
 import net.fabricmc.api.EnvType;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.PacketByteBuf;
+import net.minecraft.network.PacketByteBuf;
 
 import java.io.IOException;
 
@@ -58,7 +56,7 @@ public class DeleteMarkerPacket extends AbstractMessage<DeleteMarkerPacket> {
 	protected void process(PlayerEntity player, EnvType side) {
 		if (side == EnvType.SERVER) {
 			// Make sure it's this player's atlas :^)
-			if (SettingsConfig.gameplay.itemNeeded && !AtlasAPI.getPlayerAtlases(player).contains(atlasID)) {
+			if (AntiqueAtlasMod.CONFIG.gameplay.itemNeeded && !AtlasAPI.getPlayerAtlases(player).contains(atlasID)) {
 				Log.warn("Player %s attempted to delete marker from someone else's Atlas #%d",
 						player.getCommandSource().getName(), atlasID);
 				return;

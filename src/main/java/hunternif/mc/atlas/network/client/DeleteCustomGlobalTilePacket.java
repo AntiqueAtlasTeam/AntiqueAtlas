@@ -8,8 +8,9 @@ import java.io.IOException;
 
 import net.fabricmc.api.EnvType;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.PacketByteBuf;
+import net.minecraft.network.PacketByteBuf;
 import net.minecraft.util.registry.Registry;
+import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.dimension.DimensionType;
 
 
@@ -19,12 +20,12 @@ import net.minecraft.world.dimension.DimensionType;
  */
 public class DeleteCustomGlobalTilePacket extends AbstractClientMessage<DeleteCustomGlobalTilePacket> {
 	
-	private DimensionType dimension;
+	private RegistryKey<DimensionType> dimension;
 	private int chunkX, chunkZ;
 
 	public DeleteCustomGlobalTilePacket() {}
 	
-	public DeleteCustomGlobalTilePacket(DimensionType dimension, int chunkX, int chunkZ) {
+	public DeleteCustomGlobalTilePacket(RegistryKey<DimensionType> dimension, int chunkX, int chunkZ) {
 		this.dimension = dimension;
 		this.chunkX = chunkX;
 		this.chunkZ = chunkZ;
@@ -32,14 +33,14 @@ public class DeleteCustomGlobalTilePacket extends AbstractClientMessage<DeleteCu
 	
 	@Override
 	protected void read(PacketByteBuf buffer) throws IOException {
-		dimension = Registry.DIMENSION.get(buffer.readVarInt());
+		dimension = RegistryKey.of(Registry.DIMENSION_TYPE_KEY, buffer.readIdentifier());
 		chunkX = buffer.readInt();
 		chunkZ = buffer.readInt();
 	}
 
 	@Override
 	protected void write(PacketByteBuf buffer) throws IOException {
-		buffer.writeVarInt(Registry.DIMENSION.getRawId(dimension));
+		buffer.writeIdentifier(dimension.getValue());
 		buffer.writeInt(chunkX);
 		buffer.writeInt(chunkZ);
 	}

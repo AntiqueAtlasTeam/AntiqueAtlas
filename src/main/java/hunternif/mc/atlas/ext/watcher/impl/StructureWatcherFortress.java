@@ -60,7 +60,7 @@ public class StructureWatcherFortress implements IStructureWatcher {
 
     @Override
     public boolean isDimensionValid(DimensionType type) {
-        return type == DimensionType.THE_NETHER;
+        return type.isNether();
     }
 
     @Nullable
@@ -173,6 +173,6 @@ public class StructureWatcherFortress implements IStructureWatcher {
 	}
 
 	private static boolean noTileAt(World world, int chunkX, int chunkZ) {
-		return AntiqueAtlasMod.extBiomeData.getData().getBiomeAt(world.dimension.getType(), chunkX, chunkZ) == -1;
+		return AntiqueAtlasMod.extBiomeData.getData().getBiomeAt(world.getDimensionRegistryKey(), chunkX, chunkZ) == -1;
 	}
 }

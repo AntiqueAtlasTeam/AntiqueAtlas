@@ -1,6 +1,7 @@
 package hunternif.mc.atlas.client.gui.core;
 
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.util.math.MatrixStack;
 import org.lwjgl.opengl.GL11;
 
 /**
@@ -39,14 +40,14 @@ public class GuiViewport extends GuiComponent {
 	}
 	
 	@Override
-	public void render(int mouseX, int mouseY, float par3) {
+	public void render(MatrixStack matrices, int mouseX, int mouseY, float par3) {
 		GL11.glEnable(GL11.GL_SCISSOR_TEST);
 		GL11.glScissor((int) (getGuiX()*screenScale),
-				(int) (minecraft.getWindow().getFramebufferHeight() - (getGuiY() + properHeight)*screenScale),
+				(int) (MinecraftClient.getInstance().getWindow().getFramebufferHeight() - (getGuiY() + properHeight)*screenScale),
 				(int) (properWidth*screenScale), (int) (properHeight*screenScale));
 		
 		// Draw the content (child GUIs):
-		super.render(mouseX, mouseY, par3);
+		super.render(matrices, mouseX, mouseY, par3);
 		
 		GL11.glDisable(GL11.GL_SCISSOR_TEST);
 	}

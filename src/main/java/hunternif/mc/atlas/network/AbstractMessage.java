@@ -17,12 +17,11 @@
 
 package hunternif.mc.atlas.network;
 
-import com.google.common.base.Throwables;
-import hunternif.mc.atlas.AntiqueAtlasMod;
 import io.netty.buffer.ByteBuf;
 import net.fabricmc.api.EnvType;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.PacketByteBuf;
+import net.minecraft.network.PacketByteBuf;
+
 import java.io.IOException;
 
 /**

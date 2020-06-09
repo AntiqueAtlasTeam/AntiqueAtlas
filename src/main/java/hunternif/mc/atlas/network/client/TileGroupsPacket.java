@@ -11,15 +11,16 @@ import hunternif.mc.atlas.network.AbstractMessage.AbstractClientMessage;
 import net.fabricmc.api.EnvType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.util.PacketByteBuf;
+import net.minecraft.network.PacketByteBuf;
 import net.minecraft.util.registry.Registry;
+import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.dimension.DimensionType;
 
 
 public class TileGroupsPacket extends AbstractClientMessage<TileGroupsPacket> {
 
 	public int atlasID;
-	public DimensionType dimension;
+	public RegistryKey<DimensionType> dimension;
 	public ArrayList<TileGroup> tileGroups;
 
 	public static final int TILE_GROUPS_PER_PACKET = 100;
@@ -28,7 +29,7 @@ public class TileGroupsPacket extends AbstractClientMessage<TileGroupsPacket> {
 		tileGroups = new ArrayList<TileGroup>();
 	}
 	
-	public TileGroupsPacket(ArrayList<TileGroup> tileGroups, int atlasID, DimensionType dimension) {
+	public TileGroupsPacket(ArrayList<TileGroup> tileGroups, int atlasID, RegistryKey<DimensionType> dimension) {
 		this.tileGroups = tileGroups;
 		this.atlasID = atlasID;
 		this.dimension = dimension;
@@ -37,7 +38,7 @@ public class TileGroupsPacket extends AbstractClientMessage<TileGroupsPacket> {
 	@Override
 	protected void read(PacketByteBuf buffer) throws IOException {
 		atlasID = buffer.readVarInt();
-		dimension = Registry.DIMENSION.get(buffer.readVarInt());
+		dimension = RegistryKey.of(Registry.DIMENSION_TYPE_KEY, buffer.readIdentifier());
 		int length = buffer.readVarInt();
 		tileGroups = new ArrayList<TileGroup>(length);
 		for (int i = 0; i < length; i++) {
@@ -50,7 +51,7 @@ public class TileGroupsPacket extends AbstractClientMessage<TileGroupsPacket> {
 	@Override
 	protected void write(PacketByteBuf buffer) throws IOException {
 		buffer.writeVarInt(atlasID);
-		buffer.writeVarInt(Registry.DIMENSION.getRawId(dimension));
+		buffer.writeIdentifier(dimension.getValue());
 		buffer.writeVarInt(tileGroups.size());
 		for (TileGroup t : tileGroups) {
 			CompoundTag me = new CompoundTag();

@@ -21,7 +21,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.PacketByteBuf;
+import net.minecraft.network.PacketByteBuf;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraft.world.dimension.DimensionType;
@@ -160,7 +160,6 @@ public class PacketDispatcher {
 	/**
 	 * Send this message to the server.
 	 */
-	@Environment(EnvType.CLIENT)
 	public static void sendToServer(AbstractMessage<?> message) {
 		ClientSidePacketRegistry.INSTANCE.sendToServer(
 				packets.inverse().get(message.getClass()),

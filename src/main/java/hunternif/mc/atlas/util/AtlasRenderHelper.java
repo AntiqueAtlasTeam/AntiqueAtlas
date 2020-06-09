@@ -1,13 +1,17 @@
 package hunternif.mc.atlas.util;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.BufferBuilder;
 import net.minecraft.client.render.Tessellator;
 
 import net.minecraft.client.render.VertexFormats;
+import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.Identifier;
 import org.lwjgl.opengl.GL11;
 
+@Environment(EnvType.CLIENT)
 public class AtlasRenderHelper {
 	public static void drawTexturedRect(Identifier texture, double x, double y, double u, double v, int width, int height, int imageWidth, int imageHeight, double scaleX, double scaleY) {
 		MinecraftClient.getInstance().getTextureManager().bindTexture(texture);
@@ -35,7 +39,7 @@ public class AtlasRenderHelper {
 		drawTexturedRect(texture, x, y, 0, 0, width, height, width, height, scaleX, scaleY);
 	}
 
-	public static void drawFullTexture(Identifier texture, double x, double y, int width, int height) {
+	public static void drawFullTexture(MatrixStack matrices, Identifier texture, double x, double y, int width, int height) {
 		drawFullTexture(texture, x, y, width, height, 1, 1);
 	}
 

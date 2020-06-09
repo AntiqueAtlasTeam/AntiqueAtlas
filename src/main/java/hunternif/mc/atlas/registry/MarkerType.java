@@ -4,13 +4,16 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
+import com.mojang.serialization.Lifecycle;
 import hunternif.mc.atlas.AntiqueAtlasMod;
 import hunternif.mc.atlas.util.BitMatrix;
 import hunternif.mc.atlas.util.Log;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.client.texture.NativeImage;
-import net.minecraft.client.texture.SpriteAtlasTexture;
 import net.minecraft.client.texture.TextureManager;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.registry.*;
 import org.apache.commons.io.IOUtils;
 
 import java.io.IOException;
@@ -20,6 +23,8 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.resource.Resource;
 
 public class MarkerType {
+	public static final RegistryKey<Registry<MarkerType>> KEY = RegistryKey.ofRegistry(AntiqueAtlasMod.id("marker"));
+	public static final DefaultedRegistry<MarkerType> REGISTRY = new DefaultedRegistry<>(AntiqueAtlasMod.id("red_x_small").toString(), KEY, Lifecycle.experimental());
 
 	private Identifier[] icons;
 	private BitMatrix[] iconPixels;
@@ -42,6 +47,21 @@ public class MarkerType {
 	
 	public MarkerType(Identifier... icons) {
 		this.icons = icons;
+	}
+
+	public static void register(Identifier location, MarkerType type) {
+		if (REGISTRY.containsId(location)) {
+			int id = REGISTRY.getRawId(type);
+			REGISTRY.set(id, RegistryKey.of(KEY, location), type);
+		} else {
+			REGISTRY.add(RegistryKey.of(KEY, location), type);
+		}
+	}
+
+	public static Identifier getLoc(String type) {
+		if(!type.contains(":"))
+			type = AntiqueAtlasMod.ID + ":" + type;
+		return new Identifier(type);
 	}
 
 	public boolean isTechnical() {
@@ -166,6 +186,7 @@ public class MarkerType {
 		return new MarkerRenderInfo(icon, x, y, size, size);
 	}
 
+	@Environment(EnvType.CLIENT)
 	public void initMips() {
 		iconSizes = new int[icons.length];
 		iconPixels = new BitMatrix[icons.length];
@@ -173,7 +194,7 @@ public class MarkerType {
 		for (int i = 0; i < icons.length; i++) {
 			iconSizes[i] = -1;
 			if (icons[i] == null) {
-				Log.warn("Marker %s -- Texture location is null at index %d!", MarkerRegistry.getId(this).toString(), i);
+				Log.warn("Marker %s -- Texture location is null at index %d!", MarkerType.REGISTRY.getId(this).toString(), i);
 			}
 
 			Resource iresource = null;
@@ -188,7 +209,7 @@ public class MarkerType {
 				for (int x = 0; x < bufferedimage.getWidth(); x++) {
 					for (int y = 0; y < bufferedimage.getHeight(); y++) {
 						
-						int color = bufferedimage.getPixelRgba(x, y);
+						int color = bufferedimage.getPixelColor(x, y);
 						int alpha = (color >> 24) & 0xff;
 						
 						if(alpha >= ALPHA_THRESHOLD) {
@@ -212,7 +233,7 @@ public class MarkerType {
 				iconPixels[i] = matrix;
 			} catch (IOException e) {
 				Log.warn(e, "Marker %s -- Error getting texture size data for index %d - %s",
-						MarkerRegistry.getId(this).toString(), i, icons[i].toString());
+								MarkerType.REGISTRY.getId(this).toString(), i, icons[i].toString());
 			} finally {
 				if (bufferedimage != null) {
 					bufferedimage.close();
@@ -340,7 +361,7 @@ public class MarkerType {
 			if(object.entrySet().size() == 0)
 				return;
 			
-			String typeName = MarkerRegistry.getId(type).toString();
+			Identifier typeName = MarkerType.REGISTRY.getId(type);
 			String workingOn = NONE;
 			try {
 				if(object.has(ICONS) && object.get(ICONS).isJsonArray()) {

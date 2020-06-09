@@ -1,18 +1,14 @@
 package hunternif.mc.atlas.marker;
 
 import hunternif.mc.atlas.AntiqueAtlasMod;
-import hunternif.mc.atlas.RegistrarAntiqueAtlas;
-import hunternif.mc.atlas.SettingsConfig;
 import hunternif.mc.atlas.api.AtlasAPI;
 import hunternif.mc.atlas.item.ItemAtlas;
 import hunternif.mc.atlas.mixinhooks.EntityHooksAA;
-import hunternif.mc.atlas.registry.MarkerRegistry;
 import hunternif.mc.atlas.registry.MarkerType;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.Identifier;
+import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.World;
 import net.minecraft.world.dimension.DimensionType;
 import java.util.List;
@@ -78,7 +74,7 @@ public class NetherPortalWatcher {
 				// player.worldObj.provider.dimensionId is the dimension of origin
 				DimensionType originDimension = player.getEntityWorld().getDimension().getType();
 				Log.info("Player %s left the %s", player.getCommandSource().getName(),
-						Registry.DIMENSION.getId(originDimension));
+						Registry.DIMENSION_TYPE.getId(originDimension));
 				teleportingPlayersOrigin.put(entity.getEntityId(), originDimension);
 				// TODO Check what is the target dimension
 				addPortalMarkerIfNone(player, originDimension);
@@ -88,16 +84,16 @@ public class NetherPortalWatcher {
 	
 	/** Put the Portal marker at the player's current coordinates into all
 	 * atlases that he is carrying, if the same marker is not already there. */
-	private void addPortalMarkerIfNone(PlayerEntity player, DimensionType dimension) {
-		if (!SettingsConfig.gameplay.autoNetherPortalMarkers || player.getEntityWorld().isClient) {
+	private void addPortalMarkerIfNone(PlayerEntity player, RegistryKey<DimensionType> dimension) {
+		if (!AntiqueAtlasMod.CONFIG.gameplay.autoNetherPortalMarkers || player.getEntityWorld().isClient) {
 			return;
 		}
 
 		// Due to switching dimensions this player entity's worldObj is lagging.
 		// We need the very specific dimension each time.
-		World world = ((ServerWorld) player.getEntityWorld()).getServer().getWorld(dimension);
+		World world = player.getEntityWorld();
 
-		if (!SettingsConfig.gameplay.itemNeeded) {
+		if (!AntiqueAtlasMod.CONFIG.gameplay.itemNeeded) {
 			addPortalMarkerIfNone(player, world, dimension, player.getUuid().hashCode());
 			return;
 		}
@@ -109,8 +105,8 @@ public class NetherPortalWatcher {
 		}
 	}
 
-	private void addPortalMarkerIfNone(PlayerEntity player, World world, DimensionType dimension, int atlasID) {
-		MarkerType netherPortalType = MarkerRegistry.find(new Identifier("antiqueatlas:nether_portal"), false);
+	private void addPortalMarkerIfNone(PlayerEntity player, World world, RegistryKey<DimensionType> dimension, int atlasID) {
+		MarkerType netherPortalType = MarkerType.REGISTRY.get(AntiqueAtlasMod.id("nether_portal"));
 		if (netherPortalType == null) {
 			return;
 		}
@@ -134,7 +130,7 @@ public class NetherPortalWatcher {
 		}
 
 		// Marker not found, place new one:
-		AtlasAPI.markers.putMarker(world, false, atlasID, MarkerRegistry.getId(netherPortalType).toString(), "gui.antiqueatlas.marker.netherPortal", x, z);
+		AtlasAPI.markers.putMarker(world, false, atlasID, MarkerType.REGISTRY.getId(netherPortalType).toString(), "gui.antiqueatlas.marker.netherPortal", x, z);
 	}
 	
 	private static boolean isEntityInPortal(Entity entity) {

@@ -1,21 +1,18 @@
 package hunternif.mc.atlas.core;
 
 import hunternif.mc.atlas.ext.ExtTileIdMap;
-
-import java.util.HashMap;
-import java.util.Map;
-
 import net.minecraft.block.Block;
-
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
-import net.minecraft.world.biome.BiomeArray;
-import net.minecraft.world.biome.Biomes;
+import net.minecraft.world.biome.source.BiomeArray;
 import net.minecraft.world.chunk.Chunk;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Detects seas of lava, cave ground and cave walls in the Nether.
@@ -33,7 +30,6 @@ public class BiomeDetectorNether extends BiomeDetectorBase implements IBiomeDete
 	
 	@Override
 	public TileKind getBiomeID(World world, Chunk chunk) {
-		int biomesCount = Registry.BIOME.getIds().size();
 		BiomeArray chunkBiomes = chunk.getBiomeArray();
 		Map<Biome, Integer> biomeOccurrences = new HashMap<>(Registry.BIOME.getIds().size());
 		
@@ -41,12 +37,11 @@ public class BiomeDetectorNether extends BiomeDetectorBase implements IBiomeDete
 		int lavaOccurences = 0;
 		int groundOccurences = 0;
 		
-		Biome hellID = Biomes.NETHER;
 
 		for (int x = 0; x < 16; x++) {
 			for (int z = 0; z < 16; z++) {
-				Biome biomeID = chunkBiomes.getStoredBiome(x, 0, z);
-				if (biomeID == hellID) {
+				Biome biome = chunkBiomes.getBiomeForNoiseGen(x, 0, z);
+				if (biome.getCategory() == Biome.Category.NETHER) {
 					// The Nether!
 					Block netherBlock = chunk.getBlockState(new BlockPos(x, lavaSeaLevel, z)).getBlock();
 					if (netherBlock == Blocks.LAVA) {
@@ -57,15 +52,15 @@ public class BiomeDetectorNether extends BiomeDetectorBase implements IBiomeDete
 							groundOccurences ++; // ground
 						} else {
 							// cave walls
-							biomeOccurrences.put(biomeID,
-									biomeOccurrences.getOrDefault(biomeID, 0) + 1
+							biomeOccurrences.put(biome,
+									biomeOccurrences.getOrDefault(biome, 0) + 1
 							);
 						}
 					}
 				} else {
 					// In case there are custom biomes "modded in":
-					biomeOccurrences.put(biomeID,
-							biomeOccurrences.getOrDefault(biomeID, 0) + priorityForBiome(biomeID)
+					biomeOccurrences.put(biome,
+							biomeOccurrences.getOrDefault(biome, 0) + priorityForBiome(biome)
 					);
 				}
 			}

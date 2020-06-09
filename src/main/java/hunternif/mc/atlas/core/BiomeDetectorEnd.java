@@ -1,10 +1,6 @@
 package hunternif.mc.atlas.core;
 
 import hunternif.mc.atlas.ext.ExtTileIdMap;
-
-import java.util.HashMap;
-import java.util.Map;
-
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.util.math.BlockPos;
@@ -12,9 +8,12 @@ import net.minecraft.util.registry.Registry;
 import net.minecraft.world.Heightmap;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
-import net.minecraft.world.biome.BiomeArray;
 import net.minecraft.world.biome.Biomes;
+import net.minecraft.world.biome.source.BiomeArray;
 import net.minecraft.world.chunk.Chunk;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Detects seas of lava, cave ground and cave walls in the Nether.
@@ -36,7 +35,7 @@ public class BiomeDetectorEnd extends BiomeDetectorBase implements IBiomeDetecto
 		
 		for (int x = 0; x < 16; x++) {
 			for (int z = 0; z < 16; z++) {
-				Biome biomeID = chunkBiomes.getStoredBiome(x, 0, z);
+				Biome biomeID = chunkBiomes.getBiomeForNoiseGen(x, 0, z);
 				if (biomeID == endID) {
 					// The End!
 					int top = chunk.getHeightmap(Heightmap.Type.MOTION_BLOCKING_NO_LEAVES).get(x, z);

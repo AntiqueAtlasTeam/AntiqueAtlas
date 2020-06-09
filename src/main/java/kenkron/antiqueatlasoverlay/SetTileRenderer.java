@@ -1,7 +1,11 @@
 package kenkron.antiqueatlasoverlay;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
+import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.render.VertexFormat;
 import net.minecraft.client.render.VertexFormats;
+import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.Identifier;
 import org.lwjgl.opengl.GL11;
 
@@ -17,12 +21,15 @@ import net.minecraft.client.render.Tessellator;
  * sorting the draw commands by texture, then
  * rendering all of the same textures of a map at once without re-binding.
  */
-class SetTileRenderer {
+@Environment(EnvType.CLIENT)
+class SetTileRenderer extends DrawableHelper {
 
     private final HashMap<Identifier, ArrayList<TileCorner>> subjects = new HashMap<>();
-    private int tileHalfSize = 8;
+    private final MatrixStack matrices;
+    private final int tileHalfSize;
 
-    public SetTileRenderer(int tileHalfSize) {
+    public SetTileRenderer(MatrixStack matrices, int tileHalfSize) {
+        this.matrices = matrices;
         this.tileHalfSize = tileHalfSize;
     }
 
@@ -34,30 +41,17 @@ class SetTileRenderer {
     public void draw() {
         for (Identifier key : subjects.keySet()) {
             ArrayList<TileCorner> tca = subjects.get(key);
-            //Effectively a call to GL11.glBindTexture(GL11.GL_TEXTURE_2D, p_94277_0_);
+
             MinecraftClient.getInstance().getTextureManager().bindTexture(key);
 
-            Tessellator tessellator = Tessellator.getInstance();
-            BufferBuilder renderer = tessellator.getBuffer();
-            renderer.begin(GL11.GL_QUADS, VertexFormats.POSITION_TEXTURE);
             for (TileCorner tc : tca) {
                 drawInlineAutotileCorner(tc.x, tc.y, tc.u, tc.v);
             }
-            tessellator.draw();
         }
     }
 
     private void drawInlineAutotileCorner(int x, int y, int u, int v) {
-        float minU = u / 4f;
-        float maxU = (u + 1) / 4f;
-        float minV = v / 6f;
-        float maxV = (v + 1) / 6f;
-        Tessellator tessellator = Tessellator.getInstance();
-        BufferBuilder renderer = tessellator.getBuffer();
-        renderer.vertex(x + tileHalfSize, y + tileHalfSize, 0).texture(maxU, maxV).next();
-        renderer.vertex(x + tileHalfSize, y, 0).texture(maxU, minV).next();
-        renderer.vertex(x, y, 0).texture(minU, minV).next();
-        renderer.vertex(x, y + tileHalfSize, 0).texture(minU, maxV).next();
+        drawTexture(this.matrices, x, y, tileHalfSize, tileHalfSize, u, v, 1, 1, 4, 6);
     }
 
     public class TileCorner {

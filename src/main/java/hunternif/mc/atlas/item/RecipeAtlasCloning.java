@@ -29,8 +29,8 @@ public class RecipeAtlasCloning implements CraftingRecipe {
 		int i = 0; // number of empty atlases
 		ItemStack filledAtlas = ItemStack.EMPTY;
 
-		for (int j = 0; j < inv.getInvSize(); ++j) {
-			ItemStack stack = inv.getInvStack(j);
+		for (int j = 0; j < inv.size(); ++j) {
+			ItemStack stack = inv.getStack(j);
 
 			if (!stack.isEmpty()) {
 				if (stack.getItem() == RegistrarAntiqueAtlas.ATLAS) {
@@ -55,8 +55,8 @@ public class RecipeAtlasCloning implements CraftingRecipe {
 		int i = 0; // number of new copies
 		ItemStack filledAtlas = ItemStack.EMPTY;
 
-		for (int j = 0; j < inv.getInvSize(); ++j) {
-			ItemStack stack = inv.getInvStack(j);
+		for (int j = 0; j < inv.size(); ++j) {
+			ItemStack stack = inv.getStack(j);
 
 			if (!stack.isEmpty()) {
 				if (stack.getItem() == RegistrarAntiqueAtlas.ATLAS) {

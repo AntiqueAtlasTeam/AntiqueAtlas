@@ -1,6 +1,6 @@
 package hunternif.mc.atlas.api;
 
-import hunternif.mc.atlas.SettingsConfig;
+import hunternif.mc.atlas.AntiqueAtlasMod;
 import hunternif.mc.atlas.api.impl.MarkerApiImpl;
 import hunternif.mc.atlas.api.impl.TileApiImpl;
 import hunternif.mc.atlas.item.ItemAtlas;
@@ -46,7 +46,7 @@ public class AtlasAPI {
 	/** Convenience method that returns a list of atlas IDs for all atlas items
 	 * the player is currently carrying. **/
 	public static List<Integer> getPlayerAtlases(PlayerEntity player) {
-		if (!SettingsConfig.gameplay.itemNeeded) {
+		if (!AntiqueAtlasMod.CONFIG.gameplay.itemNeeded) {
 			return Collections.singletonList(player.getUuid().hashCode());
 		}
 

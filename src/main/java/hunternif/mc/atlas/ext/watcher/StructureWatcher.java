@@ -33,12 +33,12 @@ public class StructureWatcher {
             return;
 
         for (IStructureWatcher watcher : structureWatchers)
-            if (watcher.isDimensionValid(world.dimension.getType())) {
+            if (watcher.isDimensionValid(world.getDimension())) {
                 CompoundTag structureData = watcher.getStructureData(world);
                 if (structureData != null) {
                     Set<Pair<WatcherPos, String>> visited = watcher.visitStructure(world, structureData);
                     for (Pair<WatcherPos, String> visit : visited)
-                        Log.info("Visited %s in dimension %s at %s", visit.getRight(), world.dimension.getType().toString(), visit.getLeft().toString());
+                        Log.info("Visited %s in dimension %s at %s", visit.getRight(), world.getDimension().toString(), visit.getLeft().toString());
                 }
             }
     }

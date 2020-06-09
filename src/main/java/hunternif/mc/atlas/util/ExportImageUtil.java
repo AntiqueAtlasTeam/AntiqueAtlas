@@ -1,12 +1,12 @@
 package hunternif.mc.atlas.util;
 
+import hunternif.mc.atlas.AntiqueAtlasMod;
 import hunternif.mc.atlas.client.*;
 import hunternif.mc.atlas.client.gui.ExportUpdateListener;
 import hunternif.mc.atlas.core.DimensionData;
 import hunternif.mc.atlas.marker.DimensionMarkersData;
 import hunternif.mc.atlas.marker.Marker;
 import hunternif.mc.atlas.marker.MarkersData;
-import hunternif.mc.atlas.registry.MarkerRegistry;
 import hunternif.mc.atlas.registry.MarkerRenderInfo;
 import hunternif.mc.atlas.registry.MarkerType;
 import net.fabricmc.api.EnvType;
@@ -122,7 +122,7 @@ public class ExportImageUtil {
 			List<Identifier> allTextures = new ArrayList<>(64);
 			allTextures.addAll(BiomeTextureMap.instance().getAllTextures());
 			if (showMarkers) {
-				for (MarkerType type : MarkerRegistry.iterable()) {
+				for (MarkerType type : MarkerType.REGISTRY) {
 					allTextures.addAll(Arrays.asList( type.getAllIcons() ));
 //					allTextures.add(type.getIcon());
 				}
@@ -192,7 +192,7 @@ public class ExportImageUtil {
 			List<Identifier> allTextures = new ArrayList<>(64);
 			allTextures.addAll(BiomeTextureMap.instance().getAllTextures());
 			if (showMarkers) {
-				for (MarkerType type : MarkerRegistry.iterable()) {
+				for (MarkerType type : MarkerType.REGISTRY) {
 					allTextures.addAll(Arrays.asList( type.getAllIcons() ));
 //					allTextures.add(type.getIcon());
 				}
@@ -394,7 +394,7 @@ public class ExportImageUtil {
 				}
 				
 				for (Marker marker : markers) {
-					MarkerType type = MarkerRegistry.find(marker.getType());
+					MarkerType type = MarkerType.REGISTRY.get(AntiqueAtlasMod.id(marker.getType()));
 					if (type == null){
 						Log.warn("Could not find marker data for type: %s\n", marker.getType());
 						continue;

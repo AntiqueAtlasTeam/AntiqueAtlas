@@ -1,7 +1,6 @@
 package hunternif.mc.atlas.network.bidirectional;
 
 import hunternif.mc.atlas.AntiqueAtlasMod;
-import hunternif.mc.atlas.SettingsConfig;
 import hunternif.mc.atlas.api.AtlasAPI;
 import hunternif.mc.atlas.core.AtlasData;
 import hunternif.mc.atlas.core.TileKind;
@@ -10,9 +9,9 @@ import hunternif.mc.atlas.network.AbstractMessage;
 import hunternif.mc.atlas.util.Log;
 import net.fabricmc.api.EnvType;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.PacketByteBuf;
+import net.minecraft.network.PacketByteBuf;
 import net.minecraft.util.registry.Registry;
-import net.minecraft.world.biome.Biome;
+import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.dimension.DimensionType;
 
 import java.io.IOException;
@@ -24,12 +23,12 @@ import java.io.IOException;
  */
 public class PutTilePacket extends AbstractMessage<PutTilePacket> {
 	private int atlasID, x, z;
-	private DimensionType dimension;
+	private RegistryKey<DimensionType> dimension;
 	private TileKind kind;
 	
 	public PutTilePacket() {}
 	
-	public PutTilePacket(int atlasID, DimensionType dimension, int x, int z, TileKind kind) {
+	public PutTilePacket(int atlasID, RegistryKey<DimensionType> dimension, int x, int z, TileKind kind) {
 		this.atlasID = atlasID;
 		this.dimension = dimension;
 		this.x = x;
@@ -40,7 +39,7 @@ public class PutTilePacket extends AbstractMessage<PutTilePacket> {
 	@Override
 	protected void read(PacketByteBuf buffer) throws IOException {
 		atlasID = buffer.readVarInt();
-		dimension = Registry.DIMENSION.get(buffer.readVarInt());
+		dimension = RegistryKey.of(Registry.DIMENSION_TYPE_KEY, buffer.readIdentifier());
 		x = buffer.readVarInt();
 		z = buffer.readVarInt();
 		kind = TileKindFactory.get(buffer.readVarInt());
@@ -49,7 +48,7 @@ public class PutTilePacket extends AbstractMessage<PutTilePacket> {
 	@Override
 	protected void write(PacketByteBuf buffer) throws IOException {
 		buffer.writeVarInt(atlasID);
-		buffer.writeVarInt(Registry.DIMENSION.getRawId(dimension));
+		buffer.writeIdentifier(dimension.getValue());
 		buffer.writeVarInt(x);
 		buffer.writeVarInt(z);
 		buffer.writeVarInt(kind.getId());
@@ -59,7 +58,7 @@ public class PutTilePacket extends AbstractMessage<PutTilePacket> {
 	protected void process(PlayerEntity player, EnvType side) {
 		if (side == EnvType.SERVER) {
 			// Make sure it's this player's atlas :^)
-			if (SettingsConfig.gameplay.itemNeeded && !AtlasAPI.getPlayerAtlases(player).contains(atlasID)) {
+			if (AntiqueAtlasMod.CONFIG.gameplay.itemNeeded && !AtlasAPI.getPlayerAtlases(player).contains(atlasID)) {
 				Log.warn("Player %s attempted to modify someone else's Atlas #%d",
 						player.getCommandSource().getName(), atlasID);
 				return;
