@@ -238,26 +238,34 @@ public class OverlayRenderer extends DrawableHelper {
     private void drawMarkersData(MatrixStack matrices, DimensionMarkersData markersData, DimensionData biomeData) {
         //this will be large enough to include markers that are larger than tiles
         Rect mcchunks = getChunkCoverage(player.getPos());
+        Rect chunks = new Rect((int) Math.floor(mcchunks.minX / MarkersData.CHUNK_STEP),
+                (int) Math.floor(mcchunks.minY / MarkersData.CHUNK_STEP),
+                (int) Math.ceil(mcchunks.maxX / MarkersData.CHUNK_STEP),
+                (int) Math.ceil(mcchunks.maxY / MarkersData.CHUNK_STEP));
 
         int shapeMiddleX = (int) ((GuiAtlas.WIDTH * 1.5F) / 4F);
         int shapeMiddleY = (int) ((GuiAtlas.HEIGHT * 1.5F) / 4F);
         Vec3d chunkPosition = player.getPos().multiply(1D / CHUNK_SIZE, 1D / CHUNK_SIZE, 1D / CHUNK_SIZE);
 
-        for (int x = mcchunks.minX; x <= mcchunks.maxX; x++) {
-            for (int z = mcchunks.minY; z <= mcchunks.maxY; z++) {
+        for (int x = chunks.minX; x <= chunks.maxX; x++) {
+            for (int z = chunks.minY; z <= chunks.maxY; z++) {
                 //A marker chunk is greater than a Minecraft chunk
                 List<Marker> markers = markersData.getMarkersAtChunk(
-                        Math.round(x / MarkersData.CHUNK_STEP),
-                        Math.round(z / MarkersData.CHUNK_STEP));
+                        Math.round(x),
+                        Math.round(z));
                 if (markers == null)
                     continue;
                 for (Marker marker : markers) {
-                    int relativeChunkPositionX = (int) (marker.getX() / 2.0
-                                                + mcchunks.minX - player.getX());
-                    int relativeChunkPositionY = (int) (marker.getZ() / 2.0
-                                                + mcchunks.minY - player.getZ());
+                    float relativeChunkPositionX = (float) (marker.getChunkX()
+                            - chunkPosition.x);
+                    float relativeChunkPositionY = (float) (marker.getChunkZ()
+                             - chunkPosition.z);
 
-                    renderMarker(matrices, marker, relativeChunkPositionX, relativeChunkPositionY, biomeData);
+                    renderMarker(matrices, marker,
+                            shapeMiddleX
+                                    + (int) Math.floor(relativeChunkPositionX * 8),
+                            shapeMiddleY
+                                    + (int) Math.floor(relativeChunkPositionY * 8), biomeData);
                 }
             }
         }
@@ -273,8 +281,10 @@ public class OverlayRenderer extends DrawableHelper {
         MarkerRenderInfo info = type.getRenderInfo(1, AntiqueAtlasMod.CONFIG.appearance.tileSize, 1);
         MinecraftClient.getInstance().getTextureManager().bindTexture(info.tex);
         drawTexture(matrices,
-                x - GuiAtlas.MARKER_SIZE / 2,
-                y - GuiAtlas.MARKER_SIZE / 2,
+                x - GuiAtlas.MARKER_SIZE / 4 + 1,
+                y - GuiAtlas.MARKER_SIZE / 4 + 4,
+                GuiAtlas.MARKER_SIZE / 2,
+                GuiAtlas.MARKER_SIZE / 2,
                 0,
                 0,
                 GuiAtlas.MARKER_SIZE,
