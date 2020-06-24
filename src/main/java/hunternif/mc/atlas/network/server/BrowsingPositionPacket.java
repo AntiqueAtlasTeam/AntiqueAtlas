@@ -39,7 +39,7 @@ public class BrowsingPositionPacket extends AbstractServerMessage<BrowsingPositi
 	@Override
 	protected void read(PacketByteBuf buffer) throws IOException {
 		atlasID = buffer.readVarInt();
-		dimension = Registry.DIMENSION.get(buffer.readVarInt());
+		dimension = Registry.DIMENSION_TYPE.get(buffer.readVarInt());
 		x = buffer.readVarInt();
 		y = buffer.readVarInt();
 		zoom = (double)buffer.readVarInt() / ZOOM_SCALE_FACTOR;
@@ -48,7 +48,7 @@ public class BrowsingPositionPacket extends AbstractServerMessage<BrowsingPositi
 	@Override
 	protected void write(PacketByteBuf buffer) throws IOException {
 		buffer.writeVarInt(atlasID);
-		buffer.writeVarInt(Registry.DIMENSION.getRawId(dimension));
+		buffer.writeVarInt(Registry.DIMENSION_TYPE.getRawId(dimension));
 		buffer.writeVarInt(x);
 		buffer.writeVarInt(y);
 		buffer.writeVarInt((int)Math.round(zoom * ZOOM_SCALE_FACTOR));

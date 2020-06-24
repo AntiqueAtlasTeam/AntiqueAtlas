@@ -6,7 +6,6 @@ import hunternif.mc.atlas.client.gui.core.GuiToggleButton;
 import hunternif.mc.atlas.util.AtlasRenderHelper;
 import java.util.Collections;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.render.GuiLighting;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
@@ -53,7 +52,7 @@ public class GuiBookmarkButton extends GuiToggleButton {
 	@Override
 	public void render(int mouseX, int mouseY, float partialTick) {
 		GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
-		GuiLighting.disable();
+//		GuiLighting.disable();
 
 		// Render background:
 		int u = colorIndex * WIDTH;

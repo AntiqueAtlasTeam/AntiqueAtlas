@@ -57,7 +57,7 @@ public class MarkersPacket extends AbstractClientMessage<MarkersPacket> {
 	@Override
 	public void read(PacketByteBuf buffer) throws IOException {
 		atlasID = buffer.readVarInt();
-		dimension = Registry.DIMENSION.get(buffer.readVarInt());
+		dimension = Registry.DIMENSION_TYPE.get(buffer.readVarInt());
 		int typesLength = buffer.readVarInt();
 		for (int i = 0; i < typesLength; i++) {
 			String type = buffer.readString(512);
@@ -75,7 +75,7 @@ public class MarkersPacket extends AbstractClientMessage<MarkersPacket> {
 	@Override
 	public void write(PacketByteBuf buffer) throws IOException {
 		buffer.writeVarInt(atlasID);
-		buffer.writeVarInt(Registry.DIMENSION.getRawId(dimension));
+		buffer.writeVarInt(Registry.DIMENSION_TYPE.getRawId(dimension));
 		Set<String> types = markersByType.keySet();
 		buffer.writeVarInt(types.size());
 		for (String type : types) {

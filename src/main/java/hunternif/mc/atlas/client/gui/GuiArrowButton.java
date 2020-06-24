@@ -4,7 +4,6 @@ import com.mojang.blaze3d.platform.GlStateManager;
 import hunternif.mc.atlas.client.Textures;
 import hunternif.mc.atlas.client.gui.core.GuiComponentButton;
 import hunternif.mc.atlas.util.AtlasRenderHelper;
-import net.minecraft.client.render.GuiLighting;
 import org.lwjgl.opengl.GL11;
 
 public class GuiArrowButton extends GuiComponentButton {
@@ -44,7 +43,7 @@ public class GuiArrowButton extends GuiComponentButton {
 
 	@Override
 	public void render(int mouseX, int mouseY, float partialTick) {
-		GuiLighting.disable();
+		//GuiLighting.disable();
 		GlStateManager.enableBlend();
 		GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 		

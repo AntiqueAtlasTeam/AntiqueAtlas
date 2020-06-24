@@ -5,7 +5,6 @@ import hunternif.mc.atlas.network.client.TilesPacket;
 import hunternif.mc.atlas.util.Log;
 import hunternif.mc.atlas.util.ShortVec2;
 import net.fabricmc.fabric.api.util.NbtType;
-import net.minecraft.client.network.packet.LoginSuccessS2CPacket;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -13,7 +12,6 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.PersistentState;
-import net.minecraft.world.biome.Biome;
 import net.minecraft.world.dimension.DimensionType;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -52,9 +50,9 @@ public class ExtBiomeData extends PersistentState {
 			CompoundTag tag = dimensionMapList.getCompound(d);
 			DimensionType dimensionID;
 			if (tag.contains(TAG_DIMENSION_ID, NbtType.NUMBER)) {
-				dimensionID = Registry.DIMENSION.get(tag.getInt(TAG_DIMENSION_ID));
+				dimensionID = Registry.DIMENSION_TYPE.get(tag.getInt(TAG_DIMENSION_ID));
 			} else {
-				dimensionID = Registry.DIMENSION.get(new Identifier(tag.getString(TAG_DIMENSION_ID)));
+				dimensionID = Registry.DIMENSION_TYPE.get(new Identifier(tag.getString(TAG_DIMENSION_ID)));
 			}
 			Map<ShortVec2, Integer> biomeMap = getBiomesInDimension(dimensionID);
 			int[] intArray = tag.getIntArray(TAG_BIOME_IDS);
@@ -70,7 +68,7 @@ public class ExtBiomeData extends PersistentState {
 		ListTag dimensionMapList = new ListTag();
 		for (DimensionType dimension : dimensionMap.keySet()) {
 			CompoundTag tag = new CompoundTag();
-			tag.putString(TAG_DIMENSION_ID, Registry.DIMENSION.getId(dimension).toString());
+			tag.putString(TAG_DIMENSION_ID, Registry.DIMENSION_TYPE.getId(dimension).toString());
 			Map<ShortVec2, Integer> biomeMap = getBiomesInDimension(dimension);
 			int[] intArray = new int[biomeMap.size()*3];
 			int i = 0;

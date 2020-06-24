@@ -85,9 +85,9 @@ public class MarkersData extends PersistentState {
 			CompoundTag tag = dimensionMapList.getCompound(d);
 			DimensionType dimensionID;
 			if (tag.contains(TAG_DIMENSION_ID, NbtType.NUMBER)) {
-				dimensionID = Registry.DIMENSION.get(tag.getInt(TAG_DIMENSION_ID));
+				dimensionID = Registry.DIMENSION_TYPE.get(tag.getInt(TAG_DIMENSION_ID));
 			} else {
-				dimensionID = Registry.DIMENSION.get(new Identifier(tag.getString(TAG_DIMENSION_ID)));
+				dimensionID = Registry.DIMENSION_TYPE.get(new Identifier(tag.getString(TAG_DIMENSION_ID)));
 			}
 			ListTag tagList = tag.getList(TAG_MARKERS, NbtType.COMPOUND);
 			for (int i = 0; i < tagList.size(); i++) {
@@ -133,7 +133,7 @@ public class MarkersData extends PersistentState {
 		ListTag dimensionMapList = new ListTag();
 		for (DimensionType dimension : dimensionMap.keySet()) {
 			CompoundTag tag = new CompoundTag();
-			tag.putString(TAG_DIMENSION_ID, Registry.DIMENSION.getId(dimension).toString());
+			tag.putString(TAG_DIMENSION_ID, Registry.DIMENSION_TYPE.getId(dimension).toString());
 			DimensionMarkersData data = getMarkersDataInDimension(dimension);
 			ListTag tagList = new ListTag();
 			for (Marker marker : data.getAllMarkers()) {

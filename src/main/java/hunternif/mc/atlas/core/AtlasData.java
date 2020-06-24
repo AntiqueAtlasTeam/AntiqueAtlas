@@ -77,9 +77,9 @@ public class AtlasData extends PersistentState {
 			CompoundTag dimTag = dimensionMapList.getCompound(d);
 			DimensionType dimensionID;
 			if (dimTag.contains(TAG_DIMENSION_ID, NbtType.NUMBER)) {
-				dimensionID = Registry.DIMENSION.get(dimTag.getInt(TAG_DIMENSION_ID));
+				dimensionID = Registry.DIMENSION_TYPE.get(dimTag.getInt(TAG_DIMENSION_ID));
 			} else {
-				dimensionID = Registry.DIMENSION.get(new Identifier(dimTag.getString(TAG_DIMENSION_ID)));
+				dimensionID = Registry.DIMENSION_TYPE.get(new Identifier(dimTag.getString(TAG_DIMENSION_ID)));
 			}
 			ListTag dimensionTag = (ListTag) dimTag.get(TAG_VISITED_CHUNKS);
 			DimensionData dimData = getDimensionData(dimensionID);
@@ -105,9 +105,9 @@ public class AtlasData extends PersistentState {
 			CompoundTag dimTag = dimensionMapList.getCompound(d);
 			DimensionType dimensionID;
 			if (dimTag.contains(TAG_DIMENSION_ID, NbtType.NUMBER)) {
-				dimensionID = Registry.DIMENSION.get(dimTag.getInt(TAG_DIMENSION_ID));
+				dimensionID = Registry.DIMENSION_TYPE.get(dimTag.getInt(TAG_DIMENSION_ID));
 			} else {
-				dimensionID = Registry.DIMENSION.get(new Identifier(dimTag.getString(TAG_DIMENSION_ID)));
+				dimensionID = Registry.DIMENSION_TYPE.get(new Identifier(dimTag.getString(TAG_DIMENSION_ID)));
 			}
 			int[] intArray = dimTag.getIntArray(TAG_VISITED_CHUNKS);
 			DimensionData dimData = getDimensionData(dimensionID);
@@ -136,7 +136,7 @@ public class AtlasData extends PersistentState {
 		compound.putInt(TAG_VERSION, VERSION);
 		for (Entry<DimensionType, DimensionData> dimensionEntry : dimensionMap.entrySet()) {
 			CompoundTag dimTag = new CompoundTag();
-			dimTag.putString(TAG_DIMENSION_ID, Registry.DIMENSION.getId(dimensionEntry.getKey()).toString());
+			dimTag.putString(TAG_DIMENSION_ID, Registry.DIMENSION_TYPE.getId(dimensionEntry.getKey()).toString());
 			DimensionData dimData = dimensionEntry.getValue();
 			if (includeTileData){
 				dimTag.put(TAG_VISITED_CHUNKS, dimData.writeToNBT());

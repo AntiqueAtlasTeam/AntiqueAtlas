@@ -9,8 +9,8 @@ import net.minecraft.util.registry.Registry;
 import net.minecraft.world.Heightmap;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
-import net.minecraft.world.biome.BiomeArray;
 import net.minecraft.world.biome.Biomes;
+import net.minecraft.world.biome.source.BiomeArray;
 import net.minecraft.world.chunk.Chunk;
 
 import java.util.*;
@@ -92,7 +92,7 @@ public class BiomeDetectorBase implements IBiomeDetector {
 
 		for (int x = 0; x < 16; x++) {
 			for (int z = 0; z < 16; z++) {
-				Biome biomeID = chunkBiomes.getStoredBiome(x, 0, z);
+				Biome biomeID = chunkBiomes.getBiomeForNoiseGen(x, 0, z);
 				if (doScanPonds) {
 					int y = chunk.getHeightmap(Heightmap.Type.MOTION_BLOCKING).get(x, z);
 					if (y > 0) {

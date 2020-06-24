@@ -32,7 +32,7 @@ public class DimensionUpdatePacket extends AbstractClientMessage<DimensionUpdate
 
 	public DimensionUpdatePacket(int atlasID, DimensionType dimension) {
 		this.atlasID = atlasID;
-		this.dimensionId = Registry.DIMENSION.getId(dimension);
+		this.dimensionId = Registry.DIMENSION_TYPE.getId(dimension);
 		tileCount = 0;
 		tileData = Unpooled.buffer();
 	}
@@ -76,7 +76,7 @@ public class DimensionUpdatePacket extends AbstractClientMessage<DimensionUpdate
 
 	@Override
 	protected void process(PlayerEntity player, EnvType side) {
-		DimensionType dimension = Registry.DIMENSION.get(dimensionId);
+		DimensionType dimension = Registry.DIMENSION_TYPE.get(dimensionId);
 		if (dimension == null) {
 			// TODO FABRIC
 			return;

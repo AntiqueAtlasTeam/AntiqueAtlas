@@ -40,7 +40,7 @@ public class PutTilePacket extends AbstractMessage<PutTilePacket> {
 	@Override
 	protected void read(PacketByteBuf buffer) throws IOException {
 		atlasID = buffer.readVarInt();
-		dimension = Registry.DIMENSION.get(buffer.readVarInt());
+		dimension = Registry.DIMENSION_TYPE.get(buffer.readVarInt());
 		x = buffer.readVarInt();
 		z = buffer.readVarInt();
 		kind = TileKindFactory.get(buffer.readVarInt());
@@ -49,7 +49,7 @@ public class PutTilePacket extends AbstractMessage<PutTilePacket> {
 	@Override
 	protected void write(PacketByteBuf buffer) throws IOException {
 		buffer.writeVarInt(atlasID);
-		buffer.writeVarInt(Registry.DIMENSION.getRawId(dimension));
+		buffer.writeVarInt(Registry.DIMENSION_TYPE.getRawId(dimension));
 		buffer.writeVarInt(x);
 		buffer.writeVarInt(z);
 		buffer.writeVarInt(kind.getId());

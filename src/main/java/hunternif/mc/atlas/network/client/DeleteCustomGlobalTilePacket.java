@@ -32,14 +32,14 @@ public class DeleteCustomGlobalTilePacket extends AbstractClientMessage<DeleteCu
 	
 	@Override
 	protected void read(PacketByteBuf buffer) throws IOException {
-		dimension = Registry.DIMENSION.get(buffer.readVarInt());
+		dimension = Registry.DIMENSION_TYPE.get(buffer.readVarInt());
 		chunkX = buffer.readInt();
 		chunkZ = buffer.readInt();
 	}
 
 	@Override
 	protected void write(PacketByteBuf buffer) throws IOException {
-		buffer.writeVarInt(Registry.DIMENSION.getRawId(dimension));
+		buffer.writeVarInt(Registry.DIMENSION_TYPE.getRawId(dimension));
 		buffer.writeInt(chunkX);
 		buffer.writeInt(chunkZ);
 	}

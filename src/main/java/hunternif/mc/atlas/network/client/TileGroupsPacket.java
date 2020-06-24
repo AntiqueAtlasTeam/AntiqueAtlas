@@ -37,7 +37,7 @@ public class TileGroupsPacket extends AbstractClientMessage<TileGroupsPacket> {
 	@Override
 	protected void read(PacketByteBuf buffer) throws IOException {
 		atlasID = buffer.readVarInt();
-		dimension = Registry.DIMENSION.get(buffer.readVarInt());
+		dimension = Registry.DIMENSION_TYPE.get(buffer.readVarInt());
 		int length = buffer.readVarInt();
 		tileGroups = new ArrayList<TileGroup>(length);
 		for (int i = 0; i < length; i++) {
@@ -50,7 +50,7 @@ public class TileGroupsPacket extends AbstractClientMessage<TileGroupsPacket> {
 	@Override
 	protected void write(PacketByteBuf buffer) throws IOException {
 		buffer.writeVarInt(atlasID);
-		buffer.writeVarInt(Registry.DIMENSION.getRawId(dimension));
+		buffer.writeVarInt(Registry.DIMENSION_TYPE.getRawId(dimension));
 		buffer.writeVarInt(tileGroups.size());
 		for (TileGroup t : tileGroups) {
 			CompoundTag me = new CompoundTag();

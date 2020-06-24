@@ -47,14 +47,14 @@ public class TilesPacket extends AbstractClientMessage<TilesPacket> {
 
 	@Override
 	public void read(PacketByteBuf buffer) throws IOException {
-		dimension = Registry.DIMENSION.get(buffer.readVarInt());
+		dimension = Registry.DIMENSION_TYPE.get(buffer.readVarInt());
 		tileCount = buffer.readVarInt();
 		tileData = buffer.readBytes(tileCount * ENTRY_SIZE_BYTES);
 	}
 
 	@Override
 	public void write(PacketByteBuf buffer) throws IOException {
-		buffer.writeVarInt(Registry.DIMENSION.getRawId(dimension));
+		buffer.writeVarInt(Registry.DIMENSION_TYPE.getRawId(dimension));
 		buffer.writeVarInt(tileCount);
 		buffer.writeBytes(tileData);
 	}
