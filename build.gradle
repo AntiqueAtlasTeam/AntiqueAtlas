@@ -12,6 +12,7 @@ version = project.mod_version
 group = project.maven_group
 
 minecraft {
+	accessWidener = file("src/main/resources/antiqueatlas.accesswidener")
 }
 
 repositories {
@@ -34,19 +35,16 @@ dependencies {
 
 	// Fabric API. This is technically optional, but you probably want it anyway.
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
-	modImplementation "me.zeroeightsix:fiber:${project.fiber_version}"
 	modImplementation "io.github.prospector:modmenu:${project.mod_menu_version}"
 
-	modApi ("me.shedaniel.cloth:config-2:${project.cloth_config_version}") {
-		transitive = false
-	}
-	modApi ("me.shedaniel.cloth:fiber2cloth:${project.fiber_to_cloth_version}") {
+	modImplementation ("me.shedaniel.cloth:config-2:${project.cloth_config_version}") {
 		transitive = false
 	}
 
 	include "me.shedaniel.cloth:config-2:${project.cloth_config_version}"
-	include "me.shedaniel.cloth:fiber2cloth:${project.fiber_to_cloth_version}"
-	include "me.zeroeightsix:fiber:${project.fiber_version}"
+
+	modImplementation "me.sargunvohra.mcmods:autoconfig1u:${project.auto_config_version}"
+	include "me.sargunvohra.mcmods:autoconfig1u:${project.auto_config_version}"
 
 	compile 'com.google.code.findbugs:jsr305:3.0.2'
 	testCompile "junit:junit:4.+"
