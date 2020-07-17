@@ -66,8 +66,7 @@ public class AtlasData extends PersistentState {
 		this.nbt = compound;
 		int version = compound.getInt(TAG_VERSION);
 		if (version < VERSION) {
-			Log.warn("Outdated atlas data format! Was %d but current is %d. Updating.", version, VERSION);
-			readFromNBT2(compound);
+			Log.warn("Outdated atlas data format! Was %d but current is %d.", version, VERSION);
 			return;
 		}
 
@@ -83,37 +82,6 @@ public class AtlasData extends PersistentState {
 			if (zoom == 0) zoom = 0.5;
 			dimData.setBrowsingPosition(worldTag.getInt(TAG_BROWSING_X),
 					worldTag.getInt(TAG_BROWSING_Y), zoom);
-		}
-	}
-
-	/**Reads from NBT version 2. This is designed to allow easy upgrading to version 3.*/
-	public void readFromNBT2(CompoundTag compound) {
-		this.nbt = compound;
-		int version = compound.getInt(TAG_VERSION);
-		if (version < 2) {
-			Log.warn("Loading map with version 2 failed");
-			this.markDirty();
-			return;
-		}
-		ListTag dimensionMapList = compound.getList(TAG_WORLD_MAP_LIST, NbtType.COMPOUND);
-		for (int d = 0; d < dimensionMapList.size(); d++) {
-			CompoundTag dimTag = dimensionMapList.getCompound(d);
-			RegistryKey<World> worldId;
-			worldId = RegistryKey.of(Registry.DIMENSION, new Identifier(dimTag.getString(TAG_WORLD_ID)));
-			int[] intArray = dimTag.getIntArray(TAG_VISITED_CHUNKS);
-			WorldData dimData = getWorldData(worldId);
-			for (int i = 0; i < intArray.length; i += 3) {
-				if (dimData.getTile(intArray[i], intArray[i+1]) != null){
-					Log.warn("Duplicate tile at "+ intArray[i] + ", " + intArray[i]);
-				}
-				// TODO FABRIC remove int
-				dimData.setTile(intArray[i], intArray[i+1], TileKindFactory.get(intArray[i + 2]));
-			}
-			Log.info("Updated " + intArray.length/3 + " chunks");
-			double zoom = dimTag.getDouble(TAG_BROWSING_ZOOM);
-			if (zoom == 0) zoom = 0.5;
-			dimData.setBrowsingPosition(dimTag.getInt(TAG_BROWSING_X),
-					dimTag.getInt(TAG_BROWSING_Y), zoom);
 		}
 	}
 
@@ -185,15 +153,12 @@ public class AtlasData extends PersistentState {
 
 				int x = (int)(playerX + dx);
 				int z = (int)(playerZ + dz);
-				TileKind oldTile = seenChunks.getTile(x, z);
-				TileKind tile = null;
+				Identifier oldTile = seenChunks.getTile(x, z);
+				Identifier tile = null;
 
 				// Check if there's a custom tile at the location:
 				// Custom tiles overwrite even the chunks already seen.
-				int customTileId = AntiqueAtlasMod.extBiomeData.getData().getBiomeAt(player.getEntityWorld().getRegistryKey(), x, z);
-				if (customTileId != -1) {
-					tile = TileKindFactory.get(customTileId);
-				}
+				tile = AntiqueAtlasMod.extBiomeData.getData().getBiomeAt(player.getEntityWorld().getRegistryKey(), x, z);
 
 				// If there's no custom tile, check the actual chunk:
 				if (tile == null) {
@@ -245,13 +210,13 @@ public class AtlasData extends PersistentState {
 
 	/** Puts a given tile into given map at specified coordinates and,
 	 * if tileStitcher is present, sets appropriate sectors on adjacent tiles. */
-	public void setTile(RegistryKey<World> world, int x, int y, TileKind tile) {
-		WorldData dimData = getWorldData(world);
-		dimData.setTile(x, y, tile);
+	public void setTile(RegistryKey<World> world, int x, int y, Identifier tile) {
+		WorldData worldData = getWorldData(world);
+		worldData.setTile(x, y, tile);
 	}
 
 	/** Returns the Tile previously set at given coordinates. */
-	private TileKind removeTile(RegistryKey<World> world, int x, int y) {
+	private Identifier removeTile(RegistryKey<World> world, int x, int y) {
 		WorldData dimData = getWorldData(world);
 		return dimData.removeTile(x, y);
 	}
@@ -267,7 +232,7 @@ public class AtlasData extends PersistentState {
 		return worldMap.computeIfAbsent(world, k -> new WorldData(this, world));
 	}
 
-	public Map<ShortVec2, TileKind> getSeenChunksInDimension(RegistryKey<World> world) {
+	public Map<ShortVec2, Identifier> getSeenChunksInDimension(RegistryKey<World> world) {
 		return getWorldData(world).getSeenChunks();
 	}
 

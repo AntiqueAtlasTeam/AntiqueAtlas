@@ -1,11 +1,9 @@
 package hunternif.mc.impl.atlas.api.oldimpl;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
-
-import hunternif.mc.impl.atlas.core.TileKind;
-import hunternif.mc.impl.atlas.core.TileKindFactory;
 
 import hunternif.mc.impl.atlas.ext.TileIdRegisteredCallback;
 import hunternif.mc.impl.atlas.network.packet.c2s.play.PutTileC2SPacket;
@@ -20,10 +18,10 @@ import net.minecraft.entity.player.PlayerEntity;
 
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
-import net.minecraft.world.dimension.DimensionType;
 import hunternif.mc.impl.atlas.AntiqueAtlasMod;
 import hunternif.mc.impl.atlas.api.TileAPI;
 import hunternif.mc.impl.atlas.client.BiomeTextureMap;
@@ -104,7 +102,7 @@ public class TileApiImpl implements TileAPI {
 	
 	// Biome tiles =============================================================
 
-	private void putTile(World world, int atlasID, TileKind kind, int chunkX, int chunkZ) {
+	private void putTile(World world, int atlasID, Identifier kind, int chunkX, int chunkZ) {
 		RegistryKey<World> dimension = world.getRegistryKey();
 		if (world.isClient) {
 			new PutTileC2SPacket(atlasID, chunkX, chunkZ, kind).send();
@@ -118,67 +116,69 @@ public class TileApiImpl implements TileAPI {
 	}
 
 	@Override
-	public void putBiomeTile(World world, int atlasID, Biome biome, int chunkX, int chunkZ) {
-		putTile(world, atlasID, TileKindFactory.get(biome), chunkX, chunkZ);
+	public void putBiomeTile(World world, int atlasID, Identifier biomeId, int chunkX, int chunkZ) {
+		putTile(world, atlasID, biomeId, chunkX, chunkZ);
 	}
 	
 	
 	// Custom tiles ============================================================
 	
 	@Override
-	public void putCustomTile(World world, int atlasID, Identifier tileName, int chunkX, int chunkZ) {
-		if (tileName == null) {
+	public void putCustomTile(World world, int atlasID, Identifier tileId, int chunkX, int chunkZ) {
+		if (tileId == null) {
 			Log.error("Attempted to put custom tile with null name");
 			return;
 		}
 		if (world.isClient) {
-			int biomeID = ExtTileIdMap.INSTANCE.getPseudoBiomeID(tileName);
+			int biomeID = ExtTileIdMap.INSTANCE.getPseudoBiomeID(tileId);
 			if (biomeID != ExtTileIdMap.NOT_FOUND) {
-				putTile(world, atlasID, TileKindFactory.get(tileName), chunkX, chunkZ);
+				putTile(world, atlasID, tileId, chunkX, chunkZ);
 			} else {
-				pendingTiles.put(tileName, new TileData(world, atlasID, chunkX, chunkZ));
-				new RegisterTileC2SPacket(tileName).send();
+				pendingTiles.put(tileId, new TileData(world, atlasID, chunkX, chunkZ));
+				new RegisterTileC2SPacket(tileId).send();
 			}
 		} else {
-			int biomeID = ExtTileIdMap.INSTANCE.getPseudoBiomeID(tileName);
-			if (biomeID == ExtTileIdMap.NOT_FOUND) {
-				biomeID = ExtTileIdMap.INSTANCE.getOrCreatePseudoBiomeID(tileName);
-				new TileNameS2CPacket(tileName, biomeID).send(world.getServer());
-			}
-			putTile(world, atlasID, TileKindFactory.get(biomeID), chunkX, chunkZ);
+//			Identifier biomeID = ExtTileIdMap.INSTANCE.getPseudoBiomeID(tileId);
+//			if (biomeID == ExtTileIdMap.NOT_FOUND) {
+//				biomeID = ExtTileIdMap.INSTANCE.getOrCreatePseudoBiomeID(tileId);
+//				new TileNameS2CPacket(tileId, biomeID).send(world.getServer());
+//			}
+			putTile(world, atlasID, tileId, chunkX, chunkZ);
 		}
 	}
 	
 	@Override
-	public void putCustomGlobalTile(World world, Identifier tileName, int chunkX, int chunkZ) {
-		if (tileName == null) {
+	public void putCustomGlobalTile(World world, Identifier tileId, int chunkX, int chunkZ) {
+		if (tileId == null) {
 			Log.error("Attempted to put custom global tile with null name");
 			return;
 		}
+
 		if (world.isClient) {
 			Log.warn("Client attempted to put global tile");
 			return;
 		}
-		boolean isIdRegistered = ExtTileIdMap.INSTANCE.getPseudoBiomeID(tileName) != ExtTileIdMap.NOT_FOUND;
-		int biomeID = ExtTileIdMap.INSTANCE.getOrCreatePseudoBiomeID(tileName);
+
+		boolean isIdRegistered = ExtTileIdMap.INSTANCE.getPseudoBiomeID(tileId) != ExtTileIdMap.NOT_FOUND;
+//		int biomeID = ExtTileIdMap.INSTANCE.getOrCreatePseudoBiomeID(tileId);
 		ExtBiomeData data = AntiqueAtlasMod.extBiomeData.getData();
-		data.setBiomeAt(world.getRegistryKey(), chunkX, chunkZ, biomeID);
+		data.setBiomeAt(world.getRegistryKey(), chunkX, chunkZ, tileId);
 
 		// Send name-ID packet:
 		if (!isIdRegistered) {
-			new TileNameS2CPacket(tileName, biomeID).send(world.getServer());
+			new TileNameS2CPacket(tileId).send(world.getServer());
 		}
 
 		// Send tile packet:
-		new CustomTileInfoS2CPacket(world.getRegistryKey(), chunkX, chunkZ, biomeID).send(world.getServer());
+		new CustomTileInfoS2CPacket(world.getRegistryKey(), chunkX, chunkZ, tileId).send(world.getServer());
 	}
 	
-	public void onTileIdRegistered(Map<Identifier, Integer> nameToIdMap) {
-		for (Entry<Identifier, Integer> entry : nameToIdMap.entrySet()) {
+	public void onTileIdRegistered(Collection<Identifier> ids) {
+		for (Identifier id : ids) {
 			// Put pending tiles:
-			TileData tile = pendingTiles.remove(entry.getKey());
+			TileData tile = pendingTiles.remove(id);
 			if (tile != null) {
-				putBiomeTile(tile.world, tile.atlasID, TileKindFactory.get(entry.getValue()).getBiome(), tile.x, tile.z);
+				putBiomeTile(tile.world, tile.atlasID, id, tile.x, tile.z);
 			}
 		}
 	}
@@ -191,10 +191,10 @@ public class TileApiImpl implements TileAPI {
 			return;
 		}
 		ExtBiomeData data = AntiqueAtlasMod.extBiomeData.getData();
-		RegistryKey<World> dimension = world.getRegistryKey();
-		if (data.getBiomeAt(dimension, chunkX, chunkZ) != -1) {
-			data.removeBiomeAt(dimension, chunkX, chunkZ);
-			new DeleteCustomGlobalTileS2CPacket(dimension, chunkX, chunkZ).send(world.getServer());
+		RegistryKey<World> worldKey = world.getRegistryKey();
+		if (data.getBiomeAt(worldKey, chunkX, chunkZ) != null) {
+			data.removeBiomeAt(worldKey, chunkX, chunkZ);
+			new DeleteCustomGlobalTileS2CPacket(worldKey, chunkX, chunkZ).send(world.getServer());
 		}
 	}
 }

@@ -2,6 +2,7 @@ package hunternif.mc.impl.atlas.ext;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
+import hunternif.mc.impl.atlas.AntiqueAtlasMod;
 import hunternif.mc.impl.atlas.network.packet.s2c.play.TileNameS2CPacket;
 import hunternif.mc.impl.atlas.util.SaveData;
 import java.util.Map;
@@ -19,44 +20,40 @@ public class ExtTileIdMap extends SaveData {
 
 	public static final Identifier
 	// Village:
-	TILE_VILLAGE_LIBRARY = id("npc_village_library"),
-	TILE_VILLAGE_SMITHY = id("npc_village_smithy"),
-	TILE_VILLAGE_L_HOUSE = id("npc_village_l_house"),
-	TILE_VILLAGE_FARMLAND_SMALL = id("npc_village_farmland_small"),
-	TILE_VILLAGE_FARMLAND_LARGE = id("npc_village_farmland_large"),
-	TILE_VILLAGE_WELL = id("npc_village_well"),
-	TILE_VILLAGE_TORCH = id("npc_village_torch"),
-//	TILE_VILLAGE_PATH_X = id("npc_village_path_x"),
-//	TILE_VILLAGE_PATH_Z = id("npc_village_path_z"),
-	TILE_VILLAGE_HUT = id("npc_village_hut"),
-	TILE_VILLAGE_SMALL_HOUSE = id("npc_village_small_house"),
-	TILE_VILLAGE_BUTCHERS_SHOP = id("npc_village_butchers_shop"),
-	TILE_VILLAGE_CHURCH = id("npc_village_church"),
+	TILE_VILLAGE_LIBRARY = AntiqueAtlasMod.id("npc_village_library"),
+	TILE_VILLAGE_SMITHY = AntiqueAtlasMod.id("npc_village_smithy"),
+	TILE_VILLAGE_L_HOUSE = AntiqueAtlasMod.id("npc_village_l_house"),
+	TILE_VILLAGE_FARMLAND_SMALL = AntiqueAtlasMod.id("npc_village_farmland_small"),
+	TILE_VILLAGE_FARMLAND_LARGE = AntiqueAtlasMod.id("npc_village_farmland_large"),
+	TILE_VILLAGE_WELL = AntiqueAtlasMod.id("npc_village_well"),
+	TILE_VILLAGE_TORCH = AntiqueAtlasMod.id("npc_village_torch"),
+//	TILE_VILLAGE_PATH_X = AntiqueAtlasMod.id("npc_village_path_x"),
+//	TILE_VILLAGE_PATH_Z = AntiqueAtlasMod.id("npc_village_path_z"),
+	TILE_VILLAGE_HUT = AntiqueAtlasMod.id("npc_village_hut"),
+	TILE_VILLAGE_SMALL_HOUSE = AntiqueAtlasMod.id("npc_village_small_house"),
+	TILE_VILLAGE_BUTCHERS_SHOP = AntiqueAtlasMod.id("npc_village_butchers_shop"),
+	TILE_VILLAGE_CHURCH = AntiqueAtlasMod.id("npc_village_church"),
 
-	TILE_RAVINE = id("ravine"),
+	TILE_RAVINE = AntiqueAtlasMod.id("ravine"),
 
 	// Nether & Nether Fortress:
-	TILE_LAVA = id("lava"),
-	TILE_LAVA_SHORE = id("lava_shore"),
-	TILE_NETHER_BRIDGE = id("nether_bridge"),
-	TILE_NETHER_BRIDGE_X = id("nether_bridge_x"),
-	TILE_NETHER_BRIDGE_Z = id("nether_bridge_z"),
-	TILE_NETHER_BRIDGE_END_X = id("nether_bridge_end_x"),
-	TILE_NETHER_BRIDGE_END_Z = id("nether_bridge_end_z"),
-	TILE_NETHER_BRIDGE_GATE = id("nether_bridge_gate"),
-	TILE_NETHER_TOWER = id("nether_tower"),
-	TILE_NETHER_WALL = id("nether_wall"),
-	TILE_NETHER_HALL = id("nether_hall"),
-	TILE_NETHER_FORT_STAIRS = id("nether_fort_stairs"),
-	TILE_NETHER_THRONE = id("nether_throne"),
+	TILE_LAVA = AntiqueAtlasMod.id("lava"),
+	TILE_LAVA_SHORE = AntiqueAtlasMod.id("lava_shore"),
+	TILE_NETHER_BRIDGE = AntiqueAtlasMod.id("nether_bridge"),
+	TILE_NETHER_BRIDGE_X = AntiqueAtlasMod.id("nether_bridge_x"),
+	TILE_NETHER_BRIDGE_Z = AntiqueAtlasMod.id("nether_bridge_z"),
+	TILE_NETHER_BRIDGE_END_X = AntiqueAtlasMod.id("nether_bridge_end_x"),
+	TILE_NETHER_BRIDGE_END_Z = AntiqueAtlasMod.id("nether_bridge_end_z"),
+	TILE_NETHER_BRIDGE_GATE = AntiqueAtlasMod.id("nether_bridge_gate"),
+	TILE_NETHER_TOWER = AntiqueAtlasMod.id("nether_tower"),
+	TILE_NETHER_WALL = AntiqueAtlasMod.id("nether_wall"),
+	TILE_NETHER_HALL = AntiqueAtlasMod.id("nether_hall"),
+	TILE_NETHER_FORT_STAIRS = AntiqueAtlasMod.id("nether_fort_stairs"),
+	TILE_NETHER_THRONE = AntiqueAtlasMod.id("nether_throne"),
 	
-	TILE_END_ISLAND = id("end_island"),
-	TILE_END_ISLAND_PLANTS = id("end_island_plants"),
-	TILE_END_VOID = id("end_void");
-
-	private static final Identifier id(String s) {
-		return new Identifier("antiqueatlas", s);
-	}
+	TILE_END_ISLAND = AntiqueAtlasMod.id("end_island"),
+	TILE_END_ISLAND_PLANTS = AntiqueAtlasMod.id("end_island_plants"),
+	TILE_END_VOID = AntiqueAtlasMod.id("end_void");
 
 	public static final int NOT_FOUND = -1;
 	
@@ -111,6 +108,6 @@ public class ExtTileIdMap extends SaveData {
 	
 	/** Send all name-biomeID pairs to the player. */
 	public void syncOnPlayer(PlayerEntity player) {
-		new TileNameS2CPacket(nameToIdMap).send((ServerPlayerEntity) player);
+//		new TileNameS2CPacket(nameToIdMap).send((ServerPlayerEntity) player);
 	}
 }

@@ -1,6 +1,6 @@
 package hunternif.mc.impl.atlas.client;
 
-import hunternif.mc.impl.atlas.core.TileKind;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 
 /**
@@ -17,7 +17,7 @@ import net.minecraft.util.math.MathHelper;
  * @author Hunternif
  */
 public class SubTile {
-	public TileKind tile;
+	public Identifier tile;
 	/** coordinates of the subtile on the grid, measured in subtiles,
 	 * starting from (0,0) in the top left corner. */
 	public int x, y;

@@ -13,6 +13,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.World;
 
@@ -48,9 +49,9 @@ public class WorldData implements ITileStorage {
 	/**
 	 * This function has to create a new map on each call since the packet rework
 	 */
-	public Map<ShortVec2, TileKind> getSeenChunks() {
-		Map<ShortVec2, TileKind> chunks = new ConcurrentHashMap<>(2, 0.75f, 2);
-		TileKind t;
+	public Map<ShortVec2, Identifier> getSeenChunks() {
+		Map<ShortVec2, Identifier> chunks = new ConcurrentHashMap<>(2, 0.75f, 2);
+		Identifier t;
 		for (Map.Entry<ShortVec2, TileGroup> entry: tileGroups.entrySet()){
 			int basex = entry.getValue().getScope().minX;
 			int basey = entry.getValue().getScope().minY;
@@ -96,7 +97,7 @@ public class WorldData implements ITileStorage {
 	}
 
 	@Override
-	public void setTile(int x, int y, TileKind tile) {
+	public void setTile(int x, int y, Identifier tile) {
 		ShortVec2 groupPos = getKey().set((int)Math.floor(x / (float) TileGroup.CHUNK_STEP),
 				(int)Math.floor(y / (float) TileGroup.CHUNK_STEP));
 		TileGroup tg = tileGroups.get(groupPos);
@@ -117,7 +118,7 @@ public class WorldData implements ITileStorage {
 	}
 	
 	@Override
-	public TileKind removeTile(int x, int y) {
+	public Identifier removeTile(int x, int y) {
 		//TODO
 		// since scope is not modified, I assume this was never really used
 		// Tile oldTile = tileGroups.remove(getKey().set(x, y));
@@ -127,7 +128,7 @@ public class WorldData implements ITileStorage {
 	}
 
 	@Override
-	public TileKind getTile(int x, int y) {
+	public Identifier getTile(int x, int y) {
 		ShortVec2 groupPos = getKey().set((int)Math.floor(x / (float) TileGroup.CHUNK_STEP),
 				(int)Math.floor(y / (float) TileGroup.CHUNK_STEP));
 		TileGroup tg = tileGroups.get(groupPos);
@@ -162,7 +163,7 @@ public class WorldData implements ITileStorage {
 			Rect s = group.getScope();
 			for (int x = s.minX; x <= s.maxX; x++){
 				for (int y = s.minY; y <= s.maxY; y++){
-					TileKind tile = group.getTile(x, y);
+					Identifier tile = group.getTile(x, y);
 					if (tile != null) setTile(x, y, tile);
 				}
 			}

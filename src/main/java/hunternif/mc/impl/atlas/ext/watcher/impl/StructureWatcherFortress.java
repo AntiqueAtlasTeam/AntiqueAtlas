@@ -170,6 +170,6 @@ public class StructureWatcherFortress implements IStructureWatcher {
 	}
 
 	private static boolean noTileAt(World world, int chunkX, int chunkZ) {
-		return AntiqueAtlasMod.extBiomeData.getData().getBiomeAt(world.getRegistryKey(), chunkX, chunkZ) == -1;
+		return AntiqueAtlasMod.extBiomeData.getData().getBiomeAt(world.getRegistryKey(), chunkX, chunkZ) == null;
 	}
 }

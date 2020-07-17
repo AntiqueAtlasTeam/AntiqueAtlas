@@ -64,13 +64,13 @@ public interface TileAPI {
 	// Biome tiles =============================================================
 
 	/**
-	 * Edit the biome at the specified chunk in the specified atlas. 
+	 * Edit the biomeId at the specified chunk in the specified atlas.
 	 * You only need to call this method once for every chunk, after that
 	 * the tile will be persisted with the world and loaded when the server
 	 * starts up.
 	 * <p>
 	 * Note that global custom tiles, such as village territory, will override
-	 * biome IDs at shared chunks.
+	 * biomeId IDs at shared chunks.
 	 * </p>
 	 * <p>
 	 * If calling this method on the client, the player must carry the atlas
@@ -83,11 +83,11 @@ public interface TileAPI {
 	 * @param world		dimension the chunk is located in.
 	 * @param atlasID	the ID of the atlas you want to put marker in. Equal
 	 * 					to ItemStack damage for ItemAtlas.
-	 * @param biome	
+	 * @param biomeId
 	 * @param chunkX	x chunk coordinate. (block coordinate >> 4)
 	 * @param chunkZ	z chunk coordinate. (block coordinate >> 4)
 	 */
-	void putBiomeTile(World world, int atlasID, Biome biome, int chunkX, int chunkZ);
+	void putBiomeTile(World world, int atlasID, Identifier biomeId, int chunkX, int chunkZ);
 	
 	
 	// Custom tiles ============================================================

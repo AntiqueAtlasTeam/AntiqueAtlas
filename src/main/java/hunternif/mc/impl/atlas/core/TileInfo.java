@@ -1,12 +1,14 @@
 package hunternif.mc.impl.atlas.core;
 
+import net.minecraft.util.Identifier;
+
 public class TileInfo {
 	public final int x, z;
-	public final TileKind biome;
+	public final Identifier id;
 
-	public TileInfo(int x, int z, TileKind biome){
+	public TileInfo(int x, int z, Identifier id){
 		this.x = x;
 		this.z = z;
-		this.biome = biome;
+		this.id = id;
 	}
 }

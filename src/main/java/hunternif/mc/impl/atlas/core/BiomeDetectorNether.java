@@ -4,6 +4,7 @@ import hunternif.mc.impl.atlas.ext.ExtTileIdMap;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.World;
@@ -29,10 +30,10 @@ public class BiomeDetectorNether extends BiomeDetectorBase implements IBiomeDete
 	private static final int priorityLava = 1;
 	
 	@Override
-	public TileKind getBiomeID(World world, Chunk chunk) {
+	public Identifier getBiomeID(World world, Chunk chunk) {
 		BiomeArray chunkBiomes = chunk.getBiomeArray();
 		if (chunkBiomes == null)
-			return TileKindFactory.get(ExtTileIdMap.TILE_LAVA);
+			return ExtTileIdMap.TILE_LAVA;
 
 		Map<Biome, Integer> biomeOccurrences = new HashMap<>(Registry.BIOME.getIds().size());
 		
@@ -69,21 +70,21 @@ public class BiomeDetectorNether extends BiomeDetectorBase implements IBiomeDete
 			}
 		}
 
-		TileKind meanBiomeId = null;
+		Identifier meanBiomeId = null;
 		int meanBiomeOccurences = 0;
 		for (Biome biome : biomeOccurrences.keySet()) {
 			int occ = biomeOccurrences.get(biome);
 			if (biomeOccurrences.get(biome) > meanBiomeOccurences) {
-				meanBiomeId = TileKindFactory.get(biome);
+				meanBiomeId = Registry.BIOME.getId(biome);
 				meanBiomeOccurences = occ;
 			}
 		}
 		
 		// The following important pseudo-biomes don't have IDs:
 		if (meanBiomeOccurences < lavaOccurences) {
-			meanBiomeId = TileKindFactory.get(ExtTileIdMap.TILE_LAVA);
+			meanBiomeId = ExtTileIdMap.TILE_LAVA;
 		} else if (meanBiomeOccurences < groundOccurences) {
-			meanBiomeId = TileKindFactory.get(ExtTileIdMap.TILE_LAVA_SHORE);
+			meanBiomeId = ExtTileIdMap.TILE_LAVA_SHORE;
 		}
 		
 		return meanBiomeId;

@@ -21,23 +21,23 @@ import java.util.Map;
 public class CustomTileInfoS2CPacket extends S2CPacket {
 	public static final Identifier ID = AntiqueAtlasMod.id("packet", "s2c", "custom_tile", "info");
 
-	public CustomTileInfoS2CPacket(RegistryKey<World> world, Map<ShortVec2, Integer> biomes) {
+	public CustomTileInfoS2CPacket(RegistryKey<World> world, Map<ShortVec2, Identifier> tiles) {
 		this.writeIdentifier(world.getValue());
-		this.writeVarInt(biomes.size());
+		this.writeVarInt(tiles.size());
 
-		for (Map.Entry<ShortVec2, Integer> entry : biomes.entrySet()) {
+		for (Map.Entry<ShortVec2, Identifier> entry : tiles.entrySet()) {
 			this.writeShort(entry.getKey().x);
 			this.writeShort(entry.getKey().y);
-			this.writeInt(entry.getValue());
+			this.writeIdentifier(entry.getValue());
 		}
 	}
 
-	public CustomTileInfoS2CPacket(RegistryKey<World> world, int chunkX, int chunkZ, int biomeId) {
+	public CustomTileInfoS2CPacket(RegistryKey<World> world, int chunkX, int chunkZ, Identifier tileId) {
 		this.writeIdentifier(world.getValue());
 		this.writeVarInt(1);
 		this.writeShort(chunkX);
 		this.writeShort(chunkZ);
-		this.writeInt(biomeId);
+		this.writeIdentifier(tileId);
 	}
 
 	@Override
@@ -51,7 +51,7 @@ public class CustomTileInfoS2CPacket extends S2CPacket {
 
 		ExtBiomeData data = AntiqueAtlasMod.extBiomeData.getData();
 		for (int i = 0; i < tileCount; ++i) {
-			data.setBiomeAt(world, buf.readShort(), buf.readShort(), buf.readInt());
+			data.setBiomeAt(world, buf.readShort(), buf.readShort(), buf.readIdentifier());
 		}
 	}
 }

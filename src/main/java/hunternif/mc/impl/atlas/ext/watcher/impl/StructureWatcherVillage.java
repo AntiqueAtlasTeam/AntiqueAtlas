@@ -208,8 +208,7 @@ public class StructureWatcherVillage implements IStructureWatcher {
 	}
 
 	private static Identifier tileAt(World world, int chunkX, int chunkZ) {
-		int biomeID = AntiqueAtlasMod.extBiomeData.getData().getBiomeAt(world.getRegistryKey(), chunkX, chunkZ);
-		return ExtTileIdMap.INSTANCE.getPseudoBiomeName(biomeID);
+		return AntiqueAtlasMod.extBiomeData.getData().getBiomeAt(world.getRegistryKey(), chunkX, chunkZ);
 	}
 
 	/** Delete the marker and custom tile data about the village. */

@@ -3,7 +3,6 @@ package hunternif.mc.impl.atlas.network.packet.s2c.play;
 import hunternif.mc.impl.atlas.AntiqueAtlasMod;
 import hunternif.mc.impl.atlas.core.AtlasData;
 import hunternif.mc.impl.atlas.core.TileInfo;
-import hunternif.mc.impl.atlas.core.TileKindFactory;
 import hunternif.mc.impl.atlas.network.packet.s2c.S2CPacket;
 import net.fabricmc.fabric.api.network.PacketContext;
 import net.minecraft.network.PacketByteBuf;
@@ -27,7 +26,7 @@ public class DimensionUpdateS2CPacket extends S2CPacket {
 		for (TileInfo tile : tiles) {
 			this.writeShort(tile.x);
 			this.writeShort(tile.z);
-			this.writeInt(tile.biome.getId());
+			this.writeIdentifier(tile.id);
 		}
 	}
 
@@ -51,15 +50,15 @@ public class DimensionUpdateS2CPacket extends S2CPacket {
 			tiles.add(new TileInfo(
 					buf.readShort(),
 					buf.readShort(),
-					TileKindFactory.get(buf.readInt())
-			));
+					buf.readIdentifier())
+			);
 		}
 
 		context.getTaskQueue().execute(() -> {
 			AtlasData data = AntiqueAtlasMod.atlasData.getAtlasData(atlasID, context.getPlayer().world);
 
 			for (TileInfo info : tiles) {
-				data.getWorldData(world).setTile(info.x, info.z, info.biome);
+				data.getWorldData(world).setTile(info.x, info.z, info.id);
 			}
 		});
 	}

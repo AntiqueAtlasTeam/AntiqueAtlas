@@ -14,8 +14,7 @@ import net.minecraft.network.PacketByteBuf;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Used to send pairs (unique tile name)-(pseudo-biome ID) from the server
@@ -26,19 +25,17 @@ import java.util.Map;
 public class TileNameS2CPacket extends S2CPacket {
 	public static final Identifier ID = AntiqueAtlasMod.id("packet", "c2s", "tile", "update");
 
-	public TileNameS2CPacket(Map<Identifier, Integer> tileIdToBiomeIdMap) {
-		this.writeVarInt(tileIdToBiomeIdMap.size());
+	public TileNameS2CPacket(Collection<Identifier> tileIds) {
+		this.writeVarInt(tileIds.size());
 
-		for (Map.Entry<Identifier, Integer> entry : tileIdToBiomeIdMap.entrySet()) {
-			this.writeIdentifier(entry.getKey());
-			this.writeVarInt(entry.getValue());
+		for (Identifier id : tileIds) {
+			this.writeIdentifier(id);
 		}
 	}
 
-	public TileNameS2CPacket(Identifier id, int biomeId) {
+	public TileNameS2CPacket(Identifier id) {
 		this.writeVarInt(1);
 		this.writeIdentifier(id);
-		this.writeVarInt(biomeId);
 	}
 
 	@Override
@@ -49,25 +46,18 @@ public class TileNameS2CPacket extends S2CPacket {
 	@Environment(EnvType.CLIENT)
 	public static void apply(PacketContext context, PacketByteBuf buf) {
 		int size = buf.readVarInt();
-		Map<Identifier, Integer> tileIdToBiomeIdMap = new HashMap<>();
+		Collection<Identifier> tileIds = new HashSet<>();
 		for (int i = 0; i < size; ++i) {
-			tileIdToBiomeIdMap.put(buf.readIdentifier(), buf.readVarInt());
+			tileIds.add(buf.readIdentifier());
 		}
 
 		context.getTaskQueue().execute(() -> {
-			for (Map.Entry<Identifier, Integer> entry : tileIdToBiomeIdMap.entrySet()) {
-				int oldID = ExtTileIdMap.INSTANCE.getPseudoBiomeID(entry.getKey());
-
-				if (oldID != ExtTileIdMap.NOT_FOUND && oldID != entry.getValue() && Registry.BIOME.containsId(oldID)) {
-					BiomeTextureMap.instance().setTexture(Registry.BIOME.get(oldID), null);
-				}
-
-				ExtTileIdMap.INSTANCE.setPseudoBiomeID(entry.getKey(), entry.getValue());
-				TextureSet texture = ExtTileTextureMap.instance().getTexture(entry.getKey());
-				BiomeTextureMap.instance().setTexture(entry.getValue(), texture);
+			for (Identifier id: tileIds) {
+				TextureSet texture = ExtTileTextureMap.instance().getTexture(id);
+				BiomeTextureMap.instance().setTexture(id, texture);
 			}
 
-			TileIdRegisteredCallback.EVENT.invoker().onTileIDsReceived(tileIdToBiomeIdMap);
+			TileIdRegisteredCallback.EVENT.invoker().onTileIDsReceived(tileIds);
 		});
 	}
 }

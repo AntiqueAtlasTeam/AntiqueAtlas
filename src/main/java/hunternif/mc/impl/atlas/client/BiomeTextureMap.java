@@ -1,6 +1,5 @@
 package hunternif.mc.impl.atlas.client;
 
-import hunternif.mc.impl.atlas.core.TileKind;
 import hunternif.mc.impl.atlas.util.Log;
 import hunternif.mc.impl.atlas.util.SaveData;
 import net.fabricmc.api.EnvType;
@@ -31,48 +30,31 @@ public class BiomeTextureMap extends SaveData {
 		return INSTANCE;
 	}
 
-	/** This map stores biome texture mappings. */
-	final Map<Biome, TextureSet> biomeTextureMap = new HashMap<>();
 	/** This map stores the pseudo biome texture mappings, any biome with ID <0 is assumed to be a pseudo biome */
-	final Map<Integer, TextureSet> pseudoBiomeTextureMap = new HashMap<>();
+	final Map<Identifier, TextureSet> textureMap = new HashMap<>();
 
 	public static final TextureSet defaultTexture = PLAINS;
 
 	/** Assign texture set to biome. */
 	public void setTexture(Biome biome, TextureSet textureSet) {
-		Log.info("Register texture set %s for biome %s", textureSet.name, biome.getTranslationKey());
-		if (textureSet == null) {
-			if (biomeTextureMap.remove(biome) != null) {
-				Log.warn("Removing old texture for biome %s", Registry.BIOME.getId(biome));
-			}
-			return;
-		}
-		TextureSet previous = biomeTextureMap.put(biome, textureSet);
-		// If the old texture set is equal to the new one (i.e. has equal name
-		// and equal texture files), then there's no need to update the config.
-		if (previous == null) {
-			markDirty();
-		} else if (!previous.equals(textureSet)) {
-			Log.warn("Overwriting texture set for biome %s", Registry.BIOME.getId(biome));
-			markDirty();
-		}
+		this.setTexture(Registry.BIOME.getId(biome), textureSet);
 	}
 
 	/** Assign texture set to pseudo biome */
-	public void setTexture(int pseudoID, TextureSet textureSet) {
+	public void setTexture(Identifier tileId, TextureSet textureSet) {
 		if (textureSet == null) {
-			if (pseudoBiomeTextureMap.remove(pseudoID) != null) {
-				Log.warn("Removing old texture for pseudo-biome %d", pseudoID);
+			if (textureMap.remove(tileId) != null) {
+				Log.warn("Removing old texture for %d", tileId);
 			}
 			return;
 		}
-		TextureSet previous = pseudoBiomeTextureMap.put(pseudoID, textureSet);
+		TextureSet previous = textureMap.put(tileId, textureSet);
 		// If the old texture set is equal to the new one (i.e. has equal name
 		// and equal texture files), then there's no need to update the config.
 		if (previous == null) {
 			markDirty();
 		} else if (!previous.equals(textureSet)) {
-			Log.warn("Overwriting texture set for pseudo-biome %d", pseudoID);
+			Log.warn("Overwriting texture set for %d", tileId);
 			markDirty();
 		}
 	}
@@ -149,146 +131,6 @@ public class BiomeTextureMap extends SaveData {
 				break;
 		}
 
-		/* Set<Type> types = BiomeDictionary.getTypes(biome);
-		// 1. Swamp
-		if (types.contains(Type.SWAMP)) {
-			if (types.contains(Type.HILLS)) {
-				setTexture(biome, SWAMP_HILLS);
-			} else {
-				setTexture(biome, SWAMP);
-			}
-		}
-		// 2. Water
-		else if (types.contains(Type.WATER) || types.contains(Type.RIVER)) {
-			// Water + trees = swamp
-			if (types.contains(Type.FOREST) || types.contains(Type.JUNGLE)) {
-				if (types.contains(Type.HILLS)) {
-					setTexture(biome, SWAMP_HILLS);
-				} else {
-					setTexture(biome, SWAMP);
-				}
-			} else if (types.contains(Type.SNOWY)){
-				setTexture(biome, ICE);
-			} else {
-				setTexture(biome, WATER);
-			}
-		}
-		// 3. Shore
-		else if (types.contains(Type.BEACH)){
-			if (types.contains(Type.MOUNTAIN)) {
-				setTexture(biome, ROCK_SHORE);
-			} else {
-				setTexture(biome, SHORE);
-			}
-		}
-		// 4. Jungle
-		else if (types.contains(Type.JUNGLE)) {
-			if (types.contains(Type.MOUNTAIN)) {
-				setTexture(biome, JUNGLE_CLIFFS);
-			} else if (types.contains(Type.HILLS)) {
-				setTexture(biome, JUNGLE_HILLS);
-			} else {
-				setTexture(biome, JUNGLE);
-			}
-		}
-		// 5. Savanna
-		else if (types.contains(Type.SAVANNA)) {
-			if (types.contains(Type.MOUNTAIN) || types.contains(Type.HILLS)) {
-				setTexture(biome, SAVANNA_CLIFFS);
-			} else {
-				setTexture(biome, SAVANNA);
-			}
-		}
-		// 6. Pines
-		else if (types.contains(Type.CONIFEROUS)) {
-			if (types.contains(Type.MOUNTAIN) || types.contains(Type.HILLS)) {
-				setTexture(biome, PINES_HILLS);
-			} else {
-				setTexture(biome, PINES);
-			}
-		}
-		// 7. Mesa - I suspect that by using this type people usually mean "Plateau"
-		else if (types.contains(Type.MESA)) {
-			if (types.contains(Type.FOREST)) {
-				setTexture(biome, PLATEAU_MESA_TREES);
-			} else {
-				setTexture(biome, PLATEAU_MESA);
-			}
-		}
-		// 8. General forest
-		else if (types.contains(Type.FOREST)) {
-			// Frozen forest automatically counts as pines:
-			if (types.contains(Type.SNOWY)) {
-				if (types.contains(Type.HILLS)) {
-					setTexture(biome, SNOW_PINES_HILLS);
-				} else {
-					setTexture(biome, SNOW_PINES);
-				}
-			} else {
-				// Segregate by density:
-				if (types.contains(Type.SPARSE)) {
-					if (types.contains(Type.HILLS)) {
-						setTexture(biome, SPARSE_FOREST_HILLS);
-					} else {
-						setTexture(biome, SPARSE_FOREST);
-					}
-				} else if (types.contains(Type.DENSE)) {
-					if (types.contains(Type.HILLS)) {
-						setTexture(biome, DENSE_FOREST_HILLS);
-					} else {
-						setTexture(biome, DENSE_FOREST);
-					}
-				} else {
-					if (types.contains(Type.HILLS)) {
-						setTexture(biome, FOREST_HILLS);
-					} else {
-						setTexture(biome, FOREST);
-					}
-				}
-			}
-		}
-		// 9. Various plains
-		else if (types.contains(Type.PLAINS) || types.contains(Type.WASTELAND)) {
-			if (types.contains(Type.SNOWY) || types.contains(Type.COLD)) {
-				if (types.contains(Type.MOUNTAIN)) {
-					setTexture(biome, MOUNTAINS_SNOW_CAPS);
-				} else if (types.contains(Type.HILLS)) {
-					setTexture(biome, SNOW_HILLS);
-				} else {
-					setTexture(biome, SNOW);
-				}
-			} else if (types.contains(Type.HOT)) {
-				if (types.contains(Type.HILLS) || types.contains(Type.MOUNTAIN)) {
-					setTexture(biome, DESERT_HILLS);
-				} else {
-					setTexture(biome, DESERT);
-				}
-			}
-			else {
-				if (types.contains(Type.HILLS) || types.contains(Type.MOUNTAIN)) {
-					setTexture(biome, HILLS);
-				} else {
-					setTexture(biome, PLAINS);
-				}
-			}
-		}
-		// 10. General mountains
-		else if (types.contains(Type.MOUNTAIN)) {
-			setTexture(biome, MOUNTAINS_NAKED);
-		}
-		// 11. General hills
-		else if (types.contains(Type.HILLS)) {
-			if (types.contains(Type.SNOWY) || types.contains(Type.COLD)) {
-				setTexture(biome, SNOW_HILLS);
-			} else if (types.contains(Type.SANDY)) {
-				setTexture(biome, DESERT_HILLS);
-			} else {
-				setTexture(biome, HILLS);
-			}
-		} else {
-			setTexture(biome, defaultTexture);
-		} */
-
 		Log.info("Auto-registered standard texture set for biome %s", Registry.BIOME.getId(biome).toString());
 	}
 
@@ -301,47 +143,48 @@ public class BiomeTextureMap extends SaveData {
 	}
 
 	/** Checks for pseudo biome ID - if not registered, use default */
-	private void checkRegistration(int pseudoID) {
-		if (!isRegistered(pseudoID)) {
-			setTexture(pseudoID, defaultTexture);
+	private void checkRegistration(Identifier id) {
+		if (!isRegistered(id)) {
+			setTexture(id, defaultTexture);
 		}
 	}
 
 	public boolean isRegistered(Biome biome) {
-		return biomeTextureMap.containsKey(biome);
+		return isRegistered(Registry.BIOME.getId(biome));
 	}
 
-	public boolean isRegistered(int pseudoID) {
-		return pseudoBiomeTextureMap.containsKey(pseudoID);
+	public boolean isRegistered(Identifier id) {
+		return textureMap.containsKey(id);
 	}
 
 	/** If unknown biome, auto-registers a texture set. If null, returns default set. */
-	public TextureSet getTextureSet(TileKind tile) {
-		if (tile == null) return defaultTexture;
-		Biome biome = tile.getBiome();
+	public TextureSet getTextureSet(Identifier tile) {
+		if (tile == null) {
+			return defaultTexture;
+		}
+
+		Biome biome = Registry.BIOME.get(tile);
 		if (biome != null) {
 			checkRegistration(biome);
-			return biomeTextureMap.getOrDefault(biome, defaultTexture);
+		} else {
+			checkRegistration(tile);
 		}
-		else {
-			checkRegistration(tile.getId());
-			return pseudoBiomeTextureMap.get(tile.getId());
-		}
+
+		return textureMap.get(tile);
 	}
 
-	public Identifier getTexture(int variationNumber, TileKind tile) {
+	public Identifier getTexture(int variationNumber, Identifier tile) {
 		TextureSet set = getTextureSet(tile);
 		return set.textures[variationNumber % set.textures.length];
 	}
 
 	public List<Identifier> getAllTextures() {
-		List<Identifier> list = new ArrayList<>(biomeTextureMap.size());
-		for (Entry<Biome, TextureSet> entry : biomeTextureMap.entrySet()) {
+		List<Identifier> list = new ArrayList<>();
+
+		for (Entry<Identifier, TextureSet> entry : textureMap.entrySet()) {
 			list.addAll(Arrays.asList(entry.getValue().textures));
 		}
-		for (Entry<Integer, TextureSet> entry : pseudoBiomeTextureMap.entrySet()) {
-			list.addAll(Arrays.asList(entry.getValue().textures));
-		}
+
 		return list;
 	}
 }

@@ -32,7 +32,7 @@ public class RegisterTileC2SPacket extends C2SPacket {
 
 		context.getTaskQueue().execute(() -> {
 			for (ServerPlayerEntity playerEntity : context.getPlayer().getServer().getPlayerManager().getPlayerList()) {
-				new TileNameS2CPacket(id, ExtTileIdMap.INSTANCE.getOrCreatePseudoBiomeID(id)).send(playerEntity);
+				new TileNameS2CPacket(id).send(playerEntity);
 			}
 		});
 	}

@@ -3,6 +3,7 @@ package hunternif.mc.impl.atlas.core;
 import hunternif.mc.impl.atlas.ext.ExtTileIdMap;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.Heightmap;
@@ -79,14 +80,15 @@ public class BiomeDetectorBase implements IBiomeDetector {
 		}
 	}
 
-	/** If no valid biome ID is found, returns null. */
+	/** If no valid biome ID is found, returns null.
+	 * @return*/
 	@Override
-	public TileKind getBiomeID(World world, Chunk chunk) {
+	public Identifier getBiomeID(World world, Chunk chunk) {
 		BiomeArray chunkBiomes = chunk.getBiomeArray();
 		Map<Biome, Integer> biomeOccurrences = new HashMap<>(Registry.BIOME.getIds().size());
 
 		if (chunkBiomes == null)
-			return TileKindFactory.get(Biomes.DEFAULT);
+			return Registry.BIOME.getId(Biomes.DEFAULT);
 
 		// The following important pseudo-biomes don't have IDs:
 		int lavaOccurrences = 0;
@@ -128,15 +130,15 @@ public class BiomeDetectorBase implements IBiomeDetector {
 
 			// The following important pseudo-biomes don't have IDs:
 			if (meanBiomeOccurrences < ravineOccurences) {
-				return TileKindFactory.get(ExtTileIdMap.TILE_RAVINE);
+				return ExtTileIdMap.TILE_RAVINE;
 			}
 			if (meanBiomeOccurrences < lavaOccurrences) {
-				return TileKindFactory.get(ExtTileIdMap.TILE_LAVA);
+				return ExtTileIdMap.TILE_LAVA;
 			}
 
-			return TileKindFactory.get(meanBiomeId);
+			return Registry.BIOME.getId(meanBiomeId);
 		} catch(NoSuchElementException e){
-			return TileKindFactory.get(Biomes.DEFAULT);
+			return Registry.BIOME.getId(Biomes.DEFAULT);
 		}
 	}
 }

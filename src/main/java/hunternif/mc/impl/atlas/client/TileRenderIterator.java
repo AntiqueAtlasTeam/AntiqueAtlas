@@ -3,19 +3,21 @@ package hunternif.mc.impl.atlas.client;
 import hunternif.mc.impl.atlas.client.SubTile.Part;
 import hunternif.mc.impl.atlas.client.SubTile.Shape;
 import hunternif.mc.impl.atlas.core.ITileStorage;
-import hunternif.mc.impl.atlas.core.TileKind;
 import hunternif.mc.impl.atlas.util.Rect;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
+import net.minecraft.util.Identifier;
 
 import java.util.Iterator;
 
 /**
  * Iterates through a tile storage for the purpose of rendering their textures.
- * Returned is an array of 4 {@link SubTile}s which constitute a whole
- * {@link TileKind}.
+ * Returned is an array of 4 {@link SubTile}s which constitute a whole Tile.
  * The SubTile objects are generated on the fly and not retained in memory.
  * May return null!
  * @author Hunternif
  */
+@Environment(EnvType.CLIENT)
 public class TileRenderIterator implements Iterator<SubTileQuartet> {
 
 	private final ITileStorage tiles;
@@ -55,7 +57,7 @@ public class TileRenderIterator implements Iterator<SubTileQuartet> {
 	 * 'i' is at (x, y).
 	 * The returned array of subtiles represents the corner 'd-e-h-i'
 	 */
-	private TileKind a, b, c, d, e, f, g, h, i, j, k, l;
+	private Identifier a, b, c, d, e, f, g, h, i, j, k, l;
 	
 	/** Shortcuts for the quartet. */
 	private final SubTile _d = new SubTile(Part.BOTTOM_RIGHT),
@@ -186,7 +188,7 @@ public class TileRenderIterator implements Iterator<SubTileQuartet> {
 	
 	/** Whether the first tile should be stitched to the 2nd (in any direction)
 	 * (but the opposite is not always true!) */
-	private static boolean shouldStitchTo(TileKind tile, TileKind to) {
+	private static boolean shouldStitchTo(Identifier tile, Identifier to) {
 		if (tile == null) return false;
 		TextureSet set = BiomeTextureMap.instance().getTextureSet(tile);
 		TextureSet toSet = BiomeTextureMap.instance().getTextureSet(to);
@@ -194,7 +196,7 @@ public class TileRenderIterator implements Iterator<SubTileQuartet> {
 	}
 	/** Whether the first tile should be stitched to the 2nd along the X axis
 	 * (but the opposite is not always true!) */
-	private static boolean shouldStitchToHorizontally(TileKind tile, TileKind to) {
+	private static boolean shouldStitchToHorizontally(Identifier tile, Identifier to) {
 		if (tile == null) return false;
 		TextureSet set = BiomeTextureMap.instance().getTextureSet(tile);
 		TextureSet toSet = BiomeTextureMap.instance().getTextureSet(to);
@@ -202,7 +204,7 @@ public class TileRenderIterator implements Iterator<SubTileQuartet> {
 	}
 	/** Whether the first tile should be stitched to the 2nd along the Z axis
 	 * (but the opposite is not always true!) */
-	private static boolean shouldStitchToVertically(TileKind tile, TileKind to) {
+	private static boolean shouldStitchToVertically(Identifier tile, Identifier to) {
 		if (tile == null) return false;
 		TextureSet set = BiomeTextureMap.instance().getTextureSet(tile);
 		TextureSet toSet = BiomeTextureMap.instance().getTextureSet(to);

@@ -12,7 +12,7 @@ import net.minecraft.world.World;
 
 public class NetherFortressStructurePieceHandler implements StructurePieceAddedCallback {
 	protected static boolean hasTile(World world, int chunkX, int chunkZ) {
-		return AntiqueAtlasMod.extBiomeData.getData().getBiomeAt(world.getRegistryKey(), chunkX, chunkZ) != -1;
+		return AntiqueAtlasMod.extBiomeData.getData().getBiomeAt(world.getRegistryKey(), chunkX, chunkZ) != null;
 	}
 
 	@Override

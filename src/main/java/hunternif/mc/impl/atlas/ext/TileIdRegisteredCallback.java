@@ -1,5 +1,6 @@
 package hunternif.mc.impl.atlas.ext;
 
+import java.util.Collection;
 import java.util.Map;
 
 import net.fabricmc.fabric.api.event.Event;
@@ -19,5 +20,5 @@ public interface TileIdRegisteredCallback {
 				}
 			});
 
-	void onTileIDsReceived(Map<Identifier, Integer> nameToIdMap);
+	void onTileIDsReceived(Collection<Identifier> ids);
 }

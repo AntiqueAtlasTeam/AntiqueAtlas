@@ -3,12 +3,12 @@ package hunternif.mc.impl.atlas;
 import hunternif.mc.impl.atlas.client.*;
 import hunternif.mc.impl.atlas.client.gui.GuiAtlas;
 import hunternif.mc.impl.atlas.ext.ExtTileIdMap;
-import hunternif.mc.impl.atlas.ext.ExtTileTextureConfig;
-import hunternif.mc.impl.atlas.ext.ExtTileTextureMap;
 import hunternif.mc.impl.atlas.marker.MarkerTextureConfig;
 import hunternif.mc.impl.atlas.registry.MarkerType;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.event.client.ClientTickCallback;
 import net.fabricmc.fabric.api.network.ClientSidePacketRegistry;
 import net.fabricmc.fabric.api.network.PacketConsumer;
@@ -33,10 +33,7 @@ import static hunternif.mc.impl.atlas.client.TextureSet.*;
 public class ClientProxy extends CommonProxy implements SimpleSynchronousResourceReloadListener {
 	private static TextureSetMap textureSetMap;
 	private static TextureSetConfig textureSetConfig;
-	private static BiomeTextureMap biomeTextureMap;
-	private static BiomeTextureConfig biomeTextureConfig;
-	private static ExtTileTextureMap tileTextureMap;
-	private static ExtTileTextureConfig tileTextureConfig;
+	private static BiomeTextureMap textureMap;
 	private static MarkerTextureConfig markerTextureConfig;
 
 	private static GuiAtlas guiAtlas;
@@ -62,27 +59,14 @@ public class ClientProxy extends CommonProxy implements SimpleSynchronousResourc
 		ResourceManagerHelper.get(ResourceType.CLIENT_RESOURCES).registerReloadListener(textureSetConfig);
 
 		// Legacy file name:
-		File biomeTextureConfigFile = new File(configDir, "textures.json");
-		if (biomeTextureConfigFile.exists()) {
-			biomeTextureConfigFile.renameTo(new File(configDir, "biome_textures.json"));
-		}
-
-		tileTextureMap = ExtTileTextureMap.instance();
-		tileTextureConfig = new ExtTileTextureConfig(tileTextureMap, textureSetMap);
-		ResourceManagerHelper.get(ResourceType.CLIENT_RESOURCES).registerReloadListener(tileTextureConfig);
-		// Prevent rewriting of the config while no changes have been made:
-		tileTextureMap.setDirty(false);
-		registerVanillaCustomTileTextures();
-
 		ResourceManagerHelper.get(ResourceType.CLIENT_RESOURCES).registerReloadListener(this);
 
 		// init
-		biomeTextureMap = BiomeTextureMap.instance();
-		biomeTextureConfig = new BiomeTextureConfig(biomeTextureMap, textureSetMap);
-		ResourceManagerHelper.get(ResourceType.CLIENT_RESOURCES).registerReloadListener(biomeTextureConfig);
+		textureMap = BiomeTextureMap.instance();
+		registerVanillaCustomTileTextures();
 
 		// Prevent rewriting of the config while no changes have been made:
-		biomeTextureMap.setDirty(false);
+		textureMap.setDirty(false);
 		assignVanillaBiomeTextures();
 
 		markerTextureConfig = new MarkerTextureConfig();
@@ -97,7 +81,7 @@ public class ClientProxy extends CommonProxy implements SimpleSynchronousResourc
 
 		if (!AntiqueAtlasMod.CONFIG.itemNeeded) {
             KeyHandler.registerBindings();
-			ClientTickCallback.EVENT.register(KeyHandler::onClientTick);
+			ClientTickEvents.START_CLIENT_TICK.register(KeyHandler::onClientTick);
         }
 
 	}
@@ -297,8 +281,8 @@ public class ClientProxy extends CommonProxy implements SimpleSynchronousResourc
 	/** Only applies the change if no texture is registered for this biome.
 	 * This prevents overwriting of the config when there is no real change. */
 	private void setBiomeTextureIfNone(Biome biome, TextureSet textureSet) {
-		if(!biomeTextureMap.isRegistered(biome)) {
-			biomeTextureMap.setTexture(biome, textureSet);
+		if(!textureMap.isRegistered(biome)) {
+			textureMap.setTexture(biome, textureSet);
 		}
 	}
 
@@ -343,9 +327,9 @@ public class ClientProxy extends CommonProxy implements SimpleSynchronousResourc
 	}
 	/** Only applies the change if no texture is registered for this tile name.
 	 * This prevents overwriting of the config when there is no real change. */
-	private void setCustomTileTextureIfNone(Identifier tileName, TextureSet textureSet) {
-		if (!tileTextureMap.isRegistered(tileName)) {
-			tileTextureMap.setTexture(tileName, textureSet);
+	private void setCustomTileTextureIfNone(Identifier tileId, TextureSet textureSet) {
+		if (!textureMap.isRegistered(tileId)) {
+			textureMap.setTexture(tileId, textureSet);
 		}
 	}
 

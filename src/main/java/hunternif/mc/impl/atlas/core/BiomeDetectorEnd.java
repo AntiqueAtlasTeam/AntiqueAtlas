@@ -3,6 +3,7 @@ package hunternif.mc.impl.atlas.core;
 import hunternif.mc.impl.atlas.ext.ExtTileIdMap;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.Heightmap;
@@ -22,11 +23,11 @@ import java.util.Map;
 public class BiomeDetectorEnd extends BiomeDetectorBase implements IBiomeDetector {
 	
 	@Override
-	public TileKind getBiomeID(World world, Chunk chunk) {
+	public Identifier getBiomeID(World world, Chunk chunk) {
 		BiomeArray chunkBiomes = chunk.getBiomeArray();
 
 		if (chunkBiomes == null)
-			return TileKindFactory.get(ExtTileIdMap.NOT_FOUND);
+			return ExtTileIdMap.TILE_END_VOID;
 
 		Map<Biome, Integer> biomeOccurrences = new HashMap<>(Registry.BIOME.getIds().size());
 		
@@ -63,12 +64,12 @@ public class BiomeDetectorEnd extends BiomeDetectorBase implements IBiomeDetecto
 			}
 		}
 
-		TileKind meanBiomeId = null;
+		Identifier meanBiomeId = null;
 		int meanBiomeOccurences = 0;
 		for (Biome biome : biomeOccurrences.keySet()) {
 			int occ = biomeOccurrences.get(biome);
 			if (biomeOccurrences.get(biome) > meanBiomeOccurences) {
-				meanBiomeId = TileKindFactory.get(biome);
+				meanBiomeId = Registry.BIOME.getId(biome);
 				meanBiomeOccurences = occ;
 			}
 		}
@@ -76,11 +77,11 @@ public class BiomeDetectorEnd extends BiomeDetectorBase implements IBiomeDetecto
 		// The following important pseudo-biomes don't have IDs:
 		if (meanBiomeOccurences < islandOccurences) {
 			if(plantOccurences == 0)
-				meanBiomeId = TileKindFactory.get(ExtTileIdMap.TILE_END_ISLAND);
+				meanBiomeId = ExtTileIdMap.TILE_END_ISLAND;
 			else
-				meanBiomeId = TileKindFactory.get(ExtTileIdMap.TILE_END_ISLAND_PLANTS);
+				meanBiomeId = ExtTileIdMap.TILE_END_ISLAND_PLANTS;
 		} else if (meanBiomeOccurences < voidOccurences) {
-			meanBiomeId = TileKindFactory.get(ExtTileIdMap.TILE_END_VOID);
+			meanBiomeId = ExtTileIdMap.TILE_END_VOID;
 		}
 		
 		return meanBiomeId;

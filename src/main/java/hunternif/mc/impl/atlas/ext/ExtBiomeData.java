@@ -13,7 +13,7 @@ import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.PersistentState;
 import net.minecraft.world.World;
-import net.minecraft.world.dimension.DimensionType;
+
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
@@ -24,17 +24,16 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author Hunternif
  */
 public class ExtBiomeData extends PersistentState {
-	private static final int VERSION = 1;
+	private static final int VERSION = 2;
 	private static final String TAG_VERSION = "aaVersion";
 	private static final String TAG_WORLD_MAP_LIST = "dimMap";
 	private static final String TAG_WORLD_ID = "worldID";
-	private static final String TAG_BIOME_IDS = "biomeIDs";
-	
+
 	public ExtBiomeData(String key) {
 		super(key);
 	}
 	
-	private final Map<RegistryKey<World>, Map<ShortVec2, Integer>> dimensionMap =
+	private final Map<RegistryKey<World>, Map<ShortVec2, Identifier>> worldMap =
             new ConcurrentHashMap<>(2, 0.75f, 2);
 	
 	private final ShortVec2 tempCoords = new ShortVec2(0, 0);
@@ -52,50 +51,47 @@ public class ExtBiomeData extends PersistentState {
 			RegistryKey<World> worldID;
 			worldID = RegistryKey.of(Registry.DIMENSION, new Identifier(tag.getString(TAG_WORLD_ID)));
 
-			Map<ShortVec2, Integer> biomeMap = getBiomesInWorld(worldID);
-			int[] intArray = tag.getIntArray(TAG_BIOME_IDS);
-			for (int i = 0; i < intArray.length; i += 3) {
-				ShortVec2 coords = new ShortVec2(intArray[i], intArray[i+1]);
-				biomeMap.put(coords, intArray[i + 2]);
-			}}
+			Map<ShortVec2, Identifier> biomeMap = getBiomesInWorld(worldID);
+			ShortVec2 coords = new ShortVec2(tag.getInt("x"), tag.getInt("y"));
+			biomeMap.put(coords, Identifier.tryParse(tag.getString("id")));
+		}
 	}
 
 	@Override
 	public CompoundTag toTag(CompoundTag compound) {
 		compound.putInt(TAG_VERSION, VERSION);
-		ListTag dimensionMapList = new ListTag();
-		for (RegistryKey<World> world : dimensionMap.keySet()) {
+		ListTag worldMaplist = new ListTag();
+		for (RegistryKey<World> world : worldMap.keySet()) {
 			CompoundTag tag = new CompoundTag();
 			tag.putString(TAG_WORLD_ID, world.getValue().toString());
-			Map<ShortVec2, Integer> biomeMap = getBiomesInWorld(world);
-			int[] intArray = new int[biomeMap.size()*3];
-			int i = 0;
-			for (Entry<ShortVec2, Integer> entry : biomeMap.entrySet()) {
-				intArray[i++] = entry.getKey().x;
-				intArray[i++] = entry.getKey().y;
-				intArray[i++] = entry.getValue();
+
+			Map<ShortVec2, Identifier> biomeMap = getBiomesInWorld(world);
+
+			for (Entry<ShortVec2, Identifier> entry : biomeMap.entrySet()) {
+				tag.putInt("x", entry.getKey().x);
+				tag.putInt("y", entry.getKey().y);
+				tag.putString("id", entry.getValue().toString());
 			}
-			tag.putIntArray(TAG_BIOME_IDS, intArray);
-			dimensionMapList.add(tag);
+
+			worldMaplist.add(tag);
 		}
-		compound.put(TAG_WORLD_MAP_LIST, dimensionMapList);
+		compound.put(TAG_WORLD_MAP_LIST, worldMaplist);
 		
 		return compound;
 	}
 	
-	private Map<ShortVec2, Integer> getBiomesInWorld(RegistryKey<World> world) {
-		return dimensionMap.computeIfAbsent(world,
+	private Map<ShortVec2, Identifier> getBiomesInWorld(RegistryKey<World> world) {
+		return worldMap.computeIfAbsent(world,
 				k -> new ConcurrentHashMap<>(2, 0.75f, 2));
 	}
 	
 	/** If no custom tile is set at the specified coordinates, returns -1. */
-	public int getBiomeAt(RegistryKey<World> world, int x, int z) {
-		Integer i = getBiomesInWorld(world).get(tempCoords.set(x, z));
-		return i != null ? i : -1;
+	public Identifier getBiomeAt(RegistryKey<World> world, int x, int z) {
+		return getBiomesInWorld(world).get(tempCoords.set(x, z));
 	}
 	
 	/** If setting biome on the server, a packet should be sent to all players. */
-	public void setBiomeAt(RegistryKey<World> world, int x, int z, int biome) {
+	public void setBiomeAt(RegistryKey<World> world, int x, int z, Identifier biome) {
 		getBiomesInWorld(world).put(new ShortVec2(x, z), biome);
 		markDirty();
 	}
@@ -107,8 +103,8 @@ public class ExtBiomeData extends PersistentState {
 	
 	/** Send all data to player in several zipped packets. */
 	public void syncOnPlayer(PlayerEntity player) {
-		for (RegistryKey<World> world : dimensionMap.keySet()) {
-			Map<ShortVec2, Integer> biomes = getBiomesInWorld(world);
+		for (RegistryKey<World> world : worldMap.keySet()) {
+			Map<ShortVec2, Identifier> biomes = getBiomesInWorld(world);
 
 			new CustomTileInfoS2CPacket(world, biomes).send((ServerPlayerEntity) player);
 		}
