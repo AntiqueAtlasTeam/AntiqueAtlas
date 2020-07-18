@@ -10,7 +10,6 @@ public class AntiqueAtlasModClient implements ClientModInitializer {
 	@Override
 	public void onInitializeClient() {
 		ClientProxy clientProxy = new ClientProxy();
-		AntiqueAtlasMod.proxy = clientProxy;
 		clientProxy.initClient();
 
 		AntiqueAtlasNetworking.registerS2CListeners();

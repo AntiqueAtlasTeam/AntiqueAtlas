@@ -13,8 +13,8 @@ import hunternif.mc.impl.atlas.util.Log;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.world.World;
 
@@ -26,16 +26,16 @@ public class MarkerApiImpl implements MarkerAPI {
 
 	@Nullable
 	@Override
-	public Marker putMarker(@Nonnull World world, boolean visibleAhead, int atlasID, MarkerType markerType, String label, int x, int z) {
+	public Marker putMarker(@Nonnull World world, boolean visibleAhead, int atlasID, MarkerType markerType, Text label, int x, int z) {
 		return doPutMarker(world, visibleAhead, atlasID, markerType, label, x, z);
 	}
 	@Nullable
 	@Override
-	public Marker putGlobalMarker(@Nonnull World world, boolean visibleAhead, MarkerType markerType, String label, int x, int z) {
+	public Marker putGlobalMarker(@Nonnull World world, boolean visibleAhead, MarkerType markerType, Text label, int x, int z) {
 		return doPutMarker(world, visibleAhead, GLOBAL, markerType, label, x, z);
 	}
 
-	private Marker doPutMarker(World world, boolean visibleAhead, int atlasID, MarkerType markerType, String label, int x, int z) {
+	private Marker doPutMarker(World world, boolean visibleAhead, int atlasID, MarkerType markerType, Text label, int x, int z) {
 		Marker marker = null;
 		if (!world.isClient && world.getServer() != null) {
 			MarkersData data = atlasID == GLOBAL

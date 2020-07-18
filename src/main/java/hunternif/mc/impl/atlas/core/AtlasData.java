@@ -158,7 +158,7 @@ public class AtlasData extends PersistentState {
 
 				// Check if there's a custom tile at the location:
 				// Custom tiles overwrite even the chunks already seen.
-				tile = AntiqueAtlasMod.extBiomeData.getData().getBiomeAt(player.getEntityWorld().getRegistryKey(), x, z);
+				tile = AntiqueAtlasMod.tileData.getData().getTile(player.getEntityWorld().getRegistryKey(), x, z);
 
 				// If there's no custom tile, check the actual chunk:
 				if (tile == null) {

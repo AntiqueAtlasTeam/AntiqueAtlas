@@ -2,13 +2,13 @@ package hunternif.mc.impl.atlas.marker;
 
 import hunternif.mc.impl.atlas.AntiqueAtlasMod;
 import hunternif.mc.impl.atlas.api.AtlasAPI;
-import hunternif.mc.impl.atlas.item.ItemAtlas;
+import hunternif.mc.impl.atlas.item.AtlasItem;
 import hunternif.mc.impl.atlas.mixinhooks.EntityHooksAA;
 import hunternif.mc.impl.atlas.registry.MarkerType;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.registry.RegistryKey;
+import net.minecraft.text.TranslatableText;
 import net.minecraft.world.World;
 import net.minecraft.world.dimension.DimensionType;
 import java.util.List;
@@ -99,9 +99,9 @@ public class NetherPortalWatcher {
 		}
 
 		for (ItemStack stack : player.inventory.main) {
-			if (stack == null || !(stack.getItem() instanceof ItemAtlas)) continue;
+			if (stack == null || !(stack.getItem() instanceof AtlasItem)) continue;
 
-			addPortalMarkerIfNone(player, world, ((ItemAtlas) stack.getItem()).getAtlasID(stack));
+			addPortalMarkerIfNone(player, world, ((AtlasItem) stack.getItem()).getAtlasID(stack));
 		}
 	}
 
@@ -130,7 +130,7 @@ public class NetherPortalWatcher {
 		}
 
 		// Marker not found, place new one:
-		AtlasAPI.markers.putMarker(world, false, atlasID,netherPortalType, "gui.antiqueatlas.marker.netherPortal", x, z);
+		AtlasAPI.markers.putMarker(world, false, atlasID,netherPortalType, new TranslatableText("gui.antiqueatlas.marker.netherPortal"), x, z);
 	}
 	
 	private static boolean isEntityInPortal(Entity entity) {

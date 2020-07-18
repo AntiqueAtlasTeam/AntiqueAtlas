@@ -1,7 +1,7 @@
 package hunternif.mc.impl.atlas.network.packet.s2c.play;
 
 import hunternif.mc.impl.atlas.AntiqueAtlasMod;
-import hunternif.mc.impl.atlas.ext.ExtBiomeData;
+import hunternif.mc.impl.atlas.ext.TileDataStorage;
 import hunternif.mc.impl.atlas.network.packet.s2c.S2CPacket;
 import hunternif.mc.impl.atlas.util.ShortVec2;
 import net.fabricmc.fabric.api.network.PacketContext;
@@ -49,9 +49,9 @@ public class CustomTileInfoS2CPacket extends S2CPacket {
 		RegistryKey<World> world = RegistryKey.of(Registry.DIMENSION, buf.readIdentifier());
 		int tileCount = buf.readVarInt();
 
-		ExtBiomeData data = AntiqueAtlasMod.extBiomeData.getData();
+		TileDataStorage data = AntiqueAtlasMod.tileData.getData();
 		for (int i = 0; i < tileCount; ++i) {
-			data.setBiomeAt(world, buf.readShort(), buf.readShort(), buf.readIdentifier());
+			data.setTile(world, buf.readShort(), buf.readShort(), buf.readIdentifier());
 		}
 	}
 }

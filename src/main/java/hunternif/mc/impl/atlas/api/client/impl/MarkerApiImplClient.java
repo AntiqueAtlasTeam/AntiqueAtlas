@@ -7,7 +7,7 @@ import hunternif.mc.impl.atlas.network.packet.c2s.play.AddMarkerC2SPacket;
 import hunternif.mc.impl.atlas.registry.MarkerType;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.fabricmc.fabric.api.network.ClientSidePacketRegistry;
+import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.world.World;
 
@@ -26,14 +26,14 @@ public class MarkerApiImplClient implements MarkerAPI {
 
 	@Nullable
 	@Override
-	public Marker putMarker(@Nonnull World world, boolean visibleAhead, int atlasID, MarkerType markerType, String label, int x, int z) {
+	public Marker putMarker(@Nonnull World world, boolean visibleAhead, int atlasID, MarkerType markerType, Text label, int x, int z) {
 		new AddMarkerC2SPacket(atlasID, markerType, x, z, visibleAhead, label).send();
 		return null;
 	}
 
 	@Nullable
 	@Override
-	public Marker putGlobalMarker(@Nonnull World world, boolean visibleAhead, MarkerType markerType, String label, int x, int z) {
+	public Marker putGlobalMarker(@Nonnull World world, boolean visibleAhead, MarkerType markerType, Text label, int x, int z) {
 		AntiqueAtlasMod.LOG.warn("Client tried to add a global marker");
 
 		return null;

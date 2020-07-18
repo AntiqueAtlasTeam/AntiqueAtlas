@@ -10,6 +10,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.RegistryKey;
@@ -114,7 +115,7 @@ public class MarkersData extends PersistentState {
 				Marker marker = new Marker(
 						id,
 						MarkerType.REGISTRY.get(new Identifier(markerTag.getString(TAG_MARKER_TYPE))),
-						markerTag.getString(TAG_MARKER_LABEL),
+						Text.Serializer.fromJson(markerTag.getString(TAG_MARKER_LABEL)),
 						world,
 						markerTag.getInt(TAG_MARKER_X),
 						markerTag.getInt(TAG_MARKER_Y),
@@ -138,7 +139,7 @@ public class MarkersData extends PersistentState {
 				CompoundTag markerTag = new CompoundTag();
 				markerTag.putInt(TAG_MARKER_ID, marker.getId());
 				markerTag.putString(TAG_MARKER_TYPE, MarkerType.REGISTRY.getId(marker.getType()).toString());
-				markerTag.putString(TAG_MARKER_LABEL, marker.getLabel());
+				markerTag.putString(TAG_MARKER_LABEL, Text.Serializer.toJson(marker.getLabel()));
 				markerTag.putInt(TAG_MARKER_X, marker.getX());
 				markerTag.putInt(TAG_MARKER_Y, marker.getZ());
 				markerTag.putBoolean(TAG_MARKER_VISIBLE_AHEAD, marker.isVisibleAhead());
@@ -188,7 +189,7 @@ public class MarkersData extends PersistentState {
 	/** For internal use. Use the {@link MarkerAPI} to put markers! This method
 	 * creates a new marker from the given data, saves and returns it.
 	 * Server side only! */
-	public Marker createAndSaveMarker(MarkerType type, RegistryKey<World> world, int x, int z, boolean visibleAhead, String label) {
+	public Marker createAndSaveMarker(MarkerType type, RegistryKey<World> world, int x, int z, boolean visibleAhead, Text label) {
 		Marker marker = new Marker(getNewID(), type, label, world, x, z, visibleAhead);
 		Log.info("Created new marker %s", marker.toString());
 		idMap.put(marker.getId(), marker);

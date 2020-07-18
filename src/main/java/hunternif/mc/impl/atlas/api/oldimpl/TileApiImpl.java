@@ -3,8 +3,8 @@ package hunternif.mc.impl.atlas.api.oldimpl;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Map.Entry;
 
+import hunternif.mc.impl.atlas.ext.TileDataStorage;
 import hunternif.mc.impl.atlas.ext.TileIdRegisteredCallback;
 import hunternif.mc.impl.atlas.network.packet.c2s.play.PutTileC2SPacket;
 import hunternif.mc.impl.atlas.network.packet.c2s.play.RegisterTileC2SPacket;
@@ -18,7 +18,6 @@ import net.minecraft.entity.player.PlayerEntity;
 
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
@@ -28,7 +27,6 @@ import hunternif.mc.impl.atlas.client.BiomeTextureMap;
 import hunternif.mc.impl.atlas.client.TextureSet;
 import hunternif.mc.impl.atlas.client.TextureSetMap;
 import hunternif.mc.impl.atlas.core.AtlasData;
-import hunternif.mc.impl.atlas.ext.ExtBiomeData;
 import hunternif.mc.impl.atlas.ext.ExtTileIdMap;
 import hunternif.mc.impl.atlas.ext.ExtTileTextureMap;
 import hunternif.mc.impl.atlas.util.Log;
@@ -129,22 +127,8 @@ public class TileApiImpl implements TileAPI {
 			Log.error("Attempted to put custom tile with null name");
 			return;
 		}
-		if (world.isClient) {
-			int biomeID = ExtTileIdMap.INSTANCE.getPseudoBiomeID(tileId);
-			if (biomeID != ExtTileIdMap.NOT_FOUND) {
-				putTile(world, atlasID, tileId, chunkX, chunkZ);
-			} else {
-				pendingTiles.put(tileId, new TileData(world, atlasID, chunkX, chunkZ));
-				new RegisterTileC2SPacket(tileId).send();
-			}
-		} else {
-//			Identifier biomeID = ExtTileIdMap.INSTANCE.getPseudoBiomeID(tileId);
-//			if (biomeID == ExtTileIdMap.NOT_FOUND) {
-//				biomeID = ExtTileIdMap.INSTANCE.getOrCreatePseudoBiomeID(tileId);
-//				new TileNameS2CPacket(tileId, biomeID).send(world.getServer());
-//			}
-			putTile(world, atlasID, tileId, chunkX, chunkZ);
-		}
+
+		putTile(world, atlasID, tileId, chunkX, chunkZ);
 	}
 	
 	@Override
@@ -159,15 +143,8 @@ public class TileApiImpl implements TileAPI {
 			return;
 		}
 
-		boolean isIdRegistered = ExtTileIdMap.INSTANCE.getPseudoBiomeID(tileId) != ExtTileIdMap.NOT_FOUND;
-//		int biomeID = ExtTileIdMap.INSTANCE.getOrCreatePseudoBiomeID(tileId);
-		ExtBiomeData data = AntiqueAtlasMod.extBiomeData.getData();
-		data.setBiomeAt(world.getRegistryKey(), chunkX, chunkZ, tileId);
-
-		// Send name-ID packet:
-		if (!isIdRegistered) {
-			new TileNameS2CPacket(tileId).send(world.getServer());
-		}
+		TileDataStorage data = AntiqueAtlasMod.tileData.getData();
+		data.setTile(world.getRegistryKey(), chunkX, chunkZ, tileId);
 
 		// Send tile packet:
 		new CustomTileInfoS2CPacket(world.getRegistryKey(), chunkX, chunkZ, tileId).send(world.getServer());
@@ -190,10 +167,10 @@ public class TileApiImpl implements TileAPI {
 			Log.warn("Client attempted to delete global tile");
 			return;
 		}
-		ExtBiomeData data = AntiqueAtlasMod.extBiomeData.getData();
+		TileDataStorage data = AntiqueAtlasMod.tileData.getData();
 		RegistryKey<World> worldKey = world.getRegistryKey();
-		if (data.getBiomeAt(worldKey, chunkX, chunkZ) != null) {
-			data.removeBiomeAt(worldKey, chunkX, chunkZ);
+		if (data.getTile(worldKey, chunkX, chunkZ) != null) {
+			data.removeTile(worldKey, chunkX, chunkZ);
 			new DeleteCustomGlobalTileS2CPacket(worldKey, chunkX, chunkZ).send(world.getServer());
 		}
 	}

@@ -12,7 +12,7 @@ import net.minecraft.recipe.*;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.World;
-import net.minecraft.world.dimension.DimensionType;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -59,11 +59,11 @@ public class RecipeAtlasCombining implements CraftingRecipe {
 		for (int i = 0; i < inv.size(); ++i) {
 			ItemStack stack = inv.getStack(i);
 			if (!stack.isEmpty()) {
-				if (stack.getItem() instanceof ItemAtlas) {
+				if (stack.getItem() instanceof AtlasItem) {
 					if (firstAtlas.isEmpty()) {
 						firstAtlas = stack;
 					} else {
-						atlasIds.add(((ItemAtlas) stack.getItem()).getAtlasID(stack));
+						atlasIds.add(((AtlasItem) stack.getItem()).getAtlasID(stack));
 					}
 				}
 			}

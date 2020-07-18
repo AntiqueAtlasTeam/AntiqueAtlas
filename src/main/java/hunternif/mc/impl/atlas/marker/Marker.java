@@ -8,6 +8,7 @@ import net.fabricmc.api.Environment;
 import net.minecraft.client.resource.language.I18n;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.text.StringRenderable;
+import net.minecraft.text.Text;
 import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.World;
 import net.minecraft.world.dimension.DimensionType;
@@ -27,7 +28,7 @@ public class Marker {
 	 * or among global markers in a world. */
 	private final int id;
 	private final MarkerType type;
-	private final String label;
+	private final Text label;
 	private final RegistryKey<World> world;
 	private final int x, z;
 	private final boolean visibleAhead;
@@ -35,14 +36,9 @@ public class Marker {
 	
 	//TODO make an option for the marker to disappear at a certain scale.
 	
-	public Marker(int id, MarkerType type, String label, RegistryKey<World> world, int x, int z, boolean visibleAhead) {
+	public Marker(int id, MarkerType type, Text label, RegistryKey<World> world, int x, int z, boolean visibleAhead) {
 		this.id = id;
 		this.type = type;
-
-		if (label.length() > LABEL_LIMIT){
-			label = label.substring(0, LABEL_LIMIT);
-			Log.warn("Marker type is to long. Trimming to %d characters. Type: %s", LABEL_LIMIT, label);
-		}
 
 		this.label = label;
 		this.world = world;
@@ -66,28 +62,8 @@ public class Marker {
 	/** The label "as is", it might be a placeholder in the format
 	 * "gui.antiqueatlas.marker.*" that has to be translated.
 	 */
-	public String getLabel() {
+	public Text getLabel() {
 		return label;
-	}
-
-	@Environment(EnvType.CLIENT)
-	public StringRenderable getLocalizedLabel() {
-		// Assuming the beginning of the label string until a whitespace (or end)
-		// is a traslatable key. What comes after it is assumed to be a single
-		// string parameter, i.e. player's name.
-		int whitespaceIndex = label.indexOf(' ');
-		if (whitespaceIndex == -1) {
-			return StringRenderable.plain(I18n.translate(label));
-		} else {
-			String key = label.substring(0, whitespaceIndex);
-			String param = label.substring(whitespaceIndex + 1);
-			String translated = I18n.translate(key);
-			if (!key.equals(translated)) { // Make sure translation succeeded
-				return StringRenderable.plain(String.format(I18n.translate(key), param));
-			} else {
-				return StringRenderable.plain(label);
-			}
-		}
 	}
 	
 	public RegistryKey<World> getWorld() {
@@ -139,12 +115,12 @@ public class Marker {
 	
 	@Override
 	public String toString() {
-		return "#" + id + "\"" + label + "\"" + "@(" + x + ", " + z + ")";
+		return "#" + id + "\"" + label.getString() + "\"" + "@(" + x + ", " + z + ")";
 	}
 
 	public void write(PacketByteBuf buf) {
 		buf.writeVarInt(this.id);
-		buf.writeString(this.label, 512);
+		buf.writeText(this.label);
 		buf.writeVarInt(this.x);
 		buf.writeVarInt(this.z);
 		buf.writeBoolean(this.visibleAhead);
@@ -152,14 +128,14 @@ public class Marker {
 
 	public static class Precursor {
 		private final int id;
-		private final String label;
+		private final Text label;
 		private final int x, z;
 		private final boolean visibleAhead;
 
 
 		public Precursor(PacketByteBuf buf) {
 			this.id = buf.readVarInt();
-			this.label = buf.readString(512);
+			this.label = buf.readText();
 			this.x = buf.readVarInt();
 			this.z = buf.readVarInt();
 			this.visibleAhead = buf.readBoolean();

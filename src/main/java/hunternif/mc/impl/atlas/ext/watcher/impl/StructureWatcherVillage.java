@@ -15,6 +15,7 @@ import hunternif.mc.impl.atlas.registry.MarkerType;
 import hunternif.mc.impl.atlas.util.Log;
 import hunternif.mc.impl.atlas.util.MathUtil;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockBox;
 import net.minecraft.world.dimension.DimensionType;
@@ -178,7 +179,7 @@ public class StructureWatcherVillage implements IStructureWatcher {
 					}
 				}
 				if (!foundMarker && AntiqueAtlasMod.CONFIG.autoVillageMarkers) {
-					AtlasAPI.markers.putGlobalMarker(world, false, villageType, "gui.antiqueatlas.marker.village", x, z);
+					AtlasAPI.markers.putGlobalMarker(world, false, villageType, new TranslatableText("gui.antiqueatlas.marker.village"), x, z);
 				}
 			}
 //			String tileName = null;
@@ -208,7 +209,7 @@ public class StructureWatcherVillage implements IStructureWatcher {
 	}
 
 	private static Identifier tileAt(World world, int chunkX, int chunkZ) {
-		return AntiqueAtlasMod.extBiomeData.getData().getBiomeAt(world.getRegistryKey(), chunkX, chunkZ);
+		return AntiqueAtlasMod.tileData.getData().getTile(world.getRegistryKey(), chunkX, chunkZ);
 	}
 
 	/** Delete the marker and custom tile data about the village. */

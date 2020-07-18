@@ -20,7 +20,6 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.world.World;
 
-import java.awt.*;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -102,7 +101,7 @@ public class StructureWatcherFortress implements IStructureWatcher {
 			BlockBox boundingBox = new BlockBox(child.getIntArray("BB"));
 			if (BRIDGE.equals(childID)) { // Straight open bridge segment. Is allowed to span several chunks.
 				if (boundingBox.getBlockCountX() > 16) {
-					Identifier tileName = ExtTileIdMap.TILE_NETHER_BRIDGE_X;
+					Identifier tileName = ExtTileIdMap.NETHER_BRIDGE_X;
 
 					int chunkZ = MathUtil.getCenter(boundingBox).getZ() >> 4;
 					for (int x = boundingBox.minX; x < boundingBox.maxX; x += 16) {
@@ -112,7 +111,7 @@ public class StructureWatcherFortress implements IStructureWatcher {
 						}
 					}
 				} else {//if (boundingBox.getZSize() > 16) {
-					Identifier tileName = ExtTileIdMap.TILE_NETHER_BRIDGE_Z;
+					Identifier tileName = ExtTileIdMap.NETHER_BRIDGE_Z;
 
 					int chunkX = MathUtil.getCenter(boundingBox).getX() >> 4;
 					for (int z = boundingBox.minZ; z < boundingBox.maxZ; z += 16) {
@@ -126,11 +125,11 @@ public class StructureWatcherFortress implements IStructureWatcher {
 				Identifier tileName;
 				int chunkX, chunkZ;
 				if (boundingBox.getBlockCountX() > boundingBox.getBlockCountZ()) {
-					tileName = ExtTileIdMap.TILE_NETHER_BRIDGE_END_X;
+					tileName = ExtTileIdMap.NETHER_BRIDGE_END_X;
 					chunkX = boundingBox.minX >> 4;
 					chunkZ = MathUtil.getCenter(boundingBox).getZ() >> 4;
 				} else {
-					tileName = ExtTileIdMap.TILE_NETHER_BRIDGE_END_Z;
+					tileName = ExtTileIdMap.NETHER_BRIDGE_END_Z;
 					chunkX = MathUtil.getCenter(boundingBox).getX() >> 4;
 					chunkZ = boundingBox.minZ >> 4;
 				}
@@ -142,25 +141,25 @@ public class StructureWatcherFortress implements IStructureWatcher {
 				int chunkZ = MathUtil.getCenter(boundingBox).getZ() >> 4;
 				Identifier tileName;
 				if (BRIDGE_GATE.equals(childID)) {
-					tileName = ExtTileIdMap.TILE_NETHER_BRIDGE_GATE;
+					tileName = ExtTileIdMap.NETHER_FORTRESS_BRIDGE_SMALL_CROSSING;
 					AtlasAPI.tiles.putCustomGlobalTile(world, tileName, chunkX, chunkZ);
 				} else if (BRIDGE_CROSS.equals(childID) || START.equals(childID)) {
-					tileName = ExtTileIdMap.TILE_NETHER_BRIDGE;
+					tileName = ExtTileIdMap.NETHER_FORTRESS_BRIDGE_CROSSING;
 					AtlasAPI.tiles.putCustomGlobalTile(world, tileName, chunkX, chunkZ);
 				} else if (TOWER.equals(childID)) {
-					tileName = ExtTileIdMap.TILE_NETHER_TOWER;
+					tileName = ExtTileIdMap.NETHER_FORTRESS_BRIDGE_STAIRS;
 					AtlasAPI.tiles.putCustomGlobalTile(world, tileName, chunkX, chunkZ);
 				} else if (ENTRANCE.equals(childID)) {
-					tileName = ExtTileIdMap.TILE_NETHER_HALL;
+					tileName = ExtTileIdMap.NETHER_FORTRESS_EXIT;
 					AtlasAPI.tiles.putCustomGlobalTile(world, tileName, chunkX, chunkZ);
 				} else if (WART_STAIRS.equals(childID)) {
-					tileName = ExtTileIdMap.TILE_NETHER_FORT_STAIRS;
+					tileName = ExtTileIdMap.NETHER_FORTRESS_CORRIDOR_NETHER_WARTS_ROOM;
 					AtlasAPI.tiles.putCustomGlobalTile(world, tileName, chunkX, chunkZ);
 				} else if (THRONE.equals(childID)) {
-					tileName = ExtTileIdMap.TILE_NETHER_THRONE;
+					tileName = ExtTileIdMap.NETHER_FORTRESS_BRIDGE_PLATFORM;
 					AtlasAPI.tiles.putCustomGlobalTile(world, tileName, chunkX, chunkZ);
 				} else {
-					tileName = ExtTileIdMap.TILE_NETHER_WALL;
+					tileName = ExtTileIdMap.NETHER_FORTRESS_WALL;
 					if (noTileAt(world, chunkX, chunkZ)) {
 						AtlasAPI.tiles.putCustomGlobalTile(world, tileName, chunkX, chunkZ);
 					}
@@ -170,6 +169,6 @@ public class StructureWatcherFortress implements IStructureWatcher {
 	}
 
 	private static boolean noTileAt(World world, int chunkX, int chunkZ) {
-		return AntiqueAtlasMod.extBiomeData.getData().getBiomeAt(world.getRegistryKey(), chunkX, chunkZ) == null;
+		return AntiqueAtlasMod.tileData.getData().getTile(world.getRegistryKey(), chunkX, chunkZ) == null;
 	}
 }

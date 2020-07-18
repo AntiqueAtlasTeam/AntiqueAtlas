@@ -3,7 +3,7 @@ package hunternif.mc.impl.atlas.marker;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import hunternif.mc.impl.atlas.item.ItemAtlas;
+import hunternif.mc.impl.atlas.item.AtlasItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.world.PersistentStateManager;
@@ -22,8 +22,8 @@ public class MarkersDataHandler {
 	
 	/** Loads data for the given atlas or creates a new one. */
 	public MarkersData getMarkersData(ItemStack stack, World world) {
-		if (stack.getItem() instanceof ItemAtlas) {
-			return getMarkersData(((ItemAtlas) stack.getItem()).getAtlasID(stack), world);
+		if (stack.getItem() instanceof AtlasItem) {
+			return getMarkersData(((AtlasItem) stack.getItem()).getAtlasID(stack), world);
 		} else {
 			return null;
 		}

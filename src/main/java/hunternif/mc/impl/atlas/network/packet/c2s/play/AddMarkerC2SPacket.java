@@ -10,6 +10,7 @@ import hunternif.mc.impl.atlas.registry.MarkerType;
 import net.fabricmc.fabric.api.network.PacketContext;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 
 import java.util.Collections;
@@ -23,13 +24,13 @@ import java.util.Collections;
 public class AddMarkerC2SPacket extends C2SPacket {
 	public static final Identifier ID = AntiqueAtlasMod.id("packet", "c2s", "marker", "add");
 
-	public AddMarkerC2SPacket(int atlasID, MarkerType markerType, int x, int z, boolean visibleBeforeDiscovery, String label) {
+	public AddMarkerC2SPacket(int atlasID, MarkerType markerType, int x, int z, boolean visibleBeforeDiscovery, Text label) {
 		this.writeVarInt(atlasID);
 		this.writeIdentifier(MarkerType.REGISTRY.getId(markerType));
 		this.writeVarInt(x);
 		this.writeVarInt(z);
 		this.writeBoolean(visibleBeforeDiscovery);
-		this.writeString(label);
+		this.writeText(label);
 	}
 
 	@Override
@@ -43,7 +44,7 @@ public class AddMarkerC2SPacket extends C2SPacket {
 		int x = buf.readVarInt();
 		int z = buf.readVarInt();
 		boolean visibleBeforeDiscovery = buf.readBoolean();
-		String label = buf.readString(32767);
+		Text label = buf.readText();
 
 		context.getTaskQueue().execute(() -> {
 			ServerPlayerEntity playerEntity = (ServerPlayerEntity) context.getPlayer();

@@ -6,7 +6,7 @@ import hunternif.mc.impl.atlas.RegistrarAntiqueAtlas;
 import hunternif.mc.impl.atlas.client.*;
 import hunternif.mc.impl.atlas.client.gui.GuiAtlas;
 import hunternif.mc.impl.atlas.core.WorldData;
-import hunternif.mc.impl.atlas.item.ItemAtlas;
+import hunternif.mc.impl.atlas.item.AtlasItem;
 import hunternif.mc.impl.atlas.marker.DimensionMarkersData;
 import hunternif.mc.impl.atlas.marker.Marker;
 import hunternif.mc.impl.atlas.marker.MarkersData;
@@ -86,9 +86,9 @@ public class OverlayRenderer extends DrawableHelper {
             ItemStack stack2 = player.getOffHandStack();
 
             if (!stack.isEmpty() && stack.getItem() == RegistrarAntiqueAtlas.ATLAS) {
-                atlasID = ((ItemAtlas) stack.getItem()).getAtlasID(stack);
+                atlasID = ((AtlasItem) stack.getItem()).getAtlasID(stack);
             } else if (!stack2.isEmpty() && stack2.getItem() == RegistrarAntiqueAtlas.ATLAS) {
-                atlasID = ((ItemAtlas) stack2.getItem()).getAtlasID(stack2);
+                atlasID = ((AtlasItem) stack2.getItem()).getAtlasID(stack2);
             }
         } else {
             atlasID = getPlayerAtlas(player);

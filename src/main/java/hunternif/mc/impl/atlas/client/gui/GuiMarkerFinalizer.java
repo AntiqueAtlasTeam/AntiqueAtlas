@@ -12,6 +12,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.text.LiteralText;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.world.World;
 
@@ -41,15 +42,12 @@ public class GuiMarkerFinalizer extends GuiComponent {
 	private ButtonWidget btnDone;
 	private ButtonWidget btnCancel;
 	private TextFieldWidget textField;
-	private final GuiScrollingContainer scroller;
+	private GuiScrollingContainer scroller;
 	private ToggleGroup<GuiMarkerInList> typeRadioGroup;
 
 	private final List<IMarkerTypeSelectListener> markerListeners = new ArrayList<>();
 
 	GuiMarkerFinalizer() {
-		scroller = new GuiScrollingContainer();
-		scroller.setWheelScrollsHorizontally();
-		this.addChild(scroller);
 	}
 
 	void setMarkerData(World world, int atlasID, int markerX, int markerZ) {
@@ -77,7 +75,7 @@ public class GuiMarkerFinalizer extends GuiComponent {
 		super.init();
 
 		addButton(btnDone = new ButtonWidget(this.width/2 - BUTTON_WIDTH - BUTTON_SPACING/2, this.height/2 + 40, BUTTON_WIDTH, 20, new TranslatableText("gui.done"), (button) -> {
-			MarkerRegistry.API.putMarker(world, true, atlasID, selectedType, textField.getText(), markerX, markerZ);
+			MarkerRegistry.API.putMarker(world, true, atlasID, selectedType, new LiteralText(textField.getText()), markerX, markerZ);
 			Log.info("Put marker in Atlas #%d \"%s\" at (%d, %d)", atlasID, textField.getText(), markerX, markerZ);
 			close();
 		}));
@@ -88,7 +86,10 @@ public class GuiMarkerFinalizer extends GuiComponent {
 		textField.setEditable(true);
 		textField.setText("");
 
-		scroller.removeAllContent();
+		scroller = new GuiScrollingContainer();
+		scroller.setWheelScrollsHorizontally();
+		this.addChild(scroller);
+
 		int typeCount = 0;
 		for (MarkerType type : MarkerType.REGISTRY) {
 			if(!type.isTechnical())

@@ -3,7 +3,7 @@ package hunternif.mc.impl.atlas.api;
 import hunternif.mc.impl.atlas.AntiqueAtlasMod;
 import hunternif.mc.impl.atlas.api.oldimpl.MarkerApiImpl;
 import hunternif.mc.impl.atlas.api.oldimpl.TileApiImpl;
-import hunternif.mc.impl.atlas.item.ItemAtlas;
+import hunternif.mc.impl.atlas.item.AtlasItem;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -52,13 +52,13 @@ public class AtlasAPI {
 
 		List<Integer> list = new ArrayList<>();
 		for (ItemStack stack : player.inventory.main) {
-			if (!stack.isEmpty() && stack.getItem() instanceof ItemAtlas) {
-				list.add(((ItemAtlas) stack.getItem()).getAtlasID(stack));
+			if (!stack.isEmpty() && stack.getItem() instanceof AtlasItem) {
+				list.add(((AtlasItem) stack.getItem()).getAtlasID(stack));
 			}
 		}
 		for (ItemStack stack : player.inventory.offHand) {
-			if (!stack.isEmpty() && stack.getItem() instanceof ItemAtlas) {
-				list.add(((ItemAtlas) stack.getItem()).getAtlasID(stack));
+			if (!stack.isEmpty() && stack.getItem() instanceof AtlasItem) {
+				list.add(((AtlasItem) stack.getItem()).getAtlasID(stack));
 			}
 		}
 

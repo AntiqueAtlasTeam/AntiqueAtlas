@@ -16,6 +16,7 @@ public class AntiqueAtlasNetworking {
 		ClientSidePacketRegistry.INSTANCE.register(DimensionUpdateS2CPacket.ID, DimensionUpdateS2CPacket::apply);
 		ClientSidePacketRegistry.INSTANCE.register(MapDataS2CPacket.ID, MapDataS2CPacket::apply);
 		ClientSidePacketRegistry.INSTANCE.register(MarkersS2CPacket.ID, MarkersS2CPacket::apply);
+		ClientSidePacketRegistry.INSTANCE.register(OpenAtlasS2CPacket.ID, OpenAtlasS2CPacket::apply);
 		ClientSidePacketRegistry.INSTANCE.register(PutTileS2CPacket.ID, PutTileS2CPacket::apply);
 		ClientSidePacketRegistry.INSTANCE.register(TileGroupsS2CPacket.ID, TileGroupsS2CPacket::apply);
 		ClientSidePacketRegistry.INSTANCE.register(TileNameS2CPacket.ID, TileNameS2CPacket::apply);

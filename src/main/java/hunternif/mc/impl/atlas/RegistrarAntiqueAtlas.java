@@ -1,6 +1,6 @@
 package hunternif.mc.impl.atlas;
 
-import hunternif.mc.impl.atlas.item.ItemAtlas;
+import hunternif.mc.impl.atlas.item.AtlasItem;
 import hunternif.mc.impl.atlas.item.ItemEmptyAtlas;
 import hunternif.mc.impl.atlas.item.RecipeAtlasCloning;
 import hunternif.mc.impl.atlas.item.RecipeAtlasCombining;
@@ -12,7 +12,7 @@ import net.minecraft.util.registry.Registry;
 
 public class RegistrarAntiqueAtlas {
     public static final ItemEmptyAtlas EMPTY_ATLAS = new ItemEmptyAtlas(new Item.Settings().group(ItemGroup.MISC));
-    public static final ItemAtlas ATLAS = new ItemAtlas(new Item.Settings().maxCount(1));
+    public static final AtlasItem ATLAS = new AtlasItem(new Item.Settings().maxCount(1));
 
     public static void register() {
         // TODO FABRIC

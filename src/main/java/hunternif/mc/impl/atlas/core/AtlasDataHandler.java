@@ -1,6 +1,6 @@
 package hunternif.mc.impl.atlas.core;
 
-import hunternif.mc.impl.atlas.item.ItemAtlas;
+import hunternif.mc.impl.atlas.item.AtlasItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.world.PersistentStateManager;
@@ -21,8 +21,8 @@ public class AtlasDataHandler {
 
 	/** Loads data for the given atlas ID or creates a new one. */
 	public AtlasData getAtlasData(ItemStack stack, World world) {
-		if (stack.getItem() instanceof ItemAtlas) {
-			return getAtlasData(((ItemAtlas) stack.getItem()).getAtlasID(stack), world);
+		if (stack.getItem() instanceof AtlasItem) {
+			return getAtlasData(((AtlasItem) stack.getItem()).getAtlasID(stack), world);
 		} else {
 			return null;
 		}

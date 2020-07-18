@@ -11,6 +11,7 @@ import hunternif.mc.impl.atlas.marker.MarkersData;
 import hunternif.mc.impl.atlas.registry.MarkerType;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.text.Text;
 import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.World;
 import net.minecraft.world.dimension.DimensionType;
@@ -28,11 +29,11 @@ public class StructureWatcherGeneric implements IStructureWatcher {
 	private final String datFileName;
 	private MarkerType markerType;
 	private MarkerType tileMarker;
-	private String markerLabel;
-	private String tileMarkerLabel;
+	private Text markerLabel;
+	private Text tileMarkerLabel;
 	private final RegistryKey<DimensionType> dimension;
 
-    public StructureWatcherGeneric(String datFileName, RegistryKey<DimensionType> dimType, MarkerType markerType, String label) {
+    public StructureWatcherGeneric(String datFileName, RegistryKey<DimensionType> dimType, MarkerType markerType, Text label) {
         this.markerType = markerType;
         this.markerLabel = label;
         this.dimension = dimType;
@@ -85,7 +86,7 @@ public class StructureWatcherGeneric implements IStructureWatcher {
         return visits;
     }
 
-    public StructureWatcherGeneric setTileMarker(MarkerType type, String label) {
+    public StructureWatcherGeneric setTileMarker(MarkerType type, Text label) {
         tileMarker = type;
         tileMarkerLabel = label;
         return this;

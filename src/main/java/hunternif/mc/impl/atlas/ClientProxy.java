@@ -7,15 +7,9 @@ import hunternif.mc.impl.atlas.marker.MarkerTextureConfig;
 import hunternif.mc.impl.atlas.registry.MarkerType;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
-import net.fabricmc.fabric.api.event.client.ClientTickCallback;
-import net.fabricmc.fabric.api.network.ClientSidePacketRegistry;
-import net.fabricmc.fabric.api.network.PacketConsumer;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.fabricmc.fabric.api.resource.SimpleSynchronousResourceReloadListener;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.item.ItemStack;
 import net.minecraft.resource.ResourceManager;
 import net.minecraft.resource.ResourceType;
 import net.minecraft.util.Identifier;
@@ -23,26 +17,16 @@ import net.minecraft.util.registry.Registry;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.Biomes;
 
-import java.io.File;
-import java.util.Set;
-import java.util.function.Function;
-
 import static hunternif.mc.impl.atlas.client.TextureSet.*;
 
 @Environment(EnvType.CLIENT)
-public class ClientProxy extends CommonProxy implements SimpleSynchronousResourceReloadListener {
+public class ClientProxy implements SimpleSynchronousResourceReloadListener {
 	private static TextureSetMap textureSetMap;
 	private static TextureSetConfig textureSetConfig;
 	private static BiomeTextureMap textureMap;
 	private static MarkerTextureConfig markerTextureConfig;
 
 	private static GuiAtlas guiAtlas;
-
-	@Override
-	public void registerPackets(Set<Identifier> clientPackets, Set<Identifier> serverPackets, Function<Identifier, PacketConsumer> consumer) {
-		super.registerPackets(clientPackets, serverPackets, consumer);
-		clientPackets.forEach((id) -> ClientSidePacketRegistry.INSTANCE.register(id, consumer.apply(id)));
-	}
 
 	public void initClient() {
 		//TODO Enforce texture config loading process as follows:
@@ -87,36 +71,6 @@ public class ClientProxy extends CommonProxy implements SimpleSynchronousResourc
 	}
 
 	@Environment(EnvType.CLIENT)
-	private GuiAtlas getAtlasGUI() {
-		if (guiAtlas == null) {
-			guiAtlas = new GuiAtlas();
-			guiAtlas.setMapScale(AntiqueAtlasMod.CONFIG.defaultScale);
-		}
-		return guiAtlas;
-	}
-
-	@Override
-	@Environment(EnvType.CLIENT)
-	public void openAtlasGUI(ItemStack stack) {
-	    openAtlasGUI(getAtlasGUI().prepareToOpen(stack));
-	}
-
-	@Override
-	@Environment(EnvType.CLIENT)
-	public void openAtlasGUI() {
-	    openAtlasGUI(getAtlasGUI().prepareToOpen());
-    }
-
-	@Environment(EnvType.CLIENT)
-	private void openAtlasGUI(GuiAtlas gui) {
-        MinecraftClient mc = MinecraftClient.getInstance();
-        if (mc.currentScreen == null) { // In-game screen
-            guiAtlas.updateL18n();
-            mc.openScreen(gui);
-        }
-    }
-
-	@Environment(EnvType.CLIENT)
 	private void registerDefaultTextureSets(TextureSetMap map) {
 		map.register(ICE);
 		map.register(SHORE);
@@ -156,7 +110,7 @@ public class ClientProxy extends CommonProxy implements SimpleSynchronousResourc
 		map.register(PINES);
 		map.register(PINES_HILLS);
 		map.register(SAVANNA);
-		map.register(SAVANNA_CLIFFS);
+		map.register(SAVANNA_PLATEAU);
 		map.register(PLATEAU_SAVANNA_M);
 		map.register(MESA);
 		map.register(BRYCE);
@@ -224,12 +178,12 @@ public class ClientProxy extends CommonProxy implements SimpleSynchronousResourc
 		setBiomeTextureIfNone(Biomes.SUNFLOWER_PLAINS, SUNFLOWERS);
 		setBiomeTextureIfNone(Biomes.SNOWY_BEACH, SHORE);
 		setBiomeTextureIfNone(Biomes.STONE_SHORE, ROCK_SHORE);
-		/*
-		setBiomeTextureIfNone(ays.TODO_1_12_2_S, MOUNTAINS_SNOW_CAPS);
-		setBiomeTextureIfNone(ays.TODO_1_12_2_J, MOUNTAINS_ALL);
-		setBiomeTextureIfNone(ays.TODO_1_12_2_af, MOUNTAINS_SNOW_CAPS);
-		 */
-		// setBiomeTextureIfNone(ays.TODO_1_12_2_f, FOREST);
+
+		setBiomeTextureIfNone(Biomes.SNOWY_MOUNTAINS, MOUNTAINS_SNOW_CAPS);
+		setBiomeTextureIfNone(Biomes.MOUNTAINS, MOUNTAINS_ALL);
+		setBiomeTextureIfNone(Biomes.SNOWY_TAIGA_MOUNTAINS, MOUNTAINS_SNOW_CAPS);
+		setBiomeTextureIfNone(Biomes.FOREST, FOREST);
+
 		setBiomeTextureIfNone(Biomes.FLOWER_FOREST, FOREST_FLOWERS);
 		// setBiomeTextureIfNone(ays.TODO_1_12_2_t, FOREST_HILLS);
 		/* setBiomeTextureIfNone(ays.TODO_1_12_2_E, DENSE_FOREST);
@@ -239,16 +193,16 @@ public class ClientProxy extends CommonProxy implements SimpleSynchronousResourc
 		setBiomeTextureIfNone(Biomes.BIRCH_FOREST_HILLS, BIRCH_HILLS);
 		setBiomeTextureIfNone(Biomes.TALL_BIRCH_HILLS, TALL_BIRCH_HILLS);
 		setBiomeTextureIfNone(Biomes.JUNGLE, JUNGLE);
-		// setBiomeTextureIfNone(ays.TODO_1_12_2_X, JUNGLE_CLIFFS);
+		setBiomeTextureIfNone(Biomes.MODIFIED_JUNGLE_EDGE, JUNGLE_CLIFFS);
 		setBiomeTextureIfNone(Biomes.JUNGLE_HILLS, JUNGLE_HILLS);
 		setBiomeTextureIfNone(Biomes.JUNGLE_EDGE, JUNGLE_EDGE);
 		// setBiomeTextureIfNone(ays.TODO_1_12_2_Y, JUNGLE_EDGE_HILLS);
-		/* setBiomeTextureIfNone(ays.TODO_1_12_2_g, PINES);
-		setBiomeTextureIfNone(ays.TODO_1_12_2_U, PINES_HILLS);
-		setBiomeTextureIfNone(ays.TODO_1_12_2_u, PINES_HILLS);
-		setBiomeTextureIfNone(ays.TODO_1_12_2_F, SNOW_PINES);
-		setBiomeTextureIfNone(ays.TODO_1_12_2_ac, SNOW_PINES_HILLS);
-		setBiomeTextureIfNone(ays.TODO_1_12_2_G, SNOW_PINES_HILLS); */
+		setBiomeTextureIfNone(Biomes.TAIGA, PINES);
+		setBiomeTextureIfNone(Biomes.TAIGA_HILLS, PINES_HILLS);
+		setBiomeTextureIfNone(Biomes.TAIGA_HILLS, PINES_HILLS);
+		setBiomeTextureIfNone(Biomes.SNOWY_TAIGA, SNOW_PINES);
+		setBiomeTextureIfNone(Biomes.SNOWY_TAIGA_HILLS, SNOW_PINES_HILLS);
+		setBiomeTextureIfNone(Biomes.SNOWY_TAIGA_MOUNTAINS, SNOW_PINES_HILLS);
 		setBiomeTextureIfNone(Biomes.GIANT_TREE_TAIGA, MEGA_TAIGA);
 		setBiomeTextureIfNone(Biomes.GIANT_SPRUCE_TAIGA, MEGA_SPRUCE);
 		setBiomeTextureIfNone(Biomes.GIANT_TREE_TAIGA_HILLS, MEGA_TAIGA_HILLS);
@@ -259,18 +213,23 @@ public class ClientProxy extends CommonProxy implements SimpleSynchronousResourc
 		setBiomeTextureIfNone(Biomes.WARPED_FOREST, JUNGLE);
 		setBiomeTextureIfNone(Biomes.BASALT_DELTAS, MOUNTAINS_ALL);
 		setBiomeTextureIfNone(Biomes.THE_END, END_VOID);
+
 		setBiomeTextureIfNone(Biomes.MUSHROOM_FIELDS, MUSHROOM);
 		setBiomeTextureIfNone(Biomes.MUSHROOM_FIELD_SHORE, SHORE);
-/*		setBiomeTextureIfNone(ays.TODO_1_12_2_K, SAVANNA);
-		setBiomeTextureIfNone(ays.TODO_1_12_2_ag, SAVANNA_CLIFFS); */
-		/* setBiomeTextureIfNone(ays.TODO_1_12_2_M, MESA);
-		setBiomeTextureIfNone(ays.TODO_1_12_2_ai, BRYCE);
-		setBiomeTextureIfNone(ays.TODO_1_12_2_O, PLATEAU_MESA);
-		setBiomeTextureIfNone(ays.TODO_1_12_2_N, PLATEAU_MESA_TREES);
-		setBiomeTextureIfNone(ays.TODO_1_12_2_ak, PLATEAU_MESA_LOW);
-		setBiomeTextureIfNone(ays.TODO_1_12_2_aj, PLATEAU_MESA_TREES_LOW);
-		setBiomeTextureIfNone(ays.TODO_1_12_2_L, PLATEAU_SAVANNA);
-		setBiomeTextureIfNone(ays.TODO_1_12_2_ah, PLATEAU_SAVANNA_M); */
+
+		setBiomeTextureIfNone(Biomes.SAVANNA, SAVANNA);
+		setBiomeTextureIfNone(Biomes.SAVANNA_PLATEAU, SAVANNA_PLATEAU);
+		setBiomeTextureIfNone(Biomes.SHATTERED_SAVANNA, SAVANNA);
+		setBiomeTextureIfNone(Biomes.SHATTERED_SAVANNA_PLATEAU, SAVANNA_PLATEAU);
+
+//		setBiomeTextureIfNone(ays.TODO_1_12_2_M, MESA);
+//		setBiomeTextureIfNone(ays.TODO_1_12_2_ai, BRYCE);
+//		setBiomeTextureIfNone(ays.TODO_1_12_2_O, PLATEAU_MESA);
+//		setBiomeTextureIfNone(ays.TODO_1_12_2_N, PLATEAU_MESA_TREES);
+//		setBiomeTextureIfNone(ays.TODO_1_12_2_ak, PLATEAU_MESA_LOW);
+//		setBiomeTextureIfNone(ays.TODO_1_12_2_aj, PLATEAU_MESA_TREES_LOW);
+//		setBiomeTextureIfNone(ays.TODO_1_12_2_L, PLATEAU_SAVANNA);
+//		setBiomeTextureIfNone(ays.TODO_1_12_2_ah, PLATEAU_SAVANNA_M);
 
 		// Now let's register every other biome, they'll come from other mods
 		for (Biome biome : Registry.BIOME) {
@@ -307,17 +266,17 @@ public class ClientProxy extends CommonProxy implements SimpleSynchronousResourc
 		// Nether & Nether Fortress:
 		setCustomTileTextureIfNone(ExtTileIdMap.TILE_LAVA, LAVA);
 		setCustomTileTextureIfNone(ExtTileIdMap.TILE_LAVA_SHORE, LAVA_SHORE);
-		setCustomTileTextureIfNone(ExtTileIdMap.TILE_NETHER_BRIDGE, NETHER_BRIDGE);
-		setCustomTileTextureIfNone(ExtTileIdMap.TILE_NETHER_BRIDGE_X, NETHER_BRIDGE_X);
-		setCustomTileTextureIfNone(ExtTileIdMap.TILE_NETHER_BRIDGE_Z, NETHER_BRIDGE_Z);
-		setCustomTileTextureIfNone(ExtTileIdMap.TILE_NETHER_BRIDGE_END_X, NETHER_BRIDGE_END_X);
-		setCustomTileTextureIfNone(ExtTileIdMap.TILE_NETHER_BRIDGE_END_Z, NETHER_BRIDGE_END_Z);
-		setCustomTileTextureIfNone(ExtTileIdMap.TILE_NETHER_BRIDGE_GATE, NETHER_BRIDGE_GATE);
-		setCustomTileTextureIfNone(ExtTileIdMap.TILE_NETHER_TOWER, NETHER_TOWER);
-		setCustomTileTextureIfNone(ExtTileIdMap.TILE_NETHER_WALL, NETHER_WALL);
-		setCustomTileTextureIfNone(ExtTileIdMap.TILE_NETHER_HALL, NETHER_HALL);
-		setCustomTileTextureIfNone(ExtTileIdMap.TILE_NETHER_FORT_STAIRS, NETHER_FORT_STAIRS);
-		setCustomTileTextureIfNone(ExtTileIdMap.TILE_NETHER_THRONE, NETHER_THRONE);
+		setCustomTileTextureIfNone(ExtTileIdMap.NETHER_FORTRESS_BRIDGE_CROSSING, NETHER_BRIDGE);
+		setCustomTileTextureIfNone(ExtTileIdMap.NETHER_BRIDGE_X, NETHER_BRIDGE_X);
+		setCustomTileTextureIfNone(ExtTileIdMap.NETHER_BRIDGE_Z, NETHER_BRIDGE_Z);
+		setCustomTileTextureIfNone(ExtTileIdMap.NETHER_BRIDGE_END_X, NETHER_BRIDGE_END_X);
+		setCustomTileTextureIfNone(ExtTileIdMap.NETHER_BRIDGE_END_Z, NETHER_BRIDGE_END_Z);
+		setCustomTileTextureIfNone(ExtTileIdMap.NETHER_FORTRESS_BRIDGE_SMALL_CROSSING, NETHER_BRIDGE_GATE);
+		setCustomTileTextureIfNone(ExtTileIdMap.NETHER_FORTRESS_BRIDGE_STAIRS, NETHER_TOWER);
+		setCustomTileTextureIfNone(ExtTileIdMap.NETHER_FORTRESS_WALL, NETHER_WALL);
+		setCustomTileTextureIfNone(ExtTileIdMap.NETHER_FORTRESS_EXIT, NETHER_HALL);
+		setCustomTileTextureIfNone(ExtTileIdMap.NETHER_FORTRESS_CORRIDOR_NETHER_WARTS_ROOM, NETHER_FORT_STAIRS);
+		setCustomTileTextureIfNone(ExtTileIdMap.NETHER_FORTRESS_BRIDGE_PLATFORM, NETHER_THRONE);
 
 		setCustomTileTextureIfNone(ExtTileIdMap.TILE_END_ISLAND, END_ISLAND);
 		setCustomTileTextureIfNone(ExtTileIdMap.TILE_END_ISLAND_PLANTS, END_ISLAND_PLANTS);
@@ -332,11 +291,7 @@ public class ClientProxy extends CommonProxy implements SimpleSynchronousResourc
 			textureMap.setTexture(tileId, textureSet);
 		}
 	}
-
-	public File getConfigDir(){
-		return configDir;
-	}
-
+	
 	@Override
 	public Identifier getFabricId() {
 		return AntiqueAtlasMod.id("proxy");

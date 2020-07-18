@@ -2,6 +2,8 @@ package hunternif.mc.impl.atlas.client;
 
 import hunternif.mc.impl.atlas.AntiqueAtlasMod;
 import hunternif.mc.impl.atlas.client.gui.GuiAtlas;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.keybinding.FabricKeyBinding;
 import net.fabricmc.fabric.api.client.keybinding.KeyBindingRegistry;
 import net.minecraft.client.MinecraftClient;
@@ -12,6 +14,7 @@ import net.minecraft.util.Identifier;
 import java.util.ArrayList;
 import java.util.List;
 
+@Environment(EnvType.CLIENT)
 public class KeyHandler {
     /** ID's of keys */
     private static final int KEY_ATLAS = 0;
@@ -33,7 +36,9 @@ public class KeyHandler {
             if (currentScreen instanceof GuiAtlas) {
                 currentScreen.onClose();
             } else {
-                AntiqueAtlasMod.proxy.openAtlasGUI();
+                GuiAtlas gui = new GuiAtlas();
+                gui.updateL18n();
+                client.openScreen(gui);
             }
         }
     }

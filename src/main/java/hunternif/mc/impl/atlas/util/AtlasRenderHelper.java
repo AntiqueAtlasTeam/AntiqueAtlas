@@ -3,6 +3,7 @@ package hunternif.mc.impl.atlas.util;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.render.BufferBuilder;
 import net.minecraft.client.render.Tessellator;
 
@@ -57,5 +58,10 @@ public class AtlasRenderHelper {
 		renderer.vertex( x,                  y,                 0).texture(minU, minV).next();
 		renderer.vertex( x,                 (y + tileHalfSize), 0).texture(minU, maxV).next();
 		tessellator.draw();
+	}
+
+	public static void drawFullTexture(MatrixStack matrices, Identifier texture, int x, int y, int size) {
+		MinecraftClient.getInstance().getTextureManager().bindTexture(texture);
+		DrawableHelper.drawTexture(matrices, x, y, 0F, 0F, size, size, size, size);
 	}
 }

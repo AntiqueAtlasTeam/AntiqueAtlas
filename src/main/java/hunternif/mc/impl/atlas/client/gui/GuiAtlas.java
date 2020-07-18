@@ -10,7 +10,7 @@ import hunternif.mc.impl.atlas.client.gui.core.GuiStates.SimpleState;
 import hunternif.mc.impl.atlas.core.WorldData;
 import hunternif.mc.impl.atlas.event.MarkerClickedCallback;
 import hunternif.mc.impl.atlas.event.MarkerHoveredCallback;
-import hunternif.mc.impl.atlas.item.ItemAtlas;
+import hunternif.mc.impl.atlas.item.AtlasItem;
 import hunternif.mc.impl.atlas.marker.DimensionMarkersData;
 import hunternif.mc.impl.atlas.marker.Marker;
 import hunternif.mc.impl.atlas.marker.MarkersData;
@@ -925,8 +925,8 @@ public class GuiAtlas extends GuiComponent {
 				markerX + info.x,
 				markerY + info.y,
 				info.width, info.height);
-		if (isMouseOver && mouseIsOverMarker && marker.getLabel().length() > 0) {
-			drawTooltip(Collections.singletonList(marker.getLocalizedLabel()), textRenderer);
+		if (isMouseOver && mouseIsOverMarker && marker.getLabel().getString().length() > 0) {
+			drawTooltip(Collections.singletonList(marker.getLabel()), textRenderer);
 		}
 	}
 
@@ -983,6 +983,6 @@ public class GuiAtlas extends GuiComponent {
 
 	/** Returns atlas id based on "itemNeeded" option */
 	private int getAtlasID() {
-	    return AntiqueAtlasMod.CONFIG.itemNeeded ? ((ItemAtlas) stack.getItem()).getAtlasID(stack) : player.getUuid().hashCode();
+	    return AntiqueAtlasMod.CONFIG.itemNeeded ? ((AtlasItem) stack.getItem()).getAtlasID(stack) : player.getUuid().hashCode();
     }
 }

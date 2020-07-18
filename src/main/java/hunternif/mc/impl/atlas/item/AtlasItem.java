@@ -3,6 +3,8 @@ package hunternif.mc.impl.atlas.item;
 import java.util.Collection;
 
 import hunternif.mc.impl.atlas.network.packet.s2c.play.DimensionUpdateS2CPacket;
+import hunternif.mc.impl.atlas.network.packet.s2c.play.OpenAtlasS2CPacket;
+import net.fabricmc.fabric.api.network.ServerSidePacketRegistry;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
@@ -19,10 +21,10 @@ import hunternif.mc.impl.atlas.core.AtlasData;
 import hunternif.mc.impl.atlas.core.TileInfo;
 import hunternif.mc.impl.atlas.marker.MarkersData;
 
-public class ItemAtlas extends Item {
+public class AtlasItem extends Item {
 	static final String WORLD_ATLAS_DATA_ID = "aAtlas";
 
-	public ItemAtlas(Item.Settings settings) {
+	public AtlasItem(Item.Settings settings) {
 		super(settings);
 	}
 
@@ -39,8 +41,8 @@ public class ItemAtlas extends Item {
 	public TypedActionResult<ItemStack> use(World world, PlayerEntity playerEntity, Hand hand) {
 		ItemStack stack = playerEntity.getStackInHand(hand);
 
-		if (world.isClient) {
-			AntiqueAtlasMod.proxy.openAtlasGUI(stack);
+		if (!world.isClient) {
+			new OpenAtlasS2CPacket(hand).send((ServerPlayerEntity) playerEntity);
 		}
 
 		return new TypedActionResult<>(ActionResult.SUCCESS, stack);
@@ -51,7 +53,7 @@ public class ItemAtlas extends Item {
 		AtlasData data = AntiqueAtlasMod.atlasData.getAtlasData(stack, world);
 		if (data == null || !(entity instanceof PlayerEntity)) return;
 
-		int atlasId = ((ItemAtlas) stack.getItem()).getAtlasID(stack);
+		int atlasId = ((AtlasItem) stack.getItem()).getAtlasID(stack);
 
 		// On the first run send the map from the server to the client:
 		PlayerEntity player = (PlayerEntity) entity;

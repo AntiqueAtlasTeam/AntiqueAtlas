@@ -1,7 +1,7 @@
 package hunternif.mc.impl.atlas.network.packet.s2c.play;
 
 import hunternif.mc.impl.atlas.AntiqueAtlasMod;
-import hunternif.mc.impl.atlas.ext.ExtBiomeData;
+import hunternif.mc.impl.atlas.ext.TileDataStorage;
 import hunternif.mc.impl.atlas.network.packet.s2c.S2CPacket;
 import net.fabricmc.fabric.api.network.PacketContext;
 import net.minecraft.network.PacketByteBuf;
@@ -35,8 +35,8 @@ public class DeleteCustomGlobalTileS2CPacket extends S2CPacket {
 		int chunkZ = buf.readVarInt();
 
 		context.getTaskQueue().execute(() -> {
-			ExtBiomeData data = AntiqueAtlasMod.extBiomeData.getData();
-			data.removeBiomeAt(world, chunkX, chunkZ);
+			TileDataStorage data = AntiqueAtlasMod.tileData.getData();
+			data.removeTile(world, chunkX, chunkZ);
 		});
 	}
 }

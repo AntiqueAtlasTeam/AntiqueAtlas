@@ -5,15 +5,14 @@ import hunternif.mc.impl.atlas.core.GlobalAtlasData;
 import hunternif.mc.impl.atlas.core.PlayerEventHandler;
 import hunternif.mc.impl.atlas.event.RecipeCraftedCallback;
 import hunternif.mc.impl.atlas.event.RecipeCraftedHandler;
-import hunternif.mc.impl.atlas.ext.ExtBiomeDataHandler;
+import hunternif.mc.impl.atlas.ext.TileDataHandler;
 import hunternif.mc.impl.atlas.marker.GlobalMarkersDataHandler;
 import hunternif.mc.impl.atlas.marker.MarkersDataHandler;
 import hunternif.mc.impl.atlas.mixinhooks.NewPlayerConnectionCallback;
 import hunternif.mc.impl.atlas.mixinhooks.NewServerConnectionCallback;
 import hunternif.mc.impl.atlas.mixinhooks.ServerWorldLoadCallback;
 import hunternif.mc.impl.atlas.network.AntiqueAtlasNetworking;
-import hunternif.mc.impl.atlas.structure.NetherFortressStructurePieceHandler;
-import hunternif.mc.impl.atlas.structure.StructurePieceAddedCallback;
+import hunternif.mc.impl.atlas.structure.*;
 import me.sargunvohra.mcmods.autoconfig1u.AutoConfig;
 import me.sargunvohra.mcmods.autoconfig1u.serializer.Toml4jConfigSerializer;
 import net.fabricmc.api.ModInitializer;
@@ -32,12 +31,10 @@ public class AntiqueAtlasMod implements ModInitializer {
 	public static AntiqueAtlasMod instance;
 	public static Logger LOG = LogManager.getLogger(NAME);
 
-	public static CommonProxy proxy;
-
 	public static final AtlasDataHandler atlasData = new AtlasDataHandler();
 	public static final MarkersDataHandler markersData = new MarkersDataHandler();
 
-	public static final ExtBiomeDataHandler extBiomeData = new ExtBiomeDataHandler();
+	public static final TileDataHandler tileData = new TileDataHandler();
 	public static final GlobalMarkersDataHandler globalMarkersData = new GlobalMarkersDataHandler();
 
 	public static final RecipeCraftedHandler craftedHandler = new RecipeCraftedHandler();
@@ -62,14 +59,11 @@ public class AntiqueAtlasMod implements ModInitializer {
 	@Override
 	public void onInitialize() {
 		instance = this;
-		proxy = new CommonProxy();
 
 		AutoConfig.register(AntiqueAtlasConfig.class, Toml4jConfigSerializer::new);
 		CONFIG = AutoConfig.getConfigHolder(AntiqueAtlasConfig.class).getConfig();
 
 		RegistrarAntiqueAtlas.register();
-
-		proxy.init();
 
 		AntiqueAtlasNetworking.registerC2SListeners();
 
@@ -78,14 +72,18 @@ public class AntiqueAtlasMod implements ModInitializer {
 		NewServerConnectionCallback.EVENT.register(globalMarkersData::onClientConnectedToServer);
 
 		NewPlayerConnectionCallback.EVENT.register(globalMarkersData::onPlayerLogin);
-		NewPlayerConnectionCallback.EVENT.register(extBiomeData::onPlayerLogin);
+		NewPlayerConnectionCallback.EVENT.register(tileData::onPlayerLogin);
 		NewPlayerConnectionCallback.EVENT.register(PlayerEventHandler::onPlayerLogin);
 
 		ServerWorldLoadCallback.EVENT.register(globalMarkersData::onWorldLoad);
-		ServerWorldLoadCallback.EVENT.register(extBiomeData::onWorldLoad);
+		ServerWorldLoadCallback.EVENT.register(tileData::onWorldLoad);
 
 		RecipeCraftedCallback.EVENT.register(craftedHandler);
 
-		StructurePieceAddedCallback.EVENT.register(new NetherFortressStructurePieceHandler());
+		StructurePieceAddedCallback.EVENT.register(StructureHandler::resolve);
+		StructureAddedCallback.EVENT.register(StructureHandler::resolve);
+
+		NetherFortress.registerPieces();
+		Village.registerMarkers();
 	}
 }
