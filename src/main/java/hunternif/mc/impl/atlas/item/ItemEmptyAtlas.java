@@ -4,9 +4,11 @@ import hunternif.mc.impl.atlas.AntiqueAtlasMod;
 import hunternif.mc.impl.atlas.RegistrarAntiqueAtlas;
 import hunternif.mc.impl.atlas.core.AtlasData;
 import hunternif.mc.impl.atlas.marker.MarkersData;
+import hunternif.mc.impl.atlas.network.packet.s2c.play.AtlasCreateS2CPacket;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
@@ -30,15 +32,14 @@ public class ItemEmptyAtlas extends Item {
 		atlasStack.getOrCreateTag().putInt("atlasID", atlasID);
 
         AtlasData atlasData = AntiqueAtlasMod.atlasData.getAtlasData(atlasID, world);
-        atlasData.getWorldData(player.getEntityWorld().getRegistryKey()).setBrowsingPosition(
-                (int)Math.round(-player.getX() * AntiqueAtlasMod.CONFIG.defaultScale),
-                (int)Math.round(-player.getZ() * AntiqueAtlasMod.CONFIG.defaultScale),
-								AntiqueAtlasMod.CONFIG.defaultScale);
+        atlasData.getWorldData(player.getEntityWorld().getRegistryKey()).setBrowsingPositionTo(player);
         atlasData.markDirty();
 
         MarkersData markersData = AntiqueAtlasMod.markersData.getMarkersData(atlasID, world);
         markersData.markDirty();
-		
+
+		new AtlasCreateS2CPacket().send((ServerPlayerEntity) player);
+
 		stack.decrement(1);
 		if (stack.isEmpty()) {
 			return new TypedActionResult<>(ActionResult.SUCCESS, atlasStack);

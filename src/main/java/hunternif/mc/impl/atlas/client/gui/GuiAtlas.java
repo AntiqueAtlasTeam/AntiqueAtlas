@@ -28,6 +28,7 @@ import net.minecraft.client.sound.PositionedSoundInstance;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.math.MathHelper;
@@ -421,6 +422,10 @@ public class GuiAtlas extends GuiComponent {
 					&& hoveredMarker != null && !hoveredMarker.isGlobal() && isMouseOverMap && mouseState == 0) {
 				AtlasAPI.markers.deleteMarker(player.getEntityWorld(),
                         atlasID, hoveredMarker.getId());
+				hoveredMarker = null;
+				player.getEntityWorld().playSound(player, player.getBlockPos(),
+								SoundEvents.UI_CARTOGRAPHY_TABLE_TAKE_RESULT, SoundCategory.AMBIENT,
+								1F, 0.5F);
 			}
 			state.switchTo(NORMAL);
 		} else if (isMouseOverMap && selectedButton == null) {

@@ -11,7 +11,10 @@ import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.TextFieldWidget;
+import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.sound.SoundCategory;
+import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.world.World;
@@ -77,6 +80,11 @@ public class GuiMarkerFinalizer extends GuiComponent {
 		addButton(btnDone = new ButtonWidget(this.width/2 - BUTTON_WIDTH - BUTTON_SPACING/2, this.height/2 + 40, BUTTON_WIDTH, 20, new TranslatableText("gui.done"), (button) -> {
 			MarkerRegistry.API.putMarker(world, true, atlasID, selectedType, new LiteralText(textField.getText()), markerX, markerZ);
 			Log.info("Put marker in Atlas #%d \"%s\" at (%d, %d)", atlasID, textField.getText(), markerX, markerZ);
+
+			ClientPlayerEntity player = MinecraftClient.getInstance().player;
+			world.playSound(player, player.getBlockPos(),
+							SoundEvents.ENTITY_VILLAGER_WORK_CARTOGRAPHER, SoundCategory.AMBIENT,
+							1F, 1F);
 			close();
 		}));
 		addButton(btnCancel = new ButtonWidget(this.width/2 + BUTTON_SPACING/2, this.height/2 + 40, BUTTON_WIDTH, 20, new TranslatableText("gui.cancel"), (button) -> {

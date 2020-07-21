@@ -20,6 +20,7 @@ public class AntiqueAtlasNetworking {
 		ClientSidePacketRegistry.INSTANCE.register(PutTileS2CPacket.ID, PutTileS2CPacket::apply);
 		ClientSidePacketRegistry.INSTANCE.register(TileGroupsS2CPacket.ID, TileGroupsS2CPacket::apply);
 		ClientSidePacketRegistry.INSTANCE.register(TileNameS2CPacket.ID, TileNameS2CPacket::apply);
+		ClientSidePacketRegistry.INSTANCE.register(AtlasCreateS2CPacket.ID, AtlasCreateS2CPacket::apply);
 	}
 
 	public static void registerC2SListeners() {

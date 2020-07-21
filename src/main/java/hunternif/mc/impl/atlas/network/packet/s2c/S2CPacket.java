@@ -13,13 +13,13 @@ public abstract class S2CPacket extends AntiqueAtlasPacket {
 
 	public void send(ServerWorld world) {
 		for (ServerPlayerEntity playerEntity : world.getPlayers()) {
-			ServerSidePacketRegistry.INSTANCE.sendToPlayer(playerEntity, this.getId(), this);
+			send(playerEntity);
 		}
 	}
 
 	public void send(MinecraftServer server) {
 		for (ServerPlayerEntity playerEntity : server.getPlayerManager().getPlayerList()) {
-			ServerSidePacketRegistry.INSTANCE.sendToPlayer(playerEntity, this.getId(), this);
+			send(playerEntity);
 		}
 	}
 }

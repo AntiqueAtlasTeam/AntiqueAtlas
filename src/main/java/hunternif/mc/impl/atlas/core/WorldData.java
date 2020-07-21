@@ -9,6 +9,8 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
+
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -77,6 +79,12 @@ public class WorldData implements ITileStorage {
 			browsingZoom = AntiqueAtlasMod.CONFIG.minScale;
 		}
 		parent.markDirty();
+	}
+
+	public void setBrowsingPositionTo(Entity e) {
+		setBrowsingPosition((int)Math.round(-e.getX() * AntiqueAtlasMod.CONFIG.defaultScale),
+				(int)Math.round(-e.getZ() * AntiqueAtlasMod.CONFIG.defaultScale),
+				AntiqueAtlasMod.CONFIG.defaultScale);
 	}
 
 	public int getBrowsingX() {
