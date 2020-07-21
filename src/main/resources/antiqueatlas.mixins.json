@@ -1,14 +1,15 @@
 {
   "required": true,
-  "package": "hunternif.mc.atlas.mixin",
+  "package": "hunternif.mc.impl.atlas.mixin",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
+    "MixinCraftingResultSlot",
     "MixinEntity",
     "MixinPlayerEntity",
     "MixinPlayerEntityDeath",
     "MixinPlayerManager",
     "MixinServerWorld",
-    "MixinCraftingResultSlot"
+    "structure.StructureStartMixin"
   ],
   "client": [
     "MixinClientPlayNetworkHandler",

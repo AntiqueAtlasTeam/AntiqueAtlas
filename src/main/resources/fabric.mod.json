@@ -6,10 +6,10 @@
   "version": "${version}",
   "entrypoints": {
     "main": [
-      "hunternif.mc.atlas.AntiqueAtlasMod"
+      "hunternif.mc.impl.atlas.AntiqueAtlasMod"
     ],
     "client": [
-      "hunternif.mc.atlas.AntiqueAtlasModClient"
+      "hunternif.mc.impl.atlas.AntiqueAtlasModClient"
     ]
   },
   "environment": "*",
@@ -20,6 +20,7 @@
     "fabricloader": ">=0.6.0",
     "fabric": ">=0.4.0"
   },
+  "accessWidener": "antiqueatlas.accesswidener",
   "mixins": [
     "antiqueatlas.mixins.json",
     "antiqueatlasoverlay.mixins.json"

@@ -51,7 +51,10 @@ class SetTileRenderer extends DrawableHelper {
     }
 
     private void drawInlineAutotileCorner(int x, int y, int u, int v) {
-        drawTexture(this.matrices, x, y, tileHalfSize, tileHalfSize, u, v, 1, 1, 4, 6);
+        // This is dumb. But because their drawn four at a time, these chunks prevent rendering outside of our map
+        if ((x + tileHalfSize) <= 240 && (x - tileHalfSize >= 0) && (y + tileHalfSize) < 166 && (y - tileHalfSize) >= 0) {
+            drawTexture(this.matrices, x, y, tileHalfSize, tileHalfSize, u, v, 1, 1, 4, 6);
+        }
     }
 
     public class TileCorner {

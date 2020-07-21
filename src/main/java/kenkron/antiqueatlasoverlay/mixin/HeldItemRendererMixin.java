@@ -1,7 +1,7 @@
 package kenkron.antiqueatlasoverlay.mixin;
 
-import hunternif.mc.atlas.AntiqueAtlasMod;
-import hunternif.mc.atlas.RegistrarAntiqueAtlas;
+import hunternif.mc.impl.atlas.AntiqueAtlasMod;
+import hunternif.mc.impl.atlas.RegistrarAntiqueAtlas;
 import kenkron.antiqueatlasoverlay.OverlayRenderer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -40,7 +40,7 @@ public abstract class HeldItemRendererMixin {
 
 	@Inject(method = "renderFirstPersonItem", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;isEmpty()Z", ordinal = 0), locals = LocalCapture.CAPTURE_FAILHARD)
 	private void renderAtlas(AbstractClientPlayerEntity player, float tickDelta, float pitch, Hand hand, float swingProgress, ItemStack item, float equipProgress, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, CallbackInfo ci, boolean bl, Arm arm) {
-		if (item.getItem() == RegistrarAntiqueAtlas.ATLAS && !AntiqueAtlasMod.CONFIG.appearance.enabled) {
+		if (item.getItem() == RegistrarAntiqueAtlas.ATLAS && !AntiqueAtlasMod.CONFIG.enabled) {
 			if (bl && this.offHand.isEmpty()) {
 				renderAtlasInBothHands(matrices, vertexConsumers, light, pitch, equipProgress, swingProgress);
 			} else {
@@ -81,7 +81,7 @@ public abstract class HeldItemRendererMixin {
 		matrices.multiply(Vector3f.POSITIVE_Z.getDegreesQuaternion(180.0F));
 
 		matrices.scale(0.38F, 0.38F, 0.38F);
-		matrices.translate(-1.8375D, -0.5D, 0.0D);
+		matrices.translate(-1.85D, -0.5D, 0.0D);
 		matrices.scale(0.0078125F, 0.0078125F, 0.0078125F);
 
 		atlasOverlayRenderer.drawOverlay(matrices);
