@@ -1,6 +1,8 @@
 package hunternif.mc.atlas.ext.watcher;
 
 import java.util.Set;
+
+import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.dimension.DimensionType;
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -22,7 +24,7 @@ public interface IStructureWatcher {
     /**
      * @return if the dimension is valid for this watcher
      */
-    boolean isDimensionValid(DimensionType type);
+    boolean isDimensionValid(RegistryKey<DimensionType> type);
 
     /**
      * Return null if a structure should not be attempted to be visited.

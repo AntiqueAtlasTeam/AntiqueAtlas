@@ -14,6 +14,9 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.client.resource.language.I18n;
+import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.text.TranslatableText;
+import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.World;
 import net.minecraft.world.dimension.DimensionType;
 
@@ -25,7 +28,7 @@ import net.minecraft.world.dimension.DimensionType;
 public class GuiMarkerFinalizer extends GuiComponent {
 	private World world;
 	private int atlasID;
-	private DimensionType dimension;
+	private RegistryKey<DimensionType> dimension;
 	private int markerX;
 	private int markerZ;
 
@@ -51,7 +54,8 @@ public class GuiMarkerFinalizer extends GuiComponent {
 		this.addChild(scroller);
 	}
 
-	void setMarkerData(World world, int atlasID, DimensionType dimension, int markerX, int markerZ) {
+	void setMarkerData(World world, int atlasID, RegistryKey<DimensionType> dimension, int markerX,
+					   int markerZ) {
 		this.world = world;
 		this.atlasID = atlasID;
 		this.dimension = dimension;
@@ -76,15 +80,22 @@ public class GuiMarkerFinalizer extends GuiComponent {
 	protected void init() {
 		super.init();
 
-		addButton(btnDone = new ButtonWidget(this.width/2 - BUTTON_WIDTH - BUTTON_SPACING/2, this.height/2 + 40, BUTTON_WIDTH, 20, I18n.translate("gui.done"), (button) -> {
+		addButton(btnDone = new ButtonWidget(this.width/2 - BUTTON_WIDTH - BUTTON_SPACING/2,
+											 this.height/2 + 40, BUTTON_WIDTH, 20,
+											 new TranslatableText("gui.done")
+				, (button) -> {
 			AtlasAPI.markers.putMarker(world, true, atlasID, MarkerRegistry.getId(selectedType).toString(), textField.getText(), markerX, markerZ);
 			Log.info("Put marker in Atlas #%d \"%s\" at (%d, %d)", atlasID, textField.getText(), markerX, markerZ);
 			close();
 		}));
-		addButton(btnCancel = new ButtonWidget(this.width/2 + BUTTON_SPACING/2, this.height/2 + 40, BUTTON_WIDTH, 20, I18n.translate("gui.cancel"), (button) -> {
+		addButton(btnCancel = new ButtonWidget(this.width/2 + BUTTON_SPACING/2,
+											   this.height/2 + 40, BUTTON_WIDTH, 20, new TranslatableText(
+											   		"gui.cancel"), (button) -> {
 			close();
 		}));
-		textField = new TextFieldWidget(MinecraftClient.getInstance().textRenderer, (this.width - 200)/2, this.height/2 - 81, 200, 20, I18n.translate("gui.antiqueatlas.marker.label"));
+		textField = new TextFieldWidget(MinecraftClient.getInstance().textRenderer,
+                                        (this.width - 200)/2, this.height/2 - 81, 200, 20,
+                                        new TranslatableText("gui.antiqueatlas.marker.label"));
 		textField.setEditable(true);
 		textField.setText("");
 
@@ -137,18 +148,21 @@ public class GuiMarkerFinalizer extends GuiComponent {
 	}
 
 	@Override
-	public void render(int mouseX, int mouseY, float partialTick) {
-		this.renderBackground();
-		drawCenteredString(I18n.translate("gui.antiqueatlas.marker.label"), this.height/2 - 97, 0xffffff, true);
-		textField.render(mouseX, mouseY, partialTick);
-		drawCenteredString(I18n.translate("gui.antiqueatlas.marker.type"), this.height/2 - 44, 0xffffff, true);
-
+	public void render(MatrixStack matrix, int mouseX, int mouseY, float partialTick) {
+		this.renderBackground(matrix);
+		drawCenteredString(matrix, I18n.translate("gui.antiqueatlas.marker.label"),
+                           this.height/2 - 97, 0xffffff,
+            true);
+		textField.render(matrix, mouseX, mouseY, partialTick);
+		drawCenteredString(matrix, I18n.translate("gui.antiqueatlas.marker.type"),
+                           this.height/2 - 44, 0xffffff,
+            true);
 		// Darker background for marker type selector
-		fillGradient(scroller.getGuiX() - TYPE_BG_FRAME, scroller.getGuiY() - TYPE_BG_FRAME,
+		fillGradient(matrix, scroller.getGuiX() - TYPE_BG_FRAME, scroller.getGuiY() - TYPE_BG_FRAME,
 				scroller.getGuiX() + scroller.getWidth() + TYPE_BG_FRAME,
 				scroller.getGuiY() + scroller.getHeight() + TYPE_BG_FRAME,
 				0x88101010, 0x99101010);
-		super.render(mouseX, mouseY, partialTick);
+		super.render(matrix, mouseX, mouseY, partialTick);
 	}
 
 	interface IMarkerTypeSelectListener {

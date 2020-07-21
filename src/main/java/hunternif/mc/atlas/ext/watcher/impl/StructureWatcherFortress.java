@@ -11,6 +11,7 @@ import hunternif.mc.atlas.util.MathUtil;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockBox;
+import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.dimension.DimensionType;
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -59,8 +60,8 @@ public class StructureWatcherFortress implements IStructureWatcher {
     }
 
     @Override
-    public boolean isDimensionValid(DimensionType type) {
-        return type == DimensionType.THE_NETHER;
+    public boolean isDimensionValid(RegistryKey<DimensionType> type) {
+        return type == DimensionType.THE_NETHER_REGISTRY_KEY;
     }
 
     @Nullable
@@ -173,6 +174,6 @@ public class StructureWatcherFortress implements IStructureWatcher {
 	}
 
 	private static boolean noTileAt(World world, int chunkX, int chunkZ) {
-		return AntiqueAtlasMod.extBiomeData.getData().getBiomeAt(world.dimension.getType(), chunkX, chunkZ) == -1;
+		return AntiqueAtlasMod.extBiomeData.getData().getBiomeAt(world.getDimensionRegistryKey(), chunkX, chunkZ) == -1;
 	}
 }

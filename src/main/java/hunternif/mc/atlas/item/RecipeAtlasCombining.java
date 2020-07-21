@@ -10,6 +10,7 @@ import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.recipe.*;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.World;
 import net.minecraft.world.dimension.DimensionType;
 import java.util.ArrayList;
@@ -40,8 +41,8 @@ public class RecipeAtlasCombining implements CraftingRecipe {
 
 	private boolean matches(CraftingInventory inv) {
 		int atlasesFound = 0;
-		for (int i = 0; i < inv.getInvSize(); ++i) {
-			ItemStack stack = inv.getInvStack(i);
+		for (int i = 0; i < inv.size(); ++i) {
+			ItemStack stack = inv.getStack(i);
 			if (!stack.isEmpty()) {
 				if (stack.getItem() == RegistrarAntiqueAtlas.ATLAS) {
 					atlasesFound++;
@@ -55,8 +56,8 @@ public class RecipeAtlasCombining implements CraftingRecipe {
 	public ItemStack craft(CraftingInventory inv) {
 		ItemStack firstAtlas = ItemStack.EMPTY;
 		List<Integer> atlasIds = new ArrayList<>(9);
-		for (int i = 0; i < inv.getInvSize(); ++i) {
-			ItemStack stack = inv.getInvStack(i);
+		for (int i = 0; i < inv.size(); ++i) {
+			ItemStack stack = inv.getStack(i);
 			if (!stack.isEmpty()) {
 				if (stack.getItem() instanceof ItemAtlas) {
 					if (firstAtlas.isEmpty()) {
@@ -104,18 +105,18 @@ public class RecipeAtlasCombining implements CraftingRecipe {
 		destBiomes.markDirty();
 		MarkersData destMarkers = AntiqueAtlasMod.markersData.getMarkersData(atlasID, world);
 		destMarkers.markDirty();
-		for (int i = 0; i < inventory.getInvSize(); ++i) {
-			ItemStack stack = inventory.getInvStack(i);
+		for (int i = 0; i < inventory.size(); ++i) {
+			ItemStack stack = inventory.getStack(i);
 			if (stack.isEmpty()) continue;
 			AtlasData srcBiomes = AntiqueAtlasMod.atlasData.getAtlasData(stack, world);
 			if (destBiomes != null && srcBiomes != null && destBiomes != srcBiomes) {
-				for (DimensionType dim : srcBiomes.getVisitedDimensions()) {
+				for (RegistryKey<DimensionType> dim : srcBiomes.getVisitedDimensions()) {
 					destBiomes.getDimensionData(dim).addData(srcBiomes.getDimensionData(dim));
 				}
 			}
 			MarkersData srcMarkers = AntiqueAtlasMod.markersData.getMarkersData(stack, world);
 			if (destMarkers != null && srcMarkers != null && destMarkers != srcMarkers) {
-				for (DimensionType dim : srcMarkers.getVisitedDimensions()) {
+				for (RegistryKey<DimensionType> dim : srcMarkers.getVisitedDimensions()) {
 					for (Marker marker : srcMarkers.getMarkersDataInDimension(dim).getAllMarkers()) {
 						destMarkers.createAndSaveMarker(marker.getType(), marker.getLabel(),
 								dim, marker.getX(), marker.getZ(), marker.isVisibleAhead());

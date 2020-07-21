@@ -10,8 +10,10 @@ import hunternif.mc.atlas.network.AbstractMessage;
 import hunternif.mc.atlas.util.Log;
 import net.fabricmc.api.EnvType;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.PacketByteBuf;
+import net.minecraft.network.PacketByteBuf;
 import net.minecraft.util.registry.Registry;
+import net.minecraft.util.registry.RegistryKey;
+import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.dimension.DimensionType;
 
@@ -24,12 +26,12 @@ import java.io.IOException;
  */
 public class PutTilePacket extends AbstractMessage<PutTilePacket> {
 	private int atlasID, x, z;
-	private DimensionType dimension;
+	private RegistryKey<DimensionType> dimension;
 	private TileKind kind;
 	
 	public PutTilePacket() {}
 	
-	public PutTilePacket(int atlasID, DimensionType dimension, int x, int z, TileKind kind) {
+	public PutTilePacket(int atlasID, RegistryKey<DimensionType> dimension, int x, int z, TileKind kind) {
 		this.atlasID = atlasID;
 		this.dimension = dimension;
 		this.x = x;
@@ -40,7 +42,7 @@ public class PutTilePacket extends AbstractMessage<PutTilePacket> {
 	@Override
 	protected void read(PacketByteBuf buffer) throws IOException {
 		atlasID = buffer.readVarInt();
-		dimension = Registry.DIMENSION_TYPE.get(buffer.readVarInt());
+		dimension = RegistryKey.of(Registry.DIMENSION_TYPE_KEY, buffer.readIdentifier());
 		x = buffer.readVarInt();
 		z = buffer.readVarInt();
 		kind = TileKindFactory.get(buffer.readVarInt());
@@ -49,7 +51,7 @@ public class PutTilePacket extends AbstractMessage<PutTilePacket> {
 	@Override
 	protected void write(PacketByteBuf buffer) throws IOException {
 		buffer.writeVarInt(atlasID);
-		buffer.writeVarInt(Registry.DIMENSION_TYPE.getRawId(dimension));
+		buffer.writeIdentifier(dimension.getValue());
 		buffer.writeVarInt(x);
 		buffer.writeVarInt(z);
 		buffer.writeVarInt(kind.getId());

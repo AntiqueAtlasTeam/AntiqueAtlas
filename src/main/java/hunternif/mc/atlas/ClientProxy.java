@@ -271,7 +271,7 @@ public class ClientProxy extends CommonProxy implements SimpleSynchronousResourc
 		setBiomeTextureIfNone(Biomes.GIANT_SPRUCE_TAIGA, MEGA_SPRUCE);
 		setBiomeTextureIfNone(Biomes.GIANT_TREE_TAIGA_HILLS, MEGA_TAIGA_HILLS);
 		setBiomeTextureIfNone(Biomes.GIANT_SPRUCE_TAIGA_HILLS, MEGA_SPRUCE_HILLS);
-		setBiomeTextureIfNone(Biomes.NETHER, CAVE_WALLS);
+		setBiomeTextureIfNone(Biomes.NETHER_WASTES, CAVE_WALLS);
 		setBiomeTextureIfNone(Biomes.THE_END, END_VOID);
 		setBiomeTextureIfNone(Biomes.MUSHROOM_FIELDS, MUSHROOM);
 		setBiomeTextureIfNone(Biomes.MUSHROOM_FIELD_SHORE, SHORE);

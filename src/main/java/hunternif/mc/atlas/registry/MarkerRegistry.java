@@ -3,27 +3,35 @@ package hunternif.mc.atlas.registry;
 import java.util.List;
 import java.util.Set;
 
+import com.mojang.serialization.Lifecycle;
 import hunternif.mc.atlas.AntiqueAtlasMod;
 import hunternif.mc.atlas.util.SaveData;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.DefaultedRegistry;
 import net.minecraft.util.registry.MutableRegistry;
+import net.minecraft.util.registry.Registry;
+import net.minecraft.util.registry.RegistryKey;
 
 public class MarkerRegistry extends SaveData {
 	public static final MarkerRegistry INSTANCE = new MarkerRegistry();
+	public static final Identifier MARKER_REGISTRY = new Identifier(AntiqueAtlasMod.ID, "marker");
+	public static final RegistryKey<Registry<MarkerType>> MARKER_TYPE_REGISTRY_KEY =
+			RegistryKey.ofRegistry(MARKER_REGISTRY);
 
 	private final MutableRegistry<MarkerType> registry;
-	
+
+
 	private MarkerRegistry() {
-		registry = new DefaultedRegistry<>("antiqueatlas:red_x_small");
+		registry = new DefaultedRegistry<>("antiqueatlas:red_x_small", MARKER_TYPE_REGISTRY_KEY,
+										   Lifecycle.stable());
 	}
 	
 	public static void register(Identifier location, MarkerType type) {
 		if (INSTANCE.registry.containsId(location)) {
 			int oldId = INSTANCE.registry.getRawId(INSTANCE.registry.get(location));
-			INSTANCE.registry.set(oldId, location, type);
+			INSTANCE.registry.set(oldId, RegistryKey.of(MARKER_TYPE_REGISTRY_KEY, location), type);
 		} else {
-			INSTANCE.registry.add(location, type);
+			INSTANCE.registry.add(RegistryKey.of(MARKER_TYPE_REGISTRY_KEY, location), type);
 		}
 	}
 	

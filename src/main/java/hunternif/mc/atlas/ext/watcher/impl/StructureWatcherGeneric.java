@@ -14,6 +14,7 @@ import hunternif.mc.atlas.registry.MarkerType;
 import hunternif.mc.atlas.util.Log;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.World;
 import net.minecraft.world.dimension.DimensionType;
 import org.apache.commons.lang3.tuple.Pair;
@@ -32,9 +33,9 @@ public class StructureWatcherGeneric implements IStructureWatcher {
 	private MarkerType tileMarker;
 	private String markerLabel;
 	private String tileMarkerLabel;
-	private final DimensionType dimension;
+	private final RegistryKey<DimensionType> dimension;
 
-    public StructureWatcherGeneric(String datFileName, DimensionType dimType, MarkerType marker, String label) {
+    public StructureWatcherGeneric(String datFileName, RegistryKey<DimensionType> dimType, MarkerType marker, String label) {
         this.marker = marker;
         this.markerLabel = label;
         this.dimension = dimType;
@@ -50,7 +51,7 @@ public class StructureWatcherGeneric implements IStructureWatcher {
     }
 
     @Override
-    public boolean isDimensionValid(DimensionType type) {
+    public boolean isDimensionValid(RegistryKey<DimensionType> type) {
     	return this.dimension == type;
     }
 
@@ -100,7 +101,8 @@ public class StructureWatcherGeneric implements IStructureWatcher {
 		boolean foundTileMarker = false;
 		
     	List<Marker> markers = AntiqueAtlasMod.globalMarkersData.getData()
-				.getMarkersAtChunk(world.dimension.getType(), chunkX / MarkersData.CHUNK_STEP, chunkZ / MarkersData.CHUNK_STEP);
+				.getMarkersAtChunk(world.getDimensionRegistryKey(), chunkX / MarkersData.CHUNK_STEP,
+                                   chunkZ / MarkersData.CHUNK_STEP);
 		if (markers != null) {
 			for (Marker marker : markers) {
 				if (!foundMarker && marker.getChunkX() == chunkX && marker.getChunkZ() == chunkZ &&

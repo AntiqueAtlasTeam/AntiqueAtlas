@@ -13,9 +13,9 @@ import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import net.fabricmc.api.EnvType;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.PacketByteBuf;
+import net.minecraft.network.PacketByteBuf;
 import net.minecraft.util.registry.Registry;
+import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.dimension.DimensionType;
 
 
@@ -24,20 +24,20 @@ public class DimensionUpdatePacket extends AbstractClientMessage<DimensionUpdate
 	private static final int ENTRY_SIZE_BYTES = 2 + 2 + 4;
 
 	private int atlasID;
-	private Identifier dimensionId;
+	private RegistryKey<DimensionType> dimension;
 	private int tileCount;
 	private ByteBuf tileData;
 
 	public DimensionUpdatePacket() {}
 
-	public DimensionUpdatePacket(int atlasID, DimensionType dimension) {
+	public DimensionUpdatePacket(int atlasID, RegistryKey<DimensionType> dimension) {
 		this.atlasID = atlasID;
-		this.dimensionId = Registry.DIMENSION_TYPE.getId(dimension);
+		this.dimension = dimension;
 		tileCount = 0;
 		tileData = Unpooled.buffer();
 	}
 
-	public DimensionUpdatePacket(int atlasID, DimensionType dimension, Collection<TileInfo> tiles) {
+	public DimensionUpdatePacket(int atlasID, RegistryKey<DimensionType> dimension, Collection<TileInfo> tiles) {
 		this(atlasID, dimension);
 		for (TileInfo i : tiles) {
 			addTile(i.x, i.z, i.biome);
@@ -59,7 +59,7 @@ public class DimensionUpdatePacket extends AbstractClientMessage<DimensionUpdate
 	@Override
 	public void read(PacketByteBuf buffer) throws IOException {
 		atlasID = buffer.readVarInt();
-		dimensionId = buffer.readIdentifier();
+		dimension = RegistryKey.of(Registry.DIMENSION_TYPE_KEY, buffer.readIdentifier());
 		tileCount = buffer.readVarInt();
 		tileData = buffer.readBytes(tileCount * ENTRY_SIZE_BYTES);
 	}
@@ -67,7 +67,7 @@ public class DimensionUpdatePacket extends AbstractClientMessage<DimensionUpdate
 	@Override
 	public void write(PacketByteBuf buffer) throws IOException {
 		buffer.writeVarInt(atlasID);
-		buffer.writeIdentifier(dimensionId);
+		buffer.writeIdentifier(dimension.getValue());
 		buffer.writeVarInt(tileCount);
 		buffer.writeBytes(tileData);
 		// reset readerIndex, as this packet may gets send to multiple peers.
@@ -76,12 +76,6 @@ public class DimensionUpdatePacket extends AbstractClientMessage<DimensionUpdate
 
 	@Override
 	protected void process(PlayerEntity player, EnvType side) {
-		DimensionType dimension = Registry.DIMENSION_TYPE.get(dimensionId);
-		if (dimension == null) {
-			// TODO FABRIC
-			return;
-		}
-
 		AtlasData data = AntiqueAtlasMod.atlasData.getAtlasData(atlasID, player.world);
 		for (int i = 0; i < tileCount; i++) {
 			int x = tileData.readShort();

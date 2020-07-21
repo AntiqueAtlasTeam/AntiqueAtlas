@@ -3,6 +3,7 @@ package hunternif.mc.atlas.marker;
 import hunternif.mc.atlas.network.client.MarkersPacket;
 import hunternif.mc.atlas.registry.MarkerType;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.dimension.DimensionType;
 
 /** Holds global markers, i.e. ones that appear in all atlases. */
@@ -13,7 +14,7 @@ public class GlobalMarkersData extends MarkersData {
 	}
 	
 	@Override
-	public Marker createAndSaveMarker(String type, String label, DimensionType dimension, int x, int y, boolean visibleAhead) {
+	public Marker createAndSaveMarker(String type, String label, RegistryKey<DimensionType> dimension, int x, int y, boolean visibleAhead) {
 		return super.createAndSaveMarker(type, label, dimension, x, y, visibleAhead).setGlobal(true);
 	}
 	
@@ -28,7 +29,7 @@ public class GlobalMarkersData extends MarkersData {
 	}
 	
 	@Override
-	protected MarkersPacket newMarkersPacket(int atlasID, DimensionType dimension) {
+	protected MarkersPacket newMarkersPacket(int atlasID, RegistryKey<DimensionType> dimension) {
 		return new MarkersPacket(dimension);
 	}
 

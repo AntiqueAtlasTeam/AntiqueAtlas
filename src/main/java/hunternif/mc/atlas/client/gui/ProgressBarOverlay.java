@@ -9,6 +9,7 @@ import net.minecraft.client.render.BufferBuilder;
 import net.minecraft.client.render.Tessellator;
 import net.minecraft.client.render.VertexFormats;
 
+import net.minecraft.client.util.math.MatrixStack;
 import org.lwjgl.opengl.GL11;
 
 class ProgressBarOverlay {
@@ -29,13 +30,13 @@ class ProgressBarOverlay {
 
 	/** Render progress bar on the screen. */
 	@Environment(EnvType.CLIENT)
-	public void draw(int x, int y) {
+	public void draw(MatrixStack matrix, int x, int y) {
 		ExportUpdateListener l = ExportUpdateListener.INSTANCE;
 
-		int headerWidth = font.getStringWidth(l.header);
-		font.draw(l.header, x + (barWidth - headerWidth)/2, y-14, 0xffffff);
-		int statusWidth = font.getStringWidth(l.status);
-		font.draw(l.status, x + (barWidth - statusWidth)/2, y, 0xffffff);
+		int headerWidth = font.getWidth(l.header);
+		font.draw(matrix, l.header, x + (barWidth - headerWidth) / 2, y - 14, 0xffffff);
+		int statusWidth = font.getWidth(l.status);
+		font.draw(matrix, l.status, x + (barWidth - statusWidth)/2, y, 0xffffff);
 		y += 14;
 
 		double p = l.currentProgress/l.maxProgress;

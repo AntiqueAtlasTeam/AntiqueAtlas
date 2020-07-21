@@ -32,7 +32,7 @@ public class ItemEmptyAtlas extends Item {
 		atlasStack.getOrCreateTag().putInt("atlasID", atlasID);
 
         AtlasData atlasData = AntiqueAtlasMod.atlasData.getAtlasData(atlasID, world);
-        atlasData.getDimensionData(player.dimension).setBrowsingPosition(
+        atlasData.getDimensionData(player.world.getDimensionRegistryKey()).setBrowsingPosition(
                 (int)Math.round(-player.getX() * SettingsConfig.userInterface.defaultScale),
                 (int)Math.round(-player.getZ() * SettingsConfig.userInterface.defaultScale),
                 SettingsConfig.userInterface.defaultScale);

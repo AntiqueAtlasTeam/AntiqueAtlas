@@ -6,6 +6,7 @@ import hunternif.mc.atlas.client.gui.core.GuiToggleButton;
 import hunternif.mc.atlas.util.AtlasRenderHelper;
 import java.util.Collections;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
@@ -23,14 +24,14 @@ public class GuiBookmarkButton extends GuiToggleButton {
 
 	private final int colorIndex;
 	private Identifier iconTexture;
-	private String title;
+	private Text title;
 
 	/**
 	 * @param colorIndex 0=red, 1=blue, 2=yellow, 3=green
 	 * @param iconTexture the path to the 16x16 texture to be drawn on top of the bookmark.
 	 * @param title hovering text.
 	 */
-	GuiBookmarkButton(int colorIndex, Identifier iconTexture, String title) {
+	GuiBookmarkButton(int colorIndex, Identifier iconTexture, Text title) {
 		this.colorIndex = colorIndex;
 		setIconTexture(iconTexture);
 		setTitle(title);
@@ -41,16 +42,16 @@ public class GuiBookmarkButton extends GuiToggleButton {
 		this.iconTexture = iconTexture;
 	}
 
-	void setTitle(String title) {
+	void setTitle(Text title) {
 		this.title = title;
 	}
 
 	public Text getTitle() {
-		return new LiteralText(title);
+		return title;
 	}
 
 	@Override
-	public void render(int mouseX, int mouseY, float partialTick) {
+	public void render(MatrixStack matrix, int mouseX, int mouseY, float partialTick) {
 		GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
 //		GuiLighting.disable();
 

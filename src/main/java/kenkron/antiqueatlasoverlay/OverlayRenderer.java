@@ -18,9 +18,11 @@ import hunternif.mc.atlas.util.AtlasRenderHelper;
 import hunternif.mc.atlas.util.Rect;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
+import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.dimension.DimensionType;
 import org.lwjgl.opengl.GL11;
 
@@ -50,7 +52,7 @@ public class OverlayRenderer
         }
 
         for (int i = 0; i < 9; i++) {
-            stack = player.inventory.getInvStack(i);
+            stack = player.inventory.getStack(i);
             if (!stack.isEmpty() && stack.getItem() == RegistrarAntiqueAtlas.ATLAS) {
                 return stack.getDamage();
             }
@@ -59,7 +61,7 @@ public class OverlayRenderer
         return null;
     }
 
-    public static void drawOverlay(int gameWidth, int gameHeight) {
+    public static void drawOverlay(MatrixStack matrix, int gameWidth, int gameHeight) {
 
         if (!AAOConfig.appearance.enabled) {
             return;
@@ -97,12 +99,12 @@ public class OverlayRenderer
             }
 
             bounds.setSize(AAOConfig.position.width, AAOConfig.position.height);
-            drawMinimap(bounds, atlas, player.getPos(), player.getHeadYaw(), player.dimension);
+            drawMinimap(bounds, atlas, player.getPos(), player.getHeadYaw(), player.world.getDimensionRegistryKey());
         }
     }
 
     private static void drawMinimap(Rect shape, int atlasID, Vec3d position, float rotation,
-                             DimensionType dimension) {
+                                    RegistryKey<DimensionType> dimension) {
         GlStateManager.color4f(1, 1, 1, 1);
         GlStateManager.enableBlend();
         GlStateManager.alphaFunc(GL11.GL_GREATER, 0); // So light detail on tiles is
@@ -132,7 +134,7 @@ public class OverlayRenderer
     }
 
     private static void drawTiles(Rect shape, int atlasID, Vec3d position,
-                           DimensionType dimension) {
+                                  RegistryKey<DimensionType> dimension) {
         GL11.glEnable(GL11.GL_SCISSOR_TEST);
         // glScissor uses the default window coordinates,
         // the display window does not. We need to fix this
@@ -186,7 +188,7 @@ public class OverlayRenderer
     }
 
     private static void drawMarkers(Rect shape, int atlasID, Vec3d position,
-                                    DimensionType dimension) {
+                                    RegistryKey<DimensionType> dimension) {
 
         GL11.glEnable(GL11.GL_SCISSOR_TEST);
         glScissorGUI(shape);

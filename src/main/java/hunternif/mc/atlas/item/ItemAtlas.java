@@ -7,6 +7,8 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.text.LiteralText;
+import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
@@ -32,7 +34,7 @@ public class ItemAtlas extends Item {
 
 	@Override
 	public Text getName(ItemStack stack) {
-		return super.getName(stack).append(" #" + getAtlasID(stack));
+		return ((MutableText)super.getName(stack)).append(" #" + getAtlasID(stack));
 	}
 
 	@Override
@@ -71,7 +73,8 @@ public class ItemAtlas extends Item {
 		
 		if (!world.isClient) {
 			if (!newTiles.isEmpty()) {
-				DimensionUpdatePacket packet = new DimensionUpdatePacket(atlasId, player.dimension, newTiles);
+				DimensionUpdatePacket packet = new DimensionUpdatePacket(atlasId, player.world.getDimensionRegistryKey(),
+																		 newTiles);
 				PacketDispatcher.sendToAll(((ServerWorld) world).getServer(), packet);
 			}
 		}

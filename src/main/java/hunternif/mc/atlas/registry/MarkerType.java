@@ -188,7 +188,7 @@ public class MarkerType {
 				for (int x = 0; x < bufferedimage.getWidth(); x++) {
 					for (int y = 0; y < bufferedimage.getHeight(); y++) {
 						
-						int color = bufferedimage.getPixelRgba(x, y);
+						int color = bufferedimage.getPixelColor(x, y);
 						int alpha = (color >> 24) & 0xff;
 						
 						if(alpha >= ALPHA_THRESHOLD) {

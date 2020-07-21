@@ -2,6 +2,7 @@ package kenkron.antiqueatlasoverlay.mixin;
 
 import kenkron.antiqueatlasoverlay.OverlayRenderer;
 import net.minecraft.client.gui.hud.InGameHud;
+import net.minecraft.client.util.math.MatrixStack;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -16,7 +17,7 @@ public class MixinInGameHud {
     private int scaledHeight;
 
     @Inject(at = @At("TAIL"), method = "render")
-    public void draw(float partial, CallbackInfo info) {
-        OverlayRenderer.drawOverlay(scaledWidth, scaledHeight);
+    public void draw(MatrixStack matrix, float partial, CallbackInfo info) {
+        OverlayRenderer.drawOverlay(matrix, scaledWidth, scaledHeight);
     }
 }

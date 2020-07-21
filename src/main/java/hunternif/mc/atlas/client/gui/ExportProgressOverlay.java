@@ -9,13 +9,14 @@ import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.render.BufferBuilder;
 import net.minecraft.client.render.Tessellator;
 import net.minecraft.client.render.VertexFormats;
+import net.minecraft.client.util.math.MatrixStack;
 import org.lwjgl.opengl.GL11;
 
 public enum ExportProgressOverlay {
 	INSTANCE;
 
 	@Environment(EnvType.CLIENT)
-	public void draw(int scaledWidth, int scaledHeight, float partial) {
+	public void draw(MatrixStack matrix, int scaledWidth, int scaledHeight, float partial) {
 		int x = scaledWidth - 40, y = scaledHeight - 20, barWidth = 50, barHeight = 2;
 
 		ExportUpdateListener l = ExportUpdateListener.INSTANCE;
@@ -29,10 +30,10 @@ public enum ExportProgressOverlay {
 
 		GlStateManager.scaled(1.0/s, 1.0/s, 1);
 
-		int headerWidth = font.getStringWidth(l.header);
-		font.draw(l.header, ( x )*s -headerWidth/2, ( y )*s - 14, 0xffffff);
-		int statusWidth = font.getStringWidth(l.status);
-		font.draw(l.status, ( x )*s -statusWidth/2, ( y )*s, 0xffffff);
+		int headerWidth = font.getWidth(l.header);
+		font.draw(matrix, l.header, ( x )*s -headerWidth/2, ( y )*s - 14, 0xffffff);
+		int statusWidth = font.getWidth(l.status);
+		font.draw(matrix, l.status, ( x )*s -statusWidth/2, ( y )*s, 0xffffff);
 
 		GlStateManager.scaled(s, s, 1);
 		y += 7;

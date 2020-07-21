@@ -8,8 +8,10 @@ import hunternif.mc.atlas.marker.MarkersData;
 import hunternif.mc.atlas.network.AbstractMessage.AbstractClientMessage;
 import net.fabricmc.api.EnvType;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.PacketByteBuf;
+import net.minecraft.network.PacketByteBuf;
 import net.minecraft.util.registry.Registry;
+import net.minecraft.util.registry.RegistryKey;
+import net.minecraft.world.World;
 import net.minecraft.world.dimension.DimensionType;
 
 import java.io.IOException;
@@ -26,13 +28,13 @@ public class MarkersPacket extends AbstractClientMessage<MarkersPacket> {
 	/** Used in place of atlasID to signify that the marker is global. */
 	private static final int GLOBAL = -1;
 	private int atlasID;
-	private DimensionType dimension;
+	private RegistryKey<DimensionType> dimension;
 	private final ListMultimap<String, Marker> markersByType = ArrayListMultimap.create();
 
 	public MarkersPacket() {}
 
 	/** Use this constructor when creating a <b>local</b> marker. */
-	public MarkersPacket(int atlasID, DimensionType dimension, Marker... markers) {
+	public MarkersPacket(int atlasID, RegistryKey<DimensionType> dimension, Marker... markers) {
 		this.atlasID = atlasID;
 		this.dimension = dimension;
 		for (Marker marker : markers) {
@@ -41,7 +43,7 @@ public class MarkersPacket extends AbstractClientMessage<MarkersPacket> {
 	}
 
 	/** Use this constructor when creating a <b>global</b> marker. */
-	public MarkersPacket(DimensionType dimension, Marker... markers) {
+	public MarkersPacket(RegistryKey<DimensionType> dimension, Marker... markers) {
 		this(GLOBAL, dimension, markers);
 	}
 
@@ -57,7 +59,7 @@ public class MarkersPacket extends AbstractClientMessage<MarkersPacket> {
 	@Override
 	public void read(PacketByteBuf buffer) throws IOException {
 		atlasID = buffer.readVarInt();
-		dimension = Registry.DIMENSION_TYPE.get(buffer.readVarInt());
+		dimension = RegistryKey.of(Registry.DIMENSION_TYPE_KEY, buffer.readIdentifier());
 		int typesLength = buffer.readVarInt();
 		for (int i = 0; i < typesLength; i++) {
 			String type = buffer.readString(512);
@@ -75,7 +77,7 @@ public class MarkersPacket extends AbstractClientMessage<MarkersPacket> {
 	@Override
 	public void write(PacketByteBuf buffer) throws IOException {
 		buffer.writeVarInt(atlasID);
-		buffer.writeVarInt(Registry.DIMENSION_TYPE.getRawId(dimension));
+		buffer.writeIdentifier(dimension.getValue());
 		Set<String> types = markersByType.keySet();
 		buffer.writeVarInt(types.size());
 		for (String type : types) {

@@ -19,6 +19,7 @@ import hunternif.mc.atlas.util.MathUtil;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockBox;
+import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.WorldChunk;
 import net.minecraft.world.dimension.DimensionType;
@@ -103,8 +104,8 @@ public class StructureWatcherVillage implements IStructureWatcher {
     }
 
     @Override
-    public boolean isDimensionValid(DimensionType type) {
-    	return type == DimensionType.OVERWORLD;
+    public boolean isDimensionValid(RegistryKey<DimensionType> type) {
+    	return type == DimensionType.OVERWORLD_REGISTRY_KEY;
     }
 
     @Nullable
@@ -170,7 +171,8 @@ public class StructureWatcherVillage implements IStructureWatcher {
 				for (int j = -1; j <= 1; j++) {
 					for (int k = -1; k <= 1; k++) {
 						List<Marker> markers = AntiqueAtlasMod.globalMarkersData.getData()
-								.getMarkersAtChunk(world.dimension.getType(), j + chunkX / MarkersData.CHUNK_STEP, k + chunkZ / MarkersData.CHUNK_STEP);
+								.getMarkersAtChunk(world.getDimensionRegistryKey(), j + chunkX / MarkersData.CHUNK_STEP
+										, k + chunkZ / MarkersData.CHUNK_STEP);
 						if (markers != null) {
 							for (Marker marker : markers) {
 								if (marker.getType().equals(villageType)) {
@@ -212,7 +214,7 @@ public class StructureWatcherVillage implements IStructureWatcher {
 	}
 
 	private static Identifier tileAt(int chunkX, int chunkZ) {
-		int biomeID = AntiqueAtlasMod.extBiomeData.getData().getBiomeAt(DimensionType.OVERWORLD, chunkX, chunkZ);
+		int biomeID = AntiqueAtlasMod.extBiomeData.getData().getBiomeAt(DimensionType.OVERWORLD_REGISTRY_KEY, chunkX, chunkZ);
 		return ExtTileIdMap.instance().getPseudoBiomeName(biomeID);
 	}
 
@@ -229,7 +231,8 @@ public class StructureWatcherVillage implements IStructureWatcher {
 			int chunkZ = z >> 4;
 			if (START.equals(childID)) {
 				List<Marker> markers = AntiqueAtlasMod.globalMarkersData.getData()
-						.getMarkersAtChunk(world.dimension.getType(), chunkX / MarkersData.CHUNK_STEP, chunkZ / MarkersData.CHUNK_STEP);
+						.getMarkersAtChunk(world.getDimensionRegistryKey(), chunkX / MarkersData.CHUNK_STEP,
+										   chunkZ / MarkersData.CHUNK_STEP);
 				if (markers != null) {
 					for (Marker marker : markers) {
 						if (marker.getType().equals("antiqueatlas:village")) {

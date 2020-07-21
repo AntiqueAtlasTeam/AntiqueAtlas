@@ -7,7 +7,9 @@ import net.minecraft.client.font.TextRenderer;
 
 
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.LiteralText;
+import net.minecraft.text.StringRenderable;
 import org.lwjgl.opengl.GL11;
 
 import java.util.List;
@@ -182,9 +184,9 @@ public class GuiComponent extends Screen {
 		}
 		child.parent = this;
 		child.setGuiCoords(guiX, guiY);
-		if (minecraft != null) {
+		if (MinecraftClient.getInstance() != null) {
 			child.buttons.clear();
-			child.init(minecraft, width, height);
+			child.init(MinecraftClient.getInstance(), width, height);
 		}
 		invalidateSize();
 	}
@@ -327,16 +329,17 @@ public class GuiComponent extends Screen {
 
 	/** Render this GUI and its children. */
 	@Override
-	public void render(int mouseX, int mouseY, float partialTick) {
-		super.render(mouseX, mouseY, partialTick);
+	public void render(MatrixStack matrix, int mouseX, int mouseY, float partialTick) {
+		super.render(matrix, mouseX, mouseY, partialTick);
 		for (GuiComponent child : children) {
 			if (!child.isClipped) {
-				child.render(mouseX, mouseY, partialTick);
+				child.render(matrix, mouseX, mouseY, partialTick);
 			}
 		}
 		// Draw any hovering text requested by child components:
 		if (hoveringTextInfo.shouldDraw) {
-			drawHoveringText2(hoveringTextInfo.lines, hoveringTextInfo.x, hoveringTextInfo.y, hoveringTextInfo.font);
+			drawHoveringText2(matrix, hoveringTextInfo.lines, hoveringTextInfo.x,
+							  hoveringTextInfo.y, hoveringTextInfo.font);
 			hoveringTextInfo.shouldDraw = false;
 		}
 	}
@@ -448,14 +451,15 @@ public class GuiComponent extends Screen {
 	/** Draws a standard Minecraft hovering text window, constrained by this
 	 * component's dimensions (i.e. if it won't fit in when drawn to the left
 	 * of the cursor, it will be drawn to the right instead). */
-    private void drawHoveringText2(List<String> lines, double x, double y, TextRenderer font) {
+    private void drawHoveringText2(MatrixStack matrix, List<StringRenderable> lines, double x, double y,
+								   TextRenderer font) {
 		boolean stencilEnabled = GL11.glIsEnabled(GL11.GL_STENCIL_TEST);
 		if (stencilEnabled) GL11.glDisable(GL11.GL_STENCIL_TEST);
 
-		TextRenderer old = this.font;
-		this.font = font;
-		renderTooltip(lines, (int) x, (int) y);
-		this.font = old;
+		TextRenderer old = this.textRenderer;
+		this.textRenderer = font;
+		renderTooltip(matrix, lines, (int) x, (int) y);
+		this.textRenderer = old;
 
 		if (stencilEnabled) GL11.glEnable(GL11.GL_STENCIL_TEST);
 	}
@@ -473,7 +477,7 @@ public class GuiComponent extends Screen {
 	/**
 	 * Draws a text tooltip at mouse coordinates.
 	 * <p>
-	 * Same as {@link #drawHoveringText2(List, int, int, TextRenderer)}, but
+	 * Same as {@link #drawHoveringText(MatrixStack, List, int, int, TextRenderer)}, but
 	 * the text is drawn on the top level parent component, after all its child
 	 * components have finished drawing. This allows the hovering text to be
 	 * unobscured by other components.
@@ -483,7 +487,7 @@ public class GuiComponent extends Screen {
 	 * from several components which occupy the same position on the screen.
 	 * </p>
 	 * */
-	protected void drawTooltip(List<String> lines, TextRenderer font) {
+	protected void drawTooltip(List<StringRenderable> lines, TextRenderer font) {
 		GuiComponent topLevel = getTopLevelParent();
 		topLevel.hoveringTextInfo.lines = lines;
 		topLevel.hoveringTextInfo.x = getMouseX();
@@ -497,7 +501,7 @@ public class GuiComponent extends Screen {
 	 * text unobscured by their neighboring components. */
 	private final HoveringTextInfo hoveringTextInfo = new HoveringTextInfo();
 	private static class HoveringTextInfo {
-		List<String> lines;
+		List<StringRenderable> lines;
 		double x, y;
 		TextRenderer font;
 		/** Whether to draw this hovering text during rendering current frame.
@@ -510,7 +514,7 @@ public class GuiComponent extends Screen {
 		if (parent != null) {
 			parent.removeChild(this); // This sets parent to null
 		} else {
-			minecraft.openScreen(null);
+			MinecraftClient.getInstance().openScreen(null);
 		}
 	}
 
@@ -518,21 +522,22 @@ public class GuiComponent extends Screen {
 	protected void onChildClosed(GuiComponent child) {}
 
 	/** Draw a text string centered horizontally, using this GUI's font. */
-	protected void drawCenteredString(String text, int y, int color, boolean dropShadow) {
-		int length = font.getStringWidth(text);
+	protected void drawCenteredString(MatrixStack matrix, String text, int y, int color,
+									  boolean dropShadow) {
+		int length = textRenderer.getWidth(text);
 		if (dropShadow) {
-			font.drawWithShadow(text, (this.width - length) / 2, y, color);
+			textRenderer.drawWithShadow(matrix, text, (this.width - length) / 2, y, color);
 		} else {
-			font.draw(text, (this.width - length) / 2, y, color);
+			textRenderer.draw(matrix, text, (this.width - length) / 2, y, color);
 		}
 	}
 
 	@Deprecated
 	protected double getMouseX() {
-		return minecraft.mouse.getX() * width / minecraft.getWindow().getWidth();
+		return MinecraftClient.getInstance().mouse.getX() * width / MinecraftClient.getInstance().getWindow().getWidth();
 	}
 	@Deprecated
 	protected double getMouseY() {
-		return minecraft.mouse.getY() * height / minecraft.getWindow().getHeight();
+		return MinecraftClient.getInstance().mouse.getY() * height / MinecraftClient.getInstance().getWindow().getHeight();
 	}
 }

@@ -14,12 +14,13 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.dimension.DimensionType;
 
 /** All tiles seen in dimension. Thread-safe (probably) */
 public class DimensionData implements ITileStorage {
 	public final AtlasData parent;
-	public final DimensionType dimension;
+	public final RegistryKey<DimensionType> dimension;
 
 	private int browsingX, browsingY;
 	private double browsingZoom = 0.5;
@@ -40,7 +41,7 @@ public class DimensionData implements ITileStorage {
 	/** Limits of explored area, in chunks. */
 	private final Rect scope = new Rect();
 
-	public DimensionData(AtlasData parent, DimensionType dimension) {
+	public DimensionData(AtlasData parent, RegistryKey<DimensionType> dimension) {
 		this.parent = parent;
 		this.dimension = dimension;
 	}

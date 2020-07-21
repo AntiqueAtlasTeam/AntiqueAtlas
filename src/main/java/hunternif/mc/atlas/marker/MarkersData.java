@@ -12,6 +12,7 @@ import net.minecraft.nbt.ListTag;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
+import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.PersistentState;
 import net.minecraft.world.dimension.DimensionType;
 import java.util.*;
@@ -65,7 +66,7 @@ public class MarkersData extends PersistentState {
 	 * TODO: consider using Quad-tree. At small zoom levels iterating through
 	 * chunks to render markers gets very slow.
 	 */
-	private final Map<DimensionType, DimensionMarkersData> dimensionMap =
+	private final Map<RegistryKey<DimensionType>, DimensionMarkersData> dimensionMap =
 			new ConcurrentHashMap<>(2, 0.75f, 2);
 	
 	public MarkersData(String key) {
@@ -83,12 +84,13 @@ public class MarkersData extends PersistentState {
 		ListTag dimensionMapList = compound.getList(TAG_DIMENSION_MAP_LIST, NbtType.COMPOUND);
 		for (int d = 0; d < dimensionMapList.size(); d++) {
 			CompoundTag tag = dimensionMapList.getCompound(d);
-			DimensionType dimensionID;
-			if (tag.contains(TAG_DIMENSION_ID, NbtType.NUMBER)) {
-				dimensionID = Registry.DIMENSION_TYPE.get(tag.getInt(TAG_DIMENSION_ID));
-			} else {
-				dimensionID = Registry.DIMENSION_TYPE.get(new Identifier(tag.getString(TAG_DIMENSION_ID)));
-			}
+			RegistryKey<DimensionType> dimensionID = RegistryKey.of(Registry.DIMENSION_TYPE_KEY,
+																	new Identifier(tag.getString(TAG_DIMENSION_ID)));
+//			if (tag.contains(TAG_DIMENSION_ID, NbtType.NUMBER)) {
+//				dimensionID = Registry.DIMENSION_TYPE.get(tag.getInt(TAG_DIMENSION_ID));
+//			} else {
+//				dimensionID = Registry.DIMENSION_TYPE.get(new Identifier(tag.getString(TAG_DIMENSION_ID)));
+//			}
 			ListTag tagList = tag.getList(TAG_MARKERS, NbtType.COMPOUND);
 			for (int i = 0; i < tagList.size(); i++) {
 				CompoundTag markerTag = tagList.getCompound(i);
@@ -131,9 +133,9 @@ public class MarkersData extends PersistentState {
 		Log.info("Saving local markers data to NBT");
 		compound.putInt(TAG_VERSION, VERSION);
 		ListTag dimensionMapList = new ListTag();
-		for (DimensionType dimension : dimensionMap.keySet()) {
+		for (RegistryKey<DimensionType> dimension : dimensionMap.keySet()) {
 			CompoundTag tag = new CompoundTag();
-			tag.putString(TAG_DIMENSION_ID, Registry.DIMENSION_TYPE.getId(dimension).toString());
+			tag.putString(TAG_DIMENSION_ID, dimension.getValue().toString());
 			DimensionMarkersData data = getMarkersDataInDimension(dimension);
 			ListTag tagList = new ListTag();
 			for (Marker marker : data.getAllMarkers()) {
@@ -154,23 +156,23 @@ public class MarkersData extends PersistentState {
 		return compound;
 	}
 	
-	public Set<DimensionType> getVisitedDimensions() {
+	public Set<RegistryKey<DimensionType>> getVisitedDimensions() {
 		return dimensionMap.keySet();
 	}
 	
 	/** This method is rather inefficient, use it sparingly. */
-	public Collection<Marker> getMarkersInDimension(DimensionType dimension) {
+	public Collection<Marker> getMarkersInDimension(RegistryKey<DimensionType> dimension) {
 		return getMarkersDataInDimension(dimension).getAllMarkers();
 	}
 	
 	/** Creates a new instance of {@link DimensionMarkersData}, if necessary. */
-	public DimensionMarkersData getMarkersDataInDimension(DimensionType dimension) {
+	public DimensionMarkersData getMarkersDataInDimension(RegistryKey<DimensionType> dimension) {
 		return dimensionMap.computeIfAbsent(dimension, k -> new DimensionMarkersData(this, dimension));
 	}
 	
 	/** The "chunk" here is {@link MarkersData#CHUNK_STEP} times larger than the
 	 * Minecraft 16x16 chunk! May return null. */
-	public List<Marker> getMarkersAtChunk(DimensionType dimension, int x, int z) {
+	public List<Marker> getMarkersAtChunk(RegistryKey<DimensionType> dimension, int x, int z) {
 		return getMarkersDataInDimension(dimension).getMarkersAtChunk(x, z);
 	}
 	
@@ -190,7 +192,7 @@ public class MarkersData extends PersistentState {
 	/** For internal use. Use the {@link MarkerAPI} to put markers! This method
 	 * creates a new marker from the given data, saves and returns it.
 	 * Server side only! */
-	public Marker createAndSaveMarker(String type, String label, DimensionType dimension, int x, int z, boolean visibleAhead) {
+	public Marker createAndSaveMarker(String type, String label, RegistryKey<DimensionType> dimension, int x, int z, boolean visibleAhead) {
 		Marker marker = new Marker(getNewID(), type, label, dimension, x, z, visibleAhead);
 		Log.info("Created new marker %s", marker.toString());
 		idMap.put(marker.getId(), marker);
@@ -208,7 +210,7 @@ public class MarkersData extends PersistentState {
 		if (!idMap.containsKey(marker.getId())) {
 			idMap.put(marker.getId(), marker);
 			int totalMarkers = 0;
-			for (Entry<DimensionType, DimensionMarkersData> e: dimensionMap.entrySet()){
+			for (Entry<RegistryKey<DimensionType>, DimensionMarkersData> e: dimensionMap.entrySet()){
 				totalMarkers += e.getValue().getAllMarkers().size();
 			}
 			if (totalMarkers < SettingsConfig.performance.markerLimit){
@@ -227,7 +229,7 @@ public class MarkersData extends PersistentState {
 	/** Send all data to the player in several packets. Called once during the
 	 * first run of ItemAtals.onUpdate(). */
 	public void syncOnPlayer(int atlasID, PlayerEntity player) {
-		for (DimensionType dimension : dimensionMap.keySet()) {
+		for (RegistryKey<DimensionType> dimension : dimensionMap.keySet()) {
 			MarkersPacket packet = newMarkersPacket(atlasID, dimension);
 			DimensionMarkersData data = getMarkersDataInDimension(dimension);
 			for (Marker marker : data.getAllMarkers()) {
@@ -240,7 +242,7 @@ public class MarkersData extends PersistentState {
 	}
 	
 	/** To be overridden in GlobalMarkersData. */
-	MarkersPacket newMarkersPacket(int atlasID, DimensionType dimension) {
+	MarkersPacket newMarkersPacket(int atlasID, RegistryKey<DimensionType> dimension) {
 		return new MarkersPacket(atlasID, dimension);
 	}
 	

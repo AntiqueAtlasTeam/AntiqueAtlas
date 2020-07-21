@@ -11,6 +11,7 @@ import java.util.Map.Entry;
 import hunternif.mc.atlas.core.*;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
+import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.dimension.DimensionType;
 import org.junit.Before;
 import org.junit.Test;
@@ -21,7 +22,7 @@ import hunternif.mc.atlas.util.ShortVec2;
 // TODO FABRIC: These tests won't run without Knot's access transformers, for now...
 public class TestNBT {
 	/**Dimension 0 in {@link #ad}*/
-	DimensionData dd = new DimensionData(null, DimensionType.OVERWORLD);
+	DimensionData dd = new DimensionData(null, DimensionType.OVERWORLD_REGISTRY_KEY);
 	/**Equal to (but not a reference to) the tile group at (16,16) in {@link #dd}*/
 	TileGroup tg = new TileGroup(16, 16);
 	
@@ -29,11 +30,12 @@ public class TestNBT {
 	public void writeToNBTv2(AtlasData atlasdata, CompoundTag compound) {
 		compound.putInt(AtlasData.TAG_VERSION, 2);
 		ListTag dimensionMapList = new ListTag();
-		DimensionType key;
-		for (DimensionType dimensionType : atlasdata.getVisitedDimensions()) {
+		RegistryKey<DimensionType> key;
+		for (RegistryKey<DimensionType> dimensionType : atlasdata.getVisitedDimensions()) {
 			CompoundTag dimTag = new CompoundTag();
 			key = dimensionType;
-			dimTag.putInt(AtlasData.TAG_DIMENSION_ID, dimensionType.getRawId() + 1);
+//			dimTag.putInt(AtlasData.TAG_DIMENSION_ID, dimensionType.getRawId() + 1);
+			dimTag.putString(AtlasData.TAG_DIMENSION_ID, dimensionType.getValue().toString());
 			DimensionData dimData = atlasdata.getDimensionData(key);
 			Map<ShortVec2, TileKind> seenChunks = dimData.getSeenChunks();
 			int[] intArray = new int[seenChunks.size()*3];
@@ -80,7 +82,7 @@ public class TestNBT {
 		assertEquals(tg, tg2);
 		
 		ListTag tagDD = dd.writeToNBT();
-		DimensionData dd2 = new DimensionData(null, DimensionType.OVERWORLD);
+		DimensionData dd2 = new DimensionData(null, DimensionType.OVERWORLD_REGISTRY_KEY);
 		dd2.readFromNBT(tagDD);
 	}
 }

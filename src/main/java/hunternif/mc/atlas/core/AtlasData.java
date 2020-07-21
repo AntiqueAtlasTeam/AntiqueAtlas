@@ -15,7 +15,9 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.registry.Registry;
+import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.PersistentState;
+import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.ChunkStatus;
 import net.minecraft.world.dimension.DimensionType;
@@ -36,7 +38,7 @@ public class AtlasData extends PersistentState {
 	public static final String TAG_BROWSING_ZOOM = "qBrowseZoom";
 
 	/** Maps dimension ID to biomeAnalyzer. */
-	private final Map<DimensionType, IBiomeDetector> biomeAnalyzers = new HashMap<>();
+	private final Map<RegistryKey<DimensionType>, IBiomeDetector> biomeAnalyzers = new HashMap<>();
 	private final BiomeDetectorBase biomeDetectorOverworld = new BiomeDetectorBase();
 	private final BiomeDetectorNether biomeDetectorNether = new BiomeDetectorNether();
 	private final BiomeDetectorEnd biomeDetectorEnd = new BiomeDetectorEnd();
@@ -44,7 +46,7 @@ public class AtlasData extends PersistentState {
 	/** This map contains, for each dimension, a map of chunks the player
 	 * has seen. This map is thread-safe.
 	 * CAREFUL! Don't modify chunk coordinates that are already put in the map! */
-	private final Map<DimensionType /*dimension ID*/, DimensionData> dimensionMap =
+	private final Map<RegistryKey<DimensionType>, DimensionData> dimensionMap =
 			new ConcurrentHashMap<>(2, 0.75f, 2);
 
 	/** Set of players this Atlas data has been sent to. */
@@ -57,9 +59,9 @@ public class AtlasData extends PersistentState {
 
 		biomeDetectorOverworld.setScanPonds(SettingsConfig.performance.doScanPonds);
 		biomeDetectorOverworld.setScanRavines(SettingsConfig.performance.doScanRavines);
-		setBiomeDetectorForDimension(DimensionType.OVERWORLD, biomeDetectorOverworld);
-		setBiomeDetectorForDimension(DimensionType.THE_NETHER, biomeDetectorNether);
-		setBiomeDetectorForDimension(DimensionType.THE_END, biomeDetectorEnd);
+		setBiomeDetectorForDimension(DimensionType.OVERWORLD_REGISTRY_KEY, biomeDetectorOverworld);
+		setBiomeDetectorForDimension(DimensionType.THE_NETHER_REGISTRY_KEY, biomeDetectorNether);
+		setBiomeDetectorForDimension(DimensionType.THE_END_REGISTRY_KEY, biomeDetectorEnd);
 	}
 
 	@Override
@@ -75,12 +77,13 @@ public class AtlasData extends PersistentState {
 		ListTag dimensionMapList = compound.getList(TAG_DIMENSION_MAP_LIST, NbtType.COMPOUND);
 		for (int d = 0; d < dimensionMapList.size(); d++) {
 			CompoundTag dimTag = dimensionMapList.getCompound(d);
-			DimensionType dimensionID;
-			if (dimTag.contains(TAG_DIMENSION_ID, NbtType.NUMBER)) {
-				dimensionID = Registry.DIMENSION_TYPE.get(dimTag.getInt(TAG_DIMENSION_ID));
-			} else {
-				dimensionID = Registry.DIMENSION_TYPE.get(new Identifier(dimTag.getString(TAG_DIMENSION_ID)));
-			}
+			RegistryKey<DimensionType> dimensionID = RegistryKey.of(Registry.DIMENSION_TYPE_KEY,
+																	new Identifier(dimTag.getString(TAG_DIMENSION_ID)));
+//			if (dimTag.contains(TAG_DIMENSION_ID, NbtType.NUMBER)) {
+//				dimensionID = Registry.DIMENSION_TYPE.get(dimTag.getInt(TAG_DIMENSION_ID));
+//			} else {
+//				dimensionID = Registry.DIMENSION_TYPE.get(new Identifier(dimTag.getString(TAG_DIMENSION_ID)));
+//			}
 			ListTag dimensionTag = (ListTag) dimTag.get(TAG_VISITED_CHUNKS);
 			DimensionData dimData = getDimensionData(dimensionID);
 			dimData.readFromNBT(dimensionTag);
@@ -103,12 +106,13 @@ public class AtlasData extends PersistentState {
 		ListTag dimensionMapList = compound.getList(TAG_DIMENSION_MAP_LIST, NbtType.COMPOUND);
 		for (int d = 0; d < dimensionMapList.size(); d++) {
 			CompoundTag dimTag = dimensionMapList.getCompound(d);
-			DimensionType dimensionID;
-			if (dimTag.contains(TAG_DIMENSION_ID, NbtType.NUMBER)) {
-				dimensionID = Registry.DIMENSION_TYPE.get(dimTag.getInt(TAG_DIMENSION_ID));
-			} else {
-				dimensionID = Registry.DIMENSION_TYPE.get(new Identifier(dimTag.getString(TAG_DIMENSION_ID)));
-			}
+			RegistryKey<DimensionType> dimensionID = RegistryKey.of(Registry.DIMENSION_TYPE_KEY,
+													   new Identifier(dimTag.getString(TAG_DIMENSION_ID)));
+//			if (dimTag.contains(TAG_DIMENSION_ID, NbtType.NUMBER)) {
+//				dimensionID = Registry.DIMENSION_TYPE.get(dimTag.getInt(TAG_DIMENSION_ID));
+//			} else {
+//				dimensionID = Registry.DIMENSION_TYPE.get(new Identifier(dimTag.getString(TAG_DIMENSION_ID)));
+//			}
 			int[] intArray = dimTag.getIntArray(TAG_VISITED_CHUNKS);
 			DimensionData dimData = getDimensionData(dimensionID);
 			for (int i = 0; i < intArray.length; i += 3) {
@@ -134,9 +138,9 @@ public class AtlasData extends PersistentState {
 	public CompoundTag writeToNBT(CompoundTag compound, boolean includeTileData) {
 		ListTag dimensionMapList = new ListTag();
 		compound.putInt(TAG_VERSION, VERSION);
-		for (Entry<DimensionType, DimensionData> dimensionEntry : dimensionMap.entrySet()) {
+		for (Entry<RegistryKey<DimensionType>, DimensionData> dimensionEntry : dimensionMap.entrySet()) {
 			CompoundTag dimTag = new CompoundTag();
-			dimTag.putString(TAG_DIMENSION_ID, Registry.DIMENSION_TYPE.getId(dimensionEntry.getKey()).toString());
+			dimTag.putString(TAG_DIMENSION_ID, dimensionEntry.getKey().getValue().toString());
 			DimensionData dimData = dimensionEntry.getValue();
 			if (includeTileData){
 				dimTag.put(TAG_VISITED_CHUNKS, dimData.writeToNBT());
@@ -151,12 +155,12 @@ public class AtlasData extends PersistentState {
 		return compound;
 	}
 
-	private void setBiomeDetectorForDimension(DimensionType dimension, IBiomeDetector biomeAnalyzer) {
+	private void setBiomeDetectorForDimension(RegistryKey<DimensionType> dimension, IBiomeDetector biomeAnalyzer) {
 		biomeAnalyzers.put(dimension, biomeAnalyzer);
 	}
 
 	/** If not found, returns the analyzer for overworld. */
-	private IBiomeDetector getBiomeDetectorForDimension(DimensionType dimension) {
+	private IBiomeDetector getBiomeDetectorForDimension(RegistryKey<DimensionType> dimension) {
 		IBiomeDetector biomeAnalyzer = biomeAnalyzers.get(dimension);
 
 		return biomeAnalyzer == null ? biomeDetectorOverworld : biomeAnalyzer;
@@ -178,8 +182,8 @@ public class AtlasData extends PersistentState {
 
 		int playerX = MathHelper.floor(player.getX()) >> 4;
 		int playerZ = MathHelper.floor(player.getZ()) >> 4;
-		ITileStorage seenChunks = this.getDimensionData(player.dimension);
-		IBiomeDetector biomeDetector = getBiomeDetectorForDimension(player.dimension);
+		ITileStorage seenChunks = this.getDimensionData(player.getEntityWorld().getDimensionRegistryKey());
+		IBiomeDetector biomeDetector = getBiomeDetectorForDimension(player.world.getDimensionRegistryKey());
 		int scanRadius = SettingsConfig.performance.scanRadius;
 
 		final boolean rescanRequired = SettingsConfig.performance.doRescan && player.getEntityWorld().getTime() % rescanInterval == 0;
@@ -199,7 +203,9 @@ public class AtlasData extends PersistentState {
 
 				// Check if there's a custom tile at the location:
 				// Custom tiles overwrite even the chunks already seen.
-				int customTileId = AntiqueAtlasMod.extBiomeData.getData().getBiomeAt(player.dimension, x, z);
+				int customTileId =
+						AntiqueAtlasMod.extBiomeData.getData().getBiomeAt(
+								player.world.getDimensionRegistryKey(), x, z);
 				if (customTileId != -1) {
 					tile = TileKindFactory.get(customTileId);
 				}
@@ -224,24 +230,24 @@ public class AtlasData extends PersistentState {
 
 						if (tile == null) {
 							// If the new tile is empty, remove the old one:
-							this.removeTile(player.dimension, x, z);
+							this.removeTile(player.world.getDimensionRegistryKey(), x, z);
 						} else if (oldTile != tile) {
 							// Only update if the old tile's biome ID doesn't match the new one:
-							this.setTile(player.dimension, x, z, tile);
+							this.setTile(player.world.getDimensionRegistryKey(), x, z, tile);
 							updatedTiles.add(new TileInfo(x, z, tile));
 						}
 					} else {
 						// Scanning new chunk:
 						tile = biomeDetector.getBiomeID(player.getEntityWorld(), chunk);
 						if (tile != null) {
-							this.setTile(player.dimension, x, z, tile);
+							this.setTile(player.world.getDimensionRegistryKey(), x, z, tile);
 							updatedTiles.add(new TileInfo(x, z, tile));
 						}
 					}
 				} else {
 					// Only update the custom tile if it doesn't rewrite itself:
 					if (oldTile == null || oldTile != tile) {
-						this.setTile(player.dimension, x, z, tile);
+						this.setTile(player.world.getDimensionRegistryKey(), x, z, tile);
 						updatedTiles.add(new TileInfo(x, z, tile));
 						this.markDirty();
 					}
@@ -254,29 +260,29 @@ public class AtlasData extends PersistentState {
 
 	/** Puts a given tile into given map at specified coordinates and,
 	 * if tileStitcher is present, sets appropriate sectors on adjacent tiles. */
-	public void setTile(DimensionType dimension, int x, int y, TileKind tile) {
+	public void setTile(RegistryKey<DimensionType> dimension, int x, int y, TileKind tile) {
 		DimensionData dimData = getDimensionData(dimension);
 		dimData.setTile(x, y, tile);
 	}
 
 	/** Returns the Tile previously set at given coordinates. */
-    private TileKind removeTile(DimensionType dimension, int x, int y) {
+    private TileKind removeTile(RegistryKey<DimensionType> dimension, int x, int y) {
 		DimensionData dimData = getDimensionData(dimension);
 		return dimData.removeTile(x, y);
 	}
 
-	public Set<DimensionType> getVisitedDimensions() {
+	public Set<RegistryKey<DimensionType>> getVisitedDimensions() {
 		return dimensionMap.keySet();
 	}
 
 	/* TODO: Packet Rework
 	 *   Dimension data should check the server for updates*/
 	/** If this dimension is not yet visited, empty DimensionData will be created. */
-	public DimensionData getDimensionData(DimensionType dimension) {
+	public DimensionData getDimensionData(RegistryKey<DimensionType> dimension) {
 		return dimensionMap.computeIfAbsent(dimension, k -> new DimensionData(this, dimension));
 	}
 
-	public Map<ShortVec2, TileKind> getSeenChunksInDimension(DimensionType dimension) {
+	public Map<ShortVec2, TileKind> getSeenChunksInDimension(RegistryKey<DimensionType> dimension) {
 		return getDimensionData(dimension).getSeenChunks();
 	}
 
@@ -301,7 +307,7 @@ public class AtlasData extends PersistentState {
 		writeToNBT(nbt, false);
 		PacketDispatcher.sendTo(new MapDataPacket(atlasID, nbt), (ServerPlayerEntity) player);
 
-		for (DimensionType i : dimensionMap.keySet()){
+		for (RegistryKey<DimensionType> i : dimensionMap.keySet()){
 			dimensionMap.get(i).syncOnPlayer(atlasID, player);
 		}
 
@@ -319,7 +325,7 @@ public class AtlasData extends PersistentState {
 		AtlasData other = (AtlasData) obj;
 		// TODO: This doesn't handle disjoint DimensionType keysets of equal size
 		if (other.dimensionMap.size()!=dimensionMap.size()) return false;
-		for (DimensionType key : dimensionMap.keySet()){
+		for (RegistryKey<DimensionType> key : dimensionMap.keySet()){
 			if (!dimensionMap.get(key).equals(other.dimensionMap.get(key))) return false;
 		}
 		return true;

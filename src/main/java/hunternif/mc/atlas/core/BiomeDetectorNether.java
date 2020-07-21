@@ -41,7 +41,7 @@ public class BiomeDetectorNether extends BiomeDetectorBase implements IBiomeDete
 		int lavaOccurences = 0;
 		int groundOccurences = 0;
 		
-		Biome hellID = Biomes.NETHER;
+		Biome hellID = Biomes.NETHER_WASTES;
 
 		for (int x = 0; x < 16; x++) {
 			for (int z = 0; z < 16; z++) {

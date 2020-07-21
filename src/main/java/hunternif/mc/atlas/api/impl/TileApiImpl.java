@@ -13,6 +13,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.dimension.DimensionType;
@@ -98,7 +99,7 @@ public class TileApiImpl implements TileAPI {
 	// Biome tiles =============================================================
 
 	private void putTile(World world, int atlasID, TileKind kind, int chunkX, int chunkZ) {
-		DimensionType dimension = world.dimension.getType();
+		RegistryKey<DimensionType> dimension = world.getDimensionRegistryKey();
 		PutTilePacket packet = new PutTilePacket(atlasID, dimension, chunkX, chunkZ, kind);
 		if (world.isClient) {
 			PacketDispatcher.sendToServer(packet);
@@ -158,7 +159,7 @@ public class TileApiImpl implements TileAPI {
 		boolean isIdRegistered = ExtTileIdMap.instance().getPseudoBiomeID(tileName) != ExtTileIdMap.NOT_FOUND;
 		int biomeID = ExtTileIdMap.instance().getOrCreatePseudoBiomeID(tileName);
 		ExtBiomeData data = AntiqueAtlasMod.extBiomeData.getData();
-		data.setBiomeAt(world.dimension.getType(), chunkX, chunkZ, biomeID);
+		data.setBiomeAt(world.getDimensionRegistryKey(), chunkX, chunkZ, biomeID);
 		// Send name-ID packet:
 		if (!isIdRegistered) {
 			TileNameIDPacket packet = new TileNameIDPacket();
@@ -166,7 +167,7 @@ public class TileApiImpl implements TileAPI {
 			PacketDispatcher.sendToAll(((ServerWorld) world).getServer(), packet);
 		}
 		// Send tile packet:
-		TilesPacket packet = new TilesPacket(world.dimension.getType());
+		TilesPacket packet = new TilesPacket(world.getDimensionRegistryKey());
 		packet.addTile(chunkX, chunkZ, biomeID);
 		PacketDispatcher.sendToAll(((ServerWorld) world).getServer(), packet);
 	}
@@ -189,7 +190,7 @@ public class TileApiImpl implements TileAPI {
 			return;
 		}
 		ExtBiomeData data = AntiqueAtlasMod.extBiomeData.getData();
-		DimensionType dimension = world.dimension.getType();
+		RegistryKey<DimensionType> dimension = world.getDimensionRegistryKey();
 		if (data.getBiomeAt(dimension, chunkX, chunkZ) != -1) {
 			data.removeBiomeAt(dimension, chunkX, chunkZ);
 			PacketDispatcher.sendToAll(((ServerWorld) world).getServer(), new DeleteCustomGlobalTilePacket(dimension, chunkX, chunkZ));

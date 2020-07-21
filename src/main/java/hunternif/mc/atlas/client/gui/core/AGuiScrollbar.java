@@ -1,5 +1,6 @@
 package hunternif.mc.atlas.client.gui.core;
 
+import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.Identifier;
 import org.lwjgl.opengl.GL11;
 import com.mojang.blaze3d.platform.GlStateManager;
@@ -152,7 +153,7 @@ public abstract class AGuiScrollbar extends GuiComponent {
 	}
 
 	@Override
-	public void render(int mouseX, int mouseY, float partialTick) {
+	public void render(MatrixStack matrix, int mouseX, int mouseY, float partialTick) {
 		// Don't draw the anchor if there's nothing to scroll:
 		if (!visible) {
 			isDragged = false;

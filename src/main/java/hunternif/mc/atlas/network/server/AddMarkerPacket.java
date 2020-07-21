@@ -12,10 +12,10 @@ import hunternif.mc.atlas.network.client.MarkersPacket;
 import hunternif.mc.atlas.util.Log;
 import net.fabricmc.api.EnvType;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.PacketByteBuf;
+import net.minecraft.network.PacketByteBuf;
 import net.minecraft.util.registry.Registry;
+import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.dimension.DimensionType;
 
 import java.io.IOException;
@@ -27,7 +27,7 @@ import java.io.IOException;
  */
 public class AddMarkerPacket extends AbstractServerMessage<AddMarkerPacket> {
 	private int atlasID;
-	private DimensionType dimension;
+	private RegistryKey<DimensionType> dimension;
 	private String type;
 	private String label;
 	private int x, y;
@@ -36,7 +36,7 @@ public class AddMarkerPacket extends AbstractServerMessage<AddMarkerPacket> {
 	public AddMarkerPacket() {}
 
 	/** Use this constructor when creating a <b>local</b> marker. */
-	public AddMarkerPacket(int atlasID, DimensionType dimension, String type, String label, int x, int y, boolean visibleAhead) {
+	public AddMarkerPacket(int atlasID, RegistryKey<DimensionType> dimension, String type, String label, int x, int y, boolean visibleAhead) {
 		this.atlasID = atlasID;
 		this.dimension = dimension;
 		this.type = type;
@@ -49,7 +49,7 @@ public class AddMarkerPacket extends AbstractServerMessage<AddMarkerPacket> {
 	@Override
 	public void read(PacketByteBuf buffer) throws IOException {
 		atlasID = buffer.readVarInt();
-		dimension = Registry.DIMENSION_TYPE.get(buffer.readVarInt());
+		dimension = RegistryKey.of(Registry.DIMENSION_TYPE_KEY, buffer.readIdentifier());
 		type = buffer.readString(512);
 		label = buffer.readString(512);
 		x = buffer.readInt();
@@ -60,7 +60,7 @@ public class AddMarkerPacket extends AbstractServerMessage<AddMarkerPacket> {
 	@Override
 	public void write(PacketByteBuf buffer) throws IOException {
 		buffer.writeVarInt(atlasID);
-		buffer.writeVarInt(Registry.DIMENSION_TYPE.getRawId(dimension));
+		buffer.writeIdentifier(dimension.getValue());
 		buffer.writeString(type);
 		buffer.writeString(label);
 		buffer.writeInt(x);

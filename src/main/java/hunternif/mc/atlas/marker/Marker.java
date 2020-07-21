@@ -3,6 +3,10 @@ package hunternif.mc.atlas.marker;
 import hunternif.mc.atlas.util.Log;
 import hunternif.mc.atlas.util.ShortVec2;
 import net.minecraft.client.resource.language.I18n;
+import net.minecraft.text.LiteralText;
+import net.minecraft.text.Text;
+import net.minecraft.text.TranslatableText;
+import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.dimension.DimensionType;
 
 /**
@@ -21,14 +25,15 @@ public class Marker {
 	private final int id;
 	private final String type;
 	private final String label;
-	private final DimensionType dim;
+	private final RegistryKey<DimensionType> dim;
 	private final int x, z;
 	private final boolean visibleAhead;
 	private boolean isGlobal;
 	
 	//TODO make an option for the marker to disappear at a certain scale.
 	
-	public Marker(int id, String type, String label, DimensionType dimension, int x, int z, boolean visibleAhead) {
+	public Marker(int id, String type, String label, RegistryKey<DimensionType> dimension, int x, int z,
+				  boolean visibleAhead) {
 		this.id = id;
 		if (type.length() > TYPE_LIMIT){
 			type = type.substring(0, TYPE_LIMIT);
@@ -60,26 +65,28 @@ public class Marker {
 	public String getLabel() {
 		return label;
 	}
-	public String getLocalizedLabel() {
+	public
+	Text getLocalizedLabel() {
 		// Assuming the beginning of the label string until a whitespace (or end)
-		// is a traslatable key. What comes after it is assumed to be a single
+		// is a translatable key. What comes after it is assumed to be a single
 		// string parameter, i.e. player's name.
 		int whitespaceIndex = label.indexOf(' ');
 		if (whitespaceIndex == -1) {
-			return I18n.translate(label);
+			return new TranslatableText(label);
 		} else {
 			String key = label.substring(0, whitespaceIndex);
 			String param = label.substring(whitespaceIndex + 1);
 			String translated = I18n.translate(key);
+
 			if (!key.equals(translated)) { // Make sure translation succeeded
-				return String.format(I18n.translate(key), param);
+				return new LiteralText(String.format(translated, param));
 			} else {
-				return label;
+				return new LiteralText(label);
 			}
 		}
 	}
 	
-	public DimensionType getDimension() {
+	public RegistryKey<DimensionType> getDimension() {
 		return dim;
 	}
 	

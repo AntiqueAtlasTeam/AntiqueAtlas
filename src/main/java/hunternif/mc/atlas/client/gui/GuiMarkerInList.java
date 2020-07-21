@@ -5,6 +5,7 @@ import hunternif.mc.atlas.client.Textures;
 import hunternif.mc.atlas.client.gui.core.GuiToggleButton;
 import hunternif.mc.atlas.registry.MarkerType;
 import hunternif.mc.atlas.util.AtlasRenderHelper;
+import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.Identifier;
 
 
@@ -23,7 +24,7 @@ public class GuiMarkerInList extends GuiToggleButton {
 	}
 	
 	@Override
-	public void render(int mouseX, int mouseY, float partialTick) {
+	public void render(MatrixStack matrix, int mouseX, int mouseY, float partialTick) {
 		GlStateManager.color4f(1, 1, 1, 1);
 		AtlasRenderHelper.drawFullTexture(
 				isSelected() ? Textures.MARKER_FRAME_ON : Textures.MARKER_FRAME_OFF,
@@ -33,6 +34,6 @@ public class GuiMarkerInList extends GuiToggleButton {
 		if (texture != null) {
 			AtlasRenderHelper.drawFullTexture(texture, getGuiX() + 1, getGuiY() + 1, GuiAtlas.MARKER_SIZE, GuiAtlas.MARKER_SIZE);
 		}
-		super.render(mouseX, mouseY, partialTick);
+		super.render(matrix, mouseX, mouseY, partialTick);
 	}
 }

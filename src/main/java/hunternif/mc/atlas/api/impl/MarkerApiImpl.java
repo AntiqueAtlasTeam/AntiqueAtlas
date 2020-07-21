@@ -40,17 +40,20 @@ public class MarkerApiImpl implements MarkerAPI {
 				Log.warn("Client tried to add a global marker!");
 			} else {
 				PacketDispatcher.sendToServer(new AddMarkerPacket(atlasID,
-						world.dimension.getType(), markerType, label, x, z, visibleAhead));
+						world.getDimensionRegistryKey(), markerType, label, x, z, visibleAhead));
 			}
 		} else {
 			if (atlasID == GLOBAL) {
 				MarkersData data = AntiqueAtlasMod.globalMarkersData.getData();
-				marker = data.createAndSaveMarker(markerType, label, world.dimension.getType(), x, z, visibleAhead);
-				PacketDispatcher.sendToAll(((ServerWorld) world).getServer(), new MarkersPacket(world.dimension.getType(), marker));
+				marker = data.createAndSaveMarker(markerType, label, world.getDimensionRegistryKey(), x, z, visibleAhead);
+				PacketDispatcher.sendToAll(((ServerWorld) world).getServer(),
+										   new MarkersPacket(world.getDimensionRegistryKey(), marker));
 			} else {
 				MarkersData data = AntiqueAtlasMod.markersData.getMarkersData(atlasID, world);
-				marker = data.createAndSaveMarker(markerType, label, world.dimension.getType(), x, z, visibleAhead);
-				PacketDispatcher.sendToAll(((ServerWorld) world).getServer(), new MarkersPacket(atlasID, world.dimension.getType(), marker));
+				marker = data.createAndSaveMarker(markerType, label, world.getDimensionRegistryKey(), x, z,
+												  visibleAhead);
+				PacketDispatcher.sendToAll(((ServerWorld) world).getServer(),
+										   new MarkersPacket(atlasID, world.getDimensionRegistryKey(), marker));
 			}
 		}
 		return marker;

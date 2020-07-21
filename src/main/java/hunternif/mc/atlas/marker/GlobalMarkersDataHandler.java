@@ -22,7 +22,7 @@ public class GlobalMarkersDataHandler {
 	private GlobalMarkersData data;
 
 	public void onWorldLoad(ServerWorld world) {
-		if (world.getDimension().getType() == DimensionType.OVERWORLD) {
+		if (world.getDimensionRegistryKey() == DimensionType.OVERWORLD_REGISTRY_KEY) {
 			data = world.getPersistentStateManager().getOrCreate(() -> {
 				GlobalMarkersData data = new GlobalMarkersData(DATA_KEY);
 				data.markDirty();

@@ -7,8 +7,9 @@ import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import net.fabricmc.api.EnvType;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.PacketByteBuf;
+import net.minecraft.network.PacketByteBuf;
 import net.minecraft.util.registry.Registry;
+import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.dimension.DimensionType;
 
 import java.io.IOException;
@@ -21,13 +22,13 @@ public class TilesPacket extends AbstractClientMessage<TilesPacket> {
 	/** Size of one entry in the map in bytes. */
 	private static final int ENTRY_SIZE_BYTES = 2 + 2 + 4;
 
-	private DimensionType dimension;
+	private RegistryKey<DimensionType> dimension;
 	private int tileCount;
 	private ByteBuf tileData;
 
 	public TilesPacket() {}
 
-	public TilesPacket(DimensionType dimension) {
+	public TilesPacket(RegistryKey<DimensionType> dimension) {
 		this.dimension = dimension;
 		tileCount = 0;
 		tileData = Unpooled.buffer();
@@ -47,14 +48,14 @@ public class TilesPacket extends AbstractClientMessage<TilesPacket> {
 
 	@Override
 	public void read(PacketByteBuf buffer) throws IOException {
-		dimension = Registry.DIMENSION_TYPE.get(buffer.readVarInt());
+		dimension = RegistryKey.of(Registry.DIMENSION_TYPE_KEY, buffer.readIdentifier());
 		tileCount = buffer.readVarInt();
 		tileData = buffer.readBytes(tileCount * ENTRY_SIZE_BYTES);
 	}
 
 	@Override
 	public void write(PacketByteBuf buffer) throws IOException {
-		buffer.writeVarInt(Registry.DIMENSION_TYPE.getRawId(dimension));
+		buffer.writeIdentifier(dimension.getValue());
 		buffer.writeVarInt(tileCount);
 		buffer.writeBytes(tileData);
 	}
