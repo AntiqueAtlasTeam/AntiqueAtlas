@@ -76,13 +76,7 @@ public class Marker {
 		} else {
 			String key = label.substring(0, whitespaceIndex);
 			String param = label.substring(whitespaceIndex + 1);
-			String translated = I18n.translate(key);
-
-			if (!key.equals(translated)) { // Make sure translation succeeded
-				return new LiteralText(String.format(translated, param));
-			} else {
-				return new LiteralText(label);
-			}
+			return new LiteralText(I18n.translate(key, param));
 		}
 	}
 	
