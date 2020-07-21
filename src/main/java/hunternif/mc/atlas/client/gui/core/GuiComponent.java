@@ -10,6 +10,7 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.StringRenderable;
+import net.minecraft.text.Text;
 import org.lwjgl.opengl.GL11;
 
 import java.util.List;
@@ -329,17 +330,16 @@ public class GuiComponent extends Screen {
 
 	/** Render this GUI and its children. */
 	@Override
-	public void render(MatrixStack matrix, int mouseX, int mouseY, float partialTick) {
-		super.render(matrix, mouseX, mouseY, partialTick);
+	public void render(MatrixStack matrices, int mouseX, int mouseY, float partialTick) {
+		super.render(matrices, mouseX, mouseY, partialTick);
 		for (GuiComponent child : children) {
 			if (!child.isClipped) {
-				child.render(matrix, mouseX, mouseY, partialTick);
+				child.render(matrices, mouseX, mouseY, partialTick);
 			}
 		}
 		// Draw any hovering text requested by child components:
 		if (hoveringTextInfo.shouldDraw) {
-			drawHoveringText2(matrix, hoveringTextInfo.lines, hoveringTextInfo.x,
-							  hoveringTextInfo.y, hoveringTextInfo.font);
+			drawHoveringText2(matrices, hoveringTextInfo.lines, hoveringTextInfo.x, hoveringTextInfo.y, hoveringTextInfo.font);
 			hoveringTextInfo.shouldDraw = false;
 		}
 	}
@@ -451,14 +451,13 @@ public class GuiComponent extends Screen {
 	/** Draws a standard Minecraft hovering text window, constrained by this
 	 * component's dimensions (i.e. if it won't fit in when drawn to the left
 	 * of the cursor, it will be drawn to the right instead). */
-    private void drawHoveringText2(MatrixStack matrix, List<StringRenderable> lines, double x, double y,
-								   TextRenderer font) {
+	private void drawHoveringText2(MatrixStack matrices, List<StringRenderable> lines, double x, double y, TextRenderer font) {
 		boolean stencilEnabled = GL11.glIsEnabled(GL11.GL_STENCIL_TEST);
 		if (stencilEnabled) GL11.glDisable(GL11.GL_STENCIL_TEST);
 
 		TextRenderer old = this.textRenderer;
 		this.textRenderer = font;
-		renderTooltip(matrix, lines, (int) x, (int) y);
+		renderTooltip(matrices, lines, (int) x, (int) y);
 		this.textRenderer = old;
 
 		if (stencilEnabled) GL11.glEnable(GL11.GL_STENCIL_TEST);
@@ -477,7 +476,7 @@ public class GuiComponent extends Screen {
 	/**
 	 * Draws a text tooltip at mouse coordinates.
 	 * <p>
-	 * Same as {@link #drawHoveringText(MatrixStack, List, int, int, TextRenderer)}, but
+	 * Same as {@link #drawHoveringText2(MatrixStack, List, double, double, TextRenderer)}, but
 	 * the text is drawn on the top level parent component, after all its child
 	 * components have finished drawing. This allows the hovering text to be
 	 * unobscured by other components.
@@ -522,13 +521,12 @@ public class GuiComponent extends Screen {
 	protected void onChildClosed(GuiComponent child) {}
 
 	/** Draw a text string centered horizontally, using this GUI's font. */
-	protected void drawCenteredString(MatrixStack matrix, String text, int y, int color,
-									  boolean dropShadow) {
-		int length = textRenderer.getWidth(text);
+	protected void drawCentered(MatrixStack matrices, Text text, int y, int color, boolean dropShadow) {
+		int length = this.textRenderer.getWidth(text);
 		if (dropShadow) {
-			textRenderer.drawWithShadow(matrix, text, (this.width - length) / 2, y, color);
+			this.textRenderer.drawWithShadow(matrices, text, (float)(this.width - length) / 2, y, color);
 		} else {
-			textRenderer.draw(matrix, text, (this.width - length) / 2, y, color);
+			this.textRenderer.draw(matrices, text, (float)(this.width - length) / 2, y, color);
 		}
 	}
 

@@ -1,8 +1,5 @@
 package hunternif.mc.atlas.network.client;
 
-import java.io.IOException;
-import java.util.ArrayList;
-
 import hunternif.mc.atlas.AntiqueAtlasMod;
 import hunternif.mc.atlas.core.AtlasData;
 import hunternif.mc.atlas.core.DimensionData;
@@ -16,6 +13,8 @@ import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.dimension.DimensionType;
 
+import java.util.ArrayList;
+
 
 public class TileGroupsPacket extends AbstractClientMessage<TileGroupsPacket> {
 
@@ -24,11 +23,9 @@ public class TileGroupsPacket extends AbstractClientMessage<TileGroupsPacket> {
 	public ArrayList<TileGroup> tileGroups;
 
 	public static final int TILE_GROUPS_PER_PACKET = 100;
-	
-	public TileGroupsPacket(){
-		tileGroups = new ArrayList<TileGroup>();
-	}
-	
+
+	public TileGroupsPacket() {}
+
 	public TileGroupsPacket(ArrayList<TileGroup> tileGroups, int atlasID, RegistryKey<DimensionType> dimension) {
 		this.tileGroups = tileGroups;
 		this.atlasID = atlasID;
@@ -36,20 +33,25 @@ public class TileGroupsPacket extends AbstractClientMessage<TileGroupsPacket> {
 	}
 
 	@Override
-	protected void read(PacketByteBuf buffer) throws IOException {
+	protected void read(PacketByteBuf buffer) {
 		atlasID = buffer.readVarInt();
 		dimension = RegistryKey.of(Registry.DIMENSION_TYPE_KEY, buffer.readIdentifier());
 		int length = buffer.readVarInt();
-		tileGroups = new ArrayList<TileGroup>(length);
+		tileGroups = new ArrayList<>(length);
 		for (int i = 0; i < length; i++) {
 			TileGroup newbie = new TileGroup(0, 0);
-			newbie.readFromNBT(buffer.readCompoundTag());
+
+			CompoundTag tag = buffer.readCompoundTag();
+			if (tag != null) {
+				newbie.readFromNBT(tag);
+			}
+
 			tileGroups.add(newbie);
 		}
 	}
 
 	@Override
-	protected void write(PacketByteBuf buffer) throws IOException {
+	protected void write(PacketByteBuf buffer) {
 		buffer.writeVarInt(atlasID);
 		buffer.writeIdentifier(dimension.getValue());
 		buffer.writeVarInt(tileGroups.size());

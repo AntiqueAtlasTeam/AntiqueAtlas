@@ -1,10 +1,6 @@
 package hunternif.mc.atlas.core;
 
 import hunternif.mc.atlas.ext.ExtTileIdMap;
-
-import java.util.HashMap;
-import java.util.Map;
-
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.util.math.BlockPos;
@@ -16,6 +12,9 @@ import net.minecraft.world.biome.Biomes;
 import net.minecraft.world.biome.source.BiomeArray;
 import net.minecraft.world.chunk.Chunk;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Detects seas of lava, cave ground and cave walls in the Nether.
  * @author Hunternif
@@ -25,6 +24,10 @@ public class BiomeDetectorEnd extends BiomeDetectorBase implements IBiomeDetecto
 	@Override
 	public TileKind getBiomeID(World world, Chunk chunk) {
 		BiomeArray chunkBiomes = chunk.getBiomeArray();
+
+		if (chunkBiomes == null)
+			return TileKindFactory.get(ExtTileIdMap.NOT_FOUND);
+
 		Map<Biome, Integer> biomeOccurrences = new HashMap<>(Registry.BIOME.getIds().size());
 		
 		// The following pseudo-biomes don't have IDs:

@@ -1,5 +1,5 @@
 {
-  "item.antiqueatlas.antique_atlas": "復刻版地圖",
+  "item.antiqueatlas.antique_atlas": "復刻版地圖 #%d",
   "item.antiqueatlas.empty_antique_atlas": "空白復刻版地圖",
 
   "gui.antiqueatlas.scalebar": "比例尺",

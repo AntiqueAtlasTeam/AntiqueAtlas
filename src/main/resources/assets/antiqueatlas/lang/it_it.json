@@ -1,5 +1,5 @@
 {
-  "item.antiqueatlas.antique_atlas": "Antico atlante",
+  "item.antiqueatlas.antique_atlas": "Antico atlante #%d",
   "item.antiqueatlas.empty_antique_atlas": "Antico atlante vuoto",
 
   "gui.antiqueatlas.scalebar": "Scala in blocchi",

@@ -1,8 +1,6 @@
 package hunternif.mc.atlas.network.server;
 
 import hunternif.mc.atlas.AntiqueAtlasMod;
-import hunternif.mc.atlas.RegistrarAntiqueAtlas;
-import hunternif.mc.atlas.SettingsConfig;
 import hunternif.mc.atlas.api.AtlasAPI;
 import hunternif.mc.atlas.network.AbstractMessage.AbstractServerMessage;
 import hunternif.mc.atlas.util.Log;
@@ -26,9 +24,9 @@ public class BrowsingPositionPacket extends AbstractServerMessage<BrowsingPositi
 	private RegistryKey<DimensionType> dimension;
 	private int x, y;
 	private double zoom;
-	
+
 	public BrowsingPositionPacket() {}
-	
+
 	public BrowsingPositionPacket(int atlasID, RegistryKey<DimensionType> dimension, int x, int y, double zoom) {
 		this.atlasID = atlasID;
 		this.dimension = dimension;
@@ -38,7 +36,7 @@ public class BrowsingPositionPacket extends AbstractServerMessage<BrowsingPositi
 	}
 	
 	@Override
-	protected void read(PacketByteBuf buffer) throws IOException {
+	protected void read(PacketByteBuf buffer) {
 		atlasID = buffer.readVarInt();
 		dimension = RegistryKey.of(Registry.DIMENSION_TYPE_KEY, buffer.readIdentifier());
 		x = buffer.readVarInt();
@@ -47,7 +45,7 @@ public class BrowsingPositionPacket extends AbstractServerMessage<BrowsingPositi
 	}
 
 	@Override
-	protected void write(PacketByteBuf buffer) throws IOException {
+	protected void write(PacketByteBuf buffer) {
 		buffer.writeVarInt(atlasID);
 		buffer.writeIdentifier(dimension.getValue());
 		buffer.writeVarInt(x);
@@ -58,7 +56,7 @@ public class BrowsingPositionPacket extends AbstractServerMessage<BrowsingPositi
 	@Override
 	protected void process(PlayerEntity player, EnvType side) {
 		// Make sure it's this player's atlas :^)
-		if (SettingsConfig.gameplay.itemNeeded && !AtlasAPI.getPlayerAtlases(player).contains(atlasID)) {
+		if (AntiqueAtlasMod.CONFIG.gameplay.itemNeeded && !AtlasAPI.getPlayerAtlases(player).contains(atlasID)) {
 			Log.warn("Player %s attempted to put position marker into someone else's Atlas #%d",
 					player.getCommandSource().getName(), atlasID);
 			return;

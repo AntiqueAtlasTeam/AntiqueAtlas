@@ -3,6 +3,7 @@
   "package": "kenkron.antiqueatlasoverlay.mixin",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
+    "HeldItemRendererMixin"
   ],
   "client": [
     "MixinInGameHud"

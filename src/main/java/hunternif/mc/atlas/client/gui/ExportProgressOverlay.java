@@ -16,7 +16,7 @@ public enum ExportProgressOverlay {
 	INSTANCE;
 
 	@Environment(EnvType.CLIENT)
-	public void draw(MatrixStack matrix, int scaledWidth, int scaledHeight, float partial) {
+	public void draw(MatrixStack matrices, int scaledWidth, int scaledHeight) {
 		int x = scaledWidth - 40, y = scaledHeight - 20, barWidth = 50, barHeight = 2;
 
 		ExportUpdateListener l = ExportUpdateListener.INSTANCE;
@@ -31,9 +31,9 @@ public enum ExportProgressOverlay {
 		GlStateManager.scaled(1.0/s, 1.0/s, 1);
 
 		int headerWidth = font.getWidth(l.header);
-		font.draw(matrix, l.header, ( x )*s -headerWidth/2, ( y )*s - 14, 0xffffff);
+		font.draw(matrices, l.header, ( x )*s -headerWidth/2F, ( y )*s - 14, 0xffffff);
 		int statusWidth = font.getWidth(l.status);
-		font.draw(matrix, l.status, ( x )*s -statusWidth/2, ( y )*s, 0xffffff);
+		font.draw(matrices, l.status, ( x )*s -statusWidth/2F, ( y )*s, 0xffffff);
 
 		GlStateManager.scaled(s, s, 1);
 		y += 7;

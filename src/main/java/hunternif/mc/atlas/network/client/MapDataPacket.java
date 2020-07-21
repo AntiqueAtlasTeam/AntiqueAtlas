@@ -1,7 +1,6 @@
 package hunternif.mc.atlas.network.client;
 
 import hunternif.mc.atlas.AntiqueAtlasMod;
-import hunternif.mc.atlas.SettingsConfig;
 import hunternif.mc.atlas.client.gui.GuiAtlas;
 import hunternif.mc.atlas.core.AtlasData;
 import hunternif.mc.atlas.network.AbstractMessage.AbstractClientMessage;
@@ -11,9 +10,6 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.PacketByteBuf;
-
-
-import java.io.IOException;
 
 /**
  * Used to sync atlas data from server to client.
@@ -31,13 +27,13 @@ public class MapDataPacket extends AbstractClientMessage<MapDataPacket> {
 	}
 
 	@Override
-	public void read(PacketByteBuf buffer) throws IOException {
+	public void read(PacketByteBuf buffer) {
 		atlasID = buffer.readVarInt();
 		data = buffer.readCompoundTag();
 	}
 
 	@Override
-	public void write(PacketByteBuf buffer) throws IOException {
+	public void write(PacketByteBuf buffer) {
 		buffer.writeVarInt(atlasID);
 		buffer.writeCompoundTag(data);
 	}
@@ -50,7 +46,7 @@ public class MapDataPacket extends AbstractClientMessage<MapDataPacket> {
 		AtlasData atlasData = AntiqueAtlasMod.atlasData.getAtlasData(atlasID, player.getEntityWorld());
 		atlasData.fromTag(data);
 		// GuiAtlas may already be opened at (0, 0) browsing position, force load saved position:
-		if (SettingsConfig.gameplay.doSaveBrowsingPos &&
+		if (AntiqueAtlasMod.CONFIG.gameplay.doSaveBrowsingPos &&
 				MinecraftClient.getInstance().currentScreen instanceof GuiAtlas) {
 			((GuiAtlas)MinecraftClient.getInstance().currentScreen).loadSavedBrowsingPosition();
 		}

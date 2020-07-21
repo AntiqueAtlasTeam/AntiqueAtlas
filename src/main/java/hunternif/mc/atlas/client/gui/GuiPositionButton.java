@@ -5,7 +5,7 @@ import hunternif.mc.atlas.client.Textures;
 import hunternif.mc.atlas.client.gui.core.GuiComponentButton;
 import hunternif.mc.atlas.util.AtlasRenderHelper;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.text.TranslatableText;
+import net.minecraft.text.StringRenderable;
 import org.lwjgl.opengl.GL11;
 
 import java.util.Collections;
@@ -21,9 +21,8 @@ public class GuiPositionButton extends GuiComponentButton {
 	}
 
 	@Override
-	public void render(MatrixStack matrix, int mouseX, int mouseY, float partialTick) {
+	public void render(MatrixStack matrices, int mouseX, int mouseY, float partialTick) {
 		if (isEnabled()) {
-//			GuiLighting.disable();
 			GlStateManager.enableBlend();
 			GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
@@ -34,12 +33,12 @@ public class GuiPositionButton extends GuiComponentButton {
 				GlStateManager.color4f(1.0F, 1.0F, 1.0F, 0.5F);
 			}
 
-			AtlasRenderHelper.drawFullTexture(Textures.BTN_POSITION, x, y, WIDTH, HEIGHT);
+			AtlasRenderHelper.drawFullTexture(matrices, Textures.BTN_POSITION, x, y, WIDTH, HEIGHT);
 
 			GlStateManager.disableBlend();
 
 			if (isMouseOver) {
-				drawTooltip(Collections.singletonList(new TranslatableText("gui.antiqueatlas.followPlayer")), MinecraftClient.getInstance().textRenderer);
+				drawTooltip(Collections.singletonList(StringRenderable.plain(I18n.translate("gui.antiqueatlas.followPlayer"))), MinecraftClient.getInstance().textRenderer);
 			}
 		}
 	}

@@ -156,7 +156,6 @@ public class PacketDispatcher {
 	/**
 	 * Send this message to the server.
 	 */
-	@Environment(EnvType.CLIENT)
 	public static void sendToServer(AbstractMessage<?> message) {
 		ClientSidePacketRegistry.INSTANCE.sendToServer(
 				packets.inverse().get(message.getClass()),

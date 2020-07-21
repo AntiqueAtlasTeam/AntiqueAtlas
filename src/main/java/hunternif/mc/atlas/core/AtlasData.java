@@ -1,7 +1,6 @@
 package hunternif.mc.atlas.core;
 
 import hunternif.mc.atlas.AntiqueAtlasMod;
-import hunternif.mc.atlas.SettingsConfig;
 import hunternif.mc.atlas.network.PacketDispatcher;
 import hunternif.mc.atlas.network.client.MapDataPacket;
 import hunternif.mc.atlas.network.server.BrowsingPositionPacket;
@@ -57,8 +56,8 @@ public class AtlasData extends PersistentState {
 	public AtlasData(String key) {
 		super(key);
 
-		biomeDetectorOverworld.setScanPonds(SettingsConfig.performance.doScanPonds);
-		biomeDetectorOverworld.setScanRavines(SettingsConfig.performance.doScanRavines);
+		biomeDetectorOverworld.setScanPonds(AntiqueAtlasMod.CONFIG.performance.doScanPonds);
+		biomeDetectorOverworld.setScanRavines(AntiqueAtlasMod.CONFIG.performance.doScanRavines);
 		setBiomeDetectorForDimension(DimensionType.OVERWORLD_REGISTRY_KEY, biomeDetectorOverworld);
 		setBiomeDetectorForDimension(DimensionType.THE_NETHER_REGISTRY_KEY, biomeDetectorNether);
 		setBiomeDetectorForDimension(DimensionType.THE_END_REGISTRY_KEY, biomeDetectorEnd);
@@ -79,11 +78,6 @@ public class AtlasData extends PersistentState {
 			CompoundTag dimTag = dimensionMapList.getCompound(d);
 			RegistryKey<DimensionType> dimensionID = RegistryKey.of(Registry.DIMENSION_TYPE_KEY,
 																	new Identifier(dimTag.getString(TAG_DIMENSION_ID)));
-//			if (dimTag.contains(TAG_DIMENSION_ID, NbtType.NUMBER)) {
-//				dimensionID = Registry.DIMENSION_TYPE.get(dimTag.getInt(TAG_DIMENSION_ID));
-//			} else {
-//				dimensionID = Registry.DIMENSION_TYPE.get(new Identifier(dimTag.getString(TAG_DIMENSION_ID)));
-//			}
 			ListTag dimensionTag = (ListTag) dimTag.get(TAG_VISITED_CHUNKS);
 			DimensionData dimData = getDimensionData(dimensionID);
 			dimData.readFromNBT(dimensionTag);
@@ -108,11 +102,6 @@ public class AtlasData extends PersistentState {
 			CompoundTag dimTag = dimensionMapList.getCompound(d);
 			RegistryKey<DimensionType> dimensionID = RegistryKey.of(Registry.DIMENSION_TYPE_KEY,
 													   new Identifier(dimTag.getString(TAG_DIMENSION_ID)));
-//			if (dimTag.contains(TAG_DIMENSION_ID, NbtType.NUMBER)) {
-//				dimensionID = Registry.DIMENSION_TYPE.get(dimTag.getInt(TAG_DIMENSION_ID));
-//			} else {
-//				dimensionID = Registry.DIMENSION_TYPE.get(new Identifier(dimTag.getString(TAG_DIMENSION_ID)));
-//			}
 			int[] intArray = dimTag.getIntArray(TAG_VISITED_CHUNKS);
 			DimensionData dimData = getDimensionData(dimensionID);
 			for (int i = 0; i < intArray.length; i += 3) {
@@ -171,22 +160,22 @@ public class AtlasData extends PersistentState {
 	 * @return A set of the new tiles, mostly so the server can synch those with relavent clients.*/
 	public Collection<TileInfo> updateMapAroundPlayer(PlayerEntity player) {
 		// Update the actual map only so often:
-		int newScanInterval = Math.round(SettingsConfig.performance.newScanInterval * 20);
-		int rescanInterval = newScanInterval * SettingsConfig.performance.rescanRate;
+		int newScanInterval = Math.round(AntiqueAtlasMod.CONFIG.performance.newScanInterval * 20);
+		int rescanInterval = newScanInterval * AntiqueAtlasMod.CONFIG.performance.rescanRate;
 
 		if (player.getEntityWorld().getTime() % newScanInterval != 0) {
 			return Collections.emptyList(); //no new tiles
 		}
 
-		ArrayList<TileInfo> updatedTiles = new ArrayList<TileInfo>();
+		ArrayList<TileInfo> updatedTiles = new ArrayList<>();
 
 		int playerX = MathHelper.floor(player.getX()) >> 4;
 		int playerZ = MathHelper.floor(player.getZ()) >> 4;
 		ITileStorage seenChunks = this.getDimensionData(player.getEntityWorld().getDimensionRegistryKey());
-		IBiomeDetector biomeDetector = getBiomeDetectorForDimension(player.world.getDimensionRegistryKey());
-		int scanRadius = SettingsConfig.performance.scanRadius;
+		IBiomeDetector biomeDetector = getBiomeDetectorForDimension(player.getEntityWorld().getDimensionRegistryKey());
+		int scanRadius = AntiqueAtlasMod.CONFIG.performance.scanRadius;
 
-		final boolean rescanRequired = SettingsConfig.performance.doRescan && player.getEntityWorld().getTime() % rescanInterval == 0;
+		final boolean rescanRequired = AntiqueAtlasMod.CONFIG.performance.doRescan && player.getEntityWorld().getTime() % rescanInterval == 0;
 		int scanRadiusSq = scanRadius*scanRadius;
 
 		// Look at chunks around in a circular area:
@@ -203,9 +192,7 @@ public class AtlasData extends PersistentState {
 
 				// Check if there's a custom tile at the location:
 				// Custom tiles overwrite even the chunks already seen.
-				int customTileId =
-						AntiqueAtlasMod.extBiomeData.getData().getBiomeAt(
-								player.world.getDimensionRegistryKey(), x, z);
+				int customTileId = AntiqueAtlasMod.extBiomeData.getData().getBiomeAt(player.getEntityWorld().getDimensionRegistryKey(), x, z);
 				if (customTileId != -1) {
 					tile = TileKindFactory.get(customTileId);
 				}
@@ -218,7 +205,7 @@ public class AtlasData extends PersistentState {
 					}
 
 					// TODO FABRIC: forceChunkLoading crashes here
-					Chunk chunk = player.getEntityWorld().getChunk(x, z, ChunkStatus.FULL, SettingsConfig.performance.forceChunkLoading);
+					Chunk chunk = player.getEntityWorld().getChunk(x, z, ChunkStatus.FULL, AntiqueAtlasMod.CONFIG.performance.forceChunkLoading);
 
 					// Skip chunk if it hasn't loaded yet:
 					if (chunk == null) {
@@ -230,24 +217,24 @@ public class AtlasData extends PersistentState {
 
 						if (tile == null) {
 							// If the new tile is empty, remove the old one:
-							this.removeTile(player.world.getDimensionRegistryKey(), x, z);
+							this.removeTile(player.getEntityWorld().getDimensionRegistryKey(), x, z);
 						} else if (oldTile != tile) {
 							// Only update if the old tile's biome ID doesn't match the new one:
-							this.setTile(player.world.getDimensionRegistryKey(), x, z, tile);
+							this.setTile(player.getEntityWorld().getDimensionRegistryKey(), x, z, tile);
 							updatedTiles.add(new TileInfo(x, z, tile));
 						}
 					} else {
 						// Scanning new chunk:
 						tile = biomeDetector.getBiomeID(player.getEntityWorld(), chunk);
 						if (tile != null) {
-							this.setTile(player.world.getDimensionRegistryKey(), x, z, tile);
+							this.setTile(player.getEntityWorld().getDimensionRegistryKey(), x, z, tile);
 							updatedTiles.add(new TileInfo(x, z, tile));
 						}
 					}
 				} else {
 					// Only update the custom tile if it doesn't rewrite itself:
 					if (oldTile == null || oldTile != tile) {
-						this.setTile(player.world.getDimensionRegistryKey(), x, z, tile);
+						this.setTile(player.getEntityWorld().getDimensionRegistryKey(), x, z, tile);
 						updatedTiles.add(new TileInfo(x, z, tile));
 						this.markDirty();
 					}
@@ -266,7 +253,7 @@ public class AtlasData extends PersistentState {
 	}
 
 	/** Returns the Tile previously set at given coordinates. */
-    private TileKind removeTile(RegistryKey<DimensionType> dimension, int x, int y) {
+	private TileKind removeTile(RegistryKey<DimensionType> dimension, int x, int y) {
 		DimensionData dimData = getDimensionData(dimension);
 		return dimData.removeTile(x, y);
 	}
@@ -307,8 +294,8 @@ public class AtlasData extends PersistentState {
 		writeToNBT(nbt, false);
 		PacketDispatcher.sendTo(new MapDataPacket(atlasID, nbt), (ServerPlayerEntity) player);
 
-		for (RegistryKey<DimensionType> i : dimensionMap.keySet()){
-			dimensionMap.get(i).syncOnPlayer(atlasID, player);
+		for (RegistryKey<DimensionType> dimension : dimensionMap.keySet()){
+			dimensionMap.get(dimension).syncOnPlayer(atlasID, player);
 		}
 
 		Log.info("Sent Atlas #%d data to player %s", atlasID, player.getCommandSource().getName());

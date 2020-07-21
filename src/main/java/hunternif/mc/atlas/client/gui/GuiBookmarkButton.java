@@ -8,6 +8,7 @@ import java.util.Collections;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.LiteralText;
+import net.minecraft.text.StringRenderable;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 
@@ -51,9 +52,8 @@ public class GuiBookmarkButton extends GuiToggleButton {
 	}
 
 	@Override
-	public void render(MatrixStack matrix, int mouseX, int mouseY, float partialTick) {
+	public void render(MatrixStack matrices, int mouseX, int mouseY, float partialTick) {
 		GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
-//		GuiLighting.disable();
 
 		// Render background:
 		int u = colorIndex * WIDTH;
@@ -61,7 +61,7 @@ public class GuiBookmarkButton extends GuiToggleButton {
 		AtlasRenderHelper.drawTexturedRect(Textures.BOOKMARKS, getGuiX(), getGuiY(), u, v, WIDTH, HEIGHT, IMAGE_WIDTH, IMAGE_HEIGHT);
 
 		// Render the icon:
-		AtlasRenderHelper.drawFullTexture(iconTexture,
+		AtlasRenderHelper.drawFullTexture(matrices, iconTexture,
 				getGuiX() + (isMouseOver || isSelected() ? 3 : 2),
 				getGuiY() + 1, ICON_WIDTH, ICON_HEIGHT);
 

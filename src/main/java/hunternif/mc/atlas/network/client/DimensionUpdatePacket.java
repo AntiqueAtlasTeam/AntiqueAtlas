@@ -76,6 +76,11 @@ public class DimensionUpdatePacket extends AbstractClientMessage<DimensionUpdate
 
 	@Override
 	protected void process(PlayerEntity player, EnvType side) {
+		if (dimension == null) {
+			// TODO FABRIC
+			return;
+		}
+
 		AtlasData data = AntiqueAtlasMod.atlasData.getAtlasData(atlasID, player.world);
 		for (int i = 0; i < tileCount; i++) {
 			int x = tileData.readShort();

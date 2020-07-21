@@ -43,8 +43,7 @@ public class GuiArrowButton extends GuiComponentButton {
 	}
 
 	@Override
-	public void render(MatrixStack matrix, int mouseX, int mouseY, float partialTick) {
-		//GuiLighting.disable();
+	public void render(MatrixStack matrices, int mouseX, int mouseY, float partialTick) {
 		GlStateManager.enableBlend();
 		GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 		

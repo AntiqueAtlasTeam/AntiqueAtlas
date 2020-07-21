@@ -21,20 +21,20 @@ import net.minecraft.network.PacketByteBuf;
  */
 public class RegisterTileIdPacket extends AbstractServerMessage<RegisterTileIdPacket> {
 	private Identifier name;
-	
+
 	public RegisterTileIdPacket() {}
-	
+
 	public RegisterTileIdPacket(Identifier uniqueTileName) {
 		this.name = uniqueTileName;
 	}
 	
 	@Override
-	protected void read(PacketByteBuf buffer) throws IOException {
+	protected void read(PacketByteBuf buffer) {
 		name = new Identifier(buffer.readString(512));
 	}
 
 	@Override
-	protected void write(PacketByteBuf buffer) throws IOException {
+	protected void write(PacketByteBuf buffer) {
 		buffer.writeString(name.toString());
 	}
 

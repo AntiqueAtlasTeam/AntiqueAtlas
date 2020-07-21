@@ -1,10 +1,8 @@
 package hunternif.mc.atlas.marker;
 
-import java.io.File;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.*;
-import java.util.Map.Entry;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 
@@ -16,16 +14,11 @@ import net.minecraft.resource.Resource;
 import net.minecraft.resource.ResourceManager;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.profiler.Profiler;
-import org.apache.commons.io.IOUtils;
 
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
-import hunternif.mc.atlas.registry.MarkerRegistry;
 import hunternif.mc.atlas.registry.MarkerType;
-import hunternif.mc.atlas.util.AbstractJSONConfig;
-import hunternif.mc.atlas.util.Log;
 
 /**
  * Maps marker type to texture.
@@ -76,7 +69,7 @@ public class MarkerTextureConfig implements SimpleResourceReloadListener<Map<Ide
 	public CompletableFuture<Void> apply(Map<Identifier, MarkerType> data, ResourceManager manager, Profiler profiler, Executor executor) {
 		return CompletableFuture.runAsync(() -> {
 			for (Identifier markerId : data.keySet()) {
-				MarkerRegistry.register(markerId, data.get(markerId));
+				MarkerType.register(markerId, data.get(markerId));
 			}
 		});
 	}

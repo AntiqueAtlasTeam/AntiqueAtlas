@@ -2,14 +2,16 @@ package hunternif.mc.atlas.item;
 
 import java.util.Collection;
 
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.sound.PositionedSoundInstance;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.text.LiteralText;
-import net.minecraft.text.MutableText;
+import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
+import net.minecraft.text.TranslatableText;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
@@ -34,13 +36,12 @@ public class ItemAtlas extends Item {
 
 	@Override
 	public Text getName(ItemStack stack) {
-		return ((MutableText)super.getName(stack)).append(" #" + getAtlasID(stack));
+		return new TranslatableText(this.getTranslationKey(), getAtlasID(stack));
 	}
 
 	@Override
-	public TypedActionResult<ItemStack> use(World world, PlayerEntity playerIn,
-			Hand hand) {
-		ItemStack stack = playerIn.getStackInHand(hand);
+	public TypedActionResult<ItemStack> use(World world, PlayerEntity playerEntity, Hand hand) {
+		ItemStack stack = playerEntity.getStackInHand(hand);
 
 		if (world.isClient) {
 			AntiqueAtlasMod.proxy.openAtlasGUI(stack);
@@ -73,8 +74,7 @@ public class ItemAtlas extends Item {
 		
 		if (!world.isClient) {
 			if (!newTiles.isEmpty()) {
-				DimensionUpdatePacket packet = new DimensionUpdatePacket(atlasId, player.world.getDimensionRegistryKey(),
-																		 newTiles);
+				DimensionUpdatePacket packet = new DimensionUpdatePacket(atlasId, player.getEntityWorld().getDimensionRegistryKey(), newTiles);
 				PacketDispatcher.sendToAll(((ServerWorld) world).getServer(), packet);
 			}
 		}

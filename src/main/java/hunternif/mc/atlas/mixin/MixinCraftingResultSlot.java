@@ -8,6 +8,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.recipe.RecipeUnlocker;
 import net.minecraft.screen.slot.CraftingResultSlot;
 import net.minecraft.screen.slot.Slot;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -17,11 +18,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(CraftingResultSlot.class)
 public class MixinCraftingResultSlot extends Slot {
-    @Shadow
-    CraftingInventory input;
-
-    @Shadow
-    PlayerEntity player;
+    @Final @Shadow private CraftingInventory input;
+    @Final @Shadow private PlayerEntity player;
 
     public MixinCraftingResultSlot(Inventory inventory_1, int int_1, int int_2, int int_3) {
         super(inventory_1, int_1, int_2, int_3);

@@ -153,7 +153,7 @@ public abstract class AGuiScrollbar extends GuiComponent {
 	}
 
 	@Override
-	public void render(MatrixStack matrix, int mouseX, int mouseY, float partialTick) {
+	public void render(MatrixStack matrices, int mouseX, int mouseY, float partialTick) {
 		// Don't draw the anchor if there's nothing to scroll:
 		if (!visible) {
 			isDragged = false;

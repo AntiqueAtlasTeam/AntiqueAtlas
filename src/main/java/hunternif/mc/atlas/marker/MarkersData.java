@@ -1,6 +1,6 @@
 package hunternif.mc.atlas.marker;
 
-import hunternif.mc.atlas.SettingsConfig;
+import hunternif.mc.atlas.AntiqueAtlasMod;
 import hunternif.mc.atlas.api.MarkerAPI;
 import hunternif.mc.atlas.network.PacketDispatcher;
 import hunternif.mc.atlas.network.client.MarkersPacket;
@@ -86,11 +86,6 @@ public class MarkersData extends PersistentState {
 			CompoundTag tag = dimensionMapList.getCompound(d);
 			RegistryKey<DimensionType> dimensionID = RegistryKey.of(Registry.DIMENSION_TYPE_KEY,
 																	new Identifier(tag.getString(TAG_DIMENSION_ID)));
-//			if (tag.contains(TAG_DIMENSION_ID, NbtType.NUMBER)) {
-//				dimensionID = Registry.DIMENSION_TYPE.get(tag.getInt(TAG_DIMENSION_ID));
-//			} else {
-//				dimensionID = Registry.DIMENSION_TYPE.get(new Identifier(tag.getString(TAG_DIMENSION_ID)));
-//			}
 			ListTag tagList = tag.getList(TAG_MARKERS, NbtType.COMPOUND);
 			for (int i = 0; i < tagList.size(); i++) {
 				CompoundTag markerTag = tagList.getCompound(i);
@@ -213,10 +208,10 @@ public class MarkersData extends PersistentState {
 			for (Entry<RegistryKey<DimensionType>, DimensionMarkersData> e: dimensionMap.entrySet()){
 				totalMarkers += e.getValue().getAllMarkers().size();
 			}
-			if (totalMarkers < SettingsConfig.performance.markerLimit){
+			if (totalMarkers < AntiqueAtlasMod.CONFIG.performance.markerLimit){
 				getMarkersDataInDimension(marker.getDimension()).insertMarker(marker);
 			} else {
-				Log.warn("Could not add new marker. Atlas is at it's limit of %d markers", SettingsConfig.performance.markerLimit);
+				Log.warn("Could not add new marker. Atlas is at it's limit of %d markers", AntiqueAtlasMod.CONFIG.performance.markerLimit);
 			}
 		}
 		return marker;

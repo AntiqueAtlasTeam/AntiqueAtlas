@@ -1,5 +1,5 @@
 {
-  "item.antiqueatlas.antique_atlas": "Antique Atlas",
+  "item.antiqueatlas.antique_atlas": "Antique Atlas #%d",
   "item.antiqueatlas.empty_antique_atlas": "Antique Atlas vacío",
 
   "gui.antiqueatlas.scalebar": "Escala en bloques",

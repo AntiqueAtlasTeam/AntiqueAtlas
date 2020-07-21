@@ -8,7 +8,6 @@ import hunternif.mc.atlas.network.PacketDispatcher;
 import hunternif.mc.atlas.network.bidirectional.DeleteMarkerPacket;
 import hunternif.mc.atlas.network.client.MarkersPacket;
 import hunternif.mc.atlas.network.server.AddMarkerPacket;
-import hunternif.mc.atlas.registry.MarkerRegistry;
 import hunternif.mc.atlas.registry.MarkerType;
 import hunternif.mc.atlas.util.Log;
 
@@ -33,6 +32,7 @@ public class MarkerApiImpl implements MarkerAPI {
 	public Marker putGlobalMarker(@Nonnull World world, boolean visibleAhead, String markerType, String label, int x, int z) {
 		return doPutMarker(world, visibleAhead, GLOBAL, markerType, label, x, z);
 	}
+
 	private Marker doPutMarker(World world, boolean visibleAhead, int atlasID, String markerType, String label, int x, int z) {
 		Marker marker = null;
 		if (world.isClient) {
@@ -46,14 +46,11 @@ public class MarkerApiImpl implements MarkerAPI {
 			if (atlasID == GLOBAL) {
 				MarkersData data = AntiqueAtlasMod.globalMarkersData.getData();
 				marker = data.createAndSaveMarker(markerType, label, world.getDimensionRegistryKey(), x, z, visibleAhead);
-				PacketDispatcher.sendToAll(((ServerWorld) world).getServer(),
-										   new MarkersPacket(world.getDimensionRegistryKey(), marker));
+				PacketDispatcher.sendToAll(((ServerWorld) world).getServer(), new MarkersPacket(world.getDimensionRegistryKey(), marker));
 			} else {
 				MarkersData data = AntiqueAtlasMod.markersData.getMarkersData(atlasID, world);
-				marker = data.createAndSaveMarker(markerType, label, world.getDimensionRegistryKey(), x, z,
-												  visibleAhead);
-				PacketDispatcher.sendToAll(((ServerWorld) world).getServer(),
-										   new MarkersPacket(atlasID, world.getDimensionRegistryKey(), marker));
+				marker = data.createAndSaveMarker(markerType, label, world.getDimensionRegistryKey(), x, z, visibleAhead);
+				PacketDispatcher.sendToAll(((ServerWorld) world).getServer(), new MarkersPacket(atlasID, world.getDimensionRegistryKey(), marker));
 			}
 		}
 		return marker;
@@ -88,7 +85,7 @@ public class MarkerApiImpl implements MarkerAPI {
 	
 	@Override
 	public void registerMarker(Identifier identifier, MarkerType markerType) {
-		MarkerRegistry.register(identifier, markerType);
+		MarkerType.register(identifier, markerType);
 	}
 
 }

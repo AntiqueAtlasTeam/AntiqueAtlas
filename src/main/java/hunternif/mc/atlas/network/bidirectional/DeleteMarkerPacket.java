@@ -1,7 +1,6 @@
 package hunternif.mc.atlas.network.bidirectional;
 
 import hunternif.mc.atlas.AntiqueAtlasMod;
-import hunternif.mc.atlas.SettingsConfig;
 import hunternif.mc.atlas.api.AtlasAPI;
 import hunternif.mc.atlas.marker.MarkersData;
 import hunternif.mc.atlas.network.AbstractMessage;
@@ -38,13 +37,13 @@ public class DeleteMarkerPacket extends AbstractMessage<DeleteMarkerPacket> {
 	}
 
 	@Override
-	public void read(PacketByteBuf buffer) throws IOException {
+	public void read(PacketByteBuf buffer) {
 		atlasID = buffer.readVarInt();
 		markerID = buffer.readVarInt();
 	}
 
 	@Override
-	public void write(PacketByteBuf buffer) throws IOException {
+	public void write(PacketByteBuf buffer) {
 		buffer.writeVarInt(atlasID);
 		buffer.writeVarInt(markerID);
 	}
@@ -57,7 +56,7 @@ public class DeleteMarkerPacket extends AbstractMessage<DeleteMarkerPacket> {
 	protected void process(PlayerEntity player, EnvType side) {
 		if (side == EnvType.SERVER) {
 			// Make sure it's this player's atlas :^)
-			if (SettingsConfig.gameplay.itemNeeded && !AtlasAPI.getPlayerAtlases(player).contains(atlasID)) {
+			if (AntiqueAtlasMod.CONFIG.gameplay.itemNeeded && !AtlasAPI.getPlayerAtlases(player).contains(atlasID)) {
 				Log.warn("Player %s attempted to delete marker from someone else's Atlas #%d",
 						player.getCommandSource().getName(), atlasID);
 				return;

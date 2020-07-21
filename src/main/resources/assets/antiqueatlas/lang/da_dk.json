@@ -1,5 +1,5 @@
 {
-  "item.antiqueatlas.antique_atlas": "Antikt Atlas",
+  "item.antiqueatlas.antique_atlas": "Antikt Atlas #%d",
   "item.antiqueatlas.empty_antique_atlas": "Tomt Antikt Atlas",
 
   "gui.antiqueatlas.scalebar": "Målestok i blokke",

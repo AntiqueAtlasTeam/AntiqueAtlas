@@ -2,7 +2,6 @@ package hunternif.mc.atlas.core;
 
 import hunternif.mc.atlas.ext.ExtTileIdMap;
 import net.minecraft.block.Block;
-
 import net.minecraft.block.Blocks;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.registry.Registry;
@@ -85,6 +84,9 @@ public class BiomeDetectorBase implements IBiomeDetector {
 	public TileKind getBiomeID(World world, Chunk chunk) {
 		BiomeArray chunkBiomes = chunk.getBiomeArray();
 		Map<Biome, Integer> biomeOccurrences = new HashMap<>(Registry.BIOME.getIds().size());
+
+		if (chunkBiomes == null)
+			return TileKindFactory.get(Biomes.DEFAULT);
 
 		// The following important pseudo-biomes don't have IDs:
 		int lavaOccurrences = 0;

@@ -1,6 +1,6 @@
 package hunternif.mc.atlas.core;
 
-import hunternif.mc.atlas.SettingsConfig;
+import hunternif.mc.atlas.AntiqueAtlasMod;
 import hunternif.mc.atlas.network.PacketDispatcher;
 import hunternif.mc.atlas.network.client.TileGroupsPacket;
 import hunternif.mc.atlas.util.Log;
@@ -31,12 +31,12 @@ public class DimensionData implements ITileStorage {
 	 * 
 	 * Key is a ShortVec2 representing the gilegroup's position in units of TileGroup.CHUNK_STEP
 	 */
-	private final Map<ShortVec2, TileGroup> tileGroups = new ConcurrentHashMap<ShortVec2, TileGroup>(2, 0.75f, 2);
+	private final Map<ShortVec2, TileGroup> tileGroups = new ConcurrentHashMap<>(2, 0.75f, 2);
 
 	/**
 	 * Maps threads to the temporary key for thread-safe access to the tile map.
 	 */
-	private final Map<Thread, ShortVec2> thread2KeyMap = new ConcurrentHashMap<Thread, ShortVec2>(2, 0.75f, 2);
+	private final Map<Thread, ShortVec2> thread2KeyMap = new ConcurrentHashMap<>(2, 0.75f, 2);
 
 	/** Limits of explored area, in chunks. */
 	private final Rect scope = new Rect();
@@ -50,8 +50,8 @@ public class DimensionData implements ITileStorage {
 	 * This function has to create a new map on each call since the packet rework
 	 */
 	public Map<ShortVec2, TileKind> getSeenChunks() {
-		Map<ShortVec2, TileKind> chunks = new ConcurrentHashMap<ShortVec2, TileKind>(2, 0.75f, 2);
-		TileKind t = null;
+		Map<ShortVec2, TileKind> chunks = new ConcurrentHashMap<>(2, 0.75f, 2);
+		TileKind t;
 		for (Map.Entry<ShortVec2, TileGroup> entry: tileGroups.entrySet()){
 			int basex = entry.getValue().getScope().minX;
 			int basey = entry.getValue().getScope().minY;
@@ -74,7 +74,7 @@ public class DimensionData implements ITileStorage {
 		this.browsingZoom = zoom;
 		if (browsingZoom <= 0) {
 			Log.warn("Setting map zoom to invalid value of %f", zoom);
-			browsingZoom = SettingsConfig.userInterface.minScale;
+			browsingZoom = AntiqueAtlasMod.CONFIG.userInterface.minScale;
 		}
 		parent.markDirty();
 	}
@@ -204,7 +204,8 @@ public class DimensionData implements ITileStorage {
 	
 	public void syncOnPlayer(int atlasID, PlayerEntity player){
 		Log.info("Sending dimension #%s", dimension.toString());
-		ArrayList<TileGroup> tgs = new ArrayList<TileGroup>(TileGroupsPacket.TILE_GROUPS_PER_PACKET);
+		ArrayList<TileGroup> tgs;
+		tgs = new ArrayList<>(TileGroupsPacket.TILE_GROUPS_PER_PACKET);
 		int count = 0;
 		int total = 0;
 		for (Entry<ShortVec2, TileGroup> t:tileGroups.entrySet()){

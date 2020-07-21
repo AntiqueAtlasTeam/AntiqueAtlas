@@ -5,13 +5,15 @@ import hunternif.mc.atlas.core.GlobalAtlasData;
 import hunternif.mc.atlas.core.PlayerEventHandler;
 import hunternif.mc.atlas.event.RecipeCraftedCallback;
 import hunternif.mc.atlas.event.RecipeCraftedHandler;
-import hunternif.mc.atlas.ext.*;
+import hunternif.mc.atlas.ext.ExtBiomeDataHandler;
 import hunternif.mc.atlas.marker.GlobalMarkersDataHandler;
 import hunternif.mc.atlas.marker.MarkersDataHandler;
 import hunternif.mc.atlas.mixinhooks.NewPlayerConnectionCallback;
 import hunternif.mc.atlas.mixinhooks.NewServerConnectionCallback;
 import hunternif.mc.atlas.mixinhooks.ServerWorldLoadCallback;
 import hunternif.mc.atlas.network.PacketDispatcher;
+import io.github.fablabsmc.fablabs.api.fiber.v1.tree.ConfigBranch;
+import io.github.fablabsmc.fablabs.api.fiber.v1.tree.ConfigTree;
 import net.fabricmc.api.ModInitializer;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.Identifier;
@@ -38,6 +40,9 @@ public class AntiqueAtlasMod implements ModInitializer {
 
 	public static final RecipeCraftedHandler craftedHandler = new RecipeCraftedHandler();
 
+	public static ConfigBranch CONFIG_TREE;
+	public static SettingsConfig CONFIG;
+
 	public static Identifier id(String name) {
 		if (name.indexOf(':') > 0) {
 			return new Identifier(name);
@@ -62,7 +67,7 @@ public class AntiqueAtlasMod implements ModInitializer {
 		instance = this;
 		proxy = new CommonProxy();
 
-		SettingsConfig.loadConfig();
+		CONFIG = SettingsConfig.deserialize();
 
 		RegistrarAntiqueAtlas.register();
 		PacketDispatcher.registerPackets();
@@ -82,21 +87,6 @@ public class AntiqueAtlasMod implements ModInitializer {
 
 		RecipeCraftedCallback.EVENT.register(craftedHandler::onCrafted);
 
-		/*
-		if (!SettingsConfig.gameplay.itemNeeded)
-            MinecraftForge.EVENT_BUS.register(new PlayerEventHandler());
-
-		MinecraftForge.EVENT_BUS.register(extBiomeData);
-
-		MinecraftForge.EVENT_BUS.register(new DeathWatcher());
-
-		MinecraftForge.EVENT_BUS.register(new NetherPortalWatcher());
-
-		// Structure Watchers
-        new StructureWatcherVillage();
-        new StructureWatcherFortress();
-		new StructureWatcherGeneric("EndCity", XX_1_13_none_bnu_XX.c, MarkerTypes.END_CITY_FAR, "gui.antiqueatlas.marker.endcity").setTileMarker(MarkerTypes.END_CITY, "gui.antiqueatlas.marker.endcity");
-
-		 */
+		CONFIG.serialize();
 	}
 }

@@ -24,16 +24,16 @@ public class GuiMarkerInList extends GuiToggleButton {
 	}
 	
 	@Override
-	public void render(MatrixStack matrix, int mouseX, int mouseY, float partialTick) {
+	public void render(MatrixStack matrices, int mouseX, int mouseY, float partialTick) {
 		GlStateManager.color4f(1, 1, 1, 1);
 		AtlasRenderHelper.drawFullTexture(
-				isSelected() ? Textures.MARKER_FRAME_ON : Textures.MARKER_FRAME_OFF,
+						matrices, isSelected() ? Textures.MARKER_FRAME_ON : Textures.MARKER_FRAME_OFF,
 				getGuiX(), getGuiY(), FRAME_SIZE, FRAME_SIZE);
 		
 		Identifier texture = markerType.getIcon();
 		if (texture != null) {
-			AtlasRenderHelper.drawFullTexture(texture, getGuiX() + 1, getGuiY() + 1, GuiAtlas.MARKER_SIZE, GuiAtlas.MARKER_SIZE);
+			AtlasRenderHelper.drawFullTexture(matrices, texture, getGuiX() + 1, getGuiY() + 1, GuiAtlas.MARKER_SIZE, GuiAtlas.MARKER_SIZE);
 		}
-		super.render(matrix, mouseX, mouseY, partialTick);
+		super.render(matrices, mouseX, mouseY, partialTick);
 	}
 }

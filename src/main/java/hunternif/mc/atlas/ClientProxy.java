@@ -1,42 +1,35 @@
 package hunternif.mc.atlas;
 
 import hunternif.mc.atlas.client.*;
-import hunternif.mc.atlas.client.gui.ExportProgressOverlay;
 import hunternif.mc.atlas.client.gui.GuiAtlas;
 import hunternif.mc.atlas.ext.ExtTileIdMap;
 import hunternif.mc.atlas.ext.ExtTileTextureConfig;
 import hunternif.mc.atlas.ext.ExtTileTextureMap;
 import hunternif.mc.atlas.marker.MarkerTextureConfig;
-import hunternif.mc.atlas.registry.MarkerRegistry;
 import hunternif.mc.atlas.registry.MarkerType;
-import hunternif.mc.atlas.util.Log;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.event.client.ClientTickCallback;
 import net.fabricmc.fabric.api.network.ClientSidePacketRegistry;
 import net.fabricmc.fabric.api.network.PacketConsumer;
-import net.fabricmc.fabric.api.network.ServerSidePacketRegistry;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.fabricmc.fabric.api.resource.SimpleSynchronousResourceReloadListener;
 import net.minecraft.client.MinecraftClient;
-
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.resource.ReloadableResourceManager;
 import net.minecraft.resource.ResourceManager;
-import net.minecraft.resource.ResourceReloadListener;
 import net.minecraft.resource.ResourceType;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.Biomes;
+
 import java.io.File;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
 
 import static hunternif.mc.atlas.client.TextureSet.*;
 
+@Environment(EnvType.CLIENT)
 public class ClientProxy extends CommonProxy implements SimpleSynchronousResourceReloadListener {
 	private static TextureSetMap textureSetMap;
 	private static TextureSetConfig textureSetConfig;
@@ -96,45 +89,50 @@ public class ClientProxy extends CommonProxy implements SimpleSynchronousResourc
 		ResourceManagerHelper.get(ResourceType.CLIENT_RESOURCES).registerReloadListener(markerTextureConfig);
 
 		// Prevent rewriting of the config while no changes have been made:
-		MarkerRegistry.INSTANCE.setDirty(true);
+//		MarkerType.REGISTRY.setDirty(true);
 
-		for (MarkerType type : MarkerRegistry.iterable()) {
+		for (MarkerType type : MarkerType.REGISTRY) {
 			type.initMips();
 		}
 
-		if (!SettingsConfig.gameplay.itemNeeded) {
+		if (!AntiqueAtlasMod.CONFIG.gameplay.itemNeeded) {
             KeyHandler.registerBindings();
 			ClientTickCallback.EVENT.register(KeyHandler::onClientTick);
         }
 
 	}
 
+	@Environment(EnvType.CLIENT)
 	private GuiAtlas getAtlasGUI() {
 		if (guiAtlas == null) {
 			guiAtlas = new GuiAtlas();
-			guiAtlas.setMapScale(SettingsConfig.userInterface.defaultScale);
+			guiAtlas.setMapScale(AntiqueAtlasMod.CONFIG.userInterface.defaultScale);
 		}
 		return guiAtlas;
 	}
 
 	@Override
+	@Environment(EnvType.CLIENT)
 	public void openAtlasGUI(ItemStack stack) {
 	    openAtlasGUI(getAtlasGUI().prepareToOpen(stack));
 	}
 
 	@Override
+	@Environment(EnvType.CLIENT)
 	public void openAtlasGUI() {
 	    openAtlasGUI(getAtlasGUI().prepareToOpen());
     }
 
-    private void openAtlasGUI(GuiAtlas gui) {
+	@Environment(EnvType.CLIENT)
+	private void openAtlasGUI(GuiAtlas gui) {
         MinecraftClient mc = MinecraftClient.getInstance();
         if (mc.currentScreen == null) { // In-game screen
             guiAtlas.updateL18n();
             mc.openScreen(gui);
         }
     }
-	
+
+	@Environment(EnvType.CLIENT)
 	private void registerDefaultTextureSets(TextureSetMap map) {
 		map.register(ICE);
 		map.register(SHORE);
@@ -272,6 +270,10 @@ public class ClientProxy extends CommonProxy implements SimpleSynchronousResourc
 		setBiomeTextureIfNone(Biomes.GIANT_TREE_TAIGA_HILLS, MEGA_TAIGA_HILLS);
 		setBiomeTextureIfNone(Biomes.GIANT_SPRUCE_TAIGA_HILLS, MEGA_SPRUCE_HILLS);
 		setBiomeTextureIfNone(Biomes.NETHER_WASTES, CAVE_WALLS);
+		setBiomeTextureIfNone(Biomes.SOUL_SAND_VALLEY, CAVE_WALLS);
+		setBiomeTextureIfNone(Biomes.CRIMSON_FOREST, CAVE_WALLS);
+		setBiomeTextureIfNone(Biomes.WARPED_FOREST, CAVE_WALLS);
+		setBiomeTextureIfNone(Biomes.BASALT_DELTAS, CAVE_WALLS);
 		setBiomeTextureIfNone(Biomes.THE_END, END_VOID);
 		setBiomeTextureIfNone(Biomes.MUSHROOM_FIELDS, MUSHROOM);
 		setBiomeTextureIfNone(Biomes.MUSHROOM_FIELD_SHORE, SHORE);
@@ -353,12 +355,12 @@ public class ClientProxy extends CommonProxy implements SimpleSynchronousResourc
 
 	@Override
 	public Identifier getFabricId() {
-		return new Identifier("antiqueatlas:proxy");
+		return AntiqueAtlasMod.id("proxy");
 	}
 
 	@Override
 	public void apply(ResourceManager var1) {
-		for (MarkerType type : MarkerRegistry.iterable()) {
+		for (MarkerType type : MarkerType.REGISTRY) {
 			type.initMips();
 		}
 	}

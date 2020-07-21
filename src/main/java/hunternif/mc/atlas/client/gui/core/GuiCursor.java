@@ -42,7 +42,7 @@ public class GuiCursor extends GuiComponent {
 	}
 	
 	@Override
-	public void render(MatrixStack matrix, int mouseX, int mouseY, float partialTick) {
-		AtlasRenderHelper.drawFullTexture(texture, mouseX - pointX, mouseY - pointY, textureWidth, textureHeight);
+	public void render(MatrixStack matrices, int mouseX, int mouseY, float partialTick) {
+		AtlasRenderHelper.drawFullTexture(matrices, texture, mouseX - pointX, mouseY - pointY, textureWidth, textureHeight);
 	}
 }

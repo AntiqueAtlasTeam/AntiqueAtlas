@@ -19,24 +19,24 @@ class ProgressBarOverlay {
 	/** Total height of the progress bar. */
 	private final int barHeight;
 
-	private final TextRenderer font;
+	private final TextRenderer textRenderer;
 
 	@Environment(EnvType.CLIENT)
 	public ProgressBarOverlay(int barWidth, int barHeight) {
 		this.barWidth = barWidth;
 		this.barHeight = barHeight;
-		font = MinecraftClient.getInstance().textRenderer;
+		textRenderer = MinecraftClient.getInstance().textRenderer;
 	}
 
 	/** Render progress bar on the screen. */
 	@Environment(EnvType.CLIENT)
-	public void draw(MatrixStack matrix, int x, int y) {
+	public void draw(MatrixStack matrices, int x, int y) {
 		ExportUpdateListener l = ExportUpdateListener.INSTANCE;
 
-		int headerWidth = font.getWidth(l.header);
-		font.draw(matrix, l.header, x + (barWidth - headerWidth) / 2, y - 14, 0xffffff);
-		int statusWidth = font.getWidth(l.status);
-		font.draw(matrix, l.status, x + (barWidth - statusWidth)/2, y, 0xffffff);
+		int headerWidth = this.textRenderer.getWidth(l.header);
+		this.textRenderer.draw(matrices, l.header, x + (barWidth - headerWidth)/2F, y-14, 0xffffff);
+		int statusWidth = this.textRenderer.getWidth(l.status);
+		this.textRenderer.draw(matrices, l.status, x + (barWidth - statusWidth)/2F, y, 0xffffff);
 		y += 14;
 
 		double p = l.currentProgress/l.maxProgress;

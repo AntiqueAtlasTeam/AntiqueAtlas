@@ -43,7 +43,7 @@ public class TileNameIDPacket extends AbstractClientMessage<TileNameIDPacket>
 	}
 
 	@Override
-	public void read(PacketByteBuf buffer) throws IOException {
+	public void read(PacketByteBuf buffer) {
 		int size = buffer.readVarInt();
 		for (int i = 0; i < size; i++) {
 			String name = buffer.readString(512);
@@ -55,7 +55,7 @@ public class TileNameIDPacket extends AbstractClientMessage<TileNameIDPacket>
 	}
 
 	@Override
-	public void write(PacketByteBuf buffer) throws IOException {
+	public void write(PacketByteBuf buffer) {
 		buffer.writeVarInt(nameToIdMap.size());
 		for (Entry<Identifier, Integer> entry : nameToIdMap.entrySet()) {
 			buffer.writeString(entry.getKey().toString());
@@ -73,7 +73,7 @@ public class TileNameIDPacket extends AbstractClientMessage<TileNameIDPacket>
 			int id = entry.getValue();
 			// Remove old texture mapping
 			int oldID = ExtTileIdMap.instance().getPseudoBiomeID(tileName);
-			if (oldID != ExtTileIdMap.NOT_FOUND && oldID != id) {
+			if (oldID != ExtTileIdMap.NOT_FOUND && oldID != id && Registry.BIOME.containsId(oldID)) {
 				BiomeTextureMap.instance().setTexture(Registry.BIOME.get(oldID), null);
 			}
 			ExtTileIdMap.instance().setPseudoBiomeID(tileName, id);

@@ -38,8 +38,7 @@ public class StructureWatcher {
                 if (structureData != null) {
                     Set<Pair<WatcherPos, String>> visited = watcher.visitStructure(world, structureData);
                     for (Pair<WatcherPos, String> visit : visited)
-                        Log.info("Visited %s in dimension %s at %s", visit.getRight(),
-                                 world.getDimensionRegistryKey().toString(), visit.getLeft().toString());
+                        Log.info("Visited %s in dimension %s at %s", visit.getRight(), world.getDimension().toString(), visit.getLeft().toString());
                 }
             }
     }

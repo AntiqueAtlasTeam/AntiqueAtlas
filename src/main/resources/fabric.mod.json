@@ -9,8 +9,7 @@
       "hunternif.mc.atlas.AntiqueAtlasMod"
     ],
     "client": [
-      "hunternif.mc.atlas.AntiqueAtlasModClient",
-      "kenkron.antiqueatlasoverlay.AntiqueAtlasOverlayMod"
+      "hunternif.mc.atlas.AntiqueAtlasModClient"
     ]
   },
   "environment": "*",
@@ -19,8 +18,7 @@
   "icon": "antiqueatlas_icon.png",
   "depends": {
     "fabricloader": ">=0.6.0",
-    "fabric": ">=0.4.0",
-    "cotton-config": ">=1.0.0-rc.1"
+    "fabric": ">=0.4.0"
   },
   "mixins": [
     "antiqueatlas.mixins.json",

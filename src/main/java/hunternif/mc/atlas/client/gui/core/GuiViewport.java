@@ -40,15 +40,15 @@ public class GuiViewport extends GuiComponent {
 	}
 	
 	@Override
-	public void render(MatrixStack matrix, int mouseX, int mouseY, float par3) {
+	public void render(MatrixStack matrices, int mouseX, int mouseY, float par3) {
 		GL11.glEnable(GL11.GL_SCISSOR_TEST);
 		GL11.glScissor((int) (getGuiX()*screenScale),
 				(int) (MinecraftClient.getInstance().getWindow().getFramebufferHeight() - (getGuiY() + properHeight)*screenScale),
 				(int) (properWidth*screenScale), (int) (properHeight*screenScale));
 		
 		// Draw the content (child GUIs):
-		super.render(matrix, mouseX, mouseY, par3);
-		
+		super.render(matrices, mouseX, mouseY, par3);
+
 		GL11.glDisable(GL11.GL_SCISSOR_TEST);
 	}
 	

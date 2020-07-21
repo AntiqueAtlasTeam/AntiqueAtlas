@@ -8,6 +8,8 @@ import hunternif.mc.atlas.core.TileKind;
 import hunternif.mc.atlas.core.TileKindFactory;
 
 import hunternif.mc.atlas.ext.TileIdRegisteredCallback;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.entity.player.PlayerEntity;
 
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -59,6 +61,7 @@ public class TileApiImpl implements TileAPI {
 	
 	
 	@Override
+	@Environment(EnvType.CLIENT)
 	public TextureSet registerTextureSet(Identifier name, Identifier... textures) {
 		TextureSet textureSet = new TextureSet(name, textures);
 		TextureSetMap.instance().register(textureSet);
@@ -69,6 +72,7 @@ public class TileApiImpl implements TileAPI {
 	// Biome textures ==========================================================
 
 	@Override
+	@Environment(EnvType.CLIENT)
 	public void setBiomeTexture(Biome biome, Identifier textureSetName, Identifier... textures) {
 		TextureSet set = new TextureSet(textureSetName, textures);
 		TextureSetMap.instance().register(set);
@@ -76,6 +80,7 @@ public class TileApiImpl implements TileAPI {
 	}
 
 	@Override
+	@Environment(EnvType.CLIENT)
 	public void setBiomeTexture(Biome biome, TextureSet textureSet) {
 		BiomeTextureMap.instance().setTexture(biome, textureSet);
 	}
@@ -84,6 +89,7 @@ public class TileApiImpl implements TileAPI {
 	// Custom tile textures ====================================================
 	
 	@Override
+	@Environment(EnvType.CLIENT)
 	public void setCustomTileTexture(Identifier uniqueTileName, Identifier ... textures) {
 		TextureSet set = new TextureSet(uniqueTileName, textures);
 		TextureSetMap.instance().register(set);
@@ -91,6 +97,7 @@ public class TileApiImpl implements TileAPI {
 	}
 	
 	@Override
+	@Environment(EnvType.CLIENT)
 	public void setCustomTileTexture(Identifier uniqueTileName, TextureSet textureSet) {
 		ExtTileTextureMap.instance().setTexture(uniqueTileName, textureSet);
 	}
