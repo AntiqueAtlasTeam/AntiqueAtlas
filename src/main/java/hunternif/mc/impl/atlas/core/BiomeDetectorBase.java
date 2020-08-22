@@ -52,6 +52,7 @@ public class BiomeDetectorBase implements IBiomeDetector {
 				case BEACH:
 					beachBiomes.add(biome);
 					break;
+				case RIVER:
 				case OCEAN:
 					waterBiomes.add(biome);
 					break;

@@ -185,9 +185,6 @@ public class ClientProxy implements SimpleSynchronousResourceReloadListener {
 		setBiomeTextureIfNone(Biomes.FOREST, FOREST);
 
 		setBiomeTextureIfNone(Biomes.FLOWER_FOREST, FOREST_FLOWERS);
-		// setBiomeTextureIfNone(ays.TODO_1_12_2_t, FOREST_HILLS);
-		/* setBiomeTextureIfNone(ays.TODO_1_12_2_E, DENSE_FOREST);
-		setBiomeTextureIfNone(ays.TODO_1_12_2_ab, DENSE_FOREST_HILLS); //TODO roofed forest M has steeper cliffs */
 		setBiomeTextureIfNone(Biomes.BIRCH_FOREST, BIRCH);
 		setBiomeTextureIfNone(Biomes.TALL_BIRCH_FOREST, TALL_BIRCH);
 		setBiomeTextureIfNone(Biomes.BIRCH_FOREST_HILLS, BIRCH_HILLS);
@@ -196,7 +193,6 @@ public class ClientProxy implements SimpleSynchronousResourceReloadListener {
 		setBiomeTextureIfNone(Biomes.MODIFIED_JUNGLE_EDGE, JUNGLE_CLIFFS);
 		setBiomeTextureIfNone(Biomes.JUNGLE_HILLS, JUNGLE_HILLS);
 		setBiomeTextureIfNone(Biomes.JUNGLE_EDGE, JUNGLE_EDGE);
-		// setBiomeTextureIfNone(ays.TODO_1_12_2_Y, JUNGLE_EDGE_HILLS);
 		setBiomeTextureIfNone(Biomes.TAIGA, PINES);
 		setBiomeTextureIfNone(Biomes.TAIGA_HILLS, PINES_HILLS);
 		setBiomeTextureIfNone(Biomes.TAIGA_HILLS, PINES_HILLS);
@@ -217,19 +213,16 @@ public class ClientProxy implements SimpleSynchronousResourceReloadListener {
 		setBiomeTextureIfNone(Biomes.MUSHROOM_FIELDS, MUSHROOM);
 		setBiomeTextureIfNone(Biomes.MUSHROOM_FIELD_SHORE, SHORE);
 
+		setBiomeTextureIfNone(Biomes.WOODED_BADLANDS_PLATEAU, PLATEAU_MESA_TREES);
+		setBiomeTextureIfNone(Biomes.BADLANDS_PLATEAU, PLATEAU_MESA);
+		setBiomeTextureIfNone(Biomes.ERODED_BADLANDS, MESA);
+		setBiomeTextureIfNone(Biomes.BADLANDS, MESA);
 		setBiomeTextureIfNone(Biomes.SAVANNA, SAVANNA);
 		setBiomeTextureIfNone(Biomes.SAVANNA_PLATEAU, SAVANNA_PLATEAU);
 		setBiomeTextureIfNone(Biomes.SHATTERED_SAVANNA, SAVANNA);
 		setBiomeTextureIfNone(Biomes.SHATTERED_SAVANNA_PLATEAU, SAVANNA_PLATEAU);
 
-//		setBiomeTextureIfNone(ays.TODO_1_12_2_M, MESA);
-//		setBiomeTextureIfNone(ays.TODO_1_12_2_ai, BRYCE);
-//		setBiomeTextureIfNone(ays.TODO_1_12_2_O, PLATEAU_MESA);
-//		setBiomeTextureIfNone(ays.TODO_1_12_2_N, PLATEAU_MESA_TREES);
-//		setBiomeTextureIfNone(ays.TODO_1_12_2_ak, PLATEAU_MESA_LOW);
-//		setBiomeTextureIfNone(ays.TODO_1_12_2_aj, PLATEAU_MESA_TREES_LOW);
-//		setBiomeTextureIfNone(ays.TODO_1_12_2_L, PLATEAU_SAVANNA);
-//		setBiomeTextureIfNone(ays.TODO_1_12_2_ah, PLATEAU_SAVANNA_M);
+		setBiomeTextureIfNone(Biomes.DEEP_FROZEN_OCEAN, ICE_SPIKES);
 
 		// Now let's register every other biome, they'll come from other mods
 		for (Biome biome : Registry.BIOME) {
