@@ -7,13 +7,11 @@ import net.fabricmc.api.Environment;
 
 
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
+import net.minecraft.util.registry.BuiltinRegistries;
 import net.minecraft.world.biome.Biome;
-import net.minecraft.world.gen.GenerationStep;
 
 import java.util.*;
 import java.util.Map.Entry;
-import java.util.stream.Stream;
 
 import static hunternif.mc.impl.atlas.client.TextureSet.*;
 
@@ -37,7 +35,7 @@ public class BiomeTextureMap extends SaveData {
 
 	/** Assign texture set to biome. */
 	public void setTexture(Biome biome, TextureSet textureSet) {
-		this.setTexture(Registry.BIOME.getId(biome), textureSet);
+		this.setTexture(BuiltinRegistries.BIOME.getId(biome), textureSet);
 	}
 
 	/** Assign texture set to pseudo biome */
@@ -113,10 +111,11 @@ public class BiomeTextureMap extends SaveData {
 				break;
 			case THEEND:
 				final boolean[] hasPlants = {false};
-				Stream.of(biome.getFeaturesForStep(GenerationStep.Feature.VEGETAL_DECORATION)).forEach(
-						feature -> {
-							if(!feature.isEmpty()) hasPlants[0] = true;
-						});
+				// TODO fix end islands
+//				Stream.of(biome.getFeaturesForStep(GenerationStep.Feature.VEGETAL_DECORATION)).forEach(
+//						feature -> {
+//							if(!feature.isEmpty()) hasPlants[0] = true;
+//						});
 				if(hasPlants[0]) {
 					setTexture(biome, END_ISLAND_PLANTS);
 				} else {
@@ -131,7 +130,7 @@ public class BiomeTextureMap extends SaveData {
 				break;
 		}
 
-		Log.info("Auto-registered standard texture set for biome %s", Registry.BIOME.getId(biome).toString());
+		Log.info("Auto-registered standard texture set for biome %s", BuiltinRegistries.BIOME.getId(biome).toString());
 	}
 
 	/** Auto-registers the biome if it is not registered. */
@@ -150,7 +149,7 @@ public class BiomeTextureMap extends SaveData {
 	}
 
 	public boolean isRegistered(Biome biome) {
-		return isRegistered(Registry.BIOME.getId(biome));
+		return isRegistered(BuiltinRegistries.BIOME.getId(biome));
 	}
 
 	public boolean isRegistered(Identifier id) {
@@ -163,7 +162,7 @@ public class BiomeTextureMap extends SaveData {
 			return defaultTexture;
 		}
 
-		Biome biome = Registry.BIOME.get(tile);
+		Biome biome = BuiltinRegistries.BIOME.get(tile);
 		if (biome != null) {
 			checkRegistration(biome);
 		} else {

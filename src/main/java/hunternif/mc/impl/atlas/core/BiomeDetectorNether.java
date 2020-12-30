@@ -6,7 +6,7 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.registry.Registry;
+import net.minecraft.util.registry.BuiltinRegistries;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.source.BiomeArray;
@@ -35,7 +35,7 @@ public class BiomeDetectorNether extends BiomeDetectorBase implements IBiomeDete
 		if (chunkBiomes == null)
 			return ExtTileIdMap.TILE_LAVA;
 
-		Map<Biome, Integer> biomeOccurrences = new HashMap<>(Registry.BIOME.getIds().size());
+		Map<Biome, Integer> biomeOccurrences = new HashMap<>(BuiltinRegistries.BIOME.getIds().size());
 		
 		// The following important pseudo-biomes don't have IDs:
 		int lavaOccurences = 0;
@@ -74,7 +74,7 @@ public class BiomeDetectorNether extends BiomeDetectorBase implements IBiomeDete
 		for (Biome biome : biomeOccurrences.keySet()) {
 			int occ = biomeOccurrences.get(biome);
 			if (biomeOccurrences.get(biome) > meanBiomeOccurences) {
-				meanBiomeId = Registry.BIOME.getId(biome);
+				meanBiomeId = BuiltinRegistries.BIOME.getId(biome);
 				meanBiomeOccurences = occ;
 			}
 		}

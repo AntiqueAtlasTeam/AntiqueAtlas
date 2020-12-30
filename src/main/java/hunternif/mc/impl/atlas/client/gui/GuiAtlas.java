@@ -374,7 +374,7 @@ public class GuiAtlas extends GuiComponent {
             state.switchTo(NORMAL); //TODO: his causes the Export PNG progress bar to disappear when resizing game window
         }
 
-		MinecraftClient.getInstance().keyboard.enableRepeatEvents(true);
+		MinecraftClient.getInstance().keyboard.setRepeatEvents(true);
 		screenScale = MinecraftClient.getInstance().getWindow().getScaleFactor();
 		setCentered();
 	}

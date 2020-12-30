@@ -7,7 +7,7 @@ import hunternif.mc.impl.atlas.util.Log;
 import net.fabricmc.fabric.api.network.PacketContext;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
+import net.minecraft.util.registry.BuiltinRegistries;
 
 /**
  * Puts biome tile into one atlas. When sent to server, forwards it to every
@@ -42,7 +42,7 @@ public class PutTileC2SPacket extends C2SPacket {
 						context.getPlayer().getName(), atlasID);
 				return;
 			}
-			if (Registry.BIOME.containsId(tile)) {
+			if (BuiltinRegistries.BIOME.containsId(tile)) {
 				AtlasAPI.tiles.putBiomeTile(context.getPlayer().getEntityWorld(), atlasID, tile, x, z);
 			} else {
 				AtlasAPI.tiles.putCustomTile(context.getPlayer().getEntityWorld(), atlasID, tile, x, z);

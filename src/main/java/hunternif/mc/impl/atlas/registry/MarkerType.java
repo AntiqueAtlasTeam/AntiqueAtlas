@@ -54,9 +54,9 @@ public class MarkerType {
 	public static void register(Identifier location, MarkerType type) {
 		if (REGISTRY.containsId(location)) {
 			int id = REGISTRY.getRawId(type);
-			REGISTRY.set(id, RegistryKey.of(KEY, location), type);
+			REGISTRY.set(id, RegistryKey.of(KEY, location), type, Lifecycle.stable());
 		} else {
-			REGISTRY.add(RegistryKey.of(KEY, location), type);
+			REGISTRY.add(RegistryKey.of(KEY, location), type, Lifecycle.stable());
 		}
 	}
 

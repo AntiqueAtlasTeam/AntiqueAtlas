@@ -5,11 +5,11 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.registry.Registry;
+import net.minecraft.util.registry.BuiltinRegistries;
 import net.minecraft.world.Heightmap;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
-import net.minecraft.world.biome.Biomes;
+import net.minecraft.world.biome.BuiltinBiomes;
 import net.minecraft.world.biome.source.BiomeArray;
 import net.minecraft.world.chunk.Chunk;
 
@@ -29,14 +29,14 @@ public class BiomeDetectorEnd extends BiomeDetectorBase implements IBiomeDetecto
 		if (chunkBiomes == null)
 			return ExtTileIdMap.TILE_END_VOID;
 
-		Map<Biome, Integer> biomeOccurrences = new HashMap<>(Registry.BIOME.getIds().size());
+		Map<Biome, Integer> biomeOccurrences = new HashMap<>(BuiltinRegistries.BIOME.getIds().size());
 		
 		// The following pseudo-biomes don't have IDs:
 		int islandOccurences = 0;
 		int plantOccurences = 0;
 		int voidOccurences = 0;
 		
-		Biome endID = Biomes.THE_END;
+		Biome endID = BuiltinBiomes.THE_VOID;
 		
 		for (int x = 0; x < 16; x++) {
 			for (int z = 0; z < 16; z++) {
@@ -69,7 +69,7 @@ public class BiomeDetectorEnd extends BiomeDetectorBase implements IBiomeDetecto
 		for (Biome biome : biomeOccurrences.keySet()) {
 			int occ = biomeOccurrences.get(biome);
 			if (biomeOccurrences.get(biome) > meanBiomeOccurences) {
-				meanBiomeId = Registry.BIOME.getId(biome);
+				meanBiomeId = BuiltinRegistries.BIOME.getId(biome);
 				meanBiomeOccurences = occ;
 			}
 		}

@@ -31,9 +31,9 @@ public class StructureWatcherGeneric implements IStructureWatcher {
 	private MarkerType tileMarker;
 	private Text markerLabel;
 	private Text tileMarkerLabel;
-	private final RegistryKey<DimensionType> dimension;
+	private final RegistryKey<World> dimension;
 
-    public StructureWatcherGeneric(String datFileName, RegistryKey<DimensionType> dimType, MarkerType markerType, Text label) {
+    public StructureWatcherGeneric(String datFileName, RegistryKey<World> dimType, MarkerType markerType, Text label) {
         this.markerType = markerType;
         this.markerLabel = label;
         this.dimension = dimType;
@@ -50,7 +50,7 @@ public class StructureWatcherGeneric implements IStructureWatcher {
 
     @Override
     public boolean isDimensionValid(ServerWorld world) {
-    	return this.dimension.equals(world.getDimensionRegistryKey());
+       	return this.dimension == world.getRegistryKey();
     }
 
     @Nullable

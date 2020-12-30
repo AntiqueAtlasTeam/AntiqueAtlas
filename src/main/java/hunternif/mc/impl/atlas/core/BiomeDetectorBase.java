@@ -5,11 +5,13 @@ import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.registry.BuiltinRegistries;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.Heightmap;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
-import net.minecraft.world.biome.Biomes;
+import net.minecraft.world.biome.BiomeKeys;
+import net.minecraft.world.biome.BuiltinBiomes;
 import net.minecraft.world.biome.source.BiomeArray;
 import net.minecraft.world.chunk.Chunk;
 
@@ -28,7 +30,7 @@ public class BiomeDetectorBase implements IBiomeDetector {
 	/** Biome used for occasional pools of water.
 	 * This used our own representation of biomes, but this was switched to Minecraft biomes.
 	 * So in absence of a better idea, this will just count as River from now on. */
-	private static final Biome waterPoolBiome = Biomes.RIVER;
+	private static final Biome waterPoolBiome = BuiltinRegistries.BIOME.get(BiomeKeys.RIVER);
 	/** Increment the counter for water biomes by this much during iteration.
 	 * This is done so that water pools are more visible. */
 	private static final int priorityRavine = 12, priorityWaterPool = 4, prioritylavaPool = 6;
@@ -47,7 +49,7 @@ public class BiomeDetectorBase implements IBiomeDetector {
 	 * given higher priority when identifying mean biome ID for a chunk.
 	 * (Currently WATER, BEACH and SWAMP) */
 	public static void scanBiomeTypes() {
-		for (Biome biome : Registry.BIOME) {
+		for (Biome biome : BuiltinRegistries.BIOME) {
 			switch (biome.getCategory()) {
 				case BEACH:
 					beachBiomes.add(biome);
@@ -86,14 +88,15 @@ public class BiomeDetectorBase implements IBiomeDetector {
 	@Override
 	public Identifier getBiomeID(World world, Chunk chunk) {
 		BiomeArray chunkBiomes = chunk.getBiomeArray();
-		Map<Biome, Integer> biomeOccurrences = new HashMap<>(Registry.BIOME.getIds().size());
+		Map<Biome, Integer> biomeOccurrences = new HashMap<>(BuiltinRegistries.BIOME.getIds().size());
 
 		if (chunkBiomes == null)
-			return Registry.BIOME.getId(Biomes.DEFAULT);
+			return BuiltinRegistries.BIOME.getId(BuiltinBiomes.PLAINS);
 
 		// The following important pseudo-biomes don't have IDs:
 		int lavaOccurrences = 0;
-		int ravineOccurences = 0;
+		int ravineOccurrences = 0;
+
 
 		for (int x = 0; x < 16; x++) {
 			for (int z = 0; z < 16; z++) {
@@ -115,7 +118,7 @@ public class BiomeDetectorBase implements IBiomeDetector {
 					int height = chunk.getHeightmap(Heightmap.Type.MOTION_BLOCKING).get(x, z);
 
 					if(height > 0 && height < world.getSeaLevel() - ravineMinDepth)	{
-						ravineOccurences += priorityRavine;
+						ravineOccurrences += priorityRavine;
 					}
 				}
 
@@ -130,16 +133,16 @@ public class BiomeDetectorBase implements IBiomeDetector {
 			int meanBiomeOccurrences = meanBiome.getValue();
 
 			// The following important pseudo-biomes don't have IDs:
-			if (meanBiomeOccurrences < ravineOccurences) {
+			if (meanBiomeOccurrences < ravineOccurrences) {
 				return ExtTileIdMap.TILE_RAVINE;
 			}
 			if (meanBiomeOccurrences < lavaOccurrences) {
 				return ExtTileIdMap.TILE_LAVA;
 			}
 
-			return Registry.BIOME.getId(meanBiomeId);
+			return world.getRegistryManager().get(Registry.BIOME_KEY).getId(meanBiomeId);
 		} catch(NoSuchElementException e){
-			return Registry.BIOME.getId(Biomes.DEFAULT);
+			return BuiltinRegistries.BIOME.getId(BuiltinBiomes.PLAINS);
 		}
 	}
 }

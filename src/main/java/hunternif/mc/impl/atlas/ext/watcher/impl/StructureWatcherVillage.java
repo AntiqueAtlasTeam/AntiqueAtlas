@@ -102,7 +102,7 @@ public class StructureWatcherVillage implements IStructureWatcher {
 
     @Override
     public boolean isDimensionValid(ServerWorld world) {
-    	return world.getDimensionRegistryKey().equals(DimensionType.OVERWORLD_REGISTRY_KEY);
+		return world.getRegistryKey() == World.OVERWORLD;
     }
 
     @Nullable

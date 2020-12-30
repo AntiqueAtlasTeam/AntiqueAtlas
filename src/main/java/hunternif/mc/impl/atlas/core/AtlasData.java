@@ -17,7 +17,6 @@ import net.minecraft.world.PersistentState;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.ChunkStatus;
-import net.minecraft.world.dimension.DimensionType;
 import java.util.*;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
@@ -35,7 +34,7 @@ public class AtlasData extends PersistentState {
 	public static final String TAG_BROWSING_ZOOM = "qBrowseZoom";
 
 	/** Maps dimension ID to biomeAnalyzer. */
-	private final Map<RegistryKey<DimensionType>, IBiomeDetector> biomeAnalyzers = new HashMap<>();
+	private final Map<RegistryKey<World>, IBiomeDetector> biomeAnalyzers = new HashMap<>();
 	private final BiomeDetectorBase biomeDetectorOverworld = new BiomeDetectorBase();
 	private final BiomeDetectorNether biomeDetectorNether = new BiomeDetectorNether();
 	private final BiomeDetectorEnd biomeDetectorEnd = new BiomeDetectorEnd();
@@ -56,9 +55,9 @@ public class AtlasData extends PersistentState {
 
 		biomeDetectorOverworld.setScanPonds(AntiqueAtlasMod.CONFIG.doScanPonds);
 		biomeDetectorOverworld.setScanRavines(AntiqueAtlasMod.CONFIG.doScanRavines);
-		setBiomeDetectorForDimension(DimensionType.OVERWORLD_REGISTRY_KEY, biomeDetectorOverworld);
-		setBiomeDetectorForDimension(DimensionType.THE_NETHER_REGISTRY_KEY, biomeDetectorNether);
-		setBiomeDetectorForDimension(DimensionType.THE_END_REGISTRY_KEY, biomeDetectorEnd);
+		setBiomeDetectorForDimension(World.OVERWORLD, biomeDetectorOverworld);
+		setBiomeDetectorForDimension(World.NETHER, biomeDetectorNether);
+		setBiomeDetectorForDimension(World.END, biomeDetectorEnd);
 	}
 
 	@Override
@@ -110,12 +109,12 @@ public class AtlasData extends PersistentState {
 		return compound;
 	}
 
-	private void setBiomeDetectorForDimension(RegistryKey<DimensionType> dimension, IBiomeDetector biomeAnalyzer) {
+	private void setBiomeDetectorForDimension(RegistryKey<World> dimension, IBiomeDetector biomeAnalyzer) {
 		biomeAnalyzers.put(dimension, biomeAnalyzer);
 	}
 
 	/** If not found, returns the analyzer for overworld. */
-	private IBiomeDetector getBiomeDetectorForDimension(RegistryKey<DimensionType> dimension) {
+	private IBiomeDetector getBiomeDetectorForDimension(RegistryKey<World> dimension) {
 		IBiomeDetector biomeAnalyzer = biomeAnalyzers.get(dimension);
 
 		return biomeAnalyzer == null ? biomeDetectorOverworld : biomeAnalyzer;
@@ -123,7 +122,7 @@ public class AtlasData extends PersistentState {
 
 	/**Updates map data around player
 	 *
-	 * @return A set of the new tiles, mostly so the server can synch those with relavent clients.*/
+	 * @return A set of the new tiles, mostly so the server can sync those with relevant clients.*/
 	public Collection<TileInfo> updateMapAroundPlayer(PlayerEntity player) {
 		// Update the actual map only so often:
 		int newScanInterval = Math.round(AntiqueAtlasMod.CONFIG.newScanInterval * 20);
@@ -138,7 +137,7 @@ public class AtlasData extends PersistentState {
 		int playerX = MathHelper.floor(player.getX()) >> 4;
 		int playerZ = MathHelper.floor(player.getZ()) >> 4;
 		ITileStorage seenChunks = this.getWorldData(player.getEntityWorld().getRegistryKey());
-		IBiomeDetector biomeDetector = getBiomeDetectorForDimension(player.getEntityWorld().getDimensionRegistryKey());
+		IBiomeDetector biomeDetector = getBiomeDetectorForDimension(player.getEntityWorld().getRegistryKey());
 		int scanRadius = AntiqueAtlasMod.CONFIG.scanRadius;
 
 		final boolean rescanRequired = AntiqueAtlasMod.CONFIG.doRescan && player.getEntityWorld().getTime() % rescanInterval == 0;

@@ -14,6 +14,7 @@ import net.minecraft.resource.Resource;
 import net.minecraft.resource.ResourceManager;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.profiler.Profiler;
+import net.minecraft.util.registry.BuiltinRegistries;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.biome.Biome;
 
@@ -80,7 +81,7 @@ public class BiomeTextureConfig implements SimpleResourceReloadListener<Map<Iden
 	public CompletableFuture<Void> apply(Map<Identifier, String> biomeTexMap, ResourceManager manager, Profiler profiler, Executor executor) {
 		return CompletableFuture.runAsync(() -> {
 			for (Entry<Identifier, String> entry : biomeTexMap.entrySet()) {
-				Biome biome = Registry.BIOME.get(entry.getKey());
+				Biome biome = BuiltinRegistries.BIOME.get(entry.getKey());
 				if (biome == null) {
 					Log.warn("Unknown biome in texture map: %s", entry.getKey());
 					continue;

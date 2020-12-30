@@ -1,17 +1,11 @@
 package hunternif.mc.impl.atlas.marker;
 
 import hunternif.mc.impl.atlas.registry.MarkerType;
-import hunternif.mc.impl.atlas.util.Log;
 import hunternif.mc.impl.atlas.util.ShortVec2;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-import net.minecraft.client.resource.language.I18n;
 import net.minecraft.network.PacketByteBuf;
-import net.minecraft.text.StringRenderable;
 import net.minecraft.text.Text;
 import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.World;
-import net.minecraft.world.dimension.DimensionType;
 
 /**
  * Marker on the map in an atlas. Has a type and a text label.

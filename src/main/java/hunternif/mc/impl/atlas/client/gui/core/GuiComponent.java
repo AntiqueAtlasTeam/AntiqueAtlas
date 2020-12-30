@@ -9,7 +9,6 @@ import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.LiteralText;
-import net.minecraft.text.StringRenderable;
 import net.minecraft.text.Text;
 import org.lwjgl.opengl.GL11;
 
@@ -451,7 +450,7 @@ public class GuiComponent extends Screen {
 	/** Draws a standard Minecraft hovering text window, constrained by this
 	 * component's dimensions (i.e. if it won't fit in when drawn to the left
 	 * of the cursor, it will be drawn to the right instead). */
-	private void drawHoveringText2(MatrixStack matrices, List<StringRenderable> lines, double x, double y, TextRenderer font) {
+	private void drawHoveringText2(MatrixStack matrices, List<Text> lines, double x, double y, TextRenderer font) {
 		boolean stencilEnabled = GL11.glIsEnabled(GL11.GL_STENCIL_TEST);
 		if (stencilEnabled) GL11.glDisable(GL11.GL_STENCIL_TEST);
 
@@ -486,7 +485,7 @@ public class GuiComponent extends Screen {
 	 * from several components which occupy the same position on the screen.
 	 * </p>
 	 * */
-	protected void drawTooltip(List<StringRenderable> lines, TextRenderer font) {
+	protected void drawTooltip(List<Text> lines, TextRenderer font) {
 		GuiComponent topLevel = getTopLevelParent();
 		topLevel.hoveringTextInfo.lines = lines;
 		topLevel.hoveringTextInfo.x = getMouseX();
@@ -500,7 +499,7 @@ public class GuiComponent extends Screen {
 	 * text unobscured by their neighboring components. */
 	private final HoveringTextInfo hoveringTextInfo = new HoveringTextInfo();
 	private static class HoveringTextInfo {
-		List<StringRenderable> lines;
+		List<Text> lines;
 		double x, y;
 		TextRenderer font;
 		/** Whether to draw this hovering text during rendering current frame.

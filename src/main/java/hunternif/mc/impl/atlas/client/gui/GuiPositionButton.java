@@ -5,12 +5,11 @@ import hunternif.mc.impl.atlas.client.Textures;
 import hunternif.mc.impl.atlas.client.gui.core.GuiComponentButton;
 import hunternif.mc.impl.atlas.util.AtlasRenderHelper;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.text.StringRenderable;
+import net.minecraft.text.TranslatableText;
 import org.lwjgl.opengl.GL11;
 
 import java.util.Collections;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.resource.language.I18n;
 
 public class GuiPositionButton extends GuiComponentButton {
 	private static final int WIDTH = 11;
@@ -38,7 +37,7 @@ public class GuiPositionButton extends GuiComponentButton {
 			GlStateManager.disableBlend();
 
 			if (isMouseOver) {
-				drawTooltip(Collections.singletonList(StringRenderable.plain(I18n.translate("gui.antiqueatlas.followPlayer"))), MinecraftClient.getInstance().textRenderer);
+				drawTooltip(Collections.singletonList(new TranslatableText("gui.antiqueatlas.followPlayer")), MinecraftClient.getInstance().textRenderer);
 			}
 		}
 	}

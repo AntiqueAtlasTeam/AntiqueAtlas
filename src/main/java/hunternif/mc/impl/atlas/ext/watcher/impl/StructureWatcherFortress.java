@@ -61,7 +61,7 @@ public class StructureWatcherFortress implements IStructureWatcher {
 
     @Override
     public boolean isDimensionValid(ServerWorld world) {
-        return world.getDimensionRegistryKey().equals(DimensionType.THE_NETHER_REGISTRY_KEY);
+        return world.getRegistryKey() == World.NETHER;
     }
 
     @Nullable

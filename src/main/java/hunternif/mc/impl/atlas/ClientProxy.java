@@ -13,9 +13,11 @@ import net.fabricmc.fabric.api.resource.SimpleSynchronousResourceReloadListener;
 import net.minecraft.resource.ResourceManager;
 import net.minecraft.resource.ResourceType;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.registry.BuiltinRegistries;
 import net.minecraft.util.registry.Registry;
+import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.biome.Biome;
-import net.minecraft.world.biome.Biomes;
+import net.minecraft.world.biome.BiomeKeys;
 
 import static hunternif.mc.impl.atlas.client.TextureSet.*;
 
@@ -174,67 +176,67 @@ public class ClientProxy implements SimpleSynchronousResourceReloadListener {
 		// Since biome categories are now vanilla, we only handle the
 		// "edge cases".
 
-		setBiomeTextureIfNone(Biomes.ICE_SPIKES, ICE_SPIKES); // this is a biome mutation
-		setBiomeTextureIfNone(Biomes.SUNFLOWER_PLAINS, SUNFLOWERS);
-		setBiomeTextureIfNone(Biomes.SNOWY_BEACH, SHORE);
-		setBiomeTextureIfNone(Biomes.STONE_SHORE, ROCK_SHORE);
+		setBiomeTextureIfNone(BiomeKeys.ICE_SPIKES, ICE_SPIKES); // this is a biome mutation
+		setBiomeTextureIfNone(BiomeKeys.SUNFLOWER_PLAINS, SUNFLOWERS);
+		setBiomeTextureIfNone(BiomeKeys.SNOWY_BEACH, SHORE);
+		setBiomeTextureIfNone(BiomeKeys.STONE_SHORE, ROCK_SHORE);
 
-		setBiomeTextureIfNone(Biomes.SNOWY_MOUNTAINS, MOUNTAINS_SNOW_CAPS);
-		setBiomeTextureIfNone(Biomes.MOUNTAINS, MOUNTAINS_ALL);
-		setBiomeTextureIfNone(Biomes.SNOWY_TAIGA_MOUNTAINS, MOUNTAINS_SNOW_CAPS);
-		setBiomeTextureIfNone(Biomes.FOREST, FOREST);
+		setBiomeTextureIfNone(BiomeKeys.SNOWY_MOUNTAINS, MOUNTAINS_SNOW_CAPS);
+		setBiomeTextureIfNone(BiomeKeys.MOUNTAINS, MOUNTAINS_ALL);
+		setBiomeTextureIfNone(BiomeKeys.SNOWY_TAIGA_MOUNTAINS, MOUNTAINS_SNOW_CAPS);
+		setBiomeTextureIfNone(BiomeKeys.FOREST, FOREST);
 
-		setBiomeTextureIfNone(Biomes.FLOWER_FOREST, FOREST_FLOWERS);
-		setBiomeTextureIfNone(Biomes.BIRCH_FOREST, BIRCH);
-		setBiomeTextureIfNone(Biomes.TALL_BIRCH_FOREST, TALL_BIRCH);
-		setBiomeTextureIfNone(Biomes.BIRCH_FOREST_HILLS, BIRCH_HILLS);
-		setBiomeTextureIfNone(Biomes.TALL_BIRCH_HILLS, TALL_BIRCH_HILLS);
-		setBiomeTextureIfNone(Biomes.JUNGLE, JUNGLE);
-		setBiomeTextureIfNone(Biomes.MODIFIED_JUNGLE_EDGE, JUNGLE_CLIFFS);
-		setBiomeTextureIfNone(Biomes.JUNGLE_HILLS, JUNGLE_HILLS);
-		setBiomeTextureIfNone(Biomes.JUNGLE_EDGE, JUNGLE_EDGE);
-		setBiomeTextureIfNone(Biomes.TAIGA, PINES);
-		setBiomeTextureIfNone(Biomes.TAIGA_HILLS, PINES_HILLS);
-		setBiomeTextureIfNone(Biomes.TAIGA_HILLS, PINES_HILLS);
-		setBiomeTextureIfNone(Biomes.SNOWY_TAIGA, SNOW_PINES);
-		setBiomeTextureIfNone(Biomes.SNOWY_TAIGA_HILLS, SNOW_PINES_HILLS);
-		setBiomeTextureIfNone(Biomes.SNOWY_TAIGA_MOUNTAINS, SNOW_PINES_HILLS);
-		setBiomeTextureIfNone(Biomes.GIANT_TREE_TAIGA, MEGA_TAIGA);
-		setBiomeTextureIfNone(Biomes.GIANT_SPRUCE_TAIGA, MEGA_SPRUCE);
-		setBiomeTextureIfNone(Biomes.GIANT_TREE_TAIGA_HILLS, MEGA_TAIGA_HILLS);
-		setBiomeTextureIfNone(Biomes.GIANT_SPRUCE_TAIGA_HILLS, MEGA_SPRUCE_HILLS);
-		setBiomeTextureIfNone(Biomes.NETHER_WASTES, CAVE_WALLS);
-		setBiomeTextureIfNone(Biomes.SOUL_SAND_VALLEY, DESERT);
-		setBiomeTextureIfNone(Biomes.CRIMSON_FOREST, FOREST);
-		setBiomeTextureIfNone(Biomes.WARPED_FOREST, JUNGLE);
-		setBiomeTextureIfNone(Biomes.BASALT_DELTAS, MOUNTAINS_ALL);
-		setBiomeTextureIfNone(Biomes.THE_END, END_VOID);
+		setBiomeTextureIfNone(BiomeKeys.FLOWER_FOREST, FOREST_FLOWERS);
+		setBiomeTextureIfNone(BiomeKeys.BIRCH_FOREST, BIRCH);
+		setBiomeTextureIfNone(BiomeKeys.TALL_BIRCH_FOREST, TALL_BIRCH);
+		setBiomeTextureIfNone(BiomeKeys.BIRCH_FOREST_HILLS, BIRCH_HILLS);
+		setBiomeTextureIfNone(BiomeKeys.TALL_BIRCH_HILLS, TALL_BIRCH_HILLS);
+		setBiomeTextureIfNone(BiomeKeys.JUNGLE, JUNGLE);
+		setBiomeTextureIfNone(BiomeKeys.MODIFIED_JUNGLE_EDGE, JUNGLE_CLIFFS);
+		setBiomeTextureIfNone(BiomeKeys.JUNGLE_HILLS, JUNGLE_HILLS);
+		setBiomeTextureIfNone(BiomeKeys.JUNGLE_EDGE, JUNGLE_EDGE);
+		setBiomeTextureIfNone(BiomeKeys.TAIGA, PINES);
+		setBiomeTextureIfNone(BiomeKeys.TAIGA_HILLS, PINES_HILLS);
+		setBiomeTextureIfNone(BiomeKeys.TAIGA_HILLS, PINES_HILLS);
+		setBiomeTextureIfNone(BiomeKeys.SNOWY_TAIGA, SNOW_PINES);
+		setBiomeTextureIfNone(BiomeKeys.SNOWY_TAIGA_HILLS, SNOW_PINES_HILLS);
+		setBiomeTextureIfNone(BiomeKeys.SNOWY_TAIGA_MOUNTAINS, SNOW_PINES_HILLS);
+		setBiomeTextureIfNone(BiomeKeys.GIANT_TREE_TAIGA, MEGA_TAIGA);
+		setBiomeTextureIfNone(BiomeKeys.GIANT_SPRUCE_TAIGA, MEGA_SPRUCE);
+		setBiomeTextureIfNone(BiomeKeys.GIANT_TREE_TAIGA_HILLS, MEGA_TAIGA_HILLS);
+		setBiomeTextureIfNone(BiomeKeys.GIANT_SPRUCE_TAIGA_HILLS, MEGA_SPRUCE_HILLS);
+		setBiomeTextureIfNone(BiomeKeys.NETHER_WASTES, CAVE_WALLS);
+		setBiomeTextureIfNone(BiomeKeys.SOUL_SAND_VALLEY, DESERT);
+		setBiomeTextureIfNone(BiomeKeys.CRIMSON_FOREST, FOREST);
+		setBiomeTextureIfNone(BiomeKeys.WARPED_FOREST, JUNGLE);
+		setBiomeTextureIfNone(BiomeKeys.BASALT_DELTAS, MOUNTAINS_ALL);
+		setBiomeTextureIfNone(BiomeKeys.THE_END, END_VOID);
 
-		setBiomeTextureIfNone(Biomes.MUSHROOM_FIELDS, MUSHROOM);
-		setBiomeTextureIfNone(Biomes.MUSHROOM_FIELD_SHORE, SHORE);
+		setBiomeTextureIfNone(BiomeKeys.MUSHROOM_FIELDS, MUSHROOM);
+		setBiomeTextureIfNone(BiomeKeys.MUSHROOM_FIELD_SHORE, SHORE);
 
-		setBiomeTextureIfNone(Biomes.WOODED_BADLANDS_PLATEAU, PLATEAU_MESA_TREES);
-		setBiomeTextureIfNone(Biomes.BADLANDS_PLATEAU, PLATEAU_MESA);
-		setBiomeTextureIfNone(Biomes.ERODED_BADLANDS, MESA);
-		setBiomeTextureIfNone(Biomes.BADLANDS, MESA);
-		setBiomeTextureIfNone(Biomes.SAVANNA, SAVANNA);
-		setBiomeTextureIfNone(Biomes.SAVANNA_PLATEAU, SAVANNA_PLATEAU);
-		setBiomeTextureIfNone(Biomes.SHATTERED_SAVANNA, SAVANNA);
-		setBiomeTextureIfNone(Biomes.SHATTERED_SAVANNA_PLATEAU, SAVANNA_PLATEAU);
+		setBiomeTextureIfNone(BiomeKeys.WOODED_BADLANDS_PLATEAU, PLATEAU_MESA_TREES);
+		setBiomeTextureIfNone(BiomeKeys.BADLANDS_PLATEAU, PLATEAU_MESA);
+		setBiomeTextureIfNone(BiomeKeys.ERODED_BADLANDS, MESA);
+		setBiomeTextureIfNone(BiomeKeys.BADLANDS, MESA);
+		setBiomeTextureIfNone(BiomeKeys.SAVANNA, SAVANNA);
+		setBiomeTextureIfNone(BiomeKeys.SAVANNA_PLATEAU, SAVANNA_PLATEAU);
+		setBiomeTextureIfNone(BiomeKeys.SHATTERED_SAVANNA, SAVANNA);
+		setBiomeTextureIfNone(BiomeKeys.SHATTERED_SAVANNA_PLATEAU, SAVANNA_PLATEAU);
 
-		setBiomeTextureIfNone(Biomes.DEEP_FROZEN_OCEAN, ICE_SPIKES);
+		setBiomeTextureIfNone(BiomeKeys.DEEP_FROZEN_OCEAN, ICE_SPIKES);
 
 		// Now let's register every other biome, they'll come from other mods
-		for (Biome biome : Registry.BIOME) {
+		for (Biome biome : BuiltinRegistries.BIOME) {
 			BiomeTextureMap.instance().checkRegistration(biome);
 		}
 	}
 
 	/** Only applies the change if no texture is registered for this biome.
 	 * This prevents overwriting of the config when there is no real change. */
-	private void setBiomeTextureIfNone(Biome biome, TextureSet textureSet) {
-		if(!textureMap.isRegistered(biome)) {
-			textureMap.setTexture(biome, textureSet);
+	private void setBiomeTextureIfNone(RegistryKey<Biome> biome, TextureSet textureSet) {
+		if(!textureMap.isRegistered(biome.getValue())) {
+			textureMap.setTexture(biome.getValue(), textureSet);
 		}
 	}
 
