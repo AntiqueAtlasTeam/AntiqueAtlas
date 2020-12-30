@@ -1,5 +1,6 @@
 package hunternif.mc.impl.atlas.ext;
 
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 
@@ -8,7 +9,7 @@ public class TileDataHandler {
 
 	private TileDataStorage data;
 
-	public void onWorldLoad(ServerWorld world) {
+	public void onWorldLoad(MinecraftServer server, ServerWorld world) {
 		data = world.getPersistentStateManager().getOrCreate(() -> {
 			data = new TileDataStorage(DATA_KEY);
 			data.markDirty();

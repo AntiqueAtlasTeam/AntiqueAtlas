@@ -17,6 +17,8 @@ import hunternif.mc.impl.atlas.structure.*;
 import me.sargunvohra.mcmods.autoconfig1u.AutoConfig;
 import me.sargunvohra.mcmods.autoconfig1u.serializer.Toml4jConfigSerializer;
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerEntityEvents;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerWorldEvents;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.Identifier;
 import net.minecraft.world.World;
@@ -78,8 +80,8 @@ public class AntiqueAtlasMod implements ModInitializer {
 		NewPlayerConnectionCallback.EVENT.register(tileData::onPlayerLogin);
 		NewPlayerConnectionCallback.EVENT.register(PlayerEventHandler::onPlayerLogin);
 
-		ServerWorldLoadCallback.EVENT.register(globalMarkersData::onWorldLoad);
-		ServerWorldLoadCallback.EVENT.register(tileData::onWorldLoad);
+		ServerWorldEvents.LOAD.register(globalMarkersData::onWorldLoad);
+		ServerWorldEvents.LOAD.register(tileData::onWorldLoad);
 
 		RecipeCraftedCallback.EVENT.register(craftedHandler);
 
