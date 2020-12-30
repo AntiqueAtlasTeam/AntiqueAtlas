@@ -23,7 +23,7 @@ public class MarkersDataHandler {
 	/** Loads data for the given atlas or creates a new one. */
 	public MarkersData getMarkersData(ItemStack stack, World world) {
 		if (stack.getItem() instanceof AtlasItem) {
-			return getMarkersData(((AtlasItem) stack.getItem()).getAtlasID(stack), world);
+			return getMarkersData(AtlasItem.getAtlasID(stack), world);
 		} else {
 			return null;
 		}

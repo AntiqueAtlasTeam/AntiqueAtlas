@@ -63,7 +63,7 @@ public class RecipeAtlasCombining implements CraftingRecipe {
 					if (firstAtlas.isEmpty()) {
 						firstAtlas = stack;
 					} else {
-						atlasIds.add(((AtlasItem) stack.getItem()).getAtlasID(stack));
+						atlasIds.add(AtlasItem.getAtlasID(stack));
 					}
 				}
 			}

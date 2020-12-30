@@ -989,6 +989,6 @@ public class GuiAtlas extends GuiComponent {
 
 	/** Returns atlas id based on "itemNeeded" option */
 	private int getAtlasID() {
-	    return AntiqueAtlasMod.CONFIG.itemNeeded ? ((AtlasItem) stack.getItem()).getAtlasID(stack) : player.getUuid().hashCode();
+	    return AntiqueAtlasMod.CONFIG.itemNeeded ? AtlasItem.getAtlasID(stack) : player.getUuid().hashCode();
     }
 }

@@ -22,7 +22,7 @@ public class AtlasDataHandler {
 	/** Loads data for the given atlas ID or creates a new one. */
 	public AtlasData getAtlasData(ItemStack stack, World world) {
 		if (stack.getItem() instanceof AtlasItem) {
-			return getAtlasData(((AtlasItem) stack.getItem()).getAtlasID(stack), world);
+			return getAtlasData(AtlasItem.getAtlasID(stack), world);
 		} else {
 			return null;
 		}

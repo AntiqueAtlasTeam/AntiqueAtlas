@@ -87,9 +87,9 @@ public class OverlayRenderer extends DrawableHelper {
             ItemStack stack2 = player.getOffHandStack();
 
             if (!stack.isEmpty() && stack.getItem() == RegistrarAntiqueAtlas.ATLAS) {
-                atlasID = ((AtlasItem) stack.getItem()).getAtlasID(stack);
+                atlasID = AtlasItem.getAtlasID(stack);
             } else if (!stack2.isEmpty() && stack2.getItem() == RegistrarAntiqueAtlas.ATLAS) {
-                atlasID = ((AtlasItem) stack2.getItem()).getAtlasID(stack2);
+                atlasID = AtlasItem.getAtlasID(stack2);
             }
         } else {
             atlasID = getPlayerAtlas(player);

@@ -28,7 +28,7 @@ public class AtlasItem extends Item {
 		super(settings);
 	}
 
-	public int getAtlasID(ItemStack stack) {
+	public static int getAtlasID(ItemStack stack) {
 		return stack.getOrCreateTag().getInt("atlasID");
 	}
 
@@ -53,7 +53,7 @@ public class AtlasItem extends Item {
 		AtlasData data = AntiqueAtlasMod.atlasData.getAtlasData(stack, world);
 		if (data == null || !(entity instanceof PlayerEntity)) return;
 
-		int atlasId = ((AtlasItem) stack.getItem()).getAtlasID(stack);
+		int atlasId = this.getAtlasID(stack);
 
 		// On the first run send the map from the server to the client:
 		PlayerEntity player = (PlayerEntity) entity;

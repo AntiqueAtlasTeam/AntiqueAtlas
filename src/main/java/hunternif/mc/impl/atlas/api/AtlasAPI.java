@@ -53,12 +53,12 @@ public class AtlasAPI {
 		List<Integer> list = new ArrayList<>();
 		for (ItemStack stack : player.inventory.main) {
 			if (!stack.isEmpty() && stack.getItem() instanceof AtlasItem) {
-				list.add(((AtlasItem) stack.getItem()).getAtlasID(stack));
+				list.add(AtlasItem.getAtlasID(stack));
 			}
 		}
 		for (ItemStack stack : player.inventory.offHand) {
 			if (!stack.isEmpty() && stack.getItem() instanceof AtlasItem) {
-				list.add(((AtlasItem) stack.getItem()).getAtlasID(stack));
+				list.add(AtlasItem.getAtlasID(stack));
 			}
 		}
 
