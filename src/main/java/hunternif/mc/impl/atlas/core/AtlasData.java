@@ -126,7 +126,6 @@ public class AtlasData extends PersistentState {
 	public Collection<TileInfo> updateMapAroundPlayer(PlayerEntity player) {
 		// Update the actual map only so often:
 		int newScanInterval = Math.round(AntiqueAtlasMod.CONFIG.newScanInterval * 20);
-		int rescanInterval = newScanInterval * AntiqueAtlasMod.CONFIG.rescanRate;
 
 		if (player.getEntityWorld().getTime() % newScanInterval != 0) {
 			return Collections.emptyList(); //no new tiles
@@ -134,77 +133,86 @@ public class AtlasData extends PersistentState {
 
 		ArrayList<TileInfo> updatedTiles = new ArrayList<>();
 
-		int playerX = MathHelper.floor(player.getX()) >> 4;
-		int playerZ = MathHelper.floor(player.getZ()) >> 4;
-		ITileStorage seenChunks = this.getWorldData(player.getEntityWorld().getRegistryKey());
-		IBiomeDetector biomeDetector = getBiomeDetectorForDimension(player.getEntityWorld().getRegistryKey());
+		int rescanInterval = newScanInterval * AntiqueAtlasMod.CONFIG.rescanRate;
+		boolean rescanRequired = AntiqueAtlasMod.CONFIG.doRescan && player.getEntityWorld().getTime() % rescanInterval == 0;
+
 		int scanRadius = AntiqueAtlasMod.CONFIG.scanRadius;
 
-		final boolean rescanRequired = AntiqueAtlasMod.CONFIG.doRescan && player.getEntityWorld().getTime() % rescanInterval == 0;
-		int scanRadiusSq = scanRadius*scanRadius;
-
 		// Look at chunks around in a circular area:
-		for (double dx = -scanRadius; dx <= scanRadius; dx++) {
-			for (double dz = -scanRadius; dz <= scanRadius; dz++) {
-				if (dx*dx + dz*dz > scanRadiusSq) {
+		for (int dx = -scanRadius; dx <= scanRadius; dx++) {
+			for (int dz = -scanRadius; dz <= scanRadius; dz++) {
+				if (dx*dx + dz*dz > scanRadius*scanRadius) {
 					continue; // Outside the circle
 				}
 
-				int x = (int)(playerX + dx);
-				int z = (int)(playerZ + dz);
-				Identifier oldTile = seenChunks.getTile(x, z);
-				Identifier tile = null;
+				int chunkX = player.chunkX + dx;
+				int chunkZ = player.chunkZ + dz;
 
-				// Check if there's a custom tile at the location:
-				// Custom tiles overwrite even the chunks already seen.
-				tile = AntiqueAtlasMod.tileData.getData().getTile(player.getEntityWorld().getRegistryKey(), x, z);
-
-				// If there's no custom tile, check the actual chunk:
-				if (tile == null) {
-					// If the chunk has been scanned previously, only re-scan it so often:
-					if (oldTile != null && !rescanRequired) {
-						continue;
-					}
-
-					// TODO FABRIC: forceChunkLoading crashes here
-					Chunk chunk = player.getEntityWorld().getChunk(x, z, ChunkStatus.FULL, AntiqueAtlasMod.CONFIG.forceChunkLoading);
-
-					// Skip chunk if it hasn't loaded yet:
-					if (chunk == null) {
-						continue;
-					}
-
-					if (oldTile != null) {
-						tile = biomeDetector.getBiomeID(player.getEntityWorld(), chunk);
-
-						if (tile == null) {
-							// If the new tile is empty, remove the old one:
-							this.removeTile(player.getEntityWorld().getRegistryKey(), x, z);
-						} else if (oldTile != tile) {
-							// Only update if the old tile's biome ID doesn't match the new one:
-							this.setTile(player.getEntityWorld().getRegistryKey(), x, z, tile);
-							updatedTiles.add(new TileInfo(x, z, tile));
-						}
-					} else {
-						// Scanning new chunk:
-						tile = biomeDetector.getBiomeID(player.getEntityWorld(), chunk);
-						if (tile != null) {
-							this.setTile(player.getEntityWorld().getRegistryKey(), x, z, tile);
-							updatedTiles.add(new TileInfo(x, z, tile));
-						}
-					}
-				} else {
-					// Only update the custom tile if it doesn't rewrite itself:
-					if (oldTile == null || oldTile != tile) {
-						this.setTile(player.getEntityWorld().getRegistryKey(), x, z, tile);
-						updatedTiles.add(new TileInfo(x, z, tile));
-						this.markDirty();
-					}
+				TileInfo update = updateMapChunk(player.getEntityWorld(), chunkX, chunkZ, rescanRequired);
+				if(update != null) {
+					updatedTiles.add(update);
 				}
-
 			}
 		}
 		return updatedTiles;
+	}
+
+	private TileInfo updateMapChunk(World world, int x, int z, boolean rescanRequired)
+	{
+		ITileStorage seenChunks = this.getWorldData(world.getRegistryKey());
+
+		Identifier oldTile = seenChunks.getTile(x, z);
+		Identifier tile = null;
+
+		// Check if there's a custom tile at the location:
+		// Custom tiles overwrite even the chunks already seen.
+		tile = AntiqueAtlasMod.tileData.getData().getTile(world.getRegistryKey(), x, z);
+
+		// If there's no custom tile, check the actual chunk:
+		if (tile == null) {
+			// If the chunk has been scanned previously, only re-scan it so often:
+			if (oldTile != null && !rescanRequired) {
+				return null;
+			}
+
+			// TODO FABRIC: forceChunkLoading crashes here
+			Chunk chunk = world.getChunk(x, z, ChunkStatus.FULL, AntiqueAtlasMod.CONFIG.forceChunkLoading);
+
+			// Skip chunk if it hasn't loaded yet:
+			if (chunk == null) {
+				return null;
+			}
+
+			IBiomeDetector biomeDetector = getBiomeDetectorForDimension(world.getRegistryKey());
+			tile = biomeDetector.getBiomeID(world, chunk);
+
+			if (oldTile != null) {
+				if (tile == null) {
+					// If the new tile is empty, remove the old one:
+					this.removeTile(world.getRegistryKey(), x, z);
+					// TODO should this also return a TileInfo?
+				} else if (oldTile != tile) {
+					// Only update if the old tile's biome ID doesn't match the new one:
+					this.setTile(world.getRegistryKey(), x, z, tile);
+					return new TileInfo(x, z, tile);
+				}
+			} else {
+				// Scanning new chunk:
+				if (tile != null) {
+					this.setTile(world.getRegistryKey(), x, z, tile);
+					return new TileInfo(x, z, tile);
+				}
+			}
+		} else {
+			// Only update the custom tile if it doesn't rewrite itself:
+			if (oldTile == null || oldTile != tile) {
+				this.setTile(world.getRegistryKey(), x, z, tile);
+				this.markDirty();
+				return new TileInfo(x, z, tile);
+			}
+		}
+
+		return null;
 	}
 
 	/** Puts a given tile into given map at specified coordinates and,
@@ -246,7 +254,7 @@ public class AtlasData extends PersistentState {
 	}
 
 	/** Send all data to the player in several zipped packets. Called once
-	 * during the first run of ItemAtals.onUpdate(). */
+	 * during the first run of ItemAtlas.onUpdate(). */
 	public void syncOnPlayer(int atlasID, PlayerEntity player) {
 		if (nbt == null) {
 			nbt = new CompoundTag();

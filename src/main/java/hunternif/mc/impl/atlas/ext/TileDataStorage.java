@@ -88,7 +88,7 @@ public class TileDataStorage extends PersistentState {
 				k -> new ConcurrentHashMap<>(2, 0.75f, 2));
 	}
 	
-	/** If no custom tile is set at the specified coordinates, returns -1. */
+	/** If no custom tile is set at the specified coordinates, returns null. */
 	public Identifier getTile(RegistryKey<World> world, int x, int z) {
 		return getTiles(world).get(tempCoords.set(x, z));
 	}

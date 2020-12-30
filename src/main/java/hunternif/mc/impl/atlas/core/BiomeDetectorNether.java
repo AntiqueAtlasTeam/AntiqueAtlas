@@ -7,11 +7,14 @@ import net.minecraft.block.Blocks;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.registry.BuiltinRegistries;
+import net.minecraft.util.registry.Registry;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.source.BiomeArray;
 import net.minecraft.world.chunk.Chunk;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -28,19 +31,15 @@ public class BiomeDetectorNether extends BiomeDetectorBase implements IBiomeDete
 	/** Increment the counter for lava biomes by this much during iteration.
 	 * This is done so that rivers are more likely to be connected. */
 	private static final int priorityLava = 1;
-	
+
 	@Override
 	public Identifier getBiomeID(World world, Chunk chunk) {
 		BiomeArray chunkBiomes = chunk.getBiomeArray();
 		if (chunkBiomes == null)
-			return ExtTileIdMap.TILE_LAVA;
+			return null;
 
-		Map<Biome, Integer> biomeOccurrences = new HashMap<>(BuiltinRegistries.BIOME.getIds().size());
-		
-		// The following important pseudo-biomes don't have IDs:
-		int lavaOccurences = 0;
-		int groundOccurences = 0;
-		
+		Map<Identifier, Integer> biomeOccurrences = new HashMap<>(BuiltinRegistries.BIOME.getIds().size());
+
 		for (int x = 0; x < 16; x++) {
 			for (int z = 0; z < 16; z++) {
 				Biome biome = chunkBiomes.getBiomeForNoiseGen(x, lavaSeaLevel, z);
@@ -48,44 +47,28 @@ public class BiomeDetectorNether extends BiomeDetectorBase implements IBiomeDete
 					// The Nether!
 					Block netherBlock = chunk.getBlockState(new BlockPos(x, lavaSeaLevel, z)).getBlock();
 					if (netherBlock == Blocks.LAVA) {
-						lavaOccurences += priorityLava;
+						updateOccurrencesMap(biomeOccurrences, ExtTileIdMap.TILE_LAVA, priorityLava);
 					} else {
 						BlockState netherBlockState = chunk.getBlockState(new BlockPos(x, airProbeLevel, z));
 						if (netherBlockState.isAir()) {
-							groundOccurences++; // ground
+							updateOccurrencesMap(biomeOccurrences, ExtTileIdMap.TILE_LAVA_SHORE, 1);
 						} else {
 							// cave walls
-							biomeOccurrences.put(biome,
-											biomeOccurrences.getOrDefault(biome, 0) + 1
-							);
+							updateOccurrencesMap(biomeOccurrences, world, biome, 1);
 						}
 					}
 				} else {
 					// In case there are custom biomes "modded in":
-					biomeOccurrences.put(biome,
-									biomeOccurrences.getOrDefault(biome, 0) + priorityForBiome(biome)
-					);
+					updateOccurrencesMap(biomeOccurrences, world, biome, priorityForBiome(biome));
 				}
 			}
 		}
 
-		Identifier meanBiomeId = null;
-		int meanBiomeOccurences = 0;
-		for (Biome biome : biomeOccurrences.keySet()) {
-			int occ = biomeOccurrences.get(biome);
-			if (biomeOccurrences.get(biome) > meanBiomeOccurences) {
-				meanBiomeId = BuiltinRegistries.BIOME.getId(biome);
-				meanBiomeOccurences = occ;
-			}
-		}
-		
-		// The following important pseudo-biomes don't have IDs:
-		if (meanBiomeOccurences < lavaOccurences) {
-			meanBiomeId = ExtTileIdMap.TILE_LAVA;
-		} else if (meanBiomeOccurences < groundOccurences) {
-			meanBiomeId = ExtTileIdMap.TILE_LAVA_SHORE;
-		}
-		
-		return meanBiomeId;
+		if (biomeOccurrences.isEmpty()) return null;
+
+		Map.Entry<Identifier, Integer> meanBiome = Collections.max(biomeOccurrences.entrySet(), Comparator
+				.comparingInt(Map.Entry::getValue));
+
+		return meanBiome.getKey();
 	}
 }

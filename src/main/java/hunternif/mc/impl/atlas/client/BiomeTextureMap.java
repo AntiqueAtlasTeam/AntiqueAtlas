@@ -110,13 +110,7 @@ public class BiomeTextureMap extends SaveData {
 				setTexture(biome, biome.getScale() >= 0.25f ? MOUNTAINS : HILLS);
 				break;
 			case THEEND:
-				final boolean[] hasPlants = {false};
-				// TODO fix end islands
-//				Stream.of(biome.getFeaturesForStep(GenerationStep.Feature.VEGETAL_DECORATION)).forEach(
-//						feature -> {
-//							if(!feature.isEmpty()) hasPlants[0] = true;
-//						});
-				if(hasPlants[0]) {
+				if(biome.getGenerationSettings().getFeatures().size() > 1) {
 					setTexture(biome, END_ISLAND_PLANTS);
 				} else {
 					setTexture(biome, END_ISLAND);

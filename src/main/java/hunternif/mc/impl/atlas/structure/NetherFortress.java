@@ -65,14 +65,15 @@ public class NetherFortress {
 		StructureHandler.registerTile(StructurePieceType.NETHER_FORTRESS_CORRIDOR_LEFT_TURN, 95, ExtTileIdMap.NETHER_FORTRESS_WALL);
 		StructureHandler.registerTile(StructurePieceType.NETHER_FORTRESS_SMALL_CORRIDOR, 95, ExtTileIdMap.NETHER_FORTRESS_WALL);
 		StructureHandler.registerTile(StructurePieceType.NETHER_FORTRESS_CORRIDOR_RIGHT_TURN, 95, ExtTileIdMap.NETHER_FORTRESS_WALL);
-		StructureHandler.registerTile(StructurePieceType.NETHER_FORTRESS_BRIDGE_SMALL_CROSSING, 95, ExtTileIdMap.NETHER_FORTRESS_WALL);
+		StructureHandler.registerTile(StructurePieceType.NETHER_FORTRESS_BRIDGE_SMALL_CROSSING, 120, ExtTileIdMap.NETHER_FORTRESS_WALL);
 		StructureHandler.registerTile(StructurePieceType.NETHER_FORTRESS_START, 95, ExtTileIdMap.NETHER_FORTRESS_WALL);
 
-		StructureHandler.registerTile(StructurePieceType.NETHER_FORTRESS_BRIDGE_CROSSING, 90, ExtTileIdMap.NETHER_FORTRESS_BRIDGE_CROSSING);
-		StructureHandler.registerTile(StructurePieceType.NETHER_FORTRESS_BRIDGE_STAIRS, 90, ExtTileIdMap.NETHER_FORTRESS_BRIDGE_STAIRS);
+		StructureHandler.registerTile(StructurePieceType.NETHER_FORTRESS_BRIDGE_CROSSING, 120, ExtTileIdMap.NETHER_FORTRESS_BRIDGE_CROSSING);
+		StructureHandler.registerTile(StructurePieceType.NETHER_FORTRESS_BRIDGE_STAIRS, 120, ExtTileIdMap.NETHER_FORTRESS_BRIDGE_STAIRS);
 		StructureHandler.registerTile(StructurePieceType.NETHER_FORTRESS_CORRIDOR_EXIT, 90, ExtTileIdMap.NETHER_FORTRESS_EXIT);
-		StructureHandler.registerTile(StructurePieceType.NETHER_FORTRESS_BRIDGE_SMALL_CROSSING, 90, ExtTileIdMap.NETHER_FORTRESS_BRIDGE_SMALL_CROSSING);
 		StructureHandler.registerTile(StructurePieceType.NETHER_FORTRESS_CORRIDOR_NETHER_WARTS_ROOM, 90, ExtTileIdMap.NETHER_FORTRESS_CORRIDOR_NETHER_WARTS_ROOM);
-		StructureHandler.registerTile(StructurePieceType.NETHER_FORTRESS_BRIDGE_PLATFORM, 90, ExtTileIdMap.NETHER_FORTRESS_BRIDGE_PLATFORM);
+
+		StructureHandler.registerTile(StructurePieceType.NETHER_FORTRESS_BRIDGE_SMALL_CROSSING, 120, ExtTileIdMap.NETHER_FORTRESS_BRIDGE_SMALL_CROSSING);
+		StructureHandler.registerTile(StructurePieceType.NETHER_FORTRESS_BRIDGE_PLATFORM, 120, ExtTileIdMap.NETHER_FORTRESS_BRIDGE_PLATFORM);
 	}
 }
