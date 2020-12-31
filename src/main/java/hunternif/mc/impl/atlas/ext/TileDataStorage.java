@@ -28,6 +28,7 @@ public class TileDataStorage extends PersistentState {
 	private static final String TAG_VERSION = "aaVersion";
 	private static final String TAG_WORLD_MAP_LIST = "worldMap";
 	private static final String TAG_WORLD_ID = "worldID";
+	private static final String TAG_TILE_LIST = "tiles";
 
 	public TileDataStorage(String key) {
 		super(key);
@@ -54,9 +55,15 @@ public class TileDataStorage extends PersistentState {
 			RegistryKey<World> worldID;
 			worldID = RegistryKey.of(Registry.DIMENSION, new Identifier(tag.getString(TAG_WORLD_ID)));
 
-			Map<ShortVec2, Identifier> biomeMap = getTiles(worldID);
-			ShortVec2 coords = new ShortVec2(tag.getInt("x"), tag.getInt("y"));
-			biomeMap.put(coords, Identifier.tryParse(tag.getString("id")));
+			Map<ShortVec2, Identifier> worldTiles = getTiles(worldID);
+
+			ListTag tiles = tag.getList(TAG_TILE_LIST, NbtType.COMPOUND);
+
+			tiles.stream().forEach(tag1 -> {
+				CompoundTag tile = (CompoundTag) tag1;
+				ShortVec2 coords = new ShortVec2(tile.getInt("x"), tile.getInt("y"));
+				worldTiles.put(coords, Identifier.tryParse(tile.getString("id")));
+			});
 		}
 	}
 
@@ -70,11 +77,18 @@ public class TileDataStorage extends PersistentState {
 
 			Map<ShortVec2, Identifier> biomeMap = getTiles(world);
 
+			ListTag tiles = new ListTag();
+
 			for (Entry<ShortVec2, Identifier> entry : biomeMap.entrySet()) {
-				tag.putInt("x", entry.getKey().x);
-				tag.putInt("y", entry.getKey().y);
-				tag.putString("id", entry.getValue().toString());
+				CompoundTag tile = new CompoundTag();
+				tile.putInt("x", entry.getKey().x);
+				tile.putInt("y", entry.getKey().y);
+				tile.putString("id", entry.getValue().toString());
+
+				tiles.add(tile);
 			}
+
+			tag.put(TAG_TILE_LIST, tiles);
 
 			worldMaplist.add(tag);
 		}
@@ -94,8 +108,8 @@ public class TileDataStorage extends PersistentState {
 	}
 	
 	/** If setting tile on the server, a packet should be sent to all players. */
-	public void setTile(RegistryKey<World> world, int x, int z, Identifier biome) {
-		getTiles(world).put(new ShortVec2(x, z), biome);
+	public void setTile(RegistryKey<World> world, int x, int z, Identifier tile) {
+		getTiles(world).put(new ShortVec2(x, z), tile);
 		markDirty();
 	}
 	
@@ -103,7 +117,7 @@ public class TileDataStorage extends PersistentState {
 		getTiles(world).remove(tempCoords.set(x, z));
 		markDirty();
 	}
-	
+
 	/** Send all data to player in several zipped packets. */
 	public void syncOnPlayer(PlayerEntity player) {
 		for (RegistryKey<World> world : worldMap.keySet()) {

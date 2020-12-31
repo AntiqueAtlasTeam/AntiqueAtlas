@@ -191,7 +191,7 @@ public class AtlasData extends PersistentState {
 					// If the new tile is empty, remove the old one:
 					this.removeTile(world.getRegistryKey(), x, z);
 					// TODO should this also return a TileInfo?
-				} else if (oldTile != tile) {
+				} else if (!oldTile.equals(tile)) {
 					// Only update if the old tile's biome ID doesn't match the new one:
 					this.setTile(world.getRegistryKey(), x, z, tile);
 					return new TileInfo(x, z, tile);
@@ -205,7 +205,7 @@ public class AtlasData extends PersistentState {
 			}
 		} else {
 			// Only update the custom tile if it doesn't rewrite itself:
-			if (oldTile == null || oldTile != tile) {
+			if (oldTile == null || !oldTile.equals(tile)) {
 				this.setTile(world.getRegistryKey(), x, z, tile);
 				this.markDirty();
 				return new TileInfo(x, z, tile);
