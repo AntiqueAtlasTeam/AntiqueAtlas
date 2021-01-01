@@ -20,8 +20,9 @@
   },
   "icon": "antiqueatlas_icon.png",
   "depends": {
-    "fabricloader": ">=0.6.0",
-    "fabric": ">=0.4.0"
+    "fabricloader": ">=0.10.8",
+    "fabric": ">=0.25.0",
+    "minecraft": ["1.16.2", "1.16.3", "1.16.4"]
   },
   "accessWidener": "antiqueatlas.accesswidener",
   "mixins": [
