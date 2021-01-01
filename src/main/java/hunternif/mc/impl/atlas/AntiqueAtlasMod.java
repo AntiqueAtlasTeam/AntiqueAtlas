@@ -14,7 +14,7 @@ import hunternif.mc.impl.atlas.mixinhooks.NewServerConnectionCallback;
 import hunternif.mc.impl.atlas.network.AntiqueAtlasNetworking;
 import hunternif.mc.impl.atlas.structure.*;
 import me.sargunvohra.mcmods.autoconfig1u.AutoConfig;
-import me.sargunvohra.mcmods.autoconfig1u.serializer.Toml4jConfigSerializer;
+import me.sargunvohra.mcmods.autoconfig1u.serializer.JanksonConfigSerializer;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerWorldEvents;
 import net.minecraft.server.world.ServerWorld;
@@ -63,7 +63,7 @@ public class AntiqueAtlasMod implements ModInitializer {
 
 		BiomeDetectorBase.scanBiomeTypes();
 
-		AutoConfig.register(AntiqueAtlasConfig.class, Toml4jConfigSerializer::new);
+		AutoConfig.register(AntiqueAtlasConfig.class, JanksonConfigSerializer::new);
 		CONFIG = AutoConfig.getConfigHolder(AntiqueAtlasConfig.class).getConfig();
 
 		RegistrarAntiqueAtlas.register();
