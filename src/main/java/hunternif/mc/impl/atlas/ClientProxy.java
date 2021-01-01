@@ -14,7 +14,6 @@ import net.minecraft.resource.ResourceManager;
 import net.minecraft.resource.ResourceType;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.BuiltinRegistries;
-import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.BiomeKeys;
@@ -152,6 +151,8 @@ public class ClientProxy implements SimpleSynchronousResourceReloadListener {
 		map.register(BUTCHERS_SHOP);
 		map.register(CHURCH);
 
+		map.register(SOUL_SAND_VALLEY);
+
 		map.register(NETHER_BRIDGE);
 		map.register(NETHER_BRIDGE_X);
 		map.register(NETHER_BRIDGE_Z);
@@ -205,11 +206,13 @@ public class ClientProxy implements SimpleSynchronousResourceReloadListener {
 		setBiomeTextureIfNone(BiomeKeys.GIANT_SPRUCE_TAIGA, MEGA_SPRUCE);
 		setBiomeTextureIfNone(BiomeKeys.GIANT_TREE_TAIGA_HILLS, MEGA_TAIGA_HILLS);
 		setBiomeTextureIfNone(BiomeKeys.GIANT_SPRUCE_TAIGA_HILLS, MEGA_SPRUCE_HILLS);
+
 		setBiomeTextureIfNone(BiomeKeys.NETHER_WASTES, CAVE_WALLS);
-		setBiomeTextureIfNone(BiomeKeys.SOUL_SAND_VALLEY, DESERT);
+		setBiomeTextureIfNone(BiomeKeys.SOUL_SAND_VALLEY, SOUL_SAND_VALLEY);
 		setBiomeTextureIfNone(BiomeKeys.CRIMSON_FOREST, FOREST);
 		setBiomeTextureIfNone(BiomeKeys.WARPED_FOREST, JUNGLE);
 		setBiomeTextureIfNone(BiomeKeys.BASALT_DELTAS, MOUNTAINS_ALL);
+
 		setBiomeTextureIfNone(BiomeKeys.THE_END, END_VOID);
 
 		setBiomeTextureIfNone(BiomeKeys.MUSHROOM_FIELDS, MUSHROOM);

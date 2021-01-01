@@ -162,7 +162,11 @@ public class TextureSet implements Comparable<TextureSet> {
 	SHORE       = new TextureSetShore("SHORE", WATER, TILE_SHORE, TILE_SHORE2, TILE_SHORE3),
 	ROCK_SHORE  = new TextureSetShore("ROCK_SHORE", WATER, TILE_ROCK_SHORE).stitchesToNull(),
 	LAVA_SHORE  = new TextureSetShore("LAVA_SHORE", LAVA, TILE_LAVA_SHORE, TILE_LAVA_SHORE2).stitchesToNull(),
-	
+
+	// Nether stuff
+	SOUL_SAND_VALLEY  = standard("DESERT", TILE_SAND, TILE_SAND2, TILE_SAND_BUSHES),
+
+	// end dimension stuff
 	END_VOID = standard("END_VOID", TILE_END_VOID),
 	END_ISLAND = standard("END_ISLAND", TILE_END_ISLAND, TILE_END_ISLAND2),
 	END_ISLAND_PLANTS = standard("END_ISLAND_PLANTS", TILE_END_ISLAND_PLANTS, TILE_END_ISLAND_PLANTS2),
