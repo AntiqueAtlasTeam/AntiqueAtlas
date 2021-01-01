@@ -166,7 +166,7 @@ public class AtlasData extends PersistentState {
 
 		// Check if there's a custom tile at the location:
 		// Custom tiles overwrite even the chunks already seen.
-		tile = AntiqueAtlasMod.tileData.getData().getTile(world.getRegistryKey(), x, z);
+		tile = AntiqueAtlasMod.tileData.getData(world).getTile(x, z);
 
 		// If there's no custom tile, check the actual chunk:
 		if (tile == null) {

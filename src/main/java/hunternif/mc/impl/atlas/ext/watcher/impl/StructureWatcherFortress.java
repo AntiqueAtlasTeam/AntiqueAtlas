@@ -169,6 +169,6 @@ public class StructureWatcherFortress implements IStructureWatcher {
 	}
 
 	private static boolean noTileAt(World world, int chunkX, int chunkZ) {
-		return AntiqueAtlasMod.tileData.getData().getTile(world.getRegistryKey(), chunkX, chunkZ) == null;
+		return AntiqueAtlasMod.tileData.getData(world).getTile(chunkX, chunkZ) == null;
 	}
 }

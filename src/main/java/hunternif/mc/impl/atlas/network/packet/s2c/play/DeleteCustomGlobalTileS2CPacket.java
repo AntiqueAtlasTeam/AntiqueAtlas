@@ -35,8 +35,8 @@ public class DeleteCustomGlobalTileS2CPacket extends S2CPacket {
 		int chunkZ = buf.readVarInt();
 
 		context.getTaskQueue().execute(() -> {
-			TileDataStorage data = AntiqueAtlasMod.tileData.getData();
-			data.removeTile(world, chunkX, chunkZ);
+			TileDataStorage data = AntiqueAtlasMod.tileData.getData(world);
+			data.removeTile(chunkX, chunkZ);
 		});
 	}
 }

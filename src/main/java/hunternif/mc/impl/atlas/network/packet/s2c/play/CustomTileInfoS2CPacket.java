@@ -49,9 +49,9 @@ public class CustomTileInfoS2CPacket extends S2CPacket {
 		RegistryKey<World> world = RegistryKey.of(Registry.DIMENSION, buf.readIdentifier());
 		int tileCount = buf.readVarInt();
 
-		TileDataStorage data = AntiqueAtlasMod.tileData.getData();
+		TileDataStorage data = AntiqueAtlasMod.tileData.getData(world);
 		for (int i = 0; i < tileCount; ++i) {
-			data.setTile(world, buf.readShort(), buf.readShort(), buf.readIdentifier());
+			data.setTile(buf.readShort(), buf.readShort(), buf.readIdentifier());
 		}
 	}
 }

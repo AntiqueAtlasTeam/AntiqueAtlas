@@ -210,7 +210,7 @@ public class StructureWatcherVillage implements IStructureWatcher {
 	}
 
 	private static Identifier tileAt(World world, int chunkX, int chunkZ) {
-		return AntiqueAtlasMod.tileData.getData().getTile(world.getRegistryKey(), chunkX, chunkZ);
+		return AntiqueAtlasMod.tileData.getData(world).getTile(chunkX, chunkZ);
 	}
 
 	/** Delete the marker and custom tile data about the village. */

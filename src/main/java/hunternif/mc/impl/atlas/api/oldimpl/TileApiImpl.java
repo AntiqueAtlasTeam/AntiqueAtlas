@@ -143,8 +143,8 @@ public class TileApiImpl implements TileAPI {
 			return;
 		}
 
-		TileDataStorage data = AntiqueAtlasMod.tileData.getData();
-		data.setTile(world.getRegistryKey(), chunkX, chunkZ, tileId);
+		TileDataStorage data = AntiqueAtlasMod.tileData.getData(world);
+		data.setTile(chunkX, chunkZ, tileId);
 
 		// Send tile packet:
 		new CustomTileInfoS2CPacket(world.getRegistryKey(), chunkX, chunkZ, tileId).send(world.getServer());
@@ -167,11 +167,10 @@ public class TileApiImpl implements TileAPI {
 			Log.warn("Client attempted to delete global tile");
 			return;
 		}
-		TileDataStorage data = AntiqueAtlasMod.tileData.getData();
-		RegistryKey<World> worldKey = world.getRegistryKey();
-		if (data.getTile(worldKey, chunkX, chunkZ) != null) {
-			data.removeTile(worldKey, chunkX, chunkZ);
-			new DeleteCustomGlobalTileS2CPacket(worldKey, chunkX, chunkZ).send(world.getServer());
+		TileDataStorage data = AntiqueAtlasMod.tileData.getData(world);
+		if (data.getTile(chunkX, chunkZ) != null) {
+			data.removeTile(chunkX, chunkZ);
+			new DeleteCustomGlobalTileS2CPacket(world.getRegistryKey(), chunkX, chunkZ).send(world.getServer());
 		}
 	}
 }
