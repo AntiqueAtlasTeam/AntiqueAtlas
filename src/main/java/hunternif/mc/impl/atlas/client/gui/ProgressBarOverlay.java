@@ -1,6 +1,6 @@
 package hunternif.mc.impl.atlas.client.gui;
 
-import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.systems.RenderSystem;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
@@ -43,7 +43,7 @@ class ProgressBarOverlay {
 		if(l.maxProgress < 0)
 			p = 0;
 
-		GlStateManager.disableTexture();
+		RenderSystem.disableTexture();
 		Tessellator tessellator = Tessellator.getInstance();
 		BufferBuilder vb = tessellator.getBuffer();
 
@@ -61,7 +61,7 @@ class ProgressBarOverlay {
 
 		tessellator.draw();
 
-		GlStateManager.enableTexture();
+		RenderSystem.enableTexture();
 	}
 
 }

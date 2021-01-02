@@ -1,6 +1,7 @@
 package hunternif.mc.impl.atlas.client.gui.core;
 
 import hunternif.mc.impl.atlas.util.AtlasRenderHelper;
+import net.minecraft.client.util.math.MatrixStack;
 
 public class GuiHScrollbar extends AGuiScrollbar {
 	
@@ -9,17 +10,17 @@ public class GuiHScrollbar extends AGuiScrollbar {
 	}
 
 	@Override
-	protected void drawAnchor() {
+	protected void drawAnchor(MatrixStack matrices) {
 		// Draw top cap:
-		AtlasRenderHelper.drawTexturedRect(texture, getGuiX() + anchorPos, getGuiY(), 0, 0,
+		AtlasRenderHelper.drawTexturedRect(matrices, texture, getGuiX() + anchorPos, getGuiY(), 0, 0,
 				capLength, textureHeight, textureWidth, textureHeight);
 		
 		// Draw body:
-		AtlasRenderHelper.drawTexturedRect(texture, getGuiX() + anchorPos + capLength, getGuiY(),
+		AtlasRenderHelper.drawTexturedRect(matrices, texture, getGuiX() + anchorPos + capLength, getGuiY(),
 				capLength, 0, textureBodyLength, textureHeight, textureWidth, textureHeight, bodyTextureScale, 1);
 		
 		// Draw bottom cap:
-		AtlasRenderHelper.drawTexturedRect(texture,
+		AtlasRenderHelper.drawTexturedRect(matrices, texture,
 				getGuiX() + anchorPos + anchorSize - capLength, getGuiY(),
 				textureWidth - capLength, 0,
 				capLength, textureHeight, textureWidth, textureHeight);

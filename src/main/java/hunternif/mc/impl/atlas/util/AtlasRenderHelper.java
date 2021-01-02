@@ -14,34 +14,17 @@ import org.lwjgl.opengl.GL11;
 
 @Environment(EnvType.CLIENT)
 public class AtlasRenderHelper {
-	public static void drawTexturedRect(Identifier texture, double x, double y, double u, double v, int width, int height, int imageWidth, int imageHeight, double scaleX, double scaleY) {
+	public static void drawTexturedRect(MatrixStack matrices, Identifier texture, double x, double y, double u, double v, int width, int height, int imageWidth, int imageHeight, double scaleX, double scaleY) {
 		MinecraftClient.getInstance().getTextureManager().bindTexture(texture);
-		float minU = (float)u / imageWidth;
-		float maxU = (float)(u + width) / imageWidth;
-		float minV = (float)v / imageHeight;
-		float maxV = (float)(v + height) / imageHeight;
-//		After testing, there is no noticeable time difference between raw OpenGL rendering,
-//		and using the WorldRenderere
-		Tessellator tessellator = Tessellator.getInstance();
-		BufferBuilder renderer = tessellator.getBuffer();
-		renderer.begin(GL11.GL_QUADS, VertexFormats.POSITION_TEXTURE);
-		renderer.vertex((int)(x + scaleX*width), (int)(y + scaleY*height), 0).texture(maxU, maxV).next();
-		renderer.vertex((int)(x + scaleX*width), (int)y,                   0).texture(maxU, minV).next();
-		renderer.vertex((int)x,                  (int)y,                   0).texture(minU, minV).next();
-		renderer.vertex((int)x,                  (int)(y + scaleY*height), 0).texture(minU, maxV).next();
-		tessellator.draw();
+		DrawableHelper.drawTexture(matrices, (int)x, (int)y, (int)(width*scaleX), (int)(height*scaleY), (int)u, (int)v, width, height, imageWidth, imageHeight);
 	}
 
-	public static void drawTexturedRect(Identifier texture, double x, double y, int u, int v, int width, int height, int imageWidth, int imageHeight) {
-		drawTexturedRect(texture, x, y, u, v, width, height, imageWidth, imageHeight, 1, 1);
-	}
-
-	private static void drawFullTexture(Identifier texture, double x, double y, int width, int height, double scaleX, double scaleY) {
-		drawTexturedRect(texture, x, y, 0, 0, width, height, width, height, scaleX, scaleY);
+	public static void drawTexturedRect(MatrixStack matrices, Identifier texture, double x, double y, int u, int v, int width, int height, int imageWidth, int imageHeight) {
+		drawTexturedRect(matrices, texture, x, y, u, v, width, height, imageWidth, imageHeight, 1, 1);
 	}
 
 	public static void drawFullTexture(MatrixStack matrices, Identifier texture, double x, double y, int width, int height) {
-		drawFullTexture(texture, x, y, width, height, 1, 1);
+		drawTexturedRect(matrices, texture, x, y, 0,0,width, height, width, height, 1, 1);
 	}
 
 	public static void drawAutotileCorner(Identifier texture, int x, int y, double u, double v, int tileHalfSize) {
@@ -61,7 +44,6 @@ public class AtlasRenderHelper {
 	}
 
 	public static void drawFullTexture(MatrixStack matrices, Identifier texture, int x, int y, int size) {
-		MinecraftClient.getInstance().getTextureManager().bindTexture(texture);
-		DrawableHelper.drawTexture(matrices, x, y, 0F, 0F, size, size, size, size);
+		drawFullTexture(matrices, texture, x, y, size, size);
 	}
 }

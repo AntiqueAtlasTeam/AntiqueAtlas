@@ -1,6 +1,7 @@
 package hunternif.mc.impl.atlas.client.gui;
 
 import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.systems.RenderSystem;
 import hunternif.mc.impl.atlas.client.Textures;
 import hunternif.mc.impl.atlas.client.gui.core.GuiToggleButton;
 import hunternif.mc.impl.atlas.util.AtlasRenderHelper;
@@ -51,12 +52,12 @@ public class GuiBookmarkButton extends GuiToggleButton {
 
 	@Override
 	public void render(MatrixStack matrices, int mouseX, int mouseY, float partialTick) {
-		GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
+		RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
 
 		// Render background:
 		int u = colorIndex * WIDTH;
 		int v = isMouseOver || isSelected() ? 0 : HEIGHT;
-		AtlasRenderHelper.drawTexturedRect(Textures.BOOKMARKS, getGuiX(), getGuiY(), u, v, WIDTH, HEIGHT, IMAGE_WIDTH, IMAGE_HEIGHT);
+		AtlasRenderHelper.drawTexturedRect(matrices, Textures.BOOKMARKS, getGuiX(), getGuiY(), u, v, WIDTH, HEIGHT, IMAGE_WIDTH, IMAGE_HEIGHT);
 
 		// Render the icon:
 		AtlasRenderHelper.drawFullTexture(matrices, iconTexture,

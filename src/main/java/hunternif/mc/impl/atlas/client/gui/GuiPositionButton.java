@@ -1,6 +1,7 @@
 package hunternif.mc.impl.atlas.client.gui;
 
 import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.systems.RenderSystem;
 import hunternif.mc.impl.atlas.client.Textures;
 import hunternif.mc.impl.atlas.client.gui.core.GuiComponentButton;
 import hunternif.mc.impl.atlas.util.AtlasRenderHelper;
@@ -22,19 +23,19 @@ public class GuiPositionButton extends GuiComponentButton {
 	@Override
 	public void render(MatrixStack matrices, int mouseX, int mouseY, float partialTick) {
 		if (isEnabled()) {
-			GlStateManager.enableBlend();
-			GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+			RenderSystem.enableBlend();
+			RenderSystem.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
 			int x = getGuiX(), y = getGuiY();
 			if (isMouseOver) {
-				GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
+				RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
 			} else {
-				GlStateManager.color4f(1.0F, 1.0F, 1.0F, 0.5F);
+				RenderSystem.color4f(1.0F, 1.0F, 1.0F, 0.5F);
 			}
 
 			AtlasRenderHelper.drawFullTexture(matrices, Textures.BTN_POSITION, x, y, WIDTH, HEIGHT);
 
-			GlStateManager.disableBlend();
+			RenderSystem.disableBlend();
 
 			if (isMouseOver) {
 				drawTooltip(Collections.singletonList(new TranslatableText("gui.antiqueatlas.followPlayer")), MinecraftClient.getInstance().textRenderer);

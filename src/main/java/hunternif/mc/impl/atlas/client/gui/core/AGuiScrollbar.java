@@ -1,5 +1,6 @@
 package hunternif.mc.impl.atlas.client.gui.core;
 
+import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.Identifier;
 import org.lwjgl.opengl.GL11;
@@ -164,14 +165,14 @@ public abstract class AGuiScrollbar extends GuiComponent {
 					/ (float) (getScrollbarLength() - anchorSize));
 		}
 		
-		GlStateManager.enableTexture();
-		GlStateManager.enableBlend();
-		GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-		GlStateManager.color4f(1, 1, 1, 1);
+		RenderSystem.enableTexture();
+		RenderSystem.enableBlend();
+		RenderSystem.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+		RenderSystem.color4f(1, 1, 1, 1);
 		
-		drawAnchor();
-		
-		GlStateManager.disableBlend();
+		drawAnchor(matrices);
+
+		RenderSystem.disableBlend();
 	}
 	
 	private void updateAnchorSize() {
@@ -194,7 +195,7 @@ public abstract class AGuiScrollbar extends GuiComponent {
 	protected abstract int getMousePos(int mouseX, int mouseY);
 	
 	// Modifying axis-related data
-	protected abstract void drawAnchor();
+	protected abstract void drawAnchor(MatrixStack matrices);
 	protected abstract void updateContentPos();
 	/** The width is perpendicular to the scrolling axis. */
 	protected abstract void setScrollbarWidth(int textureWidth, int textureHeight);

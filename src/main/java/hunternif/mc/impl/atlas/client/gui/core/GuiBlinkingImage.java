@@ -1,6 +1,7 @@
 package hunternif.mc.impl.atlas.client.gui.core;
 
 import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.systems.RenderSystem;
 import hunternif.mc.impl.atlas.util.AtlasRenderHelper;
 
 import net.minecraft.client.util.math.MatrixStack;
@@ -51,10 +52,13 @@ public class GuiBlinkingImage extends GuiComponent {
 			lastTickTime = currentTime;
 			isVisible = !isVisible;
 		}
-		GlStateManager.color4f(1, 1, 1, isVisible ? visibleAlpha : invisibleAlpha);
-		GlStateManager.enableBlend();
-		GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+		RenderSystem.color4f(1, 1, 1, isVisible ? visibleAlpha : invisibleAlpha);
+		RenderSystem.enableBlend();
+		RenderSystem.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+
 		drawImage(matrices);
+
+		RenderSystem.disableBlend();
 	}
 	
 	private void drawImage(MatrixStack matrices) {

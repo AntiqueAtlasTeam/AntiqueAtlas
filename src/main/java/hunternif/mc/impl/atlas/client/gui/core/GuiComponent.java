@@ -1,5 +1,6 @@
 package hunternif.mc.impl.atlas.client.gui.core;
 
+import com.mojang.blaze3d.systems.RenderSystem;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
@@ -529,11 +530,10 @@ public class GuiComponent extends Screen {
 		}
 	}
 
-	@Deprecated
 	protected double getMouseX() {
 		return MinecraftClient.getInstance().mouse.getX() * width / MinecraftClient.getInstance().getWindow().getWidth();
 	}
-	@Deprecated
+
 	protected double getMouseY() {
 		return MinecraftClient.getInstance().mouse.getY() * height / MinecraftClient.getInstance().getWindow().getHeight();
 	}
