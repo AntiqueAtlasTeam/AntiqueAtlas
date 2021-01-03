@@ -278,6 +278,7 @@ public class ClientProxy implements SimpleSynchronousResourceReloadListener {
 		setCustomTileTextureIfNone(ExtTileIdMap.TILE_END_VOID, END_VOID);
 
 		setCustomTileTextureIfNone(ExtTileIdMap.TILE_RAVINE, RAVINE);
+		setCustomTileTextureIfNone(ExtTileIdMap.SWAMP_WATER, SWAMP_WATER);
 	}
 	/** Only applies the change if no texture is registered for this tile name.
 	 * This prevents overwriting of the config when there is no real change. */

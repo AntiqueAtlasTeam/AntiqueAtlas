@@ -11,7 +11,6 @@ import net.minecraft.world.Heightmap;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.BiomeKeys;
-import net.minecraft.world.biome.BuiltinBiomes;
 import net.minecraft.world.biome.source.BiomeArray;
 import net.minecraft.world.chunk.Chunk;
 
@@ -43,7 +42,7 @@ public class BiomeDetectorBase implements IBiomeDetector {
 	/** Set to true for biome IDs that return true for BiomeDictionary.isBiomeOfType(BEACH) */
 	private static final Set<Biome> beachBiomes = new HashSet<>();
 
-	private static final Set<Biome> swampBiomes = new HashSet<>();
+	private static final Set<Identifier> swampBiomes = new HashSet<>();
 
 	/** Scan all registered biomes to mark biomes of certain types that will be
 	 * given higher priority when identifying mean biome ID for a chunk.
@@ -59,7 +58,7 @@ public class BiomeDetectorBase implements IBiomeDetector {
 					waterBiomes.add(biome);
 					break;
 				case SWAMP:
-					swampBiomes.add(biome);
+					swampBiomes.add(BuiltinRegistries.BIOME.getId(biome));
 					break;
 			}
 		}
@@ -100,7 +99,8 @@ public class BiomeDetectorBase implements IBiomeDetector {
 	}
 
 	/** If no valid biome ID is found, returns null.
-	 * @return*/
+	 * @return the detected biome ID for the given chunk
+	 */
 	@Override
 	public Identifier getBiomeID(World world, Chunk chunk) {
 		BiomeArray chunkBiomes = chunk.getBiomeArray();
@@ -117,13 +117,18 @@ public class BiomeDetectorBase implements IBiomeDetector {
 					if (y > 0) {
 						Block topBlock = chunk.getBlockState(new BlockPos(x, y-1, z)).getBlock();
 						// Check if there's surface of water at (x, z), but not swamp
-						if (topBlock == Blocks.WATER && !swampBiomes.contains(biome)) {
-							updateOccurrencesMap(biomeOccurrences, waterPoolBiome, priorityWaterPool);
+						if (topBlock == Blocks.WATER) {
+							if (swampBiomes.contains(getBiomeIdentifier(world, biome))) {
+								updateOccurrencesMap(biomeOccurrences, ExtTileIdMap.SWAMP_WATER, priorityWaterPool);
+							} else {
+								updateOccurrencesMap(biomeOccurrences, waterPoolBiome, priorityWaterPool);
+							}
 						} else if (topBlock == Blocks.LAVA) {
 							updateOccurrencesMap(biomeOccurrences, ExtTileIdMap.TILE_LAVA, prioritylavaPool);
 						}
 					}
 				}
+
 				if (doScanRavines) {
 					int height = chunk.getHeightmap(Heightmap.Type.MOTION_BLOCKING).get(x, z);
 

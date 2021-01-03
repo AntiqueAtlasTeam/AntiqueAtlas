@@ -149,6 +149,7 @@ public class TextureSet implements Comparable<TextureSet> {
 					TILE_SWAMP4,
 					TILE_SWAMP5,
 					TILE_SWAMP6),
+	SWAMP_WATER = standard("SWAMP", TILE_SWAMP, TILE_SWAMP, TILE_SWAMP, TILE_SWAMP3, TILE_SWAMP6),
 	SWAMP_HILLS = standard("SWAMP_HILLS",
 					TILE_SWAMP_HILLS,
 					TILE_SWAMP_HILLS2,
@@ -209,9 +210,10 @@ public class TextureSet implements Comparable<TextureSet> {
 	// Sophisticated stitching stuff:
 	static {
 		stitchMutually(PLAINS, SUNFLOWERS);
-		WATER.stitchTo(SHORE, ROCK_SHORE, SWAMP);
+		WATER.stitchTo(SHORE, ROCK_SHORE, SWAMP, SWAMP_WATER);
+		SWAMP_WATER.stitchTo(SWAMP, WATER);
 		LAVA.stitchTo(LAVA_SHORE);
-		SWAMP.stitchTo(SWAMP_HILLS);
+		SWAMP.stitchTo(SWAMP_HILLS, SWAMP_WATER, WATER);
 		SNOW.stitchTo(SNOW_PINES, SNOW_HILLS, ICE_SPIKES, SNOW_PINES_HILLS);
 		SNOW_PINES.stitchTo(SNOW, SNOW_HILLS, ICE_SPIKES, SNOW_PINES_HILLS);
 		stitchMutually(MOUNTAINS, MOUNTAINS_NAKED, MOUNTAINS_SNOW_CAPS, MOUNTAINS_ALL);
@@ -320,7 +322,7 @@ public class TextureSet implements Comparable<TextureSet> {
 	
 	@Override
 	public boolean equals(Object obj) {
-		if (obj == null || !(obj instanceof TextureSet)) {
+		if (!(obj instanceof TextureSet)) {
 			return false;
 		}
 		TextureSet set = (TextureSet) obj;
