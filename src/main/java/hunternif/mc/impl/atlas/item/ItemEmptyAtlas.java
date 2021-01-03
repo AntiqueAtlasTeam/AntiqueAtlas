@@ -4,11 +4,11 @@ import hunternif.mc.impl.atlas.AntiqueAtlasMod;
 import hunternif.mc.impl.atlas.RegistrarAntiqueAtlas;
 import hunternif.mc.impl.atlas.core.AtlasData;
 import hunternif.mc.impl.atlas.marker.MarkersData;
-import hunternif.mc.impl.atlas.network.packet.s2c.play.AtlasCreateS2CPacket;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.sound.SoundCategory;
+import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
@@ -24,7 +24,10 @@ public class ItemEmptyAtlas extends Item {
 			Hand hand) {
 		ItemStack stack = player.getStackInHand(hand);
 		if (world.isClient)
+		{
+			world.playSound(player, player.getBlockPos(), SoundEvents.BLOCK_ENCHANTMENT_TABLE_USE, SoundCategory.PLAYERS, 1F, 1F);
 			return new TypedActionResult<>(ActionResult.SUCCESS, stack);
+		}
 
 		int atlasID = AntiqueAtlasMod.getGlobalAtlasData(world).getNextAtlasId();
 		ItemStack atlasStack = new ItemStack(RegistrarAntiqueAtlas.ATLAS);
@@ -37,8 +40,6 @@ public class ItemEmptyAtlas extends Item {
 
         MarkersData markersData = AntiqueAtlasMod.markersData.getMarkersData(atlasID, world);
         markersData.markDirty();
-
-		new AtlasCreateS2CPacket().send((ServerPlayerEntity) player);
 
 		stack.decrement(1);
 		if (stack.isEmpty()) {

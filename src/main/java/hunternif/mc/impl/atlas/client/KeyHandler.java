@@ -1,5 +1,6 @@
 package hunternif.mc.impl.atlas.client;
 
+import hunternif.mc.impl.atlas.AntiqueAtlasModClient;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import hunternif.mc.impl.atlas.client.gui.GuiAtlas;
 import net.fabricmc.api.EnvType;
@@ -34,9 +35,7 @@ public class KeyHandler {
             if (currentScreen instanceof GuiAtlas) {
                 currentScreen.onClose();
             } else {
-                GuiAtlas gui = new GuiAtlas();
-                gui.updateL18n();
-                client.openScreen(gui);
+                AntiqueAtlasModClient.openAtlasGUI();
             }
         }
     }

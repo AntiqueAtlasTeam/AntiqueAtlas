@@ -1,7 +1,6 @@
 package hunternif.mc.impl.atlas;
 
 import hunternif.mc.impl.atlas.client.*;
-import hunternif.mc.impl.atlas.client.gui.GuiAtlas;
 import hunternif.mc.impl.atlas.ext.ExtTileIdMap;
 import hunternif.mc.impl.atlas.marker.MarkerTextureConfig;
 import hunternif.mc.impl.atlas.registry.MarkerType;
@@ -26,8 +25,6 @@ public class ClientProxy implements SimpleSynchronousResourceReloadListener {
 	private static TextureSetConfig textureSetConfig;
 	private static BiomeTextureMap textureMap;
 	private static MarkerTextureConfig markerTextureConfig;
-
-	private static GuiAtlas guiAtlas;
 
 	public void initClient() {
 		//TODO Enforce texture config loading process as follows:

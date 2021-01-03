@@ -4,6 +4,7 @@ import hunternif.mc.impl.atlas.network.packet.c2s.play.*;
 import hunternif.mc.impl.atlas.network.packet.s2c.play.*;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.network.ClientSidePacketRegistry;
 import net.fabricmc.fabric.api.network.ServerSidePacketRegistry;
 
@@ -16,11 +17,9 @@ public class AntiqueAtlasNetworking {
 		ClientSidePacketRegistry.INSTANCE.register(DimensionUpdateS2CPacket.ID, DimensionUpdateS2CPacket::apply);
 		ClientSidePacketRegistry.INSTANCE.register(MapDataS2CPacket.ID, MapDataS2CPacket::apply);
 		ClientSidePacketRegistry.INSTANCE.register(MarkersS2CPacket.ID, MarkersS2CPacket::apply);
-		ClientSidePacketRegistry.INSTANCE.register(OpenAtlasS2CPacket.ID, OpenAtlasS2CPacket::apply);
 		ClientSidePacketRegistry.INSTANCE.register(PutTileS2CPacket.ID, PutTileS2CPacket::apply);
 		ClientSidePacketRegistry.INSTANCE.register(TileGroupsS2CPacket.ID, TileGroupsS2CPacket::apply);
 		ClientSidePacketRegistry.INSTANCE.register(TileNameS2CPacket.ID, TileNameS2CPacket::apply);
-		ClientSidePacketRegistry.INSTANCE.register(AtlasCreateS2CPacket.ID, AtlasCreateS2CPacket::apply);
 	}
 
 	public static void registerC2SListeners() {

@@ -2,9 +2,8 @@ package hunternif.mc.impl.atlas.item;
 
 import java.util.Collection;
 
+import hunternif.mc.impl.atlas.AntiqueAtlasModClient;
 import hunternif.mc.impl.atlas.network.packet.s2c.play.DimensionUpdateS2CPacket;
-import hunternif.mc.impl.atlas.network.packet.s2c.play.OpenAtlasS2CPacket;
-import net.fabricmc.fabric.api.network.ServerSidePacketRegistry;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
@@ -41,8 +40,8 @@ public class AtlasItem extends Item {
 	public TypedActionResult<ItemStack> use(World world, PlayerEntity playerEntity, Hand hand) {
 		ItemStack stack = playerEntity.getStackInHand(hand);
 
-		if (!world.isClient) {
-			new OpenAtlasS2CPacket(hand).send((ServerPlayerEntity) playerEntity);
+		if (world.isClient) {
+			AntiqueAtlasModClient.openAtlasGUI(stack);
 		}
 
 		return new TypedActionResult<>(ActionResult.SUCCESS, stack);
