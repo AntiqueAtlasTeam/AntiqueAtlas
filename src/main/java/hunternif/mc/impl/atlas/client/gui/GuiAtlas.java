@@ -340,6 +340,8 @@ public class GuiAtlas extends GuiComponent {
 		markerFinalizer.addMarkerListener(blinkingIcon);
 
 		eraser.setTexture(Textures.ERASER, 12, 14, 2, 11);
+
+		state.switchTo(NORMAL);
 	}
 
     public GuiAtlas prepareToOpen(ItemStack stack) {
@@ -726,7 +728,7 @@ public class GuiAtlas extends GuiComponent {
 		iter.setScope(new Rect().setOrigin(mapStartX, mapStartZ).
 				set(mapStartX, mapStartZ, mapEndX, mapEndZ));
 		iter.setStep(tile2ChunkScale);
-		int v = 1;
+
 		while (iter.hasNext()) {
 			SubTileQuartet subtiles = iter.next();
 			for (SubTile subtile : subtiles) {
