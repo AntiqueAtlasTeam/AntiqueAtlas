@@ -131,6 +131,13 @@ public class GuiMarkerFinalizer extends GuiComponent {
 	}
 
 	@Override
+	public void close()
+	{
+		super.close();
+		scroller.close();
+	}
+
+	@Override
 	public boolean mouseClicked(double mouseX, double mouseY, int button) {
 		return super.mouseClicked(mouseX, mouseY, button) || textField.mouseClicked(mouseX, mouseY, button);
 	}
