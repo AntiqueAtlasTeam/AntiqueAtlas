@@ -210,7 +210,7 @@ public class ClientProxy implements SimpleSynchronousResourceReloadListener {
 		setBiomeTextureIfNone(BiomeKeys.WARPED_FOREST, JUNGLE);
 		setBiomeTextureIfNone(BiomeKeys.BASALT_DELTAS, MOUNTAINS_ALL);
 
-		setBiomeTextureIfNone(BiomeKeys.THE_END, END_VOID);
+		setBiomeTextureIfNone(BiomeKeys.THE_END, END_ISLAND);
 
 		setBiomeTextureIfNone(BiomeKeys.MUSHROOM_FIELDS, MUSHROOM);
 		setBiomeTextureIfNone(BiomeKeys.MUSHROOM_FIELD_SHORE, SHORE);

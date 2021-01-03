@@ -9,9 +9,12 @@ import net.fabricmc.api.Environment;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.BuiltinRegistries;
 import net.minecraft.world.biome.Biome;
+import net.minecraft.world.gen.feature.ConfiguredFeature;
+import net.minecraft.world.gen.feature.ConfiguredFeatures;
 
 import java.util.*;
 import java.util.Map.Entry;
+import java.util.function.Supplier;
 
 import static hunternif.mc.impl.atlas.client.TextureSet.*;
 
@@ -110,7 +113,9 @@ public class BiomeTextureMap extends SaveData {
 				setTexture(biome, biome.getScale() >= 0.25f ? MOUNTAINS : HILLS);
 				break;
 			case THEEND:
-				if(biome.getGenerationSettings().getFeatures().size() > 1) {
+				List<List<Supplier<ConfiguredFeature<?, ?>>>> features = biome.getGenerationSettings().getFeatures();
+				boolean has_chorus_plant = features.stream().anyMatch(supplier -> supplier.stream().anyMatch(step -> step.get() == ConfiguredFeatures.CHORUS_PLANT));
+				if(has_chorus_plant) {
 					setTexture(biome, END_ISLAND_PLANTS);
 				} else {
 					setTexture(biome, END_ISLAND);
