@@ -43,7 +43,7 @@ public class MarkerApiImpl implements MarkerAPI {
 							: AntiqueAtlasMod.markersData.getMarkersData(atlasID, world)
 							;
 
-			marker = data.createAndSaveMarker(markerType, world.getRegistryKey(), x, z, visibleAhead, label);
+			marker = data.createAndSaveMarker(MarkerType.REGISTRY.getId(markerType), world.getRegistryKey(), x, z, visibleAhead, label);
 			new MarkersS2CPacket(atlasID, world.getRegistryKey(), Collections.singleton(marker)).send((ServerWorld) world);
 		}
 

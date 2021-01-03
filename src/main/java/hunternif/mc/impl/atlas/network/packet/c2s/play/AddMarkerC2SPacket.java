@@ -24,9 +24,9 @@ import java.util.Collections;
 public class AddMarkerC2SPacket extends C2SPacket {
 	public static final Identifier ID = AntiqueAtlasMod.id("packet", "c2s", "marker", "add");
 
-	public AddMarkerC2SPacket(int atlasID, MarkerType markerType, int x, int z, boolean visibleBeforeDiscovery, Text label) {
+	public AddMarkerC2SPacket(int atlasID, Identifier markerType, int x, int z, boolean visibleBeforeDiscovery, Text label) {
 		this.writeVarInt(atlasID);
-		this.writeIdentifier(MarkerType.REGISTRY.getId(markerType));
+		this.writeIdentifier(markerType);
 		this.writeVarInt(x);
 		this.writeVarInt(z);
 		this.writeBoolean(visibleBeforeDiscovery);
@@ -58,7 +58,7 @@ public class AddMarkerC2SPacket extends C2SPacket {
 			if (playerEntity.getServer() != null) {
 				MarkersData markersData = AntiqueAtlasMod.markersData.getMarkersData(atlasID, playerEntity.getEntityWorld());
 				Marker marker = markersData.createAndSaveMarker(
-								MarkerType.REGISTRY.get(markerType),
+								markerType,
 								context.getPlayer().getEntityWorld().getRegistryKey(),
 								x,
 								z,

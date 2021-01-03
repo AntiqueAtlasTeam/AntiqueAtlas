@@ -32,7 +32,6 @@ import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Matrix4f;
-import net.minecraft.util.math.Quaternion;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL11;
 
@@ -890,7 +889,7 @@ public class GuiAtlas extends GuiComponent {
 	}
 
 	private void renderMarker(MatrixStack matrices, int mouseX, int mouseY, Marker marker, double scale) {
-		MarkerType type = marker.getType();
+		MarkerType type = MarkerType.REGISTRY.get(marker.getType());
 		if (type == null){
 			Log.warn("Could not find marker data for %s. Is it in the config file?\n", marker.getType());
 			return;

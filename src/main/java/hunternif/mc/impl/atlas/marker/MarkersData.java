@@ -114,7 +114,7 @@ public class MarkersData extends PersistentState {
 				
 				Marker marker = new Marker(
 						id,
-						MarkerType.REGISTRY.get(new Identifier(markerTag.getString(TAG_MARKER_TYPE))),
+						new Identifier(markerTag.getString(TAG_MARKER_TYPE)),
 						Text.Serializer.fromJson(markerTag.getString(TAG_MARKER_LABEL)),
 						world,
 						markerTag.getInt(TAG_MARKER_X),
@@ -138,7 +138,7 @@ public class MarkersData extends PersistentState {
 			for (Marker marker : data.getAllMarkers()) {
 				CompoundTag markerTag = new CompoundTag();
 				markerTag.putInt(TAG_MARKER_ID, marker.getId());
-				markerTag.putString(TAG_MARKER_TYPE, MarkerType.REGISTRY.getId(marker.getType()).toString());
+				markerTag.putString(TAG_MARKER_TYPE, marker.getType().toString());
 				markerTag.putString(TAG_MARKER_LABEL, Text.Serializer.toJson(marker.getLabel()));
 				markerTag.putInt(TAG_MARKER_X, marker.getX());
 				markerTag.putInt(TAG_MARKER_Y, marker.getZ());
@@ -189,11 +189,11 @@ public class MarkersData extends PersistentState {
 	/** For internal use. Use the {@link MarkerAPI} to put markers! This method
 	 * creates a new marker from the given data, saves and returns it.
 	 * Server side only! */
-	public Marker createAndSaveMarker(MarkerType type, RegistryKey<World> world, int x, int z, boolean visibleAhead, Text label) {
+	public Marker createAndSaveMarker(Identifier type, RegistryKey<World> world, int x, int z, boolean visibleAhead, Text label) {
 		Marker marker = new Marker(getNewID(), type, label, world, x, z, visibleAhead);
 		Log.info("Created new marker %s", marker.toString());
 		idMap.put(marker.getId(), marker);
-		getMarkersDataInWorld(marker.getWorld()).insertMarker(marker);
+		getMarkersDataInWorld(world).insertMarker(marker);
 		markDirty();
 		return marker;
 	}

@@ -1,9 +1,9 @@
 package hunternif.mc.impl.atlas.marker;
 
-import hunternif.mc.impl.atlas.registry.MarkerType;
 import hunternif.mc.impl.atlas.util.ShortVec2;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.text.Text;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.World;
 
@@ -21,7 +21,7 @@ public class Marker {
 	/** Id is unique only within a MarkersData instance, i.e. within one atlas
 	 * or among global markers in a world. */
 	private final int id;
-	private final MarkerType type;
+	private final Identifier type;
 	private final Text label;
 	private final RegistryKey<World> world;
 	private final int x, z;
@@ -30,7 +30,7 @@ public class Marker {
 	
 	//TODO make an option for the marker to disappear at a certain scale.
 	
-	public Marker(int id, MarkerType type, Text label, RegistryKey<World> world, int x, int z, boolean visibleAhead) {
+	public Marker(int id, Identifier type, Text label, RegistryKey<World> world, int x, int z, boolean visibleAhead) {
 		this.id = id;
 		this.type = type;
 
@@ -41,7 +41,7 @@ public class Marker {
 		this.visibleAhead = visibleAhead;
 	}
 
-	public Marker(MarkerType type, RegistryKey<World> world, Precursor precursor) {
+	public Marker(Identifier type, RegistryKey<World> world, Precursor precursor) {
 		this(precursor.id, type, precursor.label, world, precursor.x, precursor.z, precursor.visibleAhead);
 	}
 	
@@ -49,7 +49,7 @@ public class Marker {
 		return id;
 	}
 
-	public MarkerType getType() {
+	public Identifier getType() {
 		return type;
 	}
 

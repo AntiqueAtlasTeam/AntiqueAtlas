@@ -27,7 +27,7 @@ public class MarkerApiImplClient implements MarkerAPI {
 	@Nullable
 	@Override
 	public Marker putMarker(@Nonnull World world, boolean visibleAhead, int atlasID, MarkerType markerType, Text label, int x, int z) {
-		new AddMarkerC2SPacket(atlasID, markerType, x, z, visibleAhead, label).send();
+		new AddMarkerC2SPacket(atlasID, MarkerType.REGISTRY.getId(markerType), x, z, visibleAhead, label).send();
 		return null;
 	}
 

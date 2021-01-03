@@ -268,7 +268,7 @@ public class OverlayRenderer extends DrawableHelper {
             return;
         }
 
-        MarkerType type = marker.getType();
+        MarkerType type = MarkerType.REGISTRY.get(marker.getType());
         // TODO Fabric - Scale factor?
         MarkerRenderInfo info = type.getRenderInfo(1, AntiqueAtlasMod.CONFIG.tileSize, 1);
         MinecraftClient.getInstance().getTextureManager().bindTexture(info.tex);

@@ -33,7 +33,7 @@ public class MarkersS2CPacket extends S2CPacket {
 	private static final int GLOBAL = -1;
 
 	public MarkersS2CPacket(int atlasID, RegistryKey<World> world, Collection<Marker> markers) {
-		ListMultimap<MarkerType, Marker> markersByType = ArrayListMultimap.create();
+		ListMultimap<Identifier, Marker> markersByType = ArrayListMultimap.create();
 		for (Marker marker : markers) {
 			markersByType.put(marker.getType(), marker);
 		}
@@ -42,8 +42,8 @@ public class MarkersS2CPacket extends S2CPacket {
 		this.writeIdentifier(world.getValue());
 		this.writeVarInt(markersByType.keySet().size());
 
-		for (MarkerType type : markersByType.keySet()) {
-			this.writeIdentifier(MarkerType.REGISTRY.getId(type));
+		for (Identifier type : markersByType.keySet()) {
+			this.writeIdentifier(type);
 			List<Marker> markerList = markersByType.get(type);
 			this.writeVarInt(markerList.size());
 			for (Marker marker : markerList) {
@@ -80,7 +80,7 @@ public class MarkersS2CPacket extends S2CPacket {
 			for (Identifier type : markersByType.keys()) {
 				MarkerType markerType = MarkerType.REGISTRY.get(type);
 				for (Marker.Precursor precursor : markersByType.get(type)) {
-					markersData.loadMarker(new Marker(markerType, world, precursor));
+					markersData.loadMarker(new Marker(MarkerType.REGISTRY.getId(markerType), world, precursor));
 				}
 			}
 		});
