@@ -20,7 +20,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(InGameHud.class)
 @Environment(EnvType.CLIENT)
 public abstract class MixinInGameHud {
-    @Shadow protected abstract void renderCrosshair(MatrixStack matrixStack);
+    @Shadow
+    protected abstract void renderCrosshair(MatrixStack matrixStack);
 
     private final OverlayRenderer atlasOverlayRenderer = new OverlayRenderer();
 
@@ -43,9 +44,9 @@ public abstract class MixinInGameHud {
             matrices.push();
             matrices.translate(AntiqueAtlasMod.CONFIG.xPosition, AntiqueAtlasMod.CONFIG.yPosition, 0);
             matrices.scale(
-            0.3F,
-            0.3F,
-            1F
+                    0.3F,
+                    0.3F,
+                    1F
             );
             atlasOverlayRenderer.drawOverlay(matrices);
             matrices.pop();

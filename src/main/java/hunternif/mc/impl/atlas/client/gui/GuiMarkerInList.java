@@ -9,29 +9,29 @@ import net.minecraft.util.Identifier;
 
 
 public class GuiMarkerInList extends GuiToggleButton {
-	public static final int FRAME_SIZE = 34;
-	
-	private final MarkerType markerType;
-	
-	public GuiMarkerInList(MarkerType markerType) {
-		this.markerType = markerType;
-		setSize(FRAME_SIZE, FRAME_SIZE);
-	}
-	
-	public MarkerType getMarkerType() {
-		return markerType;
-	}
-	
-	@Override
-	public void render(MatrixStack matrices, int mouseX, int mouseY, float partialTick) {
-		AtlasRenderHelper.drawFullTexture(matrices, isSelected() ? Textures.MARKER_FRAME_ON : Textures.MARKER_FRAME_OFF, getGuiX() + 1, getGuiY() + 1, FRAME_SIZE);
+    public static final int FRAME_SIZE = 34;
 
-		Identifier texture = markerType.getIcon();
-		if (texture != null) {
-			AtlasRenderHelper.drawFullTexture(matrices, texture, getGuiX() + 1, getGuiY() + 1, GuiAtlas.MARKER_SIZE);
+    private final MarkerType markerType;
 
-		}
+    public GuiMarkerInList(MarkerType markerType) {
+        this.markerType = markerType;
+        setSize(FRAME_SIZE, FRAME_SIZE);
+    }
 
-		super.render(matrices, mouseX, mouseY, partialTick);
-	}
+    public MarkerType getMarkerType() {
+        return markerType;
+    }
+
+    @Override
+    public void render(MatrixStack matrices, int mouseX, int mouseY, float partialTick) {
+        AtlasRenderHelper.drawFullTexture(matrices, isSelected() ? Textures.MARKER_FRAME_ON : Textures.MARKER_FRAME_OFF, getGuiX() + 1, getGuiY() + 1, FRAME_SIZE);
+
+        Identifier texture = markerType.getIcon();
+        if (texture != null) {
+            AtlasRenderHelper.drawFullTexture(matrices, texture, getGuiX() + 1, getGuiY() + 1, GuiAtlas.MARKER_SIZE);
+
+        }
+
+        super.render(matrices, mouseX, mouseY, partialTick);
+    }
 }

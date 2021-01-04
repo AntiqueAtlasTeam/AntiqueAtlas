@@ -16,52 +16,61 @@ import java.util.List;
 
 /**
  * Use this class to obtain a reference to the APIs.
+ *
  * @author Hunternif
  */
 public class AtlasAPI {
-	private static final int VERSION = 4;
-	public static final TileAPI tiles = new TileApiImpl();
-	public static final MarkerAPI markers = new MarkerApiImpl();
+    private static final int VERSION = 4;
+    public static final TileAPI tiles = new TileApiImpl();
+    public static final MarkerAPI markers = new MarkerApiImpl();
 
-	/** Version of the API, meaning only this particular class. You might
-	 * want to check static field VERSION in the specific API interfaces. */
-	public static int getVersion() {
-		return VERSION;
-	}
+    /**
+     * Version of the API, meaning only this particular class. You might
+     * want to check static field VERSION in the specific API interfaces.
+     */
+    public static int getVersion() {
+        return VERSION;
+    }
 
-	public static Item getAtlasItem() {
-		return Registry.ITEM.get(new Identifier("antiqueatlas:antique_atlas"));
-	}
+    public static Item getAtlasItem() {
+        return Registry.ITEM.get(new Identifier("antiqueatlas:antique_atlas"));
+    }
 
-	/** API for biomes and custom tiles (i.e. dungeons, towns etc). */
-	public static TileAPI getTileAPI() {
-		return tiles;
-	}
-	
-	/** API for custom markers. */
-	public static MarkerAPI getMarkerAPI() {
-		return markers;
-	}
-	
-	/** Convenience method that returns a list of atlas IDs for all atlas items
-	 * the player is currently carrying. **/
-	public static List<Integer> getPlayerAtlases(PlayerEntity player) {
-		if (!AntiqueAtlasMod.CONFIG.itemNeeded) {
-			return Collections.singletonList(player.getUuid().hashCode());
-		}
+    /**
+     * API for biomes and custom tiles (i.e. dungeons, towns etc).
+     */
+    public static TileAPI getTileAPI() {
+        return tiles;
+    }
 
-		List<Integer> list = new ArrayList<>();
-		for (ItemStack stack : player.inventory.main) {
-			if (!stack.isEmpty() && stack.getItem() instanceof AtlasItem) {
-				list.add(AtlasItem.getAtlasID(stack));
-			}
-		}
-		for (ItemStack stack : player.inventory.offHand) {
-			if (!stack.isEmpty() && stack.getItem() instanceof AtlasItem) {
-				list.add(AtlasItem.getAtlasID(stack));
-			}
-		}
+    /**
+     * API for custom markers.
+     */
+    public static MarkerAPI getMarkerAPI() {
+        return markers;
+    }
 
-		return list;
-	}
+    /**
+     * Convenience method that returns a list of atlas IDs for all atlas items
+     * the player is currently carrying.
+     **/
+    public static List<Integer> getPlayerAtlases(PlayerEntity player) {
+        if (!AntiqueAtlasMod.CONFIG.itemNeeded) {
+            return Collections.singletonList(player.getUuid().hashCode());
+        }
+
+        List<Integer> list = new ArrayList<>();
+        for (ItemStack stack : player.inventory.main) {
+            if (!stack.isEmpty() && stack.getItem() instanceof AtlasItem) {
+                list.add(AtlasItem.getAtlasID(stack));
+            }
+        }
+        for (ItemStack stack : player.inventory.offHand) {
+            if (!stack.isEmpty() && stack.getItem() instanceof AtlasItem) {
+                list.add(AtlasItem.getAtlasID(stack));
+            }
+        }
+
+        return list;
+    }
 }

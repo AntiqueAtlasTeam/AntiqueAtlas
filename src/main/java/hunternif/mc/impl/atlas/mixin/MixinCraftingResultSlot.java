@@ -18,8 +18,12 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(CraftingResultSlot.class)
 public class MixinCraftingResultSlot extends Slot {
-    @Final @Shadow private CraftingInventory input;
-    @Final @Shadow private PlayerEntity player;
+    @Final
+    @Shadow
+    private CraftingInventory input;
+    @Final
+    @Shadow
+    private PlayerEntity player;
 
     public MixinCraftingResultSlot(Inventory inventory_1, int int_1, int int_2, int int_3) {
         super(inventory_1, int_1, int_2, int_3);

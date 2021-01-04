@@ -7,5 +7,5 @@ import net.fabricmc.api.Environment;
 
 @Environment(EnvType.CLIENT)
 public class MarkerRegistry {
-	public static MarkerAPI API = new MarkerApiImplClient();
+    public static MarkerAPI API = new MarkerApiImplClient();
 }

@@ -14,7 +14,6 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
 import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.World;
-import net.minecraft.world.dimension.DimensionType;
 import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nonnull;
@@ -26,12 +25,12 @@ import java.util.Set;
 public class StructureWatcherGeneric implements IStructureWatcher {
 
     private final Set<WatcherPos> visited = new HashSet<>();
-	private final String datFileName;
-	private MarkerType markerType;
-	private MarkerType tileMarker;
-	private Text markerLabel;
-	private Text tileMarkerLabel;
-	private final RegistryKey<World> dimension;
+    private final String datFileName;
+    private MarkerType markerType;
+    private MarkerType tileMarker;
+    private Text markerLabel;
+    private Text tileMarkerLabel;
+    private final RegistryKey<World> dimension;
 
     public StructureWatcherGeneric(String datFileName, RegistryKey<World> dimType, MarkerType markerType, Text label) {
         this.markerType = markerType;
@@ -50,7 +49,7 @@ public class StructureWatcherGeneric implements IStructureWatcher {
 
     @Override
     public boolean isDimensionValid(ServerWorld world) {
-       	return this.dimension == world.getRegistryKey();
+        return this.dimension == world.getRegistryKey();
     }
 
     @Nullable
@@ -91,33 +90,33 @@ public class StructureWatcherGeneric implements IStructureWatcher {
         tileMarkerLabel = label;
         return this;
     }
-	
-	private void visit(World world, CompoundTag tag) {
-		int chunkX = tag.getInt("ChunkX");
-		int chunkZ = tag.getInt("ChunkZ");
-		boolean foundMarker = false;
-		boolean foundTileMarker = false;
-		
-    	List<Marker> markers = AntiqueAtlasMod.globalMarkersData.getData()
-				.getMarkersAtChunk(world.getRegistryKey(), chunkX / MarkersData.CHUNK_STEP, chunkZ / MarkersData.CHUNK_STEP);
-		if (markers != null) {
-			for (Marker marker : markers) {
-				if (!foundMarker && marker.getChunkX() == chunkX && marker.getChunkZ() == chunkZ &&
-				    marker.getType().equals(this.markerType)) {
-					foundMarker = true;
-				}
-				if (!foundTileMarker && tileMarker != null && marker.getChunkX() == chunkX && marker.getChunkZ() == chunkZ &&
-				    marker.getType().equals(tileMarker)) {
-					foundTileMarker = true;
-				}
-			}
-		}
-		
-		if (AntiqueAtlasMod.CONFIG.autoVillageMarkers) {
-			if(!foundMarker)
-				AtlasAPI.markers.putGlobalMarker(world, false, markerType, markerLabel, (chunkX << 4) + 8, (chunkZ << 4) + 8);
-			if(tileMarker != null && !foundTileMarker)
-				AtlasAPI.markers.putGlobalMarker(world, false, markerType, tileMarkerLabel, (chunkX << 4) + 8, (chunkZ << 4) + 8);
-		}
-	}
+
+    private void visit(World world, CompoundTag tag) {
+        int chunkX = tag.getInt("ChunkX");
+        int chunkZ = tag.getInt("ChunkZ");
+        boolean foundMarker = false;
+        boolean foundTileMarker = false;
+
+        List<Marker> markers = AntiqueAtlasMod.globalMarkersData.getData()
+                .getMarkersAtChunk(world.getRegistryKey(), chunkX / MarkersData.CHUNK_STEP, chunkZ / MarkersData.CHUNK_STEP);
+        if (markers != null) {
+            for (Marker marker : markers) {
+                if (!foundMarker && marker.getChunkX() == chunkX && marker.getChunkZ() == chunkZ &&
+                        marker.getType().equals(this.markerType)) {
+                    foundMarker = true;
+                }
+                if (!foundTileMarker && tileMarker != null && marker.getChunkX() == chunkX && marker.getChunkZ() == chunkZ &&
+                        marker.getType().equals(tileMarker)) {
+                    foundTileMarker = true;
+                }
+            }
+        }
+
+        if (AntiqueAtlasMod.CONFIG.autoVillageMarkers) {
+            if (!foundMarker)
+                AtlasAPI.markers.putGlobalMarker(world, false, markerType, markerLabel, (chunkX << 4) + 8, (chunkZ << 4) + 8);
+            if (tileMarker != null && !foundTileMarker)
+                AtlasAPI.markers.putGlobalMarker(world, false, markerType, tileMarkerLabel, (chunkX << 4) + 8, (chunkZ << 4) + 8);
+        }
+    }
 }

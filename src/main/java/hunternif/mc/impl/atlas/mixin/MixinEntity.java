@@ -7,11 +7,11 @@ import org.spongepowered.asm.mixin.Shadow;
 
 @Mixin(Entity.class)
 public class MixinEntity implements EntityHooksAA {
-	@Shadow
-	protected boolean inNetherPortal;
+    @Shadow
+    protected boolean inNetherPortal;
 
-	@Override
-	public boolean antiqueAtlas_isInPortal() {
-		return inNetherPortal;
-	}
+    @Override
+    public boolean antiqueAtlas_isInPortal() {
+        return inNetherPortal;
+    }
 }

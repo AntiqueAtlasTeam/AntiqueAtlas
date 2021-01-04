@@ -109,12 +109,12 @@ public class OverlayRenderer extends DrawableHelper {
         // visible
         this.client.getTextureManager().bindTexture(Textures.BOOK);
         drawTexture(matrices, 0, 0, (int) (GuiAtlas.WIDTH * 1.5), (int) (GuiAtlas.HEIGHT * 1.5),
-            0,
-            0,
-            310,
-            218,
-            310,
-            218
+                0,
+                0,
+                310,
+                218,
+                310,
+                218
         );
 
         matrices.push();
@@ -215,7 +215,7 @@ public class OverlayRenderer extends DrawableHelper {
         MinecraftClient.getInstance().getTextureManager().bindTexture(Textures.PLAYER);
         matrices.push();
 
-        matrices.translate((int)((GuiAtlas.WIDTH * 1.5F) / 2F), (int)((GuiAtlas.HEIGHT * 1.5F) / 2F), 0);
+        matrices.translate((int) ((GuiAtlas.WIDTH * 1.5F) / 2F), (int) ((GuiAtlas.HEIGHT * 1.5F) / 2F), 0);
         matrices.multiply(new Quaternion(Vector3f.POSITIVE_Z, this.player.getHeadYaw() + 180, true));
         matrices.translate(-AntiqueAtlasMod.CONFIG.playerIconWidth / 2.0, -AntiqueAtlasMod.CONFIG.playerIconHeight / 2.0, 0);
 
@@ -228,8 +228,8 @@ public class OverlayRenderer extends DrawableHelper {
         Rect mcchunks = getChunkCoverage(player.getPos());
         Rect chunks = new Rect(mcchunks.minX / MarkersData.CHUNK_STEP,
                 mcchunks.minY / MarkersData.CHUNK_STEP,
-                (int) Math.ceil((float)mcchunks.maxX / MarkersData.CHUNK_STEP),
-                (int) Math.ceil((float)mcchunks.maxY / MarkersData.CHUNK_STEP));
+                (int) Math.ceil((float) mcchunks.maxX / MarkersData.CHUNK_STEP),
+                (int) Math.ceil((float) mcchunks.maxY / MarkersData.CHUNK_STEP));
 
         int shapeMiddleX = (int) ((GuiAtlas.WIDTH * 1.5F) / (INNER_ELEMENTS_SCALE_FACTOR * 2));
         int shapeMiddleY = (int) ((GuiAtlas.HEIGHT * 1.5F) / (INNER_ELEMENTS_SCALE_FACTOR * 2));
@@ -247,7 +247,7 @@ public class OverlayRenderer extends DrawableHelper {
                     float relativeChunkPositionX = (float) (marker.getChunkX()
                             - chunkPosition.x);
                     float relativeChunkPositionY = (float) (marker.getChunkZ()
-                             - chunkPosition.z);
+                            - chunkPosition.z);
 
                     renderMarker(matrices, marker,
                             shapeMiddleX

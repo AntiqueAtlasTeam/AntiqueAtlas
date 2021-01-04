@@ -15,24 +15,23 @@ import net.minecraft.util.TypedActionResult;
 import net.minecraft.world.World;
 
 public class ItemEmptyAtlas extends Item {
-	public ItemEmptyAtlas(Item.Settings settings) {
-		super(settings);
-	}
+    public ItemEmptyAtlas(Item.Settings settings) {
+        super(settings);
+    }
 
-	@Override
-	public TypedActionResult<ItemStack> use(World world, PlayerEntity player,
-			Hand hand) {
-		ItemStack stack = player.getStackInHand(hand);
-		if (world.isClient)
-		{
-			world.playSound(player, player.getBlockPos(), SoundEvents.BLOCK_ENCHANTMENT_TABLE_USE, SoundCategory.PLAYERS, 1F, 1F);
-			return new TypedActionResult<>(ActionResult.SUCCESS, stack);
-		}
+    @Override
+    public TypedActionResult<ItemStack> use(World world, PlayerEntity player,
+                                            Hand hand) {
+        ItemStack stack = player.getStackInHand(hand);
+        if (world.isClient) {
+            world.playSound(player, player.getBlockPos(), SoundEvents.BLOCK_ENCHANTMENT_TABLE_USE, SoundCategory.PLAYERS, 1F, 1F);
+            return new TypedActionResult<>(ActionResult.SUCCESS, stack);
+        }
 
-		int atlasID = AntiqueAtlasMod.getGlobalAtlasData(world).getNextAtlasId();
-		ItemStack atlasStack = new ItemStack(RegistrarAntiqueAtlas.ATLAS);
+        int atlasID = AntiqueAtlasMod.getGlobalAtlasData(world).getNextAtlasId();
+        ItemStack atlasStack = new ItemStack(RegistrarAntiqueAtlas.ATLAS);
 
-		atlasStack.getOrCreateTag().putInt("atlasID", atlasID);
+        atlasStack.getOrCreateTag().putInt("atlasID", atlasID);
 
         AtlasData atlasData = AntiqueAtlasMod.atlasData.getAtlasData(atlasID, world);
         atlasData.getWorldData(player.getEntityWorld().getRegistryKey()).setBrowsingPositionTo(player);
@@ -41,15 +40,15 @@ public class ItemEmptyAtlas extends Item {
         MarkersData markersData = AntiqueAtlasMod.markersData.getMarkersData(atlasID, world);
         markersData.markDirty();
 
-		stack.decrement(1);
-		if (stack.isEmpty()) {
-			return new TypedActionResult<>(ActionResult.SUCCESS, atlasStack);
-		} else {
-			if (!player.inventory.insertStack(atlasStack.copy())) {
-				player.dropItem(atlasStack, true);
-			}
+        stack.decrement(1);
+        if (stack.isEmpty()) {
+            return new TypedActionResult<>(ActionResult.SUCCESS, atlasStack);
+        } else {
+            if (!player.inventory.insertStack(atlasStack.copy())) {
+                player.dropItem(atlasStack, true);
+            }
 
-			return new TypedActionResult<>(ActionResult.SUCCESS, stack);
-		}
-	}
+            return new TypedActionResult<>(ActionResult.SUCCESS, stack);
+        }
+    }
 }

@@ -2,9 +2,9 @@ package hunternif.mc.impl.atlas.util;
 
 class WorldUtil {
 
-	/**
-	 * Returns the village if the specified chunk overlays its territory.
-	 */
+    /**
+     * Returns the village if the specified chunk overlays its territory.
+     */
 	/* public static VillageProperties getVillageInChunk(World world, Chunk chunk) {
 		int centerX = (chunk.getPos().x << 4) + 8;
 		int centerZ = (chunk.getPos().z << 4) + 8;
@@ -19,10 +19,10 @@ class WorldUtil {
 		}
 		return null;
 	} */
-	
-	/**
-	 * Returns true if the village has a door in the specified chunk.
-	 */
+
+    /**
+     * Returns true if the village has a door in the specified chunk.
+     */
 	/* public static boolean isVillageDoorInChunk(VillageProperties village, Chunk chunk) {
 		int centerX = (chunk.getPos().x << 4) + 8;
 		int centerZ = (chunk.getPos().z << 4) + 8;
