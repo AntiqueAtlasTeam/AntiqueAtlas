@@ -1,6 +1,6 @@
 package kenkron.antiqueatlasoverlay;
 
-import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.systems.RenderSystem;
 import hunternif.mc.impl.atlas.AntiqueAtlasMod;
 import hunternif.mc.impl.atlas.RegistrarAntiqueAtlas;
 import hunternif.mc.impl.atlas.client.*;
@@ -103,10 +103,6 @@ public class OverlayRenderer extends DrawableHelper {
     }
 
     private void drawMinimap(MatrixStack matrices) {
-//        GlStateManager.color4f(1, 1, 1, 1);
-//        GlStateManager.enableBlend();
-//        GlStateManager.alphaFunc(GL11.GL_GREATER, 0); // So light detail on tiles is
-        // visible
         this.client.getTextureManager().bindTexture(Textures.BOOK);
         drawTexture(matrices, 0, 0, (int) (GuiAtlas.WIDTH * 1.5), (int) (GuiAtlas.HEIGHT * 1.5),
                 0,
@@ -120,6 +116,9 @@ public class OverlayRenderer extends DrawableHelper {
         matrices.push();
         matrices.push();
         matrices.scale(INNER_ELEMENTS_SCALE_FACTOR, INNER_ELEMENTS_SCALE_FACTOR, 1F);
+
+        RenderSystem.enableBlend();
+        RenderSystem.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
         drawTiles(matrices);
         if (AntiqueAtlasMod.CONFIG.markerSize > 0) {
@@ -142,13 +141,11 @@ public class OverlayRenderer extends DrawableHelper {
                 310,
                 218
         );
-        GlStateManager.disableBlend();
+
+        RenderSystem.disableBlend();
     }
 
     private void drawTiles(MatrixStack matrices) {
-        GlStateManager.enableBlend();
-        GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-
         WorldData biomeData = AntiqueAtlasMod.atlasData.getAtlasData(
                 atlasID, this.world).getWorldData(this.world.getRegistryKey());
 
