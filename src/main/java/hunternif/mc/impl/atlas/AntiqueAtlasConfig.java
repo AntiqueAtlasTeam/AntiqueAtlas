@@ -1,159 +1,224 @@
 package hunternif.mc.impl.atlas;
 
 import hunternif.mc.impl.atlas.client.gui.GuiAtlas;
-import me.sargunvohra.mcmods.autoconfig1u.ConfigData;
-import me.sargunvohra.mcmods.autoconfig1u.annotation.Config;
-import me.sargunvohra.mcmods.autoconfig1u.annotation.ConfigEntry;
-import me.sargunvohra.mcmods.autoconfig1u.shadowed.blue.endless.jankson.Comment;
+import net.minecraftforge.common.ForgeConfigSpec;
 
-@Config(name = "antiqueatlas")
-public class AntiqueAtlasConfig implements ConfigData {
-    //============ Gameplay settings ==============
-    @ConfigEntry.Category("gameplay")
-    @Comment("Whether to remember last open browsing position and zoom level for each dimension in every atlas.\nIf disabled, all dimensions and all atlases will be \"synchronized\" at the same coordinates and zoom level, and map will \"follow\" player by default.")
-    public boolean doSaveBrowsingPos = true;
+public class AntiqueAtlasConfig {
+	//============ Gameplay settings ==============
+    public static ForgeConfigSpec.BooleanValue doSaveBrowsingPos;
 
-    @ConfigEntry.Category("gameplay")
-    @Comment("Whether to add local marker for the spot where the player died.")
-    public boolean autoDeathMarker = true;
+    public static ForgeConfigSpec.BooleanValue autoDeathMarker;
 
-    @ConfigEntry.Category("gameplay")
-    @Comment("Whether to add global markers for NPC villages.")
-    public boolean autoVillageMarkers = true;
+    public static ForgeConfigSpec.BooleanValue autoVillageMarkers;
 
-    @ConfigEntry.Category("gameplay")
-    @Comment("Whether to add global markers for Nether Portals.")
-    public boolean autoNetherPortalMarkers = true;
+    public static ForgeConfigSpec.BooleanValue autoNetherPortalMarkers;
 
-    @ConfigEntry.Category("gameplay")
-    @Comment("Player will need to craft atlas item to use atlas.")
-    public boolean itemNeeded = true;
+    public static ForgeConfigSpec.BooleanValue itemNeeded;
 
     //============ Interface settings =============
-    @ConfigEntry.Category("userInterface")
-    public boolean doScaleMarkers = false;
+    public static ForgeConfigSpec.BooleanValue doScaleMarkers;
 
-    @ConfigEntry.Category("userInterface")
-    @Comment("Default zoom level. The number corresponds to the size of a block on the map relative to the size of a GUI pixel. Preferrably a power of 2.")
-    //@Setting.Constrain.Range(min = 0.001953125, max = 16.0)
-    public double defaultScale = 0.5f;
+    public static ForgeConfigSpec.DoubleValue defaultScale;
 
-    @ConfigEntry.Category("userInterface")
-    @Comment("Minimum zoom level. The number corresponds to the size of a block on the map relative to the size of a GUI pixel. Preferrably a power of 2. Smaller values may decrease performance!")
-    //@Setting.Constrain.Range(min = 0.001953125, max = 16.0)
-    public double minScale = 1.0 / 32.0;
+    public static ForgeConfigSpec.DoubleValue minScale;
 
-    @ConfigEntry.Category("userInterface")
-    @Comment("Maximum zoom level. The number corresponds to the size of a block on the map relative to the size of a GUI pixel. Preferrably a power of 2.")
-    //@Setting.Constrain.Range(min = 0.001953125, max = 16.0)
-    public double maxScale = 4;
+    public static ForgeConfigSpec.DoubleValue maxScale;
 
-    @ConfigEntry.Category("userInterface")
-    @Comment("If false (by default), then mousewheel up is zoom in, mousewheel down is zoom out.\nIf true, then the direction is reversed.")
-    public boolean doReverseWheelZoom = false;
+    public static ForgeConfigSpec.BooleanValue doReverseWheelZoom;
 
     //=========== Performance settings ============
-    @ConfigEntry.Category("performance")
-    @Comment("The radius of the area around the player which is scanned by the Atlas at regular intervals.\nNote that this will not force faraway chunks to load, unless force_chunk_loading is enabled.\nLower value gives better performance.")
-    public int scanRadius = 11;
+    public static ForgeConfigSpec.IntValue scanRadius;
 
-    @ConfigEntry.Category("performance")
-    @Comment("Force loading of chunks within scan radius even if it exceeds regular chunk loading distance.\nEnabling this may SEVERELY decrease performance!")
-    public boolean forceChunkLoading = false;
+    public static ForgeConfigSpec.BooleanValue forceChunkLoading;
 
-    @ConfigEntry.Category("performance")
-    @Comment("Time in seconds between two scans of the area.\nHigher value gives better performance.")
-    public float newScanInterval = 1f;
+    public static ForgeConfigSpec.DoubleValue newScanInterval; //Was A float
 
-    @ConfigEntry.Category("performance")
-    @Comment("Whether to rescan chunks in the area that have been previously mapped. This is useful in case of changes in coastline (including small ponds of water and lava), or if land disappears completely (for sky worlds).\nDisable for better performance.")
-    public boolean doRescan = true;
+    public static ForgeConfigSpec.BooleanValue doRescan;
 
-    @ConfigEntry.Category("performance")
-    @Comment("The number of area scans between full rescans.\nHigher value gives better performance.")
-    //@Setting.Constrain.Range(min = 1, max = 1000)
-    public int rescanRate = 4;
+    public static ForgeConfigSpec.IntValue rescanRate;
 
-    @ConfigEntry.Category("performance")
-    @Comment("The maximum number of markers a particular atlas can hold.")
-    //@Setting.Constrain.Range(min = 0, max = 2147483647)
-    public int markerLimit = 1024;
+    public static ForgeConfigSpec.IntValue markerLimit;
 
-    @ConfigEntry.Category("performance")
-    @Comment("Whether to perform additional scanning to locate small ponds of water or lava.\nDisable for better performance.")
-    public boolean doScanPonds = true;
+    public static ForgeConfigSpec.BooleanValue doScanPonds;
 
-    @ConfigEntry.Category("performance")
-    @Comment("Whether to perform additional scanning to locate ravines.\nDisable for better performance.")
-    public boolean doScanRavines = true;
+    public static ForgeConfigSpec.BooleanValue doScanRavines;
 
-    @ConfigEntry.Category("performance")
-    @Comment("If true, map render time will be output.")
-    public boolean debugRender = false;
+    public static ForgeConfigSpec.BooleanValue debugRender;
 
     //=========== Overlay settings ============
-    @ConfigEntry.Category("overlayPosition")
-    @Comment("If true, the map position's x axis will align 0 to the right\nof the screen, increasing towards the left.")
-    public boolean alignRight = false;
+    public static ForgeConfigSpec.BooleanValue alignRight;
 
-    @ConfigEntry.Category("overlayPosition")
-    @Comment("If true, the map position's y axis will align 0 to the bottom\nof the screen, increasing towards the top.")
-    public boolean alignBottom = false;
+    public static ForgeConfigSpec.BooleanValue alignBottom;
 
-    @ConfigEntry.Category("overlayPosition")
-    @Comment("Map's minimum position along the x axis in GUI pixels.\nNote that this will change with Minecraft's GUI scale configuration.")
-    public int xPosition = 2;
+    public static ForgeConfigSpec.IntValue xPosition;
 
-    @ConfigEntry.Category("overlayPosition")
-    @Comment("Map's minimum position along the y axis in GUI pixels.\nNote that this will change with Minecraft's GUI scale configuration.")
-    //@Setting.Constrain.Range(min = 0)
-    public int yPosition = 2;
+    public static ForgeConfigSpec.IntValue yPosition;
 
-    @ConfigEntry.Category("overlayPosition")
-    @Comment("Map's width in GUI pixels.\nNote that this will change with Minecraft's GUI scale configuration.")
-    //@Setting.Constrain.Range(min = 0)
-    public int width = GuiAtlas.WIDTH / 2;
+    public static ForgeConfigSpec.IntValue width;
 
-    @ConfigEntry.Category("overlayPosition")
-    @Comment("Map's height in GUI pixels.\nNote that this will change with Minecraft's GUI scale configuration.")
-    //@Setting.Constrain.Range(min = 0)
-    public int height = GuiAtlas.HEIGHT / 2;
+    public static ForgeConfigSpec.IntValue height;
 
-    @ConfigEntry.Category("overlayAppearance")
-    @Comment("The size (in GUI pixels) of a map's tile.\nNote that this will change with Minecraft's GUI scale configuration.\nWhen using a small gui scale, the map may look better with a TILE_SIZE of 16 or more.")
-    //@Setting.Constrain.Range(min = 1, max = 10)
-    public int tileSize = 8;
+    public static ForgeConfigSpec.IntValue tileSize;
 
-    @ConfigEntry.Category("overlayAppearance")
-    @Comment("The size (in GUI pixels) of a marker on the map.\nNote that this will change with Minecraft's GUI scale configuration.")
-    //@Setting.Constrain.Range(min = 0)
-    public int markerSize = GuiAtlas.MARKER_SIZE / 2;
+    public static ForgeConfigSpec.IntValue markerSize;
 
-    @ConfigEntry.Category("overlayAppearance")
-    @Comment("The width (in GUI pixels) of the player's icon.")
-    //@Setting.Constrain.Range(min = 0)
-    public int playerIconWidth = 14;
+    public static ForgeConfigSpec.IntValue playerIconWidth;
 
-    @ConfigEntry.Category("overlayAppearance")
-    @Comment("The height (in GUI pixels) of the player's icon.")
-    //@Setting.Constrain.Range(min = 0)
-    public int playerIconHeight = 16;
+    public static ForgeConfigSpec.IntValue playerIconHeight;
 
-    @ConfigEntry.Category("overlayAppearance")
-    @Comment("The width of the map border on the left and right sides of the minimap tiles.\nRepresented as a fraction of the image width.\nBelow a certain threshold, this border will be overtaken by the map border graphic.")
-    //@Setting.Constrain.Range(min = 0.0, max = 0.5)
-    public float borderX = 0.05F;
+    public static ForgeConfigSpec.DoubleValue borderX; //Was A float
 
-    @ConfigEntry.Category("overlayAppearance")
-    @Comment("The width of the map border on the top and bottom sides of the minimap tiles.\nRepresented as a fraction of the image width.\nBelow a certain threshold, this border will be overtaken by the map border graphic.")
-    //@Setting.Constrain.Range(min = 0.0, max = 0.5)
-    public float borderY = 0.05F;
+    public static ForgeConfigSpec.DoubleValue borderY; //Was A float
 
-    @ConfigEntry.Category("overlayAppearance")
-    @Comment("If true, the minimap will show the map of an atlas only while it is held.\nIf false, the minimap will show the map of the first atlas in the hotbar.")
-    public boolean requiresHold = true;
+    public static ForgeConfigSpec.BooleanValue requiresHold;
 
-    @ConfigEntry.Category("overlayAppearance")
-    @Comment("Set true to enable minimap")
-    public boolean enabled = false;
+    public static ForgeConfigSpec.BooleanValue enabled;
+	
+	public static int MAX = 2147483647;
+	public static void init(ForgeConfigSpec.Builder client) {
+		String category = "gameplay.";
+		
+		doSaveBrowsingPos = client
+				.comment("Whether to remember last open browsing position and zoom level for each dimension in every atlas.\nIf disabled, all dimensions and all atlases will be \"synchronized\" at the same coordinates and zoom level, and map will \"follow\" player by default.")
+				.define(category+"doSaveBrowsingPos", true);
+		
+		autoDeathMarker = client
+				.comment("Whether to add local marker for the spot where the player died.")
+				.define(category+"autoDeathMarker", true);
+		
+		autoVillageMarkers = client
+				.comment("Whether to add global markers for NPC villages.")
+				.define(category+"autoVillageMarkers", true);
+		
+		autoNetherPortalMarkers = client
+				.comment("Whether to add global markers for Nether Portals.")
+				.define(category+"autoNetherPortalMarkers", true);
+		
+		itemNeeded = client
+				.comment("Player will need to craft atlas item to use atlas.")
+				.define(category+"itemNeeded", true);
+		
+		category = "userInterface.";
+		
+		doScaleMarkers = client
+				.define(category+"doReverseWheelZoom", false);
+		
+		defaultScale = client
+				.comment("Default zoom level. The number corresponds to the size of a block on the map relative to the size of a GUI pixel. Preferrably a power of 2.")
+				.defineInRange(category+"defaultScale", 0.5f, 0.001953125, 16.0);
+		
+		minScale = client
+				.comment("Minimum zoom level. The number corresponds to the size of a block on the map relative to the size of a GUI pixel. Preferrably a power of 2. Smaller values may decrease performance!")
+				.defineInRange(category+"minScale", 1.0 / 32.0, 0.001953125, 16.0);
+		
+		maxScale = client
+				.comment("Maximum zoom level. The number corresponds to the size of a block on the map relative to the size of a GUI pixel. Preferrably a power of 2.")
+				.defineInRange(category+"maxScale", 4, 0.001953125, 16.0);
+		
+		doReverseWheelZoom = client
+				.comment("If false (by default), then mousewheel up is zoom in, mousewheel down is zoom out.\nIf true, then the direction is reversed.")
+				.define(category+"doReverseWheelZoom", false);
+		
+		category = "performance.";
+		
+		scanRadius = client
+				.comment("The radius of the area around the player which is scanned by the Atlas at regular intervals.\nNote that this will not force faraway chunks to load, unless force_chunk_loading is enabled.\nLower value gives better performance.")
+				.defineInRange(category+"scanRadius", 11, 0, MAX);
+		
+		forceChunkLoading = client
+				.comment("Force loading of chunks within scan radius even if it exceeds regular chunk loading distance.\nEnabling this may SEVERELY decrease performance!")
+				.define(category+"forceChunkLoading", false);
+		
+		newScanInterval = client
+				.comment("Time in seconds between two scans of the area.\nHigher value gives better performance.")
+				.defineInRange(category+"newScanInterval", 1f, 0.0f, MAX);
+		
+		doRescan = client
+				.comment("Whether to rescan chunks in the area that have been previously mapped. This is useful in case of changes in coastline (including small ponds of water and lava), or if land disappears completely (for sky worlds).\nDisable for better performance.")
+				.define(category+"doRescan", true);
+		
+		rescanRate = client
+				.comment("The number of area scans between full rescans.\nHigher value gives better performance.")
+				.defineInRange(category+"rescanRate", 4, 1, 1000);
+		
+		markerLimit = client
+				.comment("The maximum number of markers a particular atlas can hold.")
+				.defineInRange(category+"markerLimit", 1024, 0, 2147483647);
+		
+		doScanPonds = client
+				.comment("Whether to perform additional scanning to locate small ponds of water or lava.\nDisable for better performance.")
+				.define(category+"doScanPonds", true);
+		
+		doScanRavines = client
+				.comment("Whether to perform additional scanning to locate ravines.\nDisable for better performance.")
+				.define(category+"doScanRavines", true);
+		
+		debugRender = client
+				.comment("If true, map render time will be output.")
+				.define(category+"debugRender", false);
+		
+		category = "overlayPosition.";
+		
+		alignRight = client
+				.comment("If true, the map position's x axis will align 0 to the right\nof the screen, increasing towards the left.")
+				.define(category+"alignRight", false);
+		
+		alignBottom = client
+				.comment("If true, the map position's y axis will align 0 to the bottom\nof the screen, increasing towards the top.")
+				.define(category+"alignBottom", false);
+		
+		xPosition = client
+				.comment("Map's minimum position along the x axis in GUI pixels.\nNote that this will change with Minecraft's GUI scale configuration.")
+				.defineInRange(category+"xPosition", 2, 0, MAX);
+		
+		yPosition = client
+				.comment("Map's minimum position along the y axis in GUI pixels.\nNote that this will change with Minecraft's GUI scale configuration.")
+				.defineInRange(category+"yPosition", 2, 0, MAX);
+		
+		width = client
+				.comment("Map's width in GUI pixels.\nNote that this will change with Minecraft's GUI scale configuration.")
+				.defineInRange(category+"width", GuiAtlas.WIDTH / 2, 0, MAX);
+		
+		height = client
+				.comment("Map's height in GUI pixels.\nNote that this will change with Minecraft's GUI scale configuration.")
+				.defineInRange(category+"height", GuiAtlas.HEIGHT / 2, 0, MAX);
+		
+
+		category = "overlayAppearance.";
+		
+		tileSize = client
+				.comment("The size (in GUI pixels) of a map's tile.\nNote that this will change with Minecraft's GUI scale configuration.\nWhen using a small gui scale, the map may look better with a TILE_SIZE of 16 or more.")
+				.defineInRange(category+"tileSize", 8, 1, 10);
+		
+		markerSize = client
+				.comment("The size (in GUI pixels) of a marker on the map.\nNote that this will change with Minecraft's GUI scale configuration.")
+				.defineInRange(category+"markerSize", GuiAtlas.MARKER_SIZE / 2, 0, MAX);
+		
+		playerIconWidth = client
+				.comment("The width (in GUI pixels) of the player's icon.")
+				.defineInRange(category+"playerIconWidth", 14, 0, MAX);
+		
+		playerIconHeight = client
+				.comment("The height (in GUI pixels) of the player's icon.")
+				.defineInRange(category+"playerIconHeight", 16, 0, MAX);
+		
+		borderX = client
+				.comment("The width of the map border on the left and right sides of the minimap tiles.\nRepresented as a fraction of the image width.\nBelow a certain threshold, this border will be overtaken by the map border graphic.")
+				.defineInRange(category+"borderX", 0.05, 0.0, 0.5);
+		
+		borderY = client
+				.comment("The width of the map border on the top and bottom sides of the minimap tiles.\nRepresented as a fraction of the image width.\nBelow a certain threshold, this border will be overtaken by the map border graphic.")
+				.defineInRange(category+"borderY", 0.05, 0.0, 0.5);
+		
+		requiresHold = client
+				.comment("If true, the minimap will show the map of an atlas only while it is held.\nIf false, the minimap will show the map of the first atlas in the hotbar.")
+				.define(category+"requiresHold", true);
+		
+		enabled = client
+				.comment("Set true to enable minimap")
+				.define(category+"enabled", false);
+
+	}
+
+
 }

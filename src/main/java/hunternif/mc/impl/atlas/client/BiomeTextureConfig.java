@@ -1,37 +1,36 @@
 package hunternif.mc.impl.atlas.client;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-import hunternif.mc.impl.atlas.AntiqueAtlasMod;
-import hunternif.mc.impl.atlas.util.Log;
-
-
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-import net.fabricmc.fabric.api.resource.SimpleResourceReloadListener;
-import net.minecraft.resource.Resource;
-import net.minecraft.resource.ResourceManager;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.profiler.Profiler;
-import net.minecraft.util.registry.BuiltinRegistries;
-import net.minecraft.util.registry.Registry;
-import net.minecraft.world.biome.Biome;
-
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
+
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+
+import hunternif.mc.impl.atlas.AntiqueAtlasMod;
+import hunternif.mc.impl.atlas.util.Log;
+import net.minecraft.profiler.IProfiler;
+import net.minecraft.resources.IResource;
+import net.minecraft.resources.IResourceManager;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.registry.WorldGenRegistries;
+import net.minecraft.world.biome.Biome;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+import stereowalker.forge.IResourceReloadListener;
 
 /**
  * Client-only config mapping biome IDs to texture sets.
  * <p>Must be loaded after {@link TextureSetConfig}!</p>
  * @author Hunternif
  */
-@Environment(EnvType.CLIENT)
-public class BiomeTextureConfig implements SimpleResourceReloadListener<Map<Identifier, String>> {
+@OnlyIn(Dist.CLIENT)
+public class BiomeTextureConfig implements IResourceReloadListener<Map<ResourceLocation, String>> {
 	private static final int VERSION = 2;
 	private static final JsonParser PARSER = new JsonParser();
 	private final BiomeTextureMap biomeTextureMap;
@@ -43,12 +42,12 @@ public class BiomeTextureConfig implements SimpleResourceReloadListener<Map<Iden
 	}
 
 	@Override
-	public CompletableFuture<Map<Identifier, String>> load(ResourceManager manager, Profiler profiler, Executor executor) {
+	public CompletableFuture<Map<ResourceLocation, String>> load(IResourceManager manager, IProfiler profiler, Executor executor) {
 		return CompletableFuture.supplyAsync(() -> {
-			Map<Identifier, String> map = new HashMap<>();
+			Map<ResourceLocation, String> map = new HashMap<>();
 
 			try {
-				for (Resource resource : manager.getAllResources(new Identifier("antiqueatlas:biome_textures.json"))) {
+				for (IResource resource : manager.getAllResources(new ResourceLocation("antiqueatlas:biome_textures.json"))) {
 					try (InputStream stream = resource.getInputStream(); InputStreamReader reader = new InputStreamReader(stream)) {
 						JsonElement element = PARSER.parse(reader);
 						if (element.isJsonObject()) {
@@ -78,10 +77,10 @@ public class BiomeTextureConfig implements SimpleResourceReloadListener<Map<Iden
 	}
 
 	@Override
-	public CompletableFuture<Void> apply(Map<Identifier, String> biomeTexMap, ResourceManager manager, Profiler profiler, Executor executor) {
+	public CompletableFuture<Void> apply(Map<ResourceLocation, String> biomeTexMap, IResourceManager manager, IProfiler profiler, Executor executor) {
 		return CompletableFuture.runAsync(() -> {
-			for (Entry<Identifier, String> entry : biomeTexMap.entrySet()) {
-				Biome biome = BuiltinRegistries.BIOME.get(entry.getKey());
+			for (Entry<ResourceLocation, String> entry : biomeTexMap.entrySet()) {
+				Biome biome = WorldGenRegistries.BIOME.getOrDefault(entry.getKey());
 				if (biome == null) {
 					Log.warn("Unknown biome in texture map: %s", entry.getKey());
 					continue;
@@ -98,13 +97,13 @@ public class BiomeTextureConfig implements SimpleResourceReloadListener<Map<Iden
 		});
 	}
 
-	@Override
-	public Identifier getFabricId() {
-		return new Identifier("antiqueatlas:biome_textures");
-	}
-
-	@Override
-	public Collection<Identifier> getFabricDependencies() {
-		return Collections.singleton(new Identifier("antiqueatlas:texture_sets"));
-	}
+//	@Override
+//	public ResourceLocation getFabricId() {
+//		return new ResourceLocation("antiqueatlas:biome_textures");
+//	}
+//
+//	@Override
+//	public Collection<ResourceLocation> getFabricDependencies() {
+//		return Collections.singleton(new ResourceLocation("antiqueatlas:texture_sets"));
+//	}
 }

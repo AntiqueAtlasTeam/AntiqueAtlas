@@ -1,14 +1,14 @@
 package hunternif.mc.impl.atlas.client.gui.core;
 
-import com.mojang.blaze3d.systems.RenderSystem;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.util.Identifier;
+import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
+
+import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.platform.GlStateManager;
 
 
 public abstract class AGuiScrollbar extends GuiComponent {
-	Identifier texture;
+	ResourceLocation texture;
 	int textureWidth;
     int textureHeight;
 	/** Length of the non-scaling caps at the beginning and end of the anchor. */
@@ -53,7 +53,7 @@ public abstract class AGuiScrollbar extends GuiComponent {
 	 * @param height	height of the texture image
 	 * @param capLength	length of the non-scaling caps at the beginning and end of the anchor
 	 */
-	public void setTexture(Identifier texture, int width, int height, int capLength) {
+	public void setTexture(ResourceLocation texture, int width, int height, int capLength) {
 		this.texture = texture;
 		this.textureWidth = width;
 		this.textureHeight = height;
@@ -165,14 +165,14 @@ public abstract class AGuiScrollbar extends GuiComponent {
 					/ (float) (getScrollbarLength() - anchorSize));
 		}
 		
-		RenderSystem.enableTexture();
-		RenderSystem.enableBlend();
-		RenderSystem.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-		RenderSystem.color4f(1, 1, 1, 1);
+		GlStateManager.enableTexture();
+		GlStateManager.enableBlend();
+		GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+		GlStateManager.color4f(1, 1, 1, 1);
 		
 		drawAnchor(matrices);
-
-		RenderSystem.disableBlend();
+		
+		GlStateManager.disableBlend();
 	}
 	
 	private void updateAnchorSize() {

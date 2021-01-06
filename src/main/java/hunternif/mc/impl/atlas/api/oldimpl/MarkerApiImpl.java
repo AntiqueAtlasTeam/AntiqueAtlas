@@ -13,10 +13,10 @@ import hunternif.mc.impl.atlas.util.Log;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.World;
+import net.minecraft.world.server.ServerWorld;
 
 import java.util.Collections;
 
@@ -26,25 +26,25 @@ public class MarkerApiImpl implements MarkerAPI {
 
 	@Nullable
 	@Override
-	public Marker putMarker(@Nonnull World world, boolean visibleAhead, int atlasID, MarkerType markerType, Text label, int x, int z) {
+	public Marker putMarker(@Nonnull World world, boolean visibleAhead, int atlasID, MarkerType markerType, ITextComponent label, int x, int z) {
 		return doPutMarker(world, visibleAhead, atlasID, markerType, label, x, z);
 	}
 	@Nullable
 	@Override
-	public Marker putGlobalMarker(@Nonnull World world, boolean visibleAhead, MarkerType markerType, Text label, int x, int z) {
+	public Marker putGlobalMarker(@Nonnull World world, boolean visibleAhead, MarkerType markerType, ITextComponent label, int x, int z) {
 		return doPutMarker(world, visibleAhead, GLOBAL, markerType, label, x, z);
 	}
 
-	private Marker doPutMarker(World world, boolean visibleAhead, int atlasID, MarkerType markerType, Text label, int x, int z) {
+	private Marker doPutMarker(World world, boolean visibleAhead, int atlasID, MarkerType markerType, ITextComponent label, int x, int z) {
 		Marker marker = null;
-		if (!world.isClient && world.getServer() != null) {
+		if (!world.isRemote && world.getServer() != null) {
 			MarkersData data = atlasID == GLOBAL
 							? AntiqueAtlasMod.globalMarkersData.getData()
 							: AntiqueAtlasMod.markersData.getMarkersData(atlasID, world)
 							;
 
-			marker = data.createAndSaveMarker(markerType, world.getRegistryKey(), x, z, visibleAhead, label);
-			new MarkersS2CPacket(atlasID, world.getRegistryKey(), Collections.singleton(marker)).send((ServerWorld) world);
+			marker = data.createAndSaveMarker(MarkerType.REGISTRY.getKey(markerType), world.getDimensionKey(), x, z, visibleAhead, label);
+			new MarkersS2CPacket(atlasID, world.getDimensionKey(), Collections.singleton(marker)).send((ServerWorld) world);
 		}
 
 		return marker;
@@ -61,7 +61,7 @@ public class MarkerApiImpl implements MarkerAPI {
 	}
 
 	private void doDeleteMarker(World world, int atlasID, int markerID) {
-		if (world.isClient) {
+		if (world.isRemote) {
 			if (atlasID == GLOBAL) {
 				Log.warn("Client tried to delete a global marker!");
 			} else {
@@ -78,7 +78,7 @@ public class MarkerApiImpl implements MarkerAPI {
 	}
 	
 	@Override
-	public void registerMarker(Identifier identifier, MarkerType markerType) {
+	public void registerMarker(ResourceLocation identifier, MarkerType markerType) {
 		MarkerType.register(identifier, markerType);
 	}
 

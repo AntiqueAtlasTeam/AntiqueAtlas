@@ -4,14 +4,15 @@ import hunternif.mc.impl.atlas.ext.ExtTileIdMap;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
-import net.minecraft.util.Identifier;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.registry.BuiltinRegistries;
+import net.minecraft.util.registry.WorldGenRegistries;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
-import net.minecraft.world.biome.source.BiomeArray;
+import net.minecraft.world.biome.BiomeContainer;
 import net.minecraft.world.chunk.Chunk;
+import net.minecraft.world.chunk.IChunk;
 
 import java.util.Collections;
 import java.util.Comparator;
@@ -33,16 +34,16 @@ public class BiomeDetectorNether extends BiomeDetectorBase implements IBiomeDete
 	private static final int priorityLava = 1;
 
 	@Override
-	public Identifier getBiomeID(World world, Chunk chunk) {
-		BiomeArray chunkBiomes = chunk.getBiomeArray();
+	public ResourceLocation getBiomeID(World world, IChunk chunk) {
+		BiomeContainer chunkBiomes = chunk.getBiomes();
 		if (chunkBiomes == null)
 			return null;
 
-		Map<Identifier, Integer> biomeOccurrences = new HashMap<>(BuiltinRegistries.BIOME.getIds().size());
+		Map<ResourceLocation, Integer> biomeOccurrences = new HashMap<>(WorldGenRegistries.BIOME.keySet().size());
 
 		for (int x = 0; x < 16; x++) {
 			for (int z = 0; z < 16; z++) {
-				Biome biome = chunkBiomes.getBiomeForNoiseGen(x, lavaSeaLevel, z);
+				Biome biome = chunkBiomes.getNoiseBiome(x, lavaSeaLevel, z);
 				if (biome.getCategory() == Biome.Category.NETHER) {
 					// The Nether!
 					Block netherBlock = chunk.getBlockState(new BlockPos(x, lavaSeaLevel, z)).getBlock();
@@ -66,7 +67,7 @@ public class BiomeDetectorNether extends BiomeDetectorBase implements IBiomeDete
 
 		if (biomeOccurrences.isEmpty()) return null;
 
-		Map.Entry<Identifier, Integer> meanBiome = Collections.max(biomeOccurrences.entrySet(), Comparator
+		Map.Entry<ResourceLocation, Integer> meanBiome = Collections.max(biomeOccurrences.entrySet(), Comparator
 				.comparingInt(Map.Entry::getValue));
 
 		return meanBiome.getKey();

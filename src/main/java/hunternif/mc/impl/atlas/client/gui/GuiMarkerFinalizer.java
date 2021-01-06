@@ -1,40 +1,41 @@
 package hunternif.mc.impl.atlas.client.gui;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import com.mojang.blaze3d.matrix.MatrixStack;
+
 import hunternif.mc.api.client.MarkerRegistry;
 import hunternif.mc.impl.atlas.client.gui.core.GuiComponent;
 import hunternif.mc.impl.atlas.client.gui.core.GuiScrollingContainer;
 import hunternif.mc.impl.atlas.client.gui.core.ToggleGroup;
 import hunternif.mc.impl.atlas.registry.MarkerType;
 import hunternif.mc.impl.atlas.util.Log;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.widget.ButtonWidget;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.client.gui.widget.TextFieldWidget;
-import net.minecraft.client.network.ClientPlayerEntity;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.sound.SoundCategory;
-import net.minecraft.sound.SoundEvents;
-import net.minecraft.text.LiteralText;
-import net.minecraft.text.TranslatableText;
+import net.minecraft.client.gui.widget.button.Button;
+import net.minecraft.util.SoundCategory;
+import net.minecraft.util.SoundEvents;
+import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
-
-import java.util.ArrayList;
-import java.util.List;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
 /**
  * This GUI is used select marker icon and enter a label.
  * When the user clicks on the confirmation button, the call to MarkerAPI is made.
  * @author Hunternif
  */
-@Environment(EnvType.CLIENT)
+@OnlyIn(Dist.CLIENT)
 public class GuiMarkerFinalizer extends GuiComponent {
 	private World world;
 	private int atlasID;
 	private int markerX;
 	private int markerZ;
 
-	MarkerType selectedType = MarkerType.REGISTRY.get(MarkerType.REGISTRY.getDefaultId());
+	MarkerType selectedType = MarkerType.REGISTRY .getOrDefault(MarkerType.REGISTRY.getDefaultKey());
 
 	private static final int BUTTON_WIDTH = 100;
 	private static final int BUTTON_SPACING = 4;
@@ -42,8 +43,8 @@ public class GuiMarkerFinalizer extends GuiComponent {
 	private static final int TYPE_SPACING = 1;
 	private static final int TYPE_BG_FRAME = 4;
 
-	private ButtonWidget btnDone;
-	private ButtonWidget btnCancel;
+	private Button btnDone;
+	private Button btnCancel;
 	private TextFieldWidget textField;
 	private GuiScrollingContainer scroller;
 	private ToggleGroup<GuiMarkerInList> typeRadioGroup;
@@ -77,21 +78,21 @@ public class GuiMarkerFinalizer extends GuiComponent {
 	protected void init() {
 		super.init();
 
-		addButton(btnDone = new ButtonWidget(this.width/2 - BUTTON_WIDTH - BUTTON_SPACING/2, this.height/2 + 40, BUTTON_WIDTH, 20, new TranslatableText("gui.done"), (button) -> {
-			MarkerRegistry.API.putMarker(world, true, atlasID, selectedType, new LiteralText(textField.getText()), markerX, markerZ);
+		addButton(btnDone = new Button(this.width/2 - BUTTON_WIDTH - BUTTON_SPACING/2, this.height/2 + 40, BUTTON_WIDTH, 20, new TranslationTextComponent("gui.done"), (button) -> {
+			MarkerRegistry.API.putMarker(world, true, atlasID, selectedType, new StringTextComponent(textField.getText()), markerX, markerZ);
 			Log.info("Put marker in Atlas #%d \"%s\" at (%d, %d)", atlasID, textField.getText(), markerX, markerZ);
 
-			ClientPlayerEntity player = MinecraftClient.getInstance().player;
-			world.playSound(player, player.getBlockPos(),
+			ClientPlayerEntity player = Minecraft.getInstance().player;
+			world.playSound(player, player.getPosition(),
 							SoundEvents.ENTITY_VILLAGER_WORK_CARTOGRAPHER, SoundCategory.AMBIENT,
 							1F, 1F);
 			close();
 		}));
-		addButton(btnCancel = new ButtonWidget(this.width/2 + BUTTON_SPACING/2, this.height/2 + 40, BUTTON_WIDTH, 20, new TranslatableText("gui.cancel"), (button) -> {
+		addButton(btnCancel = new Button(this.width/2 + BUTTON_SPACING/2, this.height/2 + 40, BUTTON_WIDTH, 20, new TranslationTextComponent("gui.cancel"), (button) -> {
 			close();
 		}));
-		textField = new TextFieldWidget(MinecraftClient.getInstance().textRenderer, (this.width - 200)/2, this.height/2 - 81, 200, 20, new TranslatableText("gui.antiqueatlas.marker.label"));
-		textField.setEditable(true);
+		textField = new TextFieldWidget(Minecraft.getInstance().fontRenderer, (this.width - 200)/2, this.height/2 - 81, 200, 20, new TranslationTextComponent("gui.antiqueatlas.marker.label"));
+		textField.setEnabled(true);
 		textField.setText("");
 
 		scroller = new GuiScrollingContainer();
@@ -148,9 +149,9 @@ public class GuiMarkerFinalizer extends GuiComponent {
 	@Override
 	public void render(MatrixStack matrices, int mouseX, int mouseY, float partialTick) {
 		this.renderBackground(matrices);
-		drawCentered(matrices, new TranslatableText("gui.antiqueatlas.marker.label"), this.height/2 - 97, 0xffffff, true);
+		drawCentered(matrices, new TranslationTextComponent("gui.antiqueatlas.marker.label"), this.height/2 - 97, 0xffffff, true);
 		textField.render(matrices, mouseX, mouseY, partialTick);
-		drawCentered(matrices, new TranslatableText("gui.antiqueatlas.marker.type"), this.height/2 - 44, 0xffffff, true);
+		drawCentered(matrices, new TranslationTextComponent("gui.antiqueatlas.marker.type"), this.height/2 - 44, 0xffffff, true);
 
 		// Darker background for marker type selector
 		fillGradient(matrices, scroller.getGuiX() - TYPE_BG_FRAME, scroller.getGuiY() - TYPE_BG_FRAME,

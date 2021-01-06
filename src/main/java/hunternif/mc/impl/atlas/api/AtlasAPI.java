@@ -1,13 +1,13 @@
 package hunternif.mc.impl.atlas.api;
 
-import hunternif.mc.impl.atlas.AntiqueAtlasMod;
+import hunternif.mc.impl.atlas.AntiqueAtlasConfig;
 import hunternif.mc.impl.atlas.api.oldimpl.MarkerApiImpl;
 import hunternif.mc.impl.atlas.api.oldimpl.TileApiImpl;
 import hunternif.mc.impl.atlas.item.AtlasItem;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.Identifier;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.registry.Registry;
 
 import java.util.ArrayList;
@@ -30,7 +30,7 @@ public class AtlasAPI {
 	}
 
 	public static Item getAtlasItem() {
-		return Registry.ITEM.get(new Identifier("antiqueatlas:antique_atlas"));
+		return Registry.ITEM.getOrDefault(new ResourceLocation("antiqueatlas:antique_atlas"));
 	}
 
 	/** API for biomes and custom tiles (i.e. dungeons, towns etc). */
@@ -46,17 +46,17 @@ public class AtlasAPI {
 	/** Convenience method that returns a list of atlas IDs for all atlas items
 	 * the player is currently carrying. **/
 	public static List<Integer> getPlayerAtlases(PlayerEntity player) {
-		if (!AntiqueAtlasMod.CONFIG.itemNeeded) {
-			return Collections.singletonList(player.getUuid().hashCode());
+		if (!AntiqueAtlasConfig.itemNeeded.get()) {
+			return Collections.singletonList(player.getUniqueID().hashCode());
 		}
 
 		List<Integer> list = new ArrayList<>();
-		for (ItemStack stack : player.inventory.main) {
+		for (ItemStack stack : player.inventory.mainInventory) {
 			if (!stack.isEmpty() && stack.getItem() instanceof AtlasItem) {
 				list.add(AtlasItem.getAtlasID(stack));
 			}
 		}
-		for (ItemStack stack : player.inventory.offHand) {
+		for (ItemStack stack : player.inventory.offHandInventory) {
 			if (!stack.isEmpty() && stack.getItem() instanceof AtlasItem) {
 				list.add(AtlasItem.getAtlasID(stack));
 			}

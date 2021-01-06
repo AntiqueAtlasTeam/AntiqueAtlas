@@ -1,13 +1,13 @@
 package hunternif.mc.impl.atlas.mixin;
 
-import hunternif.mc.impl.atlas.event.RecipeCraftedCallback;
+//import hunternif.mc.impl.atlas.event.RecipeCraftedCallback;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.CraftingInventory;
+import net.minecraft.inventory.IRecipeHolder;
 import net.minecraft.inventory.Inventory;
+import net.minecraft.inventory.container.CraftingResultSlot;
+import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemStack;
-import net.minecraft.recipe.RecipeUnlocker;
-import net.minecraft.screen.slot.CraftingResultSlot;
-import net.minecraft.screen.slot.Slot;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -25,10 +25,10 @@ public class MixinCraftingResultSlot extends Slot {
         super(inventory_1, int_1, int_2, int_3);
     }
 
-    @Inject(at = @At("HEAD"), method = "onCrafted(Lnet/minecraft/item/ItemStack;)V")
+    @Inject(at = @At("HEAD"), method = "onCrafting(Lnet/minecraft/item/ItemStack;)V")
     protected void onCrafted(ItemStack stack, final CallbackInfo info) {
-        if (inventory instanceof RecipeUnlocker) {
-            RecipeCraftedCallback.EVENT.invoker().onCrafted(this.player, this.player.world, ((RecipeUnlocker) (inventory)).getLastRecipe(), stack, input);
+        if (inventory instanceof IRecipeHolder) {
+            //FIXME RecipeCraftedCallback.EVENT.invoker().onCrafted(this.player, this.player.world, ((IRecipeHolder) (inventory)).getRecipeUsed(), stack, input);
         }
     }
 }

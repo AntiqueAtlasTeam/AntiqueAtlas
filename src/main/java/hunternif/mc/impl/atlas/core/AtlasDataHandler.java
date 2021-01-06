@@ -2,9 +2,10 @@ package hunternif.mc.impl.atlas.core;
 
 import hunternif.mc.impl.atlas.item.AtlasItem;
 import net.minecraft.item.ItemStack;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.world.PersistentStateManager;
 import net.minecraft.world.World;
+import net.minecraft.world.server.ServerWorld;
+import net.minecraft.world.storage.DimensionSavedDataManager;
+
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -32,12 +33,12 @@ public class AtlasDataHandler {
 	public AtlasData getAtlasData(int atlasID, World world) {
 		String key = getAtlasDataKey(atlasID);
 		AtlasData data;
-		if (world.isClient) {
+		if (world.isRemote) {
 			// Since atlas data doesn't really belong to a single world-dimension,
 			// it can be cached. This should fix #67
 			data = atlasDataClientCache.computeIfAbsent(key, AtlasData::new);
 		} else {
-			PersistentStateManager manager = ((ServerWorld) world).getPersistentStateManager();
+			DimensionSavedDataManager manager = ((ServerWorld) world).getSavedData();
 			data = manager.getOrCreate(() -> new AtlasData(key), key);
 		}
 		return data;

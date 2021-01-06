@@ -1,21 +1,23 @@
 package hunternif.mc.impl.atlas.client.gui;
 
-import com.mojang.blaze3d.platform.GlStateManager;
-import hunternif.mc.impl.atlas.util.ExportImageUtil;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.font.TextRenderer;
-import net.minecraft.client.render.BufferBuilder;
-import net.minecraft.client.render.Tessellator;
-import net.minecraft.client.render.VertexFormats;
-import net.minecraft.client.util.math.MatrixStack;
 import org.lwjgl.opengl.GL11;
+
+import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.platform.GlStateManager;
+
+import hunternif.mc.impl.atlas.util.ExportImageUtil;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.renderer.BufferBuilder;
+import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
 public enum ExportProgressOverlay {
 	INSTANCE;
 
-	@Environment(EnvType.CLIENT)
+	@OnlyIn(Dist.CLIENT)
 	public void draw(MatrixStack matrices, int scaledWidth, int scaledHeight) {
 		int x = scaledWidth - 40, y = scaledHeight - 20, barWidth = 50, barHeight = 2;
 
@@ -25,15 +27,15 @@ public enum ExportProgressOverlay {
 			return;
 		}
 
-		TextRenderer font = MinecraftClient.getInstance().textRenderer;
+		FontRenderer font = Minecraft.getInstance().fontRenderer;
 		int s = 2;
 
 		GlStateManager.scaled(1.0/s, 1.0/s, 1);
 
-		int headerWidth = font.getWidth(l.header);
-		font.draw(matrices, l.header, ( x )*s -headerWidth/2F, ( y )*s - 14, 0xffffff);
-		int statusWidth = font.getWidth(l.status);
-		font.draw(matrices, l.status, ( x )*s -statusWidth/2F, ( y )*s, 0xffffff);
+		int headerWidth = font.getStringWidth(l.header);
+		font.drawString(matrices, l.header, ( x )*s -headerWidth/2F, ( y )*s - 14, 0xffffff);
+		int statusWidth = font.getStringWidth(l.status);
+		font.drawString(matrices, l.status, ( x )*s -statusWidth/2F, ( y )*s, 0xffffff);
 
 		GlStateManager.scaled(s, s, 1);
 		y += 7;
@@ -48,17 +50,17 @@ public enum ExportProgressOverlay {
 		Tessellator tessellator = Tessellator.getInstance();
 		BufferBuilder vb = tessellator.getBuffer();
 
-		vb.begin(GL11.GL_QUADS, VertexFormats.POSITION_COLOR);
+		vb.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
 
-		vb.vertex(x, y, 0)						.color(0.5f, 0.5f, 0.5f, 1).next();
-		vb.vertex(x, y+barHeight, 0)			.color(0.5f, 0.5f, 0.5f, 1).next();
-		vb.vertex(x+barWidth, y+barHeight, 0)	.color(0.5f, 0.5f, 0.5f, 1).next();
-		vb.vertex(x+barWidth, y, 0)			.color(0.5f, 0.5f, 0.5f, 1).next();
+		vb.pos(x, y, 0)						.color(0.5f, 0.5f, 0.5f, 1).endVertex();
+		vb.pos(x, y+barHeight, 0)			.color(0.5f, 0.5f, 0.5f, 1).endVertex();
+		vb.pos(x+barWidth, y+barHeight, 0)	.color(0.5f, 0.5f, 0.5f, 1).endVertex();
+		vb.pos(x+barWidth, y, 0)			.color(0.5f, 0.5f, 0.5f, 1).endVertex();
 
-		vb.vertex(x, y, 0)						.color(0.5f, 1, 0.5f, 1).next();
-		vb.vertex(x, y+barHeight, 0)			.color(0.5f, 1, 0.5f, 1).next();
-		vb.vertex(x+barWidth*p, y+barHeight, 0) .color(0.5f, 1, 0.5f, 1).next();
-		vb.vertex(x+barWidth*p, y, 0)			.color(0.5f, 1, 0.5f, 1).next();
+		vb.pos(x, y, 0)						.color(0.5f, 1, 0.5f, 1).endVertex();
+		vb.pos(x, y+barHeight, 0)			.color(0.5f, 1, 0.5f, 1).endVertex();
+		vb.pos(x+barWidth*p, y+barHeight, 0) .color(0.5f, 1, 0.5f, 1).endVertex();
+		vb.pos(x+barWidth*p, y, 0)			.color(0.5f, 1, 0.5f, 1).endVertex();
 
 		tessellator.draw();
 

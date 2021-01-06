@@ -1,8 +1,9 @@
 package hunternif.mc.impl.atlas.client.gui.core;
 
-import com.mojang.blaze3d.systems.RenderSystem;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.client.Minecraft;
+import org.lwjgl.opengl.GL11;
+
+import com.mojang.blaze3d.matrix.MatrixStack;
 
 /**
  * The children of this component are rendered and process input only inside
@@ -34,21 +35,22 @@ public class GuiViewport extends GuiComponent {
 	}
 	
 	@Override
-	public void init(MinecraftClient client, int w, int h) {
+	public void init(Minecraft client, int w, int h) {
 		super.init(client, w, h);
-		screenScale = client.getWindow().getScaleFactor();
+		screenScale = client.getMainWindow().getGuiScaleFactor();
 	}
 	
 	@Override
 	public void render(MatrixStack matrices, int mouseX, int mouseY, float par3) {
-		RenderSystem.enableScissor((int) (getGuiX()*screenScale),
-				(int) (MinecraftClient.getInstance().getWindow().getFramebufferHeight() - (getGuiY() + properHeight)*screenScale),
+		GL11.glEnable(GL11.GL_SCISSOR_TEST);
+		GL11.glScissor((int) (getGuiX()*screenScale),
+				(int) (Minecraft.getInstance().getMainWindow().getFramebufferHeight() - (getGuiY() + properHeight)*screenScale),
 				(int) (properWidth*screenScale), (int) (properHeight*screenScale));
 		
 		// Draw the content (child GUIs):
 		super.render(matrices, mouseX, mouseY, par3);
 		
-		RenderSystem.disableScissor();
+		GL11.glDisable(GL11.GL_SCISSOR_TEST);
 	}
 	
 	@Override

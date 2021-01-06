@@ -2,8 +2,9 @@ package hunternif.mc.impl.atlas.ext.watcher;
 
 import com.google.common.collect.Sets;
 import hunternif.mc.impl.atlas.util.Log;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.server.world.ServerWorld;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.world.server.ServerWorld;
+
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.Set;
@@ -31,11 +32,11 @@ public class StructureWatcher {
     public static void handlePotential(ServerWorld world) {
         for (IStructureWatcher watcher : INSTANCE.structureWatchers)
             if (watcher.isDimensionValid(world)) {
-                CompoundTag structureData = watcher.getStructureData(world);
+                CompoundNBT structureData = watcher.getStructureData(world);
                 if (structureData != null) {
                     Set<Pair<WatcherPos, String>> visited = watcher.visitStructure(world, structureData);
                     for (Pair<WatcherPos, String> visit : visited)
-                        Log.info("Visited %s in dimension %s at %s", visit.getRight(), world.getDimension().toString(), visit.getLeft().toString());
+                        Log.info("Visited %s in dimension %s at %s", visit.getRight(), world.getDimensionType().toString(), visit.getLeft().toString());
                 }
             }
     }

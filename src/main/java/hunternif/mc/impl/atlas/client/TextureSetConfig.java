@@ -1,29 +1,34 @@
 package hunternif.mc.impl.atlas.client;
 
-import com.google.gson.*;
-import hunternif.mc.impl.atlas.AntiqueAtlasMod;
-import hunternif.mc.impl.atlas.util.Log;
-
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 import java.util.Map.Entry;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-import net.fabricmc.fabric.api.resource.SimpleResourceReloadListener;
-import net.minecraft.resource.Resource;
-import net.minecraft.resource.ResourceManager;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.profiler.Profiler;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+
+import hunternif.mc.impl.atlas.AntiqueAtlasMod;
+import hunternif.mc.impl.atlas.util.Log;
+import net.minecraft.profiler.IProfiler;
+import net.minecraft.resources.IResource;
+import net.minecraft.resources.IResourceManager;
+import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+import stereowalker.forge.IResourceReloadListener;
 
 /**
  * Saves texture set names with the lists of texture variations.
  */
-@Environment(EnvType.CLIENT)
-public class TextureSetConfig implements SimpleResourceReloadListener<Collection<TextureSet>> {
+@OnlyIn(Dist.CLIENT)
+public class TextureSetConfig implements IResourceReloadListener<Collection<TextureSet>> {
 	private static final int VERSION = 1;
 	private static final JsonParser PARSER = new JsonParser();
 	private final TextureSetMap textureSetMap;
@@ -33,12 +38,12 @@ public class TextureSetConfig implements SimpleResourceReloadListener<Collection
 	}
 
 	@Override
-	public CompletableFuture<Collection<TextureSet>> load(ResourceManager manager, Profiler profiler, Executor executor) {
+	public CompletableFuture<Collection<TextureSet>> load(IResourceManager manager, IProfiler profiler, Executor executor) {
 		return CompletableFuture.supplyAsync(() -> {
 			List<TextureSet> sets = new ArrayList<>();
 
 			try {
-				for (Resource resource : manager.getAllResources(new Identifier("antiqueatlas:texture_sets.json"))) {
+				for (IResource resource : manager.getAllResources(new ResourceLocation("antiqueatlas:texture_sets.json"))) {
 					try (InputStream stream = resource.getInputStream(); InputStreamReader reader = new InputStreamReader(stream)) {
 						JsonElement element = PARSER.parse(reader);
 						if (element.isJsonObject()) {
@@ -51,10 +56,10 @@ public class TextureSetConfig implements SimpleResourceReloadListener<Collection
 								for (Entry<String, JsonElement> entry : obj.get("data").getAsJsonObject().entrySet()) {
 									String name = entry.getKey();
 									JsonArray array = entry.getValue().getAsJsonArray();
-									Identifier[] textures = new Identifier[array.size()];
+									ResourceLocation[] textures = new ResourceLocation[array.size()];
 									for (int i = 0; i < array.size(); i++) {
 										String path = array.get(i).getAsString();
-										textures[i] = new Identifier(path);
+										textures[i] = new ResourceLocation(path);
 									}
 									sets.add(new TextureSet(AntiqueAtlasMod.id(name), textures));
 								}
@@ -75,7 +80,7 @@ public class TextureSetConfig implements SimpleResourceReloadListener<Collection
 	}
 
 	@Override
-	public CompletableFuture<Void> apply(Collection<TextureSet> sets, ResourceManager manager, Profiler profiler, Executor executor) {
+	public CompletableFuture<Void> apply(Collection<TextureSet> sets, IResourceManager manager, IProfiler profiler, Executor executor) {
 		return CompletableFuture.runAsync(() -> {
 			for (TextureSet set : sets) {
 				textureSetMap.register(set);
@@ -84,8 +89,8 @@ public class TextureSetConfig implements SimpleResourceReloadListener<Collection
 		});
 	}
 
-	@Override
-	public Identifier getFabricId() {
-		return new Identifier("antiqueatlas:texture_sets");
-	}
+//	@Override
+//	public ResourceLocation getFabricId() {
+//		return new ResourceLocation("antiqueatlas:texture_sets");
+//	}
 }

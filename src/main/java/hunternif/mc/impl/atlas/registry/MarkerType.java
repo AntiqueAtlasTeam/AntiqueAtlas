@@ -5,30 +5,34 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import com.mojang.serialization.Lifecycle;
+
 import hunternif.mc.impl.atlas.AntiqueAtlasMod;
 import hunternif.mc.impl.atlas.util.BitMatrix;
 import hunternif.mc.impl.atlas.util.Log;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-import net.minecraft.client.texture.NativeImage;
-import net.minecraft.client.texture.TextureManager;
-import net.minecraft.util.Identifier;
+import net.minecraft.util.RegistryKey;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.registry.*;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.registries.ForgeRegistryEntry;
+
 import org.apache.commons.io.IOUtils;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.resource.Resource;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.texture.NativeImage;
+import net.minecraft.client.renderer.texture.TextureManager;
+import net.minecraft.resources.IResource;
 
 public class MarkerType {
-	public static final RegistryKey<Registry<MarkerType>> KEY = RegistryKey.ofRegistry(AntiqueAtlasMod.id("marker"));
+	public static final RegistryKey<Registry<MarkerType>> KEY = RegistryKey.getOrCreateRootKey(AntiqueAtlasMod.id("marker"));
 	public static final DefaultedRegistry<MarkerType> REGISTRY = new DefaultedRegistry<>(AntiqueAtlasMod.id("red_x_small").toString(),
 			KEY,
 			Lifecycle.experimental());
 
-	private Identifier[] icons;
+	private ResourceLocation[] icons;
 	private BitMatrix[] iconPixels;
 	private int[] iconSizes = null;
 
@@ -47,16 +51,17 @@ public class MarkerType {
 	
 	private final JSONData data = new JSONData(this);
 	
-	public MarkerType(Identifier... icons) {
+	public MarkerType(ResourceLocation... icons) {
 		this.icons = icons;
 	}
 
-	public static void register(Identifier location, MarkerType type) {
-		if (REGISTRY.containsId(location)) {
-			int id = REGISTRY.getRawId(type);
-			REGISTRY.set(id, RegistryKey.of(KEY, location), type, Lifecycle.stable());
+	public static void register(ResourceLocation location, MarkerType type) {
+		System.out.println("Registering Marker: "+location);
+		if (REGISTRY.containsKey(location)) {
+			int id = REGISTRY.getId(type);
+			REGISTRY.register(id, RegistryKey.getOrCreateKey(KEY, location), type, Lifecycle.stable());
 		} else {
-			REGISTRY.add(RegistryKey.of(KEY, location), type, Lifecycle.stable());
+			REGISTRY.register(RegistryKey.getOrCreateKey(KEY, location), type, Lifecycle.stable());
 		}
 	}
 
@@ -130,11 +135,11 @@ public class MarkerType {
 	/**
 	 * Get the icon for the marker
 	 */
-	public Identifier getIcon() {
-		return icons.length == 0 || iconIndex < 0 ? TextureManager.MISSING_IDENTIFIER : icons[iconIndex];
+	public ResourceLocation getIcon() {
+		return icons.length == 0 || iconIndex < 0 ? TextureManager.RESOURCE_LOCATION_EMPTY : icons[iconIndex];
 	}
 	
-	public Identifier[] getAllIcons() {
+	public ResourceLocation[] getAllIcons() {
 		return icons;
 	}
 	
@@ -177,12 +182,12 @@ public class MarkerType {
 		int x = -(int) (size * getCenterX());
 		int y = -(int) (size * getCenterY());
 
-		Identifier icon = getIcon();
+		ResourceLocation icon = getIcon();
 
 		return new MarkerRenderInfo(icon, x, y, size, size);
 	}
 
-	@Environment(EnvType.CLIENT)
+	@OnlyIn(Dist.CLIENT)
 	public void initMips() {
 		iconSizes = new int[icons.length];
 		iconPixels = new BitMatrix[icons.length];
@@ -190,14 +195,14 @@ public class MarkerType {
 		for (int i = 0; i < icons.length; i++) {
 			iconSizes[i] = -1;
 			if (icons[i] == null) {
-				Log.warn("Marker %s -- Texture location is null at index %d!", MarkerType.REGISTRY.getId(this).toString(), i);
+				Log.warn("Marker %s -- Texture location is null at index %d!", MarkerType.REGISTRY.getKey(this).toString(), i);
 			}
 
-			Resource iresource = null;
+			IResource iresource = null;
 			NativeImage bufferedimage = null;
 
 			try {
-				iresource = MinecraftClient.getInstance().getResourceManager().getResource(icons[i]);
+				iresource = Minecraft.getInstance().getResourceManager().getResource(icons[i]);
 				bufferedimage = NativeImage.read(iresource.getInputStream());
 				iconSizes[i] = Math.min(bufferedimage.getWidth(), bufferedimage.getHeight());
 				BitMatrix matrix = new BitMatrix(bufferedimage.getWidth(), bufferedimage.getHeight(), false);
@@ -205,7 +210,7 @@ public class MarkerType {
 				for (int x = 0; x < bufferedimage.getWidth(); x++) {
 					for (int y = 0; y < bufferedimage.getHeight(); y++) {
 						
-						int color = bufferedimage.getPixelColor(x, y);
+						int color = bufferedimage.getPixelRGBA(x, y);
 						int alpha = (color >> 24) & 0xff;
 						
 						if(alpha >= ALPHA_THRESHOLD) {
@@ -229,7 +234,7 @@ public class MarkerType {
 				iconPixels[i] = matrix;
 			} catch (IOException e) {
 				Log.warn(e, "Marker %s -- Error getting texture size data for index %d - %s",
-								MarkerType.REGISTRY.getId(this).toString(), i, icons[i].toString());
+								MarkerType.REGISTRY.getKey(this).toString(), i, icons[i].toString());
 			} finally {
 				if (bufferedimage != null) {
 					bufferedimage.close();
@@ -299,7 +304,7 @@ public class MarkerType {
 		
 		private final MarkerType type;
 		
-		Identifier[] icons;
+		ResourceLocation[] icons;
 		Integer viewSize = null, clipMin = null, clipMax = null;
 		Boolean alwaysShow = null, isTile = null, isTechnical = null;
 		Double centerX = null, centerY = null;
@@ -313,7 +318,7 @@ public class MarkerType {
 				
 				JsonArray arr = new JsonArray();
 				
-				for (Identifier loc : icons) {
+				for (ResourceLocation loc : icons) {
 					arr.add(new JsonPrimitive(loc.toString()));
 				}
 				
@@ -357,12 +362,12 @@ public class MarkerType {
 			if(object.entrySet().size() == 0)
 				return;
 			
-			Identifier typeName = MarkerType.REGISTRY.getId(type);
+			ResourceLocation typeName = MarkerType.REGISTRY.getKey(type);
 			String workingOn = NONE;
 			try {
 				if(object.has(ICONS) && object.get(ICONS).isJsonArray()) {
 					workingOn = ICONS;
-					List<Identifier> list = new ArrayList<>();
+					List<ResourceLocation> list = new ArrayList<>();
 					int i = 0;
 					for (JsonElement elem : object.get(ICONS).getAsJsonArray()) {
 						if (elem.isJsonPrimitive()) {
@@ -372,7 +377,7 @@ public class MarkerType {
 						}
 						i++;
 					}
-					icons = list.toArray(new Identifier[0]);
+					icons = list.toArray(new ResourceLocation[0]);
 					workingOn = NONE;
 				}
 				

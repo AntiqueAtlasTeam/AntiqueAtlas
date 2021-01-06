@@ -3,18 +3,19 @@ package hunternif.mc.impl.atlas.ext;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+
 import hunternif.mc.impl.atlas.AntiqueAtlasMod;
 import hunternif.mc.impl.atlas.client.TextureSetConfig;
 import hunternif.mc.impl.atlas.client.TextureSetMap;
 import hunternif.mc.impl.atlas.util.Log;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-import net.fabricmc.fabric.api.resource.SimpleResourceReloadListener;
-import net.minecraft.resource.Resource;
-import net.minecraft.resource.ResourceManager;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.profiler.Profiler;
-
+//import net.fabricmc.fabric.api.resource.SimpleResourceReloadListener;
+import net.minecraft.profiler.IProfiler;
+import net.minecraft.resources.IResource;
+import net.minecraft.resources.IResourceManager;
+import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+import stereowalker.forge.IResourceReloadListener;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -28,8 +29,8 @@ import java.util.concurrent.Executor;
  * <p>Must be loaded after {@link TextureSetConfig}!</p>
  * @author Hunternif
  */
-@Environment(EnvType.CLIENT)
-public class ExtTileTextureConfig implements SimpleResourceReloadListener<Map<String, String>> {
+@OnlyIn(Dist.CLIENT)
+public class ExtTileTextureConfig implements IResourceReloadListener<Map<String, String>>  {
 	private static final int VERSION = 1;
 	private static final JsonParser PARSER = new JsonParser();
 	private final TextureSetMap textureSetMap;
@@ -41,12 +42,12 @@ public class ExtTileTextureConfig implements SimpleResourceReloadListener<Map<St
 	}
 
 	@Override
-	public CompletableFuture<Map<String, String>> load(ResourceManager manager, Profiler profiler, Executor executor) {
+	public CompletableFuture<Map<String, String>> load(IResourceManager manager, IProfiler profiler, Executor executor) {
 		return CompletableFuture.supplyAsync(() -> {
 			Map<String, String> map = new HashMap<>();
 
 			try {
-				for (Resource resource : manager.getAllResources(new Identifier("antiqueatlas:tile_textures.json"))) {
+				for (IResource resource : manager.getAllResources(new ResourceLocation("antiqueatlas:tile_textures.json"))) {
 					try (InputStream stream = resource.getInputStream(); InputStreamReader reader = new InputStreamReader(stream)) {
 						JsonElement element = PARSER.parse(reader);
 						if (element.isJsonObject()) {
@@ -76,7 +77,7 @@ public class ExtTileTextureConfig implements SimpleResourceReloadListener<Map<St
 	}
 
 	@Override
-	public CompletableFuture<Void> apply(Map<String, String> tileTexMap, ResourceManager manager, Profiler profiler, Executor executor) {
+	public CompletableFuture<Void> apply(Map<String, String> tileTexMap, IResourceManager manager, IProfiler profiler, Executor executor) {
 		return CompletableFuture.runAsync(() -> {
 			for (Entry<String, String> entry : tileTexMap.entrySet()) {
 				String tileName = entry.getKey();
@@ -92,13 +93,13 @@ public class ExtTileTextureConfig implements SimpleResourceReloadListener<Map<St
 		});
 	}
 
-	@Override
-	public Identifier getFabricId() {
-		return new Identifier("antiqueatlas:tile_textures");
-	}
-
-	@Override
-	public Collection<Identifier> getFabricDependencies() {
-		return Collections.singleton(new Identifier("antiqueatlas:texture_sets"));
-	}
+//	@Override
+//	public ResourceLocation getFabricId() {
+//		return new ResourceLocation("antiqueatlas:tile_textures");
+//	}
+//
+//	@Override
+//	public Collection<ResourceLocation> getFabricDependencies() {
+//		return Collections.singleton(new ResourceLocation("antiqueatlas:texture_sets"));
+//	}
 }

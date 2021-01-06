@@ -2,9 +2,8 @@ package hunternif.mc.impl.atlas.marker;
 
 import hunternif.mc.impl.atlas.util.ListMapValueIterator;
 import hunternif.mc.impl.atlas.util.ShortVec2;
-import net.minecraft.util.registry.RegistryKey;
+import net.minecraft.util.RegistryKey;
 import net.minecraft.world.World;
-import net.minecraft.world.dimension.DimensionType;
 
 import java.util.AbstractCollection;
 import java.util.Collection;

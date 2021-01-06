@@ -1,31 +1,34 @@
 package hunternif.mc.impl.atlas.item;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import hunternif.mc.impl.atlas.AntiqueAtlasMod;
 import hunternif.mc.impl.atlas.RegistrarAntiqueAtlas;
 import hunternif.mc.impl.atlas.core.AtlasData;
 import hunternif.mc.impl.atlas.marker.Marker;
 import hunternif.mc.impl.atlas.marker.MarkersData;
 import net.minecraft.inventory.CraftingInventory;
-import net.minecraft.inventory.Inventory;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
-import net.minecraft.recipe.*;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.RegistryKey;
+import net.minecraft.item.crafting.ICraftingRecipe;
+import net.minecraft.item.crafting.IRecipeSerializer;
+import net.minecraft.item.crafting.IRecipeType;
+import net.minecraft.item.crafting.SpecialRecipeSerializer;
+import net.minecraft.util.RegistryKey;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * 2 or more atlases combine into one with all biome and marker data copied.
  * All data is copied into a new atlas instance.
  * @author Hunternif
  */
-public class RecipeAtlasCombining implements CraftingRecipe {
-	public static final RecipeSerializer<RecipeAtlasCombining> SERIALIZER = new SpecialRecipeSerializer<>(RecipeAtlasCombining::new);
-	private final Identifier id;
+public class RecipeAtlasCombining implements ICraftingRecipe {
+	public static final IRecipeSerializer<RecipeAtlasCombining> SERIALIZER = new SpecialRecipeSerializer<>(RecipeAtlasCombining::new);
+	private final ResourceLocation id;
 
-    public RecipeAtlasCombining(Identifier id) {
+    public RecipeAtlasCombining(ResourceLocation id) {
     	this.id = id;
     }
 
@@ -41,8 +44,8 @@ public class RecipeAtlasCombining implements CraftingRecipe {
 
 	private boolean matches(CraftingInventory inv) {
 		int atlasesFound = 0;
-		for (int i = 0; i < inv.size(); ++i) {
-			ItemStack stack = inv.getStack(i);
+		for (int i = 0; i < inv.getSizeInventory(); ++i) {
+			ItemStack stack = inv.getStackInSlot(i);
 			if (!stack.isEmpty()) {
 				if (stack.getItem() == RegistrarAntiqueAtlas.ATLAS) {
 					atlasesFound++;
@@ -53,11 +56,11 @@ public class RecipeAtlasCombining implements CraftingRecipe {
 	}
 
 	@Override
-	public ItemStack craft(CraftingInventory inv) {
+	public ItemStack getCraftingResult(CraftingInventory inv) {
 		ItemStack firstAtlas = ItemStack.EMPTY;
 		List<Integer> atlasIds = new ArrayList<>(9);
-		for (int i = 0; i < inv.size(); ++i) {
-			ItemStack stack = inv.getStack(i);
+		for (int i = 0; i < inv.getSizeInventory(); ++i) {
+			ItemStack stack = inv.getStackInSlot(i);
 			if (!stack.isEmpty()) {
 				if (stack.getItem() instanceof AtlasItem) {
 					if (firstAtlas.isEmpty()) {
@@ -72,32 +75,32 @@ public class RecipeAtlasCombining implements CraftingRecipe {
 	}
 
 	@Override
-    public boolean fits(int width, int height) {
+    public boolean canFit(int width, int height) {
         return true;
     }
 
 	@Override
-	public ItemStack getOutput() {
+	public ItemStack getRecipeOutput() {
 		return new ItemStack(RegistrarAntiqueAtlas.ATLAS);
 	}
 
 	@Override
-	public Identifier getId() {
+	public ResourceLocation getId() {
 		return id;
 	}
 
 	@Override
-	public RecipeSerializer<?> getSerializer() {
+	public IRecipeSerializer<?> getSerializer() {
 		return SERIALIZER;
 	}
 
 	@Override
-	public RecipeType<?> getType() {
-		return RecipeType.CRAFTING;
+	public IRecipeType<?> getType() {
+		return IRecipeType.CRAFTING;
 	}
 
-	public ItemStack onCrafted(World world, Inventory inventory, ItemStack result) {
-		if (world.isClient) return result;
+	public ItemStack onCrafted(World world, IInventory iInventory, ItemStack result) {
+		if (world.isRemote) return result;
 		// Until the first update, on the client the returned atlas ID is the same as the first Atlas on the crafting grid.
 		int atlasID = AntiqueAtlasMod.getGlobalAtlasData(world).getNextAtlasId();
 
@@ -105,8 +108,8 @@ public class RecipeAtlasCombining implements CraftingRecipe {
 		destBiomes.markDirty();
 		MarkersData destMarkers = AntiqueAtlasMod.markersData.getMarkersData(atlasID, world);
 		destMarkers.markDirty();
-		for (int i = 0; i < inventory.size(); ++i) {
-			ItemStack stack = inventory.getStack(i);
+		for (int i = 0; i < iInventory.getSizeInventory(); ++i) {
+			ItemStack stack = iInventory.getStackInSlot(i);
 			if (stack.isEmpty()) continue;
 			AtlasData srcBiomes = AntiqueAtlasMod.atlasData.getAtlasData(stack, world);
 			if (destBiomes != null && srcBiomes != null && destBiomes != srcBiomes) {

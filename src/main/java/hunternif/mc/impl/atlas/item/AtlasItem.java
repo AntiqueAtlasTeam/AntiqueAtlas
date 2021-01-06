@@ -2,29 +2,28 @@ package hunternif.mc.impl.atlas.item;
 
 import java.util.Collection;
 
-import hunternif.mc.impl.atlas.network.packet.s2c.play.DimensionUpdateS2CPacket;
-import hunternif.mc.impl.atlas.network.packet.s2c.play.OpenAtlasS2CPacket;
-import net.fabricmc.fabric.api.network.ServerSidePacketRegistry;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.Hand;
-import net.minecraft.util.TypedActionResult;
-import net.minecraft.world.World;
 import hunternif.mc.impl.atlas.AntiqueAtlasMod;
+import hunternif.mc.impl.atlas.AntiqueAtlasModClient;
 import hunternif.mc.impl.atlas.core.AtlasData;
 import hunternif.mc.impl.atlas.core.TileInfo;
 import hunternif.mc.impl.atlas.marker.MarkersData;
+import hunternif.mc.impl.atlas.network.packet.s2c.play.DimensionUpdateS2CPacket;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.ActionResult;
+import net.minecraft.util.ActionResultType;
+import net.minecraft.util.Hand;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.world.World;
 
 public class AtlasItem extends Item {
 	static final String WORLD_ATLAS_DATA_ID = "aAtlas";
 
-	public AtlasItem(Item.Settings settings) {
+	public AtlasItem(Item.Properties settings) {
 		super(settings);
 	}
 
@@ -33,19 +32,19 @@ public class AtlasItem extends Item {
 	}
 
 	@Override
-	public Text getName(ItemStack stack) {
-		return new TranslatableText(this.getTranslationKey(), getAtlasID(stack));
+	public ITextComponent getDisplayName(ItemStack stack) {
+		return new TranslationTextComponent(this.getTranslationKey(), getAtlasID(stack));
 	}
-
+	
 	@Override
-	public TypedActionResult<ItemStack> use(World world, PlayerEntity playerEntity, Hand hand) {
-		ItemStack stack = playerEntity.getStackInHand(hand);
+	public ActionResult<ItemStack> onItemRightClick(World world, PlayerEntity playerEntity, Hand hand) {
+		ItemStack stack = playerEntity.getHeldItem(hand);
 
-		if (!world.isClient) {
-			new OpenAtlasS2CPacket(hand).send((ServerPlayerEntity) playerEntity);
+		if (!world.isRemote) {
+			AntiqueAtlasModClient.openAtlasGUI(stack);
 		}
 
-		return new TypedActionResult<>(ActionResult.SUCCESS, stack);
+		return new ActionResult<>(ActionResultType.SUCCESS, stack);
 	}
 
 	@Override
@@ -57,22 +56,22 @@ public class AtlasItem extends Item {
 
 		// On the first run send the map from the server to the client:
 		PlayerEntity player = (PlayerEntity) entity;
-		if (!world.isClient && !data.isSyncedOnPlayer(player) && !data.isEmpty()) {
+		if (!world.isRemote && !data.isSyncedOnPlayer(player) && !data.isEmpty()) {
 			data.syncOnPlayer(atlasId, player);
 		}
 
 		// Same thing with the local markers:
 		MarkersData markers = AntiqueAtlasMod.markersData.getMarkersData(stack, world);
-		if (!world.isClient && !markers.isSyncedOnPlayer(player) && !markers.isEmpty()) {
+		if (!world.isRemote && !markers.isSyncedOnPlayer(player) && !markers.isEmpty()) {
 			markers.syncOnPlayer(atlasId, (ServerPlayerEntity) player);
 		}
 
 		// Updating map around player
 		Collection<TileInfo> newTiles = data.updateMapAroundPlayer(player);
 		
-		if (!world.isClient) {
+		if (!world.isRemote) {
 			if (!newTiles.isEmpty()) {
-				new DimensionUpdateS2CPacket(atlasId, player.getEntityWorld().getRegistryKey(), newTiles).send(world.getServer());
+				new DimensionUpdateS2CPacket(atlasId, player.getEntityWorld().getDimensionKey(), newTiles).send(world.getServer());
 			}
 		}
 	}

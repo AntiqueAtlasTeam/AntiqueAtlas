@@ -1,8 +1,20 @@
 package hunternif.mc.impl.atlas.ext.watcher.impl;
 
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
+import org.apache.commons.lang3.tuple.Pair;
+
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
 import com.google.common.collect.Sets;
+
+import hunternif.mc.impl.atlas.AntiqueAtlasConfig;
 import hunternif.mc.impl.atlas.AntiqueAtlasMod;
 import hunternif.mc.impl.atlas.api.AtlasAPI;
 import hunternif.mc.impl.atlas.ext.ExtTileIdMap;
@@ -14,20 +26,13 @@ import hunternif.mc.impl.atlas.marker.MarkersData;
 import hunternif.mc.impl.atlas.registry.MarkerType;
 import hunternif.mc.impl.atlas.util.Log;
 import hunternif.mc.impl.atlas.util.MathUtil;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.text.TranslatableText;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.math.BlockBox;
-import net.minecraft.util.registry.RegistryKey;
-import net.minecraft.world.dimension.DimensionType;
-import org.apache.commons.lang3.tuple.Pair;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.ListNBT;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.MutableBoundingBox;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
-import java.util.*;
+import net.minecraft.world.server.ServerWorld;
 
 public class StructureWatcherVillage implements IStructureWatcher {
 	public static final String MARKER = "village";
@@ -50,9 +55,9 @@ public class StructureWatcherVillage implements IStructureWatcher {
 	private static final String HOUSE_SMALL = "ViSH"; // Slightly larger than huts, sometimes with a fenced balcony on the roof and a ladder.
 	private static final String CHURCH = "ViST"; // The church.
 
-	private static final Map<String, Identifier> partToTileMap;
+	private static final Map<String, ResourceLocation> partToTileMap;
 	static {
-		ImmutableMap.Builder<String, Identifier> builder = new Builder<>();
+		ImmutableMap.Builder<String, ResourceLocation> builder = new Builder<>();
 		builder.put(LIBRARY, ExtTileIdMap.TILE_VILLAGE_LIBRARY);
 		builder.put(SMITHY, ExtTileIdMap.TILE_VILLAGE_SMITHY);
 		builder.put(L_HOUSE, ExtTileIdMap.TILE_VILLAGE_L_HOUSE);
@@ -69,9 +74,9 @@ public class StructureWatcherVillage implements IStructureWatcher {
 		partToTileMap = builder.build();
 	}
 	/** Tiles with the higher priority override tiles with lower priority at the same chunk. */
-	private static final Map<Identifier, Integer> tilePriority;
+	private static final Map<ResourceLocation, Integer> tilePriority;
 	static {
-		ImmutableMap.Builder<Identifier, Integer> builder = new Builder<>();
+		ImmutableMap.Builder<ResourceLocation, Integer> builder = new Builder<>();
 		builder.put(ExtTileIdMap.TILE_VILLAGE_LIBRARY, 5);
 		builder.put(ExtTileIdMap.TILE_VILLAGE_SMITHY, 6);
 		builder.put(ExtTileIdMap.TILE_VILLAGE_L_HOUSE, 5);
@@ -102,12 +107,12 @@ public class StructureWatcherVillage implements IStructureWatcher {
 
     @Override
     public boolean isDimensionValid(ServerWorld world) {
-		return world.getRegistryKey() == World.OVERWORLD;
+		return world.getDimensionKey() == World.OVERWORLD;
     }
 
     @Nullable
     @Override
-    public CompoundTag getStructureData(@Nonnull ServerWorld world) {
+    public CompoundNBT getStructureData(@Nonnull ServerWorld world) {
 	    /* XX_1_12_2_none_bbw_XX data = ((ServerWorld) world).getPersistentStateManager().a(XX_1_12_2_none_bbw_XX.class, "Village");
         if (data == null)
             return null;
@@ -119,8 +124,8 @@ public class StructureWatcherVillage implements IStructureWatcher {
 
     @Nonnull
     @Override
-    public Set<Pair<WatcherPos, String>> visitStructure(@Nonnull World world, @Nonnull CompoundTag structureTag) {
-        Set<String> tagSet = structureTag.getKeys();
+    public Set<Pair<WatcherPos, String>> visitStructure(@Nonnull World world, @Nonnull CompoundNBT structureTag) {
+        Set<String> tagSet = structureTag.keySet();
         Set<Pair<WatcherPos, String>> visits = Sets.newHashSet();
         for (String coords : tagSet) {
             if (!WatcherPos.POS_PATTERN.matcher(coords).matches())
@@ -128,7 +133,7 @@ public class StructureWatcherVillage implements IStructureWatcher {
 
             WatcherPos pos = new WatcherPos(coords);
             if (!visited.contains(pos)) {
-                CompoundTag tag = structureTag.getCompound(coords);
+                CompoundNBT tag = structureTag.getCompound(coords);
                 visitVillage(world, tag);
                 visited.add(pos);
                 visits.add(Pair.of(pos, "Village"));
@@ -138,7 +143,7 @@ public class StructureWatcherVillage implements IStructureWatcher {
     }
 
 	/** Put all child parts of the fortress on the map as global custom tiles. */
-	private void visitVillage(World world, CompoundTag tag) {
+	private void visitVillage(World world, CompoundNBT tag) {
 		if (!tag.getBoolean("Valid")) {
 			// The village was not actually generated and should not be mapped.
 			// Remove legacy marker and custom tile:
@@ -146,16 +151,16 @@ public class StructureWatcherVillage implements IStructureWatcher {
 			return;
 		}
 
-		MarkerType villageType = MarkerType.REGISTRY.get(AntiqueAtlasMod.id("village"));
+		MarkerType villageType = MarkerType.REGISTRY.getOrDefault(AntiqueAtlasMod.id("village"));
 		if (villageType == null) {
 			return;
 		}
 
-		ListTag children = tag.getList("Children", 10);
+		ListNBT children = tag.getList("Children", 10);
 		for (int i = 0; i < children.size(); i++) {
-			CompoundTag child = children.getCompound(i);
+			CompoundNBT child = children.getCompound(i);
 			String childID = child.getString("id");
-			BlockBox boundingBox = new BlockBox(child.getIntArray("BB"));
+			MutableBoundingBox boundingBox = new MutableBoundingBox(child.getIntArray("BB"));
 			int x = MathUtil.getCenter(boundingBox).getX();
 			int z = MathUtil.getCenter(boundingBox).getZ();
 			int chunkX = x >> 4;
@@ -168,7 +173,7 @@ public class StructureWatcherVillage implements IStructureWatcher {
 				for (int j = -1; j <= 1; j++) {
 					for (int k = -1; k <= 1; k++) {
 						List<Marker> markers = AntiqueAtlasMod.globalMarkersData.getData()
-								.getMarkersAtChunk(world.getRegistryKey(), j + chunkX / MarkersData.CHUNK_STEP, k + chunkZ / MarkersData.CHUNK_STEP);
+								.getMarkersAtChunk(world.getDimensionKey(), j + chunkX / MarkersData.CHUNK_STEP, k + chunkZ / MarkersData.CHUNK_STEP);
 						if (markers != null) {
 							for (Marker marker : markers) {
 								if (marker.getType().equals(villageType)) {
@@ -179,8 +184,8 @@ public class StructureWatcherVillage implements IStructureWatcher {
 						}
 					}
 				}
-				if (!foundMarker && AntiqueAtlasMod.CONFIG.autoVillageMarkers) {
-					AtlasAPI.markers.putGlobalMarker(world, false, villageType, new TranslatableText("gui.antiqueatlas.marker.village"), x, z);
+				if (!foundMarker && AntiqueAtlasConfig.autoVillageMarkers.get()) {
+					AtlasAPI.markers.putGlobalMarker(world, false, villageType, new TranslationTextComponent("gui.antiqueatlas.marker.village"), x, z);
 				}
 			}
 //			String tileName = null;
@@ -194,7 +199,7 @@ public class StructureWatcherVillage implements IStructureWatcher {
 //				}
 //			} else {
 //			}
-			Identifier tileName = partToTileMap.get(childID);
+			ResourceLocation tileName = partToTileMap.get(childID);
 			if (tileName != null) {
 				Integer curTilePriority = tilePriority.get(tileName);
 				Integer prevTilePriority = tilePriority.get(tileAt(world, chunkX, chunkZ));
@@ -209,24 +214,24 @@ public class StructureWatcherVillage implements IStructureWatcher {
 		}
 	}
 
-	private static Identifier tileAt(World world, int chunkX, int chunkZ) {
+	private static ResourceLocation tileAt(World world, int chunkX, int chunkZ) {
 		return AntiqueAtlasMod.tileData.getData(world).getTile(chunkX, chunkZ);
 	}
 
 	/** Delete the marker and custom tile data about the village. */
-	private static void removeVillage(World world, CompoundTag tag) {
-		ListTag children = tag.getList("Children", 10);
+	private static void removeVillage(World world, CompoundNBT tag) {
+		ListNBT children = tag.getList("Children", 10);
 		for (int i = 0; i < children.size(); i++) {
-			CompoundTag child = children.getCompound(i);
+			CompoundNBT child = children.getCompound(i);
 			String childID = child.getString("id");
-			BlockBox boundingBox = new BlockBox(child.getIntArray("BB"));
+			MutableBoundingBox boundingBox = new MutableBoundingBox(child.getIntArray("BB"));
 			int x = MathUtil.getCenter(boundingBox).getX();
 			int z = MathUtil.getCenter(boundingBox).getZ();
 			int chunkX = x >> 4;
 			int chunkZ = z >> 4;
 			if (START.equals(childID)) {
 				List<Marker> markers = AntiqueAtlasMod.globalMarkersData.getData()
-						.getMarkersAtChunk(world.getRegistryKey(), chunkX / MarkersData.CHUNK_STEP, chunkZ / MarkersData.CHUNK_STEP);
+						.getMarkersAtChunk(world.getDimensionKey(), chunkX / MarkersData.CHUNK_STEP, chunkZ / MarkersData.CHUNK_STEP);
 				if (markers != null) {
 					for (Marker marker : markers) {
 						if (marker.getType().equals("antiqueatlas:village")) {

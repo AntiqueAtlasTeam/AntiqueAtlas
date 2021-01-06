@@ -1,6 +1,8 @@
 package hunternif.mc.impl.atlas.ext.watcher.impl;
 
 import com.google.common.collect.Sets;
+
+import hunternif.mc.impl.atlas.AntiqueAtlasConfig;
 import hunternif.mc.impl.atlas.AntiqueAtlasMod;
 import hunternif.mc.impl.atlas.api.AtlasAPI;
 import hunternif.mc.impl.atlas.ext.watcher.IStructureWatcher;
@@ -9,12 +11,12 @@ import hunternif.mc.impl.atlas.ext.watcher.WatcherPos;
 import hunternif.mc.impl.atlas.marker.Marker;
 import hunternif.mc.impl.atlas.marker.MarkersData;
 import hunternif.mc.impl.atlas.registry.MarkerType;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.text.Text;
-import net.minecraft.util.registry.RegistryKey;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.RegistryKey;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.World;
-import net.minecraft.world.dimension.DimensionType;
+import net.minecraft.world.server.ServerWorld;
+
 import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nonnull;
@@ -29,11 +31,11 @@ public class StructureWatcherGeneric implements IStructureWatcher {
 	private final String datFileName;
 	private MarkerType markerType;
 	private MarkerType tileMarker;
-	private Text markerLabel;
-	private Text tileMarkerLabel;
+	private ITextComponent markerLabel;
+	private ITextComponent tileMarkerLabel;
 	private final RegistryKey<World> dimension;
 
-    public StructureWatcherGeneric(String datFileName, RegistryKey<World> dimType, MarkerType markerType, Text label) {
+    public StructureWatcherGeneric(String datFileName, RegistryKey<World> dimType, MarkerType markerType, ITextComponent label) {
         this.markerType = markerType;
         this.markerLabel = label;
         this.dimension = dimType;
@@ -50,12 +52,12 @@ public class StructureWatcherGeneric implements IStructureWatcher {
 
     @Override
     public boolean isDimensionValid(ServerWorld world) {
-       	return this.dimension == world.getRegistryKey();
+       	return this.dimension == world.getDimensionKey();
     }
 
     @Nullable
     @Override
-    public CompoundTag getStructureData(@Nonnull ServerWorld world) {
+    public CompoundNBT getStructureData(@Nonnull ServerWorld world) {
         /* XX_1_12_2_none_bbw_XX data = ((ServerWorld) world).getPersistentStateManager().a(XX_1_12_2_none_bbw_XX.class, datFileName);
         if (data == null)
             return null;
@@ -68,16 +70,16 @@ public class StructureWatcherGeneric implements IStructureWatcher {
 
     @Nonnull
     @Override
-    public Set<Pair<WatcherPos, String>> visitStructure(@Nonnull World world, @Nonnull CompoundTag structureTag) {
+    public Set<Pair<WatcherPos, String>> visitStructure(@Nonnull World world, @Nonnull CompoundNBT structureTag) {
         Set<Pair<WatcherPos, String>> visits = Sets.newHashSet();
-        Set<String> tagSet = structureTag.getKeys();
+        Set<String> tagSet = structureTag.keySet();
         for (String coords : tagSet) {
             if (!WatcherPos.POS_PATTERN.matcher(coords).matches())
                 continue; // Some other kind of data got stuffed in here. It's irrelevant to us
 
             WatcherPos pos = new WatcherPos(coords);
             if (!visited.contains(pos)) {
-                CompoundTag tag = structureTag.getCompound(coords);
+                CompoundNBT tag = structureTag.getCompound(coords);
                 visit(world, tag);
                 visited.add(pos);
                 visits.add(Pair.of(pos, datFileName));
@@ -86,20 +88,20 @@ public class StructureWatcherGeneric implements IStructureWatcher {
         return visits;
     }
 
-    public StructureWatcherGeneric setTileMarker(MarkerType type, Text label) {
+    public StructureWatcherGeneric setTileMarker(MarkerType type, ITextComponent label) {
         tileMarker = type;
         tileMarkerLabel = label;
         return this;
     }
 	
-	private void visit(World world, CompoundTag tag) {
+	private void visit(World world, CompoundNBT tag) {
 		int chunkX = tag.getInt("ChunkX");
 		int chunkZ = tag.getInt("ChunkZ");
 		boolean foundMarker = false;
 		boolean foundTileMarker = false;
 		
     	List<Marker> markers = AntiqueAtlasMod.globalMarkersData.getData()
-				.getMarkersAtChunk(world.getRegistryKey(), chunkX / MarkersData.CHUNK_STEP, chunkZ / MarkersData.CHUNK_STEP);
+				.getMarkersAtChunk(world.getDimensionKey(), chunkX / MarkersData.CHUNK_STEP, chunkZ / MarkersData.CHUNK_STEP);
 		if (markers != null) {
 			for (Marker marker : markers) {
 				if (!foundMarker && marker.getChunkX() == chunkX && marker.getChunkZ() == chunkZ &&
@@ -113,7 +115,7 @@ public class StructureWatcherGeneric implements IStructureWatcher {
 			}
 		}
 		
-		if (AntiqueAtlasMod.CONFIG.autoVillageMarkers) {
+		if (AntiqueAtlasConfig.autoVillageMarkers.get()) {
 			if(!foundMarker)
 				AtlasAPI.markers.putGlobalMarker(world, false, markerType, markerLabel, (chunkX << 4) + 8, (chunkZ << 4) + 8);
 			if(tileMarker != null && !foundTileMarker)

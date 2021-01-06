@@ -1,19 +1,26 @@
-plugins {
-	id 'java-library'
-	id 'fabric-loom' version '0.4-SNAPSHOT'
-	id 'maven-publish'
+buildscript {
+    repositories {
+        maven { url = 'https://files.minecraftforge.net/maven' }
+        jcenter()
+        mavenCentral()
+    }
+    dependencies {
+        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '3.+', changing: true
+    }
 }
-
-sourceCompatibility = JavaVersion.VERSION_1_8
-targetCompatibility = JavaVersion.VERSION_1_8
+apply plugin: 'net.minecraftforge.gradle'
+// Only edit below this line, the above code adds and enables the necessary things for Forge to be setup.
+apply plugin: 'eclipse'
+apply plugin: 'maven-publish'
 
 archivesBaseName = project.archives_base_name
 version = project.mod_version
 group = project.maven_group
 
-minecraft {
-	accessWidener = file("src/main/resources/antiqueatlas.accesswidener")
-}
+sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8' // Need this here so eclipse task generates correctly.
+
+println('Java: ' + System.getProperty('java.version') + ' JVM: ' + System.getProperty('java.vm.version') + '(' + System.getProperty('java.vendor') + ') Arch: ' + System.getProperty('os.arch'))
+println('Mod Name: ' + archivesBaseName + ', Mod Version: ' + version + ', Minecraft Version: ' + modMinecraftVersion + ', Forge Version: ' + modForgeVersion)
 
 repositories {
 	maven {
@@ -27,39 +34,63 @@ repositories {
 	}
 }
 
-dependencies {
-	//to change the versions see the gradle.properties file
-	minecraft "com.mojang:minecraft:${project.minecraft_version}"
-	mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
-	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
+minecraft {
+    mappings channel: mappingsChannel, version: mappingsVersion
+    //makeObfSourceJar = false // an Srg named sources jar is made by default. uncomment this to disable.
+    accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
+    runs {
+        client {
+            workingDirectory project.file('run/client')
 
-	// Fabric API. This is technically optional, but you probably want it anyway.
-	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
-	modImplementation "io.github.prospector:modmenu:${project.mod_menu_version}"
+            // Recommended logging data for a userdev environment
+            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
 
-	modImplementation ("me.shedaniel.cloth:config-2:${project.cloth_config_version}") {
-		transitive = false
-	}
+            // Recommended logging level for the console
+            property 'forge.logging.console.level', 'debug'
+			
+			args '--username', 'CodeHexIO', '--uuid', 'c5751ce1d50e4d47ca120e1ea1c75542'
 
-	include "me.shedaniel.cloth:config-2:${project.cloth_config_version}"
+            mods {
+                modId {
+                    source sourceSets.main
+                }
+            }
+        }
 
-	modImplementation "me.sargunvohra.mcmods:autoconfig1u:${project.auto_config_version}"
-	include "me.sargunvohra.mcmods:autoconfig1u:${project.auto_config_version}"
+        server {
+            workingDirectory project.file('run/server')
 
-	compile 'com.google.code.findbugs:jsr305:3.0.2'
-	testCompile "junit:junit:4.+"
+            // Recommended logging data for a userdev environment
+            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
+
+            // Recommended logging level for the console
+            property 'forge.logging.console.level', 'debug'
+
+            mods {
+                modId {
+                    source sourceSets.main
+                }
+            }
+        }
+    }
 }
 
+dependencies {
+	minecraft 'net.minecraftforge:forge:' + modMinecraftVersion + '-' + modForgeVersion
+}
+// Process resources on build
 processResources {
-	inputs.property "version", project.version
+	// This will ensure that this task is redone when the versions change.
+	inputs.property 'version', project.version
+	// Replace stuff in mods.toml, nothing else
 	from(sourceSets.main.resources.srcDirs) {
-		include "fabric.mod.json"
-
-		// add mod metadata
-		expand "version": project.version
+		include 'META-INF/mods.toml'
+		// Replace version
+		expand 'version': project.version
 	}
+	// Copy everything else except the mods.toml
 	from(sourceSets.main.resources.srcDirs) {
-		exclude "fabric.mod.json"
+		exclude 'META-INF/mods.toml'
 	}
 }
 
@@ -88,10 +119,10 @@ publishing {
 		mavenJava(MavenPublication) {
 			// add all the jars that should be included when publishing to maven
 			artifact(jar) {
-				builtBy remapJar
+				//builtBy remapJar
 			}
 			artifact(sourcesJar) {
-				builtBy remapSourcesJar
+				//builtBy remapSourcesJar
 			}
 		}
 	}

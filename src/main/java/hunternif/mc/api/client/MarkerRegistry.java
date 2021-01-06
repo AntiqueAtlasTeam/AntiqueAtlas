@@ -2,10 +2,10 @@ package hunternif.mc.api.client;
 
 import hunternif.mc.impl.atlas.api.MarkerAPI;
 import hunternif.mc.impl.atlas.api.client.impl.MarkerApiImplClient;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
-@Environment(EnvType.CLIENT)
+@OnlyIn(Dist.CLIENT)
 public class MarkerRegistry {
 	public static MarkerAPI API = new MarkerApiImplClient();
 }

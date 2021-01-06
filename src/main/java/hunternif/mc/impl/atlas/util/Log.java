@@ -1,9 +1,10 @@
 package hunternif.mc.impl.atlas.util;
 
-import hunternif.mc.impl.atlas.AntiqueAtlasMod;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import hunternif.mc.impl.atlas.AntiqueAtlasMod;
 
 /**
  * A simple logging helper that is not directly dependent on any mod classes.
