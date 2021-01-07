@@ -2,9 +2,14 @@ package hunternif.mc.impl.atlas.forge.hook;
 
 import java.util.Collection;
 
+import hunternif.mc.impl.atlas.forge.event.ItemCraftedEvent;
 import hunternif.mc.impl.atlas.forge.event.StructureAddedEvent;
 import hunternif.mc.impl.atlas.forge.event.StructurePieceAddedEvent;
 import hunternif.mc.impl.atlas.forge.event.TileIdRegisteredEvent;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.inventory.CraftingInventory;
+import net.minecraft.inventory.container.CraftingResultSlot;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.ISeedReader;
 import net.minecraft.world.gen.WorldGenRegion;
@@ -15,20 +20,25 @@ import net.minecraftforge.common.MinecraftForge;
 
 public class AntiqueAtlasHooks {
 
-	public static void onTileIdRegistered(Collection<ResourceLocation> tileIds )
+	public static void fireTileIdRegistered(Collection<ResourceLocation> tileIds )
 	{
 		MinecraftForge.EVENT_BUS.post(new TileIdRegisteredEvent(tileIds));
 	}
 
-	public static void onStructureAdded(StructureStart<?> structureStart, ServerWorld world)
+	public static void fireStructureAdded(StructureStart<?> structureStart, ServerWorld world)
 	{
 		MinecraftForge.EVENT_BUS.post(new StructureAddedEvent(structureStart, world));
 	}
 
-	public static void onStructurePieceAdded(StructurePiece structurePiece, ServerWorld world)
+	public static void fireStructurePieceAdded(StructurePiece structurePiece, ServerWorld world)
 	{
 		MinecraftForge.EVENT_BUS.post(new StructurePieceAddedEvent(structurePiece, world));
 	}
+	
+	public static void firePlayerCraftingEvent(PlayerEntity player, ItemStack crafted, CraftingInventory craftMatrix, CraftingResultSlot slot)
+    {
+        MinecraftForge.EVENT_BUS.post(new ItemCraftedEvent(player, crafted, craftMatrix, slot));
+    }
 
 	public static void onStructureAddedHook(StructureStart<?> structureStart, ISeedReader reader) {
 		ServerWorld world;
@@ -39,7 +49,7 @@ public class AntiqueAtlasHooks {
 			world = ((WorldGenRegion) reader).getWorld();
 		}
 
-		onStructureAdded(structureStart, world);
+		fireStructureAdded(structureStart, world);
 	}
 	
 	public static boolean onStructurePieceAddedHook(boolean get, StructurePiece structurePiece, ISeedReader reader) {
@@ -51,7 +61,7 @@ public class AntiqueAtlasHooks {
 			world = ((WorldGenRegion) reader).getWorld();
 		}
 		
-		onStructurePieceAdded(structurePiece, world);
+		fireStructurePieceAdded(structurePiece, world);
 		
 		return get;
 	}

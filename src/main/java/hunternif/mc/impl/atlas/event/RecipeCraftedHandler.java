@@ -12,7 +12,7 @@ import net.minecraft.world.World;
 public class RecipeCraftedHandler {
 
     public static ActionResultType onCrafted(PlayerEntity player, World world, IRecipe<?> recipe, ItemStack result, IInventory iInventory) {
-        if (world.isRemote()) return ActionResultType.PASS;
+    	if (world.isRemote()) return ActionResultType.PASS;
 
         if (recipe instanceof RecipeAtlasCombining) {
             RecipeAtlasCombining combining_recipe = (RecipeAtlasCombining) recipe;

@@ -1,5 +1,11 @@
 package hunternif.mc.impl.atlas.registry;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.commons.io.IOUtils;
+
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -9,22 +15,16 @@ import com.mojang.serialization.Lifecycle;
 import hunternif.mc.impl.atlas.AntiqueAtlasMod;
 import hunternif.mc.impl.atlas.util.BitMatrix;
 import hunternif.mc.impl.atlas.util.Log;
-import net.minecraft.util.RegistryKey;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.registry.*;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.registries.ForgeRegistryEntry;
-
-import org.apache.commons.io.IOUtils;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.NativeImage;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.resources.IResource;
+import net.minecraft.util.RegistryKey;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.registry.DefaultedRegistry;
+import net.minecraft.util.registry.Registry;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
 public class MarkerType {
 	public static final RegistryKey<Registry<MarkerType>> KEY = RegistryKey.getOrCreateRootKey(AntiqueAtlasMod.id("marker"));
@@ -56,7 +56,6 @@ public class MarkerType {
 	}
 
 	public static void register(ResourceLocation location, MarkerType type) {
-		System.out.println("Registering Marker: "+location);
 		if (REGISTRY.containsKey(location)) {
 			int id = REGISTRY.getId(type);
 			REGISTRY.register(id, RegistryKey.getOrCreateKey(KEY, location), type, Lifecycle.stable());

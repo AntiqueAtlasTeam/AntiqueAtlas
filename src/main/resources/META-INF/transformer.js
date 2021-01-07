@@ -16,7 +16,7 @@ function initializeCoreMod() {
 
     return {
 
-        // apply custom attributes for every item
+        // Structure Event Patch
         'structure_start_patch': {
             'target': {
                 'type': 'CLASS',
@@ -29,6 +29,22 @@ function initializeCoreMod() {
                     desc: "(Lnet/minecraft/world/ISeedReader;Lnet/minecraft/world/gen/feature/structure/StructureManager;Lnet/minecraft/world/gen/ChunkGenerator;Ljava/util/Random;Lnet/minecraft/util/math/MutableBoundingBox;Lnet/minecraft/util/math/ChunkPos;)V",
                     patches: [patchStructureStartfunc_230366_a_1, patchStructureStartfunc_230366_a_2]
                 }], classNode, "StructureStart");
+                return classNode;
+            }
+        },
+		// Forge's event doesn't include the slot involved in the crafting, so we do this ourselves
+        'crafting_result_slot_patch': {
+            'target': {
+                'type': 'CLASS',
+                'name': 'net.minecraft.inventory.container.CraftingResultSlot'
+            },
+            'transformer': function(classNode) {
+                patchMethod([{
+                    obfName: "func_75208_c",
+                    name: "onCrafting",
+                    desc: "(Lnet/minecraft/item/ItemStack;)V",
+                    patches: [patchCraftingResultSlotOnCrafting]
+                }], classNode, "CraftingResultSlot");
                 return classNode;
             }
         }
@@ -109,9 +125,22 @@ var patchStructureStartfunc_230366_a_1 = {
     }
 };
 
-
-
 var patchStructureStartfunc_230366_a_2 = {
+    filter: function(node, obfuscated) {
+        if (matchesHook(node, "net/minecraft/world/gen/feature/structure/StructurePiece", obfuscated ? "func_230383_a_" : "func_230383_a_", "(Lnet/minecraft/world/ISeedReader;Lnet/minecraft/world/gen/feature/structure/StructureManager;Lnet/minecraft/world/gen/ChunkGenerator;Ljava/util/Random;Lnet/minecraft/util/math/MutableBoundingBox;Lnet/minecraft/util/math/ChunkPos;Lnet/minecraft/util/math/BlockPos;)Z")) {
+            return node;
+        }
+    },
+    action: function(node, instructions, obfuscated) {
+        var insnList = new InsnList();
+        insnList.add(new VarInsnNode(Opcodes.ALOAD, 12));
+        insnList.add(new VarInsnNode(Opcodes.ALOAD, 1));
+        insnList.add(generateHook("onStructurePieceAddedHook", "(ZLnet/minecraft/world/gen/feature/structure/StructurePiece;Lnet/minecraft/world/ISeedReader;)Z"));
+        instructions.insert(node, insnList);
+    }
+};
+
+var patchCraftingResultSlotOnCrafting = {
     filter: function(node, obfuscated) {
 		debug("");
 		debug("*****************");
@@ -126,15 +155,19 @@ var patchStructureStartfunc_230366_a_2 = {
 		}
 		debug("*****************");
 		debug("");
-        if (matchesHook(node, "net/minecraft/world/gen/feature/structure/StructurePiece", obfuscated ? "func_230383_a_" : "func_230383_a_", "(Lnet/minecraft/world/ISeedReader;Lnet/minecraft/world/gen/feature/structure/StructureManager;Lnet/minecraft/world/gen/ChunkGenerator;Ljava/util/Random;Lnet/minecraft/util/math/MutableBoundingBox;Lnet/minecraft/util/math/ChunkPos;Lnet/minecraft/util/math/BlockPos;)Z")) {
+        if (matchesHook(node, "net/minecraft/item/ItemStack", obfuscated ? "func_77980_a" : "onCrafting", "(Lnet/minecraft/world/World;Lnet/minecraft/entity/player/PlayerEntity;I)V")) {
             return node;
         }
     },
     action: function(node, instructions, obfuscated) {
         var insnList = new InsnList();
-        insnList.add(new VarInsnNode(Opcodes.ALOAD, 12));
+		insnList.add(new VarInsnNode(Opcodes.ALOAD, null));
+        insnList.add(new FieldInsnNode(Opcodes.GETFIELD, "net/minecraft/inventory/container/CraftingResultSlot", "player", "Lnet/minecraft/entity/player/PlayerEntity;"));
         insnList.add(new VarInsnNode(Opcodes.ALOAD, 1));
-        insnList.add(generateHook("onStructurePieceAddedHook", "(ZLnet/minecraft/world/gen/feature/structure/StructurePiece;Lnet/minecraft/world/ISeedReader;)Z"));
+		insnList.add(new VarInsnNode(Opcodes.ALOAD, null));
+        insnList.add(new FieldInsnNode(Opcodes.GETFIELD, "net/minecraft/inventory/container/CraftingResultSlot", "craftMatrix", "Lnet/minecraft/inventory/CraftingInventory;"));
+        insnList.add(new VarInsnNode(Opcodes.ALOAD, 0));
+        insnList.add(generateHook("firePlayerCraftingEvent", "(Lnet/minecraft/entity/player/PlayerEntity;Lnet/minecraft/item/ItemStack;Lnet/minecraft/inventory/CraftingInventory;Lnet/minecraft/inventory/container/CraftingResultSlot;)V"));
 		
 		debug("#########MC#########");
 		if(!!node.owner)debug("MC Node Owner: "+node.owner);
@@ -145,7 +178,7 @@ var patchStructureStartfunc_230366_a_2 = {
 		debug("MC Node Opcodes: "+node.getOpcode());
 		debug("MC Node Var: "+node.var);	
 		debug("#########MC#########");
-		var node2 = insnList.get(2);
+		var node2 = insnList.get(0);
 		debug("#########CT#########");
 		if(!!node2.owner)debug("CT Node Owner: "+node2.owner);
 		debug("CT Node Name: "+node2.name);
@@ -207,7 +240,7 @@ function log(message) {
 }
 
 function debug(message) {
-	if (false) {
+	if (true) {
 		print("[Antique Atlas Transformer Debug]: " + message);
 	}
 }

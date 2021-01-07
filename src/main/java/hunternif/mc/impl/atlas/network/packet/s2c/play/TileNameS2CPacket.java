@@ -64,7 +64,7 @@ public class TileNameS2CPacket extends S2CPacket {
 		}
 
 		//FIXME TileIdRegisteredCallback.EVENT.invoker().onTileIDsReceived(tileIds);
-		AntiqueAtlasHooks.onTileIdRegistered(this.tileIds);
+		AntiqueAtlasHooks.fireTileIdRegistered(this.tileIds);
 		return true;
 	}
 

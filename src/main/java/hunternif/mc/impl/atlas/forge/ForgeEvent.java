@@ -8,6 +8,7 @@ import hunternif.mc.impl.atlas.client.gui.ExportProgressOverlay;
 import hunternif.mc.impl.atlas.core.PlayerEventHandler;
 import hunternif.mc.impl.atlas.event.RecipeCraftedHandler;
 import hunternif.mc.impl.atlas.ext.watcher.DeathWatcher;
+import hunternif.mc.impl.atlas.forge.event.ItemCraftedEvent;
 import hunternif.mc.impl.atlas.forge.event.StructureAddedEvent;
 import hunternif.mc.impl.atlas.forge.event.StructurePieceAddedEvent;
 import hunternif.mc.impl.atlas.structure.StructureHandler;
@@ -28,7 +29,6 @@ import net.minecraftforge.event.TickEvent.ClientTickEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
-import net.minecraftforge.event.entity.player.PlayerEvent.ItemCraftedEvent;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
@@ -133,8 +133,8 @@ public class ForgeEvent {
 	
 	@SubscribeEvent
 	public static void craftRecipe(ItemCraftedEvent event) {
-		if (event.getInventory() instanceof IRecipeHolder) {
-			RecipeCraftedHandler.onCrafted(event.getPlayer(), event.getPlayer().getEntityWorld(), ((IRecipeHolder)event.getInventory()).getRecipeUsed(), event.getCrafting(), event.getInventory());
+		if (event.getResultSlot().inventory instanceof IRecipeHolder) {
+			RecipeCraftedHandler.onCrafted(event.getPlayer(), event.getPlayer().getEntityWorld(), ((IRecipeHolder)event.getResultSlot().inventory).getRecipeUsed(), event.getCraftedStack(), event.getCraftingMatrix());
 		}
 	}
 }

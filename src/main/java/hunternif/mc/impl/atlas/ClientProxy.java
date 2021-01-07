@@ -148,7 +148,6 @@ public class ClientProxy implements ISelectiveResourceReloadListener {
 		// Prevent rewriting of the config while no changes have been made:
 //		MarkerType.REGISTRY.setDirty(true);
 		for (MarkerType type : MarkerType.REGISTRY) {
-			System.out.println("Amen to "+type.getIcon());
 			type.initMips();
 		}
 
