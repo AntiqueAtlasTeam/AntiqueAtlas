@@ -1,4 +1,4 @@
-package stereowalker.forge.impl.atlas.event;
+package hunternif.mc.impl.atlas.forge.event;
 
 import net.minecraft.world.gen.feature.structure.StructurePiece;
 import net.minecraft.world.gen.feature.structure.StructureStart;

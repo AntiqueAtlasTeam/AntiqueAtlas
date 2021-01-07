@@ -182,7 +182,7 @@ function matchesNode(node, owner, name, desc) {
 
 function generateHook(name, desc) {
 
-    return new MethodInsnNode(Opcodes.INVOKESTATIC, "stereowalker/forge/impl/atlas/hook/AntiqueAtlasHooks", name, desc, false);
+    return new MethodInsnNode(Opcodes.INVOKESTATIC, "hunternif/mc/impl/atlas/forge/hook/AntiqueAtlasHooks", name, desc, false);
 }
 
 function getNthNode(node, n) {

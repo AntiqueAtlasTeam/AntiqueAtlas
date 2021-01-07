@@ -1,7 +1,10 @@
-package stereowalker.forge.impl.atlas.hook;
+package hunternif.mc.impl.atlas.forge.hook;
 
 import java.util.Collection;
 
+import hunternif.mc.impl.atlas.forge.event.StructureAddedEvent;
+import hunternif.mc.impl.atlas.forge.event.StructurePieceAddedEvent;
+import hunternif.mc.impl.atlas.forge.event.TileIdRegisteredEvent;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.ISeedReader;
 import net.minecraft.world.gen.WorldGenRegion;
@@ -9,9 +12,6 @@ import net.minecraft.world.gen.feature.structure.StructurePiece;
 import net.minecraft.world.gen.feature.structure.StructureStart;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.MinecraftForge;
-import stereowalker.forge.impl.atlas.event.StructureAddedEvent;
-import stereowalker.forge.impl.atlas.event.StructurePieceAddedEvent;
-import stereowalker.forge.impl.atlas.event.TileIdRegisteredEvent;
 
 public class AntiqueAtlasHooks {
 

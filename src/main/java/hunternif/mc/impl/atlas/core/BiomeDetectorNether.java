@@ -1,5 +1,10 @@
 package hunternif.mc.impl.atlas.core;
 
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Map;
+
 import hunternif.mc.impl.atlas.ext.ExtTileIdMap;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -7,17 +12,10 @@ import net.minecraft.block.Blocks;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.registry.WorldGenRegistries;
-import net.minecraft.util.registry.Registry;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.BiomeContainer;
-import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.IChunk;
-
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Detects seas of lava, cave ground and cave walls in the Nether.

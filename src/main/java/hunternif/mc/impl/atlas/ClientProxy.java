@@ -88,7 +88,6 @@ import static hunternif.mc.impl.atlas.client.TextureSet.WELL;
 import java.util.function.Predicate;
 
 import hunternif.mc.impl.atlas.client.BiomeTextureMap;
-import hunternif.mc.impl.atlas.client.KeyHandler;
 import hunternif.mc.impl.atlas.client.TextureSet;
 import hunternif.mc.impl.atlas.client.TextureSetConfig;
 import hunternif.mc.impl.atlas.client.TextureSetMap;
@@ -99,7 +98,6 @@ import hunternif.mc.impl.atlas.registry.MarkerType;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.IReloadableResourceManager;
 import net.minecraft.resources.IResourceManager;
-import net.minecraft.resources.SimpleReloadableResourceManager;
 import net.minecraft.util.RegistryKey;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.registry.WorldGenRegistries;
@@ -111,7 +109,7 @@ import net.minecraftforge.resource.IResourceType;
 import net.minecraftforge.resource.ISelectiveResourceReloadListener;
 
 @OnlyIn(Dist.CLIENT)
-public class ClientProxy/* implements SimpleSynchronousResourceReloadListener */implements ISelectiveResourceReloadListener {
+public class ClientProxy implements ISelectiveResourceReloadListener {
 	private static TextureSetMap textureSetMap;
 	private static TextureSetConfig textureSetConfig;
 	private static BiomeTextureMap textureMap;
@@ -123,6 +121,7 @@ public class ClientProxy/* implements SimpleSynchronousResourceReloadListener */
 		//TODO Enforce texture config loading process as follows:
 		// 1. pre-init: Antique Atlas defaults are loaded, config files are read.
 		// 2. init: mods set their custom textures. Those loaded from the config must not be overwritten!
+		IReloadableResourceManager resourceManager = Minecraft.getInstance().resourceManager;
 
 		textureSetMap = TextureSetMap.instance();
 		textureSetConfig = new TextureSetConfig(textureSetMap);
@@ -131,19 +130,18 @@ public class ClientProxy/* implements SimpleSynchronousResourceReloadListener */
 		// Prevent rewriting of the config while no changes have been made:
 		textureSetMap.setDirty(false);
 
-		Minecraft.getInstance().resourceManager.addReloadListener(textureSetConfig);
+		resourceManager.addReloadListener(textureSetConfig);
 		// Legacy file name:
-		Minecraft.getInstance().resourceManager.addReloadListener(this);
+		resourceManager.addReloadListener(this);
 		// init
 		textureMap = BiomeTextureMap.instance();
 		registerVanillaCustomTileTextures();
-		IReloadableResourceManager r;
 		// Prevent rewriting of the config while no changes have been made:
 		textureMap.setDirty(false);
 		assignVanillaBiomeTextures();
 
 		markerTextureConfig = new MarkerTextureConfig();
-		Minecraft.getInstance().resourceManager.addReloadListener(markerTextureConfig);
+		resourceManager.addReloadListener(markerTextureConfig);
 		
 //		ClientProxy.markerTextureConfig.onResourceManagerReload(Minecraft.getInstance().getResourceManager());
 		

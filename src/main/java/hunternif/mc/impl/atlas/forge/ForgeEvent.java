@@ -1,4 +1,4 @@
-package stereowalker.forge;
+package hunternif.mc.impl.atlas.forge;
 
 import hunternif.mc.impl.atlas.AntiqueAtlasConfig;
 import hunternif.mc.impl.atlas.AntiqueAtlasMod;
@@ -8,6 +8,8 @@ import hunternif.mc.impl.atlas.client.gui.ExportProgressOverlay;
 import hunternif.mc.impl.atlas.core.PlayerEventHandler;
 import hunternif.mc.impl.atlas.event.RecipeCraftedHandler;
 import hunternif.mc.impl.atlas.ext.watcher.DeathWatcher;
+import hunternif.mc.impl.atlas.forge.event.StructureAddedEvent;
+import hunternif.mc.impl.atlas.forge.event.StructurePieceAddedEvent;
 import hunternif.mc.impl.atlas.structure.StructureHandler;
 import kenkron.antiqueatlasoverlay.OverlayRenderer;
 import net.minecraft.client.Minecraft;
@@ -30,8 +32,6 @@ import net.minecraftforge.event.entity.player.PlayerEvent.ItemCraftedEvent;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
-import stereowalker.forge.impl.atlas.event.StructureAddedEvent;
-import stereowalker.forge.impl.atlas.event.StructurePieceAddedEvent;
 
 @EventBusSubscriber
 public class ForgeEvent {

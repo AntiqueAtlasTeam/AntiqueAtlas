@@ -8,6 +8,7 @@ import hunternif.mc.impl.atlas.core.AtlasDataHandler;
 import hunternif.mc.impl.atlas.core.BiomeDetectorBase;
 import hunternif.mc.impl.atlas.core.GlobalAtlasData;
 import hunternif.mc.impl.atlas.ext.TileDataHandler;
+import hunternif.mc.impl.atlas.forge.AntiqueAtlasConfigBuilder;
 import hunternif.mc.impl.atlas.marker.GlobalMarkersDataHandler;
 import hunternif.mc.impl.atlas.marker.MarkersDataHandler;
 import hunternif.mc.impl.atlas.network.AntiqueAtlasNetworking;
@@ -27,7 +28,6 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLPaths;
 import net.minecraftforge.fml.network.NetworkRegistry;
 import net.minecraftforge.fml.network.simple.SimpleChannel;
-import stereowalker.forge.AntiqueAtlasConfigBuilder;
 
 @Mod("antiqueatlas")
 public class AntiqueAtlasMod

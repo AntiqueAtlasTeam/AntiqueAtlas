@@ -7,6 +7,7 @@ import com.google.gson.JsonParser;
 import hunternif.mc.impl.atlas.AntiqueAtlasMod;
 import hunternif.mc.impl.atlas.client.TextureSetConfig;
 import hunternif.mc.impl.atlas.client.TextureSetMap;
+import hunternif.mc.impl.atlas.forge.IResourceReloadListener;
 import hunternif.mc.impl.atlas.util.Log;
 //import net.fabricmc.fabric.api.resource.SimpleResourceReloadListener;
 import net.minecraft.profiler.IProfiler;
@@ -15,7 +16,6 @@ import net.minecraft.resources.IResourceManager;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import stereowalker.forge.IResourceReloadListener;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;

@@ -15,6 +15,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import hunternif.mc.impl.atlas.AntiqueAtlasMod;
+import hunternif.mc.impl.atlas.forge.IResourceReloadListener;
 import hunternif.mc.impl.atlas.util.Log;
 import net.minecraft.profiler.IProfiler;
 import net.minecraft.resources.IResource;
@@ -22,7 +23,6 @@ import net.minecraft.resources.IResourceManager;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import stereowalker.forge.IResourceReloadListener;
 
 /**
  * Saves texture set names with the lists of texture variations.

@@ -4,35 +4,31 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-import hunternif.mc.impl.atlas.ext.TileDataStorage;
-//import hunternif.mc.impl.atlas.ext.TileIdRegisteredCallback;
-import hunternif.mc.impl.atlas.network.packet.c2s.play.PutTileC2SPacket;
-import hunternif.mc.impl.atlas.network.packet.c2s.play.RegisterTileC2SPacket;
-import hunternif.mc.impl.atlas.network.packet.s2c.play.DeleteCustomGlobalTileS2CPacket;
-import hunternif.mc.impl.atlas.network.packet.s2c.play.PutTileS2CPacket;
-import hunternif.mc.impl.atlas.network.packet.s2c.play.CustomTileInfoS2CPacket;
-import hunternif.mc.impl.atlas.network.packet.s2c.play.TileNameS2CPacket;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.RegistryKey;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.World;
-import net.minecraft.world.biome.Biome;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
-import stereowalker.forge.impl.atlas.event.TileIdRegisteredEvent;
 import hunternif.mc.impl.atlas.AntiqueAtlasMod;
 import hunternif.mc.impl.atlas.api.TileAPI;
 import hunternif.mc.impl.atlas.client.BiomeTextureMap;
 import hunternif.mc.impl.atlas.client.TextureSet;
 import hunternif.mc.impl.atlas.client.TextureSetMap;
 import hunternif.mc.impl.atlas.core.AtlasData;
-import hunternif.mc.impl.atlas.ext.ExtTileIdMap;
 import hunternif.mc.impl.atlas.ext.ExtTileTextureMap;
+import hunternif.mc.impl.atlas.ext.TileDataStorage;
+import hunternif.mc.impl.atlas.forge.event.TileIdRegisteredEvent;
+//import hunternif.mc.impl.atlas.ext.TileIdRegisteredCallback;
+import hunternif.mc.impl.atlas.network.packet.c2s.play.PutTileC2SPacket;
+import hunternif.mc.impl.atlas.network.packet.s2c.play.CustomTileInfoS2CPacket;
+import hunternif.mc.impl.atlas.network.packet.s2c.play.DeleteCustomGlobalTileS2CPacket;
+import hunternif.mc.impl.atlas.network.packet.s2c.play.PutTileS2CPacket;
 import hunternif.mc.impl.atlas.util.Log;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.util.RegistryKey;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.World;
+import net.minecraft.world.biome.Biome;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 
 @EventBusSubscriber
 public class TileApiImpl implements TileAPI {

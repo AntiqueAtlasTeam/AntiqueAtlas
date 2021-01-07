@@ -1,4 +1,4 @@
-package stereowalker.forge.impl.atlas.event;
+package hunternif.mc.impl.atlas.forge.event;
 
 import java.util.Collection;
 

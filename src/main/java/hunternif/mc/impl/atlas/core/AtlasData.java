@@ -12,6 +12,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import hunternif.mc.impl.atlas.AntiqueAtlasConfig;
 import hunternif.mc.impl.atlas.AntiqueAtlasMod;
+import hunternif.mc.impl.atlas.forge.NbtType;
 import hunternif.mc.impl.atlas.network.packet.s2c.play.MapDataS2CPacket;
 import hunternif.mc.impl.atlas.util.Log;
 import hunternif.mc.impl.atlas.util.ShortVec2;
@@ -26,7 +27,6 @@ import net.minecraft.world.World;
 import net.minecraft.world.chunk.ChunkStatus;
 import net.minecraft.world.chunk.IChunk;
 import net.minecraft.world.storage.WorldSavedData;
-import stereowalker.forge.NbtType;
 
 public class AtlasData extends WorldSavedData {
 	public static final int VERSION = 4;

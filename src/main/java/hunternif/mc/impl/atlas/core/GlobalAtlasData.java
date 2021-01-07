@@ -1,8 +1,8 @@
 package hunternif.mc.impl.atlas.core;
 
+import hunternif.mc.impl.atlas.forge.NbtType;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.world.storage.WorldSavedData;
-import stereowalker.forge.NbtType;
 
 public class GlobalAtlasData extends WorldSavedData {
 	public static final String TAG_NEXT_ID = "aaNextID";

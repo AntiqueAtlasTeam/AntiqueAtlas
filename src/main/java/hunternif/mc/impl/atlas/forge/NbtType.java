@@ -1,4 +1,4 @@
-package stereowalker.forge;
+package hunternif.mc.impl.atlas.forge;
 
 public class NbtType {
 	public static final int IntNBT = 3;

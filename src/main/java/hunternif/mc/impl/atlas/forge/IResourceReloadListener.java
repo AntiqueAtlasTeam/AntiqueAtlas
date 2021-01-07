@@ -1,4 +1,4 @@
-package stereowalker.forge;
+package hunternif.mc.impl.atlas.forge;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
