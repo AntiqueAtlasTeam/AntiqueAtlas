@@ -240,7 +240,7 @@ function log(message) {
 }
 
 function debug(message) {
-	if (true) {
+	if (false) {
 		print("[Antique Atlas Transformer Debug]: " + message);
 	}
 }
