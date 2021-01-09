@@ -162,10 +162,10 @@ var patchCraftingResultSlotOnCrafting = {
     action: function(node, instructions, obfuscated) {
         var insnList = new InsnList();
 		insnList.add(new VarInsnNode(Opcodes.ALOAD, null));
-        insnList.add(new FieldInsnNode(Opcodes.GETFIELD, "net/minecraft/inventory/container/CraftingResultSlot", "player", "Lnet/minecraft/entity/player/PlayerEntity;"));
+        insnList.add(new FieldInsnNode(Opcodes.GETFIELD, "net/minecraft/inventory/container/CraftingResultSlot", obfuscated ? "field_75238_b " : "player", "Lnet/minecraft/entity/player/PlayerEntity;"));
         insnList.add(new VarInsnNode(Opcodes.ALOAD, 1));
 		insnList.add(new VarInsnNode(Opcodes.ALOAD, null));
-        insnList.add(new FieldInsnNode(Opcodes.GETFIELD, "net/minecraft/inventory/container/CraftingResultSlot", "craftMatrix", "Lnet/minecraft/inventory/CraftingInventory;"));
+        insnList.add(new FieldInsnNode(Opcodes.GETFIELD, "net/minecraft/inventory/container/CraftingResultSlot", obfuscated ? "field_75239_a" : "craftMatrix", "Lnet/minecraft/inventory/CraftingInventory;"));
         insnList.add(new VarInsnNode(Opcodes.ALOAD, 0));
         insnList.add(generateHook("firePlayerCraftingEvent", "(Lnet/minecraft/entity/player/PlayerEntity;Lnet/minecraft/item/ItemStack;Lnet/minecraft/inventory/CraftingInventory;Lnet/minecraft/inventory/container/CraftingResultSlot;)V"));
 		
