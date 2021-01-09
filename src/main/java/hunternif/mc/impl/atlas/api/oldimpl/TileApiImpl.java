@@ -51,7 +51,6 @@ public class TileApiImpl implements TileAPI {
 	}
 	
 	public TileApiImpl() {
-		//FIXME TileIdRegisteredCallback.EVENT.register(this::onTileIdRegistered);
 	}
 	
 	@SubscribeEvent

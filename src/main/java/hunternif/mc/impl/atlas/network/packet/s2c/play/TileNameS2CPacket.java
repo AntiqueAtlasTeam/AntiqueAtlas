@@ -10,7 +10,6 @@ import hunternif.mc.impl.atlas.client.BiomeTextureMap;
 import hunternif.mc.impl.atlas.client.TextureSet;
 import hunternif.mc.impl.atlas.ext.ExtTileTextureMap;
 import hunternif.mc.impl.atlas.forge.hook.AntiqueAtlasHooks;
-//import hunternif.mc.impl.atlas.ext.TileIdRegisteredCallback;
 import hunternif.mc.impl.atlas.network.packet.s2c.S2CPacket;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.network.PacketBuffer;
@@ -63,7 +62,6 @@ public class TileNameS2CPacket extends S2CPacket {
 			BiomeTextureMap.instance().setTexture(id, texture);
 		}
 
-		//FIXME TileIdRegisteredCallback.EVENT.invoker().onTileIDsReceived(tileIds);
 		AntiqueAtlasHooks.fireTileIdRegistered(this.tileIds);
 		return true;
 	}

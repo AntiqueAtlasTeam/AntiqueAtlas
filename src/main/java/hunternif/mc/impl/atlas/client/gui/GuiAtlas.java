@@ -10,6 +10,7 @@ import hunternif.mc.impl.atlas.client.gui.core.*;
 import hunternif.mc.impl.atlas.client.gui.core.GuiStates.IState;
 import hunternif.mc.impl.atlas.client.gui.core.GuiStates.SimpleState;
 import hunternif.mc.impl.atlas.core.WorldData;
+import hunternif.mc.impl.atlas.forge.hook.AntiqueAtlasHooks;
 //import hunternif.mc.impl.atlas.event.MarkerClickedCallback;
 //import hunternif.mc.impl.atlas.event.MarkerHoveredCallback;
 import hunternif.mc.impl.atlas.item.AtlasItem;
@@ -913,7 +914,7 @@ public class GuiAtlas extends GuiComponent {
 		if (mouseIsOverMarker) {
 			RenderSystem.color4f(0.5f, 0.5f, 0.5f, 1);
 			hoveredMarker = marker;
-			//FIXME MarkerHoveredCallback.EVENT.invoker().onHovered(player, marker);
+			AntiqueAtlasHooks.fireMarkerHovered(player, marker);
 		} else {
 			RenderSystem.color4f(1, 1, 1, 1);
 			if (hoveredMarker == marker) {

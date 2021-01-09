@@ -3,9 +3,11 @@ package hunternif.mc.impl.atlas.forge.hook;
 import java.util.Collection;
 
 import hunternif.mc.impl.atlas.forge.event.ItemCraftedEvent;
+import hunternif.mc.impl.atlas.forge.event.MarkerHoveredEvent;
 import hunternif.mc.impl.atlas.forge.event.StructureAddedEvent;
 import hunternif.mc.impl.atlas.forge.event.StructurePieceAddedEvent;
 import hunternif.mc.impl.atlas.forge.event.TileIdRegisteredEvent;
+import hunternif.mc.impl.atlas.marker.Marker;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.CraftingInventory;
 import net.minecraft.inventory.container.CraftingResultSlot;
@@ -39,6 +41,10 @@ public class AntiqueAtlasHooks {
     {
         MinecraftForge.EVENT_BUS.post(new ItemCraftedEvent(player, crafted, craftMatrix, slot));
     }
+	
+	public static void fireMarkerHovered(PlayerEntity player, Marker marker) {
+		MinecraftForge.EVENT_BUS.post(new MarkerHoveredEvent(player, marker));
+	}
 
 	public static void onStructureAddedHook(StructureStart<?> structureStart, ISeedReader reader) {
 		ServerWorld world;
