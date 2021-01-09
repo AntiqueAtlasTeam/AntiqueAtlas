@@ -452,6 +452,13 @@ public class GuiAtlas extends GuiComponent {
             return true;
         }
 
+        // close atlas with right-click
+        if (mouseState == 1 && state.is(NORMAL))
+        {
+            onClose();
+            return true;
+        }
+
         // If clicked on the map, start dragging
         int mapX = (width - MAP_WIDTH) / 2;
         int mapY = (height - MAP_HEIGHT) / 2;
@@ -1016,7 +1023,7 @@ public class GuiAtlas extends GuiComponent {
     @Override
     public void onClose() {
         super.onClose();
-        removeChild(markerFinalizer);
+        markerFinalizer.close();
         removeChild(blinkingIcon);
         // Keyboard.enableRepeatEvents(false);
         biomeData.setBrowsingPosition(mapOffsetX, mapOffsetY, mapScale);

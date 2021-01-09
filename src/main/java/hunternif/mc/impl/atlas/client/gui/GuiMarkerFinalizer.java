@@ -134,7 +134,9 @@ public class GuiMarkerFinalizer extends GuiComponent {
     @Override
     public void close() {
         super.close();
-        scroller.close();
+        if (scroller != null) {
+            scroller.close();
+        }
     }
 
     @Override
