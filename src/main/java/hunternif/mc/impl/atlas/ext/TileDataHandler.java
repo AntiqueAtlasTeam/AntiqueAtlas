@@ -1,10 +1,10 @@
 package hunternif.mc.impl.atlas.ext;
 
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.registry.RegistryKey;
+import net.minecraft.util.RegistryKey;
 import net.minecraft.world.World;
+import net.minecraft.world.server.ServerWorld;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -21,7 +21,7 @@ public class TileDataHandler {
 			new ConcurrentHashMap<>(2, 0.75f, 2);
 
 	public void onWorldLoad(MinecraftServer server, ServerWorld world) {
-		worldData.put(world.getRegistryKey(), world.getPersistentStateManager().getOrCreate(() -> {
+		worldData.put(world.getDimensionKey(), world.getSavedData().getOrCreate(() -> {
 			TileDataStorage data = new TileDataStorage(DATA_KEY);
 			data.markDirty();
 			return data;
@@ -30,7 +30,7 @@ public class TileDataHandler {
 
 	public TileDataStorage getData(World world)
 	{
-		return getData(world.getRegistryKey());
+		return getData(world.getDimensionKey());
 	}
 
 	public TileDataStorage getData(RegistryKey<World> world) {

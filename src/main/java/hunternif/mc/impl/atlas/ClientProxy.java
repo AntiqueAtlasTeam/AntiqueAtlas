@@ -1,31 +1,119 @@
 package hunternif.mc.impl.atlas;
 
-import hunternif.mc.impl.atlas.client.*;
+import static hunternif.mc.impl.atlas.client.TextureSet.BIRCH;
+import static hunternif.mc.impl.atlas.client.TextureSet.BIRCH_HILLS;
+import static hunternif.mc.impl.atlas.client.TextureSet.BRYCE;
+import static hunternif.mc.impl.atlas.client.TextureSet.BUTCHERS_SHOP;
+import static hunternif.mc.impl.atlas.client.TextureSet.CAVE_WALLS;
+import static hunternif.mc.impl.atlas.client.TextureSet.CHURCH;
+import static hunternif.mc.impl.atlas.client.TextureSet.DENSE_BIRCH;
+import static hunternif.mc.impl.atlas.client.TextureSet.DENSE_FOREST;
+import static hunternif.mc.impl.atlas.client.TextureSet.DENSE_FOREST_HILLS;
+import static hunternif.mc.impl.atlas.client.TextureSet.DESERT;
+import static hunternif.mc.impl.atlas.client.TextureSet.DESERT_HILLS;
+import static hunternif.mc.impl.atlas.client.TextureSet.END_ISLAND;
+import static hunternif.mc.impl.atlas.client.TextureSet.END_ISLAND_PLANTS;
+import static hunternif.mc.impl.atlas.client.TextureSet.END_VOID;
+import static hunternif.mc.impl.atlas.client.TextureSet.FARMLAND_LARGE;
+import static hunternif.mc.impl.atlas.client.TextureSet.FARMLAND_SMALL;
+import static hunternif.mc.impl.atlas.client.TextureSet.FENCE;
+import static hunternif.mc.impl.atlas.client.TextureSet.FOREST;
+import static hunternif.mc.impl.atlas.client.TextureSet.FOREST_FLOWERS;
+import static hunternif.mc.impl.atlas.client.TextureSet.FOREST_HILLS;
+import static hunternif.mc.impl.atlas.client.TextureSet.HILLS;
+import static hunternif.mc.impl.atlas.client.TextureSet.HOUSE;
+import static hunternif.mc.impl.atlas.client.TextureSet.HOUSE_SMALL;
+import static hunternif.mc.impl.atlas.client.TextureSet.HUT;
+import static hunternif.mc.impl.atlas.client.TextureSet.ICE;
+import static hunternif.mc.impl.atlas.client.TextureSet.ICE_SPIKES;
+import static hunternif.mc.impl.atlas.client.TextureSet.JUNGLE;
+import static hunternif.mc.impl.atlas.client.TextureSet.JUNGLE_CLIFFS;
+import static hunternif.mc.impl.atlas.client.TextureSet.JUNGLE_EDGE;
+import static hunternif.mc.impl.atlas.client.TextureSet.JUNGLE_EDGE_HILLS;
+import static hunternif.mc.impl.atlas.client.TextureSet.JUNGLE_HILLS;
+import static hunternif.mc.impl.atlas.client.TextureSet.LAVA;
+import static hunternif.mc.impl.atlas.client.TextureSet.LAVA_SHORE;
+import static hunternif.mc.impl.atlas.client.TextureSet.LIBRARY;
+import static hunternif.mc.impl.atlas.client.TextureSet.L_HOUSE;
+import static hunternif.mc.impl.atlas.client.TextureSet.MEGA_SPRUCE;
+import static hunternif.mc.impl.atlas.client.TextureSet.MEGA_SPRUCE_HILLS;
+import static hunternif.mc.impl.atlas.client.TextureSet.MEGA_TAIGA;
+import static hunternif.mc.impl.atlas.client.TextureSet.MEGA_TAIGA_HILLS;
+import static hunternif.mc.impl.atlas.client.TextureSet.MESA;
+import static hunternif.mc.impl.atlas.client.TextureSet.MOUNTAINS;
+import static hunternif.mc.impl.atlas.client.TextureSet.MOUNTAINS_ALL;
+import static hunternif.mc.impl.atlas.client.TextureSet.MOUNTAINS_NAKED;
+import static hunternif.mc.impl.atlas.client.TextureSet.MOUNTAINS_SNOW_CAPS;
+import static hunternif.mc.impl.atlas.client.TextureSet.MUSHROOM;
+import static hunternif.mc.impl.atlas.client.TextureSet.NETHER_BRIDGE;
+import static hunternif.mc.impl.atlas.client.TextureSet.NETHER_BRIDGE_END_X;
+import static hunternif.mc.impl.atlas.client.TextureSet.NETHER_BRIDGE_END_Z;
+import static hunternif.mc.impl.atlas.client.TextureSet.NETHER_BRIDGE_GATE;
+import static hunternif.mc.impl.atlas.client.TextureSet.NETHER_BRIDGE_X;
+import static hunternif.mc.impl.atlas.client.TextureSet.NETHER_BRIDGE_Z;
+import static hunternif.mc.impl.atlas.client.TextureSet.NETHER_FORT_STAIRS;
+import static hunternif.mc.impl.atlas.client.TextureSet.NETHER_HALL;
+import static hunternif.mc.impl.atlas.client.TextureSet.NETHER_THRONE;
+import static hunternif.mc.impl.atlas.client.TextureSet.NETHER_TOWER;
+import static hunternif.mc.impl.atlas.client.TextureSet.NETHER_WALL;
+import static hunternif.mc.impl.atlas.client.TextureSet.PINES;
+import static hunternif.mc.impl.atlas.client.TextureSet.PINES_HILLS;
+import static hunternif.mc.impl.atlas.client.TextureSet.PLAINS;
+import static hunternif.mc.impl.atlas.client.TextureSet.PLATEAU_MESA;
+import static hunternif.mc.impl.atlas.client.TextureSet.PLATEAU_MESA_LOW;
+import static hunternif.mc.impl.atlas.client.TextureSet.PLATEAU_MESA_TREES;
+import static hunternif.mc.impl.atlas.client.TextureSet.PLATEAU_MESA_TREES_LOW;
+import static hunternif.mc.impl.atlas.client.TextureSet.PLATEAU_SAVANNA;
+import static hunternif.mc.impl.atlas.client.TextureSet.PLATEAU_SAVANNA_M;
+import static hunternif.mc.impl.atlas.client.TextureSet.RAVINE;
+import static hunternif.mc.impl.atlas.client.TextureSet.ROCK_SHORE;
+import static hunternif.mc.impl.atlas.client.TextureSet.SAVANNA;
+import static hunternif.mc.impl.atlas.client.TextureSet.SAVANNA_PLATEAU;
+import static hunternif.mc.impl.atlas.client.TextureSet.SHORE;
+import static hunternif.mc.impl.atlas.client.TextureSet.SMITHY;
+import static hunternif.mc.impl.atlas.client.TextureSet.SNOW;
+import static hunternif.mc.impl.atlas.client.TextureSet.SNOW_HILLS;
+import static hunternif.mc.impl.atlas.client.TextureSet.SNOW_PINES;
+import static hunternif.mc.impl.atlas.client.TextureSet.SNOW_PINES_HILLS;
+import static hunternif.mc.impl.atlas.client.TextureSet.SOUL_SAND_VALLEY;
+import static hunternif.mc.impl.atlas.client.TextureSet.SUNFLOWERS;
+import static hunternif.mc.impl.atlas.client.TextureSet.SWAMP;
+import static hunternif.mc.impl.atlas.client.TextureSet.SWAMP_HILLS;
+import static hunternif.mc.impl.atlas.client.TextureSet.TALL_BIRCH;
+import static hunternif.mc.impl.atlas.client.TextureSet.TALL_BIRCH_HILLS;
+import static hunternif.mc.impl.atlas.client.TextureSet.VILLAGE_TORCH;
+import static hunternif.mc.impl.atlas.client.TextureSet.WATER;
+import static hunternif.mc.impl.atlas.client.TextureSet.WELL;
+
+import java.util.function.Predicate;
+
+import hunternif.mc.impl.atlas.client.BiomeTextureMap;
+import hunternif.mc.impl.atlas.client.TextureSet;
+import hunternif.mc.impl.atlas.client.TextureSetConfig;
+import hunternif.mc.impl.atlas.client.TextureSetMap;
 import hunternif.mc.impl.atlas.client.gui.GuiAtlas;
 import hunternif.mc.impl.atlas.ext.ExtTileIdMap;
 import hunternif.mc.impl.atlas.marker.MarkerTextureConfig;
 import hunternif.mc.impl.atlas.registry.MarkerType;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
-import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
-import net.fabricmc.fabric.api.resource.SimpleSynchronousResourceReloadListener;
-import net.minecraft.resource.ResourceManager;
-import net.minecraft.resource.ResourceType;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.BuiltinRegistries;
-import net.minecraft.util.registry.RegistryKey;
+import net.minecraft.client.Minecraft;
+import net.minecraft.resources.IReloadableResourceManager;
+import net.minecraft.resources.IResourceManager;
+import net.minecraft.util.RegistryKey;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.registry.WorldGenRegistries;
 import net.minecraft.world.biome.Biome;
-import net.minecraft.world.biome.BiomeKeys;
+import net.minecraft.world.biome.Biomes;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.resource.IResourceType;
+import net.minecraftforge.resource.ISelectiveResourceReloadListener;
 
-import static hunternif.mc.impl.atlas.client.TextureSet.*;
-
-@Environment(EnvType.CLIENT)
-public class ClientProxy implements SimpleSynchronousResourceReloadListener {
+@OnlyIn(Dist.CLIENT)
+public class ClientProxy implements ISelectiveResourceReloadListener {
 	private static TextureSetMap textureSetMap;
 	private static TextureSetConfig textureSetConfig;
 	private static BiomeTextureMap textureMap;
-	private static MarkerTextureConfig markerTextureConfig;
+	public static MarkerTextureConfig markerTextureConfig;
 
 	private static GuiAtlas guiAtlas;
 
@@ -33,6 +121,7 @@ public class ClientProxy implements SimpleSynchronousResourceReloadListener {
 		//TODO Enforce texture config loading process as follows:
 		// 1. pre-init: Antique Atlas defaults are loaded, config files are read.
 		// 2. init: mods set their custom textures. Those loaded from the config must not be overwritten!
+		IReloadableResourceManager resourceManager = Minecraft.getInstance().resourceManager;
 
 		textureSetMap = TextureSetMap.instance();
 		textureSetConfig = new TextureSetConfig(textureSetMap);
@@ -41,37 +130,30 @@ public class ClientProxy implements SimpleSynchronousResourceReloadListener {
 		// Prevent rewriting of the config while no changes have been made:
 		textureSetMap.setDirty(false);
 
-		ResourceManagerHelper.get(ResourceType.CLIENT_RESOURCES).registerReloadListener(textureSetConfig);
-
+		resourceManager.addReloadListener(textureSetConfig);
 		// Legacy file name:
-		ResourceManagerHelper.get(ResourceType.CLIENT_RESOURCES).registerReloadListener(this);
-
+		resourceManager.addReloadListener(this);
 		// init
 		textureMap = BiomeTextureMap.instance();
 		registerVanillaCustomTileTextures();
-
 		// Prevent rewriting of the config while no changes have been made:
 		textureMap.setDirty(false);
 		assignVanillaBiomeTextures();
 
 		markerTextureConfig = new MarkerTextureConfig();
-		ResourceManagerHelper.get(ResourceType.CLIENT_RESOURCES).registerReloadListener(markerTextureConfig);
-
+		resourceManager.addReloadListener(markerTextureConfig);
+		
+//		ClientProxy.markerTextureConfig.onResourceManagerReload(Minecraft.getInstance().getResourceManager());
+		
 		// Prevent rewriting of the config while no changes have been made:
 //		MarkerType.REGISTRY.setDirty(true);
-
 		for (MarkerType type : MarkerType.REGISTRY) {
 			type.initMips();
 		}
 
-		if (!AntiqueAtlasMod.CONFIG.itemNeeded) {
-            KeyHandler.registerBindings();
-			ClientTickEvents.START_CLIENT_TICK.register(KeyHandler::onClientTick);
-        }
-
 	}
 
-	@Environment(EnvType.CLIENT)
+	@OnlyIn(Dist.CLIENT)
 	private void registerDefaultTextureSets(TextureSetMap map) {
 		map.register(ICE);
 		map.register(SHORE);
@@ -177,60 +259,60 @@ public class ClientProxy implements SimpleSynchronousResourceReloadListener {
 		// Since biome categories are now vanilla, we only handle the
 		// "edge cases".
 
-		setBiomeTextureIfNone(BiomeKeys.ICE_SPIKES, ICE_SPIKES); // this is a biome mutation
-		setBiomeTextureIfNone(BiomeKeys.SUNFLOWER_PLAINS, SUNFLOWERS);
-		setBiomeTextureIfNone(BiomeKeys.SNOWY_BEACH, SHORE);
-		setBiomeTextureIfNone(BiomeKeys.STONE_SHORE, ROCK_SHORE);
+		setBiomeTextureIfNone(Biomes.ICE_SPIKES, ICE_SPIKES); // this is a biome mutation
+		setBiomeTextureIfNone(Biomes.SUNFLOWER_PLAINS, SUNFLOWERS);
+		setBiomeTextureIfNone(Biomes.SNOWY_BEACH, SHORE);
+		setBiomeTextureIfNone(Biomes.STONE_SHORE, ROCK_SHORE);
 
-		setBiomeTextureIfNone(BiomeKeys.SNOWY_MOUNTAINS, MOUNTAINS_SNOW_CAPS);
-		setBiomeTextureIfNone(BiomeKeys.MOUNTAINS, MOUNTAINS_ALL);
-		setBiomeTextureIfNone(BiomeKeys.SNOWY_TAIGA_MOUNTAINS, MOUNTAINS_SNOW_CAPS);
-		setBiomeTextureIfNone(BiomeKeys.FOREST, FOREST);
+		setBiomeTextureIfNone(Biomes.SNOWY_MOUNTAINS, MOUNTAINS_SNOW_CAPS);
+		setBiomeTextureIfNone(Biomes.MOUNTAINS, MOUNTAINS_ALL);
+		setBiomeTextureIfNone(Biomes.SNOWY_TAIGA_MOUNTAINS, MOUNTAINS_SNOW_CAPS);
+		setBiomeTextureIfNone(Biomes.FOREST, FOREST);
 
-		setBiomeTextureIfNone(BiomeKeys.FLOWER_FOREST, FOREST_FLOWERS);
-		setBiomeTextureIfNone(BiomeKeys.BIRCH_FOREST, BIRCH);
-		setBiomeTextureIfNone(BiomeKeys.TALL_BIRCH_FOREST, TALL_BIRCH);
-		setBiomeTextureIfNone(BiomeKeys.BIRCH_FOREST_HILLS, BIRCH_HILLS);
-		setBiomeTextureIfNone(BiomeKeys.TALL_BIRCH_HILLS, TALL_BIRCH_HILLS);
-		setBiomeTextureIfNone(BiomeKeys.JUNGLE, JUNGLE);
-		setBiomeTextureIfNone(BiomeKeys.MODIFIED_JUNGLE_EDGE, JUNGLE_CLIFFS);
-		setBiomeTextureIfNone(BiomeKeys.JUNGLE_HILLS, JUNGLE_HILLS);
-		setBiomeTextureIfNone(BiomeKeys.JUNGLE_EDGE, JUNGLE_EDGE);
-		setBiomeTextureIfNone(BiomeKeys.TAIGA, PINES);
-		setBiomeTextureIfNone(BiomeKeys.TAIGA_HILLS, PINES_HILLS);
-		setBiomeTextureIfNone(BiomeKeys.TAIGA_HILLS, PINES_HILLS);
-		setBiomeTextureIfNone(BiomeKeys.SNOWY_TAIGA, SNOW_PINES);
-		setBiomeTextureIfNone(BiomeKeys.SNOWY_TAIGA_HILLS, SNOW_PINES_HILLS);
-		setBiomeTextureIfNone(BiomeKeys.SNOWY_TAIGA_MOUNTAINS, SNOW_PINES_HILLS);
-		setBiomeTextureIfNone(BiomeKeys.GIANT_TREE_TAIGA, MEGA_TAIGA);
-		setBiomeTextureIfNone(BiomeKeys.GIANT_SPRUCE_TAIGA, MEGA_SPRUCE);
-		setBiomeTextureIfNone(BiomeKeys.GIANT_TREE_TAIGA_HILLS, MEGA_TAIGA_HILLS);
-		setBiomeTextureIfNone(BiomeKeys.GIANT_SPRUCE_TAIGA_HILLS, MEGA_SPRUCE_HILLS);
+		setBiomeTextureIfNone(Biomes.FLOWER_FOREST, FOREST_FLOWERS);
+		setBiomeTextureIfNone(Biomes.BIRCH_FOREST, BIRCH);
+		setBiomeTextureIfNone(Biomes.TALL_BIRCH_FOREST, TALL_BIRCH);
+		setBiomeTextureIfNone(Biomes.BIRCH_FOREST_HILLS, BIRCH_HILLS);
+		setBiomeTextureIfNone(Biomes.TALL_BIRCH_HILLS, TALL_BIRCH_HILLS);
+		setBiomeTextureIfNone(Biomes.JUNGLE, JUNGLE);
+		setBiomeTextureIfNone(Biomes.MODIFIED_JUNGLE_EDGE, JUNGLE_CLIFFS);
+		setBiomeTextureIfNone(Biomes.JUNGLE_HILLS, JUNGLE_HILLS);
+		setBiomeTextureIfNone(Biomes.JUNGLE_EDGE, JUNGLE_EDGE);
+		setBiomeTextureIfNone(Biomes.TAIGA, PINES);
+		setBiomeTextureIfNone(Biomes.TAIGA_HILLS, PINES_HILLS);
+		setBiomeTextureIfNone(Biomes.TAIGA_HILLS, PINES_HILLS);
+		setBiomeTextureIfNone(Biomes.SNOWY_TAIGA, SNOW_PINES);
+		setBiomeTextureIfNone(Biomes.SNOWY_TAIGA_HILLS, SNOW_PINES_HILLS);
+		setBiomeTextureIfNone(Biomes.SNOWY_TAIGA_MOUNTAINS, SNOW_PINES_HILLS);
+		setBiomeTextureIfNone(Biomes.GIANT_TREE_TAIGA, MEGA_TAIGA);
+		setBiomeTextureIfNone(Biomes.GIANT_SPRUCE_TAIGA, MEGA_SPRUCE);
+		setBiomeTextureIfNone(Biomes.GIANT_TREE_TAIGA_HILLS, MEGA_TAIGA_HILLS);
+		setBiomeTextureIfNone(Biomes.GIANT_SPRUCE_TAIGA_HILLS, MEGA_SPRUCE_HILLS);
 
-		setBiomeTextureIfNone(BiomeKeys.NETHER_WASTES, CAVE_WALLS);
-		setBiomeTextureIfNone(BiomeKeys.SOUL_SAND_VALLEY, SOUL_SAND_VALLEY);
-		setBiomeTextureIfNone(BiomeKeys.CRIMSON_FOREST, FOREST);
-		setBiomeTextureIfNone(BiomeKeys.WARPED_FOREST, JUNGLE);
-		setBiomeTextureIfNone(BiomeKeys.BASALT_DELTAS, MOUNTAINS_ALL);
+		setBiomeTextureIfNone(Biomes.NETHER_WASTES, CAVE_WALLS);
+		setBiomeTextureIfNone(Biomes.SOUL_SAND_VALLEY, SOUL_SAND_VALLEY);
+		setBiomeTextureIfNone(Biomes.CRIMSON_FOREST, FOREST);
+		setBiomeTextureIfNone(Biomes.WARPED_FOREST, JUNGLE);
+		setBiomeTextureIfNone(Biomes.BASALT_DELTAS, MOUNTAINS_ALL);
 
-		setBiomeTextureIfNone(BiomeKeys.THE_END, END_VOID);
+		setBiomeTextureIfNone(Biomes.THE_END, END_VOID);
 
-		setBiomeTextureIfNone(BiomeKeys.MUSHROOM_FIELDS, MUSHROOM);
-		setBiomeTextureIfNone(BiomeKeys.MUSHROOM_FIELD_SHORE, SHORE);
+		setBiomeTextureIfNone(Biomes.MUSHROOM_FIELDS, MUSHROOM);
+		setBiomeTextureIfNone(Biomes.MUSHROOM_FIELD_SHORE, SHORE);
 
-		setBiomeTextureIfNone(BiomeKeys.WOODED_BADLANDS_PLATEAU, PLATEAU_MESA_TREES);
-		setBiomeTextureIfNone(BiomeKeys.BADLANDS_PLATEAU, PLATEAU_MESA);
-		setBiomeTextureIfNone(BiomeKeys.ERODED_BADLANDS, MESA);
-		setBiomeTextureIfNone(BiomeKeys.BADLANDS, MESA);
-		setBiomeTextureIfNone(BiomeKeys.SAVANNA, SAVANNA);
-		setBiomeTextureIfNone(BiomeKeys.SAVANNA_PLATEAU, SAVANNA_PLATEAU);
-		setBiomeTextureIfNone(BiomeKeys.SHATTERED_SAVANNA, SAVANNA);
-		setBiomeTextureIfNone(BiomeKeys.SHATTERED_SAVANNA_PLATEAU, SAVANNA_PLATEAU);
+		setBiomeTextureIfNone(Biomes.WOODED_BADLANDS_PLATEAU, PLATEAU_MESA_TREES);
+		setBiomeTextureIfNone(Biomes.BADLANDS_PLATEAU, PLATEAU_MESA);
+		setBiomeTextureIfNone(Biomes.ERODED_BADLANDS, MESA);
+		setBiomeTextureIfNone(Biomes.BADLANDS, MESA);
+		setBiomeTextureIfNone(Biomes.SAVANNA, SAVANNA);
+		setBiomeTextureIfNone(Biomes.SAVANNA_PLATEAU, SAVANNA_PLATEAU);
+		setBiomeTextureIfNone(Biomes.SHATTERED_SAVANNA, SAVANNA);
+		setBiomeTextureIfNone(Biomes.SHATTERED_SAVANNA_PLATEAU, SAVANNA_PLATEAU);
 
-		setBiomeTextureIfNone(BiomeKeys.DEEP_FROZEN_OCEAN, ICE_SPIKES);
+		setBiomeTextureIfNone(Biomes.DEEP_FROZEN_OCEAN, ICE_SPIKES);
 
 		// Now let's register every other biome, they'll come from other mods
-		for (Biome biome : BuiltinRegistries.BIOME) {
+		for (Biome biome : WorldGenRegistries.BIOME) {
 			BiomeTextureMap.instance().checkRegistration(biome);
 		}
 	}
@@ -238,8 +320,8 @@ public class ClientProxy implements SimpleSynchronousResourceReloadListener {
 	/** Only applies the change if no texture is registered for this biome.
 	 * This prevents overwriting of the config when there is no real change. */
 	private void setBiomeTextureIfNone(RegistryKey<Biome> biome, TextureSet textureSet) {
-		if(!textureMap.isRegistered(biome.getValue())) {
-			textureMap.setTexture(biome.getValue(), textureSet);
+		if(!textureMap.isRegistered(biome.getLocation())) {
+			textureMap.setTexture(biome.getLocation(), textureSet);
 		}
 	}
 
@@ -284,21 +366,33 @@ public class ClientProxy implements SimpleSynchronousResourceReloadListener {
 	}
 	/** Only applies the change if no texture is registered for this tile name.
 	 * This prevents overwriting of the config when there is no real change. */
-	private void setCustomTileTextureIfNone(Identifier tileId, TextureSet textureSet) {
+	private void setCustomTileTextureIfNone(ResourceLocation tileId, TextureSet textureSet) {
 		if (!textureMap.isRegistered(tileId)) {
 			textureMap.setTexture(tileId, textureSet);
 		}
 	}
-	
-	@Override
-	public Identifier getFabricId() {
-		return AntiqueAtlasMod.id("proxy");
-	}
 
 	@Override
-	public void apply(ResourceManager var1) {
+	public void onResourceManagerReload(IResourceManager resourceManager, Predicate<IResourceType> resourcePredicate) {
+		onResourceManagerReload(resourceManager);
+	}
+	
+	@Override
+	public void onResourceManagerReload(IResourceManager resourceManager) {
 		for (MarkerType type : MarkerType.REGISTRY) {
 			type.initMips();
 		}
 	}
+	
+//	@Override
+//	public ResourceLocation getFabricId() {
+//		return AntiqueAtlasMod.id("proxy");
+//	}
+
+//	@Override
+//	public void apply(IResourceManager var1) {
+//		for (MarkerType type : MarkerType.REGISTRY) {
+//			type.initMips();
+//		}
+//	}
 }

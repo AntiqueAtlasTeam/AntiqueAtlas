@@ -1,6 +1,6 @@
 package hunternif.mc.impl.atlas.core;
 
-import hunternif.mc.impl.atlas.AntiqueAtlasMod;
+import hunternif.mc.impl.atlas.AntiqueAtlasConfig;
 import hunternif.mc.impl.atlas.network.packet.s2c.play.TileGroupsS2CPacket;
 import hunternif.mc.impl.atlas.util.Log;
 import hunternif.mc.impl.atlas.util.Rect;
@@ -12,11 +12,11 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.RegistryKey;
+import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.ListNBT;
+import net.minecraft.util.RegistryKey;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 
 /** All tiles seen in dimension. Thread-safe (probably) */
@@ -51,9 +51,9 @@ public class WorldData implements ITileStorage {
 	/**
 	 * This function has to create a new map on each call since the packet rework
 	 */
-	public Map<ShortVec2, Identifier> getSeenChunks() {
-		Map<ShortVec2, Identifier> chunks = new ConcurrentHashMap<>(2, 0.75f, 2);
-		Identifier t;
+	public Map<ShortVec2, ResourceLocation> getSeenChunks() {
+		Map<ShortVec2, ResourceLocation> chunks = new ConcurrentHashMap<>(2, 0.75f, 2);
+		ResourceLocation t;
 		for (Map.Entry<ShortVec2, TileGroup> entry: tileGroups.entrySet()){
 			int basex = entry.getValue().getScope().minX;
 			int basey = entry.getValue().getScope().minY;
@@ -76,15 +76,15 @@ public class WorldData implements ITileStorage {
 		this.browsingZoom = zoom;
 		if (browsingZoom <= 0) {
 			Log.warn("Setting map zoom to invalid value of %f", zoom);
-			browsingZoom = AntiqueAtlasMod.CONFIG.minScale;
+			browsingZoom = AntiqueAtlasConfig.minScale.get();
 		}
 		parent.markDirty();
 	}
 
 	public void setBrowsingPositionTo(Entity e) {
-		setBrowsingPosition((int)Math.round(-e.getX() * AntiqueAtlasMod.CONFIG.defaultScale),
-				(int)Math.round(-e.getZ() * AntiqueAtlasMod.CONFIG.defaultScale),
-				AntiqueAtlasMod.CONFIG.defaultScale);
+		setBrowsingPosition((int)Math.round(-e.getPosX() * AntiqueAtlasConfig.defaultScale.get()),
+				(int)Math.round(-e.getPosZ() * AntiqueAtlasConfig.defaultScale.get()),
+				AntiqueAtlasConfig.defaultScale.get());
 	}
 
 	public int getBrowsingX() {
@@ -105,7 +105,7 @@ public class WorldData implements ITileStorage {
 	}
 
 	@Override
-	public void setTile(int x, int y, Identifier tile) {
+	public void setTile(int x, int y, ResourceLocation tile) {
 		ShortVec2 groupPos = getKey().set((int)Math.floor(x / (float) TileGroup.CHUNK_STEP),
 				(int)Math.floor(y / (float) TileGroup.CHUNK_STEP));
 		TileGroup tg = tileGroups.get(groupPos);
@@ -126,7 +126,7 @@ public class WorldData implements ITileStorage {
 	}
 	
 	@Override
-	public Identifier removeTile(int x, int y) {
+	public ResourceLocation removeTile(int x, int y) {
 		//TODO
 		// since scope is not modified, I assume this was never really used
 		// Tile oldTile = tileGroups.remove(getKey().set(x, y));
@@ -136,7 +136,7 @@ public class WorldData implements ITileStorage {
 	}
 
 	@Override
-	public Identifier getTile(int x, int y) {
+	public ResourceLocation getTile(int x, int y) {
 		ShortVec2 groupPos = getKey().set((int)Math.floor(x / (float) TileGroup.CHUNK_STEP),
 				(int)Math.floor(y / (float) TileGroup.CHUNK_STEP));
 		TileGroup tg = tileGroups.get(groupPos);
@@ -171,17 +171,17 @@ public class WorldData implements ITileStorage {
 			Rect s = group.getScope();
 			for (int x = s.minX; x <= s.maxX; x++){
 				for (int y = s.minY; y <= s.maxY; y++){
-					Identifier tile = group.getTile(x, y);
+					ResourceLocation tile = group.getTile(x, y);
 					if (tile != null) setTile(x, y, tile);
 				}
 			}
 		}
 	}
 	
-	public ListTag writeToNBT() {
-		ListTag tileGroupList = new ListTag();
+	public ListNBT writeToNBT() {
+		ListNBT tileGroupList = new ListNBT();
 		for (Entry<ShortVec2, TileGroup> entry : tileGroups.entrySet()) {
-			CompoundTag newbie = new CompoundTag();
+			CompoundNBT newbie = new CompoundNBT();
 			entry.getValue().writeToNBT(newbie);
 			tileGroupList.add(newbie);
 		}
@@ -198,12 +198,12 @@ public class WorldData implements ITileStorage {
 		}
 	}
 	
-	public void readFromNBT(ListTag me){
+	public void readFromNBT(ListNBT me){
 		if (me == null){
 			return;
 		}
 		for (int d = 0; d < me.size(); d++) {
-			CompoundTag tgTag = me.getCompound(d);
+			CompoundNBT tgTag = me.getCompound(d);
 			TileGroup tg = new TileGroup(0, 0);
 			tg.readFromNBT(tgTag);
 			putTileGroup(tg);

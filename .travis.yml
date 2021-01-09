@@ -15,4 +15,5 @@ cache:
   - $HOME/.gradle/wrapper/
   - $HOME/.m2
 
+install: ./gradlew setupCIWorkspace -S
 script: ./gradlew build -S

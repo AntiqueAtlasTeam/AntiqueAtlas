@@ -1,13 +1,13 @@
 package hunternif.mc.impl.atlas.network.packet;
 
 import io.netty.buffer.Unpooled;
-import net.minecraft.network.PacketByteBuf;
-import net.minecraft.util.Identifier;
+import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.ResourceLocation;
 
-public abstract class AntiqueAtlasPacket extends PacketByteBuf {
+public abstract class AntiqueAtlasPacket extends PacketBuffer {
 	public AntiqueAtlasPacket() {
 		super(Unpooled.buffer());
 	}
 
-	public abstract Identifier getId();
+	public abstract ResourceLocation getId();
 }

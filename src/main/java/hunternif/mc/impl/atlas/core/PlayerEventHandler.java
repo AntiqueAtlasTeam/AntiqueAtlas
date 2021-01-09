@@ -3,13 +3,13 @@ package hunternif.mc.impl.atlas.core;
 import hunternif.mc.impl.atlas.AntiqueAtlasMod;
 import hunternif.mc.impl.atlas.marker.MarkersData;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.world.World;
 
 public class PlayerEventHandler {
     public static void onPlayerLogin(ServerPlayerEntity player) {
         World world = player.world;
-        int atlasID = player.getUuid().hashCode();
+        int atlasID = player.getUniqueID().hashCode();
 
         AtlasData data = AntiqueAtlasMod.atlasData.getAtlasData(atlasID, world);
         // On the player join send the map from the server to the client:
@@ -26,7 +26,7 @@ public class PlayerEventHandler {
 
     public static void onPlayerTick(PlayerEntity player) {
         AtlasData data = AntiqueAtlasMod.atlasData.getAtlasData(
-                player.getUuid().hashCode(), player.world);
+                player.getUniqueID().hashCode(), player.world);
 
         // Updating map around player
         data.updateMapAroundPlayer(player);

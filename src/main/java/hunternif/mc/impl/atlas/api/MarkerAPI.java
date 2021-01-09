@@ -6,8 +6,8 @@ import hunternif.mc.impl.atlas.registry.MarkerType;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 
 /**
@@ -20,7 +20,7 @@ public interface MarkerAPI {
 	/**
 	 * Registers the marker type, this should be called in PreInit, as config file overrides are loaded in Init.
 	 */
-	void registerMarker(Identifier identifier, MarkerType markerType);
+	void registerMarker(ResourceLocation identifier, MarkerType markerType);
 	
 	/**
 	 * Put a marker in the specified Atlas instance at specified block
@@ -43,7 +43,7 @@ public interface MarkerAPI {
 	 * @return returns the marker. null if failed or client
 	 */
 	@Nullable
-	Marker putMarker(@Nonnull World world, boolean visibleAhead, int atlasID, MarkerType markerType, Text label, int x, int z);
+	Marker putMarker(@Nonnull World world, boolean visibleAhead, int atlasID, MarkerType markerType, ITextComponent label, int x, int z);
 	
 	/**
 	 * Put a marker in all atlases in the world at specified block coordinates.
@@ -59,7 +59,7 @@ public interface MarkerAPI {
 	 * @return returns the marker. null if failed or client
 	 */
 	@Nullable
-	Marker putGlobalMarker(@Nonnull World world, boolean visibleAhead, MarkerType markerType, Text label, int x, int z);
+	Marker putGlobalMarker(@Nonnull World world, boolean visibleAhead, MarkerType markerType, ITextComponent label, int x, int z);
 
 	/**
 	 * Delete a marker from an atlas.

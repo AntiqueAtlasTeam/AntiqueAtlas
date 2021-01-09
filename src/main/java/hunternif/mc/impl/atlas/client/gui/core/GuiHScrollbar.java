@@ -1,7 +1,8 @@
 package hunternif.mc.impl.atlas.client.gui.core;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
+
 import hunternif.mc.impl.atlas.util.AtlasRenderHelper;
-import net.minecraft.client.util.math.MatrixStack;
 
 public class GuiHScrollbar extends AGuiScrollbar {
 	

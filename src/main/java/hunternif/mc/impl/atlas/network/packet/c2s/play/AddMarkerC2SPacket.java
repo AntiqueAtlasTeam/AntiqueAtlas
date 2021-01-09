@@ -1,19 +1,19 @@
 package hunternif.mc.impl.atlas.network.packet.c2s.play;
 
+import java.util.Collections;
+import java.util.function.Supplier;
+
 import hunternif.mc.impl.atlas.AntiqueAtlasMod;
 import hunternif.mc.impl.atlas.api.AtlasAPI;
 import hunternif.mc.impl.atlas.marker.Marker;
 import hunternif.mc.impl.atlas.marker.MarkersData;
 import hunternif.mc.impl.atlas.network.packet.c2s.C2SPacket;
 import hunternif.mc.impl.atlas.network.packet.s2c.play.MarkersS2CPacket;
-import hunternif.mc.impl.atlas.registry.MarkerType;
-import net.fabricmc.fabric.api.network.PacketContext;
-import net.minecraft.network.PacketByteBuf;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
-
-import java.util.Collections;
+import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraftforge.fml.network.NetworkEvent;
 
 /**
  * A request from a client to create a new marker. In order to prevent griefing,
@@ -22,51 +22,108 @@ import java.util.Collections;
  * @author Haven King
  */
 public class AddMarkerC2SPacket extends C2SPacket {
-	public static final Identifier ID = AntiqueAtlasMod.id("packet", "c2s", "marker", "add");
+	public static final ResourceLocation ID = AntiqueAtlasMod.id("packet", "c2s", "marker", "add");
 
-	public AddMarkerC2SPacket(int atlasID, MarkerType markerType, int x, int z, boolean visibleBeforeDiscovery, Text label) {
-		this.writeVarInt(atlasID);
-		this.writeIdentifier(MarkerType.REGISTRY.getId(markerType));
-		this.writeVarInt(x);
-		this.writeVarInt(z);
-		this.writeBoolean(visibleBeforeDiscovery);
-		this.writeText(label);
+	int atlasID; 
+	ResourceLocation markerType; 
+	int x, z; 
+	boolean visibleBeforeDiscovery;
+	ITextComponent label;
+
+
+	public AddMarkerC2SPacket(int atlasID, ResourceLocation markerType, int x, int z, boolean visibleBeforeDiscovery, ITextComponent label) {
+		this.atlasID = atlasID;
+		this.markerType = markerType;
+		this.x = x;
+		this.z = z;
+		this.visibleBeforeDiscovery = visibleBeforeDiscovery;
+		this.label = label;
 	}
 
-	@Override
-	public Identifier getId() {
-		return ID;
+	public static void encode(final AddMarkerC2SPacket msg, final PacketBuffer packetBuffer) {
+		packetBuffer.writeVarInt(msg.atlasID);
+		packetBuffer.writeResourceLocation(msg.markerType);
+		packetBuffer.writeVarInt(msg.x);
+		packetBuffer.writeVarInt(msg.z);
+		packetBuffer.writeBoolean(msg.visibleBeforeDiscovery);
+		packetBuffer.writeTextComponent(msg.label);
 	}
 
-	public static void apply(PacketContext context, PacketByteBuf buf) {
-		int atlasID = buf.readVarInt();
-		Identifier markerType = buf.readIdentifier();
-		int x = buf.readVarInt();
-		int z = buf.readVarInt();
-		boolean visibleBeforeDiscovery = buf.readBoolean();
-		Text label = buf.readText();
+	public static AddMarkerC2SPacket decode(final PacketBuffer packetBuffer) {
+		return new AddMarkerC2SPacket(
+				packetBuffer.readVarInt(), 
+				packetBuffer.readResourceLocation(),
+				packetBuffer.readVarInt(),
+				packetBuffer.readVarInt(),
+				packetBuffer.readBoolean(),
+				packetBuffer.readTextComponent());
+	}
 
-		context.getTaskQueue().execute(() -> {
-			ServerPlayerEntity playerEntity = (ServerPlayerEntity) context.getPlayer();
-			if (!AtlasAPI.getPlayerAtlases(playerEntity).contains(atlasID)) {
+	public static void handle(final AddMarkerC2SPacket msg, final Supplier<NetworkEvent.Context> contextSupplier) {
+		final NetworkEvent.Context context = contextSupplier.get();
+		context.enqueueWork(() -> {
+			final ServerPlayerEntity sender = context.getSender();
+			if (sender == null) {
+				return;
+			}
+			ServerPlayerEntity playerEntity = (ServerPlayerEntity) context.getSender();
+			if (!AtlasAPI.getPlayerAtlases(playerEntity).contains(msg.atlasID)) {
 				AntiqueAtlasMod.LOG.warn(
-								"Player {} attempted to put marker into someone else's Atlas #{}}",
-								playerEntity.getName(), atlasID);
+						"Player {} attempted to put marker into someone else's Atlas #{}}",
+						playerEntity.getName(), msg.atlasID);
 				return;
 			}
 
 			if (playerEntity.getServer() != null) {
-				MarkersData markersData = AntiqueAtlasMod.markersData.getMarkersData(atlasID, playerEntity.getEntityWorld());
+				MarkersData markersData = AntiqueAtlasMod.markersData.getMarkersData(msg.atlasID, playerEntity.getEntityWorld());
 				Marker marker = markersData.createAndSaveMarker(
-								MarkerType.REGISTRY.get(markerType),
-								context.getPlayer().getEntityWorld().getRegistryKey(),
-								x,
-								z,
-								visibleBeforeDiscovery,
-								label);
+						msg.markerType,
+						context.getSender().getEntityWorld().getDimensionKey(),
+						msg.x,
+						msg.z,
+						msg.visibleBeforeDiscovery,
+						msg.label);
 
-				new MarkersS2CPacket(atlasID, context.getPlayer().getEntityWorld().getRegistryKey(), Collections.singleton(marker)).send(playerEntity.server);
+				new MarkersS2CPacket(msg.atlasID, context.getSender().getEntityWorld().getDimensionKey(), Collections.singleton(marker)).send(playerEntity.server);
 			}
 		});
+		context.setPacketHandled(true);
 	}
+
+	@Override
+	public ResourceLocation getId() {
+		return ID;
+	}
+
+//	public static void apply(PacketContext context, PacketBuffer buf) {
+//		int atlasID = buf.readVarInt();
+//		ResourceLocation markerType = buf.readResourceLocation();
+//		int x = buf.readVarInt();
+//		int z = buf.readVarInt();
+//		boolean visibleBeforeDiscovery = buf.readBoolean();
+//		ITextComponent label = buf.readTextComponent();
+//
+//		context.getTaskQueue().execute(() -> {
+//			ServerPlayerEntity playerEntity = (ServerPlayerEntity) context.getPlayer();
+//			if (!AtlasAPI.getPlayerAtlases(playerEntity).contains(atlasID)) {
+//				AntiqueAtlasMod.LOG.warn(
+//						"Player {} attempted to put marker into someone else's Atlas #{}}",
+//						playerEntity.getName(), atlasID);
+//				return;
+//			}
+//
+//			if (playerEntity.getServer() != null) {
+//				MarkersData markersData = AntiqueAtlasMod.markersData.getMarkersData(atlasID, playerEntity.getEntityWorld());
+//				Marker marker = markersData.createAndSaveMarker(
+//						MarkerType.REGISTRY.get(markerType),
+//						context.getPlayer().getEntityWorld().getRegistryKey(),
+//						x,
+//						z,
+//						visibleBeforeDiscovery,
+//						label);
+//
+//				new MarkersS2CPacket(atlasID, context.getPlayer().getEntityWorld().getRegistryKey(), Collections.singleton(marker)).send(playerEntity.server);
+//			}
+//		});
+//	}
 }

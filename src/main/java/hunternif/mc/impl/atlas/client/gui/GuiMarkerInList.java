@@ -1,11 +1,12 @@
 package hunternif.mc.impl.atlas.client.gui;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
+
 import hunternif.mc.impl.atlas.client.Textures;
 import hunternif.mc.impl.atlas.client.gui.core.GuiToggleButton;
 import hunternif.mc.impl.atlas.registry.MarkerType;
 import hunternif.mc.impl.atlas.util.AtlasRenderHelper;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.util.Identifier;
+import net.minecraft.util.ResourceLocation;
 
 
 public class GuiMarkerInList extends GuiToggleButton {
@@ -26,7 +27,7 @@ public class GuiMarkerInList extends GuiToggleButton {
 	public void render(MatrixStack matrices, int mouseX, int mouseY, float partialTick) {
 		AtlasRenderHelper.drawFullTexture(matrices, isSelected() ? Textures.MARKER_FRAME_ON : Textures.MARKER_FRAME_OFF, getGuiX() + 1, getGuiY() + 1, FRAME_SIZE);
 
-		Identifier texture = markerType.getIcon();
+		ResourceLocation texture = markerType.getIcon();
 		if (texture != null) {
 			AtlasRenderHelper.drawFullTexture(matrices, texture, getGuiX() + 1, getGuiY() + 1, GuiAtlas.MARKER_SIZE);
 

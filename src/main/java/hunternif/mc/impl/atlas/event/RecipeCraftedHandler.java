@@ -2,25 +2,24 @@ package hunternif.mc.impl.atlas.event;
 
 import hunternif.mc.impl.atlas.item.RecipeAtlasCombining;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.inventory.Inventory;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
-import net.minecraft.recipe.Recipe;
-import net.minecraft.util.ActionResult;
+import net.minecraft.item.crafting.IRecipe;
+import net.minecraft.util.ActionResultType;
 import net.minecraft.world.World;
 
 
-public class RecipeCraftedHandler implements RecipeCraftedCallback {
+public class RecipeCraftedHandler {
 
-    @Override
-    public ActionResult onCrafted(PlayerEntity player, World world, Recipe recipe, ItemStack result, Inventory ingredients) {
-        if (world.isClient()) return ActionResult.PASS;
+    public static ActionResultType onCrafted(PlayerEntity player, World world, IRecipe<?> recipe, ItemStack result, IInventory iInventory) {
+    	if (world.isRemote()) return ActionResultType.PASS;
 
         if (recipe instanceof RecipeAtlasCombining) {
             RecipeAtlasCombining combining_recipe = (RecipeAtlasCombining) recipe;
 
-            combining_recipe.onCrafted(world, ingredients, result);
+            combining_recipe.onCrafted(world, iInventory, result);
         }
 
-        return ActionResult.PASS;
+        return ActionResultType.PASS;
     }
 }

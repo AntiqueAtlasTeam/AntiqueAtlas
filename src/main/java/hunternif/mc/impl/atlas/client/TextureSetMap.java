@@ -1,9 +1,9 @@
 package hunternif.mc.impl.atlas.client;
 
 import hunternif.mc.impl.atlas.util.SaveData;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-import net.minecraft.util.Identifier;
+import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -15,14 +15,14 @@ import java.util.Map;
  * Maps texture sets to their names.
  * @author Hunternif
  */
-@Environment(EnvType.CLIENT)
+@OnlyIn(Dist.CLIENT)
 public class TextureSetMap extends SaveData {
 	private static final TextureSetMap INSTANCE = new TextureSetMap();
 	public static TextureSetMap instance() {
 		return INSTANCE;
 	}
 	
-	private final Map<Identifier, TextureSet> map = new HashMap<>();
+	private final Map<ResourceLocation, TextureSet> map = new HashMap<>();
 	
 	public void register(TextureSet set) {
 		TextureSet old = map.put(set.name, set);
@@ -33,12 +33,12 @@ public class TextureSetMap extends SaveData {
 		}
 	}
 
-	public TextureSet getByName(Identifier name) {
+	public TextureSet getByName(ResourceLocation name) {
 		return map.get(name);
 	}
 	
 	/** If the specified name is not registered, returns a "TEST" texture set. */
-	public TextureSet getByNameNonNull(Identifier name) {
+	public TextureSet getByNameNonNull(ResourceLocation name) {
 		TextureSet set = getByName(name);
 		return set == null ? TextureSet.TEST : set;
 	}

@@ -1,26 +1,29 @@
 package hunternif.mc.impl.atlas.marker;
 
-import hunternif.mc.impl.atlas.AntiqueAtlasMod;
-import hunternif.mc.impl.atlas.api.MarkerAPI;
-import hunternif.mc.impl.atlas.network.packet.s2c.play.MarkersS2CPacket;
-import hunternif.mc.impl.atlas.registry.MarkerType;
-import hunternif.mc.impl.atlas.util.Log;
-import net.fabricmc.fabric.api.util.NbtType;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
-import net.minecraft.util.registry.RegistryKey;
-import net.minecraft.world.PersistentState;
-import net.minecraft.world.World;
-import net.minecraft.world.dimension.DimensionType;
-import java.util.*;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
+
+import hunternif.mc.impl.atlas.AntiqueAtlasConfig;
+import hunternif.mc.impl.atlas.api.MarkerAPI;
+import hunternif.mc.impl.atlas.forge.NbtType;
+import hunternif.mc.impl.atlas.network.packet.s2c.play.MarkersS2CPacket;
+import hunternif.mc.impl.atlas.util.Log;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.ListNBT;
+import net.minecraft.util.RegistryKey;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.registry.Registry;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.world.World;
+import net.minecraft.world.storage.WorldSavedData;
 
 /**
  * Contains markers, mapped to dimensions, and then to their chunk coordinates.
@@ -31,7 +34,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * </p>
  * @author Hunternif
  */
-public class MarkersData extends PersistentState {
+public class MarkersData extends WorldSavedData {
 	private static final int VERSION = 4;
 	private static final String TAG_VERSION = "aaVersion";
 	private static final String TAG_WORLD_MAP_LIST = "worldMap";
@@ -77,20 +80,20 @@ public class MarkersData extends PersistentState {
 
 
 	@Override
-	public void fromTag(CompoundTag compound) {
+	public void read(CompoundNBT compound) {
 		int version = compound.getInt(TAG_VERSION);
 		if (version < VERSION) {
 			Log.warn("Outdated atlas data format! Was %d but current is %d", version, VERSION);
 			this.markDirty();
 		}
-		ListTag dimensionMapList = compound.getList(TAG_WORLD_MAP_LIST, NbtType.COMPOUND);
+		ListNBT dimensionMapList = compound.getList(TAG_WORLD_MAP_LIST, NbtType.CompoundNBT);
 		for (int d = 0; d < dimensionMapList.size(); d++) {
-			CompoundTag tag = dimensionMapList.getCompound(d);
-			RegistryKey<World> world = RegistryKey.of(Registry.DIMENSION,new Identifier(tag.getString(TAG_WORLD_ID)));
+			CompoundNBT tag = dimensionMapList.getCompound(d);
+			RegistryKey<World> world = RegistryKey.getOrCreateKey(Registry.WORLD_KEY,new ResourceLocation(tag.getString(TAG_WORLD_ID)));
 
-			ListTag tagList = tag.getList(TAG_MARKERS, NbtType.COMPOUND);
+			ListNBT tagList = tag.getList(TAG_MARKERS, NbtType.CompoundNBT);
 			for (int i = 0; i < tagList.size(); i++) {
-				CompoundTag markerTag = tagList.getCompound(i);
+				CompoundNBT markerTag = tagList.getCompound(i);
 				boolean visibleAhead = true;
 				if (version < 2) {
 					Log.warn("Marker is visible ahead by default");
@@ -114,8 +117,8 @@ public class MarkersData extends PersistentState {
 				
 				Marker marker = new Marker(
 						id,
-						MarkerType.REGISTRY.get(new Identifier(markerTag.getString(TAG_MARKER_TYPE))),
-						Text.Serializer.fromJson(markerTag.getString(TAG_MARKER_LABEL)),
+						new ResourceLocation(markerTag.getString(TAG_MARKER_TYPE)),
+						ITextComponent.Serializer.getComponentFromJson(markerTag.getString(TAG_MARKER_LABEL)),
 						world,
 						markerTag.getInt(TAG_MARKER_X),
 						markerTag.getInt(TAG_MARKER_Y),
@@ -126,20 +129,20 @@ public class MarkersData extends PersistentState {
 	}
 
 	@Override
-	public CompoundTag toTag(CompoundTag compound) {
+	public CompoundNBT write(CompoundNBT compound) {
 		Log.info("Saving local markers data to NBT");
 		compound.putInt(TAG_VERSION, VERSION);
-		ListTag dimensionMapList = new ListTag();
+		ListNBT dimensionMapList = new ListNBT();
 		for (RegistryKey<World> world : worldMap.keySet()) {
-			CompoundTag tag = new CompoundTag();
-			tag.putString(TAG_WORLD_ID, world.getValue().toString());
+			CompoundNBT tag = new CompoundNBT();
+			tag.putString(TAG_WORLD_ID, world.getLocation().toString());
 			DimensionMarkersData data = getMarkersDataInWorld(world);
-			ListTag tagList = new ListTag();
+			ListNBT tagList = new ListNBT();
 			for (Marker marker : data.getAllMarkers()) {
-				CompoundTag markerTag = new CompoundTag();
+				CompoundNBT markerTag = new CompoundNBT();
 				markerTag.putInt(TAG_MARKER_ID, marker.getId());
-				markerTag.putString(TAG_MARKER_TYPE, MarkerType.REGISTRY.getId(marker.getType()).toString());
-				markerTag.putString(TAG_MARKER_LABEL, Text.Serializer.toJson(marker.getLabel()));
+				markerTag.putString(TAG_MARKER_TYPE, marker.getType().toString());
+				markerTag.putString(TAG_MARKER_LABEL, ITextComponent.Serializer.toJson(marker.getLabel()));
 				markerTag.putInt(TAG_MARKER_X, marker.getX());
 				markerTag.putInt(TAG_MARKER_Y, marker.getZ());
 				markerTag.putBoolean(TAG_MARKER_VISIBLE_AHEAD, marker.isVisibleAhead());
@@ -189,11 +192,11 @@ public class MarkersData extends PersistentState {
 	/** For internal use. Use the {@link MarkerAPI} to put markers! This method
 	 * creates a new marker from the given data, saves and returns it.
 	 * Server side only! */
-	public Marker createAndSaveMarker(MarkerType type, RegistryKey<World> world, int x, int z, boolean visibleAhead, Text label) {
+	public Marker createAndSaveMarker(ResourceLocation type, RegistryKey<World> world, int x, int z, boolean visibleAhead, ITextComponent label) {
 		Marker marker = new Marker(getNewID(), type, label, world, x, z, visibleAhead);
 		Log.info("Created new marker %s", marker.toString());
 		idMap.put(marker.getId(), marker);
-		getMarkersDataInWorld(marker.getWorld()).insertMarker(marker);
+		getMarkersDataInWorld(world).insertMarker(marker);
 		markDirty();
 		return marker;
 	}
@@ -210,10 +213,10 @@ public class MarkersData extends PersistentState {
 			for (Entry<RegistryKey<World>, DimensionMarkersData> e: worldMap.entrySet()){
 				totalMarkers += e.getValue().getAllMarkers().size();
 			}
-			if (totalMarkers < AntiqueAtlasMod.CONFIG.markerLimit){
+			if (totalMarkers < AntiqueAtlasConfig.markerLimit.get()){
 				getMarkersDataInWorld(marker.getWorld()).insertMarker(marker);
 			} else {
-				Log.warn("Could not add new marker. Atlas is at it's limit of %d markers", AntiqueAtlasMod.CONFIG.markerLimit);
+				Log.warn("Could not add new marker. Atlas is at it's limit of %d markers", AntiqueAtlasConfig.markerLimit.get());
 			}
 		}
 		return marker;

@@ -1,7 +1,7 @@
 package hunternif.mc.impl.atlas.ext;
 
 import hunternif.mc.impl.atlas.AntiqueAtlasMod;
-import net.minecraft.util.Identifier;
+import net.minecraft.util.ResourceLocation;
 
 
 /** Maps unique names of external tiles to pseudo-biome IDs. Set on the server,
@@ -9,7 +9,7 @@ import net.minecraft.util.Identifier;
  * @author Hunternif
  */
 public class ExtTileIdMap {
-	public static final Identifier
+	public static final ResourceLocation
 	// Village:
 	TILE_VILLAGE_LIBRARY = AntiqueAtlasMod.id("npc_village_library"),
 	TILE_VILLAGE_SMITHY = AntiqueAtlasMod.id("npc_village_smithy"),
@@ -18,8 +18,8 @@ public class ExtTileIdMap {
 	TILE_VILLAGE_FARMLAND_LARGE = AntiqueAtlasMod.id("npc_village_farmland_large"),
 	TILE_VILLAGE_WELL = AntiqueAtlasMod.id("npc_village_well"),
 	TILE_VILLAGE_TORCH = AntiqueAtlasMod.id("npc_village_torch"),
-//	TILE_VILLAGE_PATH_X = AntiqueAtlasMod.id("npc_village_path_x"),
-//	TILE_VILLAGE_PATH_Z = AntiqueAtlasMod.id("npc_village_path_z"),
+//	TILE_VILLAGE_PATH_X = AntiqueAtlas.id("npc_village_path_x"),
+//	TILE_VILLAGE_PATH_Z = AntiqueAtlas.id("npc_village_path_z"),
 	TILE_VILLAGE_HUT = AntiqueAtlasMod.id("npc_village_hut"),
 	TILE_VILLAGE_SMALL_HOUSE = AntiqueAtlasMod.id("npc_village_small_house"),
 	TILE_VILLAGE_BUTCHERS_SHOP = AntiqueAtlasMod.id("npc_village_butchers_shop"),

@@ -1,12 +1,10 @@
 package hunternif.mc.impl.atlas.marker;
 
-import hunternif.mc.impl.atlas.network.packet.s2c.play.MarkersS2CPacket;
-import hunternif.mc.impl.atlas.registry.MarkerType;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.text.Text;
-import net.minecraft.util.registry.RegistryKey;
+import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.util.RegistryKey;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
-import net.minecraft.world.dimension.DimensionType;
 
 /** Holds global markers, i.e. ones that appear in all atlases. */
 public class GlobalMarkersData extends MarkersData {
@@ -16,7 +14,7 @@ public class GlobalMarkersData extends MarkersData {
 	}
 	
 	@Override
-	public Marker createAndSaveMarker(MarkerType type, RegistryKey<World> world, int x, int y, boolean visibleAhead, Text label) {
+	public Marker createAndSaveMarker(ResourceLocation type, RegistryKey<World> world, int x, int y, boolean visibleAhead, ITextComponent label) {
 		return super.createAndSaveMarker(type, world, x, y, visibleAhead, label).setGlobal(true);
 	}
 	

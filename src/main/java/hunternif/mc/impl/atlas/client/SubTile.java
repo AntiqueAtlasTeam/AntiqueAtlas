@@ -1,6 +1,6 @@
 package hunternif.mc.impl.atlas.client;
 
-import net.minecraft.util.Identifier;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 
 /**
@@ -17,7 +17,7 @@ import net.minecraft.util.math.MathHelper;
  * @author Hunternif
  */
 public class SubTile {
-	public Identifier tile;
+	public ResourceLocation tile;
 	/** coordinates of the subtile on the grid, measured in subtiles,
 	 * starting from (0,0) in the top left corner. */
 	public int x, y;
@@ -77,6 +77,6 @@ public class SubTile {
 
 	public static int generateVariationNumber(int chunkX, int chunkY, int step)
 	{
-		return  (int) (MathHelper.hashCode(chunkX, chunkY, chunkX * chunkY) & 0x7FFFFFFF);
+		return  (int) (MathHelper.getCoordinateRandom(chunkX, chunkY, chunkX * chunkY) & 0x7FFFFFFF);
 	}
 }

@@ -1,8 +1,9 @@
 package hunternif.mc.impl.atlas.client.gui.core;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
+
 import hunternif.mc.impl.atlas.util.AtlasRenderHelper;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.util.Identifier;
+import net.minecraft.util.ResourceLocation;
 
 
 /**
@@ -11,7 +12,7 @@ import net.minecraft.util.Identifier;
  */
 public class GuiCursor extends GuiComponent {
 	
-	private Identifier texture;
+	private ResourceLocation texture;
 	private int textureWidth, textureHeight;
 	/** Coordinates of the cursor point on the texture. */
 	private int pointX, pointY;
@@ -23,7 +24,7 @@ public class GuiCursor extends GuiComponent {
 	 * @param pointX	X of the cursor point on the image
 	 * @param pointY	Y of the cursor point on the image
 	 */
-	public void setTexture(Identifier texture, int width, int height, int pointX, int pointY) {
+	public void setTexture(ResourceLocation texture, int width, int height, int pointX, int pointY) {
 		this.texture = texture;
 		this.textureWidth = width;
 		this.textureHeight = height;

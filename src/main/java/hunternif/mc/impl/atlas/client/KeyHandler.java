@@ -1,18 +1,18 @@
 package hunternif.mc.impl.atlas.client;
 
-import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import hunternif.mc.impl.atlas.client.gui.GuiAtlas;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.options.KeyBinding;
-import net.minecraft.client.util.InputUtil;
+import net.minecraft.client.settings.KeyBinding;
+import net.minecraft.client.util.InputMappings;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.fml.client.registry.ClientRegistry;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@Environment(EnvType.CLIENT)
+@OnlyIn(Dist.CLIENT)
 public class KeyHandler {
     /** ID's of keys */
     private static final int KEY_ATLAS = 0;
@@ -22,21 +22,21 @@ public class KeyHandler {
 
     public static void registerBindings() {
         // Initialisation of bindings
-        bindings.add(KEY_ATLAS, new KeyBinding("key.openatlas.desc", InputUtil.Type.KEYSYM, 77, "key.antiqueatlas.category"));
+        bindings.add(KEY_ATLAS, new KeyBinding("key.openatlas.desc", InputMappings.Type.KEYSYM, 77, "key.antiqueatlas.category"));
 
         // Registering all binding
-        bindings.forEach(KeyBindingHelper::registerKeyBinding);
+        bindings.forEach(ClientRegistry::registerKeyBinding);
     }
 
-    public static void onClientTick(MinecraftClient client) {
-        if (bindings.get(KEY_ATLAS).wasPressed()) {
-            Screen currentScreen = MinecraftClient.getInstance().currentScreen;
+    public static void onClientTick(Minecraft client) {
+        if (bindings.get(KEY_ATLAS).isPressed()) {
+            Screen currentScreen = Minecraft.getInstance().currentScreen;
             if (currentScreen instanceof GuiAtlas) {
-                currentScreen.onClose();
+                currentScreen.closeScreen();
             } else {
                 GuiAtlas gui = new GuiAtlas();
                 gui.updateL18n();
-                client.openScreen(gui);
+                client.displayGuiScreen(gui);
             }
         }
     }

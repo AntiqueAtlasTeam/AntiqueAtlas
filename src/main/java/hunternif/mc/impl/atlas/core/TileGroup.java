@@ -2,10 +2,10 @@ package hunternif.mc.impl.atlas.core;
 
 import hunternif.mc.impl.atlas.util.Log;
 import hunternif.mc.impl.atlas.util.Rect;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.StringTag;
-import net.minecraft.util.Identifier;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.ListNBT;
+import net.minecraft.nbt.StringNBT;
+import net.minecraft.util.ResourceLocation;
 
 /** Represents a group of tiles that may be sent/stored as a single NBT */
 public class TileGroup implements ITileStorage {
@@ -20,7 +20,7 @@ public class TileGroup implements ITileStorage {
 	Rect scope = new Rect(0, 0, CHUNK_STEP, CHUNK_STEP);
 
 	/** The tiles in this scope */
-	Identifier[][] tiles = new Identifier[CHUNK_STEP][CHUNK_STEP];
+	ResourceLocation[][] tiles = new ResourceLocation[CHUNK_STEP][CHUNK_STEP];
 	
 	public TileGroup(int x, int y) {
 		scope.minX = x;
@@ -33,35 +33,35 @@ public class TileGroup implements ITileStorage {
 
 	}
 
-	public TileGroup readFromNBT(CompoundTag compound) {
+	public TileGroup readFromNBT(CompoundNBT compound) {
 		this.scope.minX = compound.getIntArray(TAG_POSITION)[0];
 		this.scope.minY = compound.getIntArray(TAG_POSITION)[1];
 		this.scope.maxX = this.scope.minX + CHUNK_STEP - 1;
 		this.scope.maxY = this.scope.minY + CHUNK_STEP - 1;
-		ListTag listTag = compound.getList(TAG_TILES, 8);
+		ListNBT listTag = compound.getList(TAG_TILES, 8);
 		for (int y = 0; y < CHUNK_STEP; y++) {
 			for (int x = 0; x < CHUNK_STEP; x++) {
 				// order:
 				// 0 1 2
 				// 3 4 5
 				// 6 7 8
-				tiles[x][y] = Identifier.tryParse(listTag.getString(x + y * CHUNK_STEP));
+				tiles[x][y] = ResourceLocation.tryCreate(listTag.getString(x + y * CHUNK_STEP));
 			}
 		}
 
 		return this;
 	}
 
-	public CompoundTag writeToNBT(CompoundTag compound) {
+	public CompoundNBT writeToNBT(CompoundNBT compound) {
 		int[] pos = { scope.minX, scope.minY };
-		ListTag listTag = new ListTag();
+		ListNBT listTag = new ListNBT();
 		for (int y = 0; y < CHUNK_STEP; y++) {
 			for (int x = 0; x < CHUNK_STEP; x++) {
 				// order:
 				// 0 1 2
 				// 3 4 5
 				// 6 7 8
-				listTag.add(x + y * CHUNK_STEP, StringTag.of(this.tiles[x][y] == null ? "antiqueatlas:%null#" : this.tiles[x][y].toString()));
+				listTag.add(x + y * CHUNK_STEP, StringNBT.valueOf(this.tiles[x][y] == null ? "antiqueatlas:%null#" : this.tiles[x][y].toString()));
 			}
 		}
 
@@ -71,7 +71,7 @@ public class TileGroup implements ITileStorage {
 	}
 
 	@Override
-	public void setTile(int x, int y, Identifier tile) {
+	public void setTile(int x, int y, ResourceLocation tile) {
 		if (x >= scope.minX && y >= scope.minY && x <= scope.maxX && y <= scope.maxY) {
 			int rx = x - scope.minX;
 			int ry = y - scope.minY;
@@ -84,14 +84,14 @@ public class TileGroup implements ITileStorage {
 	}
 
 	@Override
-	public Identifier removeTile(int x, int y) {
-		Identifier tmp = getTile(x,y);
+	public ResourceLocation removeTile(int x, int y) {
+		ResourceLocation tmp = getTile(x,y);
 		setTile(x,y,null);
 		return tmp;
 	}
 
 	@Override
-	public Identifier getTile(int x, int y) {
+	public ResourceLocation getTile(int x, int y) {
 		if (x >= scope.minX && y >= scope.minY && x <= scope.maxX && y <= scope.maxY) {
 			int rx = x - scope.minX;
 			int ry = y - scope.minY;
@@ -121,8 +121,8 @@ public class TileGroup implements ITileStorage {
 			return false;
 		}
 
-		Identifier a;
-		Identifier b;
+		ResourceLocation a;
+		ResourceLocation b;
 
 		for (int y = 0; y < CHUNK_STEP; y++) {
 			for (int x = 0; x < CHUNK_STEP; x++) {

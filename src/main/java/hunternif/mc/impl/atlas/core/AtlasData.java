@@ -1,27 +1,34 @@
 package hunternif.mc.impl.atlas.core;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+
+import hunternif.mc.impl.atlas.AntiqueAtlasConfig;
 import hunternif.mc.impl.atlas.AntiqueAtlasMod;
+import hunternif.mc.impl.atlas.forge.NbtType;
 import hunternif.mc.impl.atlas.network.packet.s2c.play.MapDataS2CPacket;
 import hunternif.mc.impl.atlas.util.Log;
 import hunternif.mc.impl.atlas.util.ShortVec2;
-import net.fabricmc.fabric.api.util.NbtType;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.ListNBT;
+import net.minecraft.util.RegistryKey;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.registry.Registry;
-import net.minecraft.util.registry.RegistryKey;
-import net.minecraft.world.PersistentState;
 import net.minecraft.world.World;
-import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.ChunkStatus;
-import java.util.*;
-import java.util.Map.Entry;
-import java.util.concurrent.ConcurrentHashMap;
+import net.minecraft.world.chunk.IChunk;
+import net.minecraft.world.storage.WorldSavedData;
 
-public class AtlasData extends PersistentState {
+public class AtlasData extends WorldSavedData {
 	public static final int VERSION = 4;
 	public static final String TAG_VERSION = "aaVersion";
 	public static final String TAG_WORLD_MAP_LIST = "qWorldMap";
@@ -48,20 +55,20 @@ public class AtlasData extends PersistentState {
 	/** Set of players this Atlas data has been sent to. */
 	private final Set<PlayerEntity> playersSentTo = new HashSet<>();
 
-	private CompoundTag nbt;
+	private CompoundNBT nbt;
 
 	public AtlasData(String key) {
 		super(key);
 
-		biomeDetectorOverworld.setScanPonds(AntiqueAtlasMod.CONFIG.doScanPonds);
-		biomeDetectorOverworld.setScanRavines(AntiqueAtlasMod.CONFIG.doScanRavines);
+		biomeDetectorOverworld.setScanPonds(AntiqueAtlasConfig.doScanPonds.get());
+		biomeDetectorOverworld.setScanRavines(AntiqueAtlasConfig.doScanRavines.get());
 		setBiomeDetectorForDimension(World.OVERWORLD, biomeDetectorOverworld);
-		setBiomeDetectorForDimension(World.NETHER, biomeDetectorNether);
-		setBiomeDetectorForDimension(World.END, biomeDetectorEnd);
+		setBiomeDetectorForDimension(World.THE_NETHER, biomeDetectorNether);
+		setBiomeDetectorForDimension(World.THE_END, biomeDetectorEnd);
 	}
 
 	@Override
-	public void fromTag(CompoundTag compound) {
+	public void read(CompoundNBT compound) {
 		this.nbt = compound;
 		int version = compound.getInt(TAG_VERSION);
 		if (version < VERSION) {
@@ -69,12 +76,12 @@ public class AtlasData extends PersistentState {
 			return;
 		}
 
-		ListTag worldMapList = compound.getList(TAG_WORLD_MAP_LIST, NbtType.COMPOUND);
+		ListNBT worldMapList = compound.getList(TAG_WORLD_MAP_LIST, NbtType.CompoundNBT);
 		for (int d = 0; d < worldMapList.size(); d++) {
-			CompoundTag worldTag = worldMapList.getCompound(d);
+			CompoundNBT worldTag = worldMapList.getCompound(d);
 			RegistryKey<World> worldID;
-			worldID = RegistryKey.of(Registry.DIMENSION, new Identifier(worldTag.getString(TAG_WORLD_ID)));
-			ListTag dimensionTag = (ListTag) worldTag.get(TAG_VISITED_CHUNKS);
+			worldID = RegistryKey.getOrCreateKey(Registry.WORLD_KEY, new ResourceLocation(worldTag.getString(TAG_WORLD_ID)));
+			ListNBT dimensionTag = (ListNBT) worldTag.get(TAG_VISITED_CHUNKS);
 			WorldData dimData = getWorldData(worldID);
 			dimData.readFromNBT(dimensionTag);
 			double zoom = worldTag.getDouble(TAG_BROWSING_ZOOM);
@@ -85,16 +92,16 @@ public class AtlasData extends PersistentState {
 	}
 
 	@Override
-	public CompoundTag toTag(CompoundTag compound) {
+	public CompoundNBT write(CompoundNBT compound) {
 		return writeToNBT(compound, true);
 	}
 
-	public CompoundTag writeToNBT(CompoundTag compound, boolean includeTileData) {
-		ListTag dimensionMapList = new ListTag();
+	public CompoundNBT writeToNBT(CompoundNBT compound, boolean includeTileData) {
+		ListNBT dimensionMapList = new ListNBT();
 		compound.putInt(TAG_VERSION, VERSION);
 		for (Entry<RegistryKey<World>, WorldData> dimensionEntry : worldMap.entrySet()) {
-			CompoundTag dimTag = new CompoundTag();
-			dimTag.putString(TAG_WORLD_ID, dimensionEntry.getKey().getValue().toString());
+			CompoundNBT dimTag = new CompoundNBT();
+			dimTag.putString(TAG_WORLD_ID, dimensionEntry.getKey().getLocation().toString());
 			WorldData dimData = dimensionEntry.getValue();
 			if (includeTileData){
 				dimTag.put(TAG_VISITED_CHUNKS, dimData.writeToNBT());
@@ -125,18 +132,18 @@ public class AtlasData extends PersistentState {
 	 * @return A set of the new tiles, mostly so the server can sync those with relevant clients.*/
 	public Collection<TileInfo> updateMapAroundPlayer(PlayerEntity player) {
 		// Update the actual map only so often:
-		int newScanInterval = Math.round(AntiqueAtlasMod.CONFIG.newScanInterval * 20);
+		int newScanInterval = Math.round(AntiqueAtlasConfig.newScanInterval.get().floatValue() * 20);
 
-		if (player.getEntityWorld().getTime() % newScanInterval != 0) {
+		if (player.getEntityWorld().getGameTime() % newScanInterval != 0) {
 			return Collections.emptyList(); //no new tiles
 		}
 
 		ArrayList<TileInfo> updatedTiles = new ArrayList<>();
 
-		int rescanInterval = newScanInterval * AntiqueAtlasMod.CONFIG.rescanRate;
-		boolean rescanRequired = AntiqueAtlasMod.CONFIG.doRescan && player.getEntityWorld().getTime() % rescanInterval == 0;
+		int rescanInterval = newScanInterval * AntiqueAtlasConfig.rescanRate.get();
+		boolean rescanRequired = AntiqueAtlasConfig.doRescan.get() && player.getEntityWorld().getGameTime() % rescanInterval == 0;
 
-		int scanRadius = AntiqueAtlasMod.CONFIG.scanRadius;
+		int scanRadius = AntiqueAtlasConfig.scanRadius.get();
 
 		// Look at chunks around in a circular area:
 		for (int dx = -scanRadius; dx <= scanRadius; dx++) {
@@ -145,8 +152,8 @@ public class AtlasData extends PersistentState {
 					continue; // Outside the circle
 				}
 
-				int chunkX = player.chunkX + dx;
-				int chunkZ = player.chunkZ + dz;
+				int chunkX = player.chunkCoordX + dx;
+				int chunkZ = player.chunkCoordZ + dz;
 
 				TileInfo update = updateMapChunk(player.getEntityWorld(), chunkX, chunkZ, rescanRequired);
 				if(update != null) {
@@ -159,10 +166,10 @@ public class AtlasData extends PersistentState {
 
 	private TileInfo updateMapChunk(World world, int x, int z, boolean rescanRequired)
 	{
-		ITileStorage seenChunks = this.getWorldData(world.getRegistryKey());
+		ITileStorage seenChunks = this.getWorldData(world.getDimensionKey());
 
-		Identifier oldTile = seenChunks.getTile(x, z);
-		Identifier tile = null;
+		ResourceLocation oldTile = seenChunks.getTile(x, z);
+		ResourceLocation tile = null;
 
 		// Check if there's a custom tile at the location:
 		// Custom tiles overwrite even the chunks already seen.
@@ -176,37 +183,37 @@ public class AtlasData extends PersistentState {
 			}
 
 			// TODO FABRIC: forceChunkLoading crashes here
-			Chunk chunk = world.getChunk(x, z, ChunkStatus.FULL, AntiqueAtlasMod.CONFIG.forceChunkLoading);
+			IChunk chunk = world.getChunk(x, z, ChunkStatus.FULL, AntiqueAtlasConfig.forceChunkLoading.get());
 
 			// Skip chunk if it hasn't loaded yet:
 			if (chunk == null) {
 				return null;
 			}
 
-			IBiomeDetector biomeDetector = getBiomeDetectorForDimension(world.getRegistryKey());
+			IBiomeDetector biomeDetector = getBiomeDetectorForDimension(world.getDimensionKey());
 			tile = biomeDetector.getBiomeID(world, chunk);
 
 			if (oldTile != null) {
 				if (tile == null) {
 					// If the new tile is empty, remove the old one:
-					this.removeTile(world.getRegistryKey(), x, z);
+					this.removeTile(world.getDimensionKey(), x, z);
 					// TODO should this also return a TileInfo?
 				} else if (!oldTile.equals(tile)) {
 					// Only update if the old tile's biome ID doesn't match the new one:
-					this.setTile(world.getRegistryKey(), x, z, tile);
+					this.setTile(world.getDimensionKey(), x, z, tile);
 					return new TileInfo(x, z, tile);
 				}
 			} else {
 				// Scanning new chunk:
 				if (tile != null) {
-					this.setTile(world.getRegistryKey(), x, z, tile);
+					this.setTile(world.getDimensionKey(), x, z, tile);
 					return new TileInfo(x, z, tile);
 				}
 			}
 		} else {
 			// Only update the custom tile if it doesn't rewrite itself:
 			if (oldTile == null || !oldTile.equals(tile)) {
-				this.setTile(world.getRegistryKey(), x, z, tile);
+				this.setTile(world.getDimensionKey(), x, z, tile);
 				this.markDirty();
 				return new TileInfo(x, z, tile);
 			}
@@ -217,13 +224,13 @@ public class AtlasData extends PersistentState {
 
 	/** Puts a given tile into given map at specified coordinates and,
 	 * if tileStitcher is present, sets appropriate sectors on adjacent tiles. */
-	public void setTile(RegistryKey<World> world, int x, int y, Identifier tile) {
+	public void setTile(RegistryKey<World> world, int x, int y, ResourceLocation tile) {
 		WorldData worldData = getWorldData(world);
 		worldData.setTile(x, y, tile);
 	}
 
 	/** Returns the Tile previously set at given coordinates. */
-	private Identifier removeTile(RegistryKey<World> world, int x, int y) {
+	private ResourceLocation removeTile(RegistryKey<World> world, int x, int y) {
 		WorldData dimData = getWorldData(world);
 		return dimData.removeTile(x, y);
 	}
@@ -239,7 +246,7 @@ public class AtlasData extends PersistentState {
 		return worldMap.computeIfAbsent(world, k -> new WorldData(this, world));
 	}
 
-	public Map<ShortVec2, Identifier> getSeenChunksInDimension(RegistryKey<World> world) {
+	public Map<ShortVec2, ResourceLocation> getSeenChunksInDimension(RegistryKey<World> world) {
 		return getWorldData(world).getSeenChunks();
 	}
 
@@ -257,7 +264,7 @@ public class AtlasData extends PersistentState {
 	 * during the first run of ItemAtlas.onUpdate(). */
 	public void syncOnPlayer(int atlasID, PlayerEntity player) {
 		if (nbt == null) {
-			nbt = new CompoundTag();
+			nbt = new CompoundNBT();
 		}
 		// Before syncing make sure the changes are written to the nbt.
 		// Do not include dimension tile data.  This will happen later.
