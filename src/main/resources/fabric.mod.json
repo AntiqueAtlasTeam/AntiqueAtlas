@@ -12,6 +12,9 @@
     ],
     "client": [
       "hunternif.mc.impl.atlas.AntiqueAtlasModClient"
+    ],
+    "modmenu": [
+      "hunternif.mc.impl.atlas.client.AntiqueAtlasModMenu"
     ]
   },
   "environment": "*",

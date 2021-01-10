@@ -18,7 +18,7 @@
 
   "gui.antiqueatlas.export.opening": "Öffne Datei-Dialogfeld...",
   "gui.antiqueatlas.export.selectFile": "Wähle PNG-Datei zum Speichern aus",
-  "gui.antiqueatlas.export.tooLarge": "Sorry! Das Bild ist zu groß zum Rendern. Versuch die Java-Heap-Größe zu erhöhen.",
+  "gui.antiqueatlas.export.tooLarge": "Entschuldigung! Das Bild ist zu groß zum Rendern. Versuche die Java-Heap-Größe zu erhöhen.",
 
   "gui.antiqueatlas.export.setup": "Starte...",
   "gui.antiqueatlas.export.rendering": "Rendere...",
@@ -31,5 +31,52 @@
 
   "gui.antiqueatlas.export.rendering.background": "Rendere Kartenhintergrund",
   "gui.antiqueatlas.export.rendering.map": "Rendere Kartenabschnitte",
-  "gui.antiqueatlas.export.rendering.markers": "Rendere Markierungen"
+  "gui.antiqueatlas.export.rendering.markers": "Rendere Markierungen",
+
+  "key.openatlas.desc": "Atlas öffnen",
+  "key.antiqueatlas.category": "Antique Atlas",
+
+  "text.autoconfig.antiqueatlas.category.gameplay": "Spielweise",
+  "text.autoconfig.antiqueatlas.category.userInterface": "Benutzeroberfläche",
+  "text.autoconfig.antiqueatlas.category.performance": "Leistung",
+  "text.autoconfig.antiqueatlas.category.overlayPosition": "Position der Minimap",
+  "text.autoconfig.antiqueatlas.category.overlayAppearance": "Erscheinungsbild der Minimap",
+
+  "text.autoconfig.antiqueatlas.option.doSaveBrowsingPos": "Speichere Position im Atlas",
+  "text.autoconfig.antiqueatlas.option.autoDeathMarker": "Todesmarkierungen",
+  "text.autoconfig.antiqueatlas.option.autoVillageMarkers": "Markierungen für Dörfer",
+  "text.autoconfig.antiqueatlas.option.autoNetherPortalMarkers": "Markierungen für Nether Portale",
+  "text.autoconfig.antiqueatlas.option.itemNeeded": "Atlas wird benötigt",
+
+  "text.autoconfig.antiqueatlas.option.doScaleMarkers": "Skaliere Markierungen",
+  "text.autoconfig.antiqueatlas.option.defaultScale": "Standard Zoomfaktor",
+  "text.autoconfig.antiqueatlas.option.minScale": "Minimaler Zoomfaktor",
+  "text.autoconfig.antiqueatlas.option.maxScale": "Maximaler Zoomfaktor",
+  "text.autoconfig.antiqueatlas.option.doReverseWheelZoom": "Invertierter Mausrad zoom",
+
+  "text.autoconfig.antiqueatlas.option.scanRadius": "Abtastradius",
+  "text.autoconfig.antiqueatlas.option.forceChunkLoading": "Erzwinge Laden von Chunks",
+  "text.autoconfig.antiqueatlas.option.newScanInterval": "Abtastinterval",
+  "text.autoconfig.antiqueatlas.option.doRescan": "Erneut Abtasten",
+  "text.autoconfig.antiqueatlas.option.rescanRate": "Abtastzeit",
+  "text.autoconfig.antiqueatlas.option.markerLimit": "Limit für Markierungen",
+  "text.autoconfig.antiqueatlas.option.doScanPonds": "Suche nach Wasserbecken",
+  "text.autoconfig.antiqueatlas.option.doScanRavines": "Suche nach Schluchten",
+  "text.autoconfig.antiqueatlas.option.debugRender": "Debug rendering",
+
+  "text.autoconfig.antiqueatlas.option.alignRight": "Rechtsbündig anordnen",
+  "text.autoconfig.antiqueatlas.option.alignBottom": "Unten anordnen",
+  "text.autoconfig.antiqueatlas.option.xPosition": "Horizontale Position",
+  "text.autoconfig.antiqueatlas.option.yPosition": "Vertikale Position",
+  "text.autoconfig.antiqueatlas.option.width": "Breite",
+  "text.autoconfig.antiqueatlas.option.height": "Höhe",
+
+  "text.autoconfig.antiqueatlas.option.tileSize": "Größe einer Kachel",
+  "text.autoconfig.antiqueatlas.option.markerSize": "Größe einer Markierung",
+  "text.autoconfig.antiqueatlas.option.playerIconWidth": "Beite des Spielericons",
+  "text.autoconfig.antiqueatlas.option.playerIconHeight": "Höhe des Spielericons",
+  "text.autoconfig.antiqueatlas.option.borderX": "Horizontale Breite des Randes",
+  "text.autoconfig.antiqueatlas.option.borderY": "Vertikale Breite des Randes",
+  "text.autoconfig.antiqueatlas.option.requiresHold": "Atlas muss gehalten werden",
+  "text.autoconfig.antiqueatlas.option.enabled": "Aktiviert"
 }
