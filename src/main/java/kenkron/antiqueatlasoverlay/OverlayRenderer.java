@@ -49,13 +49,13 @@ public class OverlayRenderer extends AbstractGui {
 
         ItemStack stack = player.getHeldItemOffhand();
         if (!stack.isEmpty() && stack.getItem() == RegistrarAntiqueAtlas.ATLAS) {
-            return stack.getDamage();
+            return AtlasItem.getAtlasID(stack);
         }
 
         for (int i = 0; i < 9; i++) {
             stack = player.inventory.getStackInSlot(i);
             if (!stack.isEmpty() && stack.getItem() == RegistrarAntiqueAtlas.ATLAS) {
-                return stack.getDamage();
+                return AtlasItem.getAtlasID(stack);
             }
         }
 
