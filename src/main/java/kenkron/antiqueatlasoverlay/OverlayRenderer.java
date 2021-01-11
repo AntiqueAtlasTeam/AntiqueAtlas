@@ -1,11 +1,21 @@
 package kenkron.antiqueatlasoverlay;
 
+import java.util.List;
+
+import org.lwjgl.opengl.GL11;
+
+import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.systems.RenderSystem;
 
 import hunternif.mc.impl.atlas.AntiqueAtlasConfig;
 import hunternif.mc.impl.atlas.AntiqueAtlasMod;
 import hunternif.mc.impl.atlas.RegistrarAntiqueAtlas;
-import hunternif.mc.impl.atlas.client.*;
+import hunternif.mc.impl.atlas.client.BiomeTextureMap;
+import hunternif.mc.impl.atlas.client.SubTile;
+import hunternif.mc.impl.atlas.client.SubTileQuartet;
+import hunternif.mc.impl.atlas.client.Textures;
+import hunternif.mc.impl.atlas.client.TileRenderIterator;
 import hunternif.mc.impl.atlas.client.gui.GuiAtlas;
 import hunternif.mc.impl.atlas.core.WorldData;
 import hunternif.mc.impl.atlas.item.AtlasItem;
@@ -15,20 +25,16 @@ import hunternif.mc.impl.atlas.marker.MarkersData;
 import hunternif.mc.impl.atlas.registry.MarkerRenderInfo;
 import hunternif.mc.impl.atlas.registry.MarkerType;
 import hunternif.mc.impl.atlas.util.Rect;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.AbstractGui;
-import com.mojang.blaze3d.matrix.MatrixStack;
-import net.minecraft.util.math.vector.Vector3f;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.vector.Quaternion;
 import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.util.math.vector.Vector3f;
 import net.minecraft.world.World;
-import org.lwjgl.opengl.GL11;
-
-import java.util.List;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 @OnlyIn(Dist.CLIENT)
 public class OverlayRenderer extends AbstractGui {
     /**
@@ -104,10 +110,6 @@ public class OverlayRenderer extends AbstractGui {
     }
 
     private void drawMinimap(MatrixStack matrices) {
-//        GlStateManager.color4f(1, 1, 1, 1);
-//        GlStateManager.enableBlend();
-//        GlStateManager.alphaFunc(GL11.GL_GREATER, 0); // So light detail on tiles is
-        // visible
         this.client.getTextureManager().bindTexture(Textures.BOOK);
         blit(matrices, 0, 0, (int) (GuiAtlas.WIDTH * 1.5), (int) (GuiAtlas.HEIGHT * 1.5),
             0,
@@ -121,6 +123,9 @@ public class OverlayRenderer extends AbstractGui {
         matrices.push();
         matrices.push();
         matrices.scale(INNER_ELEMENTS_SCALE_FACTOR, INNER_ELEMENTS_SCALE_FACTOR, 1F);
+        
+        RenderSystem.enableBlend();
+        RenderSystem.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
         drawTiles(matrices);
         if (AntiqueAtlasConfig.markerSize.get() > 0) {
@@ -143,12 +148,12 @@ public class OverlayRenderer extends AbstractGui {
                 310,
                 218
         );
-        GlStateManager.disableBlend();
+        RenderSystem.disableBlend();
     }
 
     private void drawTiles(MatrixStack matrices) {
-        GlStateManager.enableBlend();
-        GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+//        GlStateManager.enableBlend();
+//        GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
         WorldData biomeData = AntiqueAtlasMod.atlasData.getAtlasData(
                 atlasID, this.world).getWorldData(this.world.getDimensionKey());
