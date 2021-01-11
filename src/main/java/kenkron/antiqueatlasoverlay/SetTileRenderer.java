@@ -47,7 +47,7 @@ class SetTileRenderer extends AbstractGui {
     }
 
     private void drawInlineAutotileCorner(int x, int y, int u, int v) {
-        // This is dumb. But because their drawn four at a time, these chunks prevent rendering outside of our map
+        // This is dumb. But because there are drawn four at a time, these chunks prevent rendering outside of our map
         if ((x + tileHalfSize) <= 240 && (x - tileHalfSize >= 0) && (y + tileHalfSize) < 166 && (y - tileHalfSize) >= 0) {
             blit(this.matrices, x, y, tileHalfSize, tileHalfSize, u, v, 1, 1, 4, 6);
         }

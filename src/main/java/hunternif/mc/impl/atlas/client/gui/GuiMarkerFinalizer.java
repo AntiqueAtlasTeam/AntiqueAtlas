@@ -130,6 +130,14 @@ public class GuiMarkerFinalizer extends GuiComponent {
 			contentX += GuiMarkerInList.FRAME_SIZE + TYPE_SPACING;
 		}
 	}
+	
+	@Override
+	public void close() {
+		super.close();
+		if (scroller != null) {
+            scroller.close();
+        }
+	}
 
 	@Override
 	public boolean mouseClicked(double mouseX, double mouseY, int button) {

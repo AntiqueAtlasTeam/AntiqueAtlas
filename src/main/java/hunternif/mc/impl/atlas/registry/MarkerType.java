@@ -48,16 +48,16 @@ public class MarkerType {
 	private double centerY = 0.5;
 
 	private boolean isFromJson = false;
-	
+
 	private final JSONData data = new JSONData(this);
-	
+
 	public MarkerType(ResourceLocation... icons) {
 		this.icons = icons;
 	}
 
 	public static void register(ResourceLocation location, MarkerType type) {
 		if (REGISTRY.containsKey(location)) {
-			int id = REGISTRY.getId(type);
+			int id = REGISTRY.getId(REGISTRY.getOrDefault(location));
 			REGISTRY.register(id, RegistryKey.getOrCreateKey(KEY, location), type, Lifecycle.stable());
 		} else {
 			REGISTRY.register(RegistryKey.getOrCreateKey(KEY, location), type, Lifecycle.stable());
@@ -67,7 +67,7 @@ public class MarkerType {
 	public boolean isTechnical() {
 		return isTechnical;
 	}
-	
+
 	/**
 	 * Whether the marker should be hidden
 	 */
@@ -78,7 +78,7 @@ public class MarkerType {
 	/**
 	 * Whether the marker should hide due to the scale clipping
 	 */
-    private boolean shouldClip(int scaleIndex) {
+	private boolean shouldClip(int scaleIndex) {
 		return !(scaleIndex >= clipMin && scaleIndex <= clipMax);
 	}
 
@@ -99,35 +99,35 @@ public class MarkerType {
 			return true;
 		int iconX = (int)(iconPixels[iconIndex].getWidth()*x);
 		int iconY = (int)(iconPixels[iconIndex].getHeight()*y);
-		
+
 		return iconPixels[iconIndex].get(iconX, iconY);
 	}
 
 	/**
 	 * The size of the icon, in chunks
 	 */
-    private int viewSize() {
+	private int viewSize() {
 		return viewSize;
 	}
 
 	/**
 	 * Whether the marker is a tile, and as such should scale with the map
 	 */
-    private boolean isTile() {
+	private boolean isTile() {
 		return isTile;
 	}
 
 	/**
 	 * The X position (0-1) of the icon that should be at the marker location
 	 */
-    private double getCenterX() {
+	private double getCenterX() {
 		return centerX;
 	}
 
 	/**
 	 * The Y position (0-1) of the icon that should be at the marker location
 	 */
-    private double getCenterY() {
+	private double getCenterY() {
 		return centerY;
 	}
 
@@ -137,19 +137,19 @@ public class MarkerType {
 	public ResourceLocation getIcon() {
 		return icons.length == 0 || iconIndex < 0 ? TextureManager.RESOURCE_LOCATION_EMPTY : icons[iconIndex];
 	}
-	
+
 	public ResourceLocation[] getAllIcons() {
 		return icons;
 	}
-	
+
 	private int iconIndex = 0;
-	
+
 	public void calculateMip(double scale, double mapScale, double screenScale) {
 		int size = (int) (16 * scale * viewSize());
 		if (isTile) {
 			size *= mapScale;
 		}
-		
+
 		if (icons.length > 1) {
 			int smallestSide = (int) (size * screenScale);
 
@@ -166,11 +166,11 @@ public class MarkerType {
 			}
 		}
 	}
-	
+
 	public void resetMip() {
 		iconIndex = 0;
 	}
-	
+
 	public MarkerRenderInfo getRenderInfo(double scale, double mapScale, double screenScale) {
 		boolean isTile = isTile();
 
@@ -205,22 +205,22 @@ public class MarkerType {
 				bufferedimage = NativeImage.read(iresource.getInputStream());
 				iconSizes[i] = Math.min(bufferedimage.getWidth(), bufferedimage.getHeight());
 				BitMatrix matrix = new BitMatrix(bufferedimage.getWidth(), bufferedimage.getHeight(), false);
-				
+
 				for (int x = 0; x < bufferedimage.getWidth(); x++) {
 					for (int y = 0; y < bufferedimage.getHeight(); y++) {
-						
+
 						int color = bufferedimage.getPixelRGBA(x, y);
 						int alpha = (color >> 24) & 0xff;
-						
+
 						if(alpha >= ALPHA_THRESHOLD) {
 							matrix.set(x, y, true);
-							
+
 							// sides
 							matrix.set(x-1, y, true);
 							matrix.set(x+1, y, true);
 							matrix.set(x, y-1, true);
 							matrix.set(x, y+1, true);
-							
+
 							// corners
 							matrix.set(x+1, y+1, true);
 							matrix.set(x-1, y-1, true);
@@ -233,7 +233,7 @@ public class MarkerType {
 				iconPixels[i] = matrix;
 			} catch (IOException e) {
 				Log.warn(e, "Marker %s -- Error getting texture size data for index %d - %s",
-								MarkerType.REGISTRY.getKey(this).toString(), i, icons[i].toString());
+						MarkerType.REGISTRY.getKey(this).toString(), i, icons[i].toString());
 			} finally {
 				if (bufferedimage != null) {
 					bufferedimage.close();
@@ -271,96 +271,96 @@ public class MarkerType {
 		this.centerY = y;
 		return this;
 	}
-	
+
 	public MarkerType setIsTechnical(boolean value) {
 		this.isTechnical = value;
 		return this;
 	}
-	
+
 	public MarkerType setIsFromJson(boolean value) {
 		this.isFromJson = value;
 		return this;
 	}
-	
+
 	public JSONData getJSONData() {
 		return data;
 	}
 
 	public static class JSONData {
 		static final String
-			ICONS = "textures",
-			SIZE  = "size",
-			CLIP_MIN = "clipMin",
-			CLIP_MAX = "clipMax",
-			ALWAYS_SHOW = "alwaysShow",
-			IS_TILE = "isTile",
-			IS_TECH = "isTechnical",
-			CENTER_X = "centerX",
-			CENTER_Y = "centerY",
-			
-			NONE = "NONE";
-		
-		
+		ICONS = "textures",
+		SIZE  = "size",
+		CLIP_MIN = "clipMin",
+		CLIP_MAX = "clipMax",
+		ALWAYS_SHOW = "alwaysShow",
+		IS_TILE = "isTile",
+		IS_TECH = "isTechnical",
+		CENTER_X = "centerX",
+		CENTER_Y = "centerY",
+
+		NONE = "NONE";
+
+
 		private final MarkerType type;
-		
+
 		ResourceLocation[] icons;
 		Integer viewSize = null, clipMin = null, clipMax = null;
 		Boolean alwaysShow = null, isTile = null, isTechnical = null;
 		Double centerX = null, centerY = null;
-		
+
 		JSONData(MarkerType type) {
 			this.type = type;
 		}
-		
+
 		public void saveTo(JsonObject object) {
 			if(icons != null) {
-				
+
 				JsonArray arr = new JsonArray();
-				
+
 				for (ResourceLocation loc : icons) {
 					arr.add(new JsonPrimitive(loc.toString()));
 				}
-				
+
 				object.add(ICONS, arr);
 			}
-			
+
 			if(viewSize != null) {
 				object.addProperty(SIZE, viewSize);
 			}
-			
+
 			if(clipMin != null) {
 				object.addProperty(CLIP_MIN, clipMin);
 			}
-			
+
 			if(clipMax != null) {
 				object.addProperty(CLIP_MAX, clipMax);
 			}
-			
+
 			if(alwaysShow != null) {
 				object.addProperty(ALWAYS_SHOW, alwaysShow);
 			}
-			
+
 			if(isTile != null) {
 				object.addProperty(IS_TILE, isTile);
 			}
-			
+
 			if(isTechnical != null) {
 				object.addProperty(IS_TECH, isTechnical);
 			}
-			
+
 			if(centerX != null) {
 				object.addProperty(CENTER_X, centerX);
 			}
-			
+
 			if(centerY != null) {
 				object.addProperty(CENTER_Y, centerY);
 			}
 		}
-		
+
 		public void readFrom(JsonObject object) {
 			if(object.entrySet().size() == 0)
 				return;
-			
+
 			ResourceLocation typeName = MarkerType.REGISTRY.getKey(type);
 			String workingOn = NONE;
 			try {
@@ -379,49 +379,49 @@ public class MarkerType {
 					icons = list.toArray(new ResourceLocation[0]);
 					workingOn = NONE;
 				}
-				
+
 				if(object.has(SIZE) && object.get(SIZE).isJsonPrimitive()) {
 					workingOn = SIZE;
 					viewSize = object.get(SIZE).getAsInt();
 					workingOn = NONE;
 				}
-				
+
 				if(object.has(CLIP_MIN) && object.get(CLIP_MIN).isJsonPrimitive()) {
 					workingOn = CLIP_MIN;
 					clipMin = object.get(CLIP_MIN).getAsInt();
 					workingOn = NONE;
 				}
-				
+
 				if(object.has(CLIP_MAX) && object.get(CLIP_MAX).isJsonPrimitive()) {
 					workingOn = CLIP_MAX;
 					clipMax = object.get(CLIP_MAX).getAsInt();
 					workingOn = NONE;
 				}
-				
+
 				if(object.has(ALWAYS_SHOW) && object.get(ALWAYS_SHOW).isJsonPrimitive()) {
 					workingOn = ALWAYS_SHOW;
 					alwaysShow = object.get(ALWAYS_SHOW).getAsBoolean();
 					workingOn = NONE;
 				}
-				
+
 				if(object.has(IS_TILE) && object.get(IS_TILE).isJsonPrimitive()) {
 					workingOn = IS_TILE;
 					isTile = object.get(IS_TILE).getAsBoolean();
 					workingOn = NONE;
 				}
-				
+
 				if(object.has(IS_TECH) && object.get(IS_TECH).isJsonPrimitive()) {
 					workingOn = IS_TECH;
 					isTechnical = object.get(IS_TECH).getAsBoolean();
 					workingOn = NONE;
 				}
-				
+
 				if(object.has(CENTER_X) && object.get(CENTER_X).isJsonPrimitive()) {
 					workingOn = CENTER_X;
 					centerX = object.get(CENTER_X).getAsDouble();
 					workingOn = NONE;
 				}
-				
+
 				if(object.has(CENTER_Y) && object.get(CENTER_Y).isJsonPrimitive()) {
 					workingOn = CENTER_Y;
 					centerY = object.get(CENTER_Y).getAsDouble();
@@ -432,29 +432,29 @@ public class MarkerType {
 			} catch (NumberFormatException e) {
 				Log.warn(e, "Loading marker $s from JSON: Parsing element %s: element was an invalid number!", typeName, workingOn);
 			}
-			
+
 			if(icons != null)
 				type.icons = icons;
-			
+
 			if(viewSize != null)
 				type.viewSize = viewSize;
 			if(clipMin != null)
 				type.clipMin = clipMin;
 			if(clipMax != null)
 				type.clipMax = clipMax;
-			
+
 			if(alwaysShow != null)
 				type.alwaysShow = alwaysShow;
 			if(isTile != null)
 				type.isTile = isTile;
 			if(isTechnical != null)
 				type.isTechnical = isTechnical;
-			
+
 			if(centerX != null)
 				type.centerX = centerX;
 			if(centerY != null)
 				type.centerY = centerY;
 		}
-		
+
 	}
 }

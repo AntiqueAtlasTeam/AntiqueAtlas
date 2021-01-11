@@ -162,7 +162,7 @@ var patchCraftingResultSlotOnCrafting = {
     action: function(node, instructions, obfuscated) {
         var insnList = new InsnList();
 		insnList.add(new VarInsnNode(Opcodes.ALOAD, null));
-        insnList.add(new FieldInsnNode(Opcodes.GETFIELD, "net/minecraft/inventory/container/CraftingResultSlot", obfuscated ? "field_75238_b " : "player", "Lnet/minecraft/entity/player/PlayerEntity;"));
+        insnList.add(new FieldInsnNode(Opcodes.GETFIELD, "net/minecraft/inventory/container/CraftingResultSlot", obfuscated ? "field_75238_b" : "player", "Lnet/minecraft/entity/player/PlayerEntity;"));
         insnList.add(new VarInsnNode(Opcodes.ALOAD, 1));
 		insnList.add(new VarInsnNode(Opcodes.ALOAD, null));
         insnList.add(new FieldInsnNode(Opcodes.GETFIELD, "net/minecraft/inventory/container/CraftingResultSlot", obfuscated ? "field_75239_a" : "craftMatrix", "Lnet/minecraft/inventory/CraftingInventory;"));
