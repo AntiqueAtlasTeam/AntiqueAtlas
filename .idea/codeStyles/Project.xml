@@ -4,7 +4,6 @@
       <option name="KEEP_SIMPLE_BLOCKS_IN_ONE_LINE" value="true" />
       <indentOptions>
         <option name="SMART_TABS" value="true" />
-        <option name="USE_RELATIVE_INDENTS" value="true" />
       </indentOptions>
     </codeStyleSettings>
   </code_scheme>
