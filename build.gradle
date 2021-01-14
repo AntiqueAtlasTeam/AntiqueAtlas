@@ -1,17 +1,24 @@
 buildscript {
     repositories {
         maven { url = 'https://files.minecraftforge.net/maven' }
+		maven { url = 'https://dist.creeper.host/Sponge/maven' }
         jcenter()
         mavenCentral()
     }
     dependencies {
         classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '3.+', changing: true
+		classpath group: 'org.spongepowered', name: 'mixingradle', version: '0.7-SNAPSHOT'
     }
 }
 apply plugin: 'net.minecraftforge.gradle'
 // Only edit below this line, the above code adds and enables the necessary things for Forge to be setup.
 apply plugin: 'eclipse'
 apply plugin: 'maven-publish'
+apply plugin: 'org.spongepowered.mixin'
+
+mixin {
+    add sourceSets.main, modId+".refmap.json"
+}
 
 archivesBaseName = project.archives_base_name
 version = project.mod_version
@@ -32,6 +39,8 @@ repositories {
 	maven {
 		url = uri("https://jitpack.io")
 	}
+	
+	maven {  url = "https://repo.spongepowered.org/maven" } // mixin
 }
 
 minecraft {
@@ -44,6 +53,7 @@ minecraft {
 
             // Recommended logging data for a userdev environment
             property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
+			arg "-mixin.config="+modId+".mixins.json"
 
             // Recommended logging level for the console
             property 'forge.logging.console.level', 'debug'
@@ -62,6 +72,7 @@ minecraft {
 
             // Recommended logging data for a userdev environment
             property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
+			arg "-mixin.config="+modId+".mixins.json"
 
             // Recommended logging level for the console
             property 'forge.logging.console.level', 'debug'
@@ -77,6 +88,8 @@ minecraft {
 
 dependencies {
 	minecraft 'net.minecraftforge:forge:' + modMinecraftVersion + '-' + modForgeVersion
+	compile 'org.spongepowered:mixin:0.8'
+	compile fileTree(include: ['*.jar'], dir: 'libs')
 }
 // Process resources on build
 processResources {
@@ -111,6 +124,12 @@ task sourcesJar(type: Jar, dependsOn: classes) {
 
 jar {
 	from "LICENSE"
+    manifest {
+        attributes([
+            // Existing properties here
+            "MixinConfigs": modId+".mixins.json"
+        ])
+    }
 }
 
 // configure the maven publication

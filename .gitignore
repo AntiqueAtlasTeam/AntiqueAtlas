@@ -23,3 +23,5 @@ run*
 
 classes
 logs
+/.apt_generated/
+/Java Projects/
