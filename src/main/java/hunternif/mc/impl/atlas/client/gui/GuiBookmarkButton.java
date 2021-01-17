@@ -3,11 +3,10 @@ package hunternif.mc.impl.atlas.client.gui;
 import com.mojang.blaze3d.systems.RenderSystem;
 import hunternif.mc.impl.atlas.client.Textures;
 import hunternif.mc.impl.atlas.client.gui.core.GuiToggleButton;
-import hunternif.mc.impl.atlas.util.AtlasRenderHelper;
+import hunternif.mc.impl.atlas.client.texture.ITexture;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
 
 import java.util.Collections;
 
@@ -25,7 +24,7 @@ public class GuiBookmarkButton extends GuiToggleButton {
     private static final int ICON_HEIGHT = 16;
 
     private final int colorIndex;
-    private Identifier iconTexture;
+    private ITexture iconTexture;
     private Text title;
 
     /**
@@ -33,23 +32,23 @@ public class GuiBookmarkButton extends GuiToggleButton {
      * @param iconTexture the path to the 16x16 texture to be drawn on top of the bookmark.
      * @param title       hovering text.
      */
-    GuiBookmarkButton(int colorIndex, Identifier iconTexture, Text title) {
+    GuiBookmarkButton(int colorIndex, ITexture iconTexture, Text title) {
         this.colorIndex = colorIndex;
         setIconTexture(iconTexture);
         setTitle(title);
         setSize(WIDTH, HEIGHT);
     }
 
-    void setIconTexture(Identifier iconTexture) {
+    void setIconTexture(ITexture iconTexture) {
         this.iconTexture = iconTexture;
-    }
-
-    void setTitle(Text title) {
-        this.title = title;
     }
 
     public Text getTitle() {
         return title;
+    }
+
+    void setTitle(Text title) {
+        this.title = title;
     }
 
     @Override
@@ -59,12 +58,14 @@ public class GuiBookmarkButton extends GuiToggleButton {
         // Render background:
         int u = colorIndex * WIDTH;
         int v = isMouseOver || isSelected() ? 0 : HEIGHT;
-        AtlasRenderHelper.drawTexturedRect(matrices, Textures.BOOKMARKS, getGuiX(), getGuiY(), u, v, WIDTH, HEIGHT, IMAGE_WIDTH, IMAGE_HEIGHT);
+//        AtlasRenderHelper.drawTexturedRect(matrices, Textures.BOOKMARKS.getTexture(), getGuiX(), getGuiY(), u, v, WIDTH, HEIGHT, IMAGE_WIDTH, IMAGE_HEIGHT);
+        Textures.BOOKMARKS.draw(matrices, getGuiX(), getGuiY(), u, v, WIDTH, HEIGHT);
 
         // Render the icon:
-        AtlasRenderHelper.drawFullTexture(matrices, iconTexture,
-                getGuiX() + (isMouseOver || isSelected() ? 3 : 2),
-                getGuiY() + 1, ICON_WIDTH, ICON_HEIGHT);
+        iconTexture.draw(matrices, getGuiX() + (isMouseOver || isSelected() ? 3 : 2), getGuiY() + 1);
+//        AtlasRenderHelper.drawFullTexture(matrices, iconTexture,
+//                getGuiX() + (isMouseOver || isSelected() ? 3 : 2),
+//                getGuiY() + 1, ICON_WIDTH, ICON_HEIGHT);
 
         if (isMouseOver) {
             drawTooltip(Collections.singletonList(title), MinecraftClient.getInstance().textRenderer);

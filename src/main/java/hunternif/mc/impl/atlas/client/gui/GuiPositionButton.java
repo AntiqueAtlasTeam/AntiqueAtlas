@@ -3,7 +3,6 @@ package hunternif.mc.impl.atlas.client.gui;
 import com.mojang.blaze3d.systems.RenderSystem;
 import hunternif.mc.impl.atlas.client.Textures;
 import hunternif.mc.impl.atlas.client.gui.core.GuiComponentButton;
-import hunternif.mc.impl.atlas.util.AtlasRenderHelper;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.TranslatableText;
@@ -32,7 +31,7 @@ public class GuiPositionButton extends GuiComponentButton {
                 RenderSystem.color4f(1.0F, 1.0F, 1.0F, 0.5F);
             }
 
-            AtlasRenderHelper.drawFullTexture(matrices, Textures.BTN_POSITION, x, y, WIDTH, HEIGHT);
+            Textures.BTN_POSITION.draw(matrices, x, y, WIDTH, HEIGHT);
 
             RenderSystem.disableBlend();
 

@@ -1,5 +1,6 @@
 package hunternif.mc.impl.atlas.client;
 
+import hunternif.mc.impl.atlas.client.texture.ITexture;
 import hunternif.mc.impl.atlas.util.Log;
 import hunternif.mc.impl.atlas.util.SaveData;
 import net.fabricmc.api.EnvType;
@@ -13,6 +14,7 @@ import net.minecraft.world.gen.feature.ConfiguredFeatures;
 import java.util.*;
 import java.util.Map.Entry;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 import static hunternif.mc.impl.atlas.client.TextureSet.*;
 
@@ -185,16 +187,15 @@ public class BiomeTextureMap extends SaveData {
         return textureMap.get(tile);
     }
 
-    public Identifier getTexture(int variationNumber, Identifier tile) {
-        TextureSet set = getTextureSet(tile);
-        return set.textures[variationNumber % set.textures.length];
+    public ITexture getTexture(SubTile subTile) {
+        return getTextureSet(subTile.tile).getTexture(subTile.variationNumber);
     }
 
     public List<Identifier> getAllTextures() {
         List<Identifier> list = new ArrayList<>();
 
         for (Entry<Identifier, TextureSet> entry : textureMap.entrySet()) {
-            list.addAll(Arrays.asList(entry.getValue().textures));
+            Arrays.stream(entry.getValue().textures).map(iTexture -> list.add(iTexture.getTexture()));
         }
 
         return list;

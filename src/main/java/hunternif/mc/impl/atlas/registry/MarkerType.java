@@ -6,6 +6,8 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import com.mojang.serialization.Lifecycle;
 import hunternif.mc.impl.atlas.AntiqueAtlasMod;
+import hunternif.mc.impl.atlas.client.texture.ITexture;
+import hunternif.mc.impl.atlas.client.texture.Texture;
 import hunternif.mc.impl.atlas.util.BitMatrix;
 import hunternif.mc.impl.atlas.util.Log;
 import net.fabricmc.api.EnvType;
@@ -52,6 +54,7 @@ public class MarkerType {
 	}
 
 	public static void register(Identifier location, MarkerType type) {
+		type.initMips();
 		if (REGISTRY.containsId(location)) {
 			int id = REGISTRY.getRawId(REGISTRY.get(location));
 			REGISTRY.set(id, RegistryKey.of(KEY, location), type, Lifecycle.stable());
@@ -134,6 +137,11 @@ public class MarkerType {
 		return icons.length == 0 || iconIndex < 0 ? TextureManager.MISSING_IDENTIFIER : icons[iconIndex];
 	}
 
+	public ITexture getTexture() {
+		if (icons.length == 0 || iconIndex < 0) return null;
+		return new Texture(getIcon(), iconSizes[iconIndex], iconSizes[iconIndex]);
+	}
+
 	public Identifier[] getAllIcons() {
 		return icons;
 	}
@@ -177,9 +185,7 @@ public class MarkerType {
 		int x = -(int) (size * getCenterX());
 		int y = -(int) (size * getCenterY());
 
-		Identifier icon = getIcon();
-
-		return new MarkerRenderInfo(icon, x, y, size, size);
+		return new MarkerRenderInfo(getTexture(), x, y, size, size);
 	}
 
 	@Environment(EnvType.CLIENT)

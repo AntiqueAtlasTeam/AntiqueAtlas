@@ -2,6 +2,8 @@ package hunternif.mc.impl.atlas.client;
 
 import com.google.gson.*;
 import hunternif.mc.impl.atlas.AntiqueAtlasMod;
+import hunternif.mc.impl.atlas.client.texture.ITexture;
+import hunternif.mc.impl.atlas.client.texture.TileTexture;
 import hunternif.mc.impl.atlas.util.Log;
 
 import java.io.InputStream;
@@ -51,10 +53,10 @@ public class TextureSetConfig implements SimpleResourceReloadListener<Collection
                                 for (Entry<String, JsonElement> entry : obj.get("data").getAsJsonObject().entrySet()) {
                                     String name = entry.getKey();
                                     JsonArray array = entry.getValue().getAsJsonArray();
-                                    Identifier[] textures = new Identifier[array.size()];
+                                    ITexture[] textures = new ITexture[array.size()];
                                     for (int i = 0; i < array.size(); i++) {
                                         String path = array.get(i).getAsString();
-                                        textures[i] = new Identifier(path);
+                                        textures[i] = new TileTexture(new Identifier(path));
                                     }
                                     sets.add(new TextureSet(AntiqueAtlasMod.id(name), textures));
                                 }

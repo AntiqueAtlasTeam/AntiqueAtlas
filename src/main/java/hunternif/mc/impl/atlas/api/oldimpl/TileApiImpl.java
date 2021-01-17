@@ -5,6 +5,7 @@ import hunternif.mc.impl.atlas.api.TileAPI;
 import hunternif.mc.impl.atlas.client.BiomeTextureMap;
 import hunternif.mc.impl.atlas.client.TextureSet;
 import hunternif.mc.impl.atlas.client.TextureSetMap;
+import hunternif.mc.impl.atlas.client.texture.TileTexture;
 import hunternif.mc.impl.atlas.core.AtlasData;
 import hunternif.mc.impl.atlas.ext.ExtTileTextureMap;
 import hunternif.mc.impl.atlas.ext.TileDataStorage;
@@ -53,10 +54,20 @@ public class TileApiImpl implements TileAPI {
     }
 
 
+    private static TileTexture[] convertToTileTexture(Identifier... textures) {
+        TileTexture[] iTextures = new TileTexture[textures.length];
+
+        for (int i = 0; i < textures.length; i++) {
+            iTextures[i] = new TileTexture(textures[i]);
+        }
+
+        return iTextures;
+    }
+
     @Override
     @Environment(EnvType.CLIENT)
     public TextureSet registerTextureSet(Identifier name, Identifier... textures) {
-        TextureSet textureSet = new TextureSet(name, textures);
+        TextureSet textureSet = new TextureSet(name, convertToTileTexture(textures));
         TextureSetMap.instance().register(textureSet);
         return textureSet;
     }
@@ -67,7 +78,7 @@ public class TileApiImpl implements TileAPI {
     @Override
     @Environment(EnvType.CLIENT)
     public void setBiomeTexture(Biome biome, Identifier textureSetName, Identifier... textures) {
-        TextureSet set = new TextureSet(textureSetName, textures);
+        TextureSet set = new TextureSet(textureSetName, convertToTileTexture(textures));
         TextureSetMap.instance().register(set);
         BiomeTextureMap.instance().setTexture(biome, set);
     }
@@ -84,7 +95,7 @@ public class TileApiImpl implements TileAPI {
     @Override
     @Environment(EnvType.CLIENT)
     public void setCustomTileTexture(Identifier uniqueTileName, Identifier... textures) {
-        TextureSet set = new TextureSet(uniqueTileName, textures);
+        TextureSet set = new TextureSet(uniqueTileName, convertToTileTexture(textures));
         TextureSetMap.instance().register(set);
         setCustomTileTexture(uniqueTileName, set);
     }

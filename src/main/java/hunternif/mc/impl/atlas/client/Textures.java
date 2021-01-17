@@ -1,6 +1,10 @@
 package hunternif.mc.impl.atlas.client;
 
 import hunternif.mc.impl.atlas.AntiqueAtlasMod;
+import hunternif.mc.impl.atlas.client.texture.ITexture;
+import hunternif.mc.impl.atlas.client.texture.IconTexture;
+import hunternif.mc.impl.atlas.client.texture.Texture;
+import hunternif.mc.impl.atlas.client.texture.TileTexture;
 import net.minecraft.util.Identifier;
 
 public class Textures {
@@ -11,21 +15,20 @@ public class Textures {
     private static final String GUI_MARKERS = GUI + "markers/";
     private static final String GUI_SCALEBAR = GUI + "scalebar/";
 
-    public static final Identifier
-            BOOK = gui("book.png"),
-            EXPORTED_BG = gui("exported_bg.png"),
-            BOOK_FRAME = gui("book_frame.png"),
-            BTN_ARROWS = gui("navigate_arrows.png"),
-            BTN_POSITION = gui("position.png"),
-            BOOKMARKS = gui("bookmarks.png"),
-            PLAYER = gui("player.png"),
-            SCROLLBAR_HOR = gui("scrollbar_hor.png"),
-            SCROLLBAR_VER = gui("scrollbar_ver.png"),
-            MARKER_FRAME_ON = gui("marker_frame_on.png"),
-            MARKER_FRAME_OFF = gui("marker_frame_off.png"),
-            ERASER = gui("eraser.png"),
+    public static final ITexture
+            BOOK = gui("book.png", 310, 218),
+            BOOK_FRAME = gui("book_frame.png", 310, 218),
+            BTN_ARROWS = gui("navigate_arrows.png", 24, 24),
+            BTN_POSITION = gui("position.png", 24, 24),
+            BOOKMARKS = gui("bookmarks.png", 84, 36),
+            PLAYER = gui("player.png", 7, 8),
+            SCROLLBAR_HOR = gui("scrollbar_hor.png", 8, 7),
+            SCROLLBAR_VER = gui("scrollbar_ver.png", 7,8),
+            MARKER_FRAME_ON = gui("marker_frame_on.png", 34, 34),
+            MARKER_FRAME_OFF = gui("marker_frame_off.png", 34, 34),
+            ERASER = gui("eraser.png", 24, 24),
 
-    SCALEBAR_4 = scaleBar("scalebar_4.png"),
+            SCALEBAR_4 = scaleBar("scalebar_4.png"),
             SCALEBAR_8 = scaleBar("scalebar_8.png"),
             SCALEBAR_16 = scaleBar("scalebar_16.png"),
             SCALEBAR_32 = scaleBar("scalebar_32.png"),
@@ -34,31 +37,13 @@ public class Textures {
             SCALEBAR_256 = scaleBar("scalebar_256.png"),
             SCALEBAR_512 = scaleBar("scalebar_512.png"),
 
-    ICON_ADD_MARKER = icon("add_marker.png"),
+            ICON_ADD_MARKER = icon("add_marker.png"),
             ICON_DELETE_MARKER = icon("del_marker.png"),
             ICON_SHOW_MARKERS = icon("show_markers.png"),
             ICON_HIDE_MARKERS = icon("hide_markers.png"),
             ICON_EXPORT = icon("export.png"),
 
-    MARKER_GOOGLE_MARKER = marker("google_marker.png"),
-            MARKER_RED_X_LARGE = marker("red_x_large.png"),
-            MARKER_RED_X_SMALL = marker("red_x_small.png"),
-            MARKER_VILLAGE = marker("village.png"),
-            MARKER_END_CITY_FAR = marker("end_city_far.png"),
-            MARKER_END_CITY = marker("end_city.png"),
-            MARKER_END_CITY_MIP_32 = marker("end_city_mipped_32.png"),
-            MARKER_END_CITY_MIP_16 = marker("end_city_mipped_16.png"),
-            MARKER_DIAMOND = marker("diamond.png"),
-            MARKER_BED = marker("bed.png"),
-            MARKER_PICKAXE = marker("pickaxe.png"),
-            MARKER_SWORD = marker("sword.png"),
-            MARKER_NETHER_PORTAL = marker("nether_portal.png"),
-            MARKER_SKULL = marker("skull.png"),
-            MARKER_TOWER = marker("tower.png"),
-            MARKER_SCROLL = marker("scroll.png"),
-            MARKER_TOMB = marker("tomb.png"),
-
-    TILE_TEST = tile("test.png"),
+            TILE_TEST = tile("test.png"),
             TILE_MOUNTAINS = tile("mountains.png"),
             TILE_MOUNTAINS2 = tile("mountains2.png"),
             TILE_MOUNTAINS3 = tile("mountains3.png"),
@@ -212,14 +197,14 @@ public class Textures {
             TILE_LAVA_SHORE = tile("lava_shore.png"),
             TILE_LAVA_SHORE2 = tile("lava_shore2.png"),
 
-    TILE_END_VOID = tile("end_void.png"),
+            TILE_END_VOID = tile("end_void.png"),
             TILE_END_ISLAND = tile("end_island.png"),
             TILE_END_ISLAND2 = tile("end_island2.png"),
             TILE_END_ISLAND_PLANTS = tile("end_island_plants.png"),
             TILE_END_ISLAND_PLANTS2 = tile("end_island_plants2.png"),
 
-    // Village:
-    TILE_HOUSE = tile("house.png"),
+            // Village:
+            TILE_HOUSE = tile("house.png"),
             TILE_FENCE = tile("fence.png"),
             TILE_LIBRARY = tile("library.png"),
             TILE_SMITHY = tile("smithy.png"),
@@ -235,8 +220,8 @@ public class Textures {
             TILE_BUTCHERS_SHOP = tile("butchers_shop.png"),
             TILE_CHURCH = tile("church.png"),
 
-    // Nether Fortress:
-    TILE_NETHER_BRIDGE = tile("nether_bridge.png"),
+            // Nether Fortress:
+            TILE_NETHER_BRIDGE = tile("nether_bridge.png"),
             TILE_NETHER_BRIDGE_X = tile("nether_bridge_x.png"),
             TILE_NETHER_BRIDGE_Z = tile("nether_bridge_z.png"),
             TILE_NETHER_BRIDGE_END_X = tile("nether_bridge_end_x.png"),
@@ -248,24 +233,22 @@ public class Textures {
             TILE_NETHER_FORT_STAIRS = tile("nether_fort_stairs.png"),
             TILE_NETHER_THRONE = tile("nether_throne.png");
 
+    public static final Identifier EXPORTED_BG = new Identifier(GUI + "exported_bg.png");
+
     // Constructor helpers:
-    private static Identifier gui(String fileName) {
-        return new Identifier(GUI + fileName);
+    private static ITexture gui(String fileName, int width, int height) {
+        return new Texture(new Identifier(GUI + fileName), width, height);
     }
 
-    private static Identifier scaleBar(String fileName) {
-        return new Identifier(GUI_SCALEBAR + fileName);
+    private static ITexture scaleBar(String fileName) {
+        return new Texture(new Identifier(GUI_SCALEBAR + fileName), 20, 8);
     }
 
-    private static Identifier marker(String fileName) {
-        return new Identifier(GUI_MARKERS + fileName);
+    private static ITexture tile(String fileName) {
+        return new TileTexture(new Identifier(GUI_TILES + fileName));
     }
 
-    private static Identifier tile(String fileName) {
-        return new Identifier(GUI_TILES + fileName);
-    }
-
-    private static Identifier icon(String fileName) {
-        return new Identifier(GUI_ICONS + fileName);
+    private static ITexture icon(String fileName) {
+        return new IconTexture(new Identifier(GUI_ICONS + fileName));
     }
 }

@@ -1,11 +1,9 @@
 package hunternif.mc.impl.atlas.client;
 
+import hunternif.mc.impl.atlas.client.texture.ITexture;
 import net.minecraft.util.Identifier;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Locale;
-import java.util.Set;
+import java.util.*;
 
 import static hunternif.mc.impl.atlas.client.Textures.*;
 
@@ -247,7 +245,7 @@ public class TextureSet implements Comparable<TextureSet> {
     /**
      * The actual textures in this set.
      */
-    public final Identifier[] textures;
+    public final ITexture[] textures;
     /**
      * Whether the texture set is part of the standard pack. Only true for
      * static constants in this class.
@@ -263,7 +261,7 @@ public class TextureSet implements Comparable<TextureSet> {
     private boolean stitchesToNull = false;
     private boolean anisotropicStitching = false;
 
-    private TextureSet(boolean isStandard, Identifier name, Identifier... textures) {
+    private TextureSet(boolean isStandard, Identifier name, ITexture... textures) {
         this.isStandard = isStandard;
         this.name = name;
         this.textures = textures;
@@ -272,11 +270,11 @@ public class TextureSet implements Comparable<TextureSet> {
     /**
      * Name has to be unique, it is used for equals() tests.
      */
-    public TextureSet(Identifier name, Identifier... textures) {
+    public TextureSet(Identifier name, ITexture... textures) {
         this(false, name, textures);
     }
 
-    private static TextureSet standard(String name, Identifier... textures) {
+    private static TextureSet standard(String name, ITexture... textures) {
         return new TextureSet(true, new Identifier("antiqueatlas", name.toLowerCase(Locale.ROOT)), textures);
     }
 
@@ -383,13 +381,17 @@ public class TextureSet implements Comparable<TextureSet> {
         return name.toString().compareTo(textureSet.name.toString());
     }
 
+    public ITexture getTexture(int variationNumber) {
+        return textures[variationNumber % textures.length];
+    }
+
     /**
      * A special texture set that is stitched to everything except water.
      */
     private static class TextureSetShore extends TextureSet {
         private final TextureSet water;
 
-        TextureSetShore(String name, TextureSet water, Identifier... textures) {
+        TextureSetShore(String name, TextureSet water, ITexture... textures) {
             super(true, new Identifier("antiqueatlas", name.toLowerCase(Locale.ROOT)), textures);
             this.water = water;
         }

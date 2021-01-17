@@ -7,6 +7,8 @@ import hunternif.mc.impl.atlas.client.*;
 import hunternif.mc.impl.atlas.client.gui.core.*;
 import hunternif.mc.impl.atlas.client.gui.core.GuiStates.IState;
 import hunternif.mc.impl.atlas.client.gui.core.GuiStates.SimpleState;
+import hunternif.mc.impl.atlas.client.texture.ITexture;
+import hunternif.mc.impl.atlas.client.texture.TileTexture;
 import hunternif.mc.impl.atlas.core.WorldData;
 import hunternif.mc.impl.atlas.event.MarkerClickedCallback;
 import hunternif.mc.impl.atlas.event.MarkerHoveredCallback;
@@ -19,10 +21,8 @@ import hunternif.mc.impl.atlas.registry.MarkerRenderInfo;
 import hunternif.mc.impl.atlas.registry.MarkerType;
 import hunternif.mc.impl.atlas.util.*;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.options.KeyBinding;
-import net.minecraft.client.render.BufferBuilder;
-import net.minecraft.client.render.Tessellator;
-import net.minecraft.client.render.VertexFormats;
 import net.minecraft.client.resource.language.I18n;
 import net.minecraft.client.sound.PositionedSoundInstance;
 import net.minecraft.client.util.math.MatrixStack;
@@ -33,7 +33,6 @@ import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Matrix4f;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL11;
 
@@ -353,7 +352,7 @@ public class GuiAtlas extends GuiComponent {
                             (int) player.getX(), (int) player.getZ());
                     addChild(markerFinalizer);
 
-                    blinkingIcon.setTexture(markerFinalizer.selectedType.getIcon(),
+                    blinkingIcon.setTexture(markerFinalizer.selectedType.getTexture(),
                             MARKER_SIZE, MARKER_SIZE);
                     addChildBehind(markerFinalizer, blinkingIcon)
                             .setRelativeCoords(worldXToScreenX((int) player.getX()) - getGuiX() - MARKER_SIZE / 2,
@@ -453,8 +452,7 @@ public class GuiAtlas extends GuiComponent {
         }
 
         // close atlas with right-click
-        if (mouseState == 1 && state.is(NORMAL))
-        {
+        if (mouseState == 1 && state.is(NORMAL)) {
             onClose();
             return true;
         }
@@ -473,7 +471,7 @@ public class GuiAtlas extends GuiComponent {
                         screenXToWorldX((int) mouseX), screenYToWorldZ((int) mouseY));
                 addChild(markerFinalizer);
 
-                blinkingIcon.setTexture(markerFinalizer.selectedType.getIcon(),
+                blinkingIcon.setTexture(markerFinalizer.selectedType.getTexture(),
                         MARKER_SIZE, MARKER_SIZE);
                 addChildBehind(markerFinalizer, blinkingIcon)
                         .setRelativeCoords((int) mouseX - getGuiX() - MARKER_SIZE / 2,
@@ -776,7 +774,7 @@ public class GuiAtlas extends GuiComponent {
         RenderSystem.color4f(1, 1, 1, 1);
         RenderSystem.enableAlphaTest();
         RenderSystem.alphaFunc(GL11.GL_GREATER, 0); // So light detail on tiles is visible
-        AtlasRenderHelper.drawFullTexture(matrices, Textures.BOOK, getGuiX(), getGuiY(), WIDTH, HEIGHT);
+        Textures.BOOK.draw(matrices, getGuiX(), getGuiY());
 
         if ((stack == null && AntiqueAtlasMod.CONFIG.itemNeeded) || biomeData == null)
             return;
@@ -806,17 +804,23 @@ public class GuiAtlas extends GuiComponent {
                 set(mapStartX, mapStartZ, mapEndX, mapEndZ));
         iter.setStep(tile2ChunkScale);
 
+        matrices.push();
+        matrices.translate(mapStartScreenX, mapStartScreenY, 0);
+
         while (iter.hasNext()) {
             SubTileQuartet subtiles = iter.next();
             for (SubTile subtile : subtiles) {
                 if (subtile == null || subtile.tile == null) continue;
-                AtlasRenderHelper.drawAutotileCorner(
-                        BiomeTextureMap.instance().getTexture(subtile.variationNumber, subtile.tile),
-                        mapStartScreenX + subtile.x * tileHalfSize,
-                        mapStartScreenY + subtile.y * tileHalfSize,
-                        subtile.getTextureU(), subtile.getTextureV(), tileHalfSize);
+                ITexture texture = BiomeTextureMap.instance().getTexture(subtile);
+                if (texture instanceof TileTexture) {
+                    TileTexture tileTexture = (TileTexture) texture;
+                    tileTexture.bind();
+                    tileTexture.drawSubTile(matrices, subtile, tileHalfSize);
+                }
             }
         }
+
+        matrices.pop();
 
         int markersStartX = MathUtil.roundToBase(mapStartX, MarkersData.CHUNK_STEP) / MarkersData.CHUNK_STEP - 1;
         int markersStartZ = MathUtil.roundToBase(mapStartZ, MarkersData.CHUNK_STEP) / MarkersData.CHUNK_STEP - 1;
@@ -831,7 +835,8 @@ public class GuiAtlas extends GuiComponent {
 
         // Overlay the frame so that edges of the map are smooth:
         RenderSystem.color4f(1, 1, 1, 1);
-        AtlasRenderHelper.drawFullTexture(matrices, Textures.BOOK_FRAME, getGuiX(), getGuiY(), WIDTH, HEIGHT);
+        Textures.BOOK_FRAME.draw(matrices, getGuiX(), getGuiY());
+
         renderScaleOverlay(matrices, deltaMillis);
 
         double iconScale = getIconScale();
@@ -852,8 +857,7 @@ public class GuiAtlas extends GuiComponent {
             float playerRotation = (float) Math.round(player.yaw / 360f * PLAYER_ROTATION_STEPS) / PLAYER_ROTATION_STEPS * 360f;
             matrices.multiply(Vector3f.POSITIVE_Z.getDegreesQuaternion(180 + playerRotation));
             matrices.translate((float) (-PLAYER_ICON_WIDTH / 2 * iconScale), (float) (-PLAYER_ICON_HEIGHT / 2 * iconScale), 0f);
-            AtlasRenderHelper.drawFullTexture(matrices, Textures.PLAYER, 0, 0,
-                    (int) Math.round(PLAYER_ICON_WIDTH * iconScale), (int) Math.round(PLAYER_ICON_HEIGHT * iconScale));
+            Textures.PLAYER.draw(matrices, 0, 0, (int) Math.round(PLAYER_ICON_WIDTH * iconScale), (int) Math.round(PLAYER_ICON_HEIGHT * iconScale));
             matrices.pop();
             RenderSystem.color4f(1, 1, 1, 1);
         }
@@ -869,10 +873,7 @@ public class GuiAtlas extends GuiComponent {
             markerFinalizer.selectedType.calculateMip(iconScale, mapScale, screenScale);
             MarkerRenderInfo renderInfo = markerFinalizer.selectedType.getRenderInfo(iconScale, mapScale, screenScale);
             markerFinalizer.selectedType.resetMip();
-            AtlasRenderHelper.drawFullTexture(
-                    matrices, renderInfo.tex,
-                    mouseX + renderInfo.x, mouseY + renderInfo.y,
-                    renderInfo.width, renderInfo.height);
+            renderInfo.tex.draw(matrices, mouseX + renderInfo.x, mouseY + renderInfo.y);
             RenderSystem.color4f(1, 1, 1, 1);
         }
         RenderSystem.disableBlend();
@@ -921,21 +922,7 @@ public class GuiAtlas extends GuiComponent {
                 int centerXtranslate = Math.max(this.textRenderer.getWidth(parts[0]), this.textRenderer.getWidth(parts[1])) / 2;
                 matrices.translate(-xWidth - centerXtranslate, (float) -this.textRenderer.fontHeight / 2, 0);
 
-                RenderSystem.color4f(0f, 0f, 0f, scaleAlpha / 255f);
-                RenderSystem.enableBlend();
-                RenderSystem.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-                RenderSystem.disableTexture();
-                Tessellator t = Tessellator.getInstance();
-                BufferBuilder vb = t.getBuffer();
-                Matrix4f matrix = matrices.peek().getModel();
-                vb.begin(GL11.GL_QUADS, VertexFormats.POSITION);
-                vb.vertex(matrix, centerXtranslate, this.textRenderer.fontHeight - 1, 0.0f).next();
-                vb.vertex(matrix, -centerXtranslate - 1, this.textRenderer.fontHeight - 1, 0.0f).next();
-                vb.vertex(matrix, -centerXtranslate - 1, this.textRenderer.fontHeight, 0.0f).next();
-                vb.vertex(matrix, centerXtranslate, this.textRenderer.fontHeight, 0.0f).next();
-                t.draw();
-                RenderSystem.enableTexture();
-                RenderSystem.disableBlend();
+                DrawableHelper.fill(matrices, -centerXtranslate - 1, this.textRenderer.fontHeight - 1, centerXtranslate, this.textRenderer.fontHeight, color);
 
                 textWidth = this.textRenderer.getWidth(parts[0]);
                 this.textRenderer.draw(matrices, parts[0], (float) -textWidth / 2, 0, color);
@@ -982,7 +969,7 @@ public class GuiAtlas extends GuiComponent {
         type.calculateMip(scale, mapScale, screenScale);
         MarkerRenderInfo info = type.getRenderInfo(scale, mapScale, screenScale);
 
-        boolean mouseIsOverMarker = type.shouldHover((getMouseX() - (markerX + info.x)) / info.width, (getMouseY() - (markerY + info.y)) / info.height);
+        boolean mouseIsOverMarker = type.shouldHover((getMouseX() - (markerX + info.x)) / info.tex.width(), (getMouseY() - (markerY + info.y)) / info.tex.height());
         type.resetMip();
 
         if (mouseIsOverMarker) {
@@ -1008,7 +995,7 @@ public class GuiAtlas extends GuiComponent {
             System.out.println("Rendering Marker: " + info.tex);
         }
 
-        AtlasRenderHelper.drawFullTexture(matrices, info.tex, markerX + info.x, markerY + info.y, info.width, info.height);
+        info.tex.draw(matrices, markerX + info.x, markerY + info.y, info.width, info.height);
 
         if (isMouseOver && mouseIsOverMarker && marker.getLabel().getString().length() > 0) {
             drawTooltip(Collections.singletonList(marker.getLabel()), textRenderer);

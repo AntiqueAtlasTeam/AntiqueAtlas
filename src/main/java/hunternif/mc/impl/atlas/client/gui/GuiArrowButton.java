@@ -3,15 +3,12 @@ package hunternif.mc.impl.atlas.client.gui;
 import com.mojang.blaze3d.systems.RenderSystem;
 import hunternif.mc.impl.atlas.client.Textures;
 import hunternif.mc.impl.atlas.client.gui.core.GuiComponentButton;
-import hunternif.mc.impl.atlas.util.AtlasRenderHelper;
 import net.minecraft.client.util.math.MatrixStack;
 import org.lwjgl.opengl.GL11;
 
 public class GuiArrowButton extends GuiComponentButton {
     private static final int WIDTH = 12;
     private static final int HEIGHT = 12;
-    private static final int IMAGE_WIDTH = 24;
-    private static final int IMAGE_HEIGHT = 24;
 
     public enum ArrowDirection {
         UP("Up"), DOWN("Down"), LEFT("Left"), RIGHT("Right");
@@ -82,7 +79,7 @@ public class GuiArrowButton extends GuiComponentButton {
                 v = 12;
                 break;
         }
-        AtlasRenderHelper.drawTexturedRect(matrices, Textures.BTN_ARROWS, x, y, u, v, WIDTH, HEIGHT, IMAGE_WIDTH, IMAGE_HEIGHT);
+        Textures.BTN_ARROWS.draw(matrices, x, y, u, v, WIDTH, HEIGHT);
 
         RenderSystem.disableBlend();
     }

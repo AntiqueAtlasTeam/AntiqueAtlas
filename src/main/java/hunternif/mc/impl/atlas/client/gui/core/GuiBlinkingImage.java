@@ -1,9 +1,8 @@
 package hunternif.mc.impl.atlas.client.gui.core;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import hunternif.mc.impl.atlas.util.AtlasRenderHelper;
+import hunternif.mc.impl.atlas.client.texture.ITexture;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.util.Identifier;
 import org.lwjgl.opengl.GL11;
 
 /**
@@ -14,7 +13,7 @@ import org.lwjgl.opengl.GL11;
  * @author Hunternif
  */
 public class GuiBlinkingImage extends GuiComponent {
-    private Identifier texture;
+    private ITexture texture;
     /**
      * The number of milliseconds the icon spends visible or invisible.
      */
@@ -28,7 +27,7 @@ public class GuiBlinkingImage extends GuiComponent {
      */
     private boolean isVisible;
 
-    public void setTexture(Identifier texture, int width, int height) {
+    public void setTexture(ITexture texture, int width, int height) {
         this.texture = texture;
         setSize(width, height);
         // Set up the timer so that the image appears visible at the first moment:
@@ -68,6 +67,6 @@ public class GuiBlinkingImage extends GuiComponent {
     }
 
     private void drawImage(MatrixStack matrices) {
-        AtlasRenderHelper.drawFullTexture(matrices, texture, getGuiX(), getGuiY(), getWidth(), getHeight());
+        texture.draw(matrices, getGuiX(), getGuiY(), getWidth(), getHeight());
     }
 }
