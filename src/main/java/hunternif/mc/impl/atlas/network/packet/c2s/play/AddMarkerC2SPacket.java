@@ -6,9 +6,10 @@ import hunternif.mc.impl.atlas.marker.Marker;
 import hunternif.mc.impl.atlas.marker.MarkersData;
 import hunternif.mc.impl.atlas.network.packet.c2s.C2SPacket;
 import hunternif.mc.impl.atlas.network.packet.s2c.play.MarkersS2CPacket;
-import hunternif.mc.impl.atlas.registry.MarkerType;
-import net.fabricmc.fabric.api.network.PacketContext;
+import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.minecraft.network.PacketByteBuf;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.network.ServerPlayNetworkHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
@@ -38,7 +39,7 @@ public class AddMarkerC2SPacket extends C2SPacket {
 		return ID;
 	}
 
-	public static void apply(PacketContext context, PacketByteBuf buf) {
+	public static void apply(MinecraftServer server, ServerPlayerEntity player, ServerPlayNetworkHandler handler, PacketByteBuf buf, PacketSender responseSender) {
 		int atlasID = buf.readVarInt();
 		Identifier markerType = buf.readIdentifier();
 		int x = buf.readVarInt();
@@ -46,26 +47,25 @@ public class AddMarkerC2SPacket extends C2SPacket {
 		boolean visibleBeforeDiscovery = buf.readBoolean();
 		Text label = buf.readText();
 
-		context.getTaskQueue().execute(() -> {
-			ServerPlayerEntity playerEntity = (ServerPlayerEntity) context.getPlayer();
-			if (!AtlasAPI.getPlayerAtlases(playerEntity).contains(atlasID)) {
+		server.execute(() -> {
+			if (!AtlasAPI.getPlayerAtlases(player).contains(atlasID)) {
 				AntiqueAtlasMod.LOG.warn(
 								"Player {} attempted to put marker into someone else's Atlas #{}}",
-								playerEntity.getName(), atlasID);
+						player.getName(), atlasID);
 				return;
 			}
 
-			if (playerEntity.getServer() != null) {
-				MarkersData markersData = AntiqueAtlasMod.markersData.getMarkersData(atlasID, playerEntity.getEntityWorld());
+			if (player.getServer() != null) {
+				MarkersData markersData = AntiqueAtlasMod.markersData.getMarkersData(atlasID, player.getEntityWorld());
 				Marker marker = markersData.createAndSaveMarker(
 								markerType,
-								context.getPlayer().getEntityWorld().getRegistryKey(),
+								player.getEntityWorld().getRegistryKey(),
 								x,
 								z,
 								visibleBeforeDiscovery,
 								label);
 
-				new MarkersS2CPacket(atlasID, context.getPlayer().getEntityWorld().getRegistryKey(), Collections.singleton(marker)).send(playerEntity.server);
+				new MarkersS2CPacket(atlasID, player.getEntityWorld().getRegistryKey(), Collections.singleton(marker)).send(server);
 			}
 		});
 	}

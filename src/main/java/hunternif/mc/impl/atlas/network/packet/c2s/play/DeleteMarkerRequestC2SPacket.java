@@ -4,8 +4,11 @@ import hunternif.mc.impl.atlas.AntiqueAtlasMod;
 import hunternif.mc.impl.atlas.api.AtlasAPI;
 import hunternif.mc.impl.atlas.network.packet.c2s.C2SPacket;
 import hunternif.mc.impl.atlas.util.Log;
-import net.fabricmc.fabric.api.network.PacketContext;
+import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.minecraft.network.PacketByteBuf;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.network.ServerPlayNetworkHandler;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
 
 /**
@@ -28,21 +31,21 @@ public class DeleteMarkerRequestC2SPacket extends C2SPacket {
 	public Identifier getId() {
 		return ID;
 	}
-	public static void apply(PacketContext context, PacketByteBuf buf) {
+	public static void apply(MinecraftServer server, ServerPlayerEntity player, ServerPlayNetworkHandler handler, PacketByteBuf buf, PacketSender responseSender) {
 		int atlasID = buf.readVarInt();
 		int markerID = buf.readVarInt();
 
-		context.getTaskQueue().execute(() -> {
-			if (AntiqueAtlasMod.CONFIG.itemNeeded && !AtlasAPI.getPlayerAtlases(context.getPlayer()).contains(atlasID)) {
+		server.execute(() -> {
+			if (AntiqueAtlasMod.CONFIG.itemNeeded && !AtlasAPI.getPlayerAtlases(player).contains(atlasID)) {
 				Log.warn("Player %s attempted to delete marker from someone else's Atlas #%d",
-						context.getPlayer().getName(), atlasID);
+						player.getName(), atlasID);
 				return;
 			}
 
 			if (markerID == GLOBAL) {
-				AtlasAPI.markers.deleteGlobalMarker(context.getPlayer().getEntityWorld(), markerID);
+				AtlasAPI.markers.deleteGlobalMarker(player.getEntityWorld(), markerID);
 			} else {
-				AtlasAPI.markers.deleteMarker(context.getPlayer().getEntityWorld(), atlasID, markerID);
+				AtlasAPI.markers.deleteMarker(player.getEntityWorld(), atlasID, markerID);
 			}
 		});
 	}

@@ -9,13 +9,14 @@ import hunternif.mc.impl.atlas.network.packet.s2c.S2CPacket;
 import hunternif.mc.impl.atlas.registry.MarkerType;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.fabricmc.fabric.api.network.PacketContext;
+import net.fabricmc.fabric.api.networking.v1.PacketSender;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.World;
-import net.minecraft.world.dimension.DimensionType;
 
 import java.util.Collection;
 import java.util.List;
@@ -58,7 +59,7 @@ public class MarkersS2CPacket extends S2CPacket {
 	}
 
 	@Environment(EnvType.CLIENT)
-	public static void apply(PacketContext context, PacketByteBuf buf) {
+	public static void apply(MinecraftClient client, ClientPlayNetworkHandler handler, PacketByteBuf buf, PacketSender responseSender) {
 		int atlasID = buf.readVarInt();
 		RegistryKey<World> world = RegistryKey.of(Registry.DIMENSION, buf.readIdentifier());
 		int typesLength = buf.readVarInt();
@@ -72,10 +73,10 @@ public class MarkersS2CPacket extends S2CPacket {
 			}
 		}
 
-		context.getTaskQueue().execute(() -> {
+		client.execute(() -> {
 			MarkersData markersData = atlasID == GLOBAL
 							? AntiqueAtlasMod.globalMarkersData.getData()
-							: AntiqueAtlasMod.markersData.getMarkersData(atlasID, context.getPlayer().getEntityWorld());
+							: AntiqueAtlasMod.markersData.getMarkersData(atlasID, client.player.getEntityWorld());
 
 			for (Identifier type : markersByType.keys()) {
 				MarkerType markerType = MarkerType.REGISTRY.get(type);

@@ -4,13 +4,15 @@ import hunternif.mc.impl.atlas.AntiqueAtlasMod;
 import hunternif.mc.impl.atlas.api.AtlasAPI;
 import hunternif.mc.impl.atlas.network.packet.c2s.C2SPacket;
 import hunternif.mc.impl.atlas.util.Log;
-import net.fabricmc.fabric.api.network.PacketContext;
+import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.minecraft.network.PacketByteBuf;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.network.ServerPlayNetworkHandler;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.World;
-import net.minecraft.world.dimension.DimensionType;
 
 /**
  * Packet used to save the last browsing position for a dimension in an atlas.
@@ -33,21 +35,21 @@ public class BrowsingPositionC2SPacket extends C2SPacket {
 		return ID;
 	}
 
-	public static void apply(PacketContext context, PacketByteBuf buf) {
+	public static void apply(MinecraftServer server, ServerPlayerEntity player, ServerPlayNetworkHandler handler, PacketByteBuf buf, PacketSender responseSender) {
 		int atlasID = buf.readVarInt();
 		RegistryKey<World> world = RegistryKey.of(Registry.DIMENSION, buf.readIdentifier());
 		int x = buf.readVarInt();
 		int y = buf.readVarInt();
 		double zoom = buf.readDouble();
 
-		context.getTaskQueue().execute(() -> {
-			if (AntiqueAtlasMod.CONFIG.itemNeeded && !AtlasAPI.getPlayerAtlases(context.getPlayer()).contains(atlasID)) {
+		server.execute(() -> {
+			if (AntiqueAtlasMod.CONFIG.itemNeeded && !AtlasAPI.getPlayerAtlases(player).contains(atlasID)) {
 				Log.warn("Player %s attempted to put position marker into someone else's Atlas #%d",
-						context.getPlayer().getCommandSource().getName(), atlasID);
+						player.getCommandSource().getName(), atlasID);
 				return;
 			}
 
-			AntiqueAtlasMod.atlasData.getAtlasData(atlasID, context.getPlayer().getEntityWorld())
+			AntiqueAtlasMod.atlasData.getAtlasData(atlasID, player.getEntityWorld())
 					.getWorldData(world).setBrowsingPosition(x, y, zoom);
 		});
 	}

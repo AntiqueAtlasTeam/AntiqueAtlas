@@ -1,11 +1,12 @@
 package hunternif.mc.impl.atlas.network.packet.c2s.play;
 
 import hunternif.mc.impl.atlas.AntiqueAtlasMod;
-import hunternif.mc.impl.atlas.ext.ExtTileIdMap;
 import hunternif.mc.impl.atlas.network.packet.c2s.C2SPacket;
 import hunternif.mc.impl.atlas.network.packet.s2c.play.TileNameS2CPacket;
-import net.fabricmc.fabric.api.network.PacketContext;
+import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.minecraft.network.PacketByteBuf;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.network.ServerPlayNetworkHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
 
@@ -27,13 +28,11 @@ public class RegisterTileC2SPacket extends C2SPacket {
 		return ID;
 	}
 
-	public static void apply(PacketContext context, PacketByteBuf buf) {
+	public static void apply(MinecraftServer server, ServerPlayerEntity player, ServerPlayNetworkHandler handler, PacketByteBuf buf, PacketSender responseSender) {
 		Identifier id = buf.readIdentifier();
 
-		context.getTaskQueue().execute(() -> {
-			for (ServerPlayerEntity playerEntity : context.getPlayer().getServer().getPlayerManager().getPlayerList()) {
-				new TileNameS2CPacket(id).send(playerEntity);
-			}
+		server.execute(() -> {
+			new TileNameS2CPacket(id).send(server);
 		});
 	}
 }

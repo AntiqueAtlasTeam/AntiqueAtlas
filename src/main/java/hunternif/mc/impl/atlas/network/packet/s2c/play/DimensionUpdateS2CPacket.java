@@ -4,7 +4,9 @@ import hunternif.mc.impl.atlas.AntiqueAtlasMod;
 import hunternif.mc.impl.atlas.core.AtlasData;
 import hunternif.mc.impl.atlas.core.TileInfo;
 import hunternif.mc.impl.atlas.network.packet.s2c.S2CPacket;
-import net.fabricmc.fabric.api.network.PacketContext;
+import net.fabricmc.fabric.api.networking.v1.PacketSender;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
@@ -35,7 +37,7 @@ public class DimensionUpdateS2CPacket extends S2CPacket {
 		return ID;
 	}
 
-	public static void apply(PacketContext context, PacketByteBuf buf) {
+	public static void apply(MinecraftClient client, ClientPlayNetworkHandler handler, PacketByteBuf buf, PacketSender responseSender) {
 		int atlasID = buf.readVarInt();
 		RegistryKey<World> world = RegistryKey.of(Registry.DIMENSION, buf.readIdentifier());
 		int tileCount = buf.readVarInt();
@@ -54,8 +56,8 @@ public class DimensionUpdateS2CPacket extends S2CPacket {
 			);
 		}
 
-		context.getTaskQueue().execute(() -> {
-			AtlasData data = AntiqueAtlasMod.atlasData.getAtlasData(atlasID, context.getPlayer().world);
+		client.execute(() -> {
+			AtlasData data = AntiqueAtlasMod.atlasData.getAtlasData(atlasID, client.player.getEntityWorld());
 
 			for (TileInfo info : tiles) {
 				data.getWorldData(world).setTile(info.x, info.z, info.id);

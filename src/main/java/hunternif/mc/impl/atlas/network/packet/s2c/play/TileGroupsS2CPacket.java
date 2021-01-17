@@ -5,14 +5,15 @@ import hunternif.mc.impl.atlas.core.AtlasData;
 import hunternif.mc.impl.atlas.core.WorldData;
 import hunternif.mc.impl.atlas.core.TileGroup;
 import hunternif.mc.impl.atlas.network.packet.s2c.S2CPacket;
-import net.fabricmc.fabric.api.network.PacketContext;
+import net.fabricmc.fabric.api.networking.v1.PacketSender;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.World;
-import net.minecraft.world.dimension.DimensionType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,7 +43,7 @@ public class TileGroupsS2CPacket extends S2CPacket {
 		return ID;
 	}
 
-	public static void apply(PacketContext context, PacketByteBuf buf) {
+	public static void apply(MinecraftClient client, ClientPlayNetworkHandler handler, PacketByteBuf buf, PacketSender responseSender) {
 		int atlasID = buf.readVarInt();
 		RegistryKey<World> world = RegistryKey.of(Registry.DIMENSION, buf.readIdentifier());
 		int length = buf.readVarInt();
@@ -56,8 +57,8 @@ public class TileGroupsS2CPacket extends S2CPacket {
 			}
 		}
 
-		context.getTaskQueue().execute(() -> {
-			AtlasData atlasData = AntiqueAtlasMod.atlasData.getAtlasData(atlasID, context.getPlayer().world);
+		client.execute(() -> {
+			AtlasData atlasData = AntiqueAtlasMod.atlasData.getAtlasData(atlasID, client.player.world);
 			WorldData dimData = atlasData.getWorldData(world);
 			for (TileGroup t : tileGroups) {
 				dimData.putTileGroup(t);
