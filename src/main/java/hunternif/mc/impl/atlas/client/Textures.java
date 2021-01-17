@@ -5,8 +5,11 @@ import hunternif.mc.impl.atlas.client.texture.ITexture;
 import hunternif.mc.impl.atlas.client.texture.IconTexture;
 import hunternif.mc.impl.atlas.client.texture.Texture;
 import hunternif.mc.impl.atlas.client.texture.TileTexture;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.util.Identifier;
 
+@Environment(EnvType.CLIENT)
 public class Textures {
     private static final String MOD_PREFIX = AntiqueAtlasMod.ID + ":";
     private static final String GUI = MOD_PREFIX + "textures/gui/";

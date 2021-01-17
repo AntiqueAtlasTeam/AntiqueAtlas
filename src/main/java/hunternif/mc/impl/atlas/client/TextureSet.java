@@ -1,12 +1,15 @@
 package hunternif.mc.impl.atlas.client;
 
 import hunternif.mc.impl.atlas.client.texture.ITexture;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.util.Identifier;
 
 import java.util.*;
 
 import static hunternif.mc.impl.atlas.client.Textures.*;
 
+@Environment(EnvType.CLIENT)
 public class TextureSet implements Comparable<TextureSet> {
     public static final TextureSet
             // This first texture set is meant to be an example for the config
