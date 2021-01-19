@@ -1,0 +1,14 @@
+{
+  "required": true,
+  "package": "hunternif.mc.impl.atlas.mixin",
+  "compatibilityLevel": "JAVA_8",
+  "refmap": "antiqueatlas.refmap.json",
+  "mixins": [
+    "MixinEntity"
+  ],
+  "client": [
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

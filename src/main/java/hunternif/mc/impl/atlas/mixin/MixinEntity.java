@@ -1,14 +1,18 @@
 package hunternif.mc.impl.atlas.mixin;
 
-import hunternif.mc.impl.atlas.mixinhooks.EntityHooksAA;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 
-//@Mixin(Entity.class)
+import hunternif.mc.impl.atlas.mixinhooks.EntityHooksAA;
+import net.minecraft.entity.Entity;
+
+@Mixin(Entity.class)
 public class MixinEntity implements EntityHooksAA {
-//	@Shadow
-	protected boolean inNetherPortal;
+	@Shadow
+	protected boolean inPortal;
 
 	@Override
 	public boolean antiqueAtlas_isInPortal() {
-		return inNetherPortal;
+		return inPortal;
 	}
 }

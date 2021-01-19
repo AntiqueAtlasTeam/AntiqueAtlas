@@ -21,7 +21,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 
 @OnlyIn(Dist.CLIENT)
-@EventBusSubscriber
+@EventBusSubscriber(value = Dist.CLIENT)
 public abstract class FirstPersonRendererEvent {
 	@OnlyIn(Dist.CLIENT)
 	private static OverlayRenderer atlasOverlayRenderer = new OverlayRenderer();
