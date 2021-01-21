@@ -40,7 +40,7 @@ public class AtlasItem extends Item {
 	public ActionResult<ItemStack> onItemRightClick(World world, PlayerEntity playerEntity, Hand hand) {
 		ItemStack stack = playerEntity.getHeldItem(hand);
 
-		if (!world.isRemote) {
+		if (world.isRemote) {
 			AntiqueAtlasModClient.openAtlasGUI(stack);
 		}
 
