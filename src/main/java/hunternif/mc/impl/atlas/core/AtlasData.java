@@ -61,9 +61,9 @@ public class AtlasData extends PersistentState {
 
         biomeDetectorOverworld.setScanPonds(AntiqueAtlasMod.CONFIG.doScanPonds);
         biomeDetectorOverworld.setScanRavines(AntiqueAtlasMod.CONFIG.doScanRavines);
-        setBiomeDetectorForDimension(World.OVERWORLD, biomeDetectorOverworld);
-        setBiomeDetectorForDimension(World.NETHER, biomeDetectorNether);
-        setBiomeDetectorForDimension(World.END, biomeDetectorEnd);
+        setBiomeDetectorForWorld(World.OVERWORLD, biomeDetectorOverworld);
+        setBiomeDetectorForWorld(World.NETHER, biomeDetectorNether);
+        setBiomeDetectorForWorld(World.END, biomeDetectorEnd);
     }
 
     @Override
@@ -115,15 +115,15 @@ public class AtlasData extends PersistentState {
         return compound;
     }
 
-    private void setBiomeDetectorForDimension(RegistryKey<World> dimension, IBiomeDetector biomeAnalyzer) {
-        biomeAnalyzers.put(dimension, biomeAnalyzer);
+    private void setBiomeDetectorForWorld(RegistryKey<World> world, IBiomeDetector biomeAnalyzer) {
+        biomeAnalyzers.put(world, biomeAnalyzer);
     }
 
     /**
      * If not found, returns the analyzer for overworld.
      */
-    private IBiomeDetector getBiomeDetectorForDimension(RegistryKey<World> dimension) {
-        IBiomeDetector biomeAnalyzer = biomeAnalyzers.get(dimension);
+    private IBiomeDetector getBiomeDetectorForWorld(RegistryKey<World> world) {
+        IBiomeDetector biomeAnalyzer = biomeAnalyzers.get(world);
 
         return biomeAnalyzer == null ? biomeDetectorOverworld : biomeAnalyzer;
     }
@@ -192,7 +192,7 @@ public class AtlasData extends PersistentState {
                 return null;
             }
 
-            IBiomeDetector biomeDetector = getBiomeDetectorForDimension(world.getRegistryKey());
+            IBiomeDetector biomeDetector = getBiomeDetectorForWorld(world.getRegistryKey());
             tile = biomeDetector.getBiomeID(world, chunk);
 
             if (oldTile != null) {
