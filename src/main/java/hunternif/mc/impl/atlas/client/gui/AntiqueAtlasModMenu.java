@@ -1,4 +1,4 @@
-package hunternif.mc.impl.atlas.client;
+package hunternif.mc.impl.atlas.client.gui;
 
 import hunternif.mc.impl.atlas.AntiqueAtlasConfig;
 import io.github.prospector.modmenu.api.ConfigScreenFactory;
