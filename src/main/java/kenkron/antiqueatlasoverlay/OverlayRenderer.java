@@ -216,9 +216,7 @@ public class OverlayRenderer extends DrawableHelper {
         for (int x = chunks.minX; x <= chunks.maxX; x++) {
             for (int z = chunks.minY; z <= chunks.maxY; z++) {
                 //A marker chunk is greater than a Minecraft chunk
-                List<Marker> markers = markersData.getMarkersAtChunk(
-                        Math.round(x),
-                        Math.round(z));
+                List<Marker> markers = markersData.getMarkersAtChunk(x, z);
                 if (markers == null)
                     continue;
                 for (Marker marker : markers) {
@@ -249,7 +247,7 @@ public class OverlayRenderer extends DrawableHelper {
         MarkerType type = MarkerType.REGISTRY.get(marker.getType());
         // TODO Fabric - Scale factor?
         MarkerRenderInfo info = type.getRenderInfo(1, AntiqueAtlasMod.CONFIG.tileSize, 1);
-        info.tex.draw(matrices, x - GuiAtlas.MARKER_SIZE / 4 + 1, y - GuiAtlas.MARKER_SIZE / 4 + 4, GuiAtlas.MARKER_SIZE / 2, GuiAtlas.MARKER_SIZE / 2);
+        info.tex.draw(matrices, x - GuiAtlas.MARKER_SIZE / 4 + 4, y - GuiAtlas.MARKER_SIZE / 4 + 4, GuiAtlas.MARKER_SIZE / 2, GuiAtlas.MARKER_SIZE / 2);
     }
 
     private Rect getChunkCoverage(Vec3d position) {
