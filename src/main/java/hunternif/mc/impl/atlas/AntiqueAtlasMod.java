@@ -87,6 +87,7 @@ public class AntiqueAtlasMod implements ModInitializer {
 		StructureAddedCallback.EVENT.register(StructureHandler::resolve);
 
 		NetherFortress.registerPieces();
+		EndCity.registerPieces();
 //		Village.registerMarkers();
 	}
 }
