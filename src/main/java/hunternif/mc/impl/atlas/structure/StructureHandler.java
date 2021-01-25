@@ -1,13 +1,16 @@
 package hunternif.mc.impl.atlas.structure;
 
 import com.google.common.collect.HashMultimap;
+import com.sun.jndi.ldap.pool.Pool;
 import hunternif.mc.impl.atlas.AntiqueAtlasMod;
 import hunternif.mc.api.AtlasAPI;
 import hunternif.mc.impl.atlas.util.MathUtil;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.structure.PoolStructurePiece;
 import net.minecraft.structure.StructurePiece;
 import net.minecraft.structure.StructurePieceType;
 import net.minecraft.structure.StructureStart;
+import net.minecraft.structure.pool.StructurePoolElement;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Pair;
@@ -28,7 +31,7 @@ public class StructureHandler {
 	private static final HashMultimap<Identifier, Pair<Identifier, Setter>> STRUCTURE_PIECE_TO_TILE_MAP = HashMultimap.create();
 	private static final HashMap<Identifier, Pair<Identifier, Text>> STRUCTURE_PIECE_TO_MARKER_MAP = new HashMap<>();
 	private static final HashMap<Identifier, Integer> STRUCTURE_PIECE_TILE_PRIORITY = new HashMap<>();
-	private static final Setter ALWAYS = (box) -> Collections.singleton(new ChunkPos(MathUtil.getCenter(box).getX() >> 4, MathUtil.getCenter(box).getZ() >> 4));
+	private static final Setter ALWAYS = (element, box) -> Collections.singleton(new ChunkPos(MathUtil.getCenter(box).getX() >> 4, MathUtil.getCenter(box).getZ() >> 4));
 
 	private static final Set<Triple<Integer, Integer, Identifier>> VISITED_STRUCTURES = Collections.newSetFromMap(new ConcurrentHashMap<>());
 
@@ -62,7 +65,13 @@ public class StructureHandler {
 		Identifier structurePieceId = Registry.STRUCTURE_PIECE.getId(structurePiece.getType());
 		if (STRUCTURE_PIECE_TO_TILE_MAP.containsKey(structurePieceId)) {
 			for (Pair<Identifier, Setter> entry : STRUCTURE_PIECE_TO_TILE_MAP.get(structurePieceId)) {
-				Collection<ChunkPos> matches = entry.getRight().matches(structurePiece.getBoundingBox());
+				Collection<ChunkPos> matches;
+				if (structurePiece instanceof PoolStructurePiece) {
+					PoolStructurePiece pool = (PoolStructurePiece)structurePiece;
+					matches = entry.getRight().matches(pool.getPoolElement(), pool.getBoundingBox());
+				} else {
+					matches = entry.getRight().matches(null, structurePiece.getBoundingBox());
+				}
 
 				for (ChunkPos pos : matches) {
 					put(structurePieceId, world, pos.x, pos.z, entry.getLeft());
@@ -94,6 +103,6 @@ public class StructureHandler {
 	}
 
 	interface Setter {
-		Collection<ChunkPos> matches(BlockBox box);
+		Collection<ChunkPos> matches(StructurePoolElement element, BlockBox box);
 	}
 }
