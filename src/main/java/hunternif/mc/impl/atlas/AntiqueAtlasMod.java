@@ -26,8 +26,6 @@ import org.apache.logging.log4j.Logger;
 public class AntiqueAtlasMod implements ModInitializer {
 	public static final String ID = "antiqueatlas";
 	public static final String NAME = "Antique Atlas";
-	public static final String CHANNEL = ID;
-	public static final String VERSION = "@VERSION@";
 
 	public static AntiqueAtlasMod instance;
 	public static Logger LOG = LogManager.getLogger(NAME);
@@ -89,6 +87,5 @@ public class AntiqueAtlasMod implements ModInitializer {
 		NetherFortress.registerPieces();
 		EndCity.registerMarkers();
 		Village.registerMarkers();
-//		Village.registerPieces();
 	}
 }
