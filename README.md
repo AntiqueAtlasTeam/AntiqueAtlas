@@ -1,4 +1,4 @@
-# Antique Atlas ![Minecraft Version](https://img.shields.io/badge/minecraft-1.16.4-blue.svg) [![Build Status](https://github.com/AntiqueAtlasTeam/AntiqueAtlas/workflows/Build%20Status/badge.svg)](https://github.com/AntiqueAtlasTeam/AntiqueAtlas/actions)
+# Antique Atlas ![Minecraft 1.16.5](https://img.shields.io/badge/minecraft-1.16.5-blue.svg) [![Build Status](https://github.com/AntiqueAtlasTeam/AntiqueAtlas/workflows/Build%20Status/badge.svg)](https://github.com/AntiqueAtlasTeam/AntiqueAtlas/actions)
 Antique Atlas is a book that acts like a map featuring infinite scrolling, zoom and custom labeled markers. The map is generated around the player by calculating the average biome in each 16x16 chunk.
 
 Navigate the map by dragging it with the mouse, clicking arrow buttons or pressing arrow keys on the keyboard. Use the +/- keys or mouse wheel to zoom in and out.
