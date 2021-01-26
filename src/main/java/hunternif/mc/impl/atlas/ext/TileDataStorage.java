@@ -26,7 +26,6 @@ import java.util.concurrent.ConcurrentHashMap;
 public class TileDataStorage extends PersistentState {
     private static final int VERSION = 3;
     private static final String TAG_VERSION = "aaVersion";
-    private static final String TAG_WORLD_ID = "worldID";
     private static final String TAG_TILE_LIST = "tiles";
 
     public TileDataStorage(String key) {
@@ -45,14 +44,6 @@ public class TileDataStorage extends PersistentState {
             Log.warn("Outdated atlas data format! Was %d but current is %d", version, VERSION);
             this.markDirty();
         }
-
-//		RegistryKey<World> worldID;
-//		worldID = RegistryKey.of(Registry.DIMENSION, new Identifier(compound.getString(TAG_WORLD_ID)));
-
-//		if (worldID != world.getRegistryKey()) {
-//			Log.error("Received update for different world (%s != %s)", world.getRegistryKey().toString(), worldID.toString());
-//			this.markDirty();
-//		}
 
         ListTag tileList = compound.getList(TAG_TILE_LIST, NbtType.COMPOUND);
 
