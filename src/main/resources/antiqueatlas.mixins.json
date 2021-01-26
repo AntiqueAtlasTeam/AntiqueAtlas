@@ -4,7 +4,10 @@
   "compatibilityLevel": "JAVA_8",
   "refmap": "antiqueatlas.refmap.json",
   "mixins": [
-    "MixinEntity"
+    "MixinEntity",
+    "MixinCartographyContainer",
+    "MixinCartographyContainerSlot",
+    "MixinCartographyContainerResultSlot"
   ],
   "client": [
   ],

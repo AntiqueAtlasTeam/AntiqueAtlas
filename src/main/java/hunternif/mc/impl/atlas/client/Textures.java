@@ -1,29 +1,35 @@
 package hunternif.mc.impl.atlas.client;
 
 import hunternif.mc.impl.atlas.AntiqueAtlasMod;
+import hunternif.mc.impl.atlas.client.texture.ITexture;
+import hunternif.mc.impl.atlas.client.texture.IconTexture;
+import hunternif.mc.impl.atlas.client.texture.Texture;
+import hunternif.mc.impl.atlas.client.texture.TileTexture;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
+@OnlyIn(Dist.CLIENT)
 public class Textures {
 	private static final String MOD_PREFIX = AntiqueAtlasMod.ID + ":";
 	private static final String GUI = MOD_PREFIX + "textures/gui/";
 	private static final String GUI_ICONS = GUI + "icons/";
 	private static final String GUI_TILES = GUI + "tiles/";
-	private static final String GUI_MARKERS = GUI + "markers/";
+//	private static final String GUI_MARKERS = GUI + "markers/";
 	private static final String GUI_SCALEBAR = GUI + "scalebar/";
-	
-	public static final ResourceLocation
-	BOOK = gui("book.png"),
-	EXPORTED_BG = gui("exported_bg.png"),
-	BOOK_FRAME = gui("book_frame.png"),
-	BTN_ARROWS = gui("navigate_arrows.png"),
-	BTN_POSITION = gui("position.png"),
-	BOOKMARKS = gui("bookmarks.png"),
-	PLAYER = gui("player.png"),
-	SCROLLBAR_HOR = gui("scrollbar_hor.png"),
-	SCROLLBAR_VER = gui("scrollbar_ver.png"),
-	MARKER_FRAME_ON = gui("marker_frame_on.png"),
-	MARKER_FRAME_OFF = gui("marker_frame_off.png"),
-	ERASER = gui("eraser.png"),
+
+	public static final ITexture
+    BOOK = gui("book.png", 310, 218),
+    BOOK_FRAME = gui("book_frame.png", 310, 218),
+    BTN_ARROWS = gui("navigate_arrows.png", 24, 24),
+    BTN_POSITION = gui("position.png", 24, 24),
+    BOOKMARKS = gui("bookmarks.png", 84, 36),
+    PLAYER = gui("player.png", 7, 8),
+    SCROLLBAR_HOR = gui("scrollbar_hor.png", 8, 7),
+    SCROLLBAR_VER = gui("scrollbar_ver.png", 7,8),
+    MARKER_FRAME_ON = gui("marker_frame_on.png", 34, 34),
+    MARKER_FRAME_OFF = gui("marker_frame_off.png", 34, 34),
+    ERASER = gui("eraser.png", 24, 24),
 
 	SCALEBAR_4 = scaleBar("scalebar_4.png"),
 	SCALEBAR_8 = scaleBar("scalebar_8.png"),
@@ -40,23 +46,23 @@ public class Textures {
 	ICON_HIDE_MARKERS = icon("hide_markers.png"),
 	ICON_EXPORT = icon("export.png"),
 
-	MARKER_GOOGLE_MARKER = marker("google_marker.png"),
-	MARKER_RED_X_LARGE = marker("red_x_large.png"),
-	MARKER_RED_X_SMALL = marker("red_x_small.png"),
-	MARKER_VILLAGE = marker("village.png"),
-	MARKER_END_CITY_FAR = marker("end_city_far.png"),
-	MARKER_END_CITY = marker("end_city.png"),
-	MARKER_END_CITY_MIP_32 = marker("end_city_mipped_32.png"),
-	MARKER_END_CITY_MIP_16 = marker("end_city_mipped_16.png"),
-	MARKER_DIAMOND = marker("diamond.png"),
-	MARKER_BED = marker("bed.png"),
-	MARKER_PICKAXE = marker("pickaxe.png"),
-	MARKER_SWORD = marker("sword.png"),
-	MARKER_NETHER_PORTAL = marker("nether_portal.png"),
-	MARKER_SKULL = marker("skull.png"),
-	MARKER_TOWER = marker("tower.png"),
-	MARKER_SCROLL = marker("scroll.png"),
-	MARKER_TOMB = marker("tomb.png"),
+//	MARKER_GOOGLE_MARKER = marker("google_marker.png"),
+//	MARKER_RED_X_LARGE = marker("red_x_large.png"),
+//	MARKER_RED_X_SMALL = marker("red_x_small.png"),
+//	MARKER_VILLAGE = marker("village.png"),
+//	MARKER_END_CITY_FAR = marker("end_city_far.png"),
+//	MARKER_END_CITY = marker("end_city.png"),
+//	MARKER_END_CITY_MIP_32 = marker("end_city_mipped_32.png"),
+//	MARKER_END_CITY_MIP_16 = marker("end_city_mipped_16.png"),
+//	MARKER_DIAMOND = marker("diamond.png"),
+//	MARKER_BED = marker("bed.png"),
+//	MARKER_PICKAXE = marker("pickaxe.png"),
+//	MARKER_SWORD = marker("sword.png"),
+//	MARKER_NETHER_PORTAL = marker("nether_portal.png"),
+//	MARKER_SKULL = marker("skull.png"),
+//	MARKER_TOWER = marker("tower.png"),
+//	MARKER_SCROLL = marker("scroll.png"),
+//	MARKER_TOMB = marker("tomb.png"),
 
 	TILE_TEST = tile("test.png"),
 	TILE_MOUNTAINS = tile("mountains.png"),
@@ -248,20 +254,22 @@ public class Textures {
 	TILE_NETHER_FORT_STAIRS = tile("nether_fort_stairs.png"),
 	TILE_NETHER_THRONE = tile("nether_throne.png");
 
+	public static final ResourceLocation EXPORTED_BG = new ResourceLocation(GUI + "exported_bg.png");
+	
 	// Constructor helpers:
-	private static ResourceLocation gui(String fileName) {
-		return new ResourceLocation(GUI + fileName);
+	private static ITexture gui(String fileName, int width, int height) {
+        return new Texture(new ResourceLocation(GUI + fileName), width, height);
+    }
+	private static ITexture scaleBar(String fileName) {
+		return new Texture(new ResourceLocation(GUI_SCALEBAR + fileName), 20, 8);
 	}
-	private static ResourceLocation scaleBar(String fileName) {
-		return new ResourceLocation(GUI_SCALEBAR + fileName);
+//	private static ITexture marker(String fileName) {
+//		return new ResourceLocation(GUI_MARKERS + fileName);
+//	}
+	private static ITexture tile(String fileName) {
+		return new TileTexture(new ResourceLocation(GUI_TILES + fileName));
 	}
-	private static ResourceLocation marker(String fileName) {
-		return new ResourceLocation(GUI_MARKERS + fileName);
-	}
-	private static ResourceLocation tile(String fileName) {
-		return new ResourceLocation(GUI_TILES + fileName);
-	}
-	private static ResourceLocation icon(String fileName) {
-		return new ResourceLocation(GUI_ICONS + fileName);
+	private static ITexture icon(String fileName) {
+		return new IconTexture(new ResourceLocation(GUI_ICONS + fileName));
 	}
 }

@@ -1,5 +1,6 @@
 package hunternif.mc.impl.atlas.client;
 
+import hunternif.mc.impl.atlas.client.texture.ITexture;
 import hunternif.mc.impl.atlas.util.Log;
 import hunternif.mc.impl.atlas.util.SaveData;
 
@@ -165,16 +166,15 @@ public class BiomeTextureMap extends SaveData {
 		return textureMap.get(tile);
 	}
 
-	public ResourceLocation getTexture(int variationNumber, ResourceLocation tile) {
-		TextureSet set = getTextureSet(tile);
-		return set.textures[variationNumber % set.textures.length];
+	public ITexture getTexture(SubTile subTile) {
+		return getTextureSet(subTile.tile).getTexture(subTile.variationNumber);
 	}
 
 	public List<ResourceLocation> getAllTextures() {
 		List<ResourceLocation> list = new ArrayList<>();
 
 		for (Entry<ResourceLocation, TextureSet> entry : textureMap.entrySet()) {
-			list.addAll(Arrays.asList(entry.getValue().textures));
+			Arrays.stream(entry.getValue().textures).map(iTexture -> list.add(iTexture.getTexture()));
 		}
 
 		return list;

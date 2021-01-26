@@ -21,7 +21,6 @@ import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 
 public class AtlasItem extends Item {
-	static final String WORLD_ATLAS_DATA_ID = "aAtlas";
 
 	public AtlasItem(Item.Properties settings) {
 		super(settings);
@@ -52,7 +51,7 @@ public class AtlasItem extends Item {
 		AtlasData data = AntiqueAtlasMod.atlasData.getAtlasData(stack, world);
 		if (data == null || !(entity instanceof PlayerEntity)) return;
 
-		int atlasId = this.getAtlasID(stack);
+		int atlasId = getAtlasID(stack);
 
 		// On the first run send the map from the server to the client:
 		PlayerEntity player = (PlayerEntity) entity;

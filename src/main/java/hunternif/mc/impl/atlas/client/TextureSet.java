@@ -1,15 +1,18 @@
 package hunternif.mc.impl.atlas.client;
 
-import net.minecraft.util.ResourceLocation;
+import static hunternif.mc.impl.atlas.client.Textures.*;
 
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Locale;
 import java.util.Set;
 
+import hunternif.mc.impl.atlas.client.texture.ITexture;
+import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
-import static hunternif.mc.impl.atlas.client.Textures.*;
-
+@OnlyIn(Dist.CLIENT)
 public class TextureSet implements Comparable<TextureSet> {
 	public static final TextureSet
 	// This first texture set is meant to be an example for the config
@@ -242,7 +245,7 @@ public class TextureSet implements Comparable<TextureSet> {
 	public final ResourceLocation name;
 	
 	/** The actual textures in this set. */
-	public final ResourceLocation[] textures;
+	public final ITexture[] textures;
 	
 	/** Texture sets that a tile rendered with this set can be stitched to,
 	 * excluding itself. */
@@ -257,18 +260,18 @@ public class TextureSet implements Comparable<TextureSet> {
 	private boolean stitchesToNull = false;
 	private boolean anisotropicStitching = false;
 	
-	private static TextureSet standard(String name, ResourceLocation ... textures) {
-		return new TextureSet(true, new ResourceLocation("antiqueatlas", name.toLowerCase(Locale.ROOT)), textures);
-	}
-	
-	private TextureSet(boolean isStandard, ResourceLocation name, ResourceLocation ... textures) {
+	private TextureSet(boolean isStandard, ResourceLocation name, ITexture ... textures) {
 		this.isStandard = isStandard;
 		this.name = name;
 		this.textures = textures;
 	}
 	/** Name has to be unique, it is used for equals() tests. */
-	public TextureSet(ResourceLocation name, ResourceLocation ... textures) {
+	public TextureSet(ResourceLocation name, ITexture ... textures) {
 		this(false, name, textures);
+	}
+	
+	private static TextureSet standard(String name, ITexture ... textures) {
+		return new TextureSet(true, new ResourceLocation("antiqueatlas", name.toLowerCase(Locale.ROOT)), textures);
 	}
 	
 	/** Allow this texture set to be stitched to empty space, i.e. edge of the map. */
@@ -327,10 +330,14 @@ public class TextureSet implements Comparable<TextureSet> {
 		return this.name.equals(set.name);
 	}
 	
+	public ITexture getTexture(int variationNumber) {
+        return textures[variationNumber % textures.length];
+    }
+	
 	/** A special texture set that is stitched to everything except water. */
 	private static class TextureSetShore extends TextureSet {
 		private final TextureSet water;
-		TextureSetShore(String name, TextureSet water, ResourceLocation... textures) {
+		TextureSetShore(String name, TextureSet water, ITexture... textures) {
 			super(true, new ResourceLocation("antiqueatlas", name.toLowerCase(Locale.ROOT)), textures);
 			this.water = water;
 		}

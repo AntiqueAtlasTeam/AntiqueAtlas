@@ -357,7 +357,7 @@ public class ExportImageUtil {
 				if (subtile == null || subtile.tile == null) continue;
 				
 				// Load tile texture
-				ResourceLocation texture = BiomeTextureMap.instance().getTexture(subtile.variationNumber, subtile.tile);
+				ResourceLocation texture = BiomeTextureMap.instance().getTexture(subtile).getTexture();
 				BufferedImage tileImage = textureImageMap.get(texture);
 				if (tileImage == null) continue;
 				
@@ -424,7 +424,7 @@ public class ExportImageUtil {
 					type.resetMip();
 					
 					// Load marker texture
-					ResourceLocation texture = info.tex;
+					ResourceLocation texture = info.tex.getTexture();
 					BufferedImage markerImage = textureImageMap.get(texture);
 					if (markerImage == null)
 						continue;
@@ -435,7 +435,7 @@ public class ExportImageUtil {
 					graphics.drawImage(
 							markerImage,
 							(int)( markerX + info.x), (int)( markerY + info.y ),
-							info.width, info.height, null);
+							info.tex.width(), info.tex.height(), null);
 				}
 			}
 		}

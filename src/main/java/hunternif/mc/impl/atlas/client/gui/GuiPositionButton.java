@@ -1,13 +1,14 @@
 package hunternif.mc.impl.atlas.client.gui;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
-import com.mojang.blaze3d.platform.GlStateManager;
-import hunternif.mc.impl.atlas.client.Textures;
-import hunternif.mc.impl.atlas.client.gui.core.GuiComponentButton;
-import hunternif.mc.impl.atlas.util.AtlasRenderHelper;
+import java.util.Collections;
+
 import org.lwjgl.opengl.GL11;
 
-import java.util.Collections;
+import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.platform.GlStateManager;
+
+import hunternif.mc.impl.atlas.client.Textures;
+import hunternif.mc.impl.atlas.client.gui.core.GuiComponentButton;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.text.TranslationTextComponent;
 
@@ -32,7 +33,7 @@ public class GuiPositionButton extends GuiComponentButton {
 				GlStateManager.color4f(1.0F, 1.0F, 1.0F, 0.5F);
 			}
 
-			AtlasRenderHelper.drawFullTexture(matrices, Textures.BTN_POSITION, x, y, WIDTH, HEIGHT);
+			Textures.BTN_POSITION.draw(matrices, x, y, WIDTH, HEIGHT);
 
 			GlStateManager.disableBlend();
 

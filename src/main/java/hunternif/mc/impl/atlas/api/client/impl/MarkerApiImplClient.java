@@ -4,6 +4,7 @@ import hunternif.mc.impl.atlas.AntiqueAtlasMod;
 import hunternif.mc.impl.atlas.api.MarkerAPI;
 import hunternif.mc.impl.atlas.marker.Marker;
 import hunternif.mc.impl.atlas.network.packet.c2s.play.AddMarkerC2SPacket;
+import hunternif.mc.impl.atlas.network.packet.c2s.play.DeleteMarkerRequestC2SPacket;
 import hunternif.mc.impl.atlas.registry.MarkerType;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
@@ -41,7 +42,7 @@ public class MarkerApiImplClient implements MarkerAPI {
 
 	@Override
 	public void deleteMarker(@Nonnull World world, int atlasID, int markerID) {
-		// TODO: Implement marker deletion, via DeleteMarkerS2CPacket
+		new DeleteMarkerRequestC2SPacket(atlasID, markerID).send();
 	}
 
 	@Override

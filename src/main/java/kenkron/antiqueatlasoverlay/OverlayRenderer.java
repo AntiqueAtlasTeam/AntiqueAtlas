@@ -5,7 +5,6 @@ import java.util.List;
 import org.lwjgl.opengl.GL11;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
-import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 
 import hunternif.mc.impl.atlas.AntiqueAtlasConfig;
@@ -42,6 +41,12 @@ public class OverlayRenderer extends AbstractGui {
      * somewhere else, but I couldn't be bothered to find it.
      */
     private static final int CHUNK_SIZE = 16;
+    private static final float INNER_ELEMENTS_SCALE_FACTOR = 1.9F;
+    private Minecraft client;
+    private PlayerEntity player;
+    private World world;
+    private Integer atlasID;
+    
 
     /**
      * Convenience method that returns the first atlas ID for all atlas items
@@ -67,13 +72,6 @@ public class OverlayRenderer extends AbstractGui {
 
         return null;
     }
-
-    private static final float INNER_ELEMENTS_SCALE_FACTOR = 1.9F;
-
-    private Minecraft client;
-    private PlayerEntity player;
-    private World world;
-    private Integer atlasID;
 
     public void drawOverlay(MatrixStack matrices) {
         // Overlay must close if Atlas GUI is opened
@@ -110,22 +108,17 @@ public class OverlayRenderer extends AbstractGui {
     }
 
     private void drawMinimap(MatrixStack matrices) {
-        this.client.getTextureManager().bindTexture(Textures.BOOK);
-        blit(matrices, 0, 0, (int) (GuiAtlas.WIDTH * 1.5), (int) (GuiAtlas.HEIGHT * 1.5),
-            0,
-            0,
-            310,
-            218,
-            310,
-            218
-        );
-
-        matrices.push();
+    	RenderSystem.disableDepthTest();
+    	
+    	RenderSystem.enableBlend();
+    	RenderSystem.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+    	
+    	Textures.BOOK.draw(matrices, 0, 0, (int) (GuiAtlas.WIDTH * 1.5), (int) (GuiAtlas.HEIGHT * 1.5));
         matrices.push();
         matrices.scale(INNER_ELEMENTS_SCALE_FACTOR, INNER_ELEMENTS_SCALE_FACTOR, 1F);
         
-        RenderSystem.enableBlend();
-        RenderSystem.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+//        RenderSystem.enableBlend();
+//        RenderSystem.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
         drawTiles(matrices);
         if (AntiqueAtlasConfig.markerSize.get() > 0) {
@@ -136,19 +129,10 @@ public class OverlayRenderer extends AbstractGui {
 
         drawPlayer(matrices);
 
-
         // Overlay the frame so that edges of the map are smooth:
-        matrices.pop();
-        Minecraft.getInstance().getTextureManager().bindTexture(Textures.BOOK_FRAME);
-        blit(matrices, 0, 0, (int) (GuiAtlas.WIDTH * 1.5), (int) (GuiAtlas.HEIGHT * 1.5),
-                0,
-                0,
-                310,
-                218,
-                310,
-                218
-        );
+        Textures.BOOK_FRAME.draw(matrices, 0, 0, (int) (GuiAtlas.WIDTH * 1.5), (int) (GuiAtlas.HEIGHT * 1.5));
         RenderSystem.disableBlend();
+        RenderSystem.enableDepthTest();
     }
 
     private void drawTiles(MatrixStack matrices) {
@@ -180,7 +164,7 @@ public class OverlayRenderer extends AbstractGui {
                 float relativeChunkPositionY = (float) (subtile.y / 2.0
                         + iteratorScope.minY - chunkPosition.z);
                 renderer.addTileCorner(
-                        BiomeTextureMap.instance().getTexture(subtile.variationNumber, subtile.tile),
+                        BiomeTextureMap.instance().getTexture(subtile).getTexture(),
                         shapeMiddleX
                                 + (int) Math.floor(relativeChunkPositionX
                                 * AntiqueAtlasConfig.tileSize.get()),
@@ -216,16 +200,13 @@ public class OverlayRenderer extends AbstractGui {
     }
 
     private void drawPlayer(MatrixStack matrices) {
-        // Draw player icon:
-
-        Minecraft.getInstance().getTextureManager().bindTexture(Textures.PLAYER);
         matrices.push();
 
         matrices.translate((int)((GuiAtlas.WIDTH * 1.5F) / 2F), (int)((GuiAtlas.HEIGHT * 1.5F) / 2F), 0);
         matrices.rotate(new Quaternion(Vector3f.ZP, this.player.getRotationYawHead() + 180, true));
         matrices.translate(-AntiqueAtlasConfig.playerIconWidth.get() / 2.0, -AntiqueAtlasConfig.playerIconHeight.get() / 2.0, 0);
 
-        blit(matrices, 0, 0, AntiqueAtlasConfig.playerIconWidth.get(), AntiqueAtlasConfig.playerIconHeight.get(), 0, 0, 8, 7, 8, 7);
+        Textures.PLAYER.draw(matrices, 0,0, AntiqueAtlasConfig.playerIconWidth.get(), AntiqueAtlasConfig.playerIconHeight.get());
         matrices.pop();
     }
 
@@ -244,9 +225,7 @@ public class OverlayRenderer extends AbstractGui {
         for (int x = chunks.minX; x <= chunks.maxX; x++) {
             for (int z = chunks.minY; z <= chunks.maxY; z++) {
                 //A marker chunk is greater than a Minecraft chunk
-                List<Marker> markers = markersData.getMarkersAtChunk(
-                        Math.round(x),
-                        Math.round(z));
+                List<Marker> markers = markersData.getMarkersAtChunk(x,z);
                 if (markers == null)
                     continue;
                 for (Marker marker : markers) {
@@ -277,19 +256,7 @@ public class OverlayRenderer extends AbstractGui {
         MarkerType type = MarkerType.REGISTRY.getOrDefault(marker.getType());
         // TODO Fabric - Scale factor?
         MarkerRenderInfo info = type.getRenderInfo(1, AntiqueAtlasConfig.tileSize.get(), 1);
-        Minecraft.getInstance().getTextureManager().bindTexture(info.tex);
-        blit(matrices,
-                x - GuiAtlas.MARKER_SIZE / 4 + 1,
-                y - GuiAtlas.MARKER_SIZE / 4 + 4,
-                GuiAtlas.MARKER_SIZE / 2,
-                GuiAtlas.MARKER_SIZE / 2,
-                0,
-                0,
-                GuiAtlas.MARKER_SIZE,
-                GuiAtlas.MARKER_SIZE,
-                GuiAtlas.MARKER_SIZE,
-                GuiAtlas.MARKER_SIZE);
-//        AtlasRenderHelper.drawFullTexture(matrices, info.tex, x, y, AntiqueAtlasMod.CONFIG.markerSize, AntiqueAtlasMod.CONFIG.markerSize);
+        info.tex.draw(matrices, x - GuiAtlas.MARKER_SIZE / 4 + 1, y - GuiAtlas.MARKER_SIZE / 4 + 4, GuiAtlas.MARKER_SIZE / 2, GuiAtlas.MARKER_SIZE / 2);
     }
 
     private Rect getChunkCoverage(Vector3d position) {
