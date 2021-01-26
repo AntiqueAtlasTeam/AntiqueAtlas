@@ -73,7 +73,7 @@ public class StructureHandler {
 			AtlasAPI.markers.putGlobalMarker(
 					world,
 					false,
-					MarkerType.REGISTRY.get(STRUCTURE_PIECE_TO_MARKER_MAP.get(structureId).getLeft()),
+					STRUCTURE_PIECE_TO_MARKER_MAP.get(structureId).getLeft(),
 					STRUCTURE_PIECE_TO_MARKER_MAP.get(structureId).getRight(),
 					structureStart.getBoundingBox().getCenter().getX(),
 					structureStart.getBoundingBox().getCenter().getZ()

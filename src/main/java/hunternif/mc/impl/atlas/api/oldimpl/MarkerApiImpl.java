@@ -26,24 +26,24 @@ public class MarkerApiImpl implements MarkerAPI {
 
     @Nullable
     @Override
-    public Marker putMarker(@Nonnull World world, boolean visibleAhead, int atlasID, MarkerType markerType, Text label, int x, int z) {
-        return doPutMarker(world, visibleAhead, atlasID, markerType, label, x, z);
+    public Marker putMarker(@Nonnull World world, boolean visibleAhead, int atlasID, Identifier marker, Text label, int x, int z) {
+        return doPutMarker(world, visibleAhead, atlasID, marker, label, x, z);
     }
 
     @Nullable
     @Override
-    public Marker putGlobalMarker(@Nonnull World world, boolean visibleAhead, MarkerType markerType, Text label, int x, int z) {
-        return doPutMarker(world, visibleAhead, GLOBAL, markerType, label, x, z);
+    public Marker putGlobalMarker(@Nonnull World world, boolean visibleAhead, Identifier marker, Text label, int x, int z) {
+        return doPutMarker(world, visibleAhead, GLOBAL, marker, label, x, z);
     }
 
-    private Marker doPutMarker(World world, boolean visibleAhead, int atlasID, MarkerType markerType, Text label, int x, int z) {
+    private Marker doPutMarker(World world, boolean visibleAhead, int atlasID, Identifier markerId, Text label, int x, int z) {
         Marker marker = null;
         if (!world.isClient && world.getServer() != null) {
             MarkersData data = atlasID == GLOBAL
                     ? AntiqueAtlasMod.globalMarkersData.getData()
                     : AntiqueAtlasMod.markersData.getMarkersData(atlasID, world);
 
-            marker = data.createAndSaveMarker(MarkerType.REGISTRY.getId(markerType), world.getRegistryKey(), x, z, visibleAhead, label);
+            marker = data.createAndSaveMarker(markerId, world.getRegistryKey(), x, z, visibleAhead, label);
             new MarkersS2CPacket(atlasID, world.getRegistryKey(), Collections.singleton(marker)).send((ServerWorld) world);
         }
 

@@ -12,6 +12,7 @@ import net.minecraft.item.Items;
 import net.minecraft.item.map.MapIcon;
 import net.minecraft.item.map.MapState;
 import net.minecraft.text.TranslatableText;
+import net.minecraft.util.Identifier;
 
 public class CartographyTableHooks {
     public static void onTakeItem(PlayerEntity player, ItemStack map, ItemStack atlas) {
@@ -25,17 +26,17 @@ public class CartographyTableHooks {
                     int z = (int) ((int) (icon.getZ() - 0.5f) / 2f) * i + mapState.zCenter;
 
                     if (icon.getType() == MapIcon.Type.RED_X) {
-                        MarkerType type = MarkerType.REGISTRY.get(AntiqueAtlasMod.id("red_x_small"));
+                        Identifier type = AntiqueAtlasMod.id("red_x_small");
                         if (!player.getEntityWorld().isClient()) {
                             Markers.API.putMarker(player.getEntityWorld(), true, AtlasItem.getAtlasID(atlas), type, new TranslatableText("gui.antiqueatlas.marker.treasure"), x, z);
                         }
                     } else if (icon.getType() == MapIcon.Type.MONUMENT) {
-                        MarkerType type = MarkerType.REGISTRY.get(AntiqueAtlasMod.id("tower"));
+                        Identifier type = AntiqueAtlasMod.id("tower");
                         if (!player.getEntityWorld().isClient()) {
                             Markers.API.putMarker(player.getEntityWorld(), true, AtlasItem.getAtlasID(atlas), type, new TranslatableText("gui.antiqueatlas.marker.monument"), x, z);
                         }
                     } else if (icon.getType() == MapIcon.Type.MANSION) {
-                        MarkerType type = MarkerType.REGISTRY.get(AntiqueAtlasMod.id("village"));
+                        Identifier type = AntiqueAtlasMod.id("village");
                         if (!player.getEntityWorld().isClient()) {
                             Markers.API.putMarker(player.getEntityWorld(), true, AtlasItem.getAtlasID(atlas), type, new TranslatableText("gui.antiqueatlas.marker.mansion"), x, z);
                         }

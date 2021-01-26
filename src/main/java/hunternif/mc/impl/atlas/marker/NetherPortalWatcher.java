@@ -37,14 +37,14 @@ public class NetherPortalWatcher {
 			event.getWorld().a(this);
 		}
 	}
-	
+
 	@SubscribeEvent
 	public void onWorldUnload(WorldEvent.Unload event) {
 		if (!event.getWorld().G) {
 			event.getWorld().b(this);
 		}
 	}
-	
+
 	@Override
 	public void a(Entity entity) {
 		if (entity instanceof PlayerEntity) {
@@ -64,7 +64,7 @@ public class NetherPortalWatcher {
 			}
 		}
 	}
-	
+
 	@Override
 	public void b(Entity entity) {
 		if (entity instanceof PlayerEntity) {
@@ -81,7 +81,7 @@ public class NetherPortalWatcher {
 			}
 		}
 	} */
-	
+
 	/** Put the Portal marker at the player's current coordinates into all
 	 * atlases that he is carrying, if the same marker is not already there. */
 	private void addPortalMarkerIfNone(PlayerEntity player) {
@@ -130,9 +130,9 @@ public class NetherPortalWatcher {
 		}
 
 		// Marker not found, place new one:
-		AtlasAPI.markers.putMarker(world, false, atlasID,netherPortalType, new TranslatableText("gui.antiqueatlas.marker.netherPortal"), x, z);
+		AtlasAPI.markers.putMarker(world, false, atlasID, MarkerType.REGISTRY.getId(netherPortalType), new TranslatableText("gui.antiqueatlas.marker.netherPortal"), x, z);
 	}
-	
+
 	private static boolean isEntityInPortal(Entity entity) {
 		return ((EntityHooksAA) entity).antiqueAtlas_isInPortal();
 	}
