@@ -2,6 +2,7 @@
   "required": true,
   "package": "hunternif.mc.impl.atlas.mixin",
   "compatibilityLevel": "JAVA_8",
+  "plugin": "hunternif.mc.impl.atlas.mixin.VolatileMixinPlugin",
   "mixins": [
     "MixinCraftingResultSlot",
     "MixinEntity",
@@ -9,8 +10,10 @@
     "MixinPlayerEntityDeath",
     "MixinPlayerManager",
     "MixinCartographyTableScreenHandler",
-    "MixinCartographyTableScreenHandlerSlot",
-    "MixinCartographyTableScreenHandlerResultSlot",
+    "dev.MixinCartographyTableScreenHandlerSlot",
+    "prod.MixinCartographyTableScreenHandlerSlot",
+    "dev.MixinCartographyTableScreenHandlerResultSlot",
+    "prod.MixinCartographyTableScreenHandlerResultSlot",
     "structure.StructureStartMixin"
   ],
   "client": [

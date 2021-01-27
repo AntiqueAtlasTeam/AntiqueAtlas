@@ -23,15 +23,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import javax.annotation.Nullable;
 
-@Mixin(targets = "net.minecraft.screen.CartographyTableScreenHandler$4")
-class MixinCartographyTableScreenHandlerSlot {
-
-    @Inject(method = "canInsert", at = @At("RETURN"), cancellable = true)
-    void antiqueatlas_canInsert(ItemStack stack, CallbackInfoReturnable<Boolean> info) {
-        info.setReturnValue(stack.getItem() == AtlasAPI.getAtlasItem() || info.getReturnValueZ());
-    }
-}
-
 @Mixin(CartographyTableScreenHandler.class)
 public abstract class MixinCartographyTableScreenHandler extends ScreenHandler {
     @Shadow
@@ -71,24 +62,4 @@ public abstract class MixinCartographyTableScreenHandler extends ScreenHandler {
         }
     }
 
-}
-
-@Mixin(targets = "net.minecraft.screen.CartographyTableScreenHandler$5")
-class MixinCartographyTableScreenHandlerResultSlot {
-
-    CartographyTableScreenHandler antiqueatlas_handler;
-
-    @Inject(method = "<init>", at = @At("TAIL"))
-    void antiqueatlas_init(CartographyTableScreenHandler handler, Inventory inv, int a, int b, int c, ScreenHandlerContext context, CallbackInfo info) {
-        antiqueatlas_handler = handler;
-    }
-
-    @Inject(method = "onTakeItem", at = @At("HEAD"))
-    void antiqueatlas_onTakeItem(PlayerEntity player, ItemStack atlas, CallbackInfoReturnable<ItemStack> info) {
-        if (atlas.getItem() == AtlasAPI.getAtlasItem()) {
-            ItemStack map = antiqueatlas_handler.slots.get(0).getStack();
-
-            CartographyTableHooks.onTakeItem(player, map, atlas);
-        }
-    }
 }
