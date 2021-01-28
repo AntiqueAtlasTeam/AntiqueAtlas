@@ -146,7 +146,9 @@ public class AtlasData extends PersistentState {
         int rescanInterval = newScanInterval * AntiqueAtlasMod.CONFIG.rescanRate;
         boolean rescanRequired = AntiqueAtlasMod.CONFIG.doRescan && player.getEntityWorld().getTime() % rescanInterval == 0;
 
-        int scanRadius = AntiqueAtlasMod.CONFIG.scanRadius;
+        IBiomeDetector biomeDetector = getBiomeDetectorForWorld(player.getEntityWorld().getRegistryKey());
+
+        int scanRadius = biomeDetector.getScanRadius();
 
         // Look at chunks around in a circular area:
         for (int dx = -scanRadius; dx <= scanRadius; dx++) {

@@ -51,16 +51,16 @@ public class BiomeDetectorNether extends BiomeDetectorBase implements IBiomeDete
                 Biome biome = chunkBiomes.getBiomeForNoiseGen(x, lavaSeaLevel, z);
                 if (biome.getCategory() == Biome.Category.NETHER) {
                     // The Nether!
-                    Block netherBlock = chunk.getBlockState(new BlockPos(x, lavaSeaLevel, z)).getBlock();
-                    if (netherBlock == Blocks.LAVA) {
+                    Block seaLevelBlock = chunk.getBlockState(new BlockPos(x, lavaSeaLevel, z)).getBlock();
+                    if (seaLevelBlock == Blocks.LAVA) {
                         updateOccurrencesMap(biomeOccurrences, ExtTileIdMap.TILE_LAVA, priorityLava);
                     } else {
-                        BlockState netherBlockState = chunk.getBlockState(new BlockPos(x, airProbeLevel, z));
-                        if (netherBlockState.isAir()) {
+                        BlockState airProbeBlock = chunk.getBlockState(new BlockPos(x, airProbeLevel, z));
+                        if (airProbeBlock.isAir()) {
                             updateOccurrencesMap(biomeOccurrences, ExtTileIdMap.TILE_LAVA_SHORE, 1);
                         } else {
                             // cave walls
-                            updateOccurrencesMap(biomeOccurrences, world, biome, 1);
+                            updateOccurrencesMap(biomeOccurrences, world, biome, 2);
                         }
                     }
                 } else {
@@ -76,5 +76,10 @@ public class BiomeDetectorNether extends BiomeDetectorBase implements IBiomeDete
                 .comparingInt(Map.Entry::getValue));
 
         return meanBiome.getKey();
+    }
+
+    @Override
+    public int getScanRadius() {
+        return Math.min(super.getScanRadius(), 6);
     }
 }

@@ -1,5 +1,6 @@
 package hunternif.mc.impl.atlas.core;
 
+import hunternif.mc.impl.atlas.AntiqueAtlasMod;
 import hunternif.mc.impl.atlas.ext.ExtTileIdMap;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
@@ -108,6 +109,11 @@ public class BiomeDetectorBase implements IBiomeDetector {
         Identifier id = getBiomeIdentifier(world, biome);
         int occurrence = map.getOrDefault(id, 0) + weight;
         map.put(id, occurrence);
+    }
+
+    @Override
+    public int getScanRadius() {
+        return AntiqueAtlasMod.CONFIG.scanRadius;
     }
 
     /**

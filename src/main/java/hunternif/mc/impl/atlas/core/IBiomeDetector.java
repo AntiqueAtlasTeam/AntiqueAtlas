@@ -17,4 +17,6 @@ interface IBiomeDetector {
      */
     @Nullable
     Identifier getBiomeID(World world, Chunk chunk);
+
+    int getScanRadius();
 }
