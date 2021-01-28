@@ -55,11 +55,11 @@ public class NetherFortress {
 
 
 	public static void registerPieces() {
-		StructureHandler.registerTile(StructurePieceType.NETHER_FORTRESS_BRIDGE_END,  110, ExtTileIdMap.NETHER_BRIDGE_END_X, NetherFortress::bridgeEndX);
-		StructureHandler.registerTile(StructurePieceType.NETHER_FORTRESS_BRIDGE_END,  110, ExtTileIdMap.NETHER_BRIDGE_END_Z, NetherFortress::bridgeEndZ);
+		StructureHandler.registerTile(StructurePieceType.NETHER_FORTRESS_BRIDGE_END,  125, ExtTileIdMap.NETHER_BRIDGE_END_X, NetherFortress::bridgeEndX);
+		StructureHandler.registerTile(StructurePieceType.NETHER_FORTRESS_BRIDGE_END,  125, ExtTileIdMap.NETHER_BRIDGE_END_Z, NetherFortress::bridgeEndZ);
 
-		StructureHandler.registerTile(StructurePieceType.NETHER_FORTRESS_BRIDGE,  100, ExtTileIdMap.NETHER_BRIDGE_X, NetherFortress::bridgeX);
-		StructureHandler.registerTile(StructurePieceType.NETHER_FORTRESS_BRIDGE,  100, ExtTileIdMap.NETHER_BRIDGE_Z, NetherFortress::bridgeZ);
+		StructureHandler.registerTile(StructurePieceType.NETHER_FORTRESS_BRIDGE,  130, ExtTileIdMap.NETHER_BRIDGE_X, NetherFortress::bridgeX);
+		StructureHandler.registerTile(StructurePieceType.NETHER_FORTRESS_BRIDGE,  130, ExtTileIdMap.NETHER_BRIDGE_Z, NetherFortress::bridgeZ);
 
 		StructureHandler.registerTile(StructurePieceType.NETHER_FORTRESS_CORRIDOR_BALCONY, 95, ExtTileIdMap.NETHER_FORTRESS_WALL);
 		StructureHandler.registerTile(StructurePieceType.NETHER_FORTRESS_CORRIDOR_LEFT_TURN, 95, ExtTileIdMap.NETHER_FORTRESS_WALL);
@@ -74,6 +74,6 @@ public class NetherFortress {
 		StructureHandler.registerTile(StructurePieceType.NETHER_FORTRESS_CORRIDOR_NETHER_WARTS_ROOM, 90, ExtTileIdMap.NETHER_FORTRESS_CORRIDOR_NETHER_WARTS_ROOM);
 
 		StructureHandler.registerTile(StructurePieceType.NETHER_FORTRESS_BRIDGE_SMALL_CROSSING, 120, ExtTileIdMap.NETHER_FORTRESS_BRIDGE_SMALL_CROSSING);
-		StructureHandler.registerTile(StructurePieceType.NETHER_FORTRESS_BRIDGE_PLATFORM, 120, ExtTileIdMap.NETHER_FORTRESS_BRIDGE_PLATFORM);
+		StructureHandler.registerTile(StructurePieceType.NETHER_FORTRESS_BRIDGE_PLATFORM, 121, ExtTileIdMap.NETHER_FORTRESS_BRIDGE_PLATFORM);
 	}
 }
