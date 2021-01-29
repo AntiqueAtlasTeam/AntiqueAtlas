@@ -3,7 +3,6 @@ package hunternif.mc.impl.atlas.structure;
 import com.google.common.collect.HashMultimap;
 import hunternif.mc.impl.atlas.AntiqueAtlasMod;
 import hunternif.mc.impl.atlas.api.AtlasAPI;
-import hunternif.mc.impl.atlas.registry.MarkerType;
 import hunternif.mc.impl.atlas.util.MathUtil;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.structure.StructurePiece;
@@ -17,16 +16,21 @@ import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.World;
 import net.minecraft.world.gen.feature.StructureFeature;
+import org.apache.commons.lang3.tuple.Triple;
 
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class StructureHandler {
 	private static final HashMultimap<Identifier, Pair<Identifier, Setter>> STRUCTURE_PIECE_TO_TILE_MAP = HashMultimap.create();
 	private static final HashMap<Identifier, Pair<Identifier, Text>> STRUCTURE_PIECE_TO_MARKER_MAP = new HashMap<>();
 	private static final HashMap<Identifier, Integer> STRUCTURE_PIECE_TILE_PRIORITY = new HashMap<>();
 	private static final Setter ALWAYS = (box) -> Collections.singleton(new ChunkPos(MathUtil.getCenter(box).getX() >> 4, MathUtil.getCenter(box).getZ() >> 4));
+
+	private static final Set<Triple<Integer, Integer, Identifier>> VISITED_STRUCTURES = Collections.newSetFromMap(new ConcurrentHashMap<>());
 
 	public static void registerTile(StructurePieceType structurePieceType, int priority, Identifier textureId, Setter setter) {
 		Identifier id = Registry.STRUCTURE_PIECE.getId(structurePieceType);
@@ -70,6 +74,14 @@ public class StructureHandler {
 	public static void resolve(StructureStart<?> structureStart, ServerWorld world) {
 		Identifier structureId = Registry.STRUCTURE_FEATURE.getId(structureStart.getFeature());
 		if (STRUCTURE_PIECE_TO_MARKER_MAP.containsKey(structureId)) {
+			Triple<Integer, Integer, Identifier> key = Triple.of(
+					structureStart.getBoundingBox().getCenter().getX(),
+					structureStart.getBoundingBox().getCenter().getY(),
+					structureId);
+
+			if (VISITED_STRUCTURES.contains(key)) return;
+			VISITED_STRUCTURES.add(key);
+
 			AtlasAPI.markers.putGlobalMarker(
 					world,
 					false,
