@@ -149,7 +149,7 @@ public class TextureSet implements Comparable<TextureSet> {
             TILE_SWAMP4,
             TILE_SWAMP5,
             TILE_SWAMP6),
-    SWAMP_WATER = standard("SWAMP", TILE_SWAMP, TILE_SWAMP, TILE_SWAMP, TILE_SWAMP3, TILE_SWAMP6),
+    SWAMP_WATER = standard("SWAMP_WATER", TILE_SWAMP, TILE_SWAMP, TILE_SWAMP, TILE_SWAMP3, TILE_SWAMP6),
     SWAMP_HILLS = standard("SWAMP_HILLS",
             TILE_SWAMP_HILLS,
             TILE_SWAMP_HILLS2,
