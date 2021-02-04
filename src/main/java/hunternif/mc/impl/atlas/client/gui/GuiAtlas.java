@@ -46,11 +46,12 @@ import java.util.List;
 public class GuiAtlas extends GuiComponent {
     public static final int WIDTH = 310;
     public static final int HEIGHT = 218;
-    private static final int CONTENT_X = 17;
-    private static final int CONTENT_Y = 11;
 
-    private static final int MAP_WIDTH = WIDTH - 17 * 2;
+    private static final int MAP_BORDER_WIDTH = 17;
+    private static final int MAP_BORDER_HEIGHT = 11;
+    private static final int MAP_WIDTH = WIDTH - MAP_BORDER_WIDTH * 2;
     private static final int MAP_HEIGHT = 194;
+
     private static final float PLAYER_ROTATION_STEPS = 16;
     private static final int PLAYER_ICON_WIDTH = 7;
     private static final int PLAYER_ICON_HEIGHT = 8;
@@ -783,8 +784,8 @@ public class GuiAtlas extends GuiComponent {
             RenderSystem.color4f(1, 1, 1, 0.5f);
         }
         RenderSystem.enableScissor(
-                (int) ((getGuiX() + CONTENT_X) * screenScale),
-                (int) ((MinecraftClient.getInstance().getWindow().getFramebufferHeight() - (getGuiY() + CONTENT_Y + MAP_HEIGHT) * screenScale)),
+                (int) ((getGuiX() + MAP_BORDER_WIDTH) * screenScale),
+                (int) ((MinecraftClient.getInstance().getWindow().getFramebufferHeight() - (getGuiY() + MAP_BORDER_HEIGHT + MAP_HEIGHT) * screenScale)),
                 (int) (MAP_WIDTH * screenScale), (int) (MAP_HEIGHT * screenScale));
         RenderSystem.enableBlend();
         RenderSystem.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
@@ -799,16 +800,14 @@ public class GuiAtlas extends GuiComponent {
         int mapEndZ = MathUtil.roundToBase((int) Math.ceil(((double) MAP_HEIGHT / 2d - mapOffsetY + 2 * tileHalfSize) / mapScale / 16d), tile2ChunkScale);
         int mapStartScreenX = getGuiX() + WIDTH / 2 + (int) ((mapStartX << 4) * mapScale) + mapOffsetX;
         int mapStartScreenY = getGuiY() + HEIGHT / 2 + (int) ((mapStartZ << 4) * mapScale) + mapOffsetY;
-        TileRenderIterator iter = new TileRenderIterator(biomeData);
-        iter.setScope(new Rect().setOrigin(mapStartX, mapStartZ).
-                set(mapStartX, mapStartZ, mapEndX, mapEndZ));
-        iter.setStep(tile2ChunkScale);
+        TileRenderIterator tiles = new TileRenderIterator(biomeData);
+        tiles.setScope(new Rect(mapStartX, mapStartZ, mapEndX, mapEndZ));
+        tiles.setStep(tile2ChunkScale);
 
         matrices.push();
         matrices.translate(mapStartScreenX, mapStartScreenY, 0);
 
-        while (iter.hasNext()) {
-            SubTileQuartet subtiles = iter.next();
+       for(SubTileQuartet subtiles : tiles) {
             for (SubTile subtile : subtiles) {
                 if (subtile == null || subtile.tile == null) continue;
                 ITexture texture = BiomeTextureMap.instance().getTexture(subtile);
@@ -827,10 +826,6 @@ public class GuiAtlas extends GuiComponent {
         int markersEndX = MathUtil.roundToBase(mapEndX, MarkersData.CHUNK_STEP) / MarkersData.CHUNK_STEP + 1;
         int markersEndZ = MathUtil.roundToBase(mapEndZ, MarkersData.CHUNK_STEP) / MarkersData.CHUNK_STEP + 1;
 
-        // Draw global markers:
-        renderMarkers(matrices, mouseX, mouseY, markersStartX, markersStartZ, markersEndX, markersEndZ, globalMarkersData);
-        renderMarkers(matrices, mouseX, mouseY, markersStartX, markersStartZ, markersEndX, markersEndZ, localMarkersData);
-
         RenderSystem.disableScissor();
 
         // Overlay the frame so that edges of the map are smooth:
@@ -841,25 +836,15 @@ public class GuiAtlas extends GuiComponent {
 
         double iconScale = getIconScale();
 
+        // Draw global markers:
+        renderMarkers(matrices, markersStartX, markersStartZ, markersEndX, markersEndZ, globalMarkersData);
+        renderMarkers(matrices, markersStartX, markersStartZ, markersEndX, markersEndZ, localMarkersData);
+
+        Textures.BOOK_FRAME_NARROW.draw(matrices, getGuiX(), getGuiY());
+
         // Draw player icon:
         if (!state.is(HIDING_MARKERS)) {
-            // How much the player has moved from the top left corner of the map, in pixels:
-            int playerOffsetX = (int) (player.getX() * mapScale) + mapOffsetX;
-            int playerOffsetZ = (int) (player.getZ() * mapScale) + mapOffsetY;
-            if (playerOffsetX < -MAP_WIDTH / 2) playerOffsetX = -MAP_WIDTH / 2;
-            if (playerOffsetX > MAP_WIDTH / 2) playerOffsetX = MAP_WIDTH / 2;
-            if (playerOffsetZ < -MAP_HEIGHT / 2) playerOffsetZ = -MAP_HEIGHT / 2;
-            if (playerOffsetZ > MAP_HEIGHT / 2 - 2) playerOffsetZ = MAP_HEIGHT / 2 - 2;
-            // Draw the icon:
-            RenderSystem.color4f(1, 1, 1, state.is(PLACING_MARKER) ? 0.5f : 1);
-            matrices.push();
-            matrices.translate(getGuiX() + WIDTH / 2 + playerOffsetX, getGuiY() + HEIGHT / 2 + playerOffsetZ, 0);
-            float playerRotation = (float) Math.round(player.yaw / 360f * PLAYER_ROTATION_STEPS) / PLAYER_ROTATION_STEPS * 360f;
-            matrices.multiply(Vector3f.POSITIVE_Z.getDegreesQuaternion(180 + playerRotation));
-            matrices.translate((float) (-PLAYER_ICON_WIDTH / 2 * iconScale), (float) (-PLAYER_ICON_HEIGHT / 2 * iconScale), 0f);
-            Textures.PLAYER.draw(matrices, 0, 0, (int) Math.round(PLAYER_ICON_WIDTH * iconScale), (int) Math.round(PLAYER_ICON_HEIGHT * iconScale));
-            matrices.pop();
-            RenderSystem.color4f(1, 1, 1, 1);
+            renderPlayer(matrices, iconScale);
         }
 
         // Draw buttons:
@@ -885,19 +870,27 @@ public class GuiAtlas extends GuiComponent {
         }
     }
 
-    private void renderMarkers(MatrixStack matrices, int mouseX, int mouseY, int markersStartX, int markersStartZ,
-                               int markersEndX, int markersEndZ, DimensionMarkersData markersData) {
-        if (markersData == null) return;
+    private void renderPlayer(MatrixStack matrices, double iconScale) {
+        // How much the player has moved from the top left corner of the map, in pixels:
+        int playerOffsetX = (int) (player.getX() * mapScale) + mapOffsetX;
+        int playerOffsetZ = (int) (player.getZ() * mapScale) + mapOffsetY;
+        playerOffsetX = MathHelper.clamp(playerOffsetX, -MAP_WIDTH / 2, MAP_WIDTH / 2);
+        playerOffsetZ = MathHelper.clamp(playerOffsetZ, -MAP_HEIGHT / 2, MAP_HEIGHT / 2 - 2);
 
-        for (int x = markersStartX; x <= markersEndX; x++) {
-            for (int z = markersStartZ; z <= markersEndZ; z++) {
-                List<Marker> markers = markersData.getMarkersAtChunk(x, z);
-                if (markers == null) continue;
-                for (Marker marker : markers) {
-                    renderMarker(matrices, mouseX, mouseY, marker, getIconScale());
-                }
-            }
-        }
+        // Draw the icon:
+        RenderSystem.color4f(1, 1, 1, state.is(PLACING_MARKER) ? 0.5f : 1);
+        matrices.push();
+
+        matrices.translate(getGuiX() + WIDTH / 2 + playerOffsetX, getGuiY() + HEIGHT / 2 + playerOffsetZ, 0);
+        float playerRotation = (float) Math.round(player.yaw / 360f * PLAYER_ROTATION_STEPS) / PLAYER_ROTATION_STEPS * 360f;
+        matrices.multiply(Vector3f.POSITIVE_Z.getDegreesQuaternion(180 + playerRotation));
+        matrices.translate((float) (-PLAYER_ICON_WIDTH / 2 * iconScale), (float) (-PLAYER_ICON_HEIGHT / 2 * iconScale), 0f);
+
+        Textures.PLAYER.draw(matrices, 0, 0, (int) Math.round(PLAYER_ICON_WIDTH * iconScale), (int) Math.round(PLAYER_ICON_HEIGHT * iconScale));
+
+        matrices.pop();
+
+        RenderSystem.color4f(1, 1, 1, 1);
     }
 
     private void renderScaleOverlay(MatrixStack matrices, long deltaMillis) {
@@ -950,12 +943,23 @@ public class GuiAtlas extends GuiComponent {
         }
     }
 
-    private void renderMarker(MatrixStack matrices, int mouseX, int mouseY, Marker marker, double scale) {
-        MarkerType type = MarkerType.REGISTRY.get(marker.getType());
-        if (type == null) {
-            Log.warn("Could not find marker data for %s. Is it in the config file?\n", marker.getType());
-            return;
+    private void renderMarkers(MatrixStack matrices, int markersStartX, int markersStartZ,
+                               int markersEndX, int markersEndZ, DimensionMarkersData markersData) {
+        if (markersData == null) return;
+
+        for (int x = markersStartX; x <= markersEndX; x++) {
+            for (int z = markersStartZ; z <= markersEndZ; z++) {
+                List<Marker> markers = markersData.getMarkersAtChunk(x, z);
+                if (markers == null) continue;
+                for (Marker marker : markers) {
+                    renderMarker(matrices, marker, getIconScale());
+                }
+            }
         }
+    }
+
+    private void renderMarker(MatrixStack matrices, Marker marker, double scale) {
+        MarkerType type = MarkerType.REGISTRY.get(marker.getType());
         if (type.shouldHide(state.is(HIDING_MARKERS), scaleClipIndex)) {
             return;
         }
@@ -1060,7 +1064,11 @@ public class GuiAtlas extends GuiComponent {
      * Returns the scale of markers and player icon at given mapScale.
      */
     private double getIconScale() {
-        return AntiqueAtlasMod.CONFIG.doScaleMarkers ? (mapScale < 0.5 ? 0.5 : mapScale > 1 ? 2 : 1) : 1;
+        if (AntiqueAtlasMod.CONFIG.doScaleMarkers) {
+            if (mapScale < 0.5) return 0.5;
+            if (mapScale > 1) return 2;
+        }
+        return 1;
     }
 
     /**
