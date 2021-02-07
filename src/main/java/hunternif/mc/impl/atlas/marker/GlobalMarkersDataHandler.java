@@ -56,7 +56,15 @@ public class GlobalMarkersDataHandler {
 
 	/** Synchronizes global markers with the connecting client. */
 	public void onPlayerLogin(ServerPlayerEntity player) {
-		if(data != null) data.syncOnPlayer(player);
+		//Check if for some reason the global marker data was set
+		if(data != null) {
+			data.syncOnPlayer(player);
+		}
+		//If not, then check if the overworld is not null. If it's not null then set the global marker data and sync it with the player
+		else if (player.getServerWorld().getServer().getWorld(World.OVERWORLD) != null) {
+			onWorldLoad(null, player.getServerWorld().getServer().getWorld(World.OVERWORLD));
+			data.syncOnPlayer(player);
+		}
 	}
 
 }

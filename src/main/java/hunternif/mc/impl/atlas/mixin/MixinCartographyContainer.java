@@ -42,29 +42,29 @@ public abstract class MixinCartographyContainer extends Container {
         super(type, syncId);
     }
 
-    @Inject(method = "func_216993_a"/*"method_17382"*/, at = @At("HEAD"), cancellable = true)
-    void antiqueatlas_call(ItemStack atlas, ItemStack map, ItemStack result/*, World world, BlockPos pos*/, CallbackInfo info) {
+    @Inject(method = "func_216996_a", at = @At("HEAD"), cancellable = true)
+    void antiqueatlas_call(ItemStack atlas, ItemStack map, ItemStack result, World world, BlockPos pos, CallbackInfo info) {
         if (atlas.getItem() == AtlasAPI.getAtlasItem() && map.getItem() == Items.FILLED_MAP) {
-            field_217001_f.setInventorySlotContents/*setStack*/(2, atlas.copy());
+            field_217001_f.setInventorySlotContents(2, atlas.copy());
 
-            this.detectAndSendChanges/*sendContentUpdates*/();
+            this.detectAndSendChanges();
 
             info.cancel();
         }
     }
 
-    @Inject(method = "transferStackInSlot"/*"transferSlot"*/, at = @At("HEAD"), cancellable = true)
+    @Inject(method = "transferStackInSlot", at = @At("HEAD"), cancellable = true)
     void antiqueatlas_transferSlot(PlayerEntity player, int index, CallbackInfoReturnable<ItemStack> info) {
         if (index >= 0 && index <= 2) return;
 
         Slot slot = this.inventorySlots.get(index);
 
-        if (slot != null && slot.getHasStack/*hasStack*/()) {
+        if (slot != null && slot.getHasStack()) {
             ItemStack stack = slot.getStack();
 
             if (stack.getItem() != AtlasAPI.getAtlasItem()) return;
 
-            boolean result = this.mergeItemStack/*insertItem*/(stack, 0, 2, false);
+            boolean result = this.mergeItemStack(stack, 0, 2, false);
 
             if (!result) {
                 info.setReturnValue(ItemStack.EMPTY);
@@ -84,7 +84,7 @@ class MixinCartographyContainerResultSlot {
         antiqueatlas_handler = handler;
     }
 
-    @Inject(method = "onTake"/*"onTakeItem"*/, at = @At("HEAD"))
+    @Inject(method = "onTake", at = @At("HEAD"))
     void antiqueatlas_onTakeItem(PlayerEntity player, ItemStack atlas, CallbackInfoReturnable<ItemStack> info) {
         if (atlas.getItem() == AtlasAPI.getAtlasItem()) {
             ItemStack map = antiqueatlas_handler.inventorySlots.get(0).getStack();

@@ -76,7 +76,7 @@ public class AntiqueAtlasMod
 //		RecipeCraftedCallback.EVENT.register(craftedHandler);
 
 		NetherFortress.registerPieces();
-		EndCity.registerPieces();
+		EndCity.registerMarkers();
 //		Village.registerMarkers();
 	}
 

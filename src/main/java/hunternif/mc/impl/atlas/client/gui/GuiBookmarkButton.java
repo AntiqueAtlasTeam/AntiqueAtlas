@@ -57,13 +57,9 @@ public class GuiBookmarkButton extends GuiToggleButton {
 		// Render background:
 		int u = colorIndex * WIDTH;
 		int v = isMouseOver || isSelected() ? 0 : HEIGHT;
-//		AtlasRenderHelper.drawTexturedRect(matrices, Textures.BOOKMARKS, getGuiX(), getGuiY(), u, v, WIDTH, HEIGHT, IMAGE_WIDTH, IMAGE_HEIGHT);
 		Textures.BOOKMARKS.draw(matrices, getGuiX(), getGuiY(), u, v, WIDTH, HEIGHT);
 
 		// Render the icon:
-//		AtlasRenderHelper.drawFullTexture(matrices, iconTexture,
-//				getGuiX() + (isMouseOver || isSelected() ? 3 : 2),
-//				getGuiY() + 1, ICON_WIDTH, ICON_HEIGHT);
 		iconTexture.draw(matrices, getGuiX() + (isMouseOver || isSelected() ? 3 : 2), getGuiY() + 1);
 
 		if (isMouseOver) {
