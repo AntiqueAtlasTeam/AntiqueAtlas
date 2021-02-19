@@ -999,7 +999,20 @@ public class GuiAtlas extends GuiComponent {
             System.out.println("Rendering Marker: " + info.tex);
         }
 
+        if (markerX <= getGuiX() + MAP_BORDER_WIDTH || markerX >= getGuiX() + MAP_WIDTH + MAP_BORDER_WIDTH
+                || markerY <= getGuiY() + MAP_BORDER_HEIGHT || markerY >= getGuiY() + MAP_HEIGHT + MAP_BORDER_HEIGHT
+        ) {
+            RenderSystem.color4f(1, 1, 1, 0.5f);
+            info.scale(0.8);
+        }
+
+        markerX = MathHelper.clamp(markerX, getGuiX() + MAP_BORDER_WIDTH,  getGuiX() + MAP_WIDTH + MAP_BORDER_WIDTH);
+        markerY = MathHelper.clamp(markerY, getGuiY() + MAP_BORDER_HEIGHT,  getGuiY() + MAP_HEIGHT + MAP_BORDER_HEIGHT);
+
+
         info.tex.draw(matrices, markerX + info.x, markerY + info.y, info.width, info.height);
+
+        RenderSystem.color4f(1, 1, 1, 1);
 
         if (isMouseOver && mouseIsOverMarker && marker.getLabel().getString().length() > 0) {
             drawTooltip(Collections.singletonList(marker.getLabel()), textRenderer);
