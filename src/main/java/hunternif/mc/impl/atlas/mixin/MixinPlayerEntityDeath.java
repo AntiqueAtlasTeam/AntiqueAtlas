@@ -1,6 +1,6 @@
 package hunternif.mc.impl.atlas.mixin;
 
-import hunternif.mc.impl.atlas.ext.watcher.DeathWatcher;
+import hunternif.mc.impl.atlas.core.watcher.DeathWatcher;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -16,5 +16,3 @@ public class MixinPlayerEntityDeath {
         DeathWatcher.onPlayerDeath((PlayerEntity) (Object) this);
     }
 }
-
-

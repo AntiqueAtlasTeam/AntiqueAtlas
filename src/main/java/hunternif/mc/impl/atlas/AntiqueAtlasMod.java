@@ -1,7 +1,7 @@
 package hunternif.mc.impl.atlas;
 
 import hunternif.mc.impl.atlas.core.AtlasDataHandler;
-import hunternif.mc.impl.atlas.core.BiomeDetectorBase;
+import hunternif.mc.impl.atlas.core.detector.TileDetectorBase;
 import hunternif.mc.impl.atlas.core.GlobalAtlasData;
 import hunternif.mc.impl.atlas.core.PlayerEventHandler;
 import hunternif.mc.impl.atlas.event.RecipeCraftedCallback;
@@ -59,7 +59,7 @@ public class AntiqueAtlasMod implements ModInitializer {
 	public void onInitialize() {
 		instance = this;
 
-		BiomeDetectorBase.scanBiomeTypes();
+		TileDetectorBase.scanBiomeTypes();
 
 		AutoConfig.register(AntiqueAtlasConfig.class, JanksonConfigSerializer::new);
 		CONFIG = AutoConfig.getConfigHolder(AntiqueAtlasConfig.class).getConfig();

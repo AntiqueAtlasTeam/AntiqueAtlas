@@ -1,4 +1,4 @@
-package hunternif.mc.impl.atlas.core;
+package hunternif.mc.impl.atlas.core.detector;
 
 import hunternif.mc.impl.atlas.ext.ExtTileIdMap;
 import net.minecraft.block.Block;
@@ -22,7 +22,7 @@ import java.util.Map;
  *
  * @author Hunternif
  */
-public class BiomeDetectorNether extends BiomeDetectorBase implements IBiomeDetector {
+public class TileDetectorNether extends TileDetectorBase implements ITileDetector {
     /**
      * The Nether will be checked for air/ground at this level.
      */
@@ -65,7 +65,7 @@ public class BiomeDetectorNether extends BiomeDetectorBase implements IBiomeDete
                     }
                 } else {
                     // In case there are custom biomes "modded in":
-                    updateOccurrencesMap(biomeOccurrences, world, biome, priorityForBiome(biome));
+                    updateOccurrencesMap(biomeOccurrences, world, biome, priorityForBiome(getBiomeIdentifier(world,biome)));
                 }
             }
         }

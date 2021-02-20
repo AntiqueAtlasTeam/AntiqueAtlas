@@ -1,4 +1,4 @@
-package hunternif.mc.impl.atlas.core;
+package hunternif.mc.impl.atlas.core.detector;
 
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
@@ -22,7 +22,7 @@ import java.util.Map;
  *
  * @author Hunternif
  */
-public class BiomeDetectorEnd extends BiomeDetectorBase implements IBiomeDetector {
+public class TileDetectorEnd extends TileDetectorBase implements ITileDetector {
 
     @Override
     public Identifier getBiomeID(World world, Chunk chunk) {

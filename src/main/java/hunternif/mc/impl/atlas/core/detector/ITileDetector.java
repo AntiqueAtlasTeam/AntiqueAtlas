@@ -1,4 +1,4 @@
-package hunternif.mc.impl.atlas.core;
+package hunternif.mc.impl.atlas.core.detector;
 
 import net.minecraft.util.Identifier;
 import net.minecraft.world.World;
@@ -11,7 +11,7 @@ import javax.annotation.Nullable;
  *
  * @author Hunternif
  */
-interface IBiomeDetector {
+public interface ITileDetector {
     /**
      * Finds the biome ID to be used for a given chunk.
      */

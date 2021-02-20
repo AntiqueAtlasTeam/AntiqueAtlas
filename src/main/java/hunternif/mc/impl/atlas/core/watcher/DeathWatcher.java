@@ -1,8 +1,7 @@
-package hunternif.mc.impl.atlas.ext.watcher;
+package hunternif.mc.impl.atlas.core.watcher;
 
 import hunternif.mc.impl.atlas.AntiqueAtlasMod;
 import hunternif.mc.impl.atlas.api.AtlasAPI;
-import hunternif.mc.impl.atlas.registry.MarkerType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Identifier;

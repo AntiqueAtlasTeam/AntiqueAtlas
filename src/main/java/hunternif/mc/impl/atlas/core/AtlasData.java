@@ -1,6 +1,10 @@
 package hunternif.mc.impl.atlas.core;
 
 import hunternif.mc.impl.atlas.AntiqueAtlasMod;
+import hunternif.mc.impl.atlas.core.detector.TileDetectorBase;
+import hunternif.mc.impl.atlas.core.detector.TileDetectorEnd;
+import hunternif.mc.impl.atlas.core.detector.TileDetectorNether;
+import hunternif.mc.impl.atlas.core.detector.ITileDetector;
 import hunternif.mc.impl.atlas.network.packet.s2c.play.MapDataS2CPacket;
 import hunternif.mc.impl.atlas.util.Log;
 import hunternif.mc.impl.atlas.util.ShortVec2;
@@ -8,6 +12,7 @@ import net.fabricmc.fabric.api.util.NbtType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
@@ -36,10 +41,10 @@ public class AtlasData extends PersistentState {
     /**
      * Maps dimension ID to biomeAnalyzer.
      */
-    private final Map<RegistryKey<World>, IBiomeDetector> biomeAnalyzers = new HashMap<>();
-    private final BiomeDetectorBase biomeDetectorOverworld = new BiomeDetectorBase();
-    private final BiomeDetectorNether biomeDetectorNether = new BiomeDetectorNether();
-    private final BiomeDetectorEnd biomeDetectorEnd = new BiomeDetectorEnd();
+    private final Map<RegistryKey<World>, ITileDetector> biomeAnalyzers = new HashMap<>();
+    private final TileDetectorBase tileDetectorOverworld = new TileDetectorBase();
+    private final TileDetectorNether tileDetectorNether = new TileDetectorNether();
+    private final TileDetectorEnd tileDetectorEnd = new TileDetectorEnd();
 
     /**
      * This map contains, for each dimension, a map of chunks the player
@@ -54,21 +59,16 @@ public class AtlasData extends PersistentState {
      */
     private final Set<PlayerEntity> playersSentTo = new HashSet<>();
 
-    private CompoundTag nbt;
-
     public AtlasData(String key) {
         super(key);
 
-        biomeDetectorOverworld.setScanPonds(AntiqueAtlasMod.CONFIG.doScanPonds);
-        biomeDetectorOverworld.setScanRavines(AntiqueAtlasMod.CONFIG.doScanRavines);
-        setBiomeDetectorForWorld(World.OVERWORLD, biomeDetectorOverworld);
-        setBiomeDetectorForWorld(World.NETHER, biomeDetectorNether);
-        setBiomeDetectorForWorld(World.END, biomeDetectorEnd);
+        setBiomeDetectorForWorld(World.OVERWORLD, tileDetectorOverworld);
+        setBiomeDetectorForWorld(World.NETHER, tileDetectorNether);
+        setBiomeDetectorForWorld(World.END, tileDetectorEnd);
     }
 
     @Override
     public void fromTag(CompoundTag compound) {
-        this.nbt = compound;
         int version = compound.getInt(TAG_VERSION);
         if (version < VERSION) {
             Log.warn("Outdated atlas data format! Was %d but current is %d.", version, VERSION);
@@ -115,17 +115,17 @@ public class AtlasData extends PersistentState {
         return compound;
     }
 
-    private void setBiomeDetectorForWorld(RegistryKey<World> world, IBiomeDetector biomeAnalyzer) {
+    private void setBiomeDetectorForWorld(RegistryKey<World> world, ITileDetector biomeAnalyzer) {
         biomeAnalyzers.put(world, biomeAnalyzer);
     }
 
     /**
      * If not found, returns the analyzer for overworld.
      */
-    private IBiomeDetector getBiomeDetectorForWorld(RegistryKey<World> world) {
-        IBiomeDetector biomeAnalyzer = biomeAnalyzers.get(world);
+    private ITileDetector getBiomeDetectorForWorld(RegistryKey<World> world) {
+        ITileDetector biomeAnalyzer = biomeAnalyzers.get(world);
 
-        return biomeAnalyzer == null ? biomeDetectorOverworld : biomeAnalyzer;
+        return biomeAnalyzer == null ? tileDetectorOverworld : biomeAnalyzer;
     }
 
     /**
@@ -146,7 +146,7 @@ public class AtlasData extends PersistentState {
         int rescanInterval = newScanInterval * AntiqueAtlasMod.CONFIG.rescanRate;
         boolean rescanRequired = AntiqueAtlasMod.CONFIG.doRescan && player.getEntityWorld().getTime() % rescanInterval == 0;
 
-        IBiomeDetector biomeDetector = getBiomeDetectorForWorld(player.getEntityWorld().getRegistryKey());
+        ITileDetector biomeDetector = getBiomeDetectorForWorld(player.getEntityWorld().getRegistryKey());
 
         int scanRadius = biomeDetector.getScanRadius();
 
@@ -194,7 +194,7 @@ public class AtlasData extends PersistentState {
                 return null;
             }
 
-            IBiomeDetector biomeDetector = getBiomeDetectorForWorld(world.getRegistryKey());
+            ITileDetector biomeDetector = getBiomeDetectorForWorld(world.getRegistryKey());
             tile = biomeDetector.getBiomeID(world, chunk);
 
             if (oldTile != null) {
@@ -280,13 +280,12 @@ public class AtlasData extends PersistentState {
      * during the first run of ItemAtlas.onUpdate().
      */
     public void syncOnPlayer(int atlasID, PlayerEntity player) {
-        if (nbt == null) {
-            nbt = new CompoundTag();
-        }
+        CompoundTag data = new CompoundTag();
+
         // Before syncing make sure the changes are written to the nbt.
         // Do not include dimension tile data.  This will happen later.
-        writeToNBT(nbt, false);
-        new MapDataS2CPacket(atlasID, nbt).send((ServerPlayerEntity) player);
+        writeToNBT(data, false);
+        new MapDataS2CPacket(atlasID, data).send((ServerPlayerEntity) player);
 
         for (RegistryKey<World> world : worldMap.keySet()) {
             worldMap.get(world).syncOnPlayer(atlasID, player);
