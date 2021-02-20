@@ -196,6 +196,7 @@ public class ClientProxy implements SimpleSynchronousResourceReloadListener {
 		setBiomeTextureIfNone(BiomeKeys.TAIGA, PINES);
 		setBiomeTextureIfNone(BiomeKeys.TAIGA_HILLS, PINES_HILLS);
 		setBiomeTextureIfNone(BiomeKeys.TAIGA_HILLS, PINES_HILLS);
+		setBiomeTextureIfNone(BiomeKeys.TAIGA_MOUNTAINS, PINES_HILLS);
 		setBiomeTextureIfNone(BiomeKeys.SNOWY_TAIGA, SNOW_PINES);
 		setBiomeTextureIfNone(BiomeKeys.SNOWY_TAIGA_HILLS, SNOW_PINES_HILLS);
 		setBiomeTextureIfNone(BiomeKeys.SNOWY_TAIGA_MOUNTAINS, SNOW_PINES_HILLS);
@@ -287,7 +288,7 @@ public class ClientProxy implements SimpleSynchronousResourceReloadListener {
 			textureMap.setTexture(tileId, textureSet);
 		}
 	}
-	
+
 	@Override
 	public Identifier getFabricId() {
 		return AntiqueAtlasMod.id("proxy");
