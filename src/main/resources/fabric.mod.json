@@ -31,7 +31,6 @@
   },
   "accessWidener": "antiqueatlas.accesswidener",
   "mixins": [
-    "antiqueatlas.mixins.json",
-    "antiqueatlasoverlay.mixins.json"
+    "antiqueatlas.mixins.json"
   ]
 }

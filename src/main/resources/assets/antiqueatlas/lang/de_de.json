@@ -39,8 +39,7 @@
   "text.autoconfig.antiqueatlas.category.gameplay": "Spielweise",
   "text.autoconfig.antiqueatlas.category.userInterface": "Benutzeroberfläche",
   "text.autoconfig.antiqueatlas.category.performance": "Leistung",
-  "text.autoconfig.antiqueatlas.category.overlayPosition": "Position der Minimap",
-  "text.autoconfig.antiqueatlas.category.overlayAppearance": "Erscheinungsbild der Minimap",
+  "text.autoconfig.antiqueatlas.category.appearance": "Erscheinungsbild",
 
   "text.autoconfig.antiqueatlas.option.doSaveBrowsingPos": "Speichere Position im Atlas",
   "text.autoconfig.antiqueatlas.option.autoDeathMarker": "Todesmarkierungen",
@@ -64,19 +63,8 @@
   "text.autoconfig.antiqueatlas.option.doScanRavines": "Suche nach Schluchten",
   "text.autoconfig.antiqueatlas.option.debugRender": "Debug rendering",
 
-  "text.autoconfig.antiqueatlas.option.alignRight": "Rechtsbündig anordnen",
-  "text.autoconfig.antiqueatlas.option.alignBottom": "Unten anordnen",
-  "text.autoconfig.antiqueatlas.option.xPosition": "Horizontale Position",
-  "text.autoconfig.antiqueatlas.option.yPosition": "Vertikale Position",
-  "text.autoconfig.antiqueatlas.option.width": "Breite",
-  "text.autoconfig.antiqueatlas.option.height": "Höhe",
-
   "text.autoconfig.antiqueatlas.option.tileSize": "Größe einer Kachel",
   "text.autoconfig.antiqueatlas.option.markerSize": "Größe einer Markierung",
   "text.autoconfig.antiqueatlas.option.playerIconWidth": "Beite des Spielericons",
-  "text.autoconfig.antiqueatlas.option.playerIconHeight": "Höhe des Spielericons",
-  "text.autoconfig.antiqueatlas.option.borderX": "Horizontale Breite des Randes",
-  "text.autoconfig.antiqueatlas.option.borderY": "Vertikale Breite des Randes",
-  "text.autoconfig.antiqueatlas.option.requiresHold": "Atlas muss gehalten werden",
-  "text.autoconfig.antiqueatlas.option.enabled": "Aktiviert"
+  "text.autoconfig.antiqueatlas.option.playerIconHeight": "Höhe des Spielericons"
 }

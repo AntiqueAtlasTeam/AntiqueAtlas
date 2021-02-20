@@ -18,7 +18,8 @@
   ],
   "client": [
     "MixinClientPlayNetworkHandler",
-    "MixinInGameHud"
+    "MixinInGameHud",
+    "HeldItemRendererMixin"
   ],
   "injectors": {
     "defaultRequire": 1

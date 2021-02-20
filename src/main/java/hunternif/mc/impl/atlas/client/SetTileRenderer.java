@@ -1,4 +1,4 @@
-package kenkron.antiqueatlasoverlay;
+package hunternif.mc.impl.atlas.client;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;

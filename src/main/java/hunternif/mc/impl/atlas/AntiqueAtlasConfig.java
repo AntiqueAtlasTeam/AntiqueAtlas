@@ -91,69 +91,23 @@ public class AntiqueAtlasConfig implements ConfigData {
     @Comment("If true, map render time will be output.")
     public boolean debugRender = false;
 
-    //=========== Overlay settings ============
-    @ConfigEntry.Category("overlayPosition")
-    @Comment("If true, the map position's x axis will align 0 to the right\nof the screen, increasing towards the left.")
-    public boolean alignRight = false;
-
-    @ConfigEntry.Category("overlayPosition")
-    @Comment("If true, the map position's y axis will align 0 to the bottom\nof the screen, increasing towards the top.")
-    public boolean alignBottom = false;
-
-    @ConfigEntry.Category("overlayPosition")
-    @Comment("Map's minimum position along the x axis in GUI pixels.\nNote that this will change with Minecraft's GUI scale configuration.")
-    public int xPosition = 2;
-
-    @ConfigEntry.Category("overlayPosition")
-    @Comment("Map's minimum position along the y axis in GUI pixels.\nNote that this will change with Minecraft's GUI scale configuration.")
-    //@Setting.Constrain.Range(min = 0)
-    public int yPosition = 2;
-
-    @ConfigEntry.Category("overlayPosition")
-    @Comment("Map's width in GUI pixels.\nNote that this will change with Minecraft's GUI scale configuration.")
-    //@Setting.Constrain.Range(min = 0)
-    public int width = GuiAtlas.WIDTH / 2;
-
-    @ConfigEntry.Category("overlayPosition")
-    @Comment("Map's height in GUI pixels.\nNote that this will change with Minecraft's GUI scale configuration.")
-    //@Setting.Constrain.Range(min = 0)
-    public int height = GuiAtlas.HEIGHT / 2;
-
-    @ConfigEntry.Category("overlayAppearance")
+    @ConfigEntry.Category("appearance")
     @Comment("The size (in GUI pixels) of a map's tile.\nNote that this will change with Minecraft's GUI scale configuration.\nWhen using a small gui scale, the map may look better with a TILE_SIZE of 16 or more.")
     //@Setting.Constrain.Range(min = 1, max = 10)
     public int tileSize = 8;
 
-    @ConfigEntry.Category("overlayAppearance")
+    @ConfigEntry.Category("appearance")
     @Comment("The size (in GUI pixels) of a marker on the map.\nNote that this will change with Minecraft's GUI scale configuration.")
     //@Setting.Constrain.Range(min = 0)
     public int markerSize = GuiAtlas.MARKER_SIZE / 2;
 
-    @ConfigEntry.Category("overlayAppearance")
+    @ConfigEntry.Category("appearance")
     @Comment("The width (in GUI pixels) of the player's icon.")
     //@Setting.Constrain.Range(min = 0)
     public int playerIconWidth = 14;
 
-    @ConfigEntry.Category("overlayAppearance")
+    @ConfigEntry.Category("appearance")
     @Comment("The height (in GUI pixels) of the player's icon.")
     //@Setting.Constrain.Range(min = 0)
     public int playerIconHeight = 16;
-
-    @ConfigEntry.Category("overlayAppearance")
-    @Comment("The width of the map border on the left and right sides of the minimap tiles.\nRepresented as a fraction of the image width.\nBelow a certain threshold, this border will be overtaken by the map border graphic.")
-    //@Setting.Constrain.Range(min = 0.0, max = 0.5)
-    public float borderX = 0.05F;
-
-    @ConfigEntry.Category("overlayAppearance")
-    @Comment("The width of the map border on the top and bottom sides of the minimap tiles.\nRepresented as a fraction of the image width.\nBelow a certain threshold, this border will be overtaken by the map border graphic.")
-    //@Setting.Constrain.Range(min = 0.0, max = 0.5)
-    public float borderY = 0.05F;
-
-    @ConfigEntry.Category("overlayAppearance")
-    @Comment("If true, the minimap will show the map of an atlas only while it is held.\nIf false, the minimap will show the map of the first atlas in the hotbar.")
-    public boolean requiresHold = true;
-
-    @ConfigEntry.Category("overlayAppearance")
-    @Comment("Set true to enable minimap")
-    public boolean enabled = false;
 }
