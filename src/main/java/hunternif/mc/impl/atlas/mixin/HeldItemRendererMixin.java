@@ -1,6 +1,5 @@
 package hunternif.mc.impl.atlas.mixin;
 
-import hunternif.mc.impl.atlas.AntiqueAtlasMod;
 import hunternif.mc.impl.atlas.RegistrarAntiqueAtlas;
 import hunternif.mc.impl.atlas.client.OverlayRenderer;
 import net.fabricmc.api.EnvType;
