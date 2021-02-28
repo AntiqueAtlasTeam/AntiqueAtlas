@@ -104,7 +104,7 @@ public class TextureSet implements Comparable<TextureSet> {
             TILE_GRASS2, TILE_GRASS2,
             TILE_GRASS3, TILE_GRASS3,
             TILE_GRASS4, TILE_GRASS4),
-    SAVANNA_PLATEAU = standard("SAVANNA_CLIFFS",
+    SAVANNA_CLIFFS = standard("SAVANNA_CLIFFS",
             TILE_SAVANNA_CLIFFS,
             TILE_SAVANNA_CLIFFS2,
             TILE_SAVANNA_CLIFFS3,

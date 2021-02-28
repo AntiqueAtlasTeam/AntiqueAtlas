@@ -108,7 +108,7 @@ public class ClientProxy implements SimpleSynchronousResourceReloadListener {
 		map.register(PINES);
 		map.register(PINES_HILLS);
 		map.register(SAVANNA);
-		map.register(SAVANNA_PLATEAU);
+		map.register(SAVANNA_CLIFFS);
 		map.register(PLATEAU_SAVANNA_M);
 		map.register(MESA);
 		map.register(BRYCE);
@@ -221,9 +221,9 @@ public class ClientProxy implements SimpleSynchronousResourceReloadListener {
 		setBiomeTextureIfNone(BiomeKeys.ERODED_BADLANDS, MESA);
 		setBiomeTextureIfNone(BiomeKeys.BADLANDS, MESA);
 		setBiomeTextureIfNone(BiomeKeys.SAVANNA, SAVANNA);
-		setBiomeTextureIfNone(BiomeKeys.SAVANNA_PLATEAU, SAVANNA_PLATEAU);
+		setBiomeTextureIfNone(BiomeKeys.SAVANNA_PLATEAU, SAVANNA_CLIFFS);
 		setBiomeTextureIfNone(BiomeKeys.SHATTERED_SAVANNA, SAVANNA);
-		setBiomeTextureIfNone(BiomeKeys.SHATTERED_SAVANNA_PLATEAU, SAVANNA_PLATEAU);
+		setBiomeTextureIfNone(BiomeKeys.SHATTERED_SAVANNA_PLATEAU, SAVANNA_CLIFFS);
 
 		setBiomeTextureIfNone(BiomeKeys.DEEP_FROZEN_OCEAN, ICE_SPIKES);
 
