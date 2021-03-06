@@ -159,7 +159,7 @@ public class MarkerType {
 		}
 
 		if (icons.length > 1) {
-			int smallestSide = (int) (size * screenScale);
+			int smallestSide = (int) (size);
 
 			int closestValue = Integer.MAX_VALUE;
 			int closestIndex = -1;
