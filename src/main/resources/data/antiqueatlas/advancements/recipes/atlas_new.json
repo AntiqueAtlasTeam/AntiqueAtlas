@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "rewards": {
+    "recipes": [
+      "antiqueatlas:empty_atlas_new"
+    ]
+  },
+  "criteria": {
+    "has_compass": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "item": "minecraft:compass"
+          }
+        ]
+      }
+    },
+    "has_the_recipe": {
+      "trigger": "minecraft:recipe_unlocked",
+      "conditions": {
+        "recipe": "antiqueatlas:empty_atlas_new"
+      }
+    }
+  },
+  "requirements": [
+    [
+      "has_compass",
+      "has_the_recipe"
+    ]
+  ]
+}
