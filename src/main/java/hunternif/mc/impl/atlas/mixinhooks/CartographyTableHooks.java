@@ -13,7 +13,7 @@ import net.minecraft.world.storage.MapData;
 import net.minecraft.world.storage.MapDecoration;
 
 public class CartographyTableHooks {
-    public static void onTakeItem(PlayerEntity player, ItemStack map, ItemStack atlas) {
+    public static void onTake(PlayerEntity player, ItemStack map, ItemStack atlas) {
         if (map.getItem() == Items.FILLED_MAP) {
         	MapData mapState = FilledMapItem.getMapData(map, player.getEntityWorld());
             if (mapState != null) {

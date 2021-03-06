@@ -2,12 +2,15 @@
   "required": true,
   "package": "hunternif.mc.impl.atlas.mixin",
   "compatibilityLevel": "JAVA_8",
+  "plugin": "hunternif.mc.impl.atlas.mixin.VolatileMixinPlugin",
   "refmap": "antiqueatlas.refmap.json",
   "mixins": [
     "MixinEntity",
-    "MixinCartographyContainer",
-    "MixinCartographyContainerSlot",
-    "MixinCartographyContainerResultSlot"
+    "MixinCartographyContainer",    
+    "dev.MixinCartographyTableContainerSlot",
+    "prod.MixinCartographyTableContainerSlot",
+    "dev.MixinCartographyTableContainerResultSlot",
+    "prod.MixinCartographyTableContainerResultSlot"
   ],
   "client": [
   ],

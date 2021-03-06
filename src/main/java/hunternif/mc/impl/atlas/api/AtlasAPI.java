@@ -1,5 +1,9 @@
 package hunternif.mc.impl.atlas.api;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import hunternif.mc.impl.atlas.AntiqueAtlasConfig;
 import hunternif.mc.impl.atlas.api.oldimpl.MarkerApiImpl;
 import hunternif.mc.impl.atlas.api.oldimpl.TileApiImpl;
@@ -8,11 +12,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.registry.Registry;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import net.minecraftforge.registries.ForgeRegistries;
 
 /**
  * Use this class to obtain a reference to the APIs.
@@ -30,7 +30,7 @@ public class AtlasAPI {
 	}
 
 	public static Item getAtlasItem() {
-		return Registry.ITEM.getOrDefault(new ResourceLocation("antiqueatlas:antique_atlas"));
+		return ForgeRegistries.ITEMS.getValue(new ResourceLocation("antiqueatlas:antique_atlas"));
 	}
 
 	/** API for biomes and custom tiles (i.e. dungeons, towns etc). */
