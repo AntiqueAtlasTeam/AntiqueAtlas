@@ -3,6 +3,10 @@ package hunternif.mc.impl.atlas.structure;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+
+import org.apache.commons.lang3.tuple.Triple;
 
 import com.google.common.collect.HashMultimap;
 
@@ -28,6 +32,7 @@ public class StructureHandler {
 	private static final HashMap<ResourceLocation, Tuple<ResourceLocation, ITextComponent>> STRUCTURE_PIECE_TO_MARKER_MAP = new HashMap<>();
 	private static final HashMap<ResourceLocation, Integer> STRUCTURE_PIECE_TILE_PRIORITY = new HashMap<>();
 	private static final Setter ALWAYS = (box) -> Collections.singleton(new ChunkPos(MathUtil.getCenter(box).getX() >> 4, MathUtil.getCenter(box).getZ() >> 4));
+	private static final Set<Triple<Integer, Integer, ResourceLocation>> VISITED_STRUCTURES = Collections.newSetFromMap(new ConcurrentHashMap<>());
 
 	public static void registerTile(IStructurePieceType structurePieceType, int priority, ResourceLocation textureId, Setter setter) {
 		ResourceLocation id = Registry.STRUCTURE_PIECE.getKey(structurePieceType);
@@ -71,6 +76,13 @@ public class StructureHandler {
 	public static void resolve(StructureStart<?> structureStart, ServerWorld world) {
 		ResourceLocation structureId = Registry.STRUCTURE_FEATURE.getKey(structureStart.getStructure());
 		if (STRUCTURE_PIECE_TO_MARKER_MAP.containsKey(structureId)) {
+			Triple<Integer, Integer, ResourceLocation> key = Triple.of(
+					structureStart.getBoundingBox()./*getCenter*/func_215126_f().getX(),
+					structureStart.getBoundingBox()./*getCenter*/func_215126_f().getY(),
+					structureId);
+
+			if (VISITED_STRUCTURES.contains(key)) return;
+			VISITED_STRUCTURES.add(key);
 			AtlasAPI.markers.putGlobalMarker(
 					world,
 					false,
