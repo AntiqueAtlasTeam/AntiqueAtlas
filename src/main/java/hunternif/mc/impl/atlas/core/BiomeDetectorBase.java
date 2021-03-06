@@ -7,6 +7,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import hunternif.mc.impl.atlas.AntiqueAtlasConfig;
 import hunternif.mc.impl.atlas.ext.ExtTileIdMap;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
@@ -103,6 +104,11 @@ public class BiomeDetectorBase implements IBiomeDetector {
 		int occurrence = map.getOrDefault(id, 0) + weight;
 		map.put(id, occurrence);
 	}
+	
+	@Override
+    public int getScanRadius() {
+        return AntiqueAtlasConfig.scanRadius.get();
+    }
 
 	/** If no valid biome ID is found, returns null.
 	 * @return*/

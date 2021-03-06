@@ -14,4 +14,6 @@ interface IBiomeDetector {
 	/** Finds the biome ID to be used for a given chunk. */
 	@Nullable
 	ResourceLocation getBiomeID(World world, IChunk chunk);
+	
+	int getScanRadius();
 }

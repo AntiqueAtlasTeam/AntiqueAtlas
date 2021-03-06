@@ -143,7 +143,9 @@ public class AtlasData extends WorldSavedData {
 		int rescanInterval = newScanInterval * AntiqueAtlasConfig.rescanRate.get();
 		boolean rescanRequired = AntiqueAtlasConfig.doRescan.get() && player.getEntityWorld().getGameTime() % rescanInterval == 0;
 
-		int scanRadius = AntiqueAtlasConfig.scanRadius.get();
+		IBiomeDetector biomeDetector = getBiomeDetectorForWorld(player.getEntityWorld().getDimensionKey());
+
+        int scanRadius = biomeDetector.getScanRadius();
 
 		// Look at chunks around in a circular area:
 		for (int dx = -scanRadius; dx <= scanRadius; dx++) {
