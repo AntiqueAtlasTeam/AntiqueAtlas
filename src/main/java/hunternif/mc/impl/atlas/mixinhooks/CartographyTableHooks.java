@@ -29,12 +29,12 @@ public class CartographyTableHooks {
                             Markers.API.putMarker(player.getEntityWorld(), true, AtlasItem.getAtlasID(atlas), type, new TranslationTextComponent("gui.antiqueatlas.marker.treasure"), x, z);
                         }
                     } else if (icon.getType() == MapDecoration.Type.MONUMENT) {
-                        MarkerType type = MarkerType.REGISTRY.getOrDefault(AntiqueAtlasMod.id("tower"));
+                        MarkerType type = MarkerType.REGISTRY.getOrDefault(AntiqueAtlasMod.id("monument"));
                         if (!player.getEntityWorld().isRemote()) {
                             Markers.API.putMarker(player.getEntityWorld(), true, AtlasItem.getAtlasID(atlas), type, new TranslationTextComponent("gui.antiqueatlas.marker.monument"), x, z);
                         }
                     } else if (icon.getType() == MapDecoration.Type.MANSION) {
-                        MarkerType type = MarkerType.REGISTRY.getOrDefault(AntiqueAtlasMod.id("village"));
+                        MarkerType type = MarkerType.REGISTRY.getOrDefault(AntiqueAtlasMod.id("mansion"));
                         if (!player.getEntityWorld().isRemote()) {
                             Markers.API.putMarker(player.getEntityWorld(), true, AtlasItem.getAtlasID(atlas), type, new TranslationTextComponent("gui.antiqueatlas.marker.mansion"), x, z);
                         }
