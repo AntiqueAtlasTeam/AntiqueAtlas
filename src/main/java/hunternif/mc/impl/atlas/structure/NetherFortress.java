@@ -55,11 +55,11 @@ public class NetherFortress {
 
 
 	public static void registerPieces() {
-		StructureHandler.registerTile(IStructurePieceType.NEBEF,  110, ExtTileIdMap.NETHER_BRIDGE_END_X, NetherFortress::bridgeEndX);
-		StructureHandler.registerTile(IStructurePieceType.NEBEF,  110, ExtTileIdMap.NETHER_BRIDGE_END_Z, NetherFortress::bridgeEndZ);
+		StructureHandler.registerTile(IStructurePieceType.NEBEF,  125, ExtTileIdMap.NETHER_BRIDGE_END_X, NetherFortress::bridgeEndX);
+		StructureHandler.registerTile(IStructurePieceType.NEBEF,  125, ExtTileIdMap.NETHER_BRIDGE_END_Z, NetherFortress::bridgeEndZ);
 
-		StructureHandler.registerTile(IStructurePieceType.NEBS,  100, ExtTileIdMap.NETHER_BRIDGE_X, NetherFortress::bridgeX);
-		StructureHandler.registerTile(IStructurePieceType.NEBS,  100, ExtTileIdMap.NETHER_BRIDGE_Z, NetherFortress::bridgeZ);
+		StructureHandler.registerTile(IStructurePieceType.NEBS,  130, ExtTileIdMap.NETHER_BRIDGE_X, NetherFortress::bridgeX);
+		StructureHandler.registerTile(IStructurePieceType.NEBS,  130, ExtTileIdMap.NETHER_BRIDGE_Z, NetherFortress::bridgeZ);
 
 		StructureHandler.registerTile(IStructurePieceType.NECCS, 95, ExtTileIdMap.NETHER_FORTRESS_WALL);
 		StructureHandler.registerTile(IStructurePieceType.NESCLT, 95, ExtTileIdMap.NETHER_FORTRESS_WALL);
@@ -74,6 +74,6 @@ public class NetherFortress {
 		StructureHandler.registerTile(IStructurePieceType.NECSR, 90, ExtTileIdMap.NETHER_FORTRESS_CORRIDOR_NETHER_WARTS_ROOM);
 
 		StructureHandler.registerTile(IStructurePieceType.NESCSC, 120, ExtTileIdMap.NETHER_FORTRESS_BRIDGE_SMALL_CROSSING);
-		StructureHandler.registerTile(IStructurePieceType.NECE, 120, ExtTileIdMap.NETHER_FORTRESS_BRIDGE_PLATFORM);
+		StructureHandler.registerTile(IStructurePieceType.NECE, 121, ExtTileIdMap.NETHER_FORTRESS_BRIDGE_PLATFORM);
 	}
 }
