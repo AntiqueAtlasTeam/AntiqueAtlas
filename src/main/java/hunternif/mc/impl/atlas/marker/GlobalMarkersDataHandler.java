@@ -56,7 +56,7 @@ public class GlobalMarkersDataHandler {
 
 	/** Synchronizes global markers with the connecting client. */
 	public void onPlayerLogin(ServerPlayerEntity player) {
-		//Check if for some reason the global marker data was set
+		//Check if the global marker data was set
 		if(data != null) {
 			data.syncOnPlayer(player);
 		}
