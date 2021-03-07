@@ -1,0 +1,10 @@
+{
+  "version": 1,
+  "data": {
+    "textures": {
+      "antiqueatlas:forest_flowers": 1,
+      "antiqueatlas:forest_flowers2": 1,
+      "antiqueatlas:forest_flowers3": 1
+    }
+  }
+}

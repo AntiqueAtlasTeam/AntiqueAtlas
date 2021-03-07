@@ -1,8 +1,8 @@
 package hunternif.mc.impl.atlas.client;
 
+import hunternif.mc.impl.atlas.AntiqueAtlasMod;
 import hunternif.mc.impl.atlas.client.texture.ITexture;
 import hunternif.mc.impl.atlas.util.Log;
-import hunternif.mc.impl.atlas.util.SaveData;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.util.Identifier;
@@ -14,9 +14,6 @@ import net.minecraft.world.gen.feature.ConfiguredFeatures;
 import java.util.*;
 import java.util.Map.Entry;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
-
-import static hunternif.mc.impl.atlas.client.TextureSet.*;
 
 /**
  * Maps biome IDs (or pseudo IDs) to textures. <i>Not thread-safe!</i>
@@ -26,7 +23,7 @@ import static hunternif.mc.impl.atlas.client.TextureSet.*;
  * @author Hunternif
  */
 @Environment(EnvType.CLIENT)
-public class BiomeTextureMap extends SaveData {
+public class BiomeTextureMap {
     private static final BiomeTextureMap INSTANCE = new BiomeTextureMap();
 
     public static BiomeTextureMap instance() {
@@ -37,8 +34,6 @@ public class BiomeTextureMap extends SaveData {
      * This map stores the pseudo biome texture mappings, any biome with ID <0 is assumed to be a pseudo biome
      */
     final Map<Identifier, TextureSet> textureMap = new HashMap<>();
-
-    public static final TextureSet defaultTexture = PLAINS;
 
     /**
      * Assign texture set to biome.
@@ -57,15 +52,12 @@ public class BiomeTextureMap extends SaveData {
             }
             return;
         }
-        TextureSet previous = textureMap.put(tileId, textureSet);
-        // If the old texture set is equal to the new one (i.e. has equal name
-        // and equal texture files), then there's no need to update the config.
-        if (previous == null) {
-            markDirty();
-        } else if (!previous.equals(textureSet)) {
-            Log.warn("Overwriting texture set for %d", tileId);
-            markDirty();
-        }
+
+        textureMap.put(tileId, textureSet);
+    }
+
+    public TextureSet getDefaultTexture() {
+        return TextureSetMap.instance().getByName(AntiqueAtlasMod.id("plains"));
     }
 
     /**
@@ -80,66 +72,66 @@ public class BiomeTextureMap extends SaveData {
 
         switch (biome.getCategory()) {
             case SWAMP:
-                setTexture(biome, biome.getScale() >= 0.25f ? SWAMP_HILLS : SWAMP);
+                setTexture(biome, biome.getScale() >= 0.25f ? TextureSetMap.instance().getByName(AntiqueAtlasMod.id("swamp_hills")) : TextureSetMap.instance().getByName(AntiqueAtlasMod.id("swamp")));
                 break;
             case OCEAN:
             case RIVER:
-                setTexture(biome, biome.getPrecipitation() == Biome.Precipitation.SNOW ? ICE : WATER);
+                setTexture(biome, biome.getPrecipitation() == Biome.Precipitation.SNOW ? TextureSetMap.instance().getByName(AntiqueAtlasMod.id("ice")) : TextureSetMap.instance().getByName(AntiqueAtlasMod.id("water")));
                 break;
             case BEACH:
-                setTexture(biome, SHORE); // TODO ROCK_SHORE
+                setTexture(biome, TextureSetMap.instance().getByName(AntiqueAtlasMod.id("shore"))); // TODO ROCK_SHORE
                 break;
             case JUNGLE:
-                setTexture(biome, biome.getScale() >= 0.25f ? JUNGLE_HILLS : JUNGLE); // TODO JUNGLE_CLIFFS
+                setTexture(biome, biome.getScale() >= 0.25f ? TextureSetMap.instance().getByName(AntiqueAtlasMod.id("jungle_hills")) : TextureSetMap.instance().getByName(AntiqueAtlasMod.id("jungle"))); // TODO JUNGLE_CLIFFS
                 break;
             case SAVANNA:
-                setTexture(biome, biome.getDepth() >= 1.0f ? PLATEAU_SAVANNA : SAVANNA);
+                setTexture(biome, biome.getDepth() >= 1.0f ? TextureSetMap.instance().getByName(AntiqueAtlasMod.id("plateau_savanna")) : TextureSetMap.instance().getByName(AntiqueAtlasMod.id("savanna")));
                 break;
             case MESA:
-                setTexture(biome, PLATEAU_MESA); // TODO PLATEAU_MESA_TREES
+                setTexture(biome, TextureSetMap.instance().getByName(AntiqueAtlasMod.id("plateau_mesa"))); // TODO PLATEAU_MESA_TREES
                 break;
             case FOREST:
                 setTexture(biome, biome.getPrecipitation() == Biome.Precipitation.SNOW ?
-                        (biome.getScale() >= 0.25f ? SNOW_PINES_HILLS : SNOW_PINES) :
-                        (biome.getScale() >= 0.25f ? FOREST_HILLS : FOREST)
+                        (biome.getScale() >= 0.25f ? TextureSetMap.instance().getByName(AntiqueAtlasMod.id("snow_pines_hills")) : TextureSetMap.instance().getByName(AntiqueAtlasMod.id("snow_pines"))) :
+                        (biome.getScale() >= 0.25f ? TextureSetMap.instance().getByName(AntiqueAtlasMod.id("forest_hills")) : TextureSetMap.instance().getByName(AntiqueAtlasMod.id("forest")))
                 );
                 break;
             case PLAINS:
                 setTexture(biome, biome.getPrecipitation() == Biome.Precipitation.SNOW ?
-                        (biome.getScale() >= 0.25f ? SNOW_HILLS : SNOW) :
-                        (biome.getScale() >= 0.25f ? HILLS : PLAINS)
+                        (biome.getScale() >= 0.25f ? TextureSetMap.instance().getByName(AntiqueAtlasMod.id("snow_hills")) : TextureSetMap.instance().getByName(AntiqueAtlasMod.id("snow"))) :
+                        (biome.getScale() >= 0.25f ? TextureSetMap.instance().getByName(AntiqueAtlasMod.id("hills")) : TextureSetMap.instance().getByName(AntiqueAtlasMod.id("plains")))
                 );
                 break;
             case ICY:
-                setTexture(biome, biome.getScale() >= 0.25f ? MOUNTAINS_SNOW_CAPS : ICE_SPIKES); // TODO also snowy mountains/tundra?
+                setTexture(biome, biome.getScale() >= 0.25f ? TextureSetMap.instance().getByName(AntiqueAtlasMod.id("mountains_snow_caps")) : TextureSetMap.instance().getByName(AntiqueAtlasMod.id("ice_spikes"))); // TODO also snowy mountains/tundra?
                 break;
             case DESERT:
-                setTexture(biome, biome.getScale() >= 0.25f ? DESERT_HILLS : DESERT);
+                setTexture(biome, biome.getScale() >= 0.25f ? TextureSetMap.instance().getByName(AntiqueAtlasMod.id("desert_hills")) : TextureSetMap.instance().getByName(AntiqueAtlasMod.id("desert")));
                 break;
             case TAIGA:
-                setTexture(biome, SNOW); // TODO
+                setTexture(biome, TextureSetMap.instance().getByName(AntiqueAtlasMod.id("snow"))); // TODO
                 break;
             case EXTREME_HILLS:
-                setTexture(biome, biome.getScale() >= 0.25f ? MOUNTAINS : HILLS);
+                setTexture(biome, biome.getScale() >= 0.25f ? TextureSetMap.instance().getByName(AntiqueAtlasMod.id("mountains")) : TextureSetMap.instance().getByName(AntiqueAtlasMod.id("hills")));
                 break;
             case THEEND:
                 List<List<Supplier<ConfiguredFeature<?, ?>>>> features = biome.getGenerationSettings().getFeatures();
                 boolean has_chorus_plant = features.stream().anyMatch(supplier -> supplier.stream().anyMatch(step -> step.get() == ConfiguredFeatures.CHORUS_PLANT));
                 if (has_chorus_plant) {
-                    setTexture(biome, END_ISLAND_PLANTS);
+                    setTexture(biome, TextureSetMap.instance().getByName(AntiqueAtlasMod.id("end_island_plants")));
                 } else {
-                    setTexture(biome, END_ISLAND);
+                    setTexture(biome, TextureSetMap.instance().getByName(AntiqueAtlasMod.id("end_island")));
                 }
                 break;
             case NONE:
-                setTexture(biome, END_VOID);
+                setTexture(biome, TextureSetMap.instance().getByName(AntiqueAtlasMod.id("end_void")));
                 break;
             default:
-                setTexture(biome, defaultTexture);
+                Log.warn("Couldn't auto-registered standard texture set for biome %s", BuiltinRegistries.BIOME.getId(biome).toString());
                 break;
         }
 
-        Log.info("Auto-registered standard texture set for biome %s", BuiltinRegistries.BIOME.getId(biome).toString());
+        Log.info("Auto-registered standard texture set for biome %s: %s", BuiltinRegistries.BIOME.getId(biome).toString(),  textureMap.get(BuiltinRegistries.BIOME.getId(biome)).name);
     }
 
     /**
@@ -148,7 +140,6 @@ public class BiomeTextureMap extends SaveData {
     public void checkRegistration(Biome biome) {
         if (!isRegistered(biome)) {
             autoRegister(biome);
-            markDirty();
         }
     }
 
@@ -157,7 +148,7 @@ public class BiomeTextureMap extends SaveData {
      */
     private void checkRegistration(Identifier id) {
         if (!isRegistered(id)) {
-            setTexture(id, defaultTexture);
+            setTexture(id, getDefaultTexture());
         }
     }
 
@@ -174,7 +165,7 @@ public class BiomeTextureMap extends SaveData {
      */
     public TextureSet getTextureSet(Identifier tile) {
         if (tile == null) {
-            return defaultTexture;
+            return getDefaultTexture();
         }
 
         Biome biome = BuiltinRegistries.BIOME.get(tile);
@@ -195,7 +186,7 @@ public class BiomeTextureMap extends SaveData {
         List<Identifier> list = new ArrayList<>();
 
         for (Entry<Identifier, TextureSet> entry : textureMap.entrySet()) {
-            Arrays.stream(entry.getValue().textures).map(iTexture -> list.add(iTexture.getTexture()));
+            Arrays.stream(entry.getValue().textures).forEach(iTexture -> list.add(iTexture.getTexture()));
         }
 
         return list;

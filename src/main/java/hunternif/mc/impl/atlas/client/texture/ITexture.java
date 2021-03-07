@@ -12,6 +12,10 @@ import net.minecraft.util.Identifier;
 @Environment(EnvType.CLIENT)
 public interface ITexture {
 
+    /**
+     * Returns path of the texture used for drawing
+     * @return the physical path to the image file used as texture
+     */
     Identifier getTexture();
 
     int width();

@@ -50,7 +50,7 @@ public class ExtTileTextureMap extends SaveData {
      */
     public TextureSet getTexture(Identifier tileName) {
         TextureSet textureSet = textureMap.get(tileName);
-        return textureSet == null ? BiomeTextureMap.defaultTexture : textureSet;
+        return textureSet == null ? BiomeTextureMap.instance().getDefaultTexture() : textureSet;
     }
 
     public boolean isRegistered(Identifier tileName) {

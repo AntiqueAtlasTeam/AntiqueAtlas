@@ -1,0 +1,9 @@
+{
+  "version": 1,
+  "data": {
+    "textures": {
+      "antiqueatlas:jungle": 1,
+      "antiqueatlas:jungle2": 1
+    }
+  }
+}

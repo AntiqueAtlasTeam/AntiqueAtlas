@@ -1,0 +1,9 @@
+{
+  "version": 1,
+  "data": {
+    "textures": {
+      "antiqueatlas:birch": 1,
+      "antiqueatlas:birch2": 1
+    }
+  }
+}

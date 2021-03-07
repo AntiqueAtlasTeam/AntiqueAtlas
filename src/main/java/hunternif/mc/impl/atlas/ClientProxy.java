@@ -1,6 +1,7 @@
 package hunternif.mc.impl.atlas;
 
 import hunternif.mc.impl.atlas.client.*;
+import hunternif.mc.impl.atlas.client.texture.ITexture;
 import hunternif.mc.impl.atlas.ext.ExtTileIdMap;
 import hunternif.mc.impl.atlas.marker.MarkerTextureConfig;
 import hunternif.mc.impl.atlas.registry.MarkerType;
@@ -17,45 +18,35 @@ import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.BiomeKeys;
 
-import static hunternif.mc.impl.atlas.client.TextureSet.*;
+import java.util.HashMap;
+import java.util.Map;
 
 @Environment(EnvType.CLIENT)
 public class ClientProxy implements SimpleSynchronousResourceReloadListener {
+	public final static Map<Identifier, ITexture> TEXTURE_MAP  = new HashMap<>();
 	private static TextureSetMap textureSetMap;
-	private static TextureSetConfig textureSetConfig;
-	private static BiomeTextureMap textureMap;
-	private static MarkerTextureConfig markerTextureConfig;
+	private static BiomeTextureMap tileTextureMap;
 
 	public void initClient() {
 		//TODO Enforce texture config loading process as follows:
 		// 1. pre-init: Antique Atlas defaults are loaded, config files are read.
 		// 2. init: mods set their custom textures. Those loaded from the config must not be overwritten!
 
-		textureSetMap = TextureSetMap.instance();
-		textureSetConfig = new TextureSetConfig(textureSetMap);
-		// Register default values before the config file loads, possibly overwriting the,:
-		registerDefaultTextureSets(textureSetMap);
-		// Prevent rewriting of the config while no changes have been made:
-		textureSetMap.setDirty(false);
+		TextureConfig textureConfig = new TextureConfig(TEXTURE_MAP);
+		ResourceManagerHelper.get(ResourceType.CLIENT_RESOURCES).registerReloadListener(textureConfig);
 
+		textureSetMap = TextureSetMap.instance();
+		TextureSetConfig textureSetConfig = new TextureSetConfig(textureSetMap);
 		ResourceManagerHelper.get(ResourceType.CLIENT_RESOURCES).registerReloadListener(textureSetConfig);
 
 		// Legacy file name:
 		ResourceManagerHelper.get(ResourceType.CLIENT_RESOURCES).registerReloadListener(this);
 
 		// init
-		textureMap = BiomeTextureMap.instance();
-		registerVanillaCustomTileTextures();
+		tileTextureMap = BiomeTextureMap.instance();
 
-		// Prevent rewriting of the config while no changes have been made:
-		textureMap.setDirty(false);
-		assignVanillaBiomeTextures();
-
-		markerTextureConfig = new MarkerTextureConfig();
+		MarkerTextureConfig markerTextureConfig = new MarkerTextureConfig();
 		ResourceManagerHelper.get(ResourceType.CLIENT_RESOURCES).registerReloadListener(markerTextureConfig);
-
-		// Prevent rewriting of the config while no changes have been made:
-//		MarkerType.REGISTRY.setDirty(true);
 
 		for (MarkerType type : MarkerType.REGISTRY) {
 			type.initMips();
@@ -68,105 +59,6 @@ public class ClientProxy implements SimpleSynchronousResourceReloadListener {
 
 	}
 
-	@Environment(EnvType.CLIENT)
-	private void registerDefaultTextureSets(TextureSetMap map) {
-		map.register(ICE);
-		map.register(SHORE);
-		map.register(ROCK_SHORE);
-		map.register(DESERT);
-		map.register(PLAINS);
-		map.register(SUNFLOWERS);
-		map.register(HILLS);
-		map.register(DESERT_HILLS);
-
-		map.register(ICE_SPIKES);
-		map.register(SNOW_PINES);
-		map.register(SNOW_PINES_HILLS);
-		map.register(SNOW_HILLS);
-		map.register(SNOW);
-
-		map.register(MOUNTAINS_NAKED);
-		map.register(MOUNTAINS);
-		map.register(MOUNTAINS_SNOW_CAPS);
-		map.register(MOUNTAINS_ALL);
-
-		map.register(FOREST);
-		map.register(FOREST_HILLS);
-		map.register(FOREST_FLOWERS);
-		map.register(DENSE_FOREST);
-		map.register(DENSE_FOREST_HILLS);
-		map.register(BIRCH);
-		map.register(BIRCH_HILLS);
-		map.register(TALL_BIRCH);
-		map.register(TALL_BIRCH_HILLS);
-		map.register(DENSE_BIRCH);
-		map.register(JUNGLE);
-		map.register(JUNGLE_HILLS);
-		map.register(JUNGLE_CLIFFS);
-		map.register(JUNGLE_EDGE);
-		map.register(JUNGLE_EDGE_HILLS);
-		map.register(PINES);
-		map.register(PINES_HILLS);
-		map.register(SAVANNA);
-		map.register(SAVANNA_CLIFFS);
-		map.register(PLATEAU_SAVANNA_M);
-		map.register(MESA);
-		map.register(BRYCE);
-		map.register(PLATEAU_MESA);
-		map.register(PLATEAU_MESA_LOW);
-		map.register(PLATEAU_MESA_TREES);
-		map.register(PLATEAU_MESA_TREES_LOW);
-		map.register(PLATEAU_SAVANNA);
-
-		map.register(MEGA_SPRUCE);
-		map.register(MEGA_SPRUCE_HILLS);
-		map.register(MEGA_TAIGA);
-		map.register(MEGA_TAIGA_HILLS);
-
-		map.register(SWAMP);
-		map.register(SWAMP_HILLS);
-		map.register(MUSHROOM);
-		map.register(WATER);
-		map.register(LAVA);
-		map.register(LAVA_SHORE);
-		map.register(CAVE_WALLS);
-		map.register(RAVINE);
-
-		map.register(HOUSE);
-		map.register(FENCE);
-		map.register(LIBRARY);
-		map.register(L_HOUSE);
-		map.register(SMITHY);
-		map.register(FARMLAND_LARGE);
-		map.register(FARMLAND_SMALL);
-		map.register(WELL);
-		map.register(VILLAGE_TORCH);
-//		map.register(VILLAGE_PATH_X);
-//		map.register(VILLAGE_PATH_Z);
-		map.register(HUT);
-		map.register(HOUSE_SMALL);
-		map.register(BUTCHERS_SHOP);
-		map.register(CHURCH);
-
-		map.register(SOUL_SAND_VALLEY);
-
-		map.register(NETHER_BRIDGE);
-		map.register(NETHER_BRIDGE_X);
-		map.register(NETHER_BRIDGE_Z);
-		map.register(NETHER_BRIDGE_END_X);
-		map.register(NETHER_BRIDGE_END_Z);
-		map.register(NETHER_BRIDGE_GATE);
-		map.register(NETHER_TOWER);
-		map.register(NETHER_WALL);
-		map.register(NETHER_HALL);
-		map.register(NETHER_FORT_STAIRS);
-		map.register(NETHER_THRONE);
-
-		map.register(END_ISLAND);
-		map.register(END_ISLAND_PLANTS);
-		map.register(END_VOID);
-	}
-
 	/** Assign default textures to vanilla biomes. The textures are assigned
 	 * only if the biome was not in the config. This prevents unnecessary
 	 * overwriting, to aid people who manually modify the config. */
@@ -174,58 +66,58 @@ public class ClientProxy implements SimpleSynchronousResourceReloadListener {
 		// Since biome categories are now vanilla, we only handle the
 		// "edge cases".
 
-		setBiomeTextureIfNone(BiomeKeys.ICE_SPIKES, ICE_SPIKES); // this is a biome mutation
-		setBiomeTextureIfNone(BiomeKeys.SUNFLOWER_PLAINS, SUNFLOWERS);
-		setBiomeTextureIfNone(BiomeKeys.SNOWY_BEACH, SHORE);
-		setBiomeTextureIfNone(BiomeKeys.STONE_SHORE, ROCK_SHORE);
+		setBiomeTextureIfNone(BiomeKeys.ICE_SPIKES, textureSetMap.getByName(AntiqueAtlasMod.id("ice_spikes")));
+		setBiomeTextureIfNone(BiomeKeys.SUNFLOWER_PLAINS, textureSetMap.getByName(AntiqueAtlasMod.id("sunflowers")));
+		setBiomeTextureIfNone(BiomeKeys.SNOWY_BEACH, textureSetMap.getByName(AntiqueAtlasMod.id("shore")));
+		setBiomeTextureIfNone(BiomeKeys.STONE_SHORE, textureSetMap.getByName(AntiqueAtlasMod.id("rock_shore")));
 
-		setBiomeTextureIfNone(BiomeKeys.SNOWY_MOUNTAINS, MOUNTAINS_SNOW_CAPS);
-		setBiomeTextureIfNone(BiomeKeys.MOUNTAINS, MOUNTAINS_ALL);
-		setBiomeTextureIfNone(BiomeKeys.SNOWY_TAIGA_MOUNTAINS, MOUNTAINS_SNOW_CAPS);
-		setBiomeTextureIfNone(BiomeKeys.FOREST, FOREST);
+		setBiomeTextureIfNone(BiomeKeys.SNOWY_MOUNTAINS, textureSetMap.getByName(AntiqueAtlasMod.id("mountains_snow_caps")));
+		setBiomeTextureIfNone(BiomeKeys.MOUNTAINS, textureSetMap.getByName(AntiqueAtlasMod.id("mountains_all")));
+		setBiomeTextureIfNone(BiomeKeys.SNOWY_TAIGA_MOUNTAINS, textureSetMap.getByName(AntiqueAtlasMod.id("mountains_snow_caps")));
+		setBiomeTextureIfNone(BiomeKeys.FOREST, textureSetMap.getByName(AntiqueAtlasMod.id("forest")));
 
-		setBiomeTextureIfNone(BiomeKeys.FLOWER_FOREST, FOREST_FLOWERS);
-		setBiomeTextureIfNone(BiomeKeys.BIRCH_FOREST, BIRCH);
-		setBiomeTextureIfNone(BiomeKeys.TALL_BIRCH_FOREST, TALL_BIRCH);
-		setBiomeTextureIfNone(BiomeKeys.BIRCH_FOREST_HILLS, BIRCH_HILLS);
-		setBiomeTextureIfNone(BiomeKeys.TALL_BIRCH_HILLS, TALL_BIRCH_HILLS);
-		setBiomeTextureIfNone(BiomeKeys.JUNGLE, JUNGLE);
-		setBiomeTextureIfNone(BiomeKeys.MODIFIED_JUNGLE_EDGE, JUNGLE_CLIFFS);
-		setBiomeTextureIfNone(BiomeKeys.JUNGLE_HILLS, JUNGLE_HILLS);
-		setBiomeTextureIfNone(BiomeKeys.JUNGLE_EDGE, JUNGLE_EDGE);
-		setBiomeTextureIfNone(BiomeKeys.TAIGA, PINES);
-		setBiomeTextureIfNone(BiomeKeys.TAIGA_HILLS, PINES_HILLS);
-		setBiomeTextureIfNone(BiomeKeys.TAIGA_HILLS, PINES_HILLS);
-		setBiomeTextureIfNone(BiomeKeys.TAIGA_MOUNTAINS, PINES_HILLS);
-		setBiomeTextureIfNone(BiomeKeys.SNOWY_TAIGA, SNOW_PINES);
-		setBiomeTextureIfNone(BiomeKeys.SNOWY_TAIGA_HILLS, SNOW_PINES_HILLS);
-		setBiomeTextureIfNone(BiomeKeys.SNOWY_TAIGA_MOUNTAINS, SNOW_PINES_HILLS);
-		setBiomeTextureIfNone(BiomeKeys.GIANT_TREE_TAIGA, MEGA_TAIGA);
-		setBiomeTextureIfNone(BiomeKeys.GIANT_SPRUCE_TAIGA, MEGA_SPRUCE);
-		setBiomeTextureIfNone(BiomeKeys.GIANT_TREE_TAIGA_HILLS, MEGA_TAIGA_HILLS);
-		setBiomeTextureIfNone(BiomeKeys.GIANT_SPRUCE_TAIGA_HILLS, MEGA_SPRUCE_HILLS);
+		setBiomeTextureIfNone(BiomeKeys.FLOWER_FOREST, textureSetMap.getByName(AntiqueAtlasMod.id("forest_flowers")));
+		setBiomeTextureIfNone(BiomeKeys.BIRCH_FOREST, textureSetMap.getByName(AntiqueAtlasMod.id("birch")));
+		setBiomeTextureIfNone(BiomeKeys.TALL_BIRCH_FOREST, textureSetMap.getByName(AntiqueAtlasMod.id("tall_birch")));
+		setBiomeTextureIfNone(BiomeKeys.BIRCH_FOREST_HILLS, textureSetMap.getByName(AntiqueAtlasMod.id("birch_hills")));
+		setBiomeTextureIfNone(BiomeKeys.TALL_BIRCH_HILLS, textureSetMap.getByName(AntiqueAtlasMod.id("tall_birch_hills")));
+		setBiomeTextureIfNone(BiomeKeys.JUNGLE, textureSetMap.getByName(AntiqueAtlasMod.id("jungle")));
+		setBiomeTextureIfNone(BiomeKeys.MODIFIED_JUNGLE_EDGE, textureSetMap.getByName(AntiqueAtlasMod.id("jungle_cliffs")));
+		setBiomeTextureIfNone(BiomeKeys.JUNGLE_HILLS, textureSetMap.getByName(AntiqueAtlasMod.id("jungle_hills")));
+		setBiomeTextureIfNone(BiomeKeys.JUNGLE_EDGE, textureSetMap.getByName(AntiqueAtlasMod.id("jungle_edge")));
+		setBiomeTextureIfNone(BiomeKeys.TAIGA, textureSetMap.getByName(AntiqueAtlasMod.id("pines")));
+		setBiomeTextureIfNone(BiomeKeys.TAIGA_HILLS, textureSetMap.getByName(AntiqueAtlasMod.id("pines_hills")));
+		setBiomeTextureIfNone(BiomeKeys.TAIGA_HILLS, textureSetMap.getByName(AntiqueAtlasMod.id("pines_hills")));
+		setBiomeTextureIfNone(BiomeKeys.TAIGA_MOUNTAINS, textureSetMap.getByName(AntiqueAtlasMod.id("pines_hills")));
+		setBiomeTextureIfNone(BiomeKeys.SNOWY_TAIGA, textureSetMap.getByName(AntiqueAtlasMod.id("snow_pines")));
+		setBiomeTextureIfNone(BiomeKeys.SNOWY_TAIGA_HILLS, textureSetMap.getByName(AntiqueAtlasMod.id("snow_pines_hills")));
+		setBiomeTextureIfNone(BiomeKeys.SNOWY_TAIGA_MOUNTAINS, textureSetMap.getByName(AntiqueAtlasMod.id("snow_pines_hills")));
+		setBiomeTextureIfNone(BiomeKeys.GIANT_TREE_TAIGA, textureSetMap.getByName(AntiqueAtlasMod.id("mega_taiga")));
+		setBiomeTextureIfNone(BiomeKeys.GIANT_SPRUCE_TAIGA, textureSetMap.getByName(AntiqueAtlasMod.id("mega_spruce")));
+		setBiomeTextureIfNone(BiomeKeys.GIANT_TREE_TAIGA_HILLS, textureSetMap.getByName(AntiqueAtlasMod.id("mega_taiga_hills")));
+		setBiomeTextureIfNone(BiomeKeys.GIANT_SPRUCE_TAIGA_HILLS, textureSetMap.getByName(AntiqueAtlasMod.id("mega_spruce_hills")));
 
-		setBiomeTextureIfNone(BiomeKeys.NETHER_WASTES, CAVE_WALLS);
-		setBiomeTextureIfNone(BiomeKeys.SOUL_SAND_VALLEY, SOUL_SAND_VALLEY);
-		setBiomeTextureIfNone(BiomeKeys.CRIMSON_FOREST, FOREST);
-		setBiomeTextureIfNone(BiomeKeys.WARPED_FOREST, JUNGLE);
-		setBiomeTextureIfNone(BiomeKeys.BASALT_DELTAS, MOUNTAINS_ALL);
+		setBiomeTextureIfNone(BiomeKeys.NETHER_WASTES, textureSetMap.getByName(AntiqueAtlasMod.id("cave_walls")));
+		setBiomeTextureIfNone(BiomeKeys.SOUL_SAND_VALLEY, textureSetMap.getByName(AntiqueAtlasMod.id("soul_sand_valley")));
+		setBiomeTextureIfNone(BiomeKeys.CRIMSON_FOREST, textureSetMap.getByName(AntiqueAtlasMod.id("forest")));
+		setBiomeTextureIfNone(BiomeKeys.WARPED_FOREST, textureSetMap.getByName(AntiqueAtlasMod.id("jungle")));
+		setBiomeTextureIfNone(BiomeKeys.BASALT_DELTAS, textureSetMap.getByName(AntiqueAtlasMod.id("mountains_all")));
 
-		setBiomeTextureIfNone(BiomeKeys.THE_END, END_ISLAND);
+		setBiomeTextureIfNone(BiomeKeys.THE_END, textureSetMap.getByName(AntiqueAtlasMod.id("end_island")));
 
-		setBiomeTextureIfNone(BiomeKeys.MUSHROOM_FIELDS, MUSHROOM);
-		setBiomeTextureIfNone(BiomeKeys.MUSHROOM_FIELD_SHORE, SHORE);
+		setBiomeTextureIfNone(BiomeKeys.MUSHROOM_FIELDS, textureSetMap.getByName(AntiqueAtlasMod.id("mushroom")));
+		setBiomeTextureIfNone(BiomeKeys.MUSHROOM_FIELD_SHORE, textureSetMap.getByName(AntiqueAtlasMod.id("shore")));
 
-		setBiomeTextureIfNone(BiomeKeys.WOODED_BADLANDS_PLATEAU, PLATEAU_MESA_TREES);
-		setBiomeTextureIfNone(BiomeKeys.BADLANDS_PLATEAU, PLATEAU_MESA);
-		setBiomeTextureIfNone(BiomeKeys.ERODED_BADLANDS, MESA);
-		setBiomeTextureIfNone(BiomeKeys.BADLANDS, MESA);
-		setBiomeTextureIfNone(BiomeKeys.SAVANNA, SAVANNA);
-		setBiomeTextureIfNone(BiomeKeys.SAVANNA_PLATEAU, SAVANNA_CLIFFS);
-		setBiomeTextureIfNone(BiomeKeys.SHATTERED_SAVANNA, SAVANNA);
-		setBiomeTextureIfNone(BiomeKeys.SHATTERED_SAVANNA_PLATEAU, SAVANNA_CLIFFS);
+		setBiomeTextureIfNone(BiomeKeys.WOODED_BADLANDS_PLATEAU, textureSetMap.getByName(AntiqueAtlasMod.id("plateau_mesa_trees")));
+		setBiomeTextureIfNone(BiomeKeys.BADLANDS_PLATEAU, textureSetMap.getByName(AntiqueAtlasMod.id("plateau_mesa")));
+		setBiomeTextureIfNone(BiomeKeys.ERODED_BADLANDS, textureSetMap.getByName(AntiqueAtlasMod.id("mesa")));
+		setBiomeTextureIfNone(BiomeKeys.BADLANDS, textureSetMap.getByName(AntiqueAtlasMod.id("mesa")));
+		setBiomeTextureIfNone(BiomeKeys.SAVANNA, textureSetMap.getByName(AntiqueAtlasMod.id("savanna")));
+		setBiomeTextureIfNone(BiomeKeys.SAVANNA_PLATEAU, textureSetMap.getByName(AntiqueAtlasMod.id("savanna_cliffs")));
+		setBiomeTextureIfNone(BiomeKeys.SHATTERED_SAVANNA, textureSetMap.getByName(AntiqueAtlasMod.id("savanna")));
+		setBiomeTextureIfNone(BiomeKeys.SHATTERED_SAVANNA_PLATEAU, textureSetMap.getByName(AntiqueAtlasMod.id("savanna_cliffs")));
 
-		setBiomeTextureIfNone(BiomeKeys.DEEP_FROZEN_OCEAN, ICE_SPIKES);
+		setBiomeTextureIfNone(BiomeKeys.DEEP_FROZEN_OCEAN, textureSetMap.getByName(AntiqueAtlasMod.id("ice_spikes")));
 
 		// Now let's register every other biome, they'll come from other mods
 		for (Biome biome : BuiltinRegistries.BIOME) {
@@ -236,8 +128,8 @@ public class ClientProxy implements SimpleSynchronousResourceReloadListener {
 	/** Only applies the change if no texture is registered for this biome.
 	 * This prevents overwriting of the config when there is no real change. */
 	private void setBiomeTextureIfNone(RegistryKey<Biome> biome, TextureSet textureSet) {
-		if(!textureMap.isRegistered(biome.getValue())) {
-			textureMap.setTexture(biome.getValue(), textureSet);
+		if(!tileTextureMap.isRegistered(biome.getValue())) {
+			tileTextureMap.setTexture(biome.getValue(), textureSet);
 		}
 	}
 
@@ -245,47 +137,47 @@ public class ClientProxy implements SimpleSynchronousResourceReloadListener {
 	 * The pseudo-biomes are: villages houses, village territory and lava. */
 	private void registerVanillaCustomTileTextures() {
 		// Village:
-		setCustomTileTextureIfNone(ExtTileIdMap.TILE_VILLAGE_LIBRARY, LIBRARY);
-		setCustomTileTextureIfNone(ExtTileIdMap.TILE_VILLAGE_SMITHY, SMITHY);
-		setCustomTileTextureIfNone(ExtTileIdMap.TILE_VILLAGE_L_HOUSE, L_HOUSE);
-		setCustomTileTextureIfNone(ExtTileIdMap.TILE_VILLAGE_FARMLAND_LARGE, FARMLAND_LARGE);
-		setCustomTileTextureIfNone(ExtTileIdMap.TILE_VILLAGE_FARMLAND_SMALL, FARMLAND_SMALL);
-		setCustomTileTextureIfNone(ExtTileIdMap.TILE_VILLAGE_WELL, WELL);
-		setCustomTileTextureIfNone(ExtTileIdMap.TILE_VILLAGE_TORCH, VILLAGE_TORCH);
+		setCustomTileTextureIfNone(ExtTileIdMap.TILE_VILLAGE_LIBRARY, textureSetMap.getByName(AntiqueAtlasMod.id("library")));
+		setCustomTileTextureIfNone(ExtTileIdMap.TILE_VILLAGE_SMITHY, textureSetMap.getByName(AntiqueAtlasMod.id("smithy")));
+		setCustomTileTextureIfNone(ExtTileIdMap.TILE_VILLAGE_L_HOUSE, textureSetMap.getByName(AntiqueAtlasMod.id("l_house")));
+		setCustomTileTextureIfNone(ExtTileIdMap.TILE_VILLAGE_FARMLAND_LARGE, textureSetMap.getByName(AntiqueAtlasMod.id("farmland_large")));
+		setCustomTileTextureIfNone(ExtTileIdMap.TILE_VILLAGE_FARMLAND_SMALL, textureSetMap.getByName(AntiqueAtlasMod.id("farmland_small")));
+		setCustomTileTextureIfNone(ExtTileIdMap.TILE_VILLAGE_WELL, textureSetMap.getByName(AntiqueAtlasMod.id("well")));
+		setCustomTileTextureIfNone(ExtTileIdMap.TILE_VILLAGE_TORCH, textureSetMap.getByName(AntiqueAtlasMod.id("village_torch")));
 //		setCustomTileTextureIfNone(ExtTileIdMap.TILE_VILLAGE_PATH_X, VILLAGE_PATH_X);
 //		setCustomTileTextureIfNone(ExtTileIdMap.TILE_VILLAGE_PATH_Z, VILLAGE_PATH_Z);
-		setCustomTileTextureIfNone(ExtTileIdMap.TILE_VILLAGE_HUT, HUT);
-		setCustomTileTextureIfNone(ExtTileIdMap.TILE_VILLAGE_SMALL_HOUSE, HOUSE_SMALL);
-		setCustomTileTextureIfNone(ExtTileIdMap.TILE_VILLAGE_BUTCHERS_SHOP, BUTCHERS_SHOP);
-		setCustomTileTextureIfNone(ExtTileIdMap.TILE_VILLAGE_CHURCH, CHURCH);
+		setCustomTileTextureIfNone(ExtTileIdMap.TILE_VILLAGE_HUT, textureSetMap.getByName(AntiqueAtlasMod.id("hut")));
+		setCustomTileTextureIfNone(ExtTileIdMap.TILE_VILLAGE_SMALL_HOUSE, textureSetMap.getByName(AntiqueAtlasMod.id("house_small")));
+		setCustomTileTextureIfNone(ExtTileIdMap.TILE_VILLAGE_BUTCHERS_SHOP, textureSetMap.getByName(AntiqueAtlasMod.id("butchers_shop")));
+		setCustomTileTextureIfNone(ExtTileIdMap.TILE_VILLAGE_CHURCH, textureSetMap.getByName(AntiqueAtlasMod.id("church")));
 
 		// Nether & Nether Fortress:
-		setCustomTileTextureIfNone(ExtTileIdMap.TILE_LAVA, LAVA);
-		setCustomTileTextureIfNone(ExtTileIdMap.TILE_LAVA_SHORE, LAVA_SHORE);
-		setCustomTileTextureIfNone(ExtTileIdMap.NETHER_FORTRESS_BRIDGE_CROSSING, NETHER_BRIDGE);
-		setCustomTileTextureIfNone(ExtTileIdMap.NETHER_BRIDGE_X, NETHER_BRIDGE_X);
-		setCustomTileTextureIfNone(ExtTileIdMap.NETHER_BRIDGE_Z, NETHER_BRIDGE_Z);
-		setCustomTileTextureIfNone(ExtTileIdMap.NETHER_BRIDGE_END_X, NETHER_BRIDGE_END_X);
-		setCustomTileTextureIfNone(ExtTileIdMap.NETHER_BRIDGE_END_Z, NETHER_BRIDGE_END_Z);
-		setCustomTileTextureIfNone(ExtTileIdMap.NETHER_FORTRESS_BRIDGE_SMALL_CROSSING, NETHER_BRIDGE_GATE);
-		setCustomTileTextureIfNone(ExtTileIdMap.NETHER_FORTRESS_BRIDGE_STAIRS, NETHER_TOWER);
-		setCustomTileTextureIfNone(ExtTileIdMap.NETHER_FORTRESS_WALL, NETHER_WALL);
-		setCustomTileTextureIfNone(ExtTileIdMap.NETHER_FORTRESS_EXIT, NETHER_HALL);
-		setCustomTileTextureIfNone(ExtTileIdMap.NETHER_FORTRESS_CORRIDOR_NETHER_WARTS_ROOM, NETHER_FORT_STAIRS);
-		setCustomTileTextureIfNone(ExtTileIdMap.NETHER_FORTRESS_BRIDGE_PLATFORM, NETHER_THRONE);
+		setCustomTileTextureIfNone(ExtTileIdMap.TILE_LAVA, textureSetMap.getByName(AntiqueAtlasMod.id("lava")));
+		setCustomTileTextureIfNone(ExtTileIdMap.TILE_LAVA_SHORE, textureSetMap.getByName(AntiqueAtlasMod.id("lava_shore")));
+		setCustomTileTextureIfNone(ExtTileIdMap.NETHER_FORTRESS_BRIDGE_CROSSING, textureSetMap.getByName(AntiqueAtlasMod.id("nether_bridge")));
+		setCustomTileTextureIfNone(ExtTileIdMap.NETHER_BRIDGE_X, textureSetMap.getByName(AntiqueAtlasMod.id("nether_bridge_x")));
+		setCustomTileTextureIfNone(ExtTileIdMap.NETHER_BRIDGE_Z, textureSetMap.getByName(AntiqueAtlasMod.id("nether_bridge_z")));
+		setCustomTileTextureIfNone(ExtTileIdMap.NETHER_BRIDGE_END_X, textureSetMap.getByName(AntiqueAtlasMod.id("nether_bridge_end_x")));
+		setCustomTileTextureIfNone(ExtTileIdMap.NETHER_BRIDGE_END_Z, textureSetMap.getByName(AntiqueAtlasMod.id("nether_bridge_end_z")));
+		setCustomTileTextureIfNone(ExtTileIdMap.NETHER_FORTRESS_BRIDGE_SMALL_CROSSING, textureSetMap.getByName(AntiqueAtlasMod.id("nether_bridge_gate")));
+		setCustomTileTextureIfNone(ExtTileIdMap.NETHER_FORTRESS_BRIDGE_STAIRS, textureSetMap.getByName(AntiqueAtlasMod.id("nether_tower")));
+		setCustomTileTextureIfNone(ExtTileIdMap.NETHER_FORTRESS_WALL, textureSetMap.getByName(AntiqueAtlasMod.id("nether_wall")));
+		setCustomTileTextureIfNone(ExtTileIdMap.NETHER_FORTRESS_EXIT, textureSetMap.getByName(AntiqueAtlasMod.id("nether_hall")));
+		setCustomTileTextureIfNone(ExtTileIdMap.NETHER_FORTRESS_CORRIDOR_NETHER_WARTS_ROOM, textureSetMap.getByName(AntiqueAtlasMod.id("nether_fort_stairs")));
+		setCustomTileTextureIfNone(ExtTileIdMap.NETHER_FORTRESS_BRIDGE_PLATFORM, textureSetMap.getByName(AntiqueAtlasMod.id("nether_throne")));
 
-		setCustomTileTextureIfNone(ExtTileIdMap.TILE_END_ISLAND, END_ISLAND);
-		setCustomTileTextureIfNone(ExtTileIdMap.TILE_END_ISLAND_PLANTS, END_ISLAND_PLANTS);
-		setCustomTileTextureIfNone(ExtTileIdMap.TILE_END_VOID, END_VOID);
+		setCustomTileTextureIfNone(ExtTileIdMap.TILE_END_ISLAND, textureSetMap.getByName(AntiqueAtlasMod.id("end_island")));
+		setCustomTileTextureIfNone(ExtTileIdMap.TILE_END_ISLAND_PLANTS, textureSetMap.getByName(AntiqueAtlasMod.id("end_island_plants")));
+		setCustomTileTextureIfNone(ExtTileIdMap.TILE_END_VOID, textureSetMap.getByName(AntiqueAtlasMod.id("end_void")));
 
-		setCustomTileTextureIfNone(ExtTileIdMap.TILE_RAVINE, RAVINE);
-		setCustomTileTextureIfNone(ExtTileIdMap.SWAMP_WATER, SWAMP_WATER);
+		setCustomTileTextureIfNone(ExtTileIdMap.TILE_RAVINE, textureSetMap.getByName(AntiqueAtlasMod.id("ravine")));
+		setCustomTileTextureIfNone(ExtTileIdMap.SWAMP_WATER, textureSetMap.getByName(AntiqueAtlasMod.id("swamp_water")));
 	}
 	/** Only applies the change if no texture is registered for this tile name.
 	 * This prevents overwriting of the config when there is no real change. */
 	private void setCustomTileTextureIfNone(Identifier tileId, TextureSet textureSet) {
-		if (!textureMap.isRegistered(tileId)) {
-			textureMap.setTexture(tileId, textureSet);
+		if (!tileTextureMap.isRegistered(tileId)) {
+			tileTextureMap.setTexture(tileId, textureSet);
 		}
 	}
 
@@ -299,5 +191,7 @@ public class ClientProxy implements SimpleSynchronousResourceReloadListener {
 		for (MarkerType type : MarkerType.REGISTRY) {
 			type.initMips();
 		}
+		registerVanillaCustomTileTextures();
+		assignVanillaBiomeTextures();
 	}
 }
