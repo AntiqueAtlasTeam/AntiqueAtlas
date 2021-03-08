@@ -810,7 +810,7 @@ public class GuiAtlas extends GuiComponent {
        for(SubTileQuartet subtiles : tiles) {
             for (SubTile subtile : subtiles) {
                 if (subtile == null || subtile.tile == null) continue;
-                ITexture texture = BiomeTextureMap.instance().getTexture(subtile);
+                ITexture texture = TileTextureMap.instance().getTexture(subtile);
                 if (texture instanceof TileTexture) {
                     TileTexture tileTexture = (TileTexture) texture;
                     tileTexture.bind();

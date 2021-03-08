@@ -127,7 +127,7 @@ public class ExportImageUtil {
 
             // Biome & Marker textures:
             List<Identifier> allTextures = new ArrayList<>(64);
-            allTextures.addAll(BiomeTextureMap.instance().getAllTextures());
+            allTextures.addAll(TileTextureMap.instance().getAllTextures());
             if (showMarkers) {
                 for (MarkerType type : MarkerType.REGISTRY) {
                     allTextures.addAll(Arrays.asList(type.getAllIcons()));
@@ -199,7 +199,7 @@ public class ExportImageUtil {
 
             // Biome & Marker textures:
             List<Identifier> allTextures = new ArrayList<>(64);
-            allTextures.addAll(BiomeTextureMap.instance().getAllTextures());
+            allTextures.addAll(TileTextureMap.instance().getAllTextures());
             if (showMarkers) {
                 for (MarkerType type : MarkerType.REGISTRY) {
                     allTextures.addAll(Arrays.asList(type.getAllIcons()));
@@ -356,7 +356,7 @@ public class ExportImageUtil {
                 if (subtile == null || subtile.tile == null) continue;
 
                 // Load tile texture
-                Identifier texture = BiomeTextureMap.instance().getTexture(subtile).getTexture();
+                Identifier texture = TileTextureMap.instance().getTexture(subtile).getTexture();
                 BufferedImage tileImage = textureImageMap.get(texture);
                 if (tileImage == null) continue;
 

@@ -149,7 +149,7 @@ public class OverlayRenderer extends DrawableHelper {
                 float relativeChunkPositionY = (float) (subtile.y / 2.0
                         + iteratorScope.minY - chunkPosition.z);
                 renderer.addTileCorner(
-                        BiomeTextureMap.instance().getTexture(subtile).getTexture(),
+                        TileTextureMap.instance().getTexture(subtile).getTexture(),
                         shapeMiddleX
                                 + (int) Math.floor(relativeChunkPositionX
                                 * AntiqueAtlasMod.CONFIG.tileSize),

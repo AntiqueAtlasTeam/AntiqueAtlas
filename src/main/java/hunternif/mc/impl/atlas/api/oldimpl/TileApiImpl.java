@@ -2,7 +2,7 @@ package hunternif.mc.impl.atlas.api.oldimpl;
 
 import hunternif.mc.impl.atlas.AntiqueAtlasMod;
 import hunternif.mc.impl.atlas.api.TileAPI;
-import hunternif.mc.impl.atlas.client.BiomeTextureMap;
+import hunternif.mc.impl.atlas.client.TileTextureMap;
 import hunternif.mc.impl.atlas.client.TextureSet;
 import hunternif.mc.impl.atlas.client.TextureSetMap;
 import hunternif.mc.impl.atlas.client.texture.TileTexture;
@@ -80,13 +80,13 @@ public class TileApiImpl implements TileAPI {
     public void setBiomeTexture(Biome biome, Identifier textureSetName, Identifier... textures) {
         TextureSet set = new TextureSet(textureSetName, textures);
         TextureSetMap.instance().register(set);
-        BiomeTextureMap.instance().setTexture(biome, set);
+        TileTextureMap.instance().setTexture(biome, set);
     }
 
     @Override
     @Environment(EnvType.CLIENT)
     public void setBiomeTexture(Biome biome, TextureSet textureSet) {
-        BiomeTextureMap.instance().setTexture(biome, textureSet);
+        TileTextureMap.instance().setTexture(biome, textureSet);
     }
 
 

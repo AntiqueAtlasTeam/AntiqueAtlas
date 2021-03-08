@@ -142,4 +142,9 @@ public class TextureSetConfig implements SimpleResourceReloadListener<Collection
     public Identifier getFabricId() {
         return new Identifier("antiqueatlas:texture_sets");
     }
+
+    @Override
+    public Collection<Identifier> getFabricDependencies() {
+        return Collections.singleton(new Identifier("antiqueatlas:textures"));
+    }
 }

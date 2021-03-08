@@ -1,7 +1,7 @@
 package hunternif.mc.impl.atlas.network.packet.s2c.play;
 
 import hunternif.mc.impl.atlas.AntiqueAtlasMod;
-import hunternif.mc.impl.atlas.client.BiomeTextureMap;
+import hunternif.mc.impl.atlas.client.TileTextureMap;
 import hunternif.mc.impl.atlas.client.TextureSet;
 import hunternif.mc.impl.atlas.ext.ExtTileTextureMap;
 import hunternif.mc.impl.atlas.ext.TileIdRegisteredCallback;
@@ -54,7 +54,7 @@ public class TileNameS2CPacket extends S2CPacket {
 		client.execute(() -> {
 			for (Identifier id: tileIds) {
 				TextureSet texture = ExtTileTextureMap.instance().getTexture(id);
-				BiomeTextureMap.instance().setTexture(id, texture);
+				TileTextureMap.instance().setTexture(id, texture);
 			}
 
 			TileIdRegisteredCallback.EVENT.invoker().onTileIDsReceived(tileIds);

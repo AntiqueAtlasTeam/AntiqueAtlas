@@ -195,24 +195,24 @@ public class TileRenderIterator implements Iterator<SubTileQuartet>, Iterable<Su
 	 * (but the opposite is not always true!) */
 	private static boolean shouldStitchTo(Identifier tile, Identifier to) {
 		if (tile == null) return false;
-		TextureSet set = BiomeTextureMap.instance().getTextureSet(tile);
-		TextureSet toSet = BiomeTextureMap.instance().getTextureSet(to);
+		TextureSet set = TileTextureMap.instance().getTextureSet(tile);
+		TextureSet toSet = TileTextureMap.instance().getTextureSet(to);
 		return set != null && set.shouldStitchTo(toSet);
 	}
 	/** Whether the first tile should be stitched to the 2nd along the X axis
 	 * (but the opposite is not always true!) */
 	private static boolean shouldStitchToHorizontally(Identifier tile, Identifier to) {
 		if (tile == null) return false;
-		TextureSet set = BiomeTextureMap.instance().getTextureSet(tile);
-		TextureSet toSet = BiomeTextureMap.instance().getTextureSet(to);
+		TextureSet set = TileTextureMap.instance().getTextureSet(tile);
+		TextureSet toSet = TileTextureMap.instance().getTextureSet(to);
 		return set != null && set.shouldStitchToHorizontally(toSet);
 	}
 	/** Whether the first tile should be stitched to the 2nd along the Z axis
 	 * (but the opposite is not always true!) */
 	private static boolean shouldStitchToVertically(Identifier tile, Identifier to) {
 		if (tile == null) return false;
-		TextureSet set = BiomeTextureMap.instance().getTextureSet(tile);
-		TextureSet toSet = BiomeTextureMap.instance().getTextureSet(to);
+		TextureSet set = TileTextureMap.instance().getTextureSet(tile);
+		TextureSet toSet = TileTextureMap.instance().getTextureSet(to);
 		return set != null && set.shouldStitchToVertically(toSet);
 	}
 
