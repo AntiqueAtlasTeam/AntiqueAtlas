@@ -5,6 +5,9 @@
       "antiqueatlas:end_island": 1,
       "antiqueatlas:end_island_plants": 1,
       "antiqueatlas:end_island_plants2": 1
+    },
+    "stitch": {
+      "antiqueatlas:end_island": "both"
     }
   }
 }

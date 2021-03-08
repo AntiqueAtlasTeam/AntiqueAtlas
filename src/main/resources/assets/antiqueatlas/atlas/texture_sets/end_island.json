@@ -4,6 +4,9 @@
     "textures": {
       "antiqueatlas:end_island": 1,
       "antiqueatlas:end_island2": 1
+    },
+    "stitch": {
+      "antiqueatlas:end_island_plants": "both"
     }
   }
 }
