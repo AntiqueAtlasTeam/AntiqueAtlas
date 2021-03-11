@@ -1,5 +1,6 @@
 package hunternif.mc.impl.atlas.api;
 
+import hunternif.mc.api.TileAPI;
 import hunternif.mc.impl.atlas.AntiqueAtlasMod;
 import hunternif.mc.impl.atlas.api.oldimpl.MarkerApiImpl;
 import hunternif.mc.impl.atlas.api.oldimpl.TileApiImpl;
@@ -20,7 +21,7 @@ import java.util.List;
  * @author Hunternif
  */
 public class AtlasAPI {
-    private static final int VERSION = 4;
+    private static final int VERSION = 5;
     public static final TileAPI tiles = new TileApiImpl();
     public static final MarkerAPI markers = new MarkerApiImpl();
 

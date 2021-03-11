@@ -11,6 +11,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.ActionResult;
@@ -66,11 +67,11 @@ public class AtlasItem extends Item {
         }
 
         // Updating map around player
-        Collection<TileInfo> newTiles = data.updateMapAroundPlayer(player);
+        Collection<TileInfo> newTiles = AntiqueAtlasMod.worldScanner.updateAtlasAroundPlayer(data, player);
 
         if (!world.isClient) {
             if (!newTiles.isEmpty()) {
-                new DimensionUpdateS2CPacket(atlasId, player.getEntityWorld().getRegistryKey(), newTiles).send(world.getServer());
+                new DimensionUpdateS2CPacket(atlasId, player.getEntityWorld().getRegistryKey(), newTiles).send((ServerWorld) world);
             }
         }
     }

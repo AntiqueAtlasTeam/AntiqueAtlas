@@ -28,7 +28,6 @@ public class PlayerEventHandler {
         AtlasData data = AntiqueAtlasMod.atlasData.getAtlasData(
                 player.getUuid().hashCode(), player.world);
 
-        // Updating map around player
-        data.updateMapAroundPlayer(player);
+        AntiqueAtlasMod.worldScanner.updateAtlasAroundPlayer(data, player);
     }
 }

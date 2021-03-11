@@ -1,16 +1,15 @@
-package hunternif.mc.impl.atlas.ext;
+package hunternif.mc.impl.atlas.core;
 
 import hunternif.mc.impl.atlas.AntiqueAtlasMod;
 import net.minecraft.util.Identifier;
 
 
 /**
- * Maps unique names of external tiles to pseudo-biome IDs. Set on the server,
- * then sent to the clients. <i>Not thread-safe!</i>
+ * Just a collection of Identifiers used when tiles are referenced from code
  *
  * @author Hunternif
  */
-public class ExtTileIdMap {
+public class TileIdMap {
     public static final Identifier
             // Village:
             TILE_VILLAGE_LIBRARY = AntiqueAtlasMod.id("npc_village_library"),

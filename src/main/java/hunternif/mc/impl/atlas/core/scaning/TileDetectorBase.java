@@ -1,7 +1,7 @@
-package hunternif.mc.impl.atlas.core.detector;
+package hunternif.mc.impl.atlas.core.scaning;
 
 import hunternif.mc.impl.atlas.AntiqueAtlasMod;
-import hunternif.mc.impl.atlas.ext.ExtTileIdMap;
+import hunternif.mc.impl.atlas.core.TileIdMap;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.util.Identifier;
@@ -128,12 +128,12 @@ public class TileDetectorBase implements ITileDetector {
                         // Check if there's surface of water at (x, z), but not swamp
                         if (topBlock == Blocks.WATER) {
                             if (swampBiomes.contains(getBiomeIdentifier(world, biome))) {
-                                updateOccurrencesMap(biomeOccurrences, ExtTileIdMap.SWAMP_WATER, priorityWaterPool);
+                                updateOccurrencesMap(biomeOccurrences, TileIdMap.SWAMP_WATER, priorityWaterPool);
                             } else {
                                 updateOccurrencesMap(biomeOccurrences, waterPoolBiome, priorityWaterPool);
                             }
                         } else if (topBlock == Blocks.LAVA) {
-                            updateOccurrencesMap(biomeOccurrences, ExtTileIdMap.TILE_LAVA, priorityLavaPool);
+                            updateOccurrencesMap(biomeOccurrences, TileIdMap.TILE_LAVA, priorityLavaPool);
                         }
                     }
                 }
@@ -142,7 +142,7 @@ public class TileDetectorBase implements ITileDetector {
                     int height = chunk.getHeightmap(Heightmap.Type.MOTION_BLOCKING).get(x, z);
 
                     if (height > 0 && height < world.getSeaLevel() - ravineMinDepth) {
-                        updateOccurrencesMap(biomeOccurrences, ExtTileIdMap.TILE_RAVINE, priorityRavine);
+                        updateOccurrencesMap(biomeOccurrences, TileIdMap.TILE_RAVINE, priorityRavine);
                     }
                 }
 

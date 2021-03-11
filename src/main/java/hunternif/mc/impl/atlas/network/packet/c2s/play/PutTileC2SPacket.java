@@ -10,7 +10,6 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayNetworkHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.BuiltinRegistries;
 
 /**
  * Puts biome tile into one atlas. When sent to server, forwards it to every
@@ -45,11 +44,8 @@ public class PutTileC2SPacket extends C2SPacket {
 						player.getName(), atlasID);
 				return;
 			}
-			if (BuiltinRegistries.BIOME.containsId(tile)) {
-				AtlasAPI.tiles.putBiomeTile(player.getEntityWorld(), atlasID, tile, x, z);
-			} else {
-				AtlasAPI.tiles.putCustomTile(player.getEntityWorld(), atlasID, tile, x, z);
-			}
+
+			AtlasAPI.tiles.putTile(player.getEntityWorld(), atlasID, tile, x, z);
 		});
 	}
 }

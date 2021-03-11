@@ -1,4 +1,4 @@
-package hunternif.mc.impl.atlas.core.detector;
+package hunternif.mc.impl.atlas.core.scaning;
 
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;

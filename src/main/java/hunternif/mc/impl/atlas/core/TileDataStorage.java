@@ -1,4 +1,4 @@
-package hunternif.mc.impl.atlas.ext;
+package hunternif.mc.impl.atlas.core;
 
 import hunternif.mc.impl.atlas.network.packet.s2c.play.CustomTileInfoS2CPacket;
 import hunternif.mc.impl.atlas.util.Log;
@@ -47,7 +47,7 @@ public class TileDataStorage extends PersistentState {
 
         ListTag tileList = compound.getList(TAG_TILE_LIST, NbtType.COMPOUND);
 
-        tileList.stream().forEach(tag1 -> {
+        tileList.forEach(tag1 -> {
             CompoundTag tile = (CompoundTag) tag1;
             ShortVec2 coords = new ShortVec2(tile.getInt("x"), tile.getInt("y"));
             tiles.put(coords, Identifier.tryParse(tile.getString("id")));

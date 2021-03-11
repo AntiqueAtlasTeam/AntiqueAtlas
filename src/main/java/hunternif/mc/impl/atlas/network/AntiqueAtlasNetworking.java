@@ -18,7 +18,6 @@ public class AntiqueAtlasNetworking {
 		ClientPlayNetworking.registerGlobalReceiver(MarkersS2CPacket.ID, MarkersS2CPacket::apply);
 		ClientPlayNetworking.registerGlobalReceiver(PutTileS2CPacket.ID, PutTileS2CPacket::apply);
 		ClientPlayNetworking.registerGlobalReceiver(TileGroupsS2CPacket.ID, TileGroupsS2CPacket::apply);
-		ClientPlayNetworking.registerGlobalReceiver(TileNameS2CPacket.ID, TileNameS2CPacket::apply);
 	}
 
 	public static void registerC2SListeners() {
@@ -26,6 +25,5 @@ public class AntiqueAtlasNetworking {
 		ServerPlayNetworking.registerGlobalReceiver(BrowsingPositionC2SPacket.ID, BrowsingPositionC2SPacket::apply);
 		ServerPlayNetworking.registerGlobalReceiver(DeleteMarkerRequestC2SPacket.ID, DeleteMarkerRequestC2SPacket::apply);
 		ServerPlayNetworking.registerGlobalReceiver(PutTileC2SPacket.ID, PutTileC2SPacket::apply);
-		ServerPlayNetworking.registerGlobalReceiver(RegisterTileC2SPacket.ID, RegisterTileC2SPacket::apply);
 	}
 }

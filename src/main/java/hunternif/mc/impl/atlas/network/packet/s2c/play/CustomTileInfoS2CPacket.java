@@ -1,7 +1,7 @@
 package hunternif.mc.impl.atlas.network.packet.s2c.play;
 
 import hunternif.mc.impl.atlas.AntiqueAtlasMod;
-import hunternif.mc.impl.atlas.ext.TileDataStorage;
+import hunternif.mc.impl.atlas.core.TileDataStorage;
 import hunternif.mc.impl.atlas.network.packet.s2c.S2CPacket;
 import hunternif.mc.impl.atlas.util.ShortVec2;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;

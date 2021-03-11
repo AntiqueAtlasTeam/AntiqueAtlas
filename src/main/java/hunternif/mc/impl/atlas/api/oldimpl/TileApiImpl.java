@@ -1,149 +1,55 @@
 package hunternif.mc.impl.atlas.api.oldimpl;
 
 import hunternif.mc.impl.atlas.AntiqueAtlasMod;
-import hunternif.mc.impl.atlas.api.TileAPI;
-import hunternif.mc.impl.atlas.client.TileTextureMap;
-import hunternif.mc.impl.atlas.client.TextureSet;
-import hunternif.mc.impl.atlas.client.TextureSetMap;
-import hunternif.mc.impl.atlas.client.texture.TileTexture;
+import hunternif.mc.api.TileAPI;
 import hunternif.mc.impl.atlas.core.AtlasData;
-import hunternif.mc.impl.atlas.ext.ExtTileTextureMap;
-import hunternif.mc.impl.atlas.ext.TileDataStorage;
-import hunternif.mc.impl.atlas.ext.TileIdRegisteredCallback;
+import hunternif.mc.impl.atlas.core.TileDataStorage;
 import hunternif.mc.impl.atlas.network.packet.c2s.play.PutTileC2SPacket;
 import hunternif.mc.impl.atlas.network.packet.s2c.play.CustomTileInfoS2CPacket;
 import hunternif.mc.impl.atlas.network.packet.s2c.play.DeleteCustomGlobalTileS2CPacket;
 import hunternif.mc.impl.atlas.network.packet.s2c.play.PutTileS2CPacket;
 import hunternif.mc.impl.atlas.util.Log;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.World;
-import net.minecraft.world.biome.Biome;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
 
 public class TileApiImpl implements TileAPI {
-    /**
-     * When a tile is being put in an atlas on the client, the pseudo-biome ID
-     * may have been unregistered yet at that moment. In that case the tile data
-     * is put into this map to be later registered when the server sends the
-     * packet with the pseudo-biome ID for the corresponding unique name.
-     */
-    private final Map<Identifier, TileData> pendingTiles = new HashMap<>();
-
-    private static class TileData {
-        final World world;
-        final int atlasID, x, z;
-
-        TileData(World world, int atlasID, int x, int z) {
-            this.world = world;
-            this.atlasID = atlasID;
-            this.x = x;
-            this.z = z;
-        }
-    }
-
     public TileApiImpl() {
-        TileIdRegisteredCallback.EVENT.register(this::onTileIdRegistered);
     }
 
-
-    private static TileTexture[] convertToTileTexture(Identifier... textures) {
-        TileTexture[] iTextures = new TileTexture[textures.length];
-
-        for (int i = 0; i < textures.length; i++) {
-            iTextures[i] = new TileTexture(textures[i]);
+    public void putTile(World world, int atlasID, Identifier tile, int chunkX, int chunkZ) {
+        if (tile == null) {
+            Log.error("Attempted to put custom tile with null name");
+            return;
         }
 
-        return iTextures;
-    }
-
-    @Override
-    @Environment(EnvType.CLIENT)
-    public TextureSet registerTextureSet(Identifier name, Identifier... textures) {
-        TextureSet textureSet = new TextureSet(name, textures);
-        TextureSetMap.instance().register(textureSet);
-        return textureSet;
-    }
-
-
-    // Biome textures ==========================================================
-
-    @Override
-    @Environment(EnvType.CLIENT)
-    public void setBiomeTexture(Biome biome, Identifier textureSetName, Identifier... textures) {
-        TextureSet set = new TextureSet(textureSetName, textures);
-        TextureSetMap.instance().register(set);
-        TileTextureMap.instance().setTexture(biome, set);
-    }
-
-    @Override
-    @Environment(EnvType.CLIENT)
-    public void setBiomeTexture(Biome biome, TextureSet textureSet) {
-        TileTextureMap.instance().setTexture(biome, textureSet);
-    }
-
-
-    // Custom tile textures ====================================================
-
-    @Override
-    @Environment(EnvType.CLIENT)
-    public void setCustomTileTexture(Identifier uniqueTileName, Identifier... textures) {
-        TextureSet set = new TextureSet(uniqueTileName, textures);
-        TextureSetMap.instance().register(set);
-        setCustomTileTexture(uniqueTileName, set);
-    }
-
-    @Override
-    @Environment(EnvType.CLIENT)
-    public void setCustomTileTexture(Identifier uniqueTileName, TextureSet textureSet) {
-        ExtTileTextureMap.instance().setTexture(uniqueTileName, textureSet);
-    }
-
-
-    // Biome tiles =============================================================
-
-    private void putTile(World world, int atlasID, Identifier kind, int chunkX, int chunkZ) {
         RegistryKey<World> dimension = world.getRegistryKey();
         if (world.isClient) {
-            new PutTileC2SPacket(atlasID, chunkX, chunkZ, kind).send();
+            new PutTileC2SPacket(atlasID, chunkX, chunkZ, tile).send();
         } else {
             AtlasData data = AntiqueAtlasMod.atlasData.getAtlasData(atlasID, world);
-            data.setTile(dimension, chunkX, chunkZ, kind);
+            data.setTile(dimension, chunkX, chunkZ, tile);
             for (PlayerEntity syncedPlayer : data.getSyncedPlayers()) {
-                new PutTileS2CPacket(atlasID, dimension, chunkX, chunkZ, kind).send((ServerPlayerEntity) syncedPlayer);
+                new PutTileS2CPacket(atlasID, dimension, chunkX, chunkZ, tile).send((ServerPlayerEntity) syncedPlayer);
             }
         }
     }
 
     @Override
-    public void putBiomeTile(World world, int atlasID, Identifier biomeId, int chunkX, int chunkZ) {
-        putTile(world, atlasID, biomeId, chunkX, chunkZ);
-    }
+    public Identifier getTile(World world, int atlasID, int chunkX, int chunkZ) {
+        AtlasData data = AntiqueAtlasMod.atlasData.getAtlasData(atlasID, world);
 
-
-    // Custom tiles ============================================================
-
-    @Override
-    public void putCustomTile(World world, int atlasID, Identifier tileId, int chunkX, int chunkZ) {
-        if (tileId == null) {
-            Log.error("Attempted to put custom tile with null name");
-            return;
-        }
-
-        putTile(world, atlasID, tileId, chunkX, chunkZ);
+        return data.getWorldData(world.getRegistryKey()).getTile(chunkX, chunkZ);
     }
 
     @Override
-    public void putCustomGlobalTile(World world, Identifier tileId, int chunkX, int chunkZ) {
+    public void putGlobalTile(World world, Identifier tileId, int chunkX, int chunkZ) {
         if (tileId == null) {
-            Log.error("Attempted to put custom global tile with null name");
+            Log.error("Attempted to put global tile with null name");
             return;
         }
 
@@ -156,22 +62,17 @@ public class TileApiImpl implements TileAPI {
         data.setTile(chunkX, chunkZ, tileId);
 
         // Send tile packet:
-        new CustomTileInfoS2CPacket(world.getRegistryKey(), chunkX, chunkZ, tileId).send(world.getServer());
+        new CustomTileInfoS2CPacket(world.getRegistryKey(), chunkX, chunkZ, tileId).send((ServerWorld) world);
     }
-
-    public void onTileIdRegistered(Collection<Identifier> ids) {
-        for (Identifier id : ids) {
-            // Put pending tiles:
-            TileData tile = pendingTiles.remove(id);
-            if (tile != null) {
-                putBiomeTile(tile.world, tile.atlasID, id, tile.x, tile.z);
-            }
-        }
-    }
-
 
     @Override
-    public void deleteCustomGlobalTile(World world, int chunkX, int chunkZ) {
+    public Identifier getGlobalTile(World world, int chunkX, int chunkZ) {
+        TileDataStorage data = AntiqueAtlasMod.tileData.getData(world);
+        return data.getTile(chunkX, chunkZ);
+    }
+
+    @Override
+    public void deleteGlobalTile(World world, int chunkX, int chunkZ) {
         if (world.isClient) {
             Log.warn("Client attempted to delete global tile");
             return;
@@ -179,7 +80,7 @@ public class TileApiImpl implements TileAPI {
         TileDataStorage data = AntiqueAtlasMod.tileData.getData(world);
         if (data.getTile(chunkX, chunkZ) != null) {
             data.removeTile(chunkX, chunkZ);
-            new DeleteCustomGlobalTileS2CPacket(world.getRegistryKey(), chunkX, chunkZ).send(world.getServer());
+            new DeleteCustomGlobalTileS2CPacket(world.getRegistryKey(), chunkX, chunkZ).send((ServerWorld) world);
         }
     }
 }

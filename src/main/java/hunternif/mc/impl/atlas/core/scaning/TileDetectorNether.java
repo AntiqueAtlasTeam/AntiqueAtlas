@@ -1,6 +1,6 @@
-package hunternif.mc.impl.atlas.core.detector;
+package hunternif.mc.impl.atlas.core.scaning;
 
-import hunternif.mc.impl.atlas.ext.ExtTileIdMap;
+import hunternif.mc.impl.atlas.core.TileIdMap;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
@@ -53,11 +53,11 @@ public class TileDetectorNether extends TileDetectorBase implements ITileDetecto
                     // The Nether!
                     Block seaLevelBlock = chunk.getBlockState(new BlockPos(x, lavaSeaLevel, z)).getBlock();
                     if (seaLevelBlock == Blocks.LAVA) {
-                        updateOccurrencesMap(biomeOccurrences, ExtTileIdMap.TILE_LAVA, priorityLava);
+                        updateOccurrencesMap(biomeOccurrences, TileIdMap.TILE_LAVA, priorityLava);
                     } else {
                         BlockState airProbeBlock = chunk.getBlockState(new BlockPos(x, airProbeLevel, z));
                         if (airProbeBlock.isAir()) {
-                            updateOccurrencesMap(biomeOccurrences, ExtTileIdMap.TILE_LAVA_SHORE, 1);
+                            updateOccurrencesMap(biomeOccurrences, TileIdMap.TILE_LAVA_SHORE, 1);
                         } else {
                             // cave walls
                             updateOccurrencesMap(biomeOccurrences, world, biome, 2);

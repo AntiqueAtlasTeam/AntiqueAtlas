@@ -54,7 +54,7 @@ public class StructureHandler {
 		Identifier existingTile = AntiqueAtlasMod.tileData.getData(world.getRegistryKey()).getTile(chunkX, chunkZ);
 
 		if (getPriority(structurePieceId) < getPriority(existingTile)) {
-			AtlasAPI.tiles.putCustomGlobalTile(world, textureId, chunkX, chunkZ);
+			AtlasAPI.tiles.putGlobalTile(world, textureId, chunkX, chunkZ);
 		}
 	}
 
