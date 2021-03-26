@@ -41,6 +41,7 @@ repositories {
 	}
 	
 	maven {  url = "https://repo.spongepowered.org/maven" } // mixin
+	maven { url "https://maven.shedaniel.me/" } // cloth config
 }
 
 minecraft {
@@ -100,6 +101,7 @@ dependencies {
 	minecraft 'net.minecraftforge:forge:' + modMinecraftVersion + '-' + modForgeVersion
 	compile 'org.spongepowered:mixin:0.8'
 	compile fileTree(include: ['*.jar'], dir: 'libs')
+	compile fg.deobf("me.shedaniel.cloth:cloth-config-forge:"+cloth_config_version)
 }
 // Process resources on build
 processResources {
