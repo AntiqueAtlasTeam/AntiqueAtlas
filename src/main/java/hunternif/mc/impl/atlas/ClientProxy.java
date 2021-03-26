@@ -68,7 +68,7 @@ import static hunternif.mc.impl.atlas.client.TextureSet.PLATEAU_SAVANNA_M;
 import static hunternif.mc.impl.atlas.client.TextureSet.RAVINE;
 import static hunternif.mc.impl.atlas.client.TextureSet.ROCK_SHORE;
 import static hunternif.mc.impl.atlas.client.TextureSet.SAVANNA;
-import static hunternif.mc.impl.atlas.client.TextureSet.SAVANNA_PLATEAU;
+import static hunternif.mc.impl.atlas.client.TextureSet.SAVANNA_CLIFFS;
 import static hunternif.mc.impl.atlas.client.TextureSet.SHORE;
 import static hunternif.mc.impl.atlas.client.TextureSet.SMITHY;
 import static hunternif.mc.impl.atlas.client.TextureSet.SNOW;
@@ -193,7 +193,7 @@ public class ClientProxy implements ISelectiveResourceReloadListener {
 		map.register(PINES);
 		map.register(PINES_HILLS);
 		map.register(SAVANNA);
-		map.register(SAVANNA_PLATEAU);
+		map.register(SAVANNA_CLIFFS);
 		map.register(PLATEAU_SAVANNA_M);
 		map.register(MESA);
 		map.register(BRYCE);
@@ -306,9 +306,9 @@ public class ClientProxy implements ISelectiveResourceReloadListener {
 		setBiomeTextureIfNone(Biomes.ERODED_BADLANDS, MESA);
 		setBiomeTextureIfNone(Biomes.BADLANDS, MESA);
 		setBiomeTextureIfNone(Biomes.SAVANNA, SAVANNA);
-		setBiomeTextureIfNone(Biomes.SAVANNA_PLATEAU, SAVANNA_PLATEAU);
+		setBiomeTextureIfNone(Biomes.SAVANNA_PLATEAU, SAVANNA_CLIFFS);
 		setBiomeTextureIfNone(Biomes.SHATTERED_SAVANNA, SAVANNA);
-		setBiomeTextureIfNone(Biomes.SHATTERED_SAVANNA_PLATEAU, SAVANNA_PLATEAU);
+		setBiomeTextureIfNone(Biomes.SHATTERED_SAVANNA_PLATEAU, SAVANNA_CLIFFS);
 
 		setBiomeTextureIfNone(Biomes.DEEP_FROZEN_OCEAN, ICE_SPIKES);
 
