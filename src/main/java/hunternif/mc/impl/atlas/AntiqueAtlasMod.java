@@ -62,7 +62,9 @@ public class AntiqueAtlasMod
 		FMLJavaModLoadingContext.get().getModEventBus().addListener(this::enqueue);
 		FMLJavaModLoadingContext.get().getModEventBus().addListener(this::initializeClient);
 		ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, AntiqueAtlasConfigBuilder.client_config, "antiqueatlas.client.toml");
+		ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, AntiqueAtlasConfigBuilder.common_config, "antiqueatlas.common.toml");
 		AntiqueAtlasConfigBuilder.loadConfig(AntiqueAtlasConfigBuilder.client_config, FMLPaths.CONFIGDIR.get().resolve("antiqueatlas.client.toml").toString());
+		AntiqueAtlasConfigBuilder.loadConfig(AntiqueAtlasConfigBuilder.common_config, FMLPaths.CONFIGDIR.get().resolve("antiqueatlas.common.toml").toString());
 		MinecraftForge.EVENT_BUS.register(this);
 
 		TileDetectorBase.scanBiomeTypes();

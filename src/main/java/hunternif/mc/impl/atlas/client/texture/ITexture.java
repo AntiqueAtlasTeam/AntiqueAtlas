@@ -13,6 +13,10 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 @OnlyIn(Dist.CLIENT)
 public interface ITexture {
 
+	/**
+     * Returns path of the texture used for drawing
+     * @return the physical path to the image file used as texture
+     */
     ResourceLocation getTexture();
 
     int width();

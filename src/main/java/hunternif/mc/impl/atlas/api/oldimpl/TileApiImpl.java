@@ -72,7 +72,7 @@ public class TileApiImpl implements TileAPI {
 	@Override
 	@OnlyIn(Dist.CLIENT)
 	public TextureSet registerTextureSet(ResourceLocation name, ResourceLocation... textures) {
-		TextureSet textureSet = new TextureSet(name, convertToTileTexture(textures));
+		TextureSet textureSet = new TextureSet(name, textures);
 		TextureSetMap.instance().register(textureSet);
 		return textureSet;
 	}
@@ -83,7 +83,7 @@ public class TileApiImpl implements TileAPI {
 	@Override
 	@OnlyIn(Dist.CLIENT)
 	public void setBiomeTexture(Biome biome, ResourceLocation textureSetName, ResourceLocation... textures) {
-		TextureSet set = new TextureSet(textureSetName, convertToTileTexture(textures));
+		TextureSet set = new TextureSet(textureSetName, textures);
 		TextureSetMap.instance().register(set);
 		BiomeTextureMap.instance().setTexture(biome, set);
 	}
@@ -100,7 +100,7 @@ public class TileApiImpl implements TileAPI {
 	@Override
 	@OnlyIn(Dist.CLIENT)
 	public void setCustomTileTexture(ResourceLocation uniqueTileName, ResourceLocation... textures) {
-		TextureSet set = new TextureSet(uniqueTileName, convertToTileTexture(textures));
+		TextureSet set = new TextureSet(uniqueTileName, textures);
 		TextureSetMap.instance().register(set);
 		setCustomTileTexture(uniqueTileName, set);
 	}

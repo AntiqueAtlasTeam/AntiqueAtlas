@@ -34,14 +34,14 @@ public class MarkerTextureConfig implements IResourceReloadListener<Map<Resource
 		return CompletableFuture.supplyAsync(() -> {
 			Map<ResourceLocation, MarkerType> typeMap = new HashMap<>();
 
-			for (ResourceLocation id : manager.getAllResourceLocations("marker_types", (s) -> s.endsWith(".json"))) {
+			for (ResourceLocation id : manager.getAllResourceLocations("atlas/marker_types", (s) -> s.endsWith(".json"))) {
 				if (!id.getNamespace().equals("antiqueatlas")) {
 					continue;
 				}
 
 				ResourceLocation markerId = new ResourceLocation(
 						id.getNamespace(),
-						id.getPath().replace("marker_types/", "").replace(".json", "")
+						id.getPath().replace("atlas/marker_types/", "").replace(".json", "")
 				);
 
 				try {

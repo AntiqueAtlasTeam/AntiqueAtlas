@@ -2,6 +2,7 @@ package hunternif.mc.impl.atlas.core.watcher;
 
 import hunternif.mc.impl.atlas.AntiqueAtlasConfig;
 import hunternif.mc.impl.atlas.api.AtlasAPI;
+import hunternif.mc.impl.atlas.registry.MarkerType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TranslationTextComponent;

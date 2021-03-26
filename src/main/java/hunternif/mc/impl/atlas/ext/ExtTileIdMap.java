@@ -26,6 +26,7 @@ public class ExtTileIdMap {
 	TILE_VILLAGE_CHURCH = AntiqueAtlasMod.id("npc_village_church"),
 
 	TILE_RAVINE = AntiqueAtlasMod.id("ravine"),
+	SWAMP_WATER = AntiqueAtlasMod.id("swamp_water"),
 
 	// Nether & Nether Fortress:
 	TILE_LAVA = AntiqueAtlasMod.id("lava"),
