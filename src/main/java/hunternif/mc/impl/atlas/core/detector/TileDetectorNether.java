@@ -1,4 +1,4 @@
-package hunternif.mc.impl.atlas.core;
+package hunternif.mc.impl.atlas.core.detector;
 
 import java.util.Collections;
 import java.util.Comparator;
@@ -21,7 +21,7 @@ import net.minecraft.world.chunk.IChunk;
  * Detects seas of lava, cave ground and cave walls in the Nether.
  * @author Hunternif
  */
-public class BiomeDetectorNether extends BiomeDetectorBase implements IBiomeDetector {
+public class TileDetectorNether extends TileDetectorBase implements ITileDetector {
 	/** The Nether will be checked for air/ground at this level. */
 	private static final int airProbeLevel = 50;
 	/** The Nether will be checked for lava at this level. */
@@ -58,7 +58,7 @@ public class BiomeDetectorNether extends BiomeDetectorBase implements IBiomeDete
 					}
 				} else {
 					// In case there are custom biomes "modded in":
-					updateOccurrencesMap(biomeOccurrences, world, biome, priorityForBiome(biome));
+					updateOccurrencesMap(biomeOccurrences, world, biome, priorityForBiome(getBiomeIdentifier(world,biome)));
 				}
 			}
 		}

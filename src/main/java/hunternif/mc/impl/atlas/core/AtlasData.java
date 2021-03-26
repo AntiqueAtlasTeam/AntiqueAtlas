@@ -12,6 +12,10 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import hunternif.mc.impl.atlas.AntiqueAtlasConfig;
 import hunternif.mc.impl.atlas.AntiqueAtlasMod;
+import hunternif.mc.impl.atlas.core.detector.TileDetectorBase;
+import hunternif.mc.impl.atlas.core.detector.TileDetectorEnd;
+import hunternif.mc.impl.atlas.core.detector.TileDetectorNether;
+import hunternif.mc.impl.atlas.core.detector.ITileDetector;
 import hunternif.mc.impl.atlas.forge.NbtType;
 import hunternif.mc.impl.atlas.network.packet.s2c.play.MapDataS2CPacket;
 import hunternif.mc.impl.atlas.util.Log;
@@ -41,10 +45,10 @@ public class AtlasData extends WorldSavedData {
 	public static final String TAG_BROWSING_ZOOM = "qBrowseZoom";
 
 	/** Maps dimension ID to biomeAnalyzer. */
-	private final Map<RegistryKey<World>, IBiomeDetector> biomeAnalyzers = new HashMap<>();
-	private final BiomeDetectorBase biomeDetectorOverworld = new BiomeDetectorBase();
-	private final BiomeDetectorNether biomeDetectorNether = new BiomeDetectorNether();
-	private final BiomeDetectorEnd biomeDetectorEnd = new BiomeDetectorEnd();
+	private final Map<RegistryKey<World>, ITileDetector> biomeAnalyzers = new HashMap<>();
+	private final TileDetectorBase tileDetectorOverworld = new TileDetectorBase();
+	private final TileDetectorNether tileDetectorNether = new TileDetectorNether();
+	private final TileDetectorEnd tileDetectorEnd = new TileDetectorEnd();
 
 	/** This map contains, for each dimension, a map of chunks the player
 	 * has seen. This map is thread-safe.
@@ -55,21 +59,16 @@ public class AtlasData extends WorldSavedData {
 	/** Set of players this Atlas data has been sent to. */
 	private final Set<PlayerEntity> playersSentTo = new HashSet<>();
 
-	private CompoundNBT nbt;
-
 	public AtlasData(String key) {
 		super(key);
 
-		biomeDetectorOverworld.setScanPonds(AntiqueAtlasConfig.doScanPonds.get());
-		biomeDetectorOverworld.setScanRavines(AntiqueAtlasConfig.doScanRavines.get());
-		setBiomeDetectorForWorld(World.OVERWORLD, biomeDetectorOverworld);
-		setBiomeDetectorForWorld(World.THE_NETHER, biomeDetectorNether);
-		setBiomeDetectorForWorld(World.THE_END, biomeDetectorEnd);
+		setBiomeDetectorForWorld(World.OVERWORLD, tileDetectorOverworld);
+		setBiomeDetectorForWorld(World.THE_NETHER, tileDetectorNether);
+		setBiomeDetectorForWorld(World.THE_END, tileDetectorEnd);
 	}
 
 	@Override
 	public void read(CompoundNBT compound) {
-		this.nbt = compound;
 		int version = compound.getInt(TAG_VERSION);
 		if (version < VERSION) {
 			Log.warn("Outdated atlas data format! Was %d but current is %d.", version, VERSION);
@@ -116,15 +115,15 @@ public class AtlasData extends WorldSavedData {
 		return compound;
 	}
 
-	private void setBiomeDetectorForWorld(RegistryKey<World> world, IBiomeDetector biomeAnalyzer) {
+	private void setBiomeDetectorForWorld(RegistryKey<World> world, ITileDetector biomeAnalyzer) {
 		biomeAnalyzers.put(world, biomeAnalyzer);
 	}
 
 	/** If not found, returns the analyzer for overworld. */
-	private IBiomeDetector getBiomeDetectorForWorld(RegistryKey<World> dimension) {
-		IBiomeDetector biomeAnalyzer = biomeAnalyzers.get(dimension);
+	private ITileDetector getBiomeDetectorForWorld(RegistryKey<World> dimension) {
+		ITileDetector biomeAnalyzer = biomeAnalyzers.get(dimension);
 
-		return biomeAnalyzer == null ? biomeDetectorOverworld : biomeAnalyzer;
+		return biomeAnalyzer == null ? tileDetectorOverworld : biomeAnalyzer;
 	}
 
 	/**Updates map data around player
@@ -143,7 +142,7 @@ public class AtlasData extends WorldSavedData {
 		int rescanInterval = newScanInterval * AntiqueAtlasConfig.rescanRate.get();
 		boolean rescanRequired = AntiqueAtlasConfig.doRescan.get() && player.getEntityWorld().getGameTime() % rescanInterval == 0;
 
-		IBiomeDetector biomeDetector = getBiomeDetectorForWorld(player.getEntityWorld().getDimensionKey());
+		ITileDetector biomeDetector = getBiomeDetectorForWorld(player.getEntityWorld().getDimensionKey());
 
         int scanRadius = biomeDetector.getScanRadius();
 
@@ -192,7 +191,7 @@ public class AtlasData extends WorldSavedData {
 				return null;
 			}
 
-			IBiomeDetector biomeDetector = getBiomeDetectorForWorld(world.getDimensionKey());
+			ITileDetector biomeDetector = getBiomeDetectorForWorld(world.getDimensionKey());
 			tile = biomeDetector.getBiomeID(world, chunk);
 
 			if (oldTile != null) {
@@ -265,13 +264,11 @@ public class AtlasData extends WorldSavedData {
 	/** Send all data to the player in several zipped packets. Called once
 	 * during the first run of ItemAtlas.onUpdate(). */
 	public void syncOnPlayer(int atlasID, PlayerEntity player) {
-		if (nbt == null) {
-			nbt = new CompoundNBT();
-		}
+		CompoundNBT data = new CompoundNBT();
 		// Before syncing make sure the changes are written to the nbt.
 		// Do not include dimension tile data.  This will happen later.
-		writeToNBT(nbt, false);
-		new MapDataS2CPacket(atlasID, nbt).send((ServerPlayerEntity) player);
+		writeToNBT(data, false);
+		new MapDataS2CPacket(atlasID, data).send((ServerPlayerEntity) player);
 
 		for (RegistryKey<World> world : worldMap.keySet()){
 			worldMap.get(world).syncOnPlayer(atlasID, player);

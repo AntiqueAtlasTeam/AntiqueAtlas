@@ -10,7 +10,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /** This class is used to store tiles, which are shared between ALL atlases
- * Also, this data overwrites the result of IBiomeDetector instances.
+ * Also, this data overwrites the result of ITileDetector instances.
  *
  * Use this class for world gen structures and other important but unique tiles.
  */

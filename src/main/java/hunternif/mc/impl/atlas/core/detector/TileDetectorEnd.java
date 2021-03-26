@@ -1,4 +1,4 @@
-package hunternif.mc.impl.atlas.core;
+package hunternif.mc.impl.atlas.core.detector;
 
 import java.util.Collections;
 import java.util.Comparator;
@@ -21,7 +21,7 @@ import net.minecraft.world.gen.Heightmap;
  * Detects seas of lava, cave ground and cave walls in the Nether.
  * @author Hunternif
  */
-public class BiomeDetectorEnd extends BiomeDetectorBase implements IBiomeDetector {
+public class TileDetectorEnd extends TileDetectorBase implements ITileDetector {
 
 	@Override
 	public ResourceLocation getBiomeID(World world, IChunk chunk) {
@@ -35,7 +35,7 @@ public class BiomeDetectorEnd extends BiomeDetectorBase implements IBiomeDetecto
 		for (int x = 0; x < 16; x++) {
 			for (int z = 0; z < 16; z++) {
 				Biome biome = chunkBiomes.getNoiseBiome(x, 0, z);
-				ResourceLocation id = getBiomeResourceLocation(world, biome);
+				ResourceLocation id = getBiomeIdentifier(world, biome);
 
 				if (id == Biomes.THE_VOID.getLocation()) {
 					// if the biome is void, it's really empty

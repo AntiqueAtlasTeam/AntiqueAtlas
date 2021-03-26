@@ -50,13 +50,10 @@ public abstract class MixinCartographyContainer extends Container {
 	@Overwrite
 	private void func_216993_a(ItemStack stack, ItemStack p_216993_2_, ItemStack p_216993_3_) {
 		this.worldPosCallable.consume((p_216996_4_, p_216996_5_) -> {
-			System.out.println("Consuming LOL");
 			if (p_216993_2_.getItem() == AtlasAPI.getAtlasItem() && stack.getItem() == Items.FILLED_MAP) {
-				System.out.println("FOund An Atlas");
 				field_217001_f.setInventorySlotContents(2, p_216993_2_.copy());
 				this.detectAndSendChanges();
 			} else {
-				System.out.println("Normal Map Stuff");
 				Item item = p_216993_2_.getItem();
 				MapData mapdata = FilledMapItem.getData(stack, p_216996_4_);
 				if (mapdata != null) {

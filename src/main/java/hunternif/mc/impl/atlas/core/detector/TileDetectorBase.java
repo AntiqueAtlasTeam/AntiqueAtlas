@@ -1,4 +1,4 @@
-package hunternif.mc.impl.atlas.core;
+package hunternif.mc.impl.atlas.core.detector;
 
 import java.util.Collections;
 import java.util.Comparator;
@@ -21,6 +21,7 @@ import net.minecraft.world.biome.BiomeContainer;
 import net.minecraft.world.biome.Biomes;
 import net.minecraft.world.chunk.IChunk;
 import net.minecraft.world.gen.Heightmap;
+import net.minecraftforge.registries.ForgeRegistries;
 
 /**
  * Detects the 256 vanilla biomes, water pools and lava pools.
@@ -28,58 +29,47 @@ import net.minecraft.world.gen.Heightmap;
  * feature of the map, and so that rivers are more connected.
  * @author Hunternif
  */
-public class BiomeDetectorBase implements IBiomeDetector {
-	private boolean doScanPonds = true;
-	private boolean doScanRavines = true;
-
+public class TileDetectorBase implements ITileDetector {
 	/** Biome used for occasional pools of water.
 	 * This used our own representation of biomes, but this was switched to Minecraft biomes.
 	 * So in absence of a better idea, this will just count as River from now on. */
 	private static final ResourceLocation waterPoolBiome = Biomes.RIVER.getLocation();
 	/** Increment the counter for water biomes by this much during iteration.
 	 * This is done so that water pools are more visible. */
-	private static final int priorityRavine = 12, priorityWaterPool = 4, prioritylavaPool = 6;
+	private static final int priorityRavine = 12, priorityWaterPool = 4, priorityLavaPool = 6;
 
 	/** Minimum depth in the ground to be considered a ravine */
 	private static final int ravineMinDepth = 7;
 
 	/** Set to true for biome IDs that return true for BiomeDictionary.isBiomeOfType(WATER) */
-	private static final Set<Biome> waterBiomes = new HashSet<>();
+	private static final Set<ResourceLocation> waterBiomes = new HashSet<>();
 	/** Set to true for biome IDs that return true for BiomeDictionary.isBiomeOfType(BEACH) */
-	private static final Set<Biome> beachBiomes = new HashSet<>();
+	private static final Set<ResourceLocation> beachBiomes = new HashSet<>();
 
-	private static final Set<Biome> swampBiomes = new HashSet<>();
+	private static final Set<ResourceLocation> swampBiomes = new HashSet<>();
 
 	/** Scan all registered biomes to mark biomes of certain types that will be
 	 * given higher priority when identifying mean biome ID for a chunk.
 	 * (Currently WATER, BEACH and SWAMP) */
 	@SuppressWarnings("incomplete-switch")
 	public static void scanBiomeTypes() {
-		for (Biome biome : WorldGenRegistries.BIOME) {
+		for (Biome biome : ForgeRegistries.BIOMES) {
 			switch (biome.getCategory()) {
 				case BEACH:
-					beachBiomes.add(biome);
+					beachBiomes.add(ForgeRegistries.BIOMES.getKey(biome));
 					break;
 				case RIVER:
 				case OCEAN:
-					waterBiomes.add(biome);
+					waterBiomes.add(ForgeRegistries.BIOMES.getKey(biome));
 					break;
 				case SWAMP:
-					swampBiomes.add(biome);
+					swampBiomes.add(ForgeRegistries.BIOMES.getKey(biome));
 					break;
 			}
 		}
 	}
 
-	public void setScanPonds(boolean value) {
-		this.doScanPonds = value;
-	}
-
-	public void setScanRavines(boolean value) {
-		this.doScanRavines = value;
-	}
-
-	int priorityForBiome(Biome biome) {
+	int priorityForBiome(ResourceLocation biome) {
 		if (waterBiomes.contains(biome)) {
 			return 4;
 		} else if (beachBiomes.contains(biome)) {
@@ -89,7 +79,7 @@ public class BiomeDetectorBase implements IBiomeDetector {
 		}
 	}
 
-	protected static ResourceLocation getBiomeResourceLocation(World world, Biome biome)
+	protected static ResourceLocation getBiomeIdentifier(World world, Biome biome)
 	{
 		return world./*getRegistryManager()*/func_241828_r().getRegistry(Registry.BIOME_KEY).getKey(biome);
 	}
@@ -100,7 +90,7 @@ public class BiomeDetectorBase implements IBiomeDetector {
 	}
 
 	protected static void updateOccurrencesMap(Map<ResourceLocation, Integer> map, World world, Biome biome, int weight) {
-		ResourceLocation id = getBiomeResourceLocation(world, biome);
+		ResourceLocation id = getBiomeIdentifier(world, biome);
 		int occurrence = map.getOrDefault(id, 0) + weight;
 		map.put(id, occurrence);
 	}
@@ -123,7 +113,7 @@ public class BiomeDetectorBase implements IBiomeDetector {
 		for (int x = 0; x < 16; x++) {
 			for (int z = 0; z < 16; z++) {
 				Biome biome = chunkBiomes.getNoiseBiome(x, 0, z);
-				if (doScanPonds) {
+				if (AntiqueAtlasConfig.doScanPonds.get()) {
 					int y = chunk.getHeightmap(Heightmap.Type.MOTION_BLOCKING).getHeight(x, z);
 					if (y > 0) {
 						Block topBlock = chunk.getBlockState(new BlockPos(x, y-1, z)).getBlock();
@@ -131,11 +121,11 @@ public class BiomeDetectorBase implements IBiomeDetector {
 						if (topBlock == Blocks.WATER && !swampBiomes.contains(biome)) {
 							updateOccurrencesMap(biomeOccurrences, waterPoolBiome, priorityWaterPool);
 						} else if (topBlock == Blocks.LAVA) {
-							updateOccurrencesMap(biomeOccurrences, ExtTileIdMap.TILE_LAVA, prioritylavaPool);
+							updateOccurrencesMap(biomeOccurrences, ExtTileIdMap.TILE_LAVA, priorityLavaPool);
 						}
 					}
 				}
-				if (doScanRavines) {
+				if (AntiqueAtlasConfig.doScanRavines.get()) {
 					int height = chunk.getHeightmap(Heightmap.Type.MOTION_BLOCKING).getHeight(x, z);
 
 					if(height > 0 && height < world.getSeaLevel() - ravineMinDepth)	{
@@ -143,7 +133,7 @@ public class BiomeDetectorBase implements IBiomeDetector {
 					}
 				}
 
-				updateOccurrencesMap(biomeOccurrences, world, biome, priorityForBiome(biome));
+				updateOccurrencesMap(biomeOccurrences, world, biome, priorityForBiome(getBiomeIdentifier(world,biome)));
 			}
 		}
 

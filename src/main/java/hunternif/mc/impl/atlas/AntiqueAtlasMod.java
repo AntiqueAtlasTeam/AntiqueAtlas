@@ -5,7 +5,7 @@ import org.apache.logging.log4j.Logger;
 
 import hunternif.mc.impl.atlas.client.KeyHandler;
 import hunternif.mc.impl.atlas.core.AtlasDataHandler;
-import hunternif.mc.impl.atlas.core.BiomeDetectorBase;
+import hunternif.mc.impl.atlas.core.detector.TileDetectorBase;
 import hunternif.mc.impl.atlas.core.GlobalAtlasData;
 import hunternif.mc.impl.atlas.ext.TileDataHandler;
 import hunternif.mc.impl.atlas.forge.AntiqueAtlasConfigBuilder;
@@ -65,7 +65,7 @@ public class AntiqueAtlasMod
 		AntiqueAtlasConfigBuilder.loadConfig(AntiqueAtlasConfigBuilder.client_config, FMLPaths.CONFIGDIR.get().resolve("antiqueatlas.client.toml").toString());
 		MinecraftForge.EVENT_BUS.register(this);
 
-		BiomeDetectorBase.scanBiomeTypes();
+		TileDetectorBase.scanBiomeTypes();
 
 		AntiqueAtlasNetworking.registerC2SListeners(MOD_CHANNEL);
 		AntiqueAtlasNetworking.registerS2CListeners(MOD_CHANNEL);

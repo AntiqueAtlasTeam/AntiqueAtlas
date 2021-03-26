@@ -6,6 +6,7 @@
   "refmap": "antiqueatlas.refmap.json",
   "mixins": [
     "MixinEntity",
+    "MixinPlayerEntityDeath",
     "MixinCartographyContainer",    
     "dev.MixinCartographyTableContainerSlot",
     "prod.MixinCartographyTableContainerSlot",
