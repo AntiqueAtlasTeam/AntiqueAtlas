@@ -1,4 +1,4 @@
-package kenkron.antiqueatlasoverlay;
+package hunternif.mc.impl.atlas.client;
 
 import java.util.List;
 
@@ -45,8 +45,6 @@ public class OverlayRenderer extends AbstractGui {
     private Minecraft client;
     private PlayerEntity player;
     private World world;
-    private Integer atlasID;
-    
 
     /**
      * Convenience method that returns the first atlas ID for all atlas items
@@ -87,27 +85,25 @@ public class OverlayRenderer extends AbstractGui {
         this.player = Minecraft.getInstance().player;
         this.world = Minecraft.getInstance().world;
 
-        if (AntiqueAtlasConfig.requiresHold.get()) {
-            ItemStack stack = player.getHeldItemMainhand();
-            ItemStack stack2 = player.getHeldItemOffhand();
-
-            if (!stack.isEmpty() && stack.getItem() == RegistrarAntiqueAtlas.ATLAS) {
-                atlasID = AtlasItem.getAtlasID(stack);
-            } else if (!stack2.isEmpty() && stack2.getItem() == RegistrarAntiqueAtlas.ATLAS) {
-                atlasID = AtlasItem.getAtlasID(stack2);
-            }
-        } else {
-            atlasID = getPlayerAtlas(player);
+        ItemStack mainHandStack = player.getHeldItemMainhand();
+        ItemStack offHandStack = player.getHeldItemOffhand();
+        
+        Integer atlasID = null;
+        
+        if (!mainHandStack.isEmpty() && mainHandStack.getItem() == RegistrarAntiqueAtlas.ATLAS) {
+        	atlasID = AtlasItem.getAtlasID(mainHandStack);
+        } else if (!offHandStack.isEmpty() && offHandStack.getItem() == RegistrarAntiqueAtlas.ATLAS) {
+        	atlasID = AtlasItem.getAtlasID(offHandStack);
         }
 
         if (atlasID != null) {
-            drawMinimap(matrices);
+            drawMinimap(matrices, atlasID);
         }
 
         atlasID = null;
     }
 
-    private void drawMinimap(MatrixStack matrices) {
+    private void drawMinimap(MatrixStack matrices, int atlasID) {
     	RenderSystem.disableDepthTest();
     	
     	RenderSystem.enableBlend();
@@ -120,9 +116,9 @@ public class OverlayRenderer extends AbstractGui {
 //        RenderSystem.enableBlend();
 //        RenderSystem.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
-        drawTiles(matrices);
+        drawTiles(matrices, atlasID);
         if (AntiqueAtlasConfig.markerSize.get() > 0) {
-            drawMarkers(matrices);
+            drawMarkers(matrices, atlasID);
         }
 
         matrices.pop();
@@ -135,7 +131,7 @@ public class OverlayRenderer extends AbstractGui {
         RenderSystem.enableDepthTest();
     }
 
-    private void drawTiles(MatrixStack matrices) {
+    private void drawTiles(MatrixStack matrices, int atlasID) {
 //        GlStateManager.enableBlend();
 //        GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
@@ -177,7 +173,7 @@ public class OverlayRenderer extends AbstractGui {
         renderer.draw();
     }
 
-    private void drawMarkers(MatrixStack matrices) {
+    private void drawMarkers(MatrixStack matrices, int atlasID) {
         // biomeData needed to prevent undiscovered markers from appearing
         WorldData biomeData = AntiqueAtlasMod.atlasData.getAtlasData(
                 atlasID, this.world).getWorldData(
@@ -206,7 +202,7 @@ public class OverlayRenderer extends AbstractGui {
         matrices.rotate(new Quaternion(Vector3f.ZP, this.player.getRotationYawHead() + 180, true));
         matrices.translate(-AntiqueAtlasConfig.playerIconWidth.get() / 2.0, -AntiqueAtlasConfig.playerIconHeight.get() / 2.0, 0);
 
-        Textures.PLAYER.draw(matrices, 0,0, AntiqueAtlasConfig.playerIconWidth.get(), AntiqueAtlasConfig.playerIconHeight.get());
+        Textures.PLAYER.draw(matrices, 0, 0, AntiqueAtlasConfig.playerIconWidth.get(), AntiqueAtlasConfig.playerIconHeight.get());
         matrices.pop();
     }
 

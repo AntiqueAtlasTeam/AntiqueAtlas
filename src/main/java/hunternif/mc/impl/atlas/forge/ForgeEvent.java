@@ -4,15 +4,14 @@ import hunternif.mc.impl.atlas.AntiqueAtlasConfig;
 import hunternif.mc.impl.atlas.AntiqueAtlasMod;
 import hunternif.mc.impl.atlas.RegistrarAntiqueAtlas;
 import hunternif.mc.impl.atlas.client.KeyHandler;
+import hunternif.mc.impl.atlas.client.OverlayRenderer;
 import hunternif.mc.impl.atlas.client.gui.ExportProgressOverlay;
 import hunternif.mc.impl.atlas.core.PlayerEventHandler;
 import hunternif.mc.impl.atlas.event.RecipeCraftedHandler;
-import hunternif.mc.impl.atlas.ext.watcher.DeathWatcher;
 import hunternif.mc.impl.atlas.forge.event.ItemCraftedEvent;
 import hunternif.mc.impl.atlas.forge.event.StructureAddedEvent;
 import hunternif.mc.impl.atlas.forge.event.StructurePieceAddedEvent;
 import hunternif.mc.impl.atlas.structure.StructureHandler;
-import kenkron.antiqueatlasoverlay.OverlayRenderer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -26,7 +25,6 @@ import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent.ElementType;
 import net.minecraftforge.event.TickEvent.ClientTickEvent;
-import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.world.WorldEvent;
@@ -71,48 +69,41 @@ public class ForgeEvent {
 		}
 	}
 
-	@OnlyIn(Dist.CLIENT)
-	@SubscribeEvent
-	public static void in(RenderGameOverlayEvent.Pre event) {
-		//************************************************//
-		if (event.getType() == ElementType.CROSSHAIRS) {
-			if (Minecraft.getInstance().player != null) {
-				for (ItemStack stack : Minecraft.getInstance().player.getHeldEquipment()) {
-					if (stack.getItem() == Items.FILLED_MAP || stack.getItem() == RegistrarAntiqueAtlas.ATLAS) {
-						event.setCanceled(true);
-					}
-				}
-			}
-
-//			Minecraft.getInstance().ingameGUI.func_238456_d_(event.getMatrixStack());
-		}
-	}
+//	@OnlyIn(Dist.CLIENT)
+//	@SubscribeEvent
+//	public static void in(RenderGameOverlayEvent.Pre event) {
+//		//************************************************//
+//		if (event.getType() == ElementType.CROSSHAIRS) {
+//			if (Minecraft.getInstance().player != null) {
+//				for (ItemStack stack : Minecraft.getInstance().player.getHeldEquipment()) {
+//					if (stack.getItem() == Items.FILLED_MAP || stack.getItem() == RegistrarAntiqueAtlas.ATLAS) {
+//						event.setCanceled(true);
+//					}
+//				}
+//			}
+//
+////			Minecraft.getInstance().ingameGUI.func_238456_d_(event.getMatrixStack());
+//		}
+//	}
 	
-	@OnlyIn(Dist.CLIENT)
-	@SubscribeEvent
-	public static void in(RenderGameOverlayEvent.Post event) {
-		//************************************************//
-		if (AntiqueAtlasConfig.enabled.get() && event.getType() == ElementType.ALL) {
-			event.getMatrixStack().push();
-			event.getMatrixStack().translate(AntiqueAtlasConfig.xPosition.get(), AntiqueAtlasConfig.yPosition.get(), 0);
-			event.getMatrixStack().scale(
-					0.3F,
-					0.3F,
-					1F
-					);
-			new OverlayRenderer().drawOverlay(event.getMatrixStack());
-			event.getMatrixStack().pop();
-		}
-		//************************************************//
-		ExportProgressOverlay.INSTANCE.draw(event.getMatrixStack(), Minecraft.getInstance().ingameGUI.scaledWidth, Minecraft.getInstance().ingameGUI.scaledHeight);
-	}
-	
-	@SubscribeEvent
-	public static void death(LivingDeathEvent event) {
-		if (event.getEntityLiving() instanceof PlayerEntity) {
-			 DeathWatcher.onPlayerDeath((PlayerEntity) event.getEntityLiving());;
-		}
-	}
+//	@OnlyIn(Dist.CLIENT)
+//	@SubscribeEvent
+//	public static void in(RenderGameOverlayEvent.Post event) {
+//		//************************************************//
+//		if (AntiqueAtlasConfig.enabled.get() && event.getType() == ElementType.ALL) {
+//			event.getMatrixStack().push();
+//			event.getMatrixStack().translate(AntiqueAtlasConfig.xPosition.get(), AntiqueAtlasConfig.yPosition.get(), 0);
+//			event.getMatrixStack().scale(
+//					0.3F,
+//					0.3F,
+//					1F
+//					);
+//			new OverlayRenderer().drawOverlay(event.getMatrixStack());
+//			event.getMatrixStack().pop();
+//		}
+//		//************************************************//
+//		ExportProgressOverlay.INSTANCE.draw(event.getMatrixStack(), Minecraft.getInstance().ingameGUI.scaledWidth, Minecraft.getInstance().ingameGUI.scaledHeight);
+//	}
 	
 	@SubscribeEvent
 	public static void playerTick(LivingUpdateEvent event) {

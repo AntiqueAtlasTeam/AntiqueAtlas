@@ -1,4 +1,4 @@
-package kenkron.antiqueatlasoverlay;
+package hunternif.mc.impl.atlas.client;
 
 import java.util.ArrayList;
 import java.util.HashMap;
