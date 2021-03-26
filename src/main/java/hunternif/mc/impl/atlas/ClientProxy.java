@@ -281,6 +281,7 @@ public class ClientProxy implements ISelectiveResourceReloadListener {
 		setBiomeTextureIfNone(Biomes.TAIGA, PINES);
 		setBiomeTextureIfNone(Biomes.TAIGA_HILLS, PINES_HILLS);
 		setBiomeTextureIfNone(Biomes.TAIGA_HILLS, PINES_HILLS);
+		setBiomeTextureIfNone(Biomes.TAIGA_MOUNTAINS, PINES_HILLS);
 		setBiomeTextureIfNone(Biomes.SNOWY_TAIGA, SNOW_PINES);
 		setBiomeTextureIfNone(Biomes.SNOWY_TAIGA_HILLS, SNOW_PINES_HILLS);
 		setBiomeTextureIfNone(Biomes.SNOWY_TAIGA_MOUNTAINS, SNOW_PINES_HILLS);
