@@ -20,7 +20,7 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.filechooser.FileFilter;
 
-import hunternif.mc.impl.atlas.client.BiomeTextureMap;
+import hunternif.mc.impl.atlas.client.TileTextureMap;
 import hunternif.mc.impl.atlas.client.SubTile;
 import hunternif.mc.impl.atlas.client.SubTileQuartet;
 import hunternif.mc.impl.atlas.client.Textures;
@@ -130,7 +130,7 @@ public class ExportImageUtil {
 			
 			// Biome & Marker textures:
 			List<ResourceLocation> allTextures = new ArrayList<>(64);
-			allTextures.addAll(BiomeTextureMap.instance().getAllTextures());
+			allTextures.addAll(TileTextureMap.instance().getAllTextures());
 			if (showMarkers) {
 				for (MarkerType type : MarkerType.REGISTRY) {
 					allTextures.addAll(Arrays.asList( type.getAllIcons() ));
@@ -200,7 +200,7 @@ public class ExportImageUtil {
 			
 			// Biome & Marker textures:
 			List<ResourceLocation> allTextures = new ArrayList<>(64);
-			allTextures.addAll(BiomeTextureMap.instance().getAllTextures());
+			allTextures.addAll(TileTextureMap.instance().getAllTextures());
 			if (showMarkers) {
 				for (MarkerType type : MarkerType.REGISTRY) {
 					allTextures.addAll(Arrays.asList( type.getAllIcons() ));
@@ -357,7 +357,7 @@ public class ExportImageUtil {
 				if (subtile == null || subtile.tile == null) continue;
 				
 				// Load tile texture
-				ResourceLocation texture = BiomeTextureMap.instance().getTexture(subtile).getTexture();
+				ResourceLocation texture = TileTextureMap.instance().getTexture(subtile).getTexture();
 				BufferedImage tileImage = textureImageMap.get(texture);
 				if (tileImage == null) continue;
 				

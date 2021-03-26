@@ -26,9 +26,9 @@ import static hunternif.mc.impl.atlas.client.TextureSet.*;
  * @author Hunternif
  */
 @OnlyIn(Dist.CLIENT)
-public class BiomeTextureMap {
-	private static final BiomeTextureMap INSTANCE = new BiomeTextureMap();
-	public static BiomeTextureMap instance() {
+public class TileTextureMap {
+	private static final TileTextureMap INSTANCE = new TileTextureMap();
+	public static TileTextureMap instance() {
 		return INSTANCE;
 	}
 
@@ -73,16 +73,16 @@ public class BiomeTextureMap {
                 setTexture(biome, biome.getPrecipitation() == Biome.RainType.SNOW ? TextureSetMap.instance().getByName(AntiqueAtlasMod.id("ice")) : TextureSetMap.instance().getByName(AntiqueAtlasMod.id("water")));
                 break;
             case BEACH:
-                setTexture(biome, TextureSetMap.instance().getByName(AntiqueAtlasMod.id("shore"))); // TODO ROCK_SHORE
+            	setTexture(biome, TextureSetMap.instance().getByName(AntiqueAtlasMod.id("shore")));
                 break;
             case JUNGLE:
-                setTexture(biome, biome.getScale() >= 0.25f ? TextureSetMap.instance().getByName(AntiqueAtlasMod.id("jungle_hills")) : TextureSetMap.instance().getByName(AntiqueAtlasMod.id("jungle"))); // TODO JUNGLE_CLIFFS
+                setTexture(biome, biome.getScale() >= 0.25f ? TextureSetMap.instance().getByName(AntiqueAtlasMod.id("jungle_hills")) : TextureSetMap.instance().getByName(AntiqueAtlasMod.id("jungle")));
                 break;
             case SAVANNA:
                 setTexture(biome, biome.getDepth() >= 1.0f ? TextureSetMap.instance().getByName(AntiqueAtlasMod.id("plateau_savanna")) : TextureSetMap.instance().getByName(AntiqueAtlasMod.id("savanna")));
                 break;
             case MESA:
-                setTexture(biome, TextureSetMap.instance().getByName(AntiqueAtlasMod.id("plateau_mesa"))); // TODO PLATEAU_MESA_TREES
+                setTexture(biome, TextureSetMap.instance().getByName(AntiqueAtlasMod.id("plateau_mesa")));
                 break;
             case FOREST:
                 setTexture(biome, biome.getPrecipitation() == Biome.RainType.SNOW ?

@@ -98,7 +98,7 @@ public class TextureSet implements Comparable<TextureSet> {
 
     public void loadTextures() {
         for (int i = 0; i < texturePaths.length; i++) {
-            textures[i] = ClientProxy.TEXTURE_MAP.get(texturePaths[i]);
+            textures[i] = Textures.TILE_TEXTURES_MAP.get(texturePaths[i]);
         }
     }
 	

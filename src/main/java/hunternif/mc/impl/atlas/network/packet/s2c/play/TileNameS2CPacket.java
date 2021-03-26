@@ -6,7 +6,7 @@ import java.util.HashSet;
 import com.google.common.collect.Sets;
 
 import hunternif.mc.impl.atlas.AntiqueAtlasMod;
-import hunternif.mc.impl.atlas.client.BiomeTextureMap;
+import hunternif.mc.impl.atlas.client.TileTextureMap;
 import hunternif.mc.impl.atlas.client.TextureSet;
 import hunternif.mc.impl.atlas.ext.ExtTileTextureMap;
 import hunternif.mc.impl.atlas.forge.hook.AntiqueAtlasHooks;
@@ -59,7 +59,7 @@ public class TileNameS2CPacket extends S2CPacket {
 	public boolean handle(ClientPlayerEntity player) {
 		for (ResourceLocation id: this.tileIds) {
 			TextureSet texture = ExtTileTextureMap.instance().getTexture(id);
-			BiomeTextureMap.instance().setTexture(id, texture);
+			TileTextureMap.instance().setTexture(id, texture);
 		}
 
 		AntiqueAtlasHooks.fireTileIdRegistered(this.tileIds);

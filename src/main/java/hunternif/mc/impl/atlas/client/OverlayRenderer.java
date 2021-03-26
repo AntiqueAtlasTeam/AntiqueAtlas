@@ -10,7 +10,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import hunternif.mc.impl.atlas.AntiqueAtlasConfig;
 import hunternif.mc.impl.atlas.AntiqueAtlasMod;
 import hunternif.mc.impl.atlas.RegistrarAntiqueAtlas;
-import hunternif.mc.impl.atlas.client.BiomeTextureMap;
+import hunternif.mc.impl.atlas.client.TileTextureMap;
 import hunternif.mc.impl.atlas.client.SubTile;
 import hunternif.mc.impl.atlas.client.SubTileQuartet;
 import hunternif.mc.impl.atlas.client.Textures;
@@ -160,7 +160,7 @@ public class OverlayRenderer extends AbstractGui {
                 float relativeChunkPositionY = (float) (subtile.y / 2.0
                         + iteratorScope.minY - chunkPosition.z);
                 renderer.addTileCorner(
-                        BiomeTextureMap.instance().getTexture(subtile).getTexture(),
+                		TileTextureMap.instance().getTexture(subtile).getTexture(),
                         shapeMiddleX
                                 + (int) Math.floor(relativeChunkPositionX
                                 * AntiqueAtlasConfig.tileSize.get()),

@@ -1,6 +1,6 @@
 package hunternif.mc.impl.atlas.ext;
 
-import hunternif.mc.impl.atlas.client.BiomeTextureMap;
+import hunternif.mc.impl.atlas.client.TileTextureMap;
 import hunternif.mc.impl.atlas.client.TextureSet;
 import hunternif.mc.impl.atlas.util.Log;
 import hunternif.mc.impl.atlas.util.SaveData;
@@ -14,7 +14,7 @@ import java.util.Map;
 /**
  * Maps unique tile name to texture set.
  * When the server sends a tile ID, the corresponding texture set is
- * re-registered into {@link BiomeTextureMap}.
+ * re-registered into {@link TileTextureMap}.
  * @author Hunternif
  */
 @OnlyIn(Dist.CLIENT)
@@ -43,10 +43,10 @@ public class ExtTileTextureMap extends SaveData {
 	}
 	
 	/** If a texture set is not found, returns the default one from
-	 * {@link BiomeTextureMap}. */
+	 * {@link TileTextureMap}. */
 	public TextureSet getTexture(ResourceLocation tileName) {
 		TextureSet textureSet = textureMap.get(tileName);
-		return textureSet == null ? BiomeTextureMap.instance().getDefaultTexture() : textureSet;
+		return textureSet == null ? TileTextureMap.instance().getDefaultTexture() : textureSet;
 	}
 	
 	public boolean isRegistered(ResourceLocation tileName) {

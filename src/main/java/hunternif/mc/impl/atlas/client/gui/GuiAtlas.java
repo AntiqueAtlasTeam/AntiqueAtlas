@@ -16,7 +16,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import hunternif.mc.impl.atlas.AntiqueAtlasConfig;
 import hunternif.mc.impl.atlas.AntiqueAtlasMod;
 import hunternif.mc.impl.atlas.api.AtlasAPI;
-import hunternif.mc.impl.atlas.client.BiomeTextureMap;
+import hunternif.mc.impl.atlas.client.TileTextureMap;
 import hunternif.mc.impl.atlas.client.SubTile;
 import hunternif.mc.impl.atlas.client.SubTileQuartet;
 import hunternif.mc.impl.atlas.client.Textures;
@@ -751,7 +751,7 @@ public class GuiAtlas extends GuiComponent {
 		for(SubTileQuartet subtiles : tiles) {
 			for (SubTile subtile : subtiles) {
 				if (subtile == null || subtile.tile == null) continue;
-				ITexture texture = BiomeTextureMap.instance().getTexture(subtile);
+				ITexture texture = TileTextureMap.instance().getTexture(subtile);
 				if (texture instanceof TileTexture) {
 					TileTexture tileTexture = (TileTexture) texture;
 					tileTexture.bind();
