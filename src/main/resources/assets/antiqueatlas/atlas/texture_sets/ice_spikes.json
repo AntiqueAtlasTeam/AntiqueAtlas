@@ -1,0 +1,9 @@
+{
+  "version": 1,
+  "data": {
+    "textures": {
+      "antiqueatlas:ice_spikes": 1,
+      "antiqueatlas:ice_spikes2": 1
+    }
+  }
+}

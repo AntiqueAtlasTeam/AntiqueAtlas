@@ -1,0 +1,10 @@
+{
+  "version": 1,
+  "data": {
+    "textures": {
+      "antiqueatlas:sand": 1,
+      "antiqueatlas:sand2": 1,
+      "antiqueatlas:sand_bushes": 1
+    }
+  }
+}

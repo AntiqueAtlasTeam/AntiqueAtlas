@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "data": {
+    "shore": {
+      "water": "antiqueatlas:water"
+    },
+    "textures": {
+      "antiqueatlas:rock_shore": 1
+    }
+  }
+}

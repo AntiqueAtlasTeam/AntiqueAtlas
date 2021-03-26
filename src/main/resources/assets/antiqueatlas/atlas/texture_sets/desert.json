@@ -1,0 +1,16 @@
+{
+  "version": 1,
+  "data": {
+    "textures": {
+      "antiqueatlas:sand": 2,
+      "antiqueatlas:sand2": 2,
+      "antiqueatlas:sand3": 2,
+      "antiqueatlas:sand_bushes": 2,
+      "antiqueatlas:cacti": 1
+    },
+    "stitch": {
+      "antiqueatlas:mesa": "both",
+      "antiqueatlas:bryce": "both"
+    }
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "version": 1,
+  "data": {
+    "textures": {
+      "antiqueatlas:jungle_cliffs": 1,
+      "antiqueatlas:jungle_cliffs2": 1,
+      "antiqueatlas:bushes_cliffs": 1
+    }
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "version": 1,
+  "data": {
+    "textures": {
+      "antiqueatlas:grass": 1,
+      "antiqueatlas:grass2": 1,
+      "antiqueatlas:grass3": 1,
+      "antiqueatlas:grass4": 1
+    },
+    "stitch": {
+      "antiqueatlas:sunflowers": "both"
+    }
+  }
+}

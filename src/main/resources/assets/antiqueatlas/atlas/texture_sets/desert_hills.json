@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "data": {
+    "textures": {
+      "antiqueatlas:hills": 1
+    },
+    "stitch": {
+      "antiqueatlas:mesa": "both",
+      "antiqueatlas:bryce": "both"
+    }
+  }
+}

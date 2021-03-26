@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "data": {
+    "textures": {
+      "antiqueatlas:bryce": 1,
+      "antiqueatlas:bryce2": 1,
+      "antiqueatlas:bryce3": 1,
+      "antiqueatlas:bryce4": 1
+    }
+  }
+}

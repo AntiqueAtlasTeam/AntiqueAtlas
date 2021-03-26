@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "data": {
+    "textures": {
+      "antiqueatlas:nether_wall": 1
+    },
+    "stitch": {
+      "antiqueatlas:nether_hall": "both",
+      "antiqueatlas:nether_fort_stairs": "both"
+    }
+  }
+}

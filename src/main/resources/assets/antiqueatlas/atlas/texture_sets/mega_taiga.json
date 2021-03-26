@@ -1,0 +1,9 @@
+{
+  "version": 1,
+  "data": {
+    "textures": {
+      "antiqueatlas:mega_taiga": 2,
+      "antiqueatlas:mega_taiga2": 1
+    }
+  }
+}

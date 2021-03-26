@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "data": {
+    "textures": {
+      "antiqueatlas:fance": 1
+    },
+    "stitch": {
+      "antiqueatlas:house": "both"
+    }
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "data": {
+    "textures": {
+      "antiqueatlas:savanna_cliffs": 1,
+      "antiqueatlas:savanna_cliffs2": 1,
+      "antiqueatlas:savanna_cliffs3": 1,
+      "antiqueatlas:cliffs": 1
+    }
+  }
+}

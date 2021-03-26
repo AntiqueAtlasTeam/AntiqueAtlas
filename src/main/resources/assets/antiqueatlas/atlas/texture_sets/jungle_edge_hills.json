@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "data": {
+    "textures": {
+      "antiqueatlas:jungle_edge_hills": 1,
+      "antiqueatlas:jungle_edge_hills2": 1,
+      "antiqueatlas:jungle_edge_hills3": 1,
+      "antiqueatlas:hills_grass": 2
+    }
+  }
+}

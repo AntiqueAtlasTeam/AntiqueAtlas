@@ -1,0 +1,10 @@
+{
+  "version": 1,
+  "data": {
+    "textures": {
+      "antiqueatlas:snow_spines": 1,
+      "antiqueatlas:snow_spines2": 1,
+      "antiqueatlas:snow_spines3": 1
+    }
+  }
+}
