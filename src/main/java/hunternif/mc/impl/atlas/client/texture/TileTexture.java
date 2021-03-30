@@ -31,5 +31,4 @@ public class TileTexture extends ATexture {
     public void drawSubTile(MatrixStack matrices, SubTile subtile, int tileHalfSize) {
         draw(matrices, subtile.x * tileHalfSize, subtile.y * tileHalfSize, tileHalfSize, tileHalfSize, subtile.getTextureU() * 8, subtile.getTextureV() * 8, 8, 8);
     }
-
 }

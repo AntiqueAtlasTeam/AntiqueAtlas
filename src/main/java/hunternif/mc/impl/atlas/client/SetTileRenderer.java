@@ -1,9 +1,10 @@
 package hunternif.mc.impl.atlas.client;
 
+import hunternif.mc.impl.atlas.client.texture.ITexture;
+import hunternif.mc.impl.atlas.client.texture.Texture;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.DrawableHelper;
+import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.Identifier;
 
@@ -17,15 +18,19 @@ import java.util.HashMap;
  * rendering all of the same textures of a map at once without re-binding.
  */
 @Environment(EnvType.CLIENT)
-class SetTileRenderer extends DrawableHelper {
+class SetTileRenderer {
 
     private final HashMap<Identifier, ArrayList<TileCorner>> subjects = new HashMap<>();
     private final MatrixStack matrices;
     private final int tileHalfSize;
+    private final int light;
+    private final VertexConsumerProvider buffer;
 
-    public SetTileRenderer(MatrixStack matrices, int tileHalfSize) {
+    public SetTileRenderer(VertexConsumerProvider buffer, MatrixStack matrices, int tileHalfSize, int light) {
         this.matrices = matrices;
         this.tileHalfSize = tileHalfSize;
+        this.light = light;
+        this.buffer = buffer;
     }
 
     public void addTileCorner(Identifier texture, int x, int y, int u, int v) {
@@ -37,18 +42,18 @@ class SetTileRenderer extends DrawableHelper {
         for (Identifier key : subjects.keySet()) {
             ArrayList<TileCorner> tca = subjects.get(key);
 
-            MinecraftClient.getInstance().getTextureManager().bindTexture(key);
+            ITexture texture = new Texture(key, 4, 6, false);
 
             for (TileCorner tc : tca) {
-                drawInlineAutotileCorner(tc.x, tc.y, tc.u, tc.v);
+                drawInlineAutotileCorner(texture, tc.x, tc.y, tc.u, tc.v);
             }
         }
     }
 
-    private void drawInlineAutotileCorner(int x, int y, int u, int v) {
+    private void drawInlineAutotileCorner(ITexture texture, int x, int y, int u, int v) {
         // This is dumb. But because there are drawn four at a time, these chunks prevent rendering outside of our map
         if ((x + tileHalfSize) <= 240 && (x - tileHalfSize >= 0) && (y + tileHalfSize) < 166 && (y - tileHalfSize) >= 0) {
-            drawTexture(this.matrices, x, y, tileHalfSize, tileHalfSize, u, v, 1, 1, 4, 6);
+            texture.drawWithLight(this.buffer, this.matrices, x, y, tileHalfSize, tileHalfSize, u, v, 1, 1, this.light);
         }
     }
 

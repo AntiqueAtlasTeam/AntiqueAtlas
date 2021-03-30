@@ -113,7 +113,7 @@ public abstract class HeldItemRendererMixin {
 
         matrices.scale(0.4f, 0.4F, 0.4F);
 
-        atlasOverlayRenderer.drawOverlay(matrices);
+        atlasOverlayRenderer.drawOverlay(matrices, vertexConsumers, light);
         matrices.pop();
     }
 
@@ -125,6 +125,6 @@ public abstract class HeldItemRendererMixin {
         matrices.translate(-1.85D, -0.5D, 0.0D);
         matrices.scale(0.0078125F, 0.0078125F, 0.0078125F);
 
-        atlasOverlayRenderer.drawOverlay(matrices);
+        atlasOverlayRenderer.drawOverlay(matrices, vertexConsumers, light);
     }
 }

@@ -832,8 +832,6 @@ public class GuiAtlas extends GuiComponent {
         RenderSystem.color4f(1, 1, 1, 1);
         Textures.BOOK_FRAME.draw(matrices, getGuiX(), getGuiY());
 
-        renderScaleOverlay(matrices, deltaMillis);
-
         double iconScale = getIconScale();
 
         // Draw global markers:
@@ -841,6 +839,8 @@ public class GuiAtlas extends GuiComponent {
         renderMarkers(matrices, markersStartX, markersStartZ, markersEndX, markersEndZ, localMarkersData);
 
         Textures.BOOK_FRAME_NARROW.draw(matrices, getGuiX(), getGuiY());
+
+        renderScaleOverlay(matrices, deltaMillis);
 
         // Draw player icon:
         if (!state.is(HIDING_MARKERS)) {
