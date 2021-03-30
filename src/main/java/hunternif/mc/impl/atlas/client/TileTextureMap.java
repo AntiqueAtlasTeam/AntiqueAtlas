@@ -33,7 +33,7 @@ public class TileTextureMap {
     /**
      * This map stores the pseudo biome texture mappings, any biome with ID <0 is assumed to be a pseudo biome
      */
-    final Map<Identifier, TextureSet> textureMap = new HashMap<>();
+    private final Map<Identifier, TextureSet> textureMap = new HashMap<>();
 
     /**
      * Assign texture set to biome.
@@ -128,7 +128,7 @@ public class TileTextureMap {
                 break;
             default:
                 Log.warn("Couldn't auto-registered standard texture set for biome %s", BuiltinRegistries.BIOME.getId(biome).toString());
-                break;
+                return;
         }
 
         Log.info("Auto-registered standard texture set for biome %s: %s", BuiltinRegistries.BIOME.getId(biome).toString(),  textureMap.get(BuiltinRegistries.BIOME.getId(biome)).name);
