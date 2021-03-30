@@ -90,7 +90,7 @@ public class OverlayRenderer extends DrawableHelper {
         }
         matrices.pop();
 
-        matrices.translate(0, 0, -0.01);
+        matrices.translate(0, 0, -0.02);
         drawPlayer(buffer, matrices, light);
 
         // Overlay the frame so that edges of the map are smooth:
@@ -152,13 +152,12 @@ public class OverlayRenderer extends DrawableHelper {
 
         MarkersData markersData = AntiqueAtlasMod.markersData.getMarkersData(
                 atlasID, MinecraftClient.getInstance().world);
-        DimensionMarkersData localMarkersData = null;
         if (markersData != null) {
-            localMarkersData = markersData.getMarkersDataInWorld(world.getRegistryKey());
-        }
+            DimensionMarkersData localMarkersData = markersData.getMarkersDataInWorld(world.getRegistryKey());
 
-        // Draw local markers:
-        drawMarkersData(buffer, matrices, localMarkersData, biomeData, light);
+            // Draw local markers:
+            drawMarkersData(buffer, matrices, localMarkersData, biomeData, light);
+        }
     }
 
     private void drawPlayer(VertexConsumerProvider buffer, MatrixStack matrices, int light) {
