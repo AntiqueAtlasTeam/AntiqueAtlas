@@ -37,16 +37,15 @@ public class AtlasDataHandler {
      */
     public AtlasData getAtlasData(int atlasID, World world) {
         String key = getAtlasDataKey(atlasID);
-        AtlasData data;
+
         if (world.isClient) {
             // Since atlas data doesn't really belong to a single world-dimension,
             // it can be cached. This should fix #67
-            data = atlasDataClientCache.computeIfAbsent(key, AtlasData::new);
+            return atlasDataClientCache.computeIfAbsent(key, AtlasData::new);
         } else {
             PersistentStateManager manager = ((ServerWorld) world).getPersistentStateManager();
-            data = manager.getOrCreate(() -> new AtlasData(key), key);
+            return manager.getOrCreate(() -> new AtlasData(key), key);
         }
-        return data;
     }
 
     private String getAtlasDataKey(int atlasID) {
