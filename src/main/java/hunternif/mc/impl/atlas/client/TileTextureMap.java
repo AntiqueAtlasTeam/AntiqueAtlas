@@ -123,6 +123,10 @@ public class TileTextureMap {
                     setTexture(biome, TextureSetMap.instance().getByName(AntiqueAtlasMod.id("end_island")));
                 }
                 break;
+            case MUSHROOM:
+                setTexture(biome, TextureSetMap.instance().getByName(AntiqueAtlasMod.id("mushroom")));
+            case NETHER:
+                setTexture(biome, TextureSetMap.instance().getByName(AntiqueAtlasMod.id("soul_sand_valley")));
             case NONE:
                 setTexture(biome, TextureSetMap.instance().getByName(AntiqueAtlasMod.id("end_void")));
                 break;
