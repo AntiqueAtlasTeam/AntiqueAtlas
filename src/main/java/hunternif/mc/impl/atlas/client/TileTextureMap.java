@@ -135,7 +135,11 @@ public class TileTextureMap {
                 return;
         }
 
-        Log.info("Auto-registered standard texture set for biome %s: %s", BuiltinRegistries.BIOME.getId(biome).toString(),  textureMap.get(BuiltinRegistries.BIOME.getId(biome)).name);
+        if (textureMap.get(BuiltinRegistries.BIOME.getId(biome)) != null) {
+            Log.info("Auto-registered standard texture set for biome %s: %s", BuiltinRegistries.BIOME.getId(biome).toString(), textureMap.get(BuiltinRegistries.BIOME.getId(biome)).name);
+        } else {
+            Log.error("Failed to auto-register a standard texture set for the biome '%s'. This is most likely caused by errors in the TextureSet configurations, check your resource packs first before reporting it as an issue!", BuiltinRegistries.BIOME.getId(biome).toString());
+        }
     }
 
     /**

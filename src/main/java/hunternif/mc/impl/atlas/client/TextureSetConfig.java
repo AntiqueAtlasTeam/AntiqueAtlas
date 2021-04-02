@@ -123,9 +123,15 @@ public class TextureSetConfig implements SimpleResourceReloadListener<Collection
     public CompletableFuture<Void> apply(Collection<TextureSet> sets, ResourceManager manager, Profiler profiler, Executor executor) {
         return CompletableFuture.runAsync(() -> {
             for (TextureSet set : sets) {
-                set.loadTextures();
-                textureSetMap.register(set);
-                Log.info("Loaded texture set %s with %d custom texture(s)", set.name, set.getTexturePaths().length);
+                try {
+                    set.loadTextures();
+                    textureSetMap.register(set);
+                    Log.info("Loaded texture set %s with %d custom texture(s)", set.name, set.getTexturePaths().length);
+                }
+                catch (Throwable e) {
+                    Log.warn(e, "Failed to load the texture set `%s`:", set.name);
+                }
+
             }
 
             for (TextureSet set : sets) {
