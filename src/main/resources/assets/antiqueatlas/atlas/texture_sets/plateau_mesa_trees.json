@@ -2,7 +2,7 @@
   "version": 1,
   "data": {
     "textures": {
-      "antiqueatlas:plateau_mesa_trees": 1,
+      "antiqueatlas:plateau_trees": 1,
       "antiqueatlas:plateau_mesa": 1,
       "antiqueatlas:plateau_mesa2": 1
     },
