@@ -46,31 +46,6 @@ public class OverlayRenderer extends AbstractGui {
     private PlayerEntity player;
     private World world;
 
-    /**
-     * Convenience method that returns the first atlas ID for all atlas items
-     * the player is currently carrying in the hotbar/offhand. Returns null if
-     * there are none. Offhand gets priority.
-     **/
-    private Integer getPlayerAtlas(PlayerEntity player) {
-        if (!AntiqueAtlasConfig.itemNeeded.get()) {
-            return player.getUniqueID().hashCode();
-        }
-
-        ItemStack stack = player.getHeldItemOffhand();
-        if (!stack.isEmpty() && stack.getItem() == RegistrarAntiqueAtlas.ATLAS) {
-            return AtlasItem.getAtlasID(stack);
-        }
-
-        for (int i = 0; i < 9; i++) {
-            stack = player.inventory.getStackInSlot(i);
-            if (!stack.isEmpty() && stack.getItem() == RegistrarAntiqueAtlas.ATLAS) {
-                return AtlasItem.getAtlasID(stack);
-            }
-        }
-
-        return null;
-    }
-
     public void drawOverlay(MatrixStack matrices) {
         // Overlay must close if Atlas GUI is opened
         if (Minecraft.getInstance().currentScreen instanceof GuiAtlas) {
@@ -113,9 +88,6 @@ public class OverlayRenderer extends AbstractGui {
         matrices.push();
         matrices.scale(INNER_ELEMENTS_SCALE_FACTOR, INNER_ELEMENTS_SCALE_FACTOR, 1F);
         
-//        RenderSystem.enableBlend();
-//        RenderSystem.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-
         drawTiles(matrices, atlasID);
         if (AntiqueAtlasConfig.markerSize.get() > 0) {
             drawMarkers(matrices, atlasID);
