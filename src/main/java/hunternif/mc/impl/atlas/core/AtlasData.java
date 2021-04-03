@@ -1,21 +1,9 @@
 package hunternif.mc.impl.atlas.core;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-import hunternif.mc.impl.atlas.AntiqueAtlasConfig;
-import hunternif.mc.impl.atlas.AntiqueAtlasMod;
-import hunternif.mc.impl.atlas.core.detector.TileDetectorBase;
-import hunternif.mc.impl.atlas.core.detector.TileDetectorEnd;
-import hunternif.mc.impl.atlas.core.detector.TileDetectorNether;
-import hunternif.mc.impl.atlas.core.detector.ITileDetector;
 import hunternif.mc.impl.atlas.forge.NbtType;
 import hunternif.mc.impl.atlas.network.packet.s2c.play.MapDataS2CPacket;
 import hunternif.mc.impl.atlas.util.Log;
@@ -28,8 +16,6 @@ import net.minecraft.util.RegistryKey;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.World;
-import net.minecraft.world.chunk.ChunkStatus;
-import net.minecraft.world.chunk.IChunk;
 import net.minecraft.world.storage.WorldSavedData;
 
 public class AtlasData extends WorldSavedData {
@@ -44,12 +30,6 @@ public class AtlasData extends WorldSavedData {
 	public static final String TAG_BROWSING_Y = "qBrowseY";
 	public static final String TAG_BROWSING_ZOOM = "qBrowseZoom";
 
-	/** Maps dimension ID to biomeAnalyzer. */
-	private final Map<RegistryKey<World>, ITileDetector> biomeAnalyzers = new HashMap<>();
-	private final TileDetectorBase tileDetectorOverworld = new TileDetectorBase();
-	private final TileDetectorNether tileDetectorNether = new TileDetectorNether();
-	private final TileDetectorEnd tileDetectorEnd = new TileDetectorEnd();
-
 	/** This map contains, for each dimension, a map of chunks the player
 	 * has seen. This map is thread-safe.
 	 * CAREFUL! Don't modify chunk coordinates that are already put in the map! */
@@ -61,10 +41,6 @@ public class AtlasData extends WorldSavedData {
 
 	public AtlasData(String key) {
 		super(key);
-
-		setBiomeDetectorForWorld(World.OVERWORLD, tileDetectorOverworld);
-		setBiomeDetectorForWorld(World.THE_NETHER, tileDetectorNether);
-		setBiomeDetectorForWorld(World.THE_END, tileDetectorEnd);
 	}
 
 	@Override
@@ -115,114 +91,6 @@ public class AtlasData extends WorldSavedData {
 		return compound;
 	}
 
-	private void setBiomeDetectorForWorld(RegistryKey<World> world, ITileDetector biomeAnalyzer) {
-		biomeAnalyzers.put(world, biomeAnalyzer);
-	}
-
-	/** If not found, returns the analyzer for overworld. */
-	private ITileDetector getBiomeDetectorForWorld(RegistryKey<World> dimension) {
-		ITileDetector biomeAnalyzer = biomeAnalyzers.get(dimension);
-
-		return biomeAnalyzer == null ? tileDetectorOverworld : biomeAnalyzer;
-	}
-
-	/**Updates map data around player
-	 *
-	 * @return A set of the new tiles, mostly so the server can sync those with relevant clients.*/
-	public Collection<TileInfo> updateMapAroundPlayer(PlayerEntity player) {
-		// Update the actual map only so often:
-		int newScanInterval = Math.round(AntiqueAtlasConfig.newScanInterval.get().floatValue() * 20);
-
-		if (player.getEntityWorld().getGameTime() % newScanInterval != 0) {
-			return Collections.emptyList(); //no new tiles
-		}
-
-		ArrayList<TileInfo> updatedTiles = new ArrayList<>();
-
-		int rescanInterval = newScanInterval * AntiqueAtlasConfig.rescanRate.get();
-		boolean rescanRequired = AntiqueAtlasConfig.doRescan.get() && player.getEntityWorld().getGameTime() % rescanInterval == 0;
-
-		ITileDetector biomeDetector = getBiomeDetectorForWorld(player.getEntityWorld().getDimensionKey());
-
-        int scanRadius = biomeDetector.getScanRadius();
-
-		// Look at chunks around in a circular area:
-		for (int dx = -scanRadius; dx <= scanRadius; dx++) {
-			for (int dz = -scanRadius; dz <= scanRadius; dz++) {
-				if (dx*dx + dz*dz > scanRadius*scanRadius) {
-					continue; // Outside the circle
-				}
-
-				int chunkX = player.chunkCoordX + dx;
-				int chunkZ = player.chunkCoordZ + dz;
-
-				TileInfo update = updateMapChunk(player.getEntityWorld(), chunkX, chunkZ, rescanRequired);
-				if(update != null) {
-					updatedTiles.add(update);
-				}
-			}
-		}
-		return updatedTiles;
-	}
-
-	private TileInfo updateMapChunk(World world, int x, int z, boolean rescanRequired)
-	{
-		ITileStorage seenChunks = this.getWorldData(world.getDimensionKey());
-
-		ResourceLocation oldTile = seenChunks.getTile(x, z);
-		ResourceLocation tile = null;
-
-		// Check if there's a custom tile at the location:
-		// Custom tiles overwrite even the chunks already seen.
-		tile = AntiqueAtlasMod.tileData.getData(world).getTile(x, z);
-
-		// If there's no custom tile, check the actual chunk:
-		if (tile == null) {
-			// If the chunk has been scanned previously, only re-scan it so often:
-			if (oldTile != null && !rescanRequired) {
-				return null;
-			}
-
-			// TODO FABRIC: forceChunkLoading crashes here
-			IChunk chunk = world.getChunk(x, z, ChunkStatus.FULL, AntiqueAtlasConfig.forceChunkLoading.get());
-
-			// Skip chunk if it hasn't loaded yet:
-			if (chunk == null) {
-				return null;
-			}
-
-			ITileDetector biomeDetector = getBiomeDetectorForWorld(world.getDimensionKey());
-			tile = biomeDetector.getBiomeID(world, chunk);
-
-			if (oldTile != null) {
-				if (tile == null) {
-					// If the new tile is empty, remove the old one:
-					this.removeTile(world.getDimensionKey(), x, z);
-					// TODO should this also return a TileInfo?
-				} else if (!oldTile.equals(tile)) {
-					// Only update if the old tile's biome ID doesn't match the new one:
-					this.setTile(world.getDimensionKey(), x, z, tile);
-					return new TileInfo(x, z, tile);
-				}
-			} else {
-				// Scanning new chunk:
-				if (tile != null) {
-					this.setTile(world.getDimensionKey(), x, z, tile);
-					return new TileInfo(x, z, tile);
-				}
-			}
-		} else {
-			// Only update the custom tile if it doesn't rewrite itself:
-			if (oldTile == null || !oldTile.equals(tile)) {
-				this.setTile(world.getDimensionKey(), x, z, tile);
-				this.markDirty();
-				return new TileInfo(x, z, tile);
-			}
-		}
-
-		return null;
-	}
-
 	/** Puts a given tile into given map at specified coordinates and,
 	 * if tileStitcher is present, sets appropriate sectors on adjacent tiles. */
 	public void setTile(RegistryKey<World> world, int x, int y, ResourceLocation tile) {
@@ -231,7 +99,7 @@ public class AtlasData extends WorldSavedData {
 	}
 
 	/** Returns the Tile previously set at given coordinates. */
-	private ResourceLocation removeTile(RegistryKey<World> world, int x, int y) {
+	public ResourceLocation removeTile(RegistryKey<World> world, int x, int y) {
 		WorldData dimData = getWorldData(world);
 		return dimData.removeTile(x, y);
 	}

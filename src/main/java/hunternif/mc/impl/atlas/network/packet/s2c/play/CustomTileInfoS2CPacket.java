@@ -1,13 +1,12 @@
 package hunternif.mc.impl.atlas.network.packet.s2c.play;
 
 import java.util.Map;
-import java.util.function.Supplier;
 
 import com.google.common.collect.ImmutableMap.Builder;
 import com.google.common.collect.Maps;
 
 import hunternif.mc.impl.atlas.AntiqueAtlasMod;
-import hunternif.mc.impl.atlas.ext.TileDataStorage;
+import hunternif.mc.impl.atlas.core.TileDataStorage;
 import hunternif.mc.impl.atlas.network.packet.s2c.S2CPacket;
 import hunternif.mc.impl.atlas.util.ShortVec2;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
@@ -18,7 +17,6 @@ import net.minecraft.util.registry.Registry;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.fml.network.NetworkEvent;
 
 /**
  * Used to sync custom tiles from server to client.

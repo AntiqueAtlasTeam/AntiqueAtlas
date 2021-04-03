@@ -19,6 +19,7 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
+import net.minecraft.world.server.ServerWorld;
 
 public class AtlasItem extends Item {
 
@@ -66,11 +67,11 @@ public class AtlasItem extends Item {
 		}
 
 		// Updating map around player
-		Collection<TileInfo> newTiles = data.updateMapAroundPlayer(player);
+		Collection<TileInfo> newTiles = AntiqueAtlasMod.worldScanner.updateAtlasAroundPlayer(data,player);
 		
 		if (!world.isRemote) {
 			if (!newTiles.isEmpty()) {
-				new DimensionUpdateS2CPacket(atlasId, player.getEntityWorld().getDimensionKey(), newTiles).send(world.getServer());
+				new DimensionUpdateS2CPacket(atlasId, player.getEntityWorld().getDimensionKey(), newTiles).send((ServerWorld) world);
 			}
 		}
 	}

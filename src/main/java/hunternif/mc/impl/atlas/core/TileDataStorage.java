@@ -1,4 +1,4 @@
-package hunternif.mc.impl.atlas.ext;
+package hunternif.mc.impl.atlas.core;
 
 import java.util.Map;
 import java.util.Map.Entry;
@@ -54,7 +54,7 @@ public class TileDataStorage extends WorldSavedData {
 
 		ListNBT tileList = compound.getList(TAG_TILE_LIST, NbtType.CompoundNBT);
 
-		tileList.stream().forEach(tag1 -> {
+		tileList.forEach(tag1 -> {
 			CompoundNBT tile = (CompoundNBT) tag1;
 			ShortVec2 coords = new ShortVec2(tile.getInt("x"), tile.getInt("y"));
 			tiles.put(coords, ResourceLocation.tryCreate(tile.getString("id")));

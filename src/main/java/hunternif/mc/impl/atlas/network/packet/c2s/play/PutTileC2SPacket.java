@@ -10,7 +10,6 @@ import hunternif.mc.impl.atlas.util.Log;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.registry.WorldGenRegistries;
 import net.minecraftforge.fml.network.NetworkEvent;
 
 /**
@@ -47,7 +46,6 @@ public class PutTileC2SPacket extends C2SPacket {
 						packetBuffer.readResourceLocation());
 	}
 
-	@SuppressWarnings("deprecation")
 	public static void handle(final PutTileC2SPacket msg, final Supplier<NetworkEvent.Context> contextSupplier) {
 		final NetworkEvent.Context context = contextSupplier.get();
 		context.enqueueWork(() -> {
@@ -60,11 +58,8 @@ public class PutTileC2SPacket extends C2SPacket {
 						context.getSender().getName(), msg.atlasID);
 				return;
 			}
-			if (WorldGenRegistries.BIOME.containsKey(msg.tile)) {
-				AtlasAPI.tiles.putBiomeTile(context.getSender().getEntityWorld(), msg.atlasID, msg.tile, msg.x, msg.z);
-			} else {
-				AtlasAPI.tiles.putCustomTile(context.getSender().getEntityWorld(), msg.atlasID, msg.tile, msg.x, msg.z);
-			}
+			
+			AtlasAPI.tiles.putTile(sender.getEntityWorld(), msg.atlasID, msg.tile, msg.x, msg.z);
 		});
 		context.setPacketHandled(true);
 	}

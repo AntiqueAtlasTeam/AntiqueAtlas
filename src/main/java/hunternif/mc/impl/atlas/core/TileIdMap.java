@@ -1,4 +1,4 @@
-package hunternif.mc.impl.atlas.ext;
+package hunternif.mc.impl.atlas.core;
 
 import hunternif.mc.impl.atlas.AntiqueAtlasMod;
 import net.minecraft.util.ResourceLocation;
@@ -8,7 +8,7 @@ import net.minecraft.util.ResourceLocation;
  * then sent to the clients. <i>Not thread-safe!</i>
  * @author Hunternif
  */
-public class ExtTileIdMap {
+public class TileIdMap {
 	public static final ResourceLocation
 	// Village:
 	TILE_VILLAGE_LIBRARY = AntiqueAtlasMod.id("npc_village_library"),

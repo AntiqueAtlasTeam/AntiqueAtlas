@@ -5,9 +5,10 @@ import org.apache.logging.log4j.Logger;
 
 import hunternif.mc.impl.atlas.client.KeyHandler;
 import hunternif.mc.impl.atlas.core.AtlasDataHandler;
-import hunternif.mc.impl.atlas.core.detector.TileDetectorBase;
+import hunternif.mc.impl.atlas.core.scaning.WorldScanner;
+import hunternif.mc.impl.atlas.core.scaning.TileDetectorBase;
 import hunternif.mc.impl.atlas.core.GlobalAtlasData;
-import hunternif.mc.impl.atlas.ext.TileDataHandler;
+import hunternif.mc.impl.atlas.core.TileDataHandler;
 import hunternif.mc.impl.atlas.forge.AntiqueAtlasConfigBuilder;
 import hunternif.mc.impl.atlas.marker.GlobalMarkersDataHandler;
 import hunternif.mc.impl.atlas.marker.MarkersDataHandler;
@@ -33,9 +34,6 @@ import net.minecraftforge.fml.network.simple.SimpleChannel;
 @Mod("antiqueatlas")
 public class AntiqueAtlasMod
 {
-	public static AntiqueAtlasMod instance;
-
-
 	public static final String ID = "antiqueatlas";
 	public static final String NAME = "Antique Atlas";
 	public static final String CHANNEL = ID;
@@ -45,18 +43,17 @@ public class AntiqueAtlasMod
 	private static final String NETWORK_PROTOCOL_VERSION = "1";
 	public static final SimpleChannel MOD_CHANNEL = NetworkRegistry.newSimpleChannel(id("main"), () -> NETWORK_PROTOCOL_VERSION, NETWORK_PROTOCOL_VERSION::equals, NETWORK_PROTOCOL_VERSION::equals);
 	
-
+	public static final WorldScanner worldScanner = new WorldScanner();
 	public static final AtlasDataHandler atlasData = new AtlasDataHandler();
 	public static final MarkersDataHandler markersData = new MarkersDataHandler();
 	
 	public static final TileDataHandler tileData = new TileDataHandler();
 	public static final GlobalMarkersDataHandler globalMarkersData = new GlobalMarkersDataHandler();
 	
-	private static final GlobalAtlasData clientAtlasData = new GlobalAtlasData("antiqueatlas:global_atlas_data");
+//	private static final GlobalAtlasData clientAtlasData = new GlobalAtlasData("antiqueatlas:global_atlas_data");
 
 	public AntiqueAtlasMod() 
 	{
-		instance = this;
 		FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
 		FMLJavaModLoadingContext.get().getModEventBus().addListener(this::clientRegistries);
 		FMLJavaModLoadingContext.get().getModEventBus().addListener(this::enqueue);
@@ -112,10 +109,11 @@ public class AntiqueAtlasMod
 	}
 	
 	public static GlobalAtlasData getGlobalAtlasData(World world) {
-		if (world instanceof ServerWorld) {
-			return ((ServerWorld) world).getSavedData().getOrCreate(() -> new GlobalAtlasData("antiqueatlas:global_atlas_data"), "antiqueatlas:global_atlas_data");
-		} else {
-			return clientAtlasData;
+		if (world.isRemote()) {
+			LOG.warn("Tried to access server only data from client.");
+			return null;
 		}
+
+		return ((ServerWorld) world).getSavedData().getOrCreate(() -> new GlobalAtlasData("antiqueatlas:global_atlas_data"), "antiqueatlas:global_atlas_data");
 	}
 }

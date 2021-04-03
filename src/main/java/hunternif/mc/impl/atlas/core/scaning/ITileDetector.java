@@ -1,4 +1,4 @@
-package hunternif.mc.impl.atlas.core.detector;
+package hunternif.mc.impl.atlas.core.scaning;
 
 import javax.annotation.Nullable;
 

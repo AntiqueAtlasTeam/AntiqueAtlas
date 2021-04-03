@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import hunternif.mc.api.TileAPI;
 import hunternif.mc.impl.atlas.AntiqueAtlasConfig;
 import hunternif.mc.impl.atlas.api.oldimpl.MarkerApiImpl;
 import hunternif.mc.impl.atlas.api.oldimpl.TileApiImpl;
@@ -19,7 +20,7 @@ import net.minecraftforge.registries.ForgeRegistries;
  * @author Hunternif
  */
 public class AtlasAPI {
-	private static final int VERSION = 4;
+	private static final int VERSION = 5;
 	public static final TileAPI tiles = new TileApiImpl();
 	public static final MarkerAPI markers = new MarkerApiImpl();
 

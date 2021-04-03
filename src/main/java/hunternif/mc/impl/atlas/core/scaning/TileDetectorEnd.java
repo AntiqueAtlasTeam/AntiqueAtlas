@@ -1,4 +1,4 @@
-package hunternif.mc.impl.atlas.core.detector;
+package hunternif.mc.impl.atlas.core.scaning;
 
 import java.util.Collections;
 import java.util.Comparator;
@@ -9,13 +9,13 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.registry.WorldGenRegistries;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.BiomeContainer;
 import net.minecraft.world.biome.Biomes;
 import net.minecraft.world.chunk.IChunk;
 import net.minecraft.world.gen.Heightmap;
+import net.minecraftforge.registries.ForgeRegistries;
 
 /**
  * Detects seas of lava, cave ground and cave walls in the Nether.
@@ -30,7 +30,7 @@ public class TileDetectorEnd extends TileDetectorBase implements ITileDetector {
 		if (chunkBiomes == null)
 			return null;
 
-		Map<ResourceLocation, Integer> biomeOccurrences = new HashMap<>(WorldGenRegistries.BIOME.keySet().size());
+		Map<ResourceLocation, Integer> biomeOccurrences = new HashMap<>(ForgeRegistries.BIOMES.getKeys().size());
 
 		for (int x = 0; x < 16; x++) {
 			for (int z = 0; z < 16; z++) {

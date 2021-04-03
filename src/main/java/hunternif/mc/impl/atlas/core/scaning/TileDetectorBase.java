@@ -1,4 +1,4 @@
-package hunternif.mc.impl.atlas.core.detector;
+package hunternif.mc.impl.atlas.core.scaning;
 
 import java.util.Collections;
 import java.util.Comparator;
@@ -8,13 +8,12 @@ import java.util.Map;
 import java.util.Set;
 
 import hunternif.mc.impl.atlas.AntiqueAtlasConfig;
-import hunternif.mc.impl.atlas.ext.ExtTileIdMap;
+import hunternif.mc.impl.atlas.core.TileIdMap;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.registry.Registry;
-import net.minecraft.util.registry.WorldGenRegistries;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.BiomeContainer;
@@ -105,7 +104,7 @@ public class TileDetectorBase implements ITileDetector {
 	@Override
 	public ResourceLocation getBiomeID(World world, IChunk chunk) {
 		BiomeContainer chunkBiomes = chunk.getBiomes();
-		Map<ResourceLocation, Integer> biomeOccurrences = new HashMap<>(WorldGenRegistries.BIOME.keySet().size());
+		Map<ResourceLocation, Integer> biomeOccurrences = new HashMap<>(ForgeRegistries.BIOMES.getKeys().size());
 
 		if (chunkBiomes == null)
 			return null;
@@ -118,10 +117,14 @@ public class TileDetectorBase implements ITileDetector {
 					if (y > 0) {
 						Block topBlock = chunk.getBlockState(new BlockPos(x, y-1, z)).getBlock();
 						// Check if there's surface of water at (x, z), but not swamp
-						if (topBlock == Blocks.WATER && !swampBiomes.contains(biome)) {
-							updateOccurrencesMap(biomeOccurrences, waterPoolBiome, priorityWaterPool);
-						} else if (topBlock == Blocks.LAVA) {
-							updateOccurrencesMap(biomeOccurrences, ExtTileIdMap.TILE_LAVA, priorityLavaPool);
+						if (topBlock == Blocks.WATER) {
+                            if (swampBiomes.contains(getBiomeIdentifier(world, biome))) {
+                                updateOccurrencesMap(biomeOccurrences, TileIdMap.SWAMP_WATER, priorityWaterPool);
+                            } else {
+                                updateOccurrencesMap(biomeOccurrences, waterPoolBiome, priorityWaterPool);
+                            }
+                        } else if (topBlock == Blocks.LAVA) {
+							updateOccurrencesMap(biomeOccurrences, TileIdMap.TILE_LAVA, priorityLavaPool);
 						}
 					}
 				}
@@ -129,7 +132,7 @@ public class TileDetectorBase implements ITileDetector {
 					int height = chunk.getHeightmap(Heightmap.Type.MOTION_BLOCKING).getHeight(x, z);
 
 					if(height > 0 && height < world.getSeaLevel() - ravineMinDepth)	{
-						updateOccurrencesMap(biomeOccurrences, ExtTileIdMap.TILE_RAVINE, priorityRavine);
+						updateOccurrencesMap(biomeOccurrences, TileIdMap.TILE_RAVINE, priorityRavine);
 					}
 				}
 

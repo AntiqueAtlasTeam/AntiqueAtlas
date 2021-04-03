@@ -1,4 +1,4 @@
-package hunternif.mc.impl.atlas.ext;
+package hunternif.mc.impl.atlas.core;
 
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.server.MinecraftServer;
@@ -39,9 +39,7 @@ public class TileDataHandler {
 	}
 
 	public void onPlayerLogin(ServerPlayerEntity player) {
-		worldData.forEach((world, tileData) -> {
-			tileData.syncToPlayer(player, world);
-		});
+		worldData.forEach((world, tileData) -> tileData.syncToPlayer(player, world));
 	}
 
 }
