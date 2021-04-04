@@ -24,7 +24,6 @@ import net.minecraft.world.storage.WorldSavedData;
 public class TileDataStorage extends WorldSavedData {
 	private static final int VERSION = 3;
 	private static final String TAG_VERSION = "aaVersion";
-	private static final String TAG_WORLD_ID = "worldID";
 	private static final String TAG_TILE_LIST = "tiles";
 
 	public TileDataStorage(String key) {
@@ -43,14 +42,6 @@ public class TileDataStorage extends WorldSavedData {
 			Log.warn("Outdated atlas data format! Was %d but current is %d", version, VERSION);
 			this.markDirty();
 		}
-
-//		RegistryKey<World> worldID;
-//		worldID = RegistryKey.of(Registry.DIMENSION, new ResourceLocation(compound.getString(TAG_WORLD_ID)));
-
-//		if (worldID != world.getRegistryKey()) {
-//			Log.error("Received update for different world (%s != %s)", world.getRegistryKey().toString(), worldID.toString());
-//			this.markDirty();
-//		}
 
 		ListNBT tileList = compound.getList(TAG_TILE_LIST, NbtType.CompoundNBT);
 
