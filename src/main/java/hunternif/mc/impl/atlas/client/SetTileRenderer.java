@@ -5,8 +5,9 @@ import java.util.HashMap;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.AbstractGui;
+import hunternif.mc.impl.atlas.client.texture.ITexture;
+import hunternif.mc.impl.atlas.client.texture.Texture;
+import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -18,15 +19,19 @@ import net.minecraftforge.api.distmarker.OnlyIn;
  * rendering all of the same textures of a map at once without re-binding.
  */
 @OnlyIn(Dist.CLIENT)
-class SetTileRenderer extends AbstractGui {
+class SetTileRenderer {
 
     private final HashMap<ResourceLocation, ArrayList<TileCorner>> subjects = new HashMap<>();
     private final MatrixStack matrices;
     private final int tileHalfSize;
+    private final int light;
+    private final IRenderTypeBuffer buffer;
 
-    public SetTileRenderer(MatrixStack matrices, int tileHalfSize) {
+    public SetTileRenderer(IRenderTypeBuffer buffer, MatrixStack matrices, int tileHalfSize, int light) {
         this.matrices = matrices;
         this.tileHalfSize = tileHalfSize;
+        this.light = light;
+        this.buffer = buffer;
     }
 
     public void addTileCorner(ResourceLocation texture, int x, int y, int u, int v) {
@@ -38,18 +43,18 @@ class SetTileRenderer extends AbstractGui {
         for (ResourceLocation key : subjects.keySet()) {
             ArrayList<TileCorner> tca = subjects.get(key);
 
-            Minecraft.getInstance().getTextureManager().bindTexture(key);
+            ITexture texture = new Texture(key, 4, 6, false);
 
             for (TileCorner tc : tca) {
-                drawInlineAutotileCorner(tc.x, tc.y, tc.u, tc.v);
+            	drawInlineAutotileCorner(texture, tc.x, tc.y, tc.u, tc.v);
             }
         }
     }
 
-    private void drawInlineAutotileCorner(int x, int y, int u, int v) {
+    private void drawInlineAutotileCorner(ITexture texture, int x, int y, int u, int v) {
         // This is dumb. But because there are drawn four at a time, these chunks prevent rendering outside of our map
         if ((x + tileHalfSize) <= 240 && (x - tileHalfSize >= 0) && (y + tileHalfSize) < 166 && (y - tileHalfSize) >= 0) {
-            blit(this.matrices, x, y, tileHalfSize, tileHalfSize, u, v, 1, 1, 4, 6);
+        	texture.drawWithLight(this.buffer, this.matrices, x, y, tileHalfSize, tileHalfSize, u, v, 1, 1, this.light);
         }
     }
 

@@ -771,8 +771,6 @@ public class GuiAtlas extends GuiComponent {
 		// Overlay the frame so that edges of the map are smooth:
 		RenderSystem.color4f(1, 1, 1, 1);
 		Textures.BOOK_FRAME.draw(matrices, getGuiX(), getGuiY());
-		renderScaleOverlay(matrices, deltaMillis);
-
 		double iconScale = getIconScale();
 
 		// Draw global markers:
@@ -781,6 +779,8 @@ public class GuiAtlas extends GuiComponent {
 
 		Textures.BOOK_FRAME_NARROW.draw(matrices, getGuiX(), getGuiY());
 
+		renderScaleOverlay(matrices, deltaMillis);
+		
 		// Draw player icon:
 		if (!state.is(HIDING_MARKERS)) {
 			renderPlayer(matrices, iconScale);
