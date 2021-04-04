@@ -5,16 +5,17 @@ import org.apache.logging.log4j.Logger;
 
 import hunternif.mc.impl.atlas.client.KeyHandler;
 import hunternif.mc.impl.atlas.core.AtlasDataHandler;
-import hunternif.mc.impl.atlas.core.scaning.WorldScanner;
-import hunternif.mc.impl.atlas.core.scaning.TileDetectorBase;
 import hunternif.mc.impl.atlas.core.GlobalAtlasData;
 import hunternif.mc.impl.atlas.core.TileDataHandler;
+import hunternif.mc.impl.atlas.core.scaning.TileDetectorBase;
+import hunternif.mc.impl.atlas.core.scaning.WorldScanner;
 import hunternif.mc.impl.atlas.forge.AntiqueAtlasConfigBuilder;
 import hunternif.mc.impl.atlas.marker.GlobalMarkersDataHandler;
 import hunternif.mc.impl.atlas.marker.MarkersDataHandler;
 import hunternif.mc.impl.atlas.network.AntiqueAtlasNetworking;
 import hunternif.mc.impl.atlas.structure.EndCity;
 import hunternif.mc.impl.atlas.structure.NetherFortress;
+import hunternif.mc.impl.atlas.structure.Village;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
@@ -36,8 +37,6 @@ public class AntiqueAtlasMod
 {
 	public static final String ID = "antiqueatlas";
 	public static final String NAME = "Antique Atlas";
-	public static final String CHANNEL = ID;
-	public static final String VERSION = "@VERSION@";
 	
 	public static final Logger LOG = LogManager.getLogger(ID);
 	private static final String NETWORK_PROTOCOL_VERSION = "1";
@@ -76,7 +75,7 @@ public class AntiqueAtlasMod
 
 		NetherFortress.registerPieces();
 		EndCity.registerMarkers();
-//		Village.registerMarkers();
+		Village.registerMarkers();
 	}
 
 	private void setup(final FMLCommonSetupEvent event)
