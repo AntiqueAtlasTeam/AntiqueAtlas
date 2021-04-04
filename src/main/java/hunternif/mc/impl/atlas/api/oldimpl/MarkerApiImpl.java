@@ -26,16 +26,16 @@ public class MarkerApiImpl implements MarkerAPI {
 
 	@Nullable
 	@Override
-	public Marker putMarker(@Nonnull World world, boolean visibleAhead, int atlasID, MarkerType markerType, ITextComponent label, int x, int z) {
-		return doPutMarker(world, visibleAhead, atlasID, markerType, label, x, z);
+	public Marker putMarker(@Nonnull World world, boolean visibleAhead, int atlasID, ResourceLocation marker, ITextComponent label, int x, int z) {
+		return doPutMarker(world, visibleAhead, atlasID, marker, label, x, z);
 	}
 	@Nullable
 	@Override
-	public Marker putGlobalMarker(@Nonnull World world, boolean visibleAhead, MarkerType markerType, ITextComponent label, int x, int z) {
-		return doPutMarker(world, visibleAhead, GLOBAL, markerType, label, x, z);
+	public Marker putGlobalMarker(@Nonnull World world, boolean visibleAhead, ResourceLocation marker, ITextComponent label, int x, int z) {
+		return doPutMarker(world, visibleAhead, GLOBAL, marker, label, x, z);
 	}
 
-	private Marker doPutMarker(World world, boolean visibleAhead, int atlasID, MarkerType markerType, ITextComponent label, int x, int z) {
+	private Marker doPutMarker(World world, boolean visibleAhead, int atlasID, ResourceLocation markerId, ITextComponent label, int x, int z) {
 		Marker marker = null;
 		if (!world.isRemote && world.getServer() != null) {
 			MarkersData data = atlasID == GLOBAL
@@ -43,7 +43,7 @@ public class MarkerApiImpl implements MarkerAPI {
 							: AntiqueAtlasMod.markersData.getMarkersData(atlasID, world)
 							;
 
-			marker = data.createAndSaveMarker(MarkerType.REGISTRY.getKey(markerType), world.getDimensionKey(), x, z, visibleAhead, label);
+			marker = data.createAndSaveMarker(markerId, world.getDimensionKey(), x, z, visibleAhead, label);
 			new MarkersS2CPacket(atlasID, world.getDimensionKey(), Collections.singleton(marker)).send((ServerWorld) world);
 		}
 

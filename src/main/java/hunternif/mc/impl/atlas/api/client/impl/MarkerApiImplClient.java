@@ -27,14 +27,14 @@ public class MarkerApiImplClient implements MarkerAPI {
 
 	@Nullable
 	@Override
-	public Marker putMarker(@Nonnull World world, boolean visibleAhead, int atlasID, MarkerType markerType, ITextComponent label, int x, int z) {
-		new AddMarkerC2SPacket(atlasID, MarkerType.REGISTRY.getKey(markerType), x, z, visibleAhead, label).send();
+	public Marker putMarker(@Nonnull World world, boolean visibleAhead, int atlasID, ResourceLocation marker, ITextComponent label, int x, int z) {
+		new AddMarkerC2SPacket(atlasID, marker, x, z, visibleAhead, label).send();
 		return null;
 	}
 
 	@Nullable
 	@Override
-	public Marker putGlobalMarker(@Nonnull World world, boolean visibleAhead, MarkerType markerType, ITextComponent label, int x, int z) {
+	public Marker putGlobalMarker(@Nonnull World world, boolean visibleAhead, ResourceLocation marker, ITextComponent label, int x, int z) {
 		AntiqueAtlasMod.LOG.warn("Client tried to add a global marker");
 
 		return null;

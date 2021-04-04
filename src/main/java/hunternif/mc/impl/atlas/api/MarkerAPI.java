@@ -35,7 +35,7 @@ public interface MarkerAPI {
 	 * 						the player hasn't yet discovered that area.
 	 * @param atlasID		the ID of the atlas you want to put marker in. Equal
 	 * 						to ItemStack damage for ItemAtlas.
-	 * @param markerType	name of your custom marker type.
+	 * @param marker    name of your custom marker type.
 	 * @param label			text label to be displayed on mouseover.
 	 * @param x				block coordinate
 	 * @param z				block coordinate
@@ -43,7 +43,7 @@ public interface MarkerAPI {
 	 * @return returns the marker. null if failed or client
 	 */
 	@Nullable
-	Marker putMarker(@Nonnull World world, boolean visibleAhead, int atlasID, MarkerType markerType, ITextComponent label, int x, int z);
+	Marker putMarker(@Nonnull World world, boolean visibleAhead, int atlasID, ResourceLocation marker, ITextComponent label, int x, int z);
 	
 	/**
 	 * Put a marker in all atlases in the world at specified block coordinates.
@@ -51,7 +51,7 @@ public interface MarkerAPI {
 	 * @param world
 	 * @param visibleAhead    whether the marker should appear visible even if
 	 * 						the player hasn't yet discovered that area.
-	 * @param markerType    name of your custom marker type.
+	 * @param marker   name of your custom marker type.
 	 * @param label            text label to be displayed on mouseover.
 	 * @param x                block coordinate
 	 * @param z                block coordinate
@@ -59,7 +59,7 @@ public interface MarkerAPI {
 	 * @return returns the marker. null if failed or client
 	 */
 	@Nullable
-	Marker putGlobalMarker(@Nonnull World world, boolean visibleAhead, MarkerType markerType, ITextComponent label, int x, int z);
+	Marker putGlobalMarker(@Nonnull World world, boolean visibleAhead, ResourceLocation marker, ITextComponent label, int x, int z);
 
 	/**
 	 * Delete a marker from an atlas.

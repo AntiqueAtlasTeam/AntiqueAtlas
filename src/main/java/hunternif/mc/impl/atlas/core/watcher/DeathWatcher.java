@@ -14,9 +14,9 @@ public class DeathWatcher {
 	public static void onPlayerDeath(PlayerEntity player) {
 		if (AntiqueAtlasConfig.autoDeathMarker.get()) {
 			for (int atlasID : AtlasAPI.getPlayerAtlases(player)) {
-				AtlasAPI.markers.putMarker(player.getEntityWorld(), true, atlasID, MarkerType.REGISTRY.getOrDefault(new ResourceLocation("antiqueatlas:tomb")),
-						new TranslationTextComponent("gui.antiqueatlas.marker.tomb", player.getName()),
-						(int)player.getPosX(), (int)player.getPosZ());
+				AtlasAPI.markers.putMarker(player.getEntityWorld(), true, atlasID, new ResourceLocation("antiqueatlas:tomb"),
+                        new TranslationTextComponent("gui.antiqueatlas.marker.tomb", player.getName()),
+                        (int) player.getPosX(), (int) player.getPosZ());
 			}
 		}
 	}
