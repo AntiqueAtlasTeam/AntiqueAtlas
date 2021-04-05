@@ -49,11 +49,11 @@ public class TileTextureMap {
 			return;
 		}
 
-        textureMap.put(tileId, textureSet);
-    }
+		textureMap.put(tileId, textureSet);
+	}
 
-    public TextureSet getDefaultTexture() {
-        return TextureSetMap.instance().getByName(AntiqueAtlasMod.id("plains"));
+	public TextureSet getDefaultTexture() {
+		return TextureSetMap.instance().getByName(AntiqueAtlasMod.id("plains"));
 	}
 
 	/** Find the most appropriate standard texture set depending on
@@ -65,64 +65,68 @@ public class TileTextureMap {
 		}
 
 		switch (biome.getCategory()) {
-			case SWAMP:
-				setTexture(biome, biome.getScale() >= 0.25f ? TextureSetMap.instance().getByName(AntiqueAtlasMod.id("swamp_hills")) : TextureSetMap.instance().getByName(AntiqueAtlasMod.id("swamp")));
-                break;
-            case OCEAN:
-            case RIVER:
-                setTexture(biome, biome.getPrecipitation() == Biome.RainType.SNOW ? TextureSetMap.instance().getByName(AntiqueAtlasMod.id("ice")) : TextureSetMap.instance().getByName(AntiqueAtlasMod.id("water")));
-                break;
-            case BEACH:
-            	setTexture(biome, TextureSetMap.instance().getByName(AntiqueAtlasMod.id("shore")));
-                break;
-            case JUNGLE:
-                setTexture(biome, biome.getScale() >= 0.25f ? TextureSetMap.instance().getByName(AntiqueAtlasMod.id("jungle_hills")) : TextureSetMap.instance().getByName(AntiqueAtlasMod.id("jungle")));
-                break;
-            case SAVANNA:
-                setTexture(biome, biome.getDepth() >= 1.0f ? TextureSetMap.instance().getByName(AntiqueAtlasMod.id("plateau_savanna")) : TextureSetMap.instance().getByName(AntiqueAtlasMod.id("savanna")));
-                break;
-            case MESA:
-                setTexture(biome, TextureSetMap.instance().getByName(AntiqueAtlasMod.id("plateau_mesa")));
-                break;
-            case FOREST:
-                setTexture(biome, biome.getPrecipitation() == Biome.RainType.SNOW ?
-                        (biome.getScale() >= 0.25f ? TextureSetMap.instance().getByName(AntiqueAtlasMod.id("snow_pines_hills")) : TextureSetMap.instance().getByName(AntiqueAtlasMod.id("snow_pines"))) :
-                        (biome.getScale() >= 0.25f ? TextureSetMap.instance().getByName(AntiqueAtlasMod.id("forest_hills")) : TextureSetMap.instance().getByName(AntiqueAtlasMod.id("forest")))
-                );
-                break;
-            case PLAINS:
-                setTexture(biome, biome.getPrecipitation() == Biome.RainType.SNOW ?
-                        (biome.getScale() >= 0.25f ? TextureSetMap.instance().getByName(AntiqueAtlasMod.id("snow_hills")) : TextureSetMap.instance().getByName(AntiqueAtlasMod.id("snow"))) :
-                        (biome.getScale() >= 0.25f ? TextureSetMap.instance().getByName(AntiqueAtlasMod.id("hills")) : TextureSetMap.instance().getByName(AntiqueAtlasMod.id("plains")))
-                );
-                break;
-            case ICY:
-                setTexture(biome, biome.getScale() >= 0.25f ? TextureSetMap.instance().getByName(AntiqueAtlasMod.id("mountains_snow_caps")) : TextureSetMap.instance().getByName(AntiqueAtlasMod.id("ice_spikes"))); // TODO also snowy mountains/tundra?
-                break;
-            case DESERT:
-                setTexture(biome, biome.getScale() >= 0.25f ? TextureSetMap.instance().getByName(AntiqueAtlasMod.id("desert_hills")) : TextureSetMap.instance().getByName(AntiqueAtlasMod.id("desert")));
-                break;
-            case TAIGA:
-                setTexture(biome, TextureSetMap.instance().getByName(AntiqueAtlasMod.id("snow"))); // TODO
-                break;
-            case EXTREME_HILLS:
-                setTexture(biome, biome.getScale() >= 0.25f ? TextureSetMap.instance().getByName(AntiqueAtlasMod.id("mountains")) : TextureSetMap.instance().getByName(AntiqueAtlasMod.id("hills")));
-				break;
-			case THEEND:
-				List<List<Supplier<ConfiguredFeature<?, ?>>>> features = biome.getGenerationSettings().getFeatures();
-                boolean has_chorus_plant = features.stream().anyMatch(supplier -> supplier.stream().anyMatch(step -> step.get() == Features.CHORUS_PLANT));
-                if (has_chorus_plant) {
-                    setTexture(biome, TextureSetMap.instance().getByName(AntiqueAtlasMod.id("end_island_plants")));
-                } else {
-                    setTexture(biome, TextureSetMap.instance().getByName(AntiqueAtlasMod.id("end_island")));
-                }
-                break;
-            case NONE:
-                setTexture(biome, TextureSetMap.instance().getByName(AntiqueAtlasMod.id("end_void")));
-                break;
-            default:
-                Log.warn("Couldn't auto-registered standard texture set for biome %s", ForgeRegistries.BIOMES.getKey(biome).toString());
-                return;
+		case SWAMP:
+			setTexture(biome, biome.getScale() >= 0.25f ? TextureSetMap.instance().getByName(AntiqueAtlasMod.id("swamp_hills")) : TextureSetMap.instance().getByName(AntiqueAtlasMod.id("swamp")));
+			break;
+		case OCEAN:
+		case RIVER:
+			setTexture(biome, biome.getPrecipitation() == Biome.RainType.SNOW ? TextureSetMap.instance().getByName(AntiqueAtlasMod.id("ice")) : TextureSetMap.instance().getByName(AntiqueAtlasMod.id("water")));
+			break;
+		case BEACH:
+			setTexture(biome, TextureSetMap.instance().getByName(AntiqueAtlasMod.id("shore")));
+			break;
+		case JUNGLE:
+			setTexture(biome, biome.getScale() >= 0.25f ? TextureSetMap.instance().getByName(AntiqueAtlasMod.id("jungle_hills")) : TextureSetMap.instance().getByName(AntiqueAtlasMod.id("jungle")));
+			break;
+		case SAVANNA:
+			setTexture(biome, biome.getDepth() >= 1.0f ? TextureSetMap.instance().getByName(AntiqueAtlasMod.id("plateau_savanna")) : TextureSetMap.instance().getByName(AntiqueAtlasMod.id("savanna")));
+			break;
+		case MESA:
+			setTexture(biome, TextureSetMap.instance().getByName(AntiqueAtlasMod.id("plateau_mesa")));
+			break;
+		case FOREST:
+			setTexture(biome, biome.getPrecipitation() == Biome.RainType.SNOW ?
+					(biome.getScale() >= 0.25f ? TextureSetMap.instance().getByName(AntiqueAtlasMod.id("snow_pines_hills")) : TextureSetMap.instance().getByName(AntiqueAtlasMod.id("snow_pines"))) :
+						(biome.getScale() >= 0.25f ? TextureSetMap.instance().getByName(AntiqueAtlasMod.id("forest_hills")) : TextureSetMap.instance().getByName(AntiqueAtlasMod.id("forest")))
+					);
+			break;
+		case PLAINS:
+			setTexture(biome, biome.getPrecipitation() == Biome.RainType.SNOW ?
+					(biome.getScale() >= 0.25f ? TextureSetMap.instance().getByName(AntiqueAtlasMod.id("snow_hills")) : TextureSetMap.instance().getByName(AntiqueAtlasMod.id("snow"))) :
+						(biome.getScale() >= 0.25f ? TextureSetMap.instance().getByName(AntiqueAtlasMod.id("hills")) : TextureSetMap.instance().getByName(AntiqueAtlasMod.id("plains")))
+					);
+			break;
+		case ICY:
+			setTexture(biome, biome.getScale() >= 0.25f ? TextureSetMap.instance().getByName(AntiqueAtlasMod.id("mountains_snow_caps")) : TextureSetMap.instance().getByName(AntiqueAtlasMod.id("ice_spikes"))); // TODO also snowy mountains/tundra?
+			break;
+		case DESERT:
+			setTexture(biome, biome.getScale() >= 0.25f ? TextureSetMap.instance().getByName(AntiqueAtlasMod.id("desert_hills")) : TextureSetMap.instance().getByName(AntiqueAtlasMod.id("desert")));
+			break;
+		case TAIGA:
+			setTexture(biome, TextureSetMap.instance().getByName(AntiqueAtlasMod.id("snow"))); // TODO
+			break;
+		case EXTREME_HILLS:
+			setTexture(biome, biome.getScale() >= 0.25f ? TextureSetMap.instance().getByName(AntiqueAtlasMod.id("mountains")) : TextureSetMap.instance().getByName(AntiqueAtlasMod.id("hills")));
+			break;
+		case THEEND:
+			List<List<Supplier<ConfiguredFeature<?, ?>>>> features = biome.getGenerationSettings().getFeatures();
+			boolean has_chorus_plant = features.stream().anyMatch(supplier -> supplier.stream().anyMatch(step -> step.get() == Features.CHORUS_PLANT));
+			if (has_chorus_plant) {
+				setTexture(biome, TextureSetMap.instance().getByName(AntiqueAtlasMod.id("end_island_plants")));
+			} else {
+				setTexture(biome, TextureSetMap.instance().getByName(AntiqueAtlasMod.id("end_island")));
+			}
+			break;
+		case MUSHROOM:
+			setTexture(biome, TextureSetMap.instance().getByName(AntiqueAtlasMod.id("mushroom")));
+		case NETHER:
+			setTexture(biome, TextureSetMap.instance().getByName(AntiqueAtlasMod.id("soul_sand_valley")));
+		case NONE:
+			setTexture(biome, TextureSetMap.instance().getByName(AntiqueAtlasMod.id("end_void")));
+			break;
+		default:
+			Log.warn("Couldn't auto-registered standard texture set for biome %s", ForgeRegistries.BIOMES.getKey(biome).toString());
+			return;
 		}
 
 		Log.info("Auto-registered standard texture set for biome %s: %s", ForgeRegistries.BIOMES.getKey(biome).toString(), textureMap.get(ForgeRegistries.BIOMES.getKey(biome)).name);
