@@ -2,7 +2,7 @@
   "version": 1,
   "data": {
     "textures": {
-      "antiqueatlas:fance": 1
+      "antiqueatlas:fence": 1
     },
     "stitch": {
       "antiqueatlas:house": "both"

@@ -2,9 +2,9 @@
   "version": 1,
   "data": {
     "textures": {
-      "antiqueatlas:sparse_forest": 1,
-      "antiqueatlas:sparse_forest2": 1,
-      "antiqueatlas:sparse_forest3": 1
+      "antiqueatlas:forest_sparse": 1,
+      "antiqueatlas:forest_sparse2": 1,
+      "antiqueatlas:forest_sparse3": 1
     }
   }
 }
