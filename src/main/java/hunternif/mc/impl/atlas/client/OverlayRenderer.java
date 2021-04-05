@@ -10,11 +10,6 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import hunternif.mc.impl.atlas.AntiqueAtlasConfig;
 import hunternif.mc.impl.atlas.AntiqueAtlasMod;
 import hunternif.mc.impl.atlas.RegistrarAntiqueAtlas;
-import hunternif.mc.impl.atlas.client.TileTextureMap;
-import hunternif.mc.impl.atlas.client.SubTile;
-import hunternif.mc.impl.atlas.client.SubTileQuartet;
-import hunternif.mc.impl.atlas.client.Textures;
-import hunternif.mc.impl.atlas.client.TileRenderIterator;
 import hunternif.mc.impl.atlas.client.gui.GuiAtlas;
 import hunternif.mc.impl.atlas.core.WorldData;
 import hunternif.mc.impl.atlas.item.AtlasItem;
@@ -99,7 +94,7 @@ public class OverlayRenderer extends AbstractGui {
 
 		matrices.pop();
 
-		matrices.translate(0, 0, -0.01);
+		matrices.translate(0, 0, -0.02);
 		drawPlayer(buffer, matrices, light);
 
 		// Overlay the frame so that edges of the map are smooth:
@@ -162,13 +157,12 @@ public class OverlayRenderer extends AbstractGui {
 
 		MarkersData markersData = AntiqueAtlasMod.markersData.getMarkersData(
 				atlasID, Minecraft.getInstance().world);
-		DimensionMarkersData localMarkersData = null;
 		if (markersData != null) {
-			localMarkersData = markersData.getMarkersDataInWorld(world.getDimensionKey());
+			DimensionMarkersData localMarkersData = markersData.getMarkersDataInWorld(world.getDimensionKey());
+			
+			// Draw local markers:
+			drawMarkersData(buffer, matrices, localMarkersData, biomeData, light);
 		}
-
-		// Draw local markers:
-		drawMarkersData(buffer, matrices, localMarkersData, biomeData, light);
 	}
 
 	private void drawPlayer(IRenderTypeBuffer buffer, MatrixStack matrices, int light) {
