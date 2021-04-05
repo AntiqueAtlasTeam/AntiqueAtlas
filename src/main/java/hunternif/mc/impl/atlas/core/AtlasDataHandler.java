@@ -32,16 +32,14 @@ public class AtlasDataHandler {
 	/** Loads data for the given atlas or creates a new one. */
 	public AtlasData getAtlasData(int atlasID, World world) {
 		String key = getAtlasDataKey(atlasID);
-		AtlasData data;
 		if (world.isRemote) {
 			// Since atlas data doesn't really belong to a single world-dimension,
 			// it can be cached. This should fix #67
-			data = atlasDataClientCache.computeIfAbsent(key, AtlasData::new);
+			return atlasDataClientCache.computeIfAbsent(key, AtlasData::new);
 		} else {
 			DimensionSavedDataManager manager = ((ServerWorld) world).getSavedData();
-			data = manager.getOrCreate(() -> new AtlasData(key), key);
+			return manager.getOrCreate(() -> new AtlasData(key), key);
 		}
-		return data;
 	}
 
 	private String getAtlasDataKey(int atlasID) {
