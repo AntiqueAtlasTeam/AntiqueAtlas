@@ -11,14 +11,11 @@ import java.util.Map.Entry;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 
-import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import hunternif.mc.impl.atlas.AntiqueAtlasMod;
-import hunternif.mc.impl.atlas.client.texture.ITexture;
-import hunternif.mc.impl.atlas.client.texture.TileTexture;
 import hunternif.mc.impl.atlas.forge.IResourceReloadListener;
 import hunternif.mc.impl.atlas.util.Log;
 import net.minecraft.profiler.IProfiler;
@@ -48,74 +45,74 @@ public class TextureSetConfig implements IResourceReloadListener<Collection<Text
 
 			try {
 				for (ResourceLocation id : manager.getAllResourceLocations("atlas/texture_sets", (s) -> s.endsWith(".json"))) {
-                    ResourceLocation texture_id = new ResourceLocation(
-                            id.getNamespace(),
-                            id.getPath().replace("atlas/texture_sets/", "").replace(".json", "")
-                    );
+					ResourceLocation texture_id = new ResourceLocation(
+							id.getNamespace(),
+							id.getPath().replace("atlas/texture_sets/", "").replace(".json", "")
+							);
 
-                    try {
-                        IResource resource = manager.getResource(id);
-                        try (
-                                InputStream stream = resource.getInputStream();
-                                InputStreamReader reader = new InputStreamReader(stream)
-                        ) {
-                            JsonObject object = PARSER.parse(reader).getAsJsonObject();
+					try {
+						IResource resource = manager.getResource(id);
+						try (
+								InputStream stream = resource.getInputStream();
+								InputStreamReader reader = new InputStreamReader(stream)
+								) {
+							JsonObject object = PARSER.parse(reader).getAsJsonObject();
 
-                            int version = object.getAsJsonPrimitive("version").getAsInt();
-                            if (version != VERSION) {
-                                AntiqueAtlasMod.LOG.warn("The TextureSet " + texture_id + " is in the wrong version! Skipping.");
-                                continue;
-                            }
+							int version = object.getAsJsonPrimitive("version").getAsInt();
+							if (version != VERSION) {
+								AntiqueAtlasMod.LOG.warn("The TextureSet " + texture_id + " is in the wrong version! Skipping.");
+								continue;
+							}
 
-                            JsonObject data = object.getAsJsonObject("data");
+							JsonObject data = object.getAsJsonObject("data");
 
-                            List<ResourceLocation> textures = new ArrayList<>();
+							List<ResourceLocation> textures = new ArrayList<>();
 
-                            for (Entry<String, JsonElement> entry : data.getAsJsonObject("textures").entrySet()) {
-                                for (int i = 0; i < entry.getValue().getAsInt(); i++) {
-                                    textures.add(new ResourceLocation(entry.getKey()));
-                                }
-                            }
+							for (Entry<String, JsonElement> entry : data.getAsJsonObject("textures").entrySet()) {
+								for (int i = 0; i < entry.getValue().getAsInt(); i++) {
+									textures.add(new ResourceLocation(entry.getKey()));
+								}
+							}
 
-                            ResourceLocation[] textureArray = new ResourceLocation[textures.size()];
-                            TextureSet set;
+							ResourceLocation[] textureArray = new ResourceLocation[textures.size()];
+							TextureSet set;
 
-                            if (!data.has("shore")) {
-                                set = new TextureSet(texture_id, textures.toArray(textureArray));
-                                
+							if (!data.has("shore")) {
+								set = new TextureSet(texture_id, textures.toArray(textureArray));
+
 							} else {
 								JsonObject shore = data.getAsJsonObject("shore");
 
-                                if (!shore.has("water")) {
-                                    throw new RuntimeException("The `shore` entry is missing a water entry.");
+								if (!shore.has("water")) {
+									throw new RuntimeException("The `shore` entry is missing a water entry.");
 								}
-                                set = new TextureSet.TextureSetShore(texture_id, new ResourceLocation(shore.get("water").getAsString()), textures.toArray(textureArray));
+								set = new TextureSet.TextureSetShore(texture_id, new ResourceLocation(shore.get("water").getAsString()), textures.toArray(textureArray));
 							}
-                            if (data.has("stitch")) {
-                                data.getAsJsonObject("stitch").entrySet().forEach(entry -> {
-                                    String to = entry.getValue().getAsString();
+							if (data.has("stitch")) {
+								data.getAsJsonObject("stitch").entrySet().forEach(entry -> {
+									String to = entry.getValue().getAsString();
 
-                                    switch (to) {
-                                        case "both":
-                                            set.stitchTo(new ResourceLocation(entry.getKey()));
-                                            break;
-                                        case "horizontal":
-                                            set.stitchToHorizontal(new ResourceLocation(entry.getKey()));
-                                            break;
-                                        case "vertical":
-                                            set.stitchToVertical(new ResourceLocation(entry.getKey()));
-                                            break;
-                                        default:
-                                            throw new RuntimeException("Invalid stitch value (" + to + ") for `" + entry.getKey() + "`");
-                                    }
-                                });
-                            }
+									switch (to) {
+									case "both":
+										set.stitchTo(new ResourceLocation(entry.getKey()));
+										break;
+									case "horizontal":
+										set.stitchToHorizontal(new ResourceLocation(entry.getKey()));
+										break;
+									case "vertical":
+										set.stitchToVertical(new ResourceLocation(entry.getKey()));
+										break;
+									default:
+										throw new RuntimeException("Invalid stitch value (" + to + ") for `" + entry.getKey() + "`");
+									}
+								});
+							}
 
 
-                            sets.put(texture_id, set);
+							sets.put(texture_id, set);
 						}
-                    } catch (Exception e) {
-                        AntiqueAtlasMod.LOG.warn("Error reading TextureSet " + texture_id + "!", e);
+					} catch (Exception e) {
+						AntiqueAtlasMod.LOG.warn("Error reading TextureSet " + texture_id + "!", e);
 					}
 				}
 			} catch (Throwable e) {
@@ -130,23 +127,28 @@ public class TextureSetConfig implements IResourceReloadListener<Collection<Text
 	public CompletableFuture<Void> apply(Collection<TextureSet> sets, IResourceManager manager, IProfiler profiler, Executor executor) {
 		return CompletableFuture.runAsync(() -> {
 			for (TextureSet set : sets) {
-				set.loadTextures();
-				textureSetMap.register(set);
-				Log.info("Loaded texture set %s with %d custom texture(s)", set.name, set.getTexturePaths().length);
-            }
+				try {
+					set.loadTextures();
+					textureSetMap.register(set);
+					Log.info("Loaded texture set %s with %d custom texture(s)", set.name, set.getTexturePaths().length);
+				}
+				catch (Throwable e) {
+					Log.warn(e, "Failed to load the texture set `%s`:", set.name);
+				}
+			}
 
-            for (TextureSet set : sets) {
-                if (set instanceof TextureSet.TextureSetShore) {
-                    TextureSet.TextureSetShore texture = (TextureSet.TextureSetShore) set;
-                    texture.loadWater();
-                    Log.info("Loaded water texture `%s` for shore texture `%s` texture", texture.waterName, texture.name);
-                }
+			for (TextureSet set : sets) {
+				if (set instanceof TextureSet.TextureSetShore) {
+					TextureSet.TextureSetShore texture = (TextureSet.TextureSetShore) set;
+					texture.loadWater();
+					Log.info("Loaded water texture `%s` for shore texture `%s` texture", texture.waterName, texture.name);
+				}
 			}
 		});
 	}
 
-//	@Override
-//	public ResourceLocation getFabricId() {
-//		return new ResourceLocation("antiqueatlas:texture_sets");
-//	}
+	@Override
+	public ResourceLocation getId() {
+		return new ResourceLocation("antiqueatlas:texture_sets");
+	}
 }

@@ -1,9 +1,16 @@
 package hunternif.mc.impl.atlas.client;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.function.Supplier;
+
 import hunternif.mc.impl.atlas.AntiqueAtlasMod;
 import hunternif.mc.impl.atlas.client.texture.ITexture;
 import hunternif.mc.impl.atlas.util.Log;
-
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.registry.WorldGenRegistries;
 import net.minecraft.world.biome.Biome;
@@ -12,12 +19,6 @@ import net.minecraft.world.gen.feature.Features;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.registries.ForgeRegistries;
-
-import java.util.*;
-import java.util.Map.Entry;
-import java.util.function.Supplier;
-
-import static hunternif.mc.impl.atlas.client.TextureSet.*;
 
 /**
  * Maps biome IDs (or pseudo IDs) to textures. <i>Not thread-safe!</i>
@@ -129,7 +130,11 @@ public class TileTextureMap {
 			return;
 		}
 
-		Log.info("Auto-registered standard texture set for biome %s: %s", ForgeRegistries.BIOMES.getKey(biome).toString(), textureMap.get(ForgeRegistries.BIOMES.getKey(biome)).name);
+		if (textureMap.get(ForgeRegistries.BIOMES.getKey(biome)) != null) {
+			Log.info("Auto-registered standard texture set for biome %s: %s", ForgeRegistries.BIOMES.getKey(biome).toString(), textureMap.get(ForgeRegistries.BIOMES.getKey(biome)).name);
+		} else {
+			Log.error("Failed to auto-register a standard texture set for the biome '%s'. This is most likely caused by errors in the TextureSet configurations, check your resource packs first before reporting it as an issue!", ForgeRegistries.BIOMES.getKey(biome).toString());
+		}
 	}
 
 	/** Auto-registers the biome if it is not registered. */

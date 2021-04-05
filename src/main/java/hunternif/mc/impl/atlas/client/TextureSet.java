@@ -98,6 +98,9 @@ public class TextureSet implements Comparable<TextureSet> {
 
     public void loadTextures() {
         for (int i = 0; i < texturePaths.length; i++) {
+        	if (!Textures.TILE_TEXTURES_MAP.containsKey(texturePaths[i])) {
+                throw new RuntimeException("Couldn't find the specified texture: " + texturePaths[i].toString());
+            }
             textures[i] = Textures.TILE_TEXTURES_MAP.get(texturePaths[i]);
         }
     }
