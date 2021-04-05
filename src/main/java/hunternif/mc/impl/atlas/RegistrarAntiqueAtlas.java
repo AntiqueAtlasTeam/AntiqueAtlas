@@ -16,19 +16,23 @@ import net.minecraftforge.fml.common.Mod;
 public class RegistrarAntiqueAtlas
 {
 	public static final ItemEmptyAtlas EMPTY_ATLAS = new ItemEmptyAtlas(new Item.Properties().group(ItemGroup.MISC));
-    public static final AtlasItem ATLAS = new AtlasItem(new Item.Properties().maxStackSize(1));
+	public static final AtlasItem ATLAS = new AtlasItem(new Item.Properties().maxStackSize(1));
 
-	
+
 	@SubscribeEvent
 	public static void registerItems(final RegistryEvent.Register<Item> event) {
-		event.getRegistry().register(ATLAS.setRegistryName(new ResourceLocation("antiqueatlas:antique_atlas")));
-		event.getRegistry().register(EMPTY_ATLAS.setRegistryName(new ResourceLocation("antiqueatlas:empty_antique_atlas")));
+		if (AntiqueAtlasConfig.itemNeeded.get()) {
+			event.getRegistry().register(ATLAS.setRegistryName(new ResourceLocation("antiqueatlas:antique_atlas")));
+			event.getRegistry().register(EMPTY_ATLAS.setRegistryName(new ResourceLocation("antiqueatlas:empty_antique_atlas")));
+		}
 	}
 
 	@SubscribeEvent
 	public static void registerRecipeSerializers(final RegistryEvent.Register<IRecipeSerializer<?>> event) {
-		event.getRegistry().register(RecipeAtlasCloning.SERIALIZER.setRegistryName(new ResourceLocation("antiqueatlas:atlas_clone")));
-		event.getRegistry().register(RecipeAtlasCombining.SERIALIZER.setRegistryName(new ResourceLocation("antiqueatlas:atlas_combine")));
-	
+		if (AntiqueAtlasConfig.itemNeeded.get()) {
+			event.getRegistry().register(RecipeAtlasCloning.SERIALIZER.setRegistryName(new ResourceLocation("antiqueatlas:atlas_clone")));
+			event.getRegistry().register(RecipeAtlasCombining.SERIALIZER.setRegistryName(new ResourceLocation("antiqueatlas:atlas_combine")));
+		}
+
 	}
 }
