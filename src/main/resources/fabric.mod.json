@@ -27,7 +27,8 @@
   "depends": {
     "fabricloader": ">=0.10.8",
     "fabric": ">=0.28.0",
-    "minecraft": "~1.16.2"
+    "minecraft": "~1.16.2",
+    "cloth-config2": "~4.11.0"
   },
   "accessWidener": "antiqueatlas.accesswidener",
   "mixins": [
