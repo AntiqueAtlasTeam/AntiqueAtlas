@@ -33,7 +33,7 @@ public class ItemEmptyAtlas extends Item {
 
         atlasStack.getOrCreateTag().putInt("atlasID", atlasID);
 
-        AtlasData atlasData = AntiqueAtlasMod.atlasData.getAtlasData(atlasID, world);
+        AtlasData atlasData = AntiqueAtlasMod.tileData.getData(atlasID, world);
         atlasData.getWorldData(player.getEntityWorld().getRegistryKey()).setBrowsingPositionTo(player);
         atlasData.markDirty();
 

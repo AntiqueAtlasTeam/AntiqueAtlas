@@ -1,11 +1,8 @@
 package hunternif.mc.impl.atlas.network.packet.c2s.play;
 
 import hunternif.mc.impl.atlas.AntiqueAtlasMod;
-import hunternif.mc.impl.atlas.api.AtlasAPI;
-import hunternif.mc.impl.atlas.marker.Marker;
-import hunternif.mc.impl.atlas.marker.MarkersData;
+import hunternif.mc.api.AtlasAPI;
 import hunternif.mc.impl.atlas.network.packet.c2s.C2SPacket;
-import hunternif.mc.impl.atlas.network.packet.s2c.play.MarkersS2CPacket;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.server.MinecraftServer;
@@ -13,8 +10,6 @@ import net.minecraft.server.network.ServerPlayNetworkHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
-
-import java.util.Collections;
 
 /**
  * A request from a client to create a new marker. In order to prevent griefing,
@@ -55,18 +50,7 @@ public class AddMarkerC2SPacket extends C2SPacket {
 				return;
 			}
 
-			if (player.getServer() != null) {
-				MarkersData markersData = AntiqueAtlasMod.markersData.getMarkersData(atlasID, player.getEntityWorld());
-				Marker marker = markersData.createAndSaveMarker(
-								markerType,
-								player.getEntityWorld().getRegistryKey(),
-								x,
-								z,
-								visibleBeforeDiscovery,
-								label);
-
-				new MarkersS2CPacket(atlasID, player.getEntityWorld().getRegistryKey(), Collections.singleton(marker)).send(server);
-			}
+			AtlasAPI.getMarkerAPI().putMarker(player.world, visibleBeforeDiscovery, atlasID, markerType, label, x,z);
 		});
 	}
 }

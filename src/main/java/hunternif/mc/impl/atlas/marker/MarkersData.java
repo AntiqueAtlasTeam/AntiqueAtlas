@@ -1,9 +1,8 @@
 package hunternif.mc.impl.atlas.marker;
 
 import hunternif.mc.impl.atlas.AntiqueAtlasMod;
-import hunternif.mc.impl.atlas.api.MarkerAPI;
+import hunternif.mc.api.MarkerAPI;
 import hunternif.mc.impl.atlas.network.packet.s2c.play.MarkersS2CPacket;
-import hunternif.mc.impl.atlas.registry.MarkerType;
 import hunternif.mc.impl.atlas.util.Log;
 import net.fabricmc.fabric.api.util.NbtType;
 import net.minecraft.entity.player.PlayerEntity;
@@ -16,7 +15,7 @@ import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.PersistentState;
 import net.minecraft.world.World;
-import net.minecraft.world.dimension.DimensionType;
+
 import java.util.*;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
@@ -43,20 +42,20 @@ public class MarkersData extends PersistentState {
 	private static final String TAG_MARKER_X = "x";
 	private static final String TAG_MARKER_Y = "y";
 	private static final String TAG_MARKER_VISIBLE_AHEAD = "visAh";
-	
+
 	/** Markers are stored in lists within square areas this many MC chunks
 	 * across. */
 	public static final int CHUNK_STEP = 8;
-	
+
 	/** Set of players this data has been sent to, only once after they connect. */
 	private final Set<PlayerEntity> playersSentTo = new HashSet<>();
-	
+
 	private final AtomicInteger largestID = new AtomicInteger(0);
-	
+
 	private int getNewID() {
 		return largestID.incrementAndGet();
 	}
-	
+
 	private final Map<Integer /*marker ID*/, Marker> idMap = new ConcurrentHashMap<>(2, 0.75f, 2);
 	/**
 	 * Maps a list of markers in a square to the square's coordinates, then to
@@ -70,7 +69,7 @@ public class MarkersData extends PersistentState {
 	 */
 	private final Map<RegistryKey<World>, DimensionMarkersData> worldMap =
 			new ConcurrentHashMap<>(2, 0.75f, 2);
-	
+
 	public MarkersData(String key) {
 		super(key);
 	}
@@ -111,7 +110,7 @@ public class MarkersData extends PersistentState {
 				if (largestID.intValue() < id) {
 					largestID.set(id);
 				}
-				
+
 				Marker marker = new Marker(
 						id,
 						new Identifier(markerTag.getString(TAG_MARKER_TYPE)),
@@ -149,30 +148,30 @@ public class MarkersData extends PersistentState {
 			dimensionMapList.add(tag);
 		}
 		compound.put(TAG_WORLD_MAP_LIST, dimensionMapList);
-		
+
 		return compound;
 	}
-	
+
 	public Set<RegistryKey<World>> getVisitedDimensions() {
 		return worldMap.keySet();
 	}
-	
+
 	/** This method is rather inefficient, use it sparingly. */
-	public Collection<Marker> getMarkersInDimension(RegistryKey<World> world) {
+	public Collection<Marker> getMarkersInWorld(RegistryKey<World> world) {
 		return getMarkersDataInWorld(world).getAllMarkers();
 	}
-	
+
 	/** Creates a new instance of {@link DimensionMarkersData}, if necessary. */
 	public DimensionMarkersData getMarkersDataInWorld(RegistryKey<World> world) {
 		return worldMap.computeIfAbsent(world, k -> new DimensionMarkersData(this, world));
 	}
-	
+
 	/** The "chunk" here is {@link MarkersData#CHUNK_STEP} times larger than the
 	 * Minecraft 16x16 chunk! May return null. */
 	public List<Marker> getMarkersAtChunk(RegistryKey<World> world, int x, int z) {
 		return getMarkersDataInWorld(world).getMarkersAtChunk(x, z);
 	}
-	
+
 	private Marker getMarkerByID(int id) {
 		return idMap.get(id);
 	}
@@ -185,7 +184,7 @@ public class MarkersData extends PersistentState {
 		}
 		return marker;
 	}
-	
+
 	/** For internal use. Use the {@link MarkerAPI} to put markers! This method
 	 * creates a new marker from the given data, saves and returns it.
 	 * Server side only! */
@@ -197,7 +196,7 @@ public class MarkersData extends PersistentState {
 		markDirty();
 		return marker;
 	}
-	
+
 	/**
 	 * For internal use, when markers are loaded from NBT or sent from the
 	 * server. IF a marker's id is conflicting, the marker will not load!
@@ -218,11 +217,11 @@ public class MarkersData extends PersistentState {
 		}
 		return marker;
 	}
-	
+
 	public boolean isSyncedOnPlayer(PlayerEntity player) {
 		return playersSentTo.contains(player);
 	}
-	
+
 	/** Send all data to the player in several packets. Called once during the
 	 * first run of ItemAtals.onUpdate(). */
 	public void syncOnPlayer(int atlasID, ServerPlayerEntity player) {
@@ -238,5 +237,5 @@ public class MarkersData extends PersistentState {
 	public boolean isEmpty() {
 		return idMap.isEmpty();
 	}
-	
+
 }

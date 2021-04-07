@@ -1,7 +1,6 @@
-package hunternif.mc.impl.atlas.api;
+package hunternif.mc.api;
 
 import hunternif.mc.impl.atlas.marker.Marker;
-import hunternif.mc.impl.atlas.registry.MarkerType;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.world.World;
@@ -16,11 +15,6 @@ import javax.annotation.Nullable;
  * @author Hunternif
  */
 public interface MarkerAPI {
-
-    /**
-     * Registers the marker type, this should be called in PreInit, as config file overrides are loaded in Init.
-     */
-    void registerMarker(Identifier identifier, MarkerType markerType);
 
     /**
      * Put a marker in the specified Atlas instance at specified block
@@ -52,7 +46,7 @@ public interface MarkerAPI {
      * @param world
      * @param visibleAhead whether the marker should appear visible even if
      *                     the player hasn't yet discovered that area.
-     * @param marker   name of your custom marker type.
+     * @param marker       name of your custom marker type.
      * @param label        text label to be displayed on mouseover.
      * @param x            block coordinate
      * @param z            block coordinate
@@ -80,6 +74,5 @@ public interface MarkerAPI {
      * @param world
      * @param markerID
      */
-
     void deleteGlobalMarker(@Nonnull World world, int markerID);
 }

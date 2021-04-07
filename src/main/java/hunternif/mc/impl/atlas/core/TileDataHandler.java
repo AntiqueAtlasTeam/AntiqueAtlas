@@ -1,45 +1,67 @@
 package hunternif.mc.impl.atlas.core;
 
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.network.ServerPlayerEntity;
+import hunternif.mc.impl.atlas.item.AtlasItem;
+import net.minecraft.item.ItemStack;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.registry.RegistryKey;
+import net.minecraft.world.PersistentStateManager;
 import net.minecraft.world.World;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * This class is used to store tiles, which are shared between ALL atlases
- * Also, this data overwrites the result of ITileDetector instances.
- * <p>
- * Use this class for world gen structures and other important but unique tiles.
+ * Provides access to {@link AtlasData}. Maintains a cache on the client side,
+ * because WorldClient is reset along with all WorldSavedData when the player
+ * changes dimension (fixes #67).
+ *
+ * @author Hunternif
  */
 public class TileDataHandler {
-    private static final String DATA_KEY = "aAtlasTiles";
+    private static final String ATLAS_DATA_PREFIX = "aAtlas_";
 
-    private final Map<RegistryKey<World>, TileDataStorage> worldData =
-            new ConcurrentHashMap<>(2, 0.75f, 2);
+    private final Map<String, AtlasData> atlasDataClientCache = new ConcurrentHashMap<>();
 
-    public void onWorldLoad(MinecraftServer server, ServerWorld world) {
-        worldData.put(world.getRegistryKey(), world.getPersistentStateManager().getOrCreate(() -> {
-            TileDataStorage data = new TileDataStorage(DATA_KEY);
-            data.markDirty();
-            return data;
-        }, DATA_KEY));
+    /**
+     * Loads data for the given atlas ID or creates a new one.
+     */
+    public AtlasData getData(ItemStack stack, World world) {
+        if (stack.getItem() instanceof AtlasItem) {
+            return getData(AtlasItem.getAtlasID(stack), world);
+        } else {
+            return null;
+        }
     }
 
-    public TileDataStorage getData(World world) {
-        return getData(world.getRegistryKey());
+    /**
+     * Loads data for the given atlas or creates a new one.
+     */
+    public AtlasData getData(int atlasID, World world) {
+        String key = getAtlasDataKey(atlasID);
+
+        if (world.isClient) {
+            // Since atlas data doesn't really belong to a single world-dimension,
+            // it can be cached. This should fix #67
+            return atlasDataClientCache.computeIfAbsent(key, AtlasData::new);
+        } else {
+            PersistentStateManager manager = ((ServerWorld) world).getPersistentStateManager();
+            return manager.getOrCreate(() -> new AtlasData(key), key);
+        }
     }
 
-    public TileDataStorage getData(RegistryKey<World> world) {
-        return worldData.computeIfAbsent(world,
-                k -> new TileDataStorage(DATA_KEY));
+    private String getAtlasDataKey(int atlasID) {
+        return ATLAS_DATA_PREFIX + atlasID;
     }
 
-    public void onPlayerLogin(ServerPlayerEntity player) {
-        worldData.forEach((world, tileData) -> tileData.syncToPlayer(player, world));
+    /**
+     * This method resets the cache when the client loads a new world.
+     * It is required in order that old atlas data is not
+     * transferred from a previous world the client visited.
+     * <p>
+     * Using a "connect" event instead of "disconnect" because according to a
+     * form post, the latter event isn't actually fired on the client.
+     * </p>
+     */
+    public void onClientConnectedToServer(boolean isRemote) {
+        atlasDataClientCache.clear();
     }
-
 }

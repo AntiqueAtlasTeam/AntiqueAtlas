@@ -58,7 +58,7 @@ public class TileGroupsS2CPacket extends S2CPacket {
 		}
 
 		client.execute(() -> {
-			AtlasData atlasData = AntiqueAtlasMod.atlasData.getAtlasData(atlasID, client.player.world);
+			AtlasData atlasData = AntiqueAtlasMod.tileData.getData(atlasID, client.player.world);
 			WorldData dimData = atlasData.getWorldData(world);
 			for (TileGroup t : tileGroups) {
 				dimData.putTileGroup(t);

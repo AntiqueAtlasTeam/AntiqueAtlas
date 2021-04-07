@@ -41,7 +41,7 @@ public class PutTileS2CPacket extends S2CPacket {
 		Identifier tile = buf.readIdentifier();
 
 		client.execute(() -> {
-			AtlasData data = AntiqueAtlasMod.atlasData.getAtlasData(atlasID, client.player.getEntityWorld());
+			AtlasData data = AntiqueAtlasMod.tileData.getData(atlasID, client.player.getEntityWorld());
 			data.setTile(world, x, z, tile);
 		});
 	}

@@ -39,7 +39,7 @@ public class MapDataS2CPacket extends S2CPacket {
 		if (data == null) return;
 
 		client.execute(() -> {
-			AtlasData atlasData = AntiqueAtlasMod.atlasData.getAtlasData(atlasID, client.player.getEntityWorld());
+			AtlasData atlasData = AntiqueAtlasMod.tileData.getData(atlasID, client.player.getEntityWorld());
 			atlasData.fromTag(data);
 
 			if (AntiqueAtlasMod.CONFIG.doSaveBrowsingPos && MinecraftClient.getInstance().currentScreen instanceof GuiAtlas) {

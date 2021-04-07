@@ -1,7 +1,7 @@
 package hunternif.mc.impl.atlas.network.packet.c2s.play;
 
 import hunternif.mc.impl.atlas.AntiqueAtlasMod;
-import hunternif.mc.impl.atlas.api.AtlasAPI;
+import hunternif.mc.api.AtlasAPI;
 import hunternif.mc.impl.atlas.network.packet.c2s.C2SPacket;
 import hunternif.mc.impl.atlas.util.Log;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
@@ -42,11 +42,7 @@ public class DeleteMarkerRequestC2SPacket extends C2SPacket {
 				return;
 			}
 
-			if (markerID == GLOBAL) {
-				AtlasAPI.markers.deleteGlobalMarker(player.getEntityWorld(), markerID);
-			} else {
-				AtlasAPI.markers.deleteMarker(player.getEntityWorld(), atlasID, markerID);
-			}
+			AtlasAPI.getMarkerAPI().deleteMarker(player.getEntityWorld(), atlasID, markerID);
 		});
 	}
 }

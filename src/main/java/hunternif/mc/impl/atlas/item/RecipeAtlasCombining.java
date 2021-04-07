@@ -105,14 +105,14 @@ public class RecipeAtlasCombining implements CraftingRecipe {
         // Until the first update, on the client the returned atlas ID is the same as the first Atlas on the crafting grid.
         int atlasID = AntiqueAtlasMod.getGlobalAtlasData(world).getNextAtlasId();
 
-        AtlasData destBiomes = AntiqueAtlasMod.atlasData.getAtlasData(atlasID, world);
+        AtlasData destBiomes = AntiqueAtlasMod.tileData.getData(atlasID, world);
         destBiomes.markDirty();
         MarkersData destMarkers = AntiqueAtlasMod.markersData.getMarkersData(atlasID, world);
         destMarkers.markDirty();
         for (int i = 0; i < inventory.size(); ++i) {
             ItemStack stack = inventory.getStack(i);
             if (stack.isEmpty()) continue;
-            AtlasData srcBiomes = AntiqueAtlasMod.atlasData.getAtlasData(stack, world);
+            AtlasData srcBiomes = AntiqueAtlasMod.tileData.getData(stack, world);
             if (destBiomes != null && srcBiomes != null && destBiomes != srcBiomes) {
                 for (RegistryKey<World> worldRegistryKey : srcBiomes.getVisitedWorlds()) {
                     destBiomes.getWorldData(worldRegistryKey).addData(srcBiomes.getWorldData(worldRegistryKey));

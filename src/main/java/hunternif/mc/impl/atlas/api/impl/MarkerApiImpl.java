@@ -1,13 +1,12 @@
-package hunternif.mc.impl.atlas.api.oldimpl;
+package hunternif.mc.impl.atlas.api.impl;
 
 import hunternif.mc.impl.atlas.AntiqueAtlasMod;
-import hunternif.mc.impl.atlas.api.MarkerAPI;
+import hunternif.mc.api.MarkerAPI;
 import hunternif.mc.impl.atlas.marker.Marker;
 import hunternif.mc.impl.atlas.marker.MarkersData;
 import hunternif.mc.impl.atlas.network.packet.c2s.play.DeleteMarkerRequestC2SPacket;
 import hunternif.mc.impl.atlas.network.packet.s2c.play.DeleteMarkerResponseS2CPacket;
 import hunternif.mc.impl.atlas.network.packet.s2c.play.MarkersS2CPacket;
-import hunternif.mc.impl.atlas.registry.MarkerType;
 import hunternif.mc.impl.atlas.util.Log;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
@@ -77,9 +76,5 @@ public class MarkerApiImpl implements MarkerAPI {
         }
     }
 
-    @Override
-    public void registerMarker(Identifier identifier, MarkerType markerType) {
-        MarkerType.register(identifier, markerType);
-    }
 
 }

@@ -57,7 +57,7 @@ public class TileTextureMap {
     }
 
     public TextureSet getDefaultTexture() {
-        return TextureSetMap.instance().getByName(AntiqueAtlasMod.id("plains"));
+        return TextureSetMap.instance().getByName(AntiqueAtlasMod.id("test"));
     }
 
     /**

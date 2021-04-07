@@ -11,7 +11,7 @@ public class PlayerEventHandler {
         World world = player.world;
         int atlasID = player.getUuid().hashCode();
 
-        AtlasData data = AntiqueAtlasMod.atlasData.getAtlasData(atlasID, world);
+        AtlasData data = AntiqueAtlasMod.tileData.getData(atlasID, world);
         // On the player join send the map from the server to the client:
         if (!data.isEmpty()) {
             data.syncOnPlayer(atlasID, player);
@@ -25,7 +25,7 @@ public class PlayerEventHandler {
     }
 
     public static void onPlayerTick(PlayerEntity player) {
-        AtlasData data = AntiqueAtlasMod.atlasData.getAtlasData(
+        AtlasData data = AntiqueAtlasMod.tileData.getData(
                 player.getUuid().hashCode(), player.world);
 
         AntiqueAtlasMod.worldScanner.updateAtlasAroundPlayer(data, player);

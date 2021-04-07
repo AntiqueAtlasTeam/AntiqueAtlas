@@ -1,6 +1,7 @@
 package hunternif.mc.impl.atlas.client;
 
 import com.mojang.blaze3d.systems.RenderSystem;
+import hunternif.mc.api.client.AtlasClientAPI;
 import hunternif.mc.impl.atlas.AntiqueAtlasMod;
 import hunternif.mc.impl.atlas.RegistrarAntiqueAtlas;
 import hunternif.mc.impl.atlas.client.gui.GuiAtlas;
@@ -36,7 +37,6 @@ public class OverlayRenderer extends DrawableHelper {
      */
     private static final int CHUNK_SIZE = 16;
     private static final float INNER_ELEMENTS_SCALE_FACTOR = 1.9F;
-    private MinecraftClient client;
     private PlayerEntity player;
     private World world;
 
@@ -50,7 +50,6 @@ public class OverlayRenderer extends DrawableHelper {
             return;
         }
 
-        this.client = MinecraftClient.getInstance();
         this.player = MinecraftClient.getInstance().player;
         this.world = MinecraftClient.getInstance().world;
 
@@ -101,14 +100,9 @@ public class OverlayRenderer extends DrawableHelper {
     }
 
     private void drawTiles(VertexConsumerProvider buffer, MatrixStack matrices, int atlasID, int light) {
-        WorldData biomeData = AntiqueAtlasMod.atlasData.getAtlasData(
-                atlasID, this.world).getWorldData(this.world.getRegistryKey());
-
-        TileRenderIterator iter = new TileRenderIterator(biomeData);
         Rect iteratorScope = getChunkCoverage(player.getPos());
-        iter.setScope(iteratorScope);
+        TileRenderIterator iter = AtlasClientAPI.getTileAPI().getTiles(world, atlasID, iteratorScope, 1);
 
-        iter.setStep(1);
         Vec3d chunkPosition = player.getPos().multiply(1D / CHUNK_SIZE, 1D / CHUNK_SIZE, 1D / CHUNK_SIZE);
         int shapeMiddleX = (int) ((GuiAtlas.WIDTH * 1.5F) / (INNER_ELEMENTS_SCALE_FACTOR * 2));
         int shapeMiddleY = (int) ((GuiAtlas.HEIGHT * 1.5F) / (INNER_ELEMENTS_SCALE_FACTOR * 2));
@@ -141,7 +135,7 @@ public class OverlayRenderer extends DrawableHelper {
 
     private void drawMarkers(VertexConsumerProvider buffer, MatrixStack matrices, int atlasID, int light) {
         // biomeData needed to prevent undiscovered markers from appearing
-        WorldData biomeData = AntiqueAtlasMod.atlasData.getAtlasData(
+        WorldData biomeData = AntiqueAtlasMod.tileData.getData(
                 atlasID, this.world).getWorldData(
                 this.world.getRegistryKey());
         DimensionMarkersData globalMarkersData = AntiqueAtlasMod.globalMarkersData

@@ -1,9 +1,8 @@
-package hunternif.mc.impl.atlas.api;
+package hunternif.mc.api;
 
-import hunternif.mc.api.TileAPI;
 import hunternif.mc.impl.atlas.AntiqueAtlasMod;
-import hunternif.mc.impl.atlas.api.oldimpl.MarkerApiImpl;
-import hunternif.mc.impl.atlas.api.oldimpl.TileApiImpl;
+import hunternif.mc.impl.atlas.api.impl.MarkerApiImpl;
+import hunternif.mc.impl.atlas.api.impl.TileApiImpl;
 import hunternif.mc.impl.atlas.item.AtlasItem;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
@@ -22,8 +21,8 @@ import java.util.List;
  */
 public class AtlasAPI {
     private static final int VERSION = 5;
-    public static final TileAPI tiles = new TileApiImpl();
-    public static final MarkerAPI markers = new MarkerApiImpl();
+    private static final TileAPI tiles = new TileApiImpl();
+    private static final MarkerAPI markers = new MarkerApiImpl();
 
     /**
      * Version of the API, meaning only this particular class. You might

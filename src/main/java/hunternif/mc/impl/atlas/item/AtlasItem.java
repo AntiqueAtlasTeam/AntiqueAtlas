@@ -49,7 +49,7 @@ public class AtlasItem extends Item {
 
     @Override
     public void inventoryTick(ItemStack stack, World world, Entity entity, int slot, boolean isEquipped) {
-        AtlasData data = AntiqueAtlasMod.atlasData.getAtlasData(stack, world);
+        AtlasData data = AntiqueAtlasMod.tileData.getData(stack, world);
         if (data == null || !(entity instanceof PlayerEntity)) return;
 
         int atlasId = getAtlasID(stack);

@@ -1,6 +1,6 @@
 package hunternif.mc.impl.atlas.mixin.prod;
 
-import hunternif.mc.impl.atlas.api.AtlasAPI;
+import hunternif.mc.api.AtlasAPI;
 import hunternif.mc.impl.atlas.mixinhooks.CartographyTableHooks;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.Inventory;

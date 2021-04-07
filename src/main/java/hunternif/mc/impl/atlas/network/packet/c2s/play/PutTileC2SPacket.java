@@ -1,7 +1,7 @@
 package hunternif.mc.impl.atlas.network.packet.c2s.play;
 
 import hunternif.mc.impl.atlas.AntiqueAtlasMod;
-import hunternif.mc.impl.atlas.api.AtlasAPI;
+import hunternif.mc.api.AtlasAPI;
 import hunternif.mc.impl.atlas.network.packet.c2s.C2SPacket;
 import hunternif.mc.impl.atlas.util.Log;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
@@ -45,7 +45,7 @@ public class PutTileC2SPacket extends C2SPacket {
 				return;
 			}
 
-			AtlasAPI.tiles.putTile(player.getEntityWorld(), atlasID, tile, x, z);
+			AtlasAPI.getTileAPI().putTile(player.getEntityWorld(), atlasID, tile, x, z);
 		});
 	}
 }

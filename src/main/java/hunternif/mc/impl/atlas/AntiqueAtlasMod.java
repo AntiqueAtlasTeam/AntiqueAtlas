@@ -1,13 +1,13 @@
 package hunternif.mc.impl.atlas;
 
-import hunternif.mc.impl.atlas.core.AtlasDataHandler;
+import hunternif.mc.impl.atlas.core.TileDataHandler;
 import hunternif.mc.impl.atlas.core.scaning.TileDetectorBase;
 import hunternif.mc.impl.atlas.core.GlobalAtlasData;
 import hunternif.mc.impl.atlas.core.PlayerEventHandler;
 import hunternif.mc.impl.atlas.core.scaning.WorldScanner;
 import hunternif.mc.impl.atlas.event.RecipeCraftedCallback;
 import hunternif.mc.impl.atlas.event.RecipeCraftedHandler;
-import hunternif.mc.impl.atlas.core.TileDataHandler;
+import hunternif.mc.impl.atlas.core.GlobalTileDataHandler;
 import hunternif.mc.impl.atlas.marker.GlobalMarkersDataHandler;
 import hunternif.mc.impl.atlas.marker.MarkersDataHandler;
 import hunternif.mc.impl.atlas.mixinhooks.NewPlayerConnectionCallback;
@@ -31,10 +31,10 @@ public class AntiqueAtlasMod implements ModInitializer {
 	public static Logger LOG = LogManager.getLogger(NAME);
 
 	public static final WorldScanner worldScanner = new WorldScanner();
-	public static final AtlasDataHandler atlasData = new AtlasDataHandler();
+	public static final TileDataHandler tileData = new TileDataHandler();
 	public static final MarkersDataHandler markersData = new MarkersDataHandler();
 
-	public static final TileDataHandler tileData = new TileDataHandler();
+	public static final GlobalTileDataHandler globalTileData = new GlobalTileDataHandler();
 	public static final GlobalMarkersDataHandler globalMarkersData = new GlobalMarkersDataHandler();
 
 	public static AntiqueAtlasConfig CONFIG = new AntiqueAtlasConfig();
@@ -63,16 +63,16 @@ public class AntiqueAtlasMod implements ModInitializer {
 
 		AntiqueAtlasNetworking.registerC2SListeners();
 
-		NewServerConnectionCallback.EVENT.register(atlasData::onClientConnectedToServer);
+		NewServerConnectionCallback.EVENT.register(tileData::onClientConnectedToServer);
 		NewServerConnectionCallback.EVENT.register(markersData::onClientConnectedToServer);
 		NewServerConnectionCallback.EVENT.register(globalMarkersData::onClientConnectedToServer);
 
 		NewPlayerConnectionCallback.EVENT.register(globalMarkersData::onPlayerLogin);
-		NewPlayerConnectionCallback.EVENT.register(tileData::onPlayerLogin);
+		NewPlayerConnectionCallback.EVENT.register(globalTileData::onPlayerLogin);
 		NewPlayerConnectionCallback.EVENT.register(PlayerEventHandler::onPlayerLogin);
 
 		ServerWorldEvents.LOAD.register(globalMarkersData::onWorldLoad);
-		ServerWorldEvents.LOAD.register(tileData::onWorldLoad);
+		ServerWorldEvents.LOAD.register(globalTileData::onWorldLoad);
 
 		RecipeCraftedCallback.EVENT.register(new RecipeCraftedHandler());
 

@@ -1,11 +1,10 @@
 package hunternif.mc.impl.atlas.client.gui;
 
-import hunternif.mc.api.client.MarkerRegistry;
+import hunternif.mc.api.client.AtlasClientAPI;
 import hunternif.mc.impl.atlas.client.gui.core.GuiComponent;
 import hunternif.mc.impl.atlas.client.gui.core.GuiScrollingContainer;
 import hunternif.mc.impl.atlas.client.gui.core.ToggleGroup;
-import hunternif.mc.impl.atlas.marker.Marker;
-import hunternif.mc.impl.atlas.registry.MarkerType;
+ import hunternif.mc.impl.atlas.registry.MarkerType;
 import hunternif.mc.impl.atlas.util.Log;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -80,7 +79,7 @@ public class GuiMarkerFinalizer extends GuiComponent {
         super.init();
 
         addButton(btnDone = new ButtonWidget(this.width / 2 - BUTTON_WIDTH - BUTTON_SPACING / 2, this.height / 2 + 40, BUTTON_WIDTH, 20, new TranslatableText("gui.done"), (button) -> {
-            MarkerRegistry.API.putMarker(world, true, atlasID, MarkerType.REGISTRY.getId(selectedType), new LiteralText(textField.getText()), markerX, markerZ);
+            AtlasClientAPI.getMarkerAPI().putMarker(world, true, atlasID, MarkerType.REGISTRY.getId(selectedType), new LiteralText(textField.getText()), markerX, markerZ);
             Log.info("Put marker in Atlas #%d \"%s\" at (%d, %d)", atlasID, textField.getText(), markerX, markerZ);
 
             ClientPlayerEntity player = MinecraftClient.getInstance().player;
