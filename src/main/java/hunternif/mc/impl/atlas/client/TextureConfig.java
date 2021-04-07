@@ -1,8 +1,5 @@
 package hunternif.mc.impl.atlas.client;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import hunternif.mc.impl.atlas.AntiqueAtlasMod;
 import hunternif.mc.impl.atlas.client.texture.ITexture;
 import hunternif.mc.impl.atlas.client.texture.TileTexture;
@@ -10,14 +7,12 @@ import hunternif.mc.impl.atlas.util.Log;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.resource.SimpleResourceReloadListener;
-import net.minecraft.resource.Resource;
 import net.minecraft.resource.ResourceManager;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.profiler.Profiler;
 
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 
@@ -54,7 +49,7 @@ public class TextureConfig implements SimpleResourceReloadListener<Map<Identifie
 
                     AntiqueAtlasMod.LOG.info("Found new Texture: " + texture_id);
 
-                    texture_map.put(texture_id, new TileTexture(id));
+                    textures.put(texture_id, new TileTexture(id));
                 }
 
             } catch (Throwable e) {
@@ -68,6 +63,7 @@ public class TextureConfig implements SimpleResourceReloadListener<Map<Identifie
     @Override
     public CompletableFuture<Void> apply(Map<Identifier, ITexture> textures, ResourceManager manager, Profiler profiler, Executor executor) {
         return CompletableFuture.runAsync(() -> {
+            texture_map.clear();
             for (Map.Entry<Identifier, ITexture> entry : textures.entrySet()) {
                 texture_map.put(entry.getKey(), entry.getValue());
                 Log.info("Loaded texture %s with path %s", entry.getKey(), entry.getValue().getTexture());
