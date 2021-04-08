@@ -129,12 +129,14 @@ public class TextureSetConfig implements SimpleResourceReloadListener<Collection
                     Log.info("Loaded texture set %s with %d custom texture(s)", set.name, set.getTexturePaths().length);
                 }
                 catch (Throwable e) {
-                    Log.warn(e, "Failed to load the texture set `%s`:", set.name);
+                    Log.error(e, "Failed to load the texture set `%s`:", set.name);
                 }
 
             }
 
             for (TextureSet set : sets) {
+                set.checkStitching();
+
                 if (set instanceof TextureSet.TextureSetShore) {
                     TextureSet.TextureSetShore texture = (TextureSet.TextureSetShore) set;
                     texture.loadWater();

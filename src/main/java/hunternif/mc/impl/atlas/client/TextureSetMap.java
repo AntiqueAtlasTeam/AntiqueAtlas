@@ -29,7 +29,7 @@ public class TextureSetMap {
         return map.get(name);
     }
 
-    public boolean isRegistered(String name) {
-        return map.containsKey(name);
+    static public boolean isRegistered(Identifier name) {
+        return INSTANCE.map.containsKey(name);
     }
 }
