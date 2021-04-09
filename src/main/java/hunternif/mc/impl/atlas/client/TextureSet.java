@@ -56,6 +56,8 @@ public class TextureSet implements Comparable<TextureSet> {
     @SuppressWarnings("UnusedReturnValue")
     public TextureSet stitchTo(Identifier... textureSets) {
         Collections.addAll(stitchTo, textureSets);
+        Collections.addAll(stitchToHorizontal, textureSets);
+        Collections.addAll(stitchToVertical, textureSets);
         return this;
     }
 
