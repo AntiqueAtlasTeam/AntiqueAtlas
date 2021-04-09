@@ -31,7 +31,11 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
+import net.minecraft.text.LiteralText;
 import net.minecraft.text.TranslatableText;
+import net.minecraft.util.Identifier;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.MathHelper;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL11;
@@ -39,6 +43,7 @@ import org.lwjgl.opengl.GL11;
 import java.io.File;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -862,6 +867,29 @@ public class GuiAtlas extends GuiComponent {
             RenderSystem.color4f(1, 1, 1, 1);
         }
         RenderSystem.disableBlend();
+
+        if (AntiqueAtlasMod.CONFIG.debugRender && !isDragging && isMouseOver) {
+            int x = screenXToWorldX((int) getMouseX());
+            int z = screenYToWorldZ((int) getMouseY());
+
+            String coords = String.format("Coords: %d / %d", x, z);
+
+            ChunkPos pos = new ChunkPos(new BlockPos(x, 0, z));
+            String chunks = String.format("Chunks: %d / %d", pos.x, pos.z);
+            Identifier tile = biomeData.getTile(pos.x, pos.z);
+
+            if (tile == null) {
+                drawTooltip(Arrays.asList(new LiteralText(coords), new LiteralText(chunks)), textRenderer);
+            } else {
+                String texture_set = TileTextureMap.instance().getTextureSet(tile).name.toString();
+                drawTooltip(Arrays.asList(
+                        new LiteralText(coords),
+                        new LiteralText(chunks),
+                        new LiteralText("Tile: " + tile.toString()),
+                        new LiteralText("TSet: " + texture_set)),
+                        textRenderer);
+            }
+        }
 
         // Draw progress overlay:
         if (state.is(EXPORTING_IMAGE)) {
