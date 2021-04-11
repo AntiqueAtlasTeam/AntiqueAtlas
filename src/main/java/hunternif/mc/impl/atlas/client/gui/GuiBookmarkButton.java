@@ -16,12 +16,8 @@ import java.util.Collections;
  * bulge on mouseover.
  */
 public class GuiBookmarkButton extends GuiToggleButton {
-    private static final int IMAGE_WIDTH = 84;
-    private static final int IMAGE_HEIGHT = 36;
     private static final int WIDTH = 21;
     private static final int HEIGHT = 18;
-    private static final int ICON_WIDTH = 16;
-    private static final int ICON_HEIGHT = 16;
 
     private final int colorIndex;
     private ITexture iconTexture;
@@ -58,14 +54,10 @@ public class GuiBookmarkButton extends GuiToggleButton {
         // Render background:
         int u = colorIndex * WIDTH;
         int v = isMouseOver || isSelected() ? 0 : HEIGHT;
-//        AtlasRenderHelper.drawTexturedRect(matrices, Textures.BOOKMARKS.getTexture(), getGuiX(), getGuiY(), u, v, WIDTH, HEIGHT, IMAGE_WIDTH, IMAGE_HEIGHT);
         Textures.BOOKMARKS.draw(matrices, getGuiX(), getGuiY(), u, v, WIDTH, HEIGHT);
 
         // Render the icon:
         iconTexture.draw(matrices, getGuiX() + (isMouseOver || isSelected() ? 3 : 2), getGuiY() + 1);
-//        AtlasRenderHelper.drawFullTexture(matrices, iconTexture,
-//                getGuiX() + (isMouseOver || isSelected() ? 3 : 2),
-//                getGuiY() + 1, ICON_WIDTH, ICON_HEIGHT);
 
         if (isMouseOver) {
             drawTooltip(Collections.singletonList(title), MinecraftClient.getInstance().textRenderer);
