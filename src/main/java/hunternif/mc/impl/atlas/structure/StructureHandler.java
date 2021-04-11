@@ -35,7 +35,7 @@ public class StructureHandler {
     public static void registerTile(StructurePieceType structurePieceType, int priority, Identifier textureId, Setter setter) {
         Identifier id = Registry.STRUCTURE_PIECE.getId(structurePieceType);
         STRUCTURE_PIECE_TO_TILE_MAP.put(id, new Pair<>(textureId, setter));
-        STRUCTURE_PIECE_TILE_PRIORITY.put(id, priority);
+        STRUCTURE_PIECE_TILE_PRIORITY.put(textureId, priority);
     }
 
     public static void registerTile(StructurePieceType structurePieceType, int priority, Identifier textureId) {
@@ -59,10 +59,10 @@ public class StructureHandler {
         return STRUCTURE_PIECE_TILE_PRIORITY.getOrDefault(structurePieceId, Integer.MAX_VALUE);
     }
 
-    private static void put(Identifier structurePieceId, World world, int chunkX, int chunkZ, Identifier textureId) {
+    private static void put(World world, int chunkX, int chunkZ, Identifier textureId) {
         Identifier existingTile = AtlasAPI.getTileAPI().getGlobalTile(world, chunkX, chunkZ);
 
-        if (getPriority(structurePieceId) < getPriority(existingTile)) {
+        if (getPriority(textureId) < getPriority(existingTile)) {
             AtlasAPI.getTileAPI().putGlobalTile(world, textureId, chunkX, chunkZ);
         }
     }
@@ -83,7 +83,7 @@ public class StructureHandler {
                         Setter setter = entry.getValue().getRight();
                         if (path.contains(entry.getKey())) {
                             for(ChunkPos pos : setter.matches(singlePoolElement, pool.getBoundingBox())) {
-                                put(tile, world, pos.x, pos.z, tile);
+                                put(world, pos.x, pos.z, tile);
                             }
                         }
                     }
@@ -112,7 +112,7 @@ public class StructureHandler {
                 }
 
                 for (ChunkPos pos : matches) {
-                    put(structurePieceId, world, pos.x, pos.z, entry.getLeft());
+                    put(world, pos.x, pos.z, entry.getLeft());
                 }
             }
         }
