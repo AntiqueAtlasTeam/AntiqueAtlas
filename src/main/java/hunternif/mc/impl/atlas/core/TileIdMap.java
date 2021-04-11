@@ -19,8 +19,8 @@ public class TileIdMap {
             TILE_VILLAGE_FARMLAND_LARGE = AntiqueAtlasMod.id("npc_village_farmland_large"),
             TILE_VILLAGE_WELL = AntiqueAtlasMod.id("npc_village_well"),
             TILE_VILLAGE_TORCH = AntiqueAtlasMod.id("npc_village_torch"),
-            //	TILE_VILLAGE_PATH_X = AntiqueAtlasMod.id("npc_village_path_x"),
-            //	TILE_VILLAGE_PATH_Z = AntiqueAtlasMod.id("npc_village_path_z"),
+            TILE_VILLAGE_PATH_X = AntiqueAtlasMod.id("npc_village_path_x"),
+            TILE_VILLAGE_PATH_Z = AntiqueAtlasMod.id("npc_village_path_z"),
             TILE_VILLAGE_HUT = AntiqueAtlasMod.id("npc_village_hut"),
             TILE_VILLAGE_SMALL_HOUSE = AntiqueAtlasMod.id("npc_village_small_house"),
             TILE_VILLAGE_BUTCHERS_SHOP = AntiqueAtlasMod.id("npc_village_butchers_shop"),
@@ -42,9 +42,5 @@ public class TileIdMap {
             NETHER_FORTRESS_WALL = AntiqueAtlasMod.id("nether_wall"),
             NETHER_FORTRESS_EXIT = AntiqueAtlasMod.id("nether_hall"),
             NETHER_FORTRESS_CORRIDOR_NETHER_WARTS_ROOM = AntiqueAtlasMod.id("nether_fort_stairs"),
-            NETHER_FORTRESS_BRIDGE_PLATFORM = AntiqueAtlasMod.id("nether_throne"),
-
-            TILE_END_ISLAND = AntiqueAtlasMod.id("end_island"),
-            TILE_END_ISLAND_PLANTS = AntiqueAtlasMod.id("end_island_plants"),
-            TILE_END_VOID = AntiqueAtlasMod.id("end_void");
+            NETHER_FORTRESS_BRIDGE_PLATFORM = AntiqueAtlasMod.id("nether_throne");
 }

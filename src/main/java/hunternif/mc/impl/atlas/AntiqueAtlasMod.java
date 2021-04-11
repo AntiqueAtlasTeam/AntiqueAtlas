@@ -82,5 +82,6 @@ public class AntiqueAtlasMod implements ModInitializer {
 		NetherFortress.registerPieces();
 		EndCity.registerMarkers();
 		Village.registerMarkers();
+		Village.registerPieces();
 	}
 }
