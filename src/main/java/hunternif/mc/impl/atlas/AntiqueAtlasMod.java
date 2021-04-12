@@ -83,5 +83,6 @@ public class AntiqueAtlasMod implements ModInitializer {
 		EndCity.registerMarkers();
 		Village.registerMarkers();
 		Village.registerPieces();
+		Overworld.registerPieces();
 	}
 }

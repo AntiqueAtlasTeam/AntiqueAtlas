@@ -28,7 +28,7 @@ public class StructureHandler {
     private static final Map<String, Pair<Identifier, Setter>> JIGSAW_TO_TILE_MAP = new HashMap<>();
     private static final Map<Identifier, Pair<Identifier, Text>> STRUCTURE_PIECE_TO_MARKER_MAP = new HashMap<>();
     private static final Map<Identifier, Integer> STRUCTURE_PIECE_TILE_PRIORITY = new HashMap<>();
-    private static final Setter ALWAYS = (element, box) -> Collections.singleton(new ChunkPos(MathUtil.getCenter(box).getX() >> 4, MathUtil.getCenter(box).getZ() >> 4));
+    private static final Setter ALWAYS = (world, element, box) -> Collections.singleton(new ChunkPos(MathUtil.getCenter(box).getX() >> 4, MathUtil.getCenter(box).getZ() >> 4));
 
     private static final Set<Triple<Integer, Integer, Identifier>> VISITED_STRUCTURES = Collections.newSetFromMap(new ConcurrentHashMap<>());
 
@@ -82,7 +82,7 @@ public class StructureHandler {
                         Identifier tile = entry.getValue().getLeft();
                         Setter setter = entry.getValue().getRight();
                         if (path.contains(entry.getKey())) {
-                            for(ChunkPos pos : setter.matches(singlePoolElement, pool.getBoundingBox())) {
+                            for(ChunkPos pos : setter.matches(world, singlePoolElement, pool.getBoundingBox())) {
                                 put(world, pos.x, pos.z, tile);
                             }
                         }
@@ -106,9 +106,9 @@ public class StructureHandler {
                 Collection<ChunkPos> matches;
                 if (structurePiece instanceof PoolStructurePiece) {
                     PoolStructurePiece pool = (PoolStructurePiece) structurePiece;
-                    matches = entry.getRight().matches(pool.getPoolElement(), pool.getBoundingBox());
+                    matches = entry.getRight().matches(world, pool.getPoolElement(), pool.getBoundingBox());
                 } else {
-                    matches = entry.getRight().matches(null, structurePiece.getBoundingBox());
+                    matches = entry.getRight().matches(world, null, structurePiece.getBoundingBox());
                 }
 
                 for (ChunkPos pos : matches) {
@@ -141,6 +141,6 @@ public class StructureHandler {
     }
 
     interface Setter {
-        Collection<ChunkPos> matches(StructurePoolElement element, BlockBox box);
+        Collection<ChunkPos> matches(World world, StructurePoolElement element, BlockBox box);
     }
 }

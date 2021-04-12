@@ -6,13 +6,14 @@ import net.minecraft.structure.StructurePieceType;
 import net.minecraft.structure.pool.StructurePoolElement;
 import net.minecraft.util.math.BlockBox;
 import net.minecraft.util.math.ChunkPos;
+import net.minecraft.world.World;
 
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 
 public class NetherFortress {
-	public static Collection<ChunkPos> bridgeX(StructurePoolElement element, BlockBox box) {
+	public static Collection<ChunkPos> bridgeX(World world, StructurePoolElement element, BlockBox box) {
 		HashSet<ChunkPos> matches = new HashSet<>();
 
 		if (box.getBlockCountX() > 16) {
@@ -25,7 +26,7 @@ public class NetherFortress {
 		return matches;
 	}
 
-	public static Collection<ChunkPos> bridgeZ(StructurePoolElement element, BlockBox box) {
+	public static Collection<ChunkPos> bridgeZ(World world, StructurePoolElement element, BlockBox box) {
 		HashSet<ChunkPos> matches = new HashSet<>();
 
 		if (box.getBlockCountZ() > 16) {
@@ -38,7 +39,7 @@ public class NetherFortress {
 		return matches;
 	}
 
-	public static Collection<ChunkPos> bridgeEndX(StructurePoolElement element, BlockBox box) {
+	public static Collection<ChunkPos> bridgeEndX(World world, StructurePoolElement element, BlockBox box) {
 		if (box.getBlockCountX() > box.getBlockCountZ()) {
 			return Collections.singleton(new ChunkPos(box.getCenter().getX() >> 4, box.getCenter().getZ() >> 4));
 		} else {
@@ -46,7 +47,7 @@ public class NetherFortress {
 		}
 	}
 
-	public static Collection<ChunkPos> bridgeEndZ(StructurePoolElement element, BlockBox box) {
+	public static Collection<ChunkPos> bridgeEndZ(World world, StructurePoolElement element, BlockBox box) {
 		if (box.getBlockCountZ() > box.getBlockCountX()) {
 			return Collections.singleton(new ChunkPos(box.getCenter().getX() >> 4, box.getCenter().getZ() >> 4));
 		} else {
