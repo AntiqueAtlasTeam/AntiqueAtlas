@@ -2,13 +2,13 @@ package hunternif.mc.impl.atlas.core;
 
 import hunternif.mc.impl.atlas.network.packet.s2c.play.MapDataS2CPacket;
 import hunternif.mc.impl.atlas.util.Log;
-import hunternif.mc.impl.atlas.util.ShortVec2;
 import net.fabricmc.fabric.api.util.NbtType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.PersistentState;
@@ -126,7 +126,7 @@ public class AtlasData extends PersistentState {
         return worldMap.computeIfAbsent(world, k -> new WorldData(this, world));
     }
 
-    public Map<ShortVec2, Identifier> getSeenChunksInDimension(RegistryKey<World> world) {
+    public Map<ChunkPos, Identifier> getSeenChunksInDimension(RegistryKey<World> world) {
         return getWorldData(world).getSeenChunks();
     }
 

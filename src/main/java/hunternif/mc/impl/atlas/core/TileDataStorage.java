@@ -2,13 +2,13 @@ package hunternif.mc.impl.atlas.core;
 
 import hunternif.mc.impl.atlas.network.packet.s2c.play.CustomTileInfoS2CPacket;
 import hunternif.mc.impl.atlas.util.Log;
-import hunternif.mc.impl.atlas.util.ShortVec2;
 import net.fabricmc.fabric.api.util.NbtType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.PersistentState;
 import net.minecraft.world.World;
@@ -32,9 +32,7 @@ public class TileDataStorage extends PersistentState {
         super(key);
     }
 
-    private final Map<ShortVec2, Identifier> tiles = new ConcurrentHashMap<>(2, 0.75f, 2);
-
-    private final ShortVec2 tempCoords = new ShortVec2(0, 0);
+    private final Map<ChunkPos, Identifier> tiles = new ConcurrentHashMap<>(2, 0.75f, 2);
 
     @Override
     public void fromTag(CompoundTag compound) {
@@ -49,7 +47,7 @@ public class TileDataStorage extends PersistentState {
 
         tileList.forEach(tag1 -> {
             CompoundTag tile = (CompoundTag) tag1;
-            ShortVec2 coords = new ShortVec2(tile.getInt("x"), tile.getInt("y"));
+            ChunkPos coords = new ChunkPos(tile.getInt("x"), tile.getInt("y"));
             tiles.put(coords, Identifier.tryParse(tile.getString("id")));
         });
     }
@@ -60,10 +58,10 @@ public class TileDataStorage extends PersistentState {
 
         ListTag tileList = new ListTag();
 
-        for (Entry<ShortVec2, Identifier> entry : tiles.entrySet()) {
+        for (Entry<ChunkPos, Identifier> entry : tiles.entrySet()) {
             CompoundTag tile = new CompoundTag();
             tile.putInt("x", entry.getKey().x);
-            tile.putInt("y", entry.getKey().y);
+            tile.putInt("y", entry.getKey().z);
             tile.putString("id", entry.getValue().toString());
 
             tileList.add(tile);
@@ -78,19 +76,19 @@ public class TileDataStorage extends PersistentState {
      * If no custom tile is set at the specified coordinates, returns null.
      */
     public Identifier getTile(int x, int z) {
-        return tiles.get(tempCoords.set(x, z));
+        return tiles.get(new ChunkPos(x, z));
     }
 
     /**
      * If setting tile on the server, a packet should be sent to all players.
      */
     public void setTile(int x, int z, Identifier tile) {
-        tiles.put(new ShortVec2(x, z), tile);
+        tiles.put(new ChunkPos(x, z), tile);
         markDirty();
     }
 
     public void removeTile(int x, int z) {
-        tiles.remove(tempCoords.set(x, z));
+        tiles.remove(new ChunkPos(x, z));
         markDirty();
     }
 

@@ -26,8 +26,8 @@ public class DimensionUpdateS2CPacket extends S2CPacket {
 		this.writeVarInt(tiles.size());
 
 		for (TileInfo tile : tiles) {
-			this.writeShort(tile.x);
-			this.writeShort(tile.z);
+			this.writeVarInt(tile.x);
+			this.writeVarInt(tile.z);
 			this.writeIdentifier(tile.id);
 		}
 	}
@@ -50,8 +50,8 @@ public class DimensionUpdateS2CPacket extends S2CPacket {
 		List<TileInfo> tiles = new ArrayList<>();
 		for (int i = 0; i < tileCount; ++i) {
 			tiles.add(new TileInfo(
-					buf.readShort(),
-					buf.readShort(),
+					buf.readVarInt(),
+					buf.readVarInt(),
 					buf.readIdentifier())
 			);
 		}
