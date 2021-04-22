@@ -28,7 +28,7 @@ public class TextureSetMap {
 		return map.get(name);
 	}
 	
-	public boolean isRegistered(String name) {
-		return map.containsKey(name);
+	static public boolean isRegistered(ResourceLocation name) {
+		return INSTANCE.map.containsKey(name);
 	}
 }

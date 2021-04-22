@@ -12,6 +12,7 @@ import hunternif.mc.impl.atlas.client.texture.ITexture;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import hunternif.mc.impl.atlas.util.Log;
 
 @OnlyIn(Dist.CLIENT)
 public class TextureSet implements Comparable<TextureSet> {
@@ -103,6 +104,21 @@ public class TextureSet implements Comparable<TextureSet> {
             }
             textures[i] = Textures.TILE_TEXTURES_MAP.get(texturePaths[i]);
         }
+    }
+    
+    /**
+     * This method goes through the list of all TextureSets this should stitch to and assert that these TextureSet exist
+     */
+    public void checkStitching() {
+        stitchTo.stream().filter(identifier -> !TextureSetMap.isRegistered(identifier)).forEach(identifier -> {
+            Log.error("The texture set %s tries to stitch to %s, which does not exists.", name, identifier);
+        });
+        stitchToVertical.stream().filter(identifier -> !TextureSetMap.isRegistered(identifier)).forEach(identifier -> {
+            Log.error("The texture set %s tries to stitch vertically to %s, which does not exists.", name, identifier);
+        });
+        stitchToHorizontal.stream().filter(identifier -> !TextureSetMap.isRegistered(identifier)).forEach(identifier -> {
+            Log.error("The texture set %s tries to stitch horizontally to %s, which does not exists.", name, identifier);
+        });
     }
 	
 	/** A special texture set that is stitched to everything except water. */
