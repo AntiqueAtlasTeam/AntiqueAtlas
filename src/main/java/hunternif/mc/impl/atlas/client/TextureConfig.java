@@ -49,7 +49,7 @@ public class TextureConfig implements IResourceReloadListener<Map<ResourceLocati
 
                     AntiqueAtlasMod.LOG.info("Found new Texture: " + texture_id);
 
-                    texture_map.put(texture_id, new TileTexture(id));
+                    textures.put(texture_id, new TileTexture(id));
                 }
 
             } catch (Throwable e) {
