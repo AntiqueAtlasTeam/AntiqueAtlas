@@ -6,7 +6,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import hunternif.mc.impl.atlas.AntiqueAtlasConfig;
 import hunternif.mc.impl.atlas.AntiqueAtlasMod;
-import hunternif.mc.impl.atlas.api.AtlasAPI;
+import hunternif.mc.api.AtlasAPI;
 import hunternif.mc.impl.atlas.item.AtlasItem;
 import hunternif.mc.impl.atlas.mixinhooks.EntityHooksAA;
 import hunternif.mc.impl.atlas.registry.MarkerType;
@@ -132,7 +132,7 @@ public class NetherPortalWatcher {
 		}
 
 		// Marker not found, place new one:
-		AtlasAPI.markers.putMarker(world, false, atlasID, MarkerType.REGISTRY.getKey(netherPortalType), new TranslationTextComponent("gui.antiqueatlas.marker.netherPortal"), x, z);
+		AtlasAPI.getMarkerAPI().putMarker(world, false, atlasID, MarkerType.REGISTRY.getKey(netherPortalType), new TranslationTextComponent("gui.antiqueatlas.marker.netherPortal"), x, z);
 	}
 
 	private static boolean isEntityInPortal(Entity entity) {

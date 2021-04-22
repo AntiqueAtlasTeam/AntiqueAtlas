@@ -11,7 +11,7 @@ import org.apache.commons.lang3.tuple.Triple;
 import com.google.common.collect.HashMultimap;
 
 import hunternif.mc.impl.atlas.AntiqueAtlasMod;
-import hunternif.mc.impl.atlas.api.AtlasAPI;
+import hunternif.mc.api.AtlasAPI;
 import hunternif.mc.impl.atlas.registry.MarkerType;
 import hunternif.mc.impl.atlas.util.MathUtil;
 import net.minecraft.util.ResourceLocation;
@@ -53,10 +53,10 @@ public class StructureHandler {
 	}
 
 	private static void put(ResourceLocation structurePieceId, World world, int chunkX, int chunkZ, ResourceLocation textureId) {
-		ResourceLocation existingTile = AntiqueAtlasMod.tileData.getData(world.getDimensionKey()).getTile(chunkX, chunkZ);
+		ResourceLocation existingTile = AntiqueAtlasMod.globalTileData.getData(world.getDimensionKey()).getTile(chunkX, chunkZ);
 
 		if (getPriority(structurePieceId) < getPriority(existingTile)) {
-			AtlasAPI.tiles.putGlobalTile(world, textureId, chunkX, chunkZ);
+			AtlasAPI.getTileAPI().putGlobalTile(world, textureId, chunkX, chunkZ);
 		}
 	}
 
@@ -83,7 +83,7 @@ public class StructureHandler {
 
 			if (VISITED_STRUCTURES.contains(key)) return;
 			VISITED_STRUCTURES.add(key);
-			AtlasAPI.markers.putGlobalMarker(
+			AtlasAPI.getMarkerAPI().putGlobalMarker(
 					world,
 					false,
 					STRUCTURE_PIECE_TO_MARKER_MAP.get(structureId).getA(),

@@ -15,7 +15,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 
 import hunternif.mc.impl.atlas.AntiqueAtlasConfig;
 import hunternif.mc.impl.atlas.AntiqueAtlasMod;
-import hunternif.mc.impl.atlas.api.AtlasAPI;
+import hunternif.mc.api.client.AtlasClientAPI;
 import hunternif.mc.impl.atlas.client.TileTextureMap;
 import hunternif.mc.impl.atlas.client.SubTile;
 import hunternif.mc.impl.atlas.client.SubTileQuartet;
@@ -440,7 +440,7 @@ public class GuiAtlas extends GuiComponent {
 						return true;
 					} else if (state.is(DELETING_MARKER) // If clicked on a marker, delete it:
 							&& hoveredMarker != null && !hoveredMarker.isGlobal() && isMouseOverMap && mouseState == 0) {
-						AtlasAPI.markers.deleteMarker(player.getEntityWorld(),
+						AtlasClientAPI.getMarkerAPI().deleteMarker(player.getEntityWorld(),
 								atlasID, hoveredMarker.getId());
 						hoveredMarker = null;
 						player.getEntityWorld().playSound(player, player.getPosition(),
@@ -619,8 +619,8 @@ public class GuiAtlas extends GuiComponent {
 	private void updateAtlasData() {
 		int atlasID = getAtlasID();
 
-		biomeData = AntiqueAtlasMod.atlasData
-				.getAtlasData(atlasID, player.getEntityWorld())
+		biomeData = AntiqueAtlasMod.tileData
+				.getData(atlasID, player.getEntityWorld())
 				.getWorldData(player.getEntityWorld().getDimensionKey());
 		globalMarkersData = AntiqueAtlasMod.globalMarkersData.getData()
 				.getMarkersDataInWorld(player.getEntityWorld().getDimensionKey());

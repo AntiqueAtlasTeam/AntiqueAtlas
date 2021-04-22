@@ -1,11 +1,10 @@
 package hunternif.mc.impl.atlas.api.client.impl;
 
 import hunternif.mc.impl.atlas.AntiqueAtlasMod;
-import hunternif.mc.impl.atlas.api.MarkerAPI;
+import hunternif.mc.api.MarkerAPI;
 import hunternif.mc.impl.atlas.marker.Marker;
 import hunternif.mc.impl.atlas.network.packet.c2s.play.AddMarkerC2SPacket;
 import hunternif.mc.impl.atlas.network.packet.c2s.play.DeleteMarkerRequestC2SPacket;
-import hunternif.mc.impl.atlas.registry.MarkerType;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.World;
@@ -17,14 +16,6 @@ import javax.annotation.Nullable;
 
 @OnlyIn(Dist.CLIENT)
 public class MarkerApiImplClient implements MarkerAPI {
-	/** Used in place of atlasID to signify that the marker is global. */
-	private static final int GLOBAL = -1;
-
-	@Override
-	public void registerMarker(ResourceLocation identifier, MarkerType markerType) {
-		MarkerType.register(identifier, markerType);
-	}
-
 	@Nullable
 	@Override
 	public Marker putMarker(@Nonnull World world, boolean visibleAhead, int atlasID, ResourceLocation marker, ITextComponent label, int x, int z) {

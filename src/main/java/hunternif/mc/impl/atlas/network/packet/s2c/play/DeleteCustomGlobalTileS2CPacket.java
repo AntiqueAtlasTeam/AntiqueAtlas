@@ -46,7 +46,7 @@ public class DeleteCustomGlobalTileS2CPacket extends S2CPacket {
 	@OnlyIn(Dist.CLIENT)
 	@Override
 	public boolean handle(ClientPlayerEntity player) {
-		TileDataStorage data = AntiqueAtlasMod.tileData.getData(this.world);
+		TileDataStorage data = AntiqueAtlasMod.globalTileData.getData(this.world);
 		data.removeTile(this.chunkX, this.chunkZ);
 		return true;
 	}

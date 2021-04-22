@@ -4,7 +4,7 @@ import java.util.function.Supplier;
 
 import hunternif.mc.impl.atlas.AntiqueAtlasConfig;
 import hunternif.mc.impl.atlas.AntiqueAtlasMod;
-import hunternif.mc.impl.atlas.api.AtlasAPI;
+import hunternif.mc.api.AtlasAPI;
 import hunternif.mc.impl.atlas.network.packet.c2s.C2SPacket;
 import hunternif.mc.impl.atlas.util.Log;
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -59,7 +59,7 @@ public class PutTileC2SPacket extends C2SPacket {
 				return;
 			}
 			
-			AtlasAPI.tiles.putTile(sender.getEntityWorld(), msg.atlasID, msg.tile, msg.x, msg.z);
+			AtlasAPI.getTileAPI().putTile(sender.getEntityWorld(), msg.atlasID, msg.tile, msg.x, msg.z);
 		});
 		context.setPacketHandled(true);
 	}
@@ -68,24 +68,4 @@ public class PutTileC2SPacket extends C2SPacket {
 	public ResourceLocation getId() {
 		return ID;
 	}
-
-//	public static void apply(PacketContext context, PacketByteBuf buf) {
-//		int atlasID = buf.readVarInt();
-//		int x = buf.readVarInt();
-//		int z = buf.readVarInt();
-//		ResourceLocation tile = buf.readIdentifier();
-//
-//		context.getTaskQueue().execute(() -> {
-//			if (AntiqueAtlasMod.CONFIG.itemNeeded && !AtlasAPI.getPlayerAtlases(context.getPlayer()).contains(atlasID)) {
-//				Log.warn("Player %s attempted to modify someone else's Atlas #%d",
-//						context.getPlayer().getName(), atlasID);
-//				return;
-//			}
-//			if (BuiltinRegistries.BIOME.containsId(tile)) {
-//				AtlasAPI.tiles.putBiomeTile(context.getPlayer().getEntityWorld(), atlasID, tile, x, z);
-//			} else {
-//				AtlasAPI.tiles.putCustomTile(context.getPlayer().getEntityWorld(), atlasID, tile, x, z);
-//			}
-//		});
-//	}
 }

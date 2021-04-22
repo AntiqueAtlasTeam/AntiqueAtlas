@@ -1,14 +1,10 @@
 package hunternif.mc.impl.atlas.network.packet.c2s.play;
 
-import java.util.Collections;
 import java.util.function.Supplier;
 
 import hunternif.mc.impl.atlas.AntiqueAtlasMod;
-import hunternif.mc.impl.atlas.api.AtlasAPI;
-import hunternif.mc.impl.atlas.marker.Marker;
-import hunternif.mc.impl.atlas.marker.MarkersData;
+import hunternif.mc.api.AtlasAPI;
 import hunternif.mc.impl.atlas.network.packet.c2s.C2SPacket;
-import hunternif.mc.impl.atlas.network.packet.s2c.play.MarkersS2CPacket;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.ResourceLocation;
@@ -66,26 +62,15 @@ public class AddMarkerC2SPacket extends C2SPacket {
 			if (sender == null) {
 				return;
 			}
-			ServerPlayerEntity playerEntity = (ServerPlayerEntity) context.getSender();
-			if (!AtlasAPI.getPlayerAtlases(playerEntity).contains(msg.atlasID)) {
+			ServerPlayerEntity player = (ServerPlayerEntity) context.getSender();
+			if (!AtlasAPI.getPlayerAtlases(player).contains(msg.atlasID)) {
 				AntiqueAtlasMod.LOG.warn(
 						"Player {} attempted to put marker into someone else's Atlas #{}}",
-						playerEntity.getName(), msg.atlasID);
+						player.getName(), msg.atlasID);
 				return;
 			}
 
-			if (playerEntity.getServer() != null) {
-				MarkersData markersData = AntiqueAtlasMod.markersData.getMarkersData(msg.atlasID, playerEntity.getEntityWorld());
-				Marker marker = markersData.createAndSaveMarker(
-						msg.markerType,
-						context.getSender().getEntityWorld().getDimensionKey(),
-						msg.x,
-						msg.z,
-						msg.visibleBeforeDiscovery,
-						msg.label);
-
-				new MarkersS2CPacket(msg.atlasID, context.getSender().getEntityWorld().getDimensionKey(), Collections.singleton(marker)).send(playerEntity.server);
-			}
+			AtlasAPI.getMarkerAPI().putMarker(player.world, msg.visibleBeforeDiscovery, msg.atlasID, msg.markerType, msg.label, msg.x,msg.z);
 		});
 		context.setPacketHandled(true);
 	}

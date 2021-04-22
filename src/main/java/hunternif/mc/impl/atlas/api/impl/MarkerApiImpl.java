@@ -1,13 +1,12 @@
-package hunternif.mc.impl.atlas.api.oldimpl;
+package hunternif.mc.impl.atlas.api.impl;
 
 import hunternif.mc.impl.atlas.AntiqueAtlasMod;
-import hunternif.mc.impl.atlas.api.MarkerAPI;
+import hunternif.mc.api.MarkerAPI;
 import hunternif.mc.impl.atlas.marker.Marker;
 import hunternif.mc.impl.atlas.marker.MarkersData;
 import hunternif.mc.impl.atlas.network.packet.c2s.play.DeleteMarkerRequestC2SPacket;
 import hunternif.mc.impl.atlas.network.packet.s2c.play.DeleteMarkerResponseS2CPacket;
 import hunternif.mc.impl.atlas.network.packet.s2c.play.MarkersS2CPacket;
-import hunternif.mc.impl.atlas.registry.MarkerType;
 import hunternif.mc.impl.atlas.util.Log;
 
 import javax.annotation.Nonnull;
@@ -75,11 +74,6 @@ public class MarkerApiImpl implements MarkerAPI {
 
 			new DeleteMarkerResponseS2CPacket(atlasID, markerID).send(world.getServer());
 		}
-	}
-	
-	@Override
-	public void registerMarker(ResourceLocation identifier, MarkerType markerType) {
-		MarkerType.register(identifier, markerType);
 	}
 
 }

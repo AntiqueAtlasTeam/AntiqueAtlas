@@ -48,7 +48,7 @@ public class MapDataS2CPacket extends S2CPacket {
 	@OnlyIn(Dist.CLIENT)
 	@Override
 	public boolean handle(ClientPlayerEntity player) {
-		AtlasData atlasData = AntiqueAtlasMod.atlasData.getAtlasData(this.atlasID, player.getEntityWorld());
+		AtlasData atlasData = AntiqueAtlasMod.tileData.getData(this.atlasID, player.getEntityWorld());
 		atlasData.read(this.data);
 
 		if (AntiqueAtlasConfig.doSaveBrowsingPos.get() && Minecraft.getInstance().currentScreen instanceof GuiAtlas) {
@@ -61,21 +61,4 @@ public class MapDataS2CPacket extends S2CPacket {
 	public ResourceLocation getId() {
 		return ID;
 	}
-
-	//	@OnlyIn(Dist.CLIENT)
-	//	public static void apply(PacketContext context, PacketBuffer buf) {
-	//		int atlasID = buf.readVarInt();
-	//		CompoundNBT data = buf.readCompoundNBT();
-	//
-	//		if (data == null) return;
-	//
-	//		context.getTaskQueue().execute(() -> {
-	//			AtlasData atlasData = AntiqueAtlasMod.atlasData.getAtlasData(atlasID, context.getPlayer().getEntityWorld());
-	//			atlasData.fromTag(data);
-	//
-	//			if (AntiqueAtlasMod.CONFIG.doSaveBrowsingPos && Minecraft.getInstance().currentScreen instanceof GuiAtlas) {
-	//				((GuiAtlas) Minecraft.getInstance().currentScreen).loadSavedBrowsingPosition();
-	//			}
-	//		});
-	//	}
 }

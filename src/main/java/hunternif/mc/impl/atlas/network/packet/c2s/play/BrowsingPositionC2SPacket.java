@@ -4,7 +4,7 @@ import java.util.function.Supplier;
 
 import hunternif.mc.impl.atlas.AntiqueAtlasConfig;
 import hunternif.mc.impl.atlas.AntiqueAtlasMod;
-import hunternif.mc.impl.atlas.api.AtlasAPI;
+import hunternif.mc.api.AtlasAPI;
 import hunternif.mc.impl.atlas.network.packet.c2s.C2SPacket;
 import hunternif.mc.impl.atlas.util.Log;
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -67,7 +67,7 @@ public class BrowsingPositionC2SPacket extends C2SPacket {
 				return;
 			}
 
-			AntiqueAtlasMod.atlasData.getAtlasData(msg.atlasID, context.getSender().getEntityWorld())
+			AntiqueAtlasMod.tileData.getData(msg.atlasID, context.getSender().getEntityWorld())
 					.getWorldData(msg.world).setBrowsingPosition(msg.x, msg.y, msg.zoom);
 		});
 		context.setPacketHandled(true);

@@ -67,7 +67,7 @@ public class DimensionUpdateS2CPacket extends S2CPacket {
 	@OnlyIn(Dist.CLIENT)
 	@Override
 	public boolean handle(ClientPlayerEntity player) {
-		AtlasData data = AntiqueAtlasMod.atlasData.getAtlasData(this.atlasID, player.world);
+		AtlasData data = AntiqueAtlasMod.tileData.getData(this.atlasID, player.world);
 		for (TileInfo info : this.tiles) {
 			data.getWorldData(this.world).setTile(info.x, info.z, info.id);
 		}
@@ -78,32 +78,4 @@ public class DimensionUpdateS2CPacket extends S2CPacket {
 	public ResourceLocation getId() {
 		return ID;
 	}
-
-	//	public static void apply(PacketContext context, PacketBuffer buf) {
-	//		int atlasID = buf.readVarInt();
-	//		RegistryKey<World> world = RegistryKey.of(Registry.DIMENSION, buf.readIdentifier());
-	//		int tileCount = buf.readVarInt();
-	//
-	//		if (world == null) {
-	//			// TODO FABRIC
-	//			return;
-	//		}
-	//
-	//		List<TileInfo> tiles = new ArrayList<>();
-	//		for (int i = 0; i < tileCount; ++i) {
-	//			tiles.add(new TileInfo(
-	//					buf.readShort(),
-	//					buf.readShort(),
-	//					buf.readIdentifier())
-	//			);
-	//		}
-	//
-	//		context.getTaskQueue().execute(() -> {
-	//			AtlasData data = AntiqueAtlasMod.atlasData.getAtlasData(atlasID, context.getPlayer().world);
-	//
-	//			for (TileInfo info : tiles) {
-	//				data.getWorldData(world).setTile(info.x, info.z, info.id);
-	//			}
-	//		});
-	//	}
 }

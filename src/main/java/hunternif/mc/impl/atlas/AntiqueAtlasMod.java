@@ -4,9 +4,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import hunternif.mc.impl.atlas.client.KeyHandler;
-import hunternif.mc.impl.atlas.core.AtlasDataHandler;
-import hunternif.mc.impl.atlas.core.GlobalAtlasData;
 import hunternif.mc.impl.atlas.core.TileDataHandler;
+import hunternif.mc.impl.atlas.core.GlobalAtlasData;
+import hunternif.mc.impl.atlas.core.GlobalTileDataHandler;
 import hunternif.mc.impl.atlas.core.scaning.TileDetectorBase;
 import hunternif.mc.impl.atlas.core.scaning.WorldScanner;
 import hunternif.mc.impl.atlas.forge.AntiqueAtlasConfigBuilder;
@@ -43,10 +43,10 @@ public class AntiqueAtlasMod
 	public static final SimpleChannel MOD_CHANNEL = NetworkRegistry.newSimpleChannel(id("main"), () -> NETWORK_PROTOCOL_VERSION, NETWORK_PROTOCOL_VERSION::equals, NETWORK_PROTOCOL_VERSION::equals);
 	
 	public static final WorldScanner worldScanner = new WorldScanner();
-	public static final AtlasDataHandler atlasData = new AtlasDataHandler();
+	public static final TileDataHandler tileData = new TileDataHandler();
 	public static final MarkersDataHandler markersData = new MarkersDataHandler();
 	
-	public static final TileDataHandler tileData = new TileDataHandler();
+	public static final GlobalTileDataHandler globalTileData = new GlobalTileDataHandler();
 	public static final GlobalMarkersDataHandler globalMarkersData = new GlobalMarkersDataHandler();
 	
 //	private static final GlobalAtlasData clientAtlasData = new GlobalAtlasData("antiqueatlas:global_atlas_data");

@@ -66,7 +66,7 @@ public class CustomTileInfoS2CPacket extends S2CPacket {
 	@OnlyIn(Dist.CLIENT)
 	@Override
 	public boolean handle(ClientPlayerEntity player) {
-		TileDataStorage data = AntiqueAtlasMod.tileData.getData(this.world);
+		TileDataStorage data = AntiqueAtlasMod.globalTileData.getData(this.world);
 		for (Map.Entry<ShortVec2, ResourceLocation> entry : this.tiles.entrySet()) {
 			data.setTile(entry.getKey().x, entry.getKey().y, entry.getValue());
 		}

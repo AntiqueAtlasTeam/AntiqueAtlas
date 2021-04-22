@@ -30,6 +30,7 @@ import net.minecraft.util.math.vector.Vector3f;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import hunternif.mc.api.client.AtlasClientAPI;
 @OnlyIn(Dist.CLIENT)
 public class OverlayRenderer extends AbstractGui {
 	/**
@@ -38,7 +39,6 @@ public class OverlayRenderer extends AbstractGui {
 	 */
 	private static final int CHUNK_SIZE = 16;
 	private static final float INNER_ELEMENTS_SCALE_FACTOR = 1.9F;
-	private Minecraft client;
 	private PlayerEntity player;
 	private World world;
 
@@ -52,7 +52,6 @@ public class OverlayRenderer extends AbstractGui {
 			return;
 		}
 
-		this.client = Minecraft.getInstance();
 		this.player = Minecraft.getInstance().player;
 		this.world = Minecraft.getInstance().world;
 
@@ -106,14 +105,9 @@ public class OverlayRenderer extends AbstractGui {
 
 	private void drawTiles(IRenderTypeBuffer buffer, MatrixStack matrices, int atlasID, int light) {
 
-		WorldData biomeData = AntiqueAtlasMod.atlasData.getAtlasData(
-				atlasID, this.world).getWorldData(this.world.getDimensionKey());
-
-		TileRenderIterator iter = new TileRenderIterator(biomeData);
 		Rect iteratorScope = getChunkCoverage(player.getPositionVec());
-		iter.setScope(iteratorScope);
-
-		iter.setStep(1);
+		TileRenderIterator iter = AtlasClientAPI.getTileAPI().getTiles(world, atlasID, iteratorScope, 1);
+		
 		Vector3d chunkPosition = player.getPositionVec().mul(1D / CHUNK_SIZE, 1D / CHUNK_SIZE, 1D / CHUNK_SIZE);
 		int shapeMiddleX = (int) ((GuiAtlas.WIDTH * 1.5F) / (INNER_ELEMENTS_SCALE_FACTOR * 2));
 		int shapeMiddleY = (int) ((GuiAtlas.HEIGHT * 1.5F) / (INNER_ELEMENTS_SCALE_FACTOR * 2));
@@ -146,7 +140,7 @@ public class OverlayRenderer extends AbstractGui {
 
 	private void drawMarkers(IRenderTypeBuffer buffer, MatrixStack matrices, int atlasID, int light) {
 		// biomeData needed to prevent undiscovered markers from appearing
-		WorldData biomeData = AntiqueAtlasMod.atlasData.getAtlasData(
+		WorldData biomeData = AntiqueAtlasMod.tileData.getData(
 				atlasID, this.world).getWorldData(
 						this.world.getDimensionKey());
 		DimensionMarkersData globalMarkersData = AntiqueAtlasMod.globalMarkersData

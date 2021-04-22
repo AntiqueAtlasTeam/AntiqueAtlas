@@ -2,7 +2,7 @@ package hunternif.mc.impl.atlas.core.scaning;
 
 import hunternif.mc.impl.atlas.AntiqueAtlasConfig;
 import hunternif.mc.impl.atlas.AntiqueAtlasMod;
-import hunternif.mc.impl.atlas.api.AtlasAPI;
+import hunternif.mc.api.AtlasAPI;
 import hunternif.mc.impl.atlas.core.AtlasData;
 import hunternif.mc.impl.atlas.core.ITileStorage;
 import hunternif.mc.impl.atlas.core.TileInfo;
@@ -90,7 +90,7 @@ public class WorldScanner {
 
         // Check if there's a custom tile at the location:
         // Custom tiles overwrite even the chunks already seen.
-        ResourceLocation tile = AntiqueAtlasMod.tileData.getData(world).getTile(x, z);
+        ResourceLocation tile = AtlasAPI.getTileAPI().getGlobalTile(world, x, z);
 
         // If there's no custom tile, check the actual chunk:
         if (tile == null) {

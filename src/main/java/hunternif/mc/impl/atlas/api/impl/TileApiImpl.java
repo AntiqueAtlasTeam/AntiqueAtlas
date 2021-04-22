@@ -1,4 +1,4 @@
-package hunternif.mc.impl.atlas.api.oldimpl;
+package hunternif.mc.impl.atlas.api.impl;
 
 import hunternif.mc.impl.atlas.AntiqueAtlasMod;
 import hunternif.mc.api.TileAPI;
@@ -33,7 +33,7 @@ public class TileApiImpl implements TileAPI {
 		if (world.isRemote) {
 			new PutTileC2SPacket(atlasID, chunkX, chunkZ, tile).send();
 		} else {
-			AtlasData data = AntiqueAtlasMod.atlasData.getAtlasData(atlasID, world);
+			AtlasData data = AntiqueAtlasMod.tileData.getData(atlasID, world);
 			data.setTile(dimension, chunkX, chunkZ, tile);
 			for (PlayerEntity syncedPlayer : data.getSyncedPlayers()) {
 				new PutTileS2CPacket(atlasID, dimension, chunkX, chunkZ, tile).send((ServerPlayerEntity) syncedPlayer);
@@ -43,7 +43,7 @@ public class TileApiImpl implements TileAPI {
 
 	@Override
 	public ResourceLocation getTile(World world, int atlasID, int chunkX, int chunkZ) {
-        AtlasData data = AntiqueAtlasMod.atlasData.getAtlasData(atlasID, world);
+        AtlasData data = AntiqueAtlasMod.tileData.getData(atlasID, world);
         return data.getWorldData(world.getDimensionKey()).getTile(chunkX, chunkZ);
 	}
 	
@@ -59,7 +59,7 @@ public class TileApiImpl implements TileAPI {
 			return;
 		}
 
-		TileDataStorage data = AntiqueAtlasMod.tileData.getData(world);
+		TileDataStorage data = AntiqueAtlasMod.globalTileData.getData(world);
 		data.setTile(chunkX, chunkZ, tileId);
 
 		// Send tile packet:
@@ -68,7 +68,7 @@ public class TileApiImpl implements TileAPI {
 	
 	@Override
     public ResourceLocation getGlobalTile(World world, int chunkX, int chunkZ) {
-        TileDataStorage data = AntiqueAtlasMod.tileData.getData(world);
+        TileDataStorage data = AntiqueAtlasMod.globalTileData.getData(world);
         return data.getTile(chunkX, chunkZ);
 	}
 
@@ -79,7 +79,7 @@ public class TileApiImpl implements TileAPI {
 			Log.warn("Client attempted to delete global tile");
 			return;
 		}
-		TileDataStorage data = AntiqueAtlasMod.tileData.getData(world);
+		TileDataStorage data = AntiqueAtlasMod.globalTileData.getData(world);
 		if (data.getTile(chunkX, chunkZ) != null) {
 			data.removeTile(chunkX, chunkZ);
 			new DeleteCustomGlobalTileS2CPacket(world.getDimensionKey(), chunkX, chunkZ).send((ServerWorld) world);

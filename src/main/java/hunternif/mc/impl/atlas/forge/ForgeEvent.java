@@ -37,7 +37,7 @@ public class ForgeEvent {
 	@OnlyIn(Dist.CLIENT)
 	@SubscribeEvent
 	public static void login(ClientPlayerNetworkEvent.LoggedInEvent event) {
-		AntiqueAtlasMod.atlasData.onClientConnectedToServer(event.getPlayer().getEntityWorld().isRemote);
+		AntiqueAtlasMod.tileData.onClientConnectedToServer(event.getPlayer().getEntityWorld().isRemote);
 		AntiqueAtlasMod.markersData.onClientConnectedToServer(event.getPlayer().getEntityWorld().isRemote);
 		AntiqueAtlasMod.globalMarkersData.onClientConnectedToServer(event.getPlayer().getEntityWorld().isRemote);
 	}
@@ -47,7 +47,7 @@ public class ForgeEvent {
 		if (event.getPlayer() instanceof ServerPlayerEntity) {
 			ServerPlayerEntity player = (ServerPlayerEntity)event.getPlayer();
 			AntiqueAtlasMod.globalMarkersData.onPlayerLogin(player);
-			AntiqueAtlasMod.tileData.onPlayerLogin(player);
+			AntiqueAtlasMod.globalTileData.onPlayerLogin(player);
 			PlayerEventHandler.onPlayerLogin(player);
 		}
 	}
@@ -57,7 +57,7 @@ public class ForgeEvent {
 		if (event.getWorld() instanceof ServerWorld) {
 			ServerWorld server = (ServerWorld)event.getWorld();
 			AntiqueAtlasMod.globalMarkersData.onWorldLoad(server.getServer(), server);
-			AntiqueAtlasMod.tileData.onWorldLoad(server.getServer(), server);
+			AntiqueAtlasMod.globalTileData.onWorldLoad(server.getServer(), server);
 		}
 	}
 

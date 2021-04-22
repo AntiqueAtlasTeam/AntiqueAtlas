@@ -5,7 +5,7 @@ import java.util.List;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 
-import hunternif.mc.api.client.MarkerRegistry;
+import hunternif.mc.api.client.AtlasClientAPI;
 import hunternif.mc.impl.atlas.client.gui.core.GuiComponent;
 import hunternif.mc.impl.atlas.client.gui.core.GuiScrollingContainer;
 import hunternif.mc.impl.atlas.client.gui.core.ToggleGroup;
@@ -79,7 +79,7 @@ public class GuiMarkerFinalizer extends GuiComponent {
 		super.init();
 
 		addButton(btnDone = new Button(this.width/2 - BUTTON_WIDTH - BUTTON_SPACING/2, this.height/2 + 40, BUTTON_WIDTH, 20, new TranslationTextComponent("gui.done"), (button) -> {
-			MarkerRegistry.API.putMarker(world, true, atlasID, MarkerType.REGISTRY.getKey(selectedType), new StringTextComponent(textField.getText()), markerX, markerZ);
+			AtlasClientAPI.getMarkerAPI().putMarker(world, true, atlasID, MarkerType.REGISTRY.getKey(selectedType), new StringTextComponent(textField.getText()), markerX, markerZ);
 			Log.info("Put marker in Atlas #%d \"%s\" at (%d, %d)", atlasID, textField.getText(), markerX, markerZ);
 
 			ClientPlayerEntity player = Minecraft.getInstance().player;
