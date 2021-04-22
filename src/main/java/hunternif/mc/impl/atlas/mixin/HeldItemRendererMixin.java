@@ -48,13 +48,14 @@ public abstract class HeldItemRendererMixin {
     @Shadow
     private ItemStack itemStackMainHand;
 
-    @Inject(method = "renderItemInFirstPerson", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;isEmpty()Z", ordinal = 0), locals = LocalCapture.CAPTURE_FAILHARD, cancellable = true)
-    private void renderAtlas(AbstractClientPlayerEntity player, float tickDelta, float pitch, Hand hand, float swingProgress, ItemStack item, float equipProgress, MatrixStack matrices, IRenderTypeBuffer vertexConsumers, int light, CallbackInfo ci, boolean bl, HandSide arm) {
-        if (item.getItem() == RegistrarAntiqueAtlas.ATLAS) {
-            if (bl && this.itemStackOffHand.isEmpty()) {
-                renderAtlasInBothHands(matrices, vertexConsumers, light, pitch, equipProgress, swingProgress);
+    @Inject(method = "renderItemInFirstPerson(Lnet/minecraft/client/entity/player/AbstractClientPlayerEntity;FFLnet/minecraft/util/Hand;FLnet/minecraft/item/ItemStack;FLcom/mojang/blaze3d/matrix/MatrixStack;Lnet/minecraft/client/renderer/IRenderTypeBuffer;I)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;isEmpty()Z", ordinal = 0), locals = LocalCapture.CAPTURE_FAILHARD, cancellable = true)
+    private void renderAtlas(AbstractClientPlayerEntity player, float tickDelta, float pitch, Hand handIn, float swingProgress, ItemStack stack, float equipProgress, MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int combinedLightIn, CallbackInfo ci, boolean flag, HandSide handside) {
+//    private void renderAtlas(AbstractClientPlayerEntity player, float tickDelta, float pitch, Hand hand, float swingProgress, ItemStack item, float equipProgress, MatrixStack matrices, IRenderTypeBuffer vertexConsumers, int light, CallbackInfo ci, boolean bl, HandSide arm) {
+        if (stack.getItem() == RegistrarAntiqueAtlas.ATLAS) {
+            if (flag && this.itemStackOffHand.isEmpty()) {
+                renderAtlasInBothHands(matrixStackIn, bufferIn, combinedLightIn, pitch, equipProgress, swingProgress);
             } else {
-                renderAtlasInOneHand(matrices, vertexConsumers, light, equipProgress, arm, swingProgress, item);
+                renderAtlasInOneHand(matrixStackIn, bufferIn, combinedLightIn, equipProgress, handside, swingProgress, stack);
             }
 
             ci.cancel();

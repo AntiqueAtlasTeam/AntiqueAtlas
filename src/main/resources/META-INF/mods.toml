@@ -26,6 +26,12 @@ Antique Atlas is a book that acts like a map featuring infinite scrolling, zoom 
 [[dependencies.antiqueatlas]]
     modId="minecraft"
     mandatory=true
-    versionRange="[1.16.4,)"
+    versionRange="[1.16.2,)"
+    ordering="NONE"
+    side="BOTH"
+[[dependencies.antiqueatlas]]
+    modId="cloth-config"
+    mandatory=true
+    versionRange="[4.11.15,)"
     ordering="NONE"
     side="BOTH"
