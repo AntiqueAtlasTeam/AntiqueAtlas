@@ -3,6 +3,7 @@ package hunternif.mc.impl.atlas.client.gui;
 import java.io.File;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -52,10 +53,14 @@ import net.minecraft.client.resources.I18n;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvents;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.vector.Vector3f;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 public class GuiAtlas extends GuiComponent {
 	public static final int WIDTH = 310;
@@ -801,7 +806,29 @@ public class GuiAtlas extends GuiComponent {
 			RenderSystem.color4f(1, 1, 1, 1);
 		}
 		RenderSystem.disableBlend();
+		
+		if (AntiqueAtlasConfig.debugRender.get() && !isDragging && isMouseOver) {
+            int x = screenXToWorldX((int) getMouseX());
+            int z = screenYToWorldZ((int) getMouseY());
 
+            String coords = String.format("Coords: %d / %d", x, z);
+
+            ChunkPos pos = new ChunkPos(new BlockPos(x, 0, z));
+            String chunks = String.format("Chunks: %d / %d", pos.x, pos.z);
+            ResourceLocation tile = biomeData.getTile(pos.x, pos.z);
+
+            if (tile == null) {
+                drawTooltip(Arrays.asList(new StringTextComponent(coords), new StringTextComponent(chunks)), font);
+            } else {
+                String texture_set = TileTextureMap.instance().getTextureSet(tile).name.toString();
+                drawTooltip(Arrays.asList(
+                        new StringTextComponent(coords),
+                        new StringTextComponent(chunks),
+                        new StringTextComponent("Tile: " + tile.toString()),
+                        new StringTextComponent("TSet: " + texture_set)),
+                        font);
+            }
+        }
 		// Draw progress overlay:
 		if (state.is(EXPORTING_IMAGE)) {
 			renderBackground(matrices);
