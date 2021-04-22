@@ -1,10 +1,10 @@
 package hunternif.mc.impl.atlas.api.client.impl;
 
 import hunternif.mc.impl.atlas.AntiqueAtlasMod;
-import hunternif.mc.impl.atlas.api.MarkerAPI;
+import hunternif.mc.api.MarkerAPI;
 import hunternif.mc.impl.atlas.marker.Marker;
 import hunternif.mc.impl.atlas.network.packet.c2s.play.AddMarkerC2SPacket;
-import hunternif.mc.impl.atlas.registry.MarkerType;
+import hunternif.mc.impl.atlas.network.packet.c2s.play.DeleteMarkerRequestC2SPacket;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.World;
@@ -16,24 +16,16 @@ import javax.annotation.Nullable;
 
 @OnlyIn(Dist.CLIENT)
 public class MarkerApiImplClient implements MarkerAPI {
-	/** Used in place of atlasID to signify that the marker is global. */
-	private static final int GLOBAL = -1;
-
-	@Override
-	public void registerMarker(ResourceLocation identifier, MarkerType markerType) {
-		MarkerType.register(identifier, markerType);
-	}
-
 	@Nullable
 	@Override
-	public Marker putMarker(@Nonnull World world, boolean visibleAhead, int atlasID, MarkerType markerType, ITextComponent label, int x, int z) {
-		new AddMarkerC2SPacket(atlasID, MarkerType.REGISTRY.getKey(markerType), x, z, visibleAhead, label).send();
+	public Marker putMarker(@Nonnull World world, boolean visibleAhead, int atlasID, ResourceLocation marker, ITextComponent label, int x, int z) {
+		new AddMarkerC2SPacket(atlasID, marker, x, z, visibleAhead, label).send();
 		return null;
 	}
 
 	@Nullable
 	@Override
-	public Marker putGlobalMarker(@Nonnull World world, boolean visibleAhead, MarkerType markerType, ITextComponent label, int x, int z) {
+	public Marker putGlobalMarker(@Nonnull World world, boolean visibleAhead, ResourceLocation marker, ITextComponent label, int x, int z) {
 		AntiqueAtlasMod.LOG.warn("Client tried to add a global marker");
 
 		return null;
@@ -41,7 +33,7 @@ public class MarkerApiImplClient implements MarkerAPI {
 
 	@Override
 	public void deleteMarker(@Nonnull World world, int atlasID, int markerID) {
-		// TODO: Implement marker deletion, via DeleteMarkerS2CPacket
+		new DeleteMarkerRequestC2SPacket(atlasID, markerID).send();
 	}
 
 	@Override

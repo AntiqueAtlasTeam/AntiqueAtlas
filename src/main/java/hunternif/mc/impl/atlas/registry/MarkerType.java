@@ -13,6 +13,8 @@ import com.google.gson.JsonPrimitive;
 import com.mojang.serialization.Lifecycle;
 
 import hunternif.mc.impl.atlas.AntiqueAtlasMod;
+import hunternif.mc.impl.atlas.client.texture.ITexture;
+import hunternif.mc.impl.atlas.client.texture.Texture;
 import hunternif.mc.impl.atlas.util.BitMatrix;
 import hunternif.mc.impl.atlas.util.Log;
 import net.minecraft.client.Minecraft;
@@ -56,6 +58,7 @@ public class MarkerType {
 	}
 
 	public static void register(ResourceLocation location, MarkerType type) {
+		type.initMips();
 		if (REGISTRY.containsKey(location)) {
 			int id = REGISTRY.getId(REGISTRY.getOrDefault(location));
 			REGISTRY.register(id, RegistryKey.getOrCreateKey(KEY, location), type, Lifecycle.stable());
@@ -137,6 +140,11 @@ public class MarkerType {
 	public ResourceLocation getIcon() {
 		return icons.length == 0 || iconIndex < 0 ? TextureManager.RESOURCE_LOCATION_EMPTY : icons[iconIndex];
 	}
+	
+	public ITexture getTexture() {
+		if (icons.length == 0 || iconIndex < 0) return null;
+		return new Texture(getIcon(), iconSizes[iconIndex], iconSizes[iconIndex]);
+	}
 
 	public ResourceLocation[] getAllIcons() {
 		return icons;
@@ -151,7 +159,7 @@ public class MarkerType {
 		}
 
 		if (icons.length > 1) {
-			int smallestSide = (int) (size * screenScale);
+			int smallestSide = (int) (size);
 
 			int closestValue = Integer.MAX_VALUE;
 			int closestIndex = -1;
@@ -181,9 +189,7 @@ public class MarkerType {
 		int x = -(int) (size * getCenterX());
 		int y = -(int) (size * getCenterY());
 
-		ResourceLocation icon = getIcon();
-
-		return new MarkerRenderInfo(icon, x, y, size, size);
+		return new MarkerRenderInfo(getTexture(), x, y, size, size);
 	}
 
 	@OnlyIn(Dist.CLIENT)

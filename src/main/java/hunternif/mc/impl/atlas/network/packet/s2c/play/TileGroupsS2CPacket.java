@@ -68,7 +68,7 @@ public class TileGroupsS2CPacket extends S2CPacket {
 	@Override
 	@OnlyIn(Dist.CLIENT)
 	public boolean handle(ClientPlayerEntity player) {
-		AtlasData atlasData = AntiqueAtlasMod.atlasData.getAtlasData(this.atlasID, player.world);
+		AtlasData atlasData = AntiqueAtlasMod.tileData.getData(this.atlasID, player.world);
 		WorldData dimData = atlasData.getWorldData(this.world);
 		for (TileGroup t : this.tileGroups) {
 			dimData.putTileGroup(t);
@@ -80,27 +80,4 @@ public class TileGroupsS2CPacket extends S2CPacket {
 	public ResourceLocation getId() {
 		return ID;
 	}
-
-	//	public static void apply(PacketContext context, PacketByteBuf buf) {
-	//		int atlasID = buf.readVarInt();
-	//		RegistryKey<World> world = RegistryKey.getOrCreateKey(Registry.WORLD_KEY, buf.readIdentifier());
-	//		int length = buf.readVarInt();
-	//		List<TileGroup> tileGroups = new ArrayList<>(length);
-	//
-	//		for (int i = 0; i < length; ++i) {
-	//			CompoundNBT tag = buf.readCompoundNBT();
-	//
-	//			if (tag != null) {
-	//				tileGroups.add(new TileGroup().readFromNBT(tag));
-	//			}
-	//		}
-	//
-	//		context.getTaskQueue().execute(() -> {
-	//			AtlasData atlasData = AntiqueAtlasMod.atlasData.getAtlasData(atlasID, context.getPlayer().world);
-	//			WorldData dimData = atlasData.getWorldData(world);
-	//			for (TileGroup t : tileGroups) {
-	//				dimData.putTileGroup(t);
-	//			}
-	//		});
-	//	}
 }

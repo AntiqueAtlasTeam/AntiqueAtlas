@@ -1,7 +1,7 @@
 package hunternif.mc.impl.atlas.network.packet.s2c.play;
 
 import hunternif.mc.impl.atlas.AntiqueAtlasMod;
-import hunternif.mc.impl.atlas.ext.TileDataStorage;
+import hunternif.mc.impl.atlas.core.TileDataStorage;
 import hunternif.mc.impl.atlas.network.packet.s2c.S2CPacket;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.network.PacketBuffer;
@@ -46,7 +46,7 @@ public class DeleteCustomGlobalTileS2CPacket extends S2CPacket {
 	@OnlyIn(Dist.CLIENT)
 	@Override
 	public boolean handle(ClientPlayerEntity player) {
-		TileDataStorage data = AntiqueAtlasMod.tileData.getData(this.world);
+		TileDataStorage data = AntiqueAtlasMod.globalTileData.getData(this.world);
 		data.removeTile(this.chunkX, this.chunkZ);
 		return true;
 	}

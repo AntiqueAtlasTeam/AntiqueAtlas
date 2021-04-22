@@ -1,0 +1,10 @@
+{
+  "version": 1,
+  "data": {
+    "textures": {
+      "antiqueatlas:pines": 1,
+      "antiqueatlas:pines2": 1,
+      "antiqueatlas:pines3": 1
+    }
+  }
+}

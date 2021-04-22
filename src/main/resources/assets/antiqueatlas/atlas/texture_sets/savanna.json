@@ -1,0 +1,14 @@
+{
+  "version": 1,
+  "data": {
+    "textures": {
+      "antiqueatlas:savanna": 1,
+      "antiqueatlas:savanna2": 1,
+      "antiqueatlas:savanna3": 1,
+      "antiqueatlas:grass": 1,
+      "antiqueatlas:grass2": 2,
+      "antiqueatlas:grass3": 2,
+      "antiqueatlas:grass4": 2
+    }
+  }
+}

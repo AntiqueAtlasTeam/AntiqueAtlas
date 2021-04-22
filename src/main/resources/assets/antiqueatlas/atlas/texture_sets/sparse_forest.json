@@ -1,0 +1,10 @@
+{
+  "version": 1,
+  "data": {
+    "textures": {
+      "antiqueatlas:forest_sparse": 1,
+      "antiqueatlas:forest_sparse2": 1,
+      "antiqueatlas:forest_sparse3": 1
+    }
+  }
+}

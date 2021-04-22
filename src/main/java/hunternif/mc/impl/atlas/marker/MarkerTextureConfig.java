@@ -22,60 +22,64 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 
 /**
  * Maps marker type to texture.
+ * 
  * @author Hunternif
  */
 @OnlyIn(Dist.CLIENT)
 public class MarkerTextureConfig implements IResourceReloadListener<Map<ResourceLocation, MarkerType>> {
 	private static final int VERSION = 1;
-	private static final JsonParser parser = new JsonParser();
+    private static final JsonParser parser = new JsonParser();
 
-	@Override
-	public CompletableFuture<Map<ResourceLocation, MarkerType>> load(IResourceManager manager, IProfiler profiler, Executor executor) {
-		return CompletableFuture.supplyAsync(() -> {
-			Map<ResourceLocation, MarkerType> typeMap = new HashMap<>();
+    @Override
+    public CompletableFuture<Map<ResourceLocation, MarkerType>> load(IResourceManager manager, IProfiler profiler, Executor executor) {
+        return CompletableFuture.supplyAsync(() -> {
+            Map<ResourceLocation, MarkerType> typeMap = new HashMap<>();
 
-			for (ResourceLocation id : manager.getAllResourceLocations("marker_types", (s) -> s.endsWith(".json"))) {
-				if (!id.getNamespace().equals("antiqueatlas")) {
-					continue;
-				}
+            for (ResourceLocation id : manager.getAllResourceLocations("atlas/markers", (s) -> s.endsWith(".json"))) {
+                ResourceLocation markerId = new ResourceLocation(
+                        id.getNamespace(),
+                        id.getPath().replace("atlas/markers/", "").replace(".json", "")
+                );
 
-				ResourceLocation markerId = new ResourceLocation(
-						id.getNamespace(),
-						id.getPath().replace("marker_types/", "").replace(".json", "")
-				);
+                try {
+                    IResource resource = manager.getResource(id);
+                    try (
+                            InputStream stream = resource.getInputStream();
+                            InputStreamReader reader = new InputStreamReader(stream)
+                    ) {
+                        JsonObject object = parser.parse(reader).getAsJsonObject();
 
-				try {
-					IResource resource = manager.getResource(id);
-					try (
-							InputStream stream = resource.getInputStream();
-							InputStreamReader reader = new InputStreamReader(stream)
-					) {
-						JsonObject object = parser.parse(reader).getAsJsonObject();
-						MarkerType markerType = new MarkerType(markerId);
-						markerType.getJSONData().readFrom(object);
-						markerType.setIsFromJson(true);
-						typeMap.put(markerId, markerType);
-					}
-				} catch (Exception e) {
-					AntiqueAtlasMod.LOG.warn("Error reading marker " + markerId + "!", e);
-				}
-			}
+                        int version = object.getAsJsonPrimitive("version").getAsInt();
 
-			return typeMap;
-		});
-	}
+                        if (version != VERSION) {
+                            throw new RuntimeException("Incompatible version (" + VERSION + " != " + version + ")");
+                        }
 
-	@Override
-	public CompletableFuture<Void> apply(Map<ResourceLocation, MarkerType> data, IResourceManager manager, IProfiler profiler, Executor executor) {
-		return CompletableFuture.runAsync(() -> {
-			for (ResourceLocation markerId : data.keySet()) {
-				MarkerType.register(markerId, data.get(markerId));
-			}
-		});
-	}
-//
-//	@Override
-//	public ResourceLocation getFabricId() {
-//		return new ResourceLocation("antiqueatlas:marker_types");
-//	}
+                        MarkerType markerType = new MarkerType(markerId);
+                        markerType.getJSONData().readFrom(object);
+                        markerType.setIsFromJson(true);
+                        typeMap.put(markerId, markerType);
+                    }
+                } catch (Exception e) {
+                    AntiqueAtlasMod.LOG.warn("Error reading marker " + markerId + "!", e);
+                }
+            }
+
+            return typeMap;
+        });
+    }
+
+    @Override
+    public CompletableFuture<Void> apply(Map<ResourceLocation, MarkerType> data, IResourceManager manager, IProfiler profiler, Executor executor) {
+        return CompletableFuture.runAsync(() -> {
+            for (ResourceLocation markerId : data.keySet()) {
+                MarkerType.register(markerId, data.get(markerId));
+            }
+        });
+    }
+
+    @Override
+    public ResourceLocation getId() {
+        return new ResourceLocation("antiqueatlas:markers");
+    }
 }

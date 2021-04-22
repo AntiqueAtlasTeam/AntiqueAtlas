@@ -1,4 +1,26 @@
 {
-  "mappings": {},
-  "data": {}
+  "mappings": {
+    "hunternif/mc/impl/atlas/mixin/MixinCartographyContainerResultSlot": {
+      "net.minecraft.inventory.container.CartographyContainer$5": "net/minecraft/inventory/container/CartographyContainer$5"
+    },
+    "hunternif/mc/impl/atlas/mixin/MixinCartographyContainer": {
+      "transferStackInSlot": "Lnet/minecraft/inventory/container/CartographyContainer;func_82846_b(Lnet/minecraft/entity/player/PlayerEntity;I)Lnet/minecraft/item/ItemStack;"
+    },
+    "hunternif/mc/impl/atlas/mixin/MixinCartographyContainerSlot": {
+      "net.minecraft.inventory.container.CartographyContainer$4": "net/minecraft/inventory/container/CartographyContainer$4"
+    }
+  },
+  "data": {
+    "searge": {
+      "hunternif/mc/impl/atlas/mixin/MixinCartographyContainerResultSlot": {
+        "net.minecraft.inventory.container.CartographyContainer$5": "net/minecraft/inventory/container/CartographyContainer$5"
+      },
+      "hunternif/mc/impl/atlas/mixin/MixinCartographyContainer": {
+        "transferStackInSlot": "Lnet/minecraft/inventory/container/CartographyContainer;func_82846_b(Lnet/minecraft/entity/player/PlayerEntity;I)Lnet/minecraft/item/ItemStack;"
+      },
+      "hunternif/mc/impl/atlas/mixin/MixinCartographyContainerSlot": {
+        "net.minecraft.inventory.container.CartographyContainer$4": "net/minecraft/inventory/container/CartographyContainer$4"
+      }
+    }
+  }
 }

@@ -1,0 +1,23 @@
+{
+  "version": 1,
+  "data": {
+    "textures": {
+      "antiqueatlas:snow": 5,
+      "antiqueatlas:snow1": 3,
+      "antiqueatlas:snow2": 3,
+      "antiqueatlas:snow3": 1,
+      "antiqueatlas:snow4": 1,
+      "antiqueatlas:snow5": 1,
+      "antiqueatlas:snow6": 1
+    },
+    "stitch": {
+      "antiqueatlas:snow_pines": "both",
+      "antiqueatlas:snow_hills": "both",
+      "antiqueatlas:ice_pikes": "both",
+      "antiqueatlas:snow_pines_hills": "both",
+      "antiqueatlas:ravine": "both",
+      "antiqueatlas:lava": "both",
+      "antiqueatlas:water": "both"
+    }
+  }
+}

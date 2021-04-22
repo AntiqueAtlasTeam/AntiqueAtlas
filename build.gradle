@@ -1,7 +1,7 @@
 buildscript {
     repositories {
         maven { url = 'https://files.minecraftforge.net/maven' }
-		maven { url = 'https://dist.creeper.host/Sponge/maven' }
+		maven { url = 'https://repo.spongepowered.org/maven' }
         jcenter()
         mavenCentral()
     }
@@ -41,6 +41,7 @@ repositories {
 	}
 	
 	maven {  url = "https://repo.spongepowered.org/maven" } // mixin
+	maven { url "https://maven.shedaniel.me/" } // cloth config
 }
 
 minecraft {
@@ -52,11 +53,16 @@ minecraft {
             workingDirectory project.file('run/client')
 
             // Recommended logging data for a userdev environment
-            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
+            // The markers can be changed as needed. 
+            // "SCAN": For mods scan.
+            // "REGISTRIES": For firing of registry events.
+            // "REGISTRYDUMP": For getting the contents of all registries.
+            property 'forge.logging.markers', 'REGISTRIES'
 			arg "-mixin.config="+modId+".mixins.json"
 
             // Recommended logging level for the console
             property 'forge.logging.console.level', 'debug'
+            property 'mixin.env.disableRefMap', 'true'
 			
 			args '--username', 'CodeHexIO', '--uuid', 'c5751ce1d50e4d47ca120e1ea1c75542'
 
@@ -71,7 +77,12 @@ minecraft {
             workingDirectory project.file('run/server')
 
             // Recommended logging data for a userdev environment
-            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
+            // The markers can be changed as needed. 
+            // "SCAN": For mods scan.
+            // "REGISTRIES": For firing of registry events.
+            // "REGISTRYDUMP": For getting the contents of all registries.
+            property 'forge.logging.markers', 'REGISTRIES'
+            property 'mixin.env.disableRefMap', 'true'
 			arg "-mixin.config="+modId+".mixins.json"
 
             // Recommended logging level for the console
@@ -90,6 +101,7 @@ dependencies {
 	minecraft 'net.minecraftforge:forge:' + modMinecraftVersion + '-' + modForgeVersion
 	compile 'org.spongepowered:mixin:0.8'
 	compile fileTree(include: ['*.jar'], dir: 'libs')
+	compile fg.deobf("me.shedaniel.cloth:cloth-config-forge:"+cloth_config_version)
 }
 // Process resources on build
 processResources {

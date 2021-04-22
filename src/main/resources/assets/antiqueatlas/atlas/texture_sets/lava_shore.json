@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "data": {
+    "shore": {
+      "water": "antiqueatlas:lava"
+    },
+    "textures": {
+      "antiqueatlas:lava_shore": 1,
+      "antiqueatlas:lava_shore2": 1
+    }
+  }
+}

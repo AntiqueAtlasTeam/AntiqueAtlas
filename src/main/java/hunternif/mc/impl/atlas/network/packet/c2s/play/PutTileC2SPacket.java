@@ -4,13 +4,12 @@ import java.util.function.Supplier;
 
 import hunternif.mc.impl.atlas.AntiqueAtlasConfig;
 import hunternif.mc.impl.atlas.AntiqueAtlasMod;
-import hunternif.mc.impl.atlas.api.AtlasAPI;
+import hunternif.mc.api.AtlasAPI;
 import hunternif.mc.impl.atlas.network.packet.c2s.C2SPacket;
 import hunternif.mc.impl.atlas.util.Log;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.registry.WorldGenRegistries;
 import net.minecraftforge.fml.network.NetworkEvent;
 
 /**
@@ -47,7 +46,6 @@ public class PutTileC2SPacket extends C2SPacket {
 						packetBuffer.readResourceLocation());
 	}
 
-	@SuppressWarnings("deprecation")
 	public static void handle(final PutTileC2SPacket msg, final Supplier<NetworkEvent.Context> contextSupplier) {
 		final NetworkEvent.Context context = contextSupplier.get();
 		context.enqueueWork(() -> {
@@ -60,11 +58,8 @@ public class PutTileC2SPacket extends C2SPacket {
 						context.getSender().getName(), msg.atlasID);
 				return;
 			}
-			if (WorldGenRegistries.BIOME.containsKey(msg.tile)) {
-				AtlasAPI.tiles.putBiomeTile(context.getSender().getEntityWorld(), msg.atlasID, msg.tile, msg.x, msg.z);
-			} else {
-				AtlasAPI.tiles.putCustomTile(context.getSender().getEntityWorld(), msg.atlasID, msg.tile, msg.x, msg.z);
-			}
+			
+			AtlasAPI.getTileAPI().putTile(sender.getEntityWorld(), msg.atlasID, msg.tile, msg.x, msg.z);
 		});
 		context.setPacketHandled(true);
 	}
@@ -73,24 +68,4 @@ public class PutTileC2SPacket extends C2SPacket {
 	public ResourceLocation getId() {
 		return ID;
 	}
-
-//	public static void apply(PacketContext context, PacketByteBuf buf) {
-//		int atlasID = buf.readVarInt();
-//		int x = buf.readVarInt();
-//		int z = buf.readVarInt();
-//		ResourceLocation tile = buf.readIdentifier();
-//
-//		context.getTaskQueue().execute(() -> {
-//			if (AntiqueAtlasMod.CONFIG.itemNeeded && !AtlasAPI.getPlayerAtlases(context.getPlayer()).contains(atlasID)) {
-//				Log.warn("Player %s attempted to modify someone else's Atlas #%d",
-//						context.getPlayer().getName(), atlasID);
-//				return;
-//			}
-//			if (BuiltinRegistries.BIOME.containsId(tile)) {
-//				AtlasAPI.tiles.putBiomeTile(context.getPlayer().getEntityWorld(), atlasID, tile, x, z);
-//			} else {
-//				AtlasAPI.tiles.putCustomTile(context.getPlayer().getEntityWorld(), atlasID, tile, x, z);
-//			}
-//		});
-//	}
 }

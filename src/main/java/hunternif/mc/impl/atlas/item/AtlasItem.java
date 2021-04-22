@@ -19,9 +19,9 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
+import net.minecraft.world.server.ServerWorld;
 
 public class AtlasItem extends Item {
-	static final String WORLD_ATLAS_DATA_ID = "aAtlas";
 
 	public AtlasItem(Item.Properties settings) {
 		super(settings);
@@ -49,10 +49,10 @@ public class AtlasItem extends Item {
 
 	@Override
 	public void inventoryTick(ItemStack stack, World world, Entity entity, int slot, boolean isEquipped) {
-		AtlasData data = AntiqueAtlasMod.atlasData.getAtlasData(stack, world);
+		AtlasData data = AntiqueAtlasMod.tileData.getData(stack, world);
 		if (data == null || !(entity instanceof PlayerEntity)) return;
 
-		int atlasId = this.getAtlasID(stack);
+		int atlasId = getAtlasID(stack);
 
 		// On the first run send the map from the server to the client:
 		PlayerEntity player = (PlayerEntity) entity;
@@ -67,11 +67,11 @@ public class AtlasItem extends Item {
 		}
 
 		// Updating map around player
-		Collection<TileInfo> newTiles = data.updateMapAroundPlayer(player);
+		Collection<TileInfo> newTiles = AntiqueAtlasMod.worldScanner.updateAtlasAroundPlayer(data,player);
 		
 		if (!world.isRemote) {
 			if (!newTiles.isEmpty()) {
-				new DimensionUpdateS2CPacket(atlasId, player.getEntityWorld().getDimensionKey(), newTiles).send(world.getServer());
+				new DimensionUpdateS2CPacket(atlasId, player.getEntityWorld().getDimensionKey(), newTiles).send((ServerWorld) world);
 			}
 		}
 	}

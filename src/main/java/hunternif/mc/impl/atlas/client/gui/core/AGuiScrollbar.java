@@ -1,14 +1,15 @@
 package hunternif.mc.impl.atlas.client.gui.core;
 
-import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.platform.GlStateManager;
 
+import hunternif.mc.impl.atlas.client.texture.ITexture;
+
 
 public abstract class AGuiScrollbar extends GuiComponent {
-	ResourceLocation texture;
+	ITexture texture;
 	int textureWidth;
     int textureHeight;
 	/** Length of the non-scaling caps at the beginning and end of the anchor. */
@@ -53,7 +54,7 @@ public abstract class AGuiScrollbar extends GuiComponent {
 	 * @param height	height of the texture image
 	 * @param capLength	length of the non-scaling caps at the beginning and end of the anchor
 	 */
-	public void setTexture(ResourceLocation texture, int width, int height, int capLength) {
+	public void setTexture(ITexture texture, int width, int height, int capLength) {
 		this.texture = texture;
 		this.textureWidth = width;
 		this.textureHeight = height;

@@ -18,10 +18,10 @@ import java.util.Iterator;
  * @author Hunternif
  */
 @OnlyIn(Dist.CLIENT)
-public class TileRenderIterator implements Iterator<SubTileQuartet> {
+public class TileRenderIterator implements Iterator<SubTileQuartet>, Iterable<SubTileQuartet> {
 
 	private final ITileStorage tiles;
-	
+
 	/** How many chunks a tile spans. Used for viewing the map at a scale below
 	 * the threshold at which the tile texture is of minimum size and no longer
 	 * scales down. Can't be less than 1. */
@@ -31,7 +31,7 @@ public class TileRenderIterator implements Iterator<SubTileQuartet> {
 			this.step = step;
 		}
 	}
-	
+
 	/** The scope of iteration. */
 	private final Rect scope = new Rect();
 	public void setScope(int minX, int minY, int maxX, int maxY) {
@@ -44,7 +44,7 @@ public class TileRenderIterator implements Iterator<SubTileQuartet> {
 		chunkX = scope.minX;
 		chunkY = scope.minY;
 	}
-	
+
 	/**
 	 * The group of adjacent tiles used for traversing the storage.
 	 * <pre>
@@ -58,28 +58,34 @@ public class TileRenderIterator implements Iterator<SubTileQuartet> {
 	 * The returned array of subtiles represents the corner 'd-e-h-i'
 	 */
 	private ResourceLocation a, b, c, d, e, f, g, h, i, j, k, l;
-	
+
 	/** Shortcuts for the quartet. */
 	private final SubTile _d = new SubTile(Part.BOTTOM_RIGHT),
-						  _e = new SubTile(Part.BOTTOM_LEFT),
-						  _h = new SubTile(Part.TOP_RIGHT),
-						  _i = new SubTile(Part.TOP_LEFT);
+			_e = new SubTile(Part.BOTTOM_LEFT),
+			_h = new SubTile(Part.TOP_RIGHT),
+			_i = new SubTile(Part.TOP_LEFT);
 	private final SubTileQuartet quartet = new SubTileQuartet(_d, _e, _h, _i);
-	
+
 	/** Current index into the tile storage, which presumably has every tile spanning exactly 1 chunk. */
 	private int chunkX, chunkY;
 	/** Current index into the grid of subtiles, starting at (-1, -1). */
 	private int subtileX = -1, subtileY = -1;
-	
+
 	public TileRenderIterator(ITileStorage tiles) {
 		this.tiles = tiles;
 		setScope(tiles.getScope());
 	}
-	
+
+	@Override
+	public Iterator<SubTileQuartet> iterator() {
+		return this;
+	}
+
+
 	@Override
 	public boolean hasNext() {
 		return chunkX >= scope.minX && chunkX <= scope.maxX + 1 &&
-			   chunkY >= scope.minY && chunkY <= scope.maxY + 1;
+				chunkY >= scope.minY && chunkY <= scope.maxY + 1;
 	}
 
 	@Override
@@ -103,12 +109,12 @@ public class TileRenderIterator implements Iterator<SubTileQuartet> {
 		_e.tile = e;
 		_h.tile = h;
 		_i.tile = i;
-		
+
 		// At first assume all convex:
 		for (SubTile subtile : quartet) {
 			subtile.shape = Shape.CONVEX;
 		}
-		
+
 		// Connect horizontally:
 		if (shouldStitchToHorizontally(d, e)) {
 			stitchHorizontally(_d);
@@ -122,7 +128,7 @@ public class TileRenderIterator implements Iterator<SubTileQuartet> {
 		if (shouldStitchToHorizontally(i, h)) {
 			stitchHorizontally(_i);
 		}
-		
+
 		// Connect vertically:
 		if (shouldStitchToVertically(d, h)) {
 			stitchVertically(_d);
@@ -148,7 +154,7 @@ public class TileRenderIterator implements Iterator<SubTileQuartet> {
 				_i.shape = Shape.FULL;
 			}
 		}
-		
+
 		// For any convex subtile check for single-object:
 		if (_d.shape == Shape.CONVEX && !shouldStitchToVertically(d, a) && !shouldStitchToHorizontally(d, c)) {
 			_d.shape = Shape.SINGLE_OBJECT;
@@ -162,7 +168,7 @@ public class TileRenderIterator implements Iterator<SubTileQuartet> {
 		if (_i.shape == Shape.CONVEX && !shouldStitchToHorizontally(i, j) && !shouldStitchToVertically(i, l)) {
 			_i.shape = Shape.SINGLE_OBJECT;
 		}
-		
+
 		chunkX += step;
 		subtileX += 2;
 		if (chunkX > scope.maxX + 1) {
@@ -185,32 +191,32 @@ public class TileRenderIterator implements Iterator<SubTileQuartet> {
 		}
 		return quartet;
 	}
-	
+
 	/** Whether the first tile should be stitched to the 2nd (in any direction)
 	 * (but the opposite is not always true!) */
 	private static boolean shouldStitchTo(ResourceLocation tile, ResourceLocation to) {
 		if (tile == null) return false;
-		TextureSet set = BiomeTextureMap.instance().getTextureSet(tile);
-		TextureSet toSet = BiomeTextureMap.instance().getTextureSet(to);
+		TextureSet set = TileTextureMap.instance().getTextureSet(tile);
+		TextureSet toSet = TileTextureMap.instance().getTextureSet(to);
 		return set != null && set.shouldStitchTo(toSet);
 	}
 	/** Whether the first tile should be stitched to the 2nd along the X axis
 	 * (but the opposite is not always true!) */
 	private static boolean shouldStitchToHorizontally(ResourceLocation tile, ResourceLocation to) {
 		if (tile == null) return false;
-		TextureSet set = BiomeTextureMap.instance().getTextureSet(tile);
-		TextureSet toSet = BiomeTextureMap.instance().getTextureSet(to);
+		TextureSet set = TileTextureMap.instance().getTextureSet(tile);
+		TextureSet toSet = TileTextureMap.instance().getTextureSet(to);
 		return set != null && set.shouldStitchToHorizontally(toSet);
 	}
 	/** Whether the first tile should be stitched to the 2nd along the Z axis
 	 * (but the opposite is not always true!) */
 	private static boolean shouldStitchToVertically(ResourceLocation tile, ResourceLocation to) {
 		if (tile == null) return false;
-		TextureSet set = BiomeTextureMap.instance().getTextureSet(tile);
-		TextureSet toSet = BiomeTextureMap.instance().getTextureSet(to);
+		TextureSet set = TileTextureMap.instance().getTextureSet(tile);
+		TextureSet toSet = TileTextureMap.instance().getTextureSet(to);
 		return set != null && set.shouldStitchToVertically(toSet);
 	}
-	
+
 	/** Change the shape of the subtile in order to stitch it vertically
 	 * to another subtile. It doesn't matter if it's top or bottom. */
 	private static void stitchVertically(SubTile subtile) {
@@ -223,10 +229,10 @@ public class TileRenderIterator implements Iterator<SubTileQuartet> {
 		if (subtile.shape == Shape.VERTICAL) subtile.shape = Shape.CONCAVE;
 		else if (subtile.shape == Shape.CONVEX) subtile.shape = Shape.HORIZONTAL;
 	}
-	
+
 	@Override
 	public void remove() {
 		throw new UnsupportedOperationException("cannot remove subtiles from tile storage");
 	}
-	
+
 }

@@ -1,0 +1,18 @@
+{
+  "version": 1,
+  "data": {
+    "textures": {
+      "antiqueatlas:swamp": 3,
+      "antiqueatlas:swamp2": 1,
+      "antiqueatlas:swamp3": 1,
+      "antiqueatlas:swamp4": 1,
+      "antiqueatlas:swamp5": 1,
+      "antiqueatlas:swamp6": 1
+    },
+    "stitch": {
+      "antiqueatlas:swamp_hills": "both",
+      "antiqueatlas:swamp_water": "both",
+      "antiqueatlas:water": "both"
+    }
+  }
+}

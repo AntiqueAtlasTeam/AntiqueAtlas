@@ -18,11 +18,8 @@ public class AntiqueAtlasNetworking {
 		channel.registerMessage(netIndex++, DimensionUpdateS2CPacket.class, DimensionUpdateS2CPacket::encode, DimensionUpdateS2CPacket::decode, DimensionUpdateS2CPacket::message);
 		channel.registerMessage(netIndex++, MapDataS2CPacket.class, MapDataS2CPacket::encode, MapDataS2CPacket::decode, MapDataS2CPacket::message);
 		channel.registerMessage(netIndex++, MarkersS2CPacket.class, MarkersS2CPacket::encode, MarkersS2CPacket::decode, MarkersS2CPacket::message);
-//		channel.registerMessage(netIndex++, OpenAtlasS2CPacket.class, OpenAtlasS2CPacket::encode, OpenAtlasS2CPacket::decode, OpenAtlasS2CPacket::message);
 		channel.registerMessage(netIndex++, PutTileS2CPacket.class, PutTileS2CPacket::encode, PutTileS2CPacket::decode, PutTileS2CPacket::message);
 		channel.registerMessage(netIndex++, TileGroupsS2CPacket.class, TileGroupsS2CPacket::encode, TileGroupsS2CPacket::decode, TileGroupsS2CPacket::message);
-		channel.registerMessage(netIndex++, TileNameS2CPacket.class, TileNameS2CPacket::encode, TileNameS2CPacket::decode, TileNameS2CPacket::message);
-//		channel.registerMessage(netIndex++, AtlasCreateS2CPackets.class, AtlasCreateS2CPackets::encode, AtlasCreateS2CPackets::decode, AtlasCreateS2CPackets::message);
 	}
 
 	public static void registerC2SListeners(SimpleChannel channel) {
@@ -30,6 +27,5 @@ public class AntiqueAtlasNetworking {
 		channel.registerMessage(netIndex++, BrowsingPositionC2SPacket.class, BrowsingPositionC2SPacket::encode, BrowsingPositionC2SPacket::decode, BrowsingPositionC2SPacket::handle);
 		channel.registerMessage(netIndex++, DeleteMarkerRequestC2SPacket.class, DeleteMarkerRequestC2SPacket::encode, DeleteMarkerRequestC2SPacket::decode, DeleteMarkerRequestC2SPacket::handle);
 		channel.registerMessage(netIndex++, PutTileC2SPacket.class, PutTileC2SPacket::encode, PutTileC2SPacket::decode, PutTileC2SPacket::handle);
-		channel.registerMessage(netIndex++, RegisterTileC2SPacket.class, RegisterTileC2SPacket::encode, RegisterTileC2SPacket::decode, RegisterTileC2SPacket::handle);
 	}
 }

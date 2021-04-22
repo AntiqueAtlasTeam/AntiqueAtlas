@@ -2,8 +2,6 @@ package hunternif.mc.impl.atlas.client.gui.core;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 
-import hunternif.mc.impl.atlas.util.AtlasRenderHelper;
-
 public class GuiHScrollbar extends AGuiScrollbar {
 	
 	public GuiHScrollbar(GuiViewport viewport) {
@@ -12,19 +10,14 @@ public class GuiHScrollbar extends AGuiScrollbar {
 
 	@Override
 	protected void drawAnchor(MatrixStack matrices) {
-		// Draw top cap:
-		AtlasRenderHelper.drawTexturedRect(matrices, texture, getGuiX() + anchorPos, getGuiY(), 0, 0,
-				capLength, textureHeight, textureWidth, textureHeight);
+		// Draw left cap:
+		texture.draw(matrices, getGuiX() + anchorPos, getGuiY(), capLength, textureHeight, 0, 0, capLength, textureHeight);
 		
 		// Draw body:
-		AtlasRenderHelper.drawTexturedRect(matrices, texture, getGuiX() + anchorPos + capLength, getGuiY(),
-				capLength, 0, textureBodyLength, textureHeight, textureWidth, textureHeight, bodyTextureScale, 1);
+		texture.draw(matrices, getGuiX() + anchorPos + capLength, getGuiY(), anchorSize, textureHeight, capLength, 0, textureBodyLength, textureHeight);
 		
-		// Draw bottom cap:
-		AtlasRenderHelper.drawTexturedRect(matrices, texture,
-				getGuiX() + anchorPos + anchorSize - capLength, getGuiY(),
-				textureWidth - capLength, 0,
-				capLength, textureHeight, textureWidth, textureHeight);
+		// Draw right cap:
+		texture.draw(matrices, getGuiX() + anchorPos + capLength + anchorSize, getGuiY(), textureWidth - capLength, 0, capLength, textureHeight);
 	}
 
 	@Override

@@ -1,14 +1,36 @@
 package hunternif.mc.impl.atlas.client.gui;
 
+import java.io.File;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+
+import org.lwjgl.glfw.GLFW;
+import org.lwjgl.opengl.GL11;
+
+import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 
 import hunternif.mc.impl.atlas.AntiqueAtlasConfig;
 import hunternif.mc.impl.atlas.AntiqueAtlasMod;
-import hunternif.mc.impl.atlas.api.AtlasAPI;
-import hunternif.mc.impl.atlas.client.*;
-import hunternif.mc.impl.atlas.client.gui.core.*;
+import hunternif.mc.api.client.AtlasClientAPI;
+import hunternif.mc.impl.atlas.client.TileTextureMap;
+import hunternif.mc.impl.atlas.client.SubTile;
+import hunternif.mc.impl.atlas.client.SubTileQuartet;
+import hunternif.mc.impl.atlas.client.Textures;
+import hunternif.mc.impl.atlas.client.TileRenderIterator;
+import hunternif.mc.impl.atlas.client.gui.core.GuiComponent;
+import hunternif.mc.impl.atlas.client.gui.core.GuiComponentButton;
+import hunternif.mc.impl.atlas.client.gui.core.GuiCursor;
+import hunternif.mc.impl.atlas.client.gui.core.GuiStates;
 import hunternif.mc.impl.atlas.client.gui.core.GuiStates.IState;
 import hunternif.mc.impl.atlas.client.gui.core.GuiStates.SimpleState;
+import hunternif.mc.impl.atlas.client.gui.core.IButtonListener;
+import hunternif.mc.impl.atlas.client.texture.ITexture;
+import hunternif.mc.impl.atlas.client.texture.TileTexture;
 import hunternif.mc.impl.atlas.core.WorldData;
 import hunternif.mc.impl.atlas.forge.hook.AntiqueAtlasHooks;
 //import hunternif.mc.impl.atlas.event.MarkerClickedCallback;
@@ -20,38 +42,32 @@ import hunternif.mc.impl.atlas.marker.MarkersData;
 import hunternif.mc.impl.atlas.network.packet.c2s.play.BrowsingPositionC2SPacket;
 import hunternif.mc.impl.atlas.registry.MarkerRenderInfo;
 import hunternif.mc.impl.atlas.registry.MarkerType;
-import hunternif.mc.impl.atlas.util.*;
+import hunternif.mc.impl.atlas.util.ExportImageUtil;
+import hunternif.mc.impl.atlas.util.Log;
+import hunternif.mc.impl.atlas.util.MathUtil;
+import hunternif.mc.impl.atlas.util.Rect;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.SimpleSound;
-import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.client.gui.AbstractGui;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvents;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.vector.Matrix4f;
-import org.lwjgl.glfw.GLFW;
-import org.lwjgl.opengl.GL11;
-
-import java.io.File;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import com.mojang.blaze3d.matrix.MatrixStack;import net.minecraft.util.math.vector.Vector3f;
+import net.minecraft.util.math.vector.Vector3f;
+import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
 public class GuiAtlas extends GuiComponent {
 	public static final int WIDTH = 310;
 	public static final int HEIGHT = 218;
-	private static final int CONTENT_X = 17;
-	private static final int CONTENT_Y = 11;
-
-	private static final int MAP_WIDTH = WIDTH - 17*2;
+	private static final int MAP_BORDER_WIDTH = 17;
+	private static final int MAP_BORDER_HEIGHT = 11;
+	private static final int MAP_WIDTH = WIDTH - MAP_BORDER_WIDTH * 2;
 	private static final int MAP_HEIGHT = 194;
 	private static final float PLAYER_ROTATION_STEPS = 16;
 	private static final int PLAYER_ICON_WIDTH = 7;
@@ -296,7 +312,7 @@ public class GuiAtlas extends GuiComponent {
 							(int) player.getPosX(), (int) player.getPosZ());
 					addChild(markerFinalizer);
 
-					blinkingIcon.setTexture(markerFinalizer.selectedType.getIcon(),
+					blinkingIcon.setTexture(markerFinalizer.selectedType.getTexture(),
 							MARKER_SIZE, MARKER_SIZE);
 					addChildBehind(markerFinalizer, blinkingIcon)
 					.setRelativeCoords(worldXToScreenX((int) player.getPosX()) - getGuiX() - MARKER_SIZE / 2,
@@ -392,13 +408,12 @@ public class GuiAtlas extends GuiComponent {
 		if (result) {
 			return true;
 		}
-		
+
 		// close atlas with right-click
-        if (mouseState == 1 && state.is(NORMAL))
-        {
-            onClose();
-            return true;
-        }
+		if (mouseState == 1 && state.is(NORMAL)) {
+			onClose();
+			return true;
+		}
 
 		// If clicked on the map, start dragging
 		int mapX = (width - MAP_WIDTH)/2;
@@ -414,7 +429,7 @@ public class GuiAtlas extends GuiComponent {
 								screenXToWorldX((int) mouseX), screenYToWorldZ((int) mouseY));
 						addChild(markerFinalizer);
 
-						blinkingIcon.setTexture(markerFinalizer.selectedType.getIcon(),
+						blinkingIcon.setTexture(markerFinalizer.selectedType.getTexture(),
 								MARKER_SIZE, MARKER_SIZE);
 						addChildBehind(markerFinalizer, blinkingIcon)
 						.setRelativeCoords((int) mouseX - getGuiX() - MARKER_SIZE/2,
@@ -430,7 +445,7 @@ public class GuiAtlas extends GuiComponent {
 						return true;
 					} else if (state.is(DELETING_MARKER) // If clicked on a marker, delete it:
 							&& hoveredMarker != null && !hoveredMarker.isGlobal() && isMouseOverMap && mouseState == 0) {
-						AtlasAPI.markers.deleteMarker(player.getEntityWorld(),
+						AtlasClientAPI.getMarkerAPI().deleteMarker(player.getEntityWorld(),
 								atlasID, hoveredMarker.getId());
 						hoveredMarker = null;
 						player.getEntityWorld().playSound(player, player.getPosition(),
@@ -556,9 +571,9 @@ public class GuiAtlas extends GuiComponent {
 			}
 
 			setMapScale(newScale, (int) addOffsetX, (int) addOffsetY);
-			
+
 			Minecraft.getInstance().getSoundHandler().play(SimpleSound.master(SoundEvents.ITEM_BOOK_PAGE_TURN, 1.0F));
-			
+
 			return true;
 		}
 
@@ -609,8 +624,8 @@ public class GuiAtlas extends GuiComponent {
 	private void updateAtlasData() {
 		int atlasID = getAtlasID();
 
-		biomeData = AntiqueAtlasMod.atlasData
-				.getAtlasData(atlasID, player.getEntityWorld())
+		biomeData = AntiqueAtlasMod.tileData
+				.getData(atlasID, player.getEntityWorld())
 				.getWorldData(player.getEntityWorld().getDimensionKey());
 		globalMarkersData = AntiqueAtlasMod.globalMarkersData.getData()
 				.getMarkersDataInWorld(player.getEntityWorld().getDimensionKey());
@@ -706,7 +721,7 @@ public class GuiAtlas extends GuiComponent {
 		RenderSystem.color4f(1, 1, 1, 1);
 		RenderSystem.enableAlphaTest();
 		RenderSystem.alphaFunc(GL11.GL_GREATER, 0); // So light detail on tiles is visible
-		AtlasRenderHelper.drawFullTexture(matrices, Textures.BOOK, getGuiX(), getGuiY(), WIDTH, HEIGHT);
+		Textures.BOOK.draw(matrices, getGuiX(), getGuiY());
 
 		if ((stack == null && AntiqueAtlasConfig.itemNeeded.get()) || biomeData == null)
 			return;
@@ -715,8 +730,8 @@ public class GuiAtlas extends GuiComponent {
 			RenderSystem.color4f(1, 1, 1, 0.5f);
 		}
 		RenderSystem.enableScissor(
-				(int) ((getGuiX() + CONTENT_X) * screenScale),
-				(int) ((Minecraft.getInstance().getMainWindow().getFramebufferHeight() - (getGuiY() + CONTENT_Y + MAP_HEIGHT)*screenScale)),
+				(int) ((getGuiX() + MAP_BORDER_WIDTH) * screenScale),
+				(int) ((Minecraft.getInstance().getMainWindow().getFramebufferHeight() - (getGuiY() + MAP_BORDER_HEIGHT + MAP_HEIGHT)*screenScale)),
 				(int) (MAP_WIDTH * screenScale), (int) (MAP_HEIGHT*screenScale));
 		RenderSystem.enableBlend();
 		RenderSystem.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
@@ -731,61 +746,49 @@ public class GuiAtlas extends GuiComponent {
 		int mapEndZ = MathUtil.roundToBase((int)Math.ceil(((double)MAP_HEIGHT / 2d - mapOffsetY + 2 * tileHalfSize) / mapScale / 16d), tile2ChunkScale);
 		int mapStartScreenX = getGuiX() + WIDTH / 2 + (int)((mapStartX << 4) * mapScale) + mapOffsetX;
 		int mapStartScreenY = getGuiY() + HEIGHT / 2 + (int)((mapStartZ << 4) * mapScale) + mapOffsetY;
-		TileRenderIterator iter = new TileRenderIterator(biomeData);
-		iter.setScope(new Rect().setOrigin(mapStartX, mapStartZ).
-				set(mapStartX, mapStartZ, mapEndX, mapEndZ));
-		iter.setStep(tile2ChunkScale);
+		TileRenderIterator tiles = new TileRenderIterator(biomeData);
+		tiles.setScope(new Rect(mapStartX, mapStartZ, mapEndX, mapEndZ));
+		tiles.setStep(tile2ChunkScale);
+
+		matrices.push();
+		matrices.translate(mapStartScreenX, mapStartScreenY, 0);
 		int v = 1;
-		while (iter.hasNext()) {
-			SubTileQuartet subtiles = iter.next();
+		for(SubTileQuartet subtiles : tiles) {
 			for (SubTile subtile : subtiles) {
 				if (subtile == null || subtile.tile == null) continue;
-				AtlasRenderHelper.drawAutotileCorner(
-						BiomeTextureMap.instance().getTexture(subtile.variationNumber, subtile.tile),
-						mapStartScreenX + subtile.x * tileHalfSize,
-						mapStartScreenY + subtile.y * tileHalfSize,
-						subtile.getTextureU(), subtile.getTextureV(), tileHalfSize);
+				ITexture texture = TileTextureMap.instance().getTexture(subtile);
+				if (texture instanceof TileTexture) {
+					TileTexture tileTexture = (TileTexture) texture;
+					tileTexture.bind();
+					tileTexture.drawSubTile(matrices, subtile, tileHalfSize);
+				}
 			}
 		}
+		matrices.pop();
 
 		int markersStartX = MathUtil.roundToBase(mapStartX, MarkersData.CHUNK_STEP) / MarkersData.CHUNK_STEP - 1;
 		int markersStartZ = MathUtil.roundToBase(mapStartZ, MarkersData.CHUNK_STEP) / MarkersData.CHUNK_STEP - 1;
 		int markersEndX = MathUtil.roundToBase(mapEndX, MarkersData.CHUNK_STEP) / MarkersData.CHUNK_STEP + 1;
 		int markersEndZ = MathUtil.roundToBase(mapEndZ, MarkersData.CHUNK_STEP) / MarkersData.CHUNK_STEP + 1;
 
-		// Draw global markers:
-		renderMarkers(matrices,	mouseX, mouseY, markersStartX, markersStartZ, markersEndX, markersEndZ, globalMarkersData);
-		renderMarkers(matrices, mouseX, mouseY, markersStartX, markersStartZ, markersEndX, markersEndZ, localMarkersData);
-
 		RenderSystem.disableScissor();
 
 		// Overlay the frame so that edges of the map are smooth:
 		RenderSystem.color4f(1, 1, 1, 1);
-		AtlasRenderHelper.drawFullTexture(matrices, Textures.BOOK_FRAME, getGuiX(), getGuiY(), WIDTH, HEIGHT);
-		renderScaleOverlay(matrices, deltaMillis);
-		
+		Textures.BOOK_FRAME.draw(matrices, getGuiX(), getGuiY());
 		double iconScale = getIconScale();
 
+		// Draw global markers:
+		renderMarkers(matrices, markersStartX, markersStartZ, markersEndX, markersEndZ, globalMarkersData);
+		renderMarkers(matrices, markersStartX, markersStartZ, markersEndX, markersEndZ, localMarkersData);
+
+		Textures.BOOK_FRAME_NARROW.draw(matrices, getGuiX(), getGuiY());
+
+		renderScaleOverlay(matrices, deltaMillis);
+		
 		// Draw player icon:
 		if (!state.is(HIDING_MARKERS)) {
-			// How much the player has moved from the top left corner of the map, in pixels:
-			int playerOffsetX = (int)(player.getPosX() * mapScale) + mapOffsetX;
-			int playerOffsetZ = (int)(player.getPosZ() * mapScale) + mapOffsetY;
-			if (playerOffsetX < -MAP_WIDTH/2) playerOffsetX = -MAP_WIDTH/2;
-			if (playerOffsetX > MAP_WIDTH/2) playerOffsetX = MAP_WIDTH/2;
-			if (playerOffsetZ < -MAP_HEIGHT/2) playerOffsetZ = -MAP_HEIGHT/2;
-			if (playerOffsetZ > MAP_HEIGHT/2 - 2) playerOffsetZ = MAP_HEIGHT/2 - 2;
-			// Draw the icon:
-			RenderSystem.color4f(1, 1, 1, state.is(PLACING_MARKER) ? 0.5f : 1);
-			matrices.push();
-			matrices.translate(getGuiX() + WIDTH/2 + playerOffsetX, getGuiY() + HEIGHT/2 + playerOffsetZ, 0);
-			float playerRotation = (float) Math.round(player.rotationYaw / 360f * PLAYER_ROTATION_STEPS) / PLAYER_ROTATION_STEPS * 360f;
-			matrices.rotate(Vector3f.ZP.rotationDegrees(180 + playerRotation));
-			matrices.translate((float)(-PLAYER_ICON_WIDTH / 2 * iconScale), (float)(-PLAYER_ICON_HEIGHT / 2 * iconScale), 0f);
-			AtlasRenderHelper.drawFullTexture(matrices, Textures.PLAYER, 0, 0,
-					(int)Math.round(PLAYER_ICON_WIDTH*iconScale), (int)Math.round(PLAYER_ICON_HEIGHT*iconScale));
-			matrices.pop();
-			RenderSystem.color4f(1, 1, 1, 1);
+			renderPlayer(matrices, iconScale);
 		}
 
 		// Draw buttons:
@@ -799,14 +802,33 @@ public class GuiAtlas extends GuiComponent {
 			markerFinalizer.selectedType.calculateMip(iconScale, mapScale, screenScale);
 			MarkerRenderInfo renderInfo = markerFinalizer.selectedType.getRenderInfo(iconScale, mapScale, screenScale);
 			markerFinalizer.selectedType.resetMip();
-			AtlasRenderHelper.drawFullTexture(
-					matrices, renderInfo.tex,
-					mouseX + renderInfo.x, mouseY + renderInfo.y,
-					renderInfo.width, renderInfo.height);
+			renderInfo.tex.draw(matrices, mouseX + renderInfo.x, mouseY + renderInfo.y);
 			RenderSystem.color4f(1, 1, 1, 1);
 		}
 		RenderSystem.disableBlend();
+		
+		if (AntiqueAtlasConfig.debugRender.get() && !isDragging && isMouseOver) {
+            int x = screenXToWorldX((int) getMouseX());
+            int z = screenYToWorldZ((int) getMouseY());
 
+            String coords = String.format("Coords: %d / %d", x, z);
+
+            ChunkPos pos = new ChunkPos(new BlockPos(x, 0, z));
+            String chunks = String.format("Chunks: %d / %d", pos.x, pos.z);
+            ResourceLocation tile = biomeData.getTile(pos.x, pos.z);
+
+            if (tile == null) {
+                drawTooltip(Arrays.asList(new StringTextComponent(coords), new StringTextComponent(chunks)), font);
+            } else {
+                String texture_set = TileTextureMap.instance().getTextureSet(tile).name.toString();
+                drawTooltip(Arrays.asList(
+                        new StringTextComponent(coords),
+                        new StringTextComponent(chunks),
+                        new StringTextComponent("Tile: " + tile.toString()),
+                        new StringTextComponent("TSet: " + texture_set)),
+                        font);
+            }
+        }
 		// Draw progress overlay:
 		if (state.is(EXPORTING_IMAGE)) {
 			renderBackground(matrices);
@@ -814,30 +836,34 @@ public class GuiAtlas extends GuiComponent {
 		}
 	}
 
-	private void renderMarkers(MatrixStack matrices, int mouseX, int mouseY, int markersStartX, int markersStartZ, 
-			int markersEndX, int markersEndZ, DimensionMarkersData markersData)
-	{
-		if (markersData == null) return;
-		
-		for (int x = markersStartX; x <= markersEndX; x++)
-		{
-			for (int z = markersStartZ; z <= markersEndZ; z++)
-			{
-				List<Marker> markers = markersData.getMarkersAtChunk(x, z);
-				if (markers == null) continue;
-				for (Marker marker : markers)
-				{
-					renderMarker(matrices, mouseX, mouseY, marker, getIconScale());
-				}
-			}
-		}
+	private void renderPlayer(MatrixStack matrices, double iconScale) {
+		// How much the player has moved from the top left corner of the map, in pixels:
+		int playerOffsetX = (int) (player.getPosX() * mapScale) + mapOffsetX;
+		int playerOffsetZ = (int) (player.getPosZ() * mapScale) + mapOffsetY;
+		playerOffsetX = MathHelper.clamp(playerOffsetX, -MAP_WIDTH / 2, MAP_WIDTH / 2);
+		playerOffsetZ = MathHelper.clamp(playerOffsetZ, -MAP_HEIGHT / 2, MAP_HEIGHT / 2 - 2);
+
+		// Draw the icon:
+		RenderSystem.color4f(1, 1, 1, state.is(PLACING_MARKER) ? 0.5f : 1);
+		matrices.push();
+
+		matrices.translate(getGuiX() + WIDTH / 2 + playerOffsetX, getGuiY() + HEIGHT / 2 + playerOffsetZ, 0);
+		float playerRotation = (float) Math.round(player.rotationYaw / 360f * PLAYER_ROTATION_STEPS) / PLAYER_ROTATION_STEPS * 360f;
+		matrices.rotate(Vector3f.ZP.rotationDegrees(180 + playerRotation));
+		matrices.translate((float) (-PLAYER_ICON_WIDTH / 2 * iconScale), (float) (-PLAYER_ICON_HEIGHT / 2 * iconScale), 0f);
+
+		Textures.PLAYER.draw(matrices, 0, 0, (int) Math.round(PLAYER_ICON_WIDTH * iconScale), (int) Math.round(PLAYER_ICON_HEIGHT * iconScale));
+
+		matrices.pop();
+
+		RenderSystem.color4f(1, 1, 1, 1);
 	}
 
 	private void renderScaleOverlay(MatrixStack matrices, long deltaMillis) {
 		if(scaleAlpha > 3) {
 			matrices.push();
 			matrices.translate(getGuiX() + WIDTH-13, getGuiY() + 12, 0);
-			
+
 			int color = scaleAlpha << 24;
 
 			String text;
@@ -853,26 +879,12 @@ public class GuiAtlas extends GuiComponent {
 
 				int centerXtranslate = Math.max(this.font.getStringWidth(parts[0]), this.font.getStringWidth(parts[1]) )/2;
 				matrices.translate(-xWidth-centerXtranslate, (float)-this.font.FONT_HEIGHT/2, 0);
-				
-				RenderSystem.color4f(0f, 0f, 0f, scaleAlpha / 255f);
-				RenderSystem.enableBlend();
-				RenderSystem.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-				RenderSystem.disableTexture();
-				Tessellator t = Tessellator.getInstance();
-				BufferBuilder vb = t.getBuffer();
-				Matrix4f matrix = matrices.getLast().getMatrix();
-				vb.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION);
-				vb.pos(matrix,  centerXtranslate,   this.font.FONT_HEIGHT - 1, 0.0f).endVertex();
-				vb.pos(matrix, -centerXtranslate-1, this.font.FONT_HEIGHT - 1, 0.0f).endVertex();
-				vb.pos(matrix, -centerXtranslate-1, this.font.FONT_HEIGHT    , 0.0f).endVertex();
-				vb.pos(matrix,  centerXtranslate,   this.font.FONT_HEIGHT    , 0.0f).endVertex();
-				t.draw();
-				RenderSystem.enableTexture();
-				RenderSystem.disableBlend();
+
+				AbstractGui.fill(matrices, -centerXtranslate - 1, this.font.FONT_HEIGHT - 1, centerXtranslate, this.font.FONT_HEIGHT, color);
 
 				textWidth = this.font.getStringWidth(parts[0]);
 				this.font.drawString(matrices, parts[0], (float)-textWidth/2, 0, color);
-				
+
 				textWidth = this.font.getStringWidth(parts[1]);
 				this.font.drawString(matrices, parts[1], (float)-textWidth/2, 10, color);
 			} else {
@@ -896,12 +908,24 @@ public class GuiAtlas extends GuiComponent {
 		}
 	}
 
-	private void renderMarker(MatrixStack matrices, int mouseX, int mouseY, Marker marker, double scale) {
-		MarkerType type = MarkerType.REGISTRY.getOrDefault(marker.getType());
-		if (type == null){
-			Log.warn("Could not find marker data for %s. Is it in the config file?\n", marker.getType());
-			return;
+	private void renderMarkers(MatrixStack matrices, int markersStartX, int markersStartZ,
+			int markersEndX, int markersEndZ, DimensionMarkersData markersData) {
+		if (markersData == null) return;
+
+		for (int x = markersStartX; x <= markersEndX; x++) {
+			for (int z = markersStartZ; z <= markersEndZ; z++) {
+				List<Marker> markers = markersData.getMarkersAtChunk(x, z);
+				if (markers == null) continue;
+				for (Marker marker : markers) {
+					renderMarker(matrices, marker, getIconScale());
+				}
+			}
 		}
+	}
+
+	private void renderMarker(MatrixStack matrices, Marker marker, double scale) {
+		MarkerType type = MarkerType.REGISTRY.getOrDefault(marker.getType());
+
 		if (type.shouldHide(state.is(HIDING_MARKERS), scaleClipIndex)) {
 			return;
 		}
@@ -915,7 +939,7 @@ public class GuiAtlas extends GuiComponent {
 		type.calculateMip(scale, mapScale, screenScale);
 		MarkerRenderInfo info = type.getRenderInfo(scale, mapScale, screenScale);
 
-		boolean mouseIsOverMarker = type.shouldHover((getMouseX()-(markerX+info.x))/info.width, (getMouseY()-(markerY+info.y))/info.height);
+		boolean mouseIsOverMarker = type.shouldHover((getMouseX() - (markerX + info.x)) / info.tex.width(), (getMouseY() - (markerY + info.y)) / info.tex.height());
 		type.resetMip();
 
 		if (mouseIsOverMarker) {
@@ -940,8 +964,20 @@ public class GuiAtlas extends GuiComponent {
 		if (AntiqueAtlasConfig.debugRender.get()){
 			System.out.println("Rendering Marker: "+info.tex);
 		}
+		
+		if (markerX <= getGuiX() + MAP_BORDER_WIDTH || markerX >= getGuiX() + MAP_WIDTH + MAP_BORDER_WIDTH
+                || markerY <= getGuiY() + MAP_BORDER_HEIGHT || markerY >= getGuiY() + MAP_HEIGHT + MAP_BORDER_HEIGHT
+        ) {
+            RenderSystem.color4f(1, 1, 1, 0.5f);
+            info.scale(0.8);
+        }
 
-		AtlasRenderHelper.drawFullTexture(matrices, info.tex, markerX + info.x, markerY + info.y, info.width, info.height);
+        markerX = MathHelper.clamp(markerX, getGuiX() + MAP_BORDER_WIDTH,  getGuiX() + MAP_WIDTH + MAP_BORDER_WIDTH);
+        markerY = MathHelper.clamp(markerY, getGuiY() + MAP_BORDER_HEIGHT,  getGuiY() + MAP_HEIGHT + MAP_BORDER_HEIGHT);
+
+		info.tex.draw(matrices, markerX + info.x, markerY + info.y, info.width, info.height);
+		
+		RenderSystem.color4f(1, 1, 1, 1);
 
 		if (isMouseOver && mouseIsOverMarker && marker.getLabel().getString().length() > 0) {
 			drawTooltip(Collections.singletonList(marker.getLabel()), font);
@@ -996,7 +1032,11 @@ public class GuiAtlas extends GuiComponent {
 
 	/** Returns the scale of markers and player icon at given mapScale. */
 	private double getIconScale() {
-		return AntiqueAtlasConfig.doScaleMarkers.get() ? (mapScale < 0.5 ? 0.5 : mapScale > 1 ? 2 : 1) : 1;
+		if (AntiqueAtlasConfig.doScaleMarkers.get()) {
+            if (mapScale < 0.5) return 0.5;
+            if (mapScale > 1) return 2;
+        }
+        return 1;
 	}
 
 	/** Returns atlas id based on "itemNeeded" option */

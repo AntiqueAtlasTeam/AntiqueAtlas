@@ -50,7 +50,7 @@ public class PutTileS2CPacket extends S2CPacket {
 	@Override
 	@OnlyIn(Dist.CLIENT)
 	public boolean handle(ClientPlayerEntity player) {
-		AtlasData data = AntiqueAtlasMod.atlasData.getAtlasData(this.atlasID, player.getEntityWorld());
+		AtlasData data = AntiqueAtlasMod.tileData.getData(this.atlasID, player.getEntityWorld());
 		data.setTile(this.world, this.x, this.z, this.tile);
 		return true;
 	}
@@ -59,17 +59,4 @@ public class PutTileS2CPacket extends S2CPacket {
 	public ResourceLocation getId() {
 		return ID;
 	}
-
-	//	public static void apply(PacketContext context, PacketByteBuf buf) {
-	//		int atlasID = buf.readVarInt();
-	//		RegistryKey<World> world = RegistryKey.getOrCreateKey(Registry.WORLD_KEY, buf.readIdentifier());
-	//		int x = buf.readVarInt();
-	//		int z = buf.readVarInt();
-	//		ResourceLocation tile = buf.readIdentifier();
-	//
-	//		context.getTaskQueue().execute(() -> {
-	//			AtlasData data = AntiqueAtlasMod.atlasData.getAtlasData(atlasID, context.getPlayer().getEntityWorld());
-	//			data.setTile(world, x, z, tile);
-	//		});
-	//	}
 }

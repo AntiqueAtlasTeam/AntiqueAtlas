@@ -1,11 +1,11 @@
 package hunternif.mc.impl.atlas.client.gui.core;
 
+import org.lwjgl.opengl.GL11;
+
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.platform.GlStateManager;
-import hunternif.mc.impl.atlas.util.AtlasRenderHelper;
 
-import net.minecraft.util.ResourceLocation;
-import org.lwjgl.opengl.GL11;
+import hunternif.mc.impl.atlas.client.texture.ITexture;
 
 /** Displays a texture that changes alpha at regular intervals.
  * By default the texture file is assumed to be full image, but that behavior
@@ -13,7 +13,7 @@ import org.lwjgl.opengl.GL11;
  * @author Hunternif
  */
 public class GuiBlinkingImage extends GuiComponent {
-	private ResourceLocation texture;
+	private ITexture texture;
 	/** The number of milliseconds the icon spends visible or invisible. */
 	private long blinkTime = 500;
 	private float visibleAlpha = 1;
@@ -23,7 +23,7 @@ public class GuiBlinkingImage extends GuiComponent {
 	/** The flag that switches value every "blink". */
 	private boolean isVisible;
 	
-	public void setTexture(ResourceLocation texture, int width, int height) {
+	public void setTexture(ITexture texture, int width, int height) {
 		this.texture = texture;
 		setSize(width, height);
 		// Set up the timer so that the image appears visible at the first moment:
@@ -58,6 +58,6 @@ public class GuiBlinkingImage extends GuiComponent {
 	}
 	
 	private void drawImage(MatrixStack matrices) {
-		AtlasRenderHelper.drawFullTexture(matrices, texture, getGuiX(), getGuiY(), getWidth(), getHeight());
+		texture.draw(matrices, getGuiX(), getGuiY(), getWidth(), getHeight());
 	}
 }

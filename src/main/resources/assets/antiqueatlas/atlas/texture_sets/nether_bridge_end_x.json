@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "data": {
+    "textures": {
+      "antiqueatlas:nether_bridge_end_x": 1
+    },
+    "stitch": {
+      "antiqueatlas:nether_bridge_gate": "horizontal",
+      "antiqueatlas:nether_tower": "horizontal",
+      "antiqueatlas:nether_hall": "horizontal",
+      "antiqueatlas:nether_fort_stairs": "horizontal",
+      "antiqueatlas:nether_throne": "horizontal",
+      "antiqueatlas:nether_bridge": "horizontal",
+      "antiqueatlas:nether_bridge_x": "horizontal"
+    }
+  }
+}

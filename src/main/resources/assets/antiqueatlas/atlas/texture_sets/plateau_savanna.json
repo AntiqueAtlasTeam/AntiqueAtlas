@@ -1,0 +1,18 @@
+{
+  "version": 1,
+  "data": {
+    "textures": {
+      "antiqueatlas:plateau_grass": 2,
+      "antiqueatlas:plateau_grass2": 2,
+      "antiqueatlas:plateau_grass3": 2,
+      "antiqueatlas:plateau_savanna": 1,
+      "antiqueatlas:plateau_savanna2": 1,
+      "antiqueatlas:plateau_savanna3": 1
+    },
+    "stitch":{
+      "antiqueatlas:plateau_mesa": "both",
+      "antiqueatlas:plateau_mesa_trees": "both",
+      "antiqueatlas:plateau_savanna_m": "both"
+    }
+  }
+}

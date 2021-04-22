@@ -45,18 +45,18 @@ public class AntiqueAtlasConfig {
 
     public static ForgeConfigSpec.BooleanValue debugRender;
 
-    //=========== Overlay settings ============
-    public static ForgeConfigSpec.BooleanValue alignRight;
-
-    public static ForgeConfigSpec.BooleanValue alignBottom;
-
-    public static ForgeConfigSpec.IntValue xPosition;
-
-    public static ForgeConfigSpec.IntValue yPosition;
-
-    public static ForgeConfigSpec.IntValue width;
-
-    public static ForgeConfigSpec.IntValue height;
+//    //=========== Overlay settings ============
+//    public static ForgeConfigSpec.BooleanValue alignRight;
+//
+//    public static ForgeConfigSpec.BooleanValue alignBottom;
+//
+//    public static ForgeConfigSpec.IntValue xPosition;
+//
+//    public static ForgeConfigSpec.IntValue yPosition;
+//
+//    public static ForgeConfigSpec.IntValue width;
+//
+//    public static ForgeConfigSpec.IntValue height;
 
     public static ForgeConfigSpec.IntValue tileSize;
 
@@ -75,7 +75,7 @@ public class AntiqueAtlasConfig {
     public static ForgeConfigSpec.BooleanValue enabled;
 	
 	public static int MAX = 2147483647;
-	public static void init(ForgeConfigSpec.Builder client) {
+	public static void init(ForgeConfigSpec.Builder client, ForgeConfigSpec.Builder common) {
 		String category = "gameplay.";
 		
 		doSaveBrowsingPos = client
@@ -121,70 +121,70 @@ public class AntiqueAtlasConfig {
 		
 		category = "performance.";
 		
-		scanRadius = client
+		scanRadius = common
 				.comment("The radius of the area around the player which is scanned by the Atlas at regular intervals.\nNote that this will not force faraway chunks to load, unless force_chunk_loading is enabled.\nLower value gives better performance.")
 				.defineInRange(category+"scanRadius", 11, 0, MAX);
 		
-		forceChunkLoading = client
+		forceChunkLoading = common
 				.comment("Force loading of chunks within scan radius even if it exceeds regular chunk loading distance.\nEnabling this may SEVERELY decrease performance!")
 				.define(category+"forceChunkLoading", false);
 		
-		newScanInterval = client
+		newScanInterval = common
 				.comment("Time in seconds between two scans of the area.\nHigher value gives better performance.")
 				.defineInRange(category+"newScanInterval", 1f, 0.0f, MAX);
 		
-		doRescan = client
+		doRescan = common
 				.comment("Whether to rescan chunks in the area that have been previously mapped. This is useful in case of changes in coastline (including small ponds of water and lava), or if land disappears completely (for sky worlds).\nDisable for better performance.")
 				.define(category+"doRescan", true);
 		
-		rescanRate = client
+		rescanRate = common
 				.comment("The number of area scans between full rescans.\nHigher value gives better performance.")
 				.defineInRange(category+"rescanRate", 4, 1, 1000);
 		
-		markerLimit = client
+		markerLimit = common
 				.comment("The maximum number of markers a particular atlas can hold.")
 				.defineInRange(category+"markerLimit", 1024, 0, 2147483647);
 		
-		doScanPonds = client
+		doScanPonds = common
 				.comment("Whether to perform additional scanning to locate small ponds of water or lava.\nDisable for better performance.")
 				.define(category+"doScanPonds", true);
 		
-		doScanRavines = client
+		doScanRavines = common
 				.comment("Whether to perform additional scanning to locate ravines.\nDisable for better performance.")
 				.define(category+"doScanRavines", true);
 		
-		debugRender = client
+		debugRender = common
 				.comment("If true, map render time will be output.")
 				.define(category+"debugRender", false);
 		
-		category = "overlayPosition.";
-		
-		alignRight = client
-				.comment("If true, the map position's x axis will align 0 to the right\nof the screen, increasing towards the left.")
-				.define(category+"alignRight", false);
-		
-		alignBottom = client
-				.comment("If true, the map position's y axis will align 0 to the bottom\nof the screen, increasing towards the top.")
-				.define(category+"alignBottom", false);
-		
-		xPosition = client
-				.comment("Map's minimum position along the x axis in GUI pixels.\nNote that this will change with Minecraft's GUI scale configuration.")
-				.defineInRange(category+"xPosition", 2, 0, MAX);
-		
-		yPosition = client
-				.comment("Map's minimum position along the y axis in GUI pixels.\nNote that this will change with Minecraft's GUI scale configuration.")
-				.defineInRange(category+"yPosition", 2, 0, MAX);
-		
-		width = client
-				.comment("Map's width in GUI pixels.\nNote that this will change with Minecraft's GUI scale configuration.")
-				.defineInRange(category+"width", GuiAtlas.WIDTH / 2, 0, MAX);
-		
-		height = client
-				.comment("Map's height in GUI pixels.\nNote that this will change with Minecraft's GUI scale configuration.")
-				.defineInRange(category+"height", GuiAtlas.HEIGHT / 2, 0, MAX);
+//		category = "overlayPosition.";
+//		
+//		alignRight = client
+//				.comment("If true, the map position's x axis will align 0 to the right\nof the screen, increasing towards the left.")
+//				.define(category+"alignRight", false);
+//		
+//		alignBottom = client
+//				.comment("If true, the map position's y axis will align 0 to the bottom\nof the screen, increasing towards the top.")
+//				.define(category+"alignBottom", false);
+//		
+//		xPosition = client
+//				.comment("Map's minimum position along the x axis in GUI pixels.\nNote that this will change with Minecraft's GUI scale configuration.")
+//				.defineInRange(category+"xPosition", 2, 0, MAX);
+//		
+//		yPosition = client
+//				.comment("Map's minimum position along the y axis in GUI pixels.\nNote that this will change with Minecraft's GUI scale configuration.")
+//				.defineInRange(category+"yPosition", 2, 0, MAX);
+//		
+//		width = client
+//				.comment("Map's width in GUI pixels.\nNote that this will change with Minecraft's GUI scale configuration.")
+//				.defineInRange(category+"width", GuiAtlas.WIDTH / 2, 0, MAX);
+//		
+//		height = client
+//				.comment("Map's height in GUI pixels.\nNote that this will change with Minecraft's GUI scale configuration.")
+//				.defineInRange(category+"height", GuiAtlas.HEIGHT / 2, 0, MAX);
 		
 
-		category = "overlayAppearance.";
+		category = "appearance.";
 		
 		tileSize = client
 				.comment("The size (in GUI pixels) of a map's tile.\nNote that this will change with Minecraft's GUI scale configuration.\nWhen using a small gui scale, the map may look better with a TILE_SIZE of 16 or more.")

@@ -1,6 +1,6 @@
 {
   "type": "minecraft:crafting_shapeless",
-  "group": "antiqueatlas:atlas",
+  "group": "minecraft:misc",
   "ingredients": [
     {
       "item": "minecraft:book"

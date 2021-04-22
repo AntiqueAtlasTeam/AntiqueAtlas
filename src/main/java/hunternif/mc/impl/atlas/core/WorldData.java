@@ -35,10 +35,10 @@ public class WorldData implements ITileStorage {
 	 */
 	private final Map<ShortVec2, TileGroup> tileGroups = new ConcurrentHashMap<>(2, 0.75f, 2);
 
-	/**
-	 * Maps threads to the temporary key for thread-safe access to the tile map.
-	 */
-	private final Map<Thread, ShortVec2> thread2KeyMap = new ConcurrentHashMap<>(2, 0.75f, 2);
+//	/**
+//	 * Maps threads to the temporary key for thread-safe access to the tile map.
+//	 */
+//	private final Map<Thread, ShortVec2> thread2KeyMap = new ConcurrentHashMap<>(2, 0.75f, 2);
 
 	/** Limits of explored area, in chunks. */
 	private final Rect scope = new Rect();
@@ -99,14 +99,14 @@ public class WorldData implements ITileStorage {
 		return browsingZoom;
 	}
 
-	/** Temporary key for thread-safe access to the tile map. */
-	private ShortVec2 getKey() {
-		return thread2KeyMap.computeIfAbsent(Thread.currentThread(), k -> new ShortVec2(0, 0));
-	}
+//	/** Temporary key for thread-safe access to the tile map. */
+//	private ShortVec2 getKey() {
+//		return thread2KeyMap.computeIfAbsent(Thread.currentThread(), k -> new ShortVec2(0, 0));
+//	}
 
 	@Override
 	public void setTile(int x, int y, ResourceLocation tile) {
-		ShortVec2 groupPos = getKey().set((int)Math.floor(x / (float) TileGroup.CHUNK_STEP),
+		ShortVec2 groupPos = new ShortVec2((int)Math.floor(x / (float) TileGroup.CHUNK_STEP),
 				(int)Math.floor(y / (float) TileGroup.CHUNK_STEP));
 		TileGroup tg = tileGroups.get(groupPos);
 		if (tg == null) {
@@ -137,7 +137,7 @@ public class WorldData implements ITileStorage {
 
 	@Override
 	public ResourceLocation getTile(int x, int y) {
-		ShortVec2 groupPos = getKey().set((int)Math.floor(x / (float) TileGroup.CHUNK_STEP),
+		ShortVec2 groupPos = new ShortVec2((int)Math.floor(x / (float) TileGroup.CHUNK_STEP),
 				(int)Math.floor(y / (float) TileGroup.CHUNK_STEP));
 		TileGroup tg = tileGroups.get(groupPos);
 		if (tg == null) {

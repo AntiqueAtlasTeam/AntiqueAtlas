@@ -1,6 +1,6 @@
 package hunternif.mc.impl.atlas.structure;
 
-import hunternif.mc.impl.atlas.ext.ExtTileIdMap;
+import hunternif.mc.impl.atlas.core.TileIdMap;
 import hunternif.mc.impl.atlas.util.MathUtil;
 import net.minecraft.util.math.MutableBoundingBox;
 import net.minecraft.world.gen.feature.structure.IStructurePieceType;
@@ -41,7 +41,7 @@ public class NetherFortress {
 		if (box.getXSize() > box.getZSize()) {
 			return Collections.singleton(new ChunkPos(box./*getCenter*/func_215126_f().getX() >> 4, box./*getCenter*/func_215126_f().getZ() >> 4));
 		} else {
-			return Collections.EMPTY_SET;
+			return Collections.emptySet();
 		}
 	}
 
@@ -49,31 +49,31 @@ public class NetherFortress {
 		if (box.getZSize() > box.getXSize()) {
 			return Collections.singleton(new ChunkPos(box./*getCenter*/func_215126_f().getX() >> 4, box./*getCenter*/func_215126_f().getZ() >> 4));
 		} else {
-			return Collections.EMPTY_SET;
+			return Collections.emptySet();
 		}
 	}
 
 
 	public static void registerPieces() {
-		StructureHandler.registerTile(IStructurePieceType.NEBEF,  110, ExtTileIdMap.NETHER_BRIDGE_END_X, NetherFortress::bridgeEndX);
-		StructureHandler.registerTile(IStructurePieceType.NEBEF,  110, ExtTileIdMap.NETHER_BRIDGE_END_Z, NetherFortress::bridgeEndZ);
+		StructureHandler.registerTile(IStructurePieceType.NEBEF,  125, TileIdMap.NETHER_BRIDGE_END_X, NetherFortress::bridgeEndX);
+		StructureHandler.registerTile(IStructurePieceType.NEBEF,  125, TileIdMap.NETHER_BRIDGE_END_Z, NetherFortress::bridgeEndZ);
 
-		StructureHandler.registerTile(IStructurePieceType.NEBS,  100, ExtTileIdMap.NETHER_BRIDGE_X, NetherFortress::bridgeX);
-		StructureHandler.registerTile(IStructurePieceType.NEBS,  100, ExtTileIdMap.NETHER_BRIDGE_Z, NetherFortress::bridgeZ);
+		StructureHandler.registerTile(IStructurePieceType.NEBS,  130, TileIdMap.NETHER_BRIDGE_X, NetherFortress::bridgeX);
+		StructureHandler.registerTile(IStructurePieceType.NEBS,  130, TileIdMap.NETHER_BRIDGE_Z, NetherFortress::bridgeZ);
 
-		StructureHandler.registerTile(IStructurePieceType.NECCS, 95, ExtTileIdMap.NETHER_FORTRESS_WALL);
-		StructureHandler.registerTile(IStructurePieceType.NESCLT, 95, ExtTileIdMap.NETHER_FORTRESS_WALL);
-		StructureHandler.registerTile(IStructurePieceType.NESC, 95, ExtTileIdMap.NETHER_FORTRESS_WALL);
-		StructureHandler.registerTile(IStructurePieceType.NESCRT, 95, ExtTileIdMap.NETHER_FORTRESS_WALL);
-		StructureHandler.registerTile(IStructurePieceType.NESCSC, 120, ExtTileIdMap.NETHER_FORTRESS_WALL);
-		StructureHandler.registerTile(IStructurePieceType.NESTART, 95, ExtTileIdMap.NETHER_FORTRESS_WALL);
+		StructureHandler.registerTile(IStructurePieceType.NECCS, 95, TileIdMap.NETHER_FORTRESS_WALL);
+		StructureHandler.registerTile(IStructurePieceType.NESCLT, 95, TileIdMap.NETHER_FORTRESS_WALL);
+		StructureHandler.registerTile(IStructurePieceType.NESC, 95, TileIdMap.NETHER_FORTRESS_WALL);
+		StructureHandler.registerTile(IStructurePieceType.NESCRT, 95, TileIdMap.NETHER_FORTRESS_WALL);
+		StructureHandler.registerTile(IStructurePieceType.NESCSC, 120, TileIdMap.NETHER_FORTRESS_WALL);
+		StructureHandler.registerTile(IStructurePieceType.NESTART, 95, TileIdMap.NETHER_FORTRESS_WALL);
 
-		StructureHandler.registerTile(IStructurePieceType.NEBCR, 120, ExtTileIdMap.NETHER_FORTRESS_BRIDGE_CROSSING);
-		StructureHandler.registerTile(IStructurePieceType.NESR, 120, ExtTileIdMap.NETHER_FORTRESS_BRIDGE_STAIRS);
-		StructureHandler.registerTile(IStructurePieceType.NECTB, 90, ExtTileIdMap.NETHER_FORTRESS_EXIT);
-		StructureHandler.registerTile(IStructurePieceType.NECSR, 90, ExtTileIdMap.NETHER_FORTRESS_CORRIDOR_NETHER_WARTS_ROOM);
+		StructureHandler.registerTile(IStructurePieceType.NEBCR, 120, TileIdMap.NETHER_FORTRESS_BRIDGE_CROSSING);
+		StructureHandler.registerTile(IStructurePieceType.NESR, 120, TileIdMap.NETHER_FORTRESS_BRIDGE_STAIRS);
+		StructureHandler.registerTile(IStructurePieceType.NECTB, 90, TileIdMap.NETHER_FORTRESS_EXIT);
+		StructureHandler.registerTile(IStructurePieceType.NECSR, 90, TileIdMap.NETHER_FORTRESS_CORRIDOR_NETHER_WARTS_ROOM);
 
-		StructureHandler.registerTile(IStructurePieceType.NESCSC, 120, ExtTileIdMap.NETHER_FORTRESS_BRIDGE_SMALL_CROSSING);
-		StructureHandler.registerTile(IStructurePieceType.NECE, 120, ExtTileIdMap.NETHER_FORTRESS_BRIDGE_PLATFORM);
+		StructureHandler.registerTile(IStructurePieceType.NESCSC, 120, TileIdMap.NETHER_FORTRESS_BRIDGE_SMALL_CROSSING);
+		StructureHandler.registerTile(IStructurePieceType.NECE, 121, TileIdMap.NETHER_FORTRESS_BRIDGE_PLATFORM);
 	}
 }

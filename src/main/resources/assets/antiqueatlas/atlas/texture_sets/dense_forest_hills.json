@@ -1,0 +1,9 @@
+{
+  "version": 1,
+  "data": {
+    "textures": {
+      "antiqueatlas:dense_forest_hills": 1,
+      "antiqueatlas:dense_forest_hills2": 1
+    }
+  }
+}

@@ -1,13 +1,13 @@
 package hunternif.mc.impl.atlas.forge;
 
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executor;
 import java.util.function.Predicate;
 
 import net.minecraft.profiler.IProfiler;
 import net.minecraft.resources.IFutureReloadListener;
 import net.minecraft.resources.IResourceManager;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.resource.IResourceType;
 import net.minecraftforge.resource.ISelectiveResourceReloadListener;
 
@@ -31,4 +31,8 @@ public interface IResourceReloadListener<T> extends ISelectiveResourceReloadList
 	CompletableFuture<T> load(IResourceManager resourceManager, IProfiler profiler, Executor executor);
 
 	CompletableFuture<Void> apply (T value, IResourceManager resourceManager, IProfiler profiler, Executor executor);
+
+	public default ResourceLocation getId() {
+		return null;
+	}
 }
