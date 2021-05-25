@@ -21,6 +21,8 @@ import net.minecraft.util.math.MutableBoundingBox;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.World;
+import net.minecraft.world.gen.feature.jigsaw.JigsawPiece;
+import net.minecraft.world.gen.feature.structure.AbstractVillagePiece;
 import net.minecraft.world.gen.feature.structure.IStructurePieceType;
 import net.minecraft.world.gen.feature.structure.Structure;
 import net.minecraft.world.gen.feature.structure.StructurePiece;
@@ -31,7 +33,7 @@ public class StructureHandler {
 	private static final HashMultimap<ResourceLocation, Tuple<ResourceLocation, Setter>> STRUCTURE_PIECE_TO_TILE_MAP = HashMultimap.create();
 	private static final HashMap<ResourceLocation, Tuple<ResourceLocation, ITextComponent>> STRUCTURE_PIECE_TO_MARKER_MAP = new HashMap<>();
 	private static final HashMap<ResourceLocation, Integer> STRUCTURE_PIECE_TILE_PRIORITY = new HashMap<>();
-	private static final Setter ALWAYS = (box) -> Collections.singleton(new ChunkPos(MathUtil.getCenter(box).getX() >> 4, MathUtil.getCenter(box).getZ() >> 4));
+	private static final Setter ALWAYS = (element, box) -> Collections.singleton(new ChunkPos(MathUtil.getCenter(box).getX() >> 4, MathUtil.getCenter(box).getZ() >> 4));
 	private static final Set<Triple<Integer, Integer, ResourceLocation>> VISITED_STRUCTURES = Collections.newSetFromMap(new ConcurrentHashMap<>());
 
 	public static void registerTile(IStructurePieceType structurePieceType, int priority, ResourceLocation textureId, Setter setter) {
@@ -64,7 +66,13 @@ public class StructureHandler {
 		ResourceLocation structurePieceId = Registry.STRUCTURE_PIECE.getKey(structurePiece.getStructurePieceType());
 		if (STRUCTURE_PIECE_TO_TILE_MAP.containsKey(structurePieceId)) {
 			for (Tuple<ResourceLocation, Setter> entry : STRUCTURE_PIECE_TO_TILE_MAP.get(structurePieceId)) {
-				Collection<ChunkPos> matches = entry.getB().matches(structurePiece.getBoundingBox());
+				Collection<ChunkPos> matches;
+				if (structurePiece instanceof AbstractVillagePiece) {
+					AbstractVillagePiece pool = (AbstractVillagePiece)structurePiece;
+					matches = entry.getB().matches(pool.getJigsawPiece(), pool.getBoundingBox());
+				} else {
+					matches = entry.getB().matches(null, structurePiece.getBoundingBox());
+				}
 
 				for (ChunkPos pos : matches) {
 					put(structurePieceId, world, pos.x, pos.z, entry.getA());
@@ -95,6 +103,6 @@ public class StructureHandler {
 	}
 
 	interface Setter {
-		Collection<ChunkPos> matches(MutableBoundingBox box);
+		Collection<ChunkPos> matches(JigsawPiece element, MutableBoundingBox box);
 	}
 }
