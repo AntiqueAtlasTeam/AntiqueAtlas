@@ -523,9 +523,9 @@ public class GuiComponent extends Screen {
 	protected void drawCentered(MatrixStack matrices, ITextComponent text, int y, int color, boolean dropShadow) {
 		int length = this.font.getStringPropertyWidth(text);
 		if (dropShadow) {
-			this.font.func_243246_a(matrices, text, (float)(this.width - length) / 2, y, color);
+			this.font.drawTextWithShadow(matrices, text, (float)(this.width - length) / 2, y, color);
 		} else {
-			this.font.func_243248_b(matrices, text, (float)(this.width - length) / 2, y, color);
+			this.font.drawText(matrices, text, (float)(this.width - length) / 2, y, color);
 		}
 	}
 
