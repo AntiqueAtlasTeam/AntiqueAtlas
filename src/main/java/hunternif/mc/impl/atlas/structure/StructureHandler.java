@@ -40,7 +40,7 @@ public class StructureHandler {
     public static void registerTile(IStructurePieceType structurePieceType, int priority, ResourceLocation textureId, Setter setter) {
         ResourceLocation id = Registry.STRUCTURE_PIECE.getKey(structurePieceType);
         STRUCTURE_PIECE_TO_TILE_MAP.put(id, new Pair<>(textureId, setter));
-        STRUCTURE_PIECE_TILE_PRIORITY.put(id, priority);
+        STRUCTURE_PIECE_TILE_PRIORITY.put(textureId, priority);
     }
 
     public static void registerTile(IStructurePieceType structurePieceType, int priority, ResourceLocation textureId) {
@@ -64,10 +64,10 @@ public class StructureHandler {
         return STRUCTURE_PIECE_TILE_PRIORITY.getOrDefault(structurePieceId, Integer.MAX_VALUE);
     }
 
-    private static void put(ResourceLocation structurePieceId, World world, int chunkX, int chunkZ, ResourceLocation textureId) {
+    private static void put(World world, int chunkX, int chunkZ, ResourceLocation textureId) {
         ResourceLocation existingTile = AtlasAPI.getTileAPI().getGlobalTile(world, chunkX, chunkZ);
 
-        if (getPriority(structurePieceId) < getPriority(existingTile)) {
+        if (getPriority(textureId) < getPriority(existingTile)) {
             AtlasAPI.getTileAPI().putGlobalTile(world, textureId, chunkX, chunkZ);
         }
     }
@@ -88,7 +88,7 @@ public class StructureHandler {
                         Setter setter = entry.getValue().getSecond();
                         if (path.contains(entry.getKey())) {
                             for(ChunkPos pos : setter.matches(singlePoolElement, pool.getBoundingBox())) {
-                                put(tile, world, pos.x, pos.z, tile);
+                                put(world, pos.x, pos.z, tile);
                             }
                         }
                     }
@@ -117,7 +117,7 @@ public class StructureHandler {
                 }
 
                 for (ChunkPos pos : matches) {
-                    put(structurePieceId, world, pos.x, pos.z, entry.getFirst());
+                    put(world, pos.x, pos.z, entry.getFirst());
                 }
             }
         }
