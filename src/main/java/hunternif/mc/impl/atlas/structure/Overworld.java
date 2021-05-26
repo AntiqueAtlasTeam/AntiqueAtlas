@@ -19,7 +19,7 @@ public class Overworld {
 
     private static Collection<ChunkPos> aboveGround(World world, @SuppressWarnings("unused") JigsawPiece structurePoolElement, MutableBoundingBox blockBox) {
         BlockPos center = new BlockPos(blockBox./*getCenter*/func_215126_f());
-        if (world.getSeaLevel() <= center.getY()) {
+        if (world.getSeaLevel() - 4 <= center.getY()) {
             return Collections.singleton(new ChunkPos(center));
         }
 
