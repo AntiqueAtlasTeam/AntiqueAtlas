@@ -67,15 +67,11 @@ public class AntiqueAtlasMod
 
 		AntiqueAtlasNetworking.registerC2SListeners(MOD_CHANNEL);
 		AntiqueAtlasNetworking.registerS2CListeners(MOD_CHANNEL);
-//
-//		ServerWorldEvents.LOAD.register(globalMarkersData::onWorldLoad);
-//		ServerWorldEvents.LOAD.register(tileData::onWorldLoad);
-//
-//		RecipeCraftedCallback.EVENT.register(craftedHandler);
 
 		NetherFortress.registerPieces();
 		EndCity.registerMarkers();
 		Village.registerMarkers();
+		Village.registerPieces();
 	}
 
 	private void setup(final FMLCommonSetupEvent event)

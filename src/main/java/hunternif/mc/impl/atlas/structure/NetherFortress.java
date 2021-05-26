@@ -56,26 +56,26 @@ public class NetherFortress {
 
 
 	public static void registerPieces() {
-		StructureHandler.registerTile(IStructurePieceType.NETHER_FORTRESS_THRONE, 140, TileIdMap.NETHER_FORTRESS_BRIDGE_PLATFORM);
+		StructureHandler.registerTile(IStructurePieceType.NETHER_FORTRESS_THRONE, 40, TileIdMap.NETHER_FORTRESS_BRIDGE_PLATFORM);
 
-		StructureHandler.registerTile(IStructurePieceType.NETHER_FORTRESS_STAIRS, 130, TileIdMap.NETHER_FORTRESS_BRIDGE_STAIRS);
-		StructureHandler.registerTile(IStructurePieceType.NETHER_FORTRESS_NETHER_STALK_ROOM, 130, TileIdMap.NETHER_FORTRESS_CORRIDOR_NETHER_WARTS_ROOM);
+		StructureHandler.registerTile(IStructurePieceType.NETHER_FORTRESS_STAIRS, 50, TileIdMap.NETHER_FORTRESS_BRIDGE_STAIRS);
+		StructureHandler.registerTile(IStructurePieceType.NETHER_FORTRESS_NETHER_STALK_ROOM, 50, TileIdMap.NETHER_FORTRESS_CORRIDOR_NETHER_WARTS_ROOM);
 
-		StructureHandler.registerTile(IStructurePieceType.NETHER_FORTRESS_CROSSING, 120, TileIdMap.NETHER_FORTRESS_BRIDGE_SMALL_CROSSING);
+		StructureHandler.registerTile(IStructurePieceType.NETHER_FORTRESS_CROSSING, 60, TileIdMap.NETHER_FORTRESS_BRIDGE_SMALL_CROSSING);
 
-		StructureHandler.registerTile(IStructurePieceType.NETHER_FORTRESS_CORRIDOR_4, 95, TileIdMap.NETHER_FORTRESS_WALL);
-		StructureHandler.registerTile(IStructurePieceType.NETHER_FORTRESS_CORRIDOR, 95, TileIdMap.NETHER_FORTRESS_WALL);
-		StructureHandler.registerTile(IStructurePieceType.NETHER_FORTRESS_CORRIDOR_5, 95, TileIdMap.NETHER_FORTRESS_WALL);
-		StructureHandler.registerTile(IStructurePieceType.NETHER_FORTRESS_CORRIDOR_2, 95, TileIdMap.NETHER_FORTRESS_WALL);
-		StructureHandler.registerTile(IStructurePieceType.NETHER_FORTRESS_START, 95, TileIdMap.NETHER_FORTRESS_WALL);
-		StructureHandler.registerTile(IStructurePieceType.NETHER_FORTRESS_ENTRANCE, 95, TileIdMap.NETHER_FORTRESS_EXIT);
+		StructureHandler.registerTile(IStructurePieceType.NETHER_FORTRESS_CORRIDOR_4, 70, TileIdMap.NETHER_FORTRESS_WALL);
+		StructureHandler.registerTile(IStructurePieceType.NETHER_FORTRESS_CORRIDOR, 70, TileIdMap.NETHER_FORTRESS_WALL);
+		StructureHandler.registerTile(IStructurePieceType.NETHER_FORTRESS_CORRIDOR_5, 70, TileIdMap.NETHER_FORTRESS_WALL);
+		StructureHandler.registerTile(IStructurePieceType.NETHER_FORTRESS_CORRIDOR_2, 70, TileIdMap.NETHER_FORTRESS_WALL);
+		StructureHandler.registerTile(IStructurePieceType.NETHER_FORTRESS_START, 70, TileIdMap.NETHER_FORTRESS_WALL);
+		StructureHandler.registerTile(IStructurePieceType.NETHER_FORTRESS_ENTRANCE, 70, TileIdMap.NETHER_FORTRESS_EXIT);
 
-		StructureHandler.registerTile(IStructurePieceType.NETHER_FORTRESS_CROSSING_3, 90, TileIdMap.NETHER_FORTRESS_BRIDGE_CROSSING);
+		StructureHandler.registerTile(IStructurePieceType.NETHER_FORTRESS_CROSSING_3, 80, TileIdMap.NETHER_FORTRESS_BRIDGE_CROSSING);
 
-		StructureHandler.registerTile(IStructurePieceType.NETHER_FORTRESS_END,  85, TileIdMap.NETHER_BRIDGE_END_X, NetherFortress::bridgeEndX);
-		StructureHandler.registerTile(IStructurePieceType.NETHER_FORTRESS_END,  85, TileIdMap.NETHER_BRIDGE_END_Z, NetherFortress::bridgeEndZ);
+		StructureHandler.registerTile(IStructurePieceType.NETHER_FORTRESS_END,  90, TileIdMap.NETHER_BRIDGE_END_X, NetherFortress::bridgeEndX);
+		StructureHandler.registerTile(IStructurePieceType.NETHER_FORTRESS_END,  90, TileIdMap.NETHER_BRIDGE_END_Z, NetherFortress::bridgeEndZ);
 
-		StructureHandler.registerTile(IStructurePieceType.NETHER_FORTRESS_STRAIGHT,  80, TileIdMap.NETHER_BRIDGE_X, NetherFortress::bridgeX);
-		StructureHandler.registerTile(IStructurePieceType.NETHER_FORTRESS_STRAIGHT,  80, TileIdMap.NETHER_BRIDGE_Z, NetherFortress::bridgeZ);
+		StructureHandler.registerTile(IStructurePieceType.NETHER_FORTRESS_STRAIGHT,  100, TileIdMap.NETHER_BRIDGE_X, NetherFortress::bridgeX);
+		StructureHandler.registerTile(IStructurePieceType.NETHER_FORTRESS_STRAIGHT,  100, TileIdMap.NETHER_BRIDGE_Z, NetherFortress::bridgeZ);
 	}
 }
