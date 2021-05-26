@@ -33,7 +33,7 @@ public class StructureHandler {
     private static final Map<String, Pair<ResourceLocation, Setter>> JIGSAW_TO_TILE_MAP = new HashMap<>();
     private static final Map<ResourceLocation, Pair<ResourceLocation, ITextComponent>> STRUCTURE_PIECE_TO_MARKER_MAP = new HashMap<>();
     private static final Map<ResourceLocation, Integer> STRUCTURE_PIECE_TILE_PRIORITY = new HashMap<>();
-    private static final Setter ALWAYS = (element, box) -> Collections.singleton(new ChunkPos(MathUtil.getCenter(box).getX() >> 4, MathUtil.getCenter(box).getZ() >> 4));
+    private static final Setter ALWAYS = (world, element, box) -> Collections.singleton(new ChunkPos(MathUtil.getCenter(box).getX() >> 4, MathUtil.getCenter(box).getZ() >> 4));
 
     private static final Set<Triple<Integer, Integer, ResourceLocation>> VISITED_STRUCTURES = Collections.newSetFromMap(new ConcurrentHashMap<>());
 
@@ -87,7 +87,7 @@ public class StructureHandler {
                         ResourceLocation tile = entry.getValue().getFirst();
                         Setter setter = entry.getValue().getSecond();
                         if (path.contains(entry.getKey())) {
-                            for(ChunkPos pos : setter.matches(singlePoolElement, pool.getBoundingBox())) {
+                            for(ChunkPos pos : setter.matches(world, singlePoolElement, pool.getBoundingBox())) {
                                 put(world, pos.x, pos.z, tile);
                             }
                         }
@@ -111,9 +111,9 @@ public class StructureHandler {
                 Collection<ChunkPos> matches;
                 if (structurePiece instanceof AbstractVillagePiece) {
                 	AbstractVillagePiece pool = (AbstractVillagePiece) structurePiece;
-                    matches = entry.getSecond().matches(pool.getJigsawPiece(), pool.getBoundingBox());
+                    matches = entry.getSecond().matches(world, pool.getJigsawPiece(), pool.getBoundingBox());
                 } else {
-                    matches = entry.getSecond().matches(null, structurePiece.getBoundingBox());
+                    matches = entry.getSecond().matches(world, null, structurePiece.getBoundingBox());
                 }
 
                 for (ChunkPos pos : matches) {
@@ -146,6 +146,6 @@ public class StructureHandler {
     }
 
     interface Setter {
-        Collection<ChunkPos> matches(JigsawPiece element, MutableBoundingBox box);
+        Collection<ChunkPos> matches(World world, JigsawPiece element, MutableBoundingBox box);
     }
 }

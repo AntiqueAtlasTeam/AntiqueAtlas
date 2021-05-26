@@ -8,11 +8,12 @@ import hunternif.mc.impl.atlas.core.TileIdMap;
 import hunternif.mc.impl.atlas.util.MathUtil;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.MutableBoundingBox;
+import net.minecraft.world.World;
 import net.minecraft.world.gen.feature.jigsaw.JigsawPiece;
 import net.minecraft.world.gen.feature.structure.IStructurePieceType;
 
 public class NetherFortress {
-	public static Collection<ChunkPos> bridgeX(JigsawPiece element, MutableBoundingBox box) {
+	public static Collection<ChunkPos> bridgeX(World world,JigsawPiece element, MutableBoundingBox box) {
 		HashSet<ChunkPos> matches = new HashSet<>();
 
 		if (box.getXSize() > 16) {
@@ -25,7 +26,7 @@ public class NetherFortress {
 		return matches;
 	}
 
-	public static Collection<ChunkPos> bridgeZ(JigsawPiece element, MutableBoundingBox box) {
+	public static Collection<ChunkPos> bridgeZ(World world,JigsawPiece element, MutableBoundingBox box) {
 		HashSet<ChunkPos> matches = new HashSet<>();
 
 		if (box.getZSize() > 16) {
@@ -38,7 +39,7 @@ public class NetherFortress {
 		return matches;
 	}
 
-	public static Collection<ChunkPos> bridgeEndX(JigsawPiece element, MutableBoundingBox box) {
+	public static Collection<ChunkPos> bridgeEndX(World world,JigsawPiece element, MutableBoundingBox box) {
 		if (box.getXSize() > box.getZSize()) {
 			return Collections.singleton(new ChunkPos(box./*getCenter*/func_215126_f().getX() >> 4, box./*getCenter*/func_215126_f().getZ() >> 4));
 		} else {
@@ -46,7 +47,7 @@ public class NetherFortress {
 		}
 	}
 
-	public static Collection<ChunkPos> bridgeEndZ(JigsawPiece element, MutableBoundingBox box) {
+	public static Collection<ChunkPos> bridgeEndZ(World world,JigsawPiece element, MutableBoundingBox box) {
 		if (box.getZSize() > box.getXSize()) {
 			return Collections.singleton(new ChunkPos(box./*getCenter*/func_215126_f().getX() >> 4, box./*getCenter*/func_215126_f().getZ() >> 4));
 		} else {
