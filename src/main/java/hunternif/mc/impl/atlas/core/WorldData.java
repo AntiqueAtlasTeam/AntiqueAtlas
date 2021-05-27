@@ -4,7 +4,6 @@ import hunternif.mc.impl.atlas.AntiqueAtlasConfig;
 import hunternif.mc.impl.atlas.network.packet.s2c.play.TileGroupsS2CPacket;
 import hunternif.mc.impl.atlas.util.Log;
 import hunternif.mc.impl.atlas.util.Rect;
-import hunternif.mc.impl.atlas.util.ShortVec2;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -17,6 +16,7 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.util.RegistryKey;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.World;
 
 /** All tiles seen in dimension. Thread-safe (probably) */
@@ -31,9 +31,9 @@ public class WorldData implements ITileStorage {
 	 * a map of chunks the player has seen. This map is thread-safe. CAREFUL!
 	 * Don't modify chunk coordinates that are already put in the map!
 	 * 
-	 * Key is a ShortVec2 representing the gilegroup's position in units of TileGroup.CHUNK_STEP
+	 * Key is a ChunkPos representing the gilegroup's position in units of TileGroup.CHUNK_STEP
 	 */
-	private final Map<ShortVec2, TileGroup> tileGroups = new ConcurrentHashMap<>(2, 0.75f, 2);
+	private final Map<ChunkPos, TileGroup> tileGroups = new ConcurrentHashMap<>(2, 0.75f, 2);
 
 //	/**
 //	 * Maps threads to the temporary key for thread-safe access to the tile map.
@@ -51,17 +51,17 @@ public class WorldData implements ITileStorage {
 	/**
 	 * This function has to create a new map on each call since the packet rework
 	 */
-	public Map<ShortVec2, ResourceLocation> getSeenChunks() {
-		Map<ShortVec2, ResourceLocation> chunks = new ConcurrentHashMap<>(2, 0.75f, 2);
+	public Map<ChunkPos, ResourceLocation> getSeenChunks() {
+		Map<ChunkPos, ResourceLocation> chunks = new ConcurrentHashMap<>(2, 0.75f, 2);
 		ResourceLocation t;
-		for (Map.Entry<ShortVec2, TileGroup> entry: tileGroups.entrySet()){
+		for (Map.Entry<ChunkPos, TileGroup> entry: tileGroups.entrySet()){
 			int basex = entry.getValue().getScope().minX;
 			int basey = entry.getValue().getScope().minY;
 			for (int x = basex; x < basex+TileGroup.CHUNK_STEP; x++){
 				for (int y = basey; y < basey+TileGroup.CHUNK_STEP; y++){
 					t = entry.getValue().getTile(x, y);
 					if (t!=null){
-						chunks.put(new ShortVec2(x, y), t);
+						chunks.put(new ChunkPos(x, y), t);
 					}
 				}
 			}
@@ -106,11 +106,11 @@ public class WorldData implements ITileStorage {
 
 	@Override
 	public void setTile(int x, int y, ResourceLocation tile) {
-		ShortVec2 groupPos = new ShortVec2((int)Math.floor(x / (float) TileGroup.CHUNK_STEP),
+		ChunkPos groupPos = new ChunkPos((int)Math.floor(x / (float) TileGroup.CHUNK_STEP),
 				(int)Math.floor(y / (float) TileGroup.CHUNK_STEP));
 		TileGroup tg = tileGroups.get(groupPos);
 		if (tg == null) {
-			tg = new TileGroup(groupPos.x * TileGroup.CHUNK_STEP, groupPos.y * TileGroup.CHUNK_STEP);
+			tg = new TileGroup(groupPos.x * TileGroup.CHUNK_STEP, groupPos.z * TileGroup.CHUNK_STEP);
 			tileGroups.put(groupPos, tg);
 		}
 		tg.setTile(x, y, tile);
@@ -120,7 +120,7 @@ public class WorldData implements ITileStorage {
 
 	/**Puts a tileGroup into this dimensionData, overwriting any previous stuff.*/
 	public void putTileGroup(TileGroup t){
-		ShortVec2 key = new ShortVec2(Math.floorDiv(t.scope.minX,TileGroup.CHUNK_STEP), Math.floorDiv(t.scope.minY,TileGroup.CHUNK_STEP));
+		ChunkPos key = new ChunkPos(Math.floorDiv(t.scope.minX,TileGroup.CHUNK_STEP), Math.floorDiv(t.scope.minY,TileGroup.CHUNK_STEP));
 		tileGroups.put(key, t);
 		extendToTileGroup(t);
 	}
@@ -137,7 +137,7 @@ public class WorldData implements ITileStorage {
 
 	@Override
 	public ResourceLocation getTile(int x, int y) {
-		ShortVec2 groupPos = new ShortVec2((int)Math.floor(x / (float) TileGroup.CHUNK_STEP),
+		ChunkPos groupPos = new ChunkPos((int)Math.floor(x / (float) TileGroup.CHUNK_STEP),
 				(int)Math.floor(y / (float) TileGroup.CHUNK_STEP));
 		TileGroup tg = tileGroups.get(groupPos);
 		if (tg == null) {
@@ -166,7 +166,7 @@ public class WorldData implements ITileStorage {
 	}
 
 	public void addData(WorldData other){
-		for (Entry<ShortVec2, TileGroup> e:other.tileGroups.entrySet()){
+		for (Entry<ChunkPos, TileGroup> e:other.tileGroups.entrySet()){
 			TileGroup group = e.getValue();
 			Rect s = group.getScope();
 			for (int x = s.minX; x <= s.maxX; x++){
@@ -180,7 +180,7 @@ public class WorldData implements ITileStorage {
 	
 	public ListNBT writeToNBT() {
 		ListNBT tileGroupList = new ListNBT();
-		for (Entry<ShortVec2, TileGroup> entry : tileGroups.entrySet()) {
+		for (Entry<ChunkPos, TileGroup> entry : tileGroups.entrySet()) {
 			CompoundNBT newbie = new CompoundNBT();
 			entry.getValue().writeToNBT(newbie);
 			tileGroupList.add(newbie);
@@ -216,7 +216,7 @@ public class WorldData implements ITileStorage {
 		tileGroups = new ArrayList<>(TileGroupsS2CPacket.TILE_GROUPS_PER_PACKET);
 		int count = 0;
 		int total = 0;
-		for (Entry<ShortVec2, TileGroup> t: this.tileGroups.entrySet()){
+		for (Entry<ChunkPos, TileGroup> t: this.tileGroups.entrySet()){
 			tileGroups.add(t.getValue());
 			count++;
 			total++;
@@ -238,7 +238,7 @@ public class WorldData implements ITileStorage {
 		if (!(obj instanceof WorldData)) return false;
 		WorldData other = (WorldData)obj;
 		if (other.tileGroups.size() != tileGroups.size()) return false;
-		for (ShortVec2 entry : tileGroups.keySet()) {
+		for (ChunkPos entry : tileGroups.keySet()) {
 			if (!this.tileGroups.get(entry).equals(other.tileGroups.get(entry))) return false;
 		}
 		return true;

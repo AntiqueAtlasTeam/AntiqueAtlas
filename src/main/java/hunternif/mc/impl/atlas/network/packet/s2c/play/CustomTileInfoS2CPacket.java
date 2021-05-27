@@ -8,11 +8,11 @@ import com.google.common.collect.Maps;
 import hunternif.mc.impl.atlas.AntiqueAtlasMod;
 import hunternif.mc.impl.atlas.core.TileDataStorage;
 import hunternif.mc.impl.atlas.network.packet.s2c.S2CPacket;
-import hunternif.mc.impl.atlas.util.ShortVec2;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.RegistryKey;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
@@ -27,25 +27,25 @@ public class CustomTileInfoS2CPacket extends S2CPacket {
 	public static final ResourceLocation ID = AntiqueAtlasMod.id("packet", "s2c", "custom_tile", "info");
 
 	RegistryKey<World> world;
-	Map<ShortVec2, ResourceLocation> tiles;
+	Map<ChunkPos, ResourceLocation> tiles;
 	
-	public CustomTileInfoS2CPacket(RegistryKey<World> world, Map<ShortVec2, ResourceLocation> tiles) {
+	public CustomTileInfoS2CPacket(RegistryKey<World> world, Map<ChunkPos, ResourceLocation> tiles) {
 		this.world = world;
 		this.tiles = tiles;
 	}
 
 	public CustomTileInfoS2CPacket(RegistryKey<World> world, int chunkX, int chunkZ, ResourceLocation tileId) {
 		this.world = world;
-		this.tiles = (new Builder<ShortVec2, ResourceLocation>()).put(new ShortVec2(chunkX, chunkZ), tileId).build();
+		this.tiles = (new Builder<ChunkPos, ResourceLocation>()).put(new ChunkPos(chunkX, chunkZ), tileId).build();
 	}
 
 	public static void encode(final CustomTileInfoS2CPacket msg, final PacketBuffer packetBuffer) {
 		packetBuffer.writeResourceLocation(msg.world.getLocation());
 		packetBuffer.writeVarInt(msg.tiles.size());
 
-		for (Map.Entry<ShortVec2, ResourceLocation> entry : msg.tiles.entrySet()) {
-			packetBuffer.writeShort(entry.getKey().x);
-			packetBuffer.writeShort(entry.getKey().y);
+		for (Map.Entry<ChunkPos, ResourceLocation> entry : msg.tiles.entrySet()) {
+			packetBuffer.writeVarInt(entry.getKey().x);
+			packetBuffer.writeVarInt(entry.getKey().z);
 			packetBuffer.writeResourceLocation(entry.getValue());
 		}
 	}
@@ -54,10 +54,10 @@ public class CustomTileInfoS2CPacket extends S2CPacket {
 		RegistryKey<World> world = RegistryKey.getOrCreateKey(Registry.WORLD_KEY, packetBuffer.readResourceLocation());
 		int tileCount = packetBuffer.readVarInt();
 
-		Map<ShortVec2, ResourceLocation> tiles = Maps.newHashMap();
+		Map<ChunkPos, ResourceLocation> tiles = Maps.newHashMap();
 		
 		for (int i = 0; i < tileCount; ++i) {
-			tiles.put(new ShortVec2(packetBuffer.readShort(), packetBuffer.readShort()), packetBuffer.readResourceLocation());
+			tiles.put(new ChunkPos(packetBuffer.readVarInt(), packetBuffer.readVarInt()), packetBuffer.readResourceLocation());
 		}
 		
 		return new CustomTileInfoS2CPacket(world, tiles);
@@ -67,8 +67,8 @@ public class CustomTileInfoS2CPacket extends S2CPacket {
 	@Override
 	public boolean handle(ClientPlayerEntity player) {
 		TileDataStorage data = AntiqueAtlasMod.globalTileData.getData(this.world);
-		for (Map.Entry<ShortVec2, ResourceLocation> entry : this.tiles.entrySet()) {
-			data.setTile(entry.getKey().x, entry.getKey().y, entry.getValue());
+		for (Map.Entry<ChunkPos, ResourceLocation> entry : this.tiles.entrySet()) {
+			data.setTile(entry.getKey().x, entry.getKey().z, entry.getValue());
 		}
 		return true;
 	}

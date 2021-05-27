@@ -1,8 +1,8 @@
 package hunternif.mc.impl.atlas.marker;
 
 import hunternif.mc.impl.atlas.util.ListMapValueIterator;
-import hunternif.mc.impl.atlas.util.ShortVec2;
 import net.minecraft.util.RegistryKey;
+import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.World;
 
 import java.util.AbstractCollection;
@@ -19,7 +19,7 @@ public class DimensionMarkersData {
 	
 	private int size = 0;
 	
-	private final Map<ShortVec2 /*chunk coords*/, List<Marker>> chunkMap =
+	private final Map<ChunkPos, List<Marker>> chunkMap =
 			new ConcurrentHashMap<>(2, 0.75f, 2);
 	
 	private final Values values = new Values();
@@ -36,19 +36,19 @@ public class DimensionMarkersData {
 	/** The "chunk" here is {@link MarkersData#CHUNK_STEP} times larger than the
 	 * Minecraft 16x16 chunk! */
 	public List<Marker> getMarkersAtChunk(int x, int z) {
-		return chunkMap.get(new ShortVec2(x, z));
+		return chunkMap.get(new ChunkPos(x, z));
 	}
 	
 	/** Insert marker into a list at chunk coordinates, maintaining the ordering
 	 * of the list by Z coordinate. */
 	public void insertMarker(Marker marker) {
-		ShortVec2 key = new ShortVec2(
+		ChunkPos key = new ChunkPos(
 				marker.getChunkX() / MarkersData.CHUNK_STEP,
 				marker.getChunkZ() / MarkersData.CHUNK_STEP);
 		List<Marker> list = chunkMap.get(key);
 		if (list == null) {
 			list = new CopyOnWriteArrayList<>();
-			chunkMap.put(key.clone(), list);
+			chunkMap.put(key, list);
 		}
 		boolean inserted = false;
 		for (int i = 0; i < list.size(); i++) {

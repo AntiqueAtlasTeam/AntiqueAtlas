@@ -36,8 +36,8 @@ public class DimensionUpdateS2CPacket extends S2CPacket {
 		packetBuffer.writeVarInt(msg.tiles.size());
 
 		for (TileInfo tile : msg.tiles) {
-			packetBuffer.writeShort(tile.x);
-			packetBuffer.writeShort(tile.z);
+			packetBuffer.writeVarInt(tile.x);
+			packetBuffer.writeVarInt(tile.z);
 			packetBuffer.writeResourceLocation(tile.id);
 		}
 	}
@@ -50,8 +50,8 @@ public class DimensionUpdateS2CPacket extends S2CPacket {
 		List<TileInfo> tiles = new ArrayList<>();
 		for (int i = 0; i < tileCount; ++i) {
 			tiles.add(new TileInfo(
-					packetBuffer.readShort(),
-					packetBuffer.readShort(),
+					packetBuffer.readVarInt(),
+					packetBuffer.readVarInt(),
 					packetBuffer.readResourceLocation())
 					);
 		}

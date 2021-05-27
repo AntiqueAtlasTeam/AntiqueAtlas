@@ -1,19 +1,23 @@
 package hunternif.mc.impl.atlas.core;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import hunternif.mc.impl.atlas.forge.NbtType;
 import hunternif.mc.impl.atlas.network.packet.s2c.play.MapDataS2CPacket;
 import hunternif.mc.impl.atlas.util.Log;
-import hunternif.mc.impl.atlas.util.ShortVec2;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.util.RegistryKey;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.World;
 import net.minecraft.world.storage.WorldSavedData;
@@ -115,7 +119,7 @@ public class AtlasData extends WorldSavedData {
 		return worldMap.computeIfAbsent(world, k -> new WorldData(this, world));
 	}
 
-	public Map<ShortVec2, ResourceLocation> getSeenChunksInDimension(RegistryKey<World> world) {
+	public Map<ChunkPos, ResourceLocation> getSeenChunksInDimension(RegistryKey<World> world) {
 		return getWorldData(world).getSeenChunks();
 	}
 

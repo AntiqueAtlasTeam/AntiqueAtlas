@@ -7,12 +7,12 @@ import java.util.concurrent.ConcurrentHashMap;
 import hunternif.mc.impl.atlas.forge.NbtType;
 import hunternif.mc.impl.atlas.network.packet.s2c.play.CustomTileInfoS2CPacket;
 import hunternif.mc.impl.atlas.util.Log;
-import hunternif.mc.impl.atlas.util.ShortVec2;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.util.RegistryKey;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.World;
 import net.minecraft.world.storage.WorldSavedData;
 
@@ -30,9 +30,7 @@ public class TileDataStorage extends WorldSavedData {
 		super(key);
 	}
 
-	private final Map<ShortVec2, ResourceLocation> tiles = new ConcurrentHashMap<>(2, 0.75f, 2);
-
-	private final ShortVec2 tempCoords = new ShortVec2(0, 0);
+	private final Map<ChunkPos, ResourceLocation> tiles = new ConcurrentHashMap<>(2, 0.75f, 2);
 
 	@Override
 	public void read(CompoundNBT compound) {
@@ -47,7 +45,7 @@ public class TileDataStorage extends WorldSavedData {
 
 		tileList.forEach(tag1 -> {
 			CompoundNBT tile = (CompoundNBT) tag1;
-			ShortVec2 coords = new ShortVec2(tile.getInt("x"), tile.getInt("y"));
+			ChunkPos coords = new ChunkPos(tile.getInt("x"), tile.getInt("y"));
 			tiles.put(coords, ResourceLocation.tryCreate(tile.getString("id")));
 		});
 	}
@@ -58,10 +56,10 @@ public class TileDataStorage extends WorldSavedData {
 
 		ListNBT tileList = new ListNBT();
 
-		for (Entry<ShortVec2, ResourceLocation> entry : tiles.entrySet()) {
+		for (Entry<ChunkPos, ResourceLocation> entry : tiles.entrySet()) {
 			CompoundNBT tile = new CompoundNBT();
 			tile.putInt("x", entry.getKey().x);
-			tile.putInt("y", entry.getKey().y);
+			tile.putInt("y", entry.getKey().z);
 			tile.putString("id", entry.getValue().toString());
 
 			tileList.add(tile);
@@ -74,17 +72,17 @@ public class TileDataStorage extends WorldSavedData {
 	
 	/** If no custom tile is set at the specified coordinates, returns null. */
 	public ResourceLocation getTile(int x, int z) {
-		return tiles.get(tempCoords.set(x,z));
+		return tiles.get(new ChunkPos(x,z));
 	}
 	
 	/** If setting tile on the server, a packet should be sent to all players. */
 	public void setTile(int x, int z, ResourceLocation tile) {
-		tiles.put(new ShortVec2(x, z), tile);
+		tiles.put(new ChunkPos(x, z), tile);
 		markDirty();
 	}
 	
 	public void removeTile(int x, int z) {
-		tiles.remove(tempCoords.set(x, z));
+		tiles.remove(new ChunkPos(x, z));
 		markDirty();
 	}
 
