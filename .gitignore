@@ -11,6 +11,7 @@ out
 *.ipr
 *.iws
 *.iml
+*.factorypath
 
 # gradle
 build
