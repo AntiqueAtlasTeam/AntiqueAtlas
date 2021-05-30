@@ -15,6 +15,7 @@ import hunternif.mc.impl.atlas.marker.MarkersDataHandler;
 import hunternif.mc.impl.atlas.network.AntiqueAtlasNetworking;
 import hunternif.mc.impl.atlas.structure.EndCity;
 import hunternif.mc.impl.atlas.structure.NetherFortress;
+import hunternif.mc.impl.atlas.structure.Overworld;
 import hunternif.mc.impl.atlas.structure.Village;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
@@ -67,15 +68,12 @@ public class AntiqueAtlasMod
 
 		AntiqueAtlasNetworking.registerC2SListeners(MOD_CHANNEL);
 		AntiqueAtlasNetworking.registerS2CListeners(MOD_CHANNEL);
-//
-//		ServerWorldEvents.LOAD.register(globalMarkersData::onWorldLoad);
-//		ServerWorldEvents.LOAD.register(tileData::onWorldLoad);
-//
-//		RecipeCraftedCallback.EVENT.register(craftedHandler);
 
 		NetherFortress.registerPieces();
 		EndCity.registerMarkers();
 		Village.registerMarkers();
+		Village.registerPieces();
+		Overworld.registerPieces();
 	}
 
 	private void setup(final FMLCommonSetupEvent event)

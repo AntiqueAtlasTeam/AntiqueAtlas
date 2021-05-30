@@ -10,10 +10,10 @@
       "antiqueatlas:nether_hall": "both",
       "antiqueatlas:nether_tower": "both",
       "antiqueatlas:nether_fort_stairs": "both",
-      "antiqueatlas:nether_bridge_z": "horizontal",
-      "antiqueatlas:nether_bridge_end_z": "horizontal",
-      "antiqueatlas:nether_bridge_y": "vertical",
-      "antiqueatlas:nether_bridge_end_y": "vertical"
+      "antiqueatlas:nether_bridge_z": "vertical",
+      "antiqueatlas:nether_bridge_end_z": "vertical",
+      "antiqueatlas:nether_bridge_x": "horizontal",
+      "antiqueatlas:nether_bridge_end_x": "horizontal"
     }
   }
 }

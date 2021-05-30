@@ -2,11 +2,10 @@ buildscript {
     repositories {
         maven { url = 'https://files.minecraftforge.net/maven' }
 		maven { url = 'https://repo.spongepowered.org/maven' }
-        jcenter()
         mavenCentral()
     }
     dependencies {
-        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '3.+', changing: true
+        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '4.1.+', changing: true
 		classpath group: 'org.spongepowered', name: 'mixingradle', version: '0.7-SNAPSHOT'
     }
 }
@@ -24,7 +23,7 @@ archivesBaseName = project.archives_base_name
 version = project.mod_version
 group = project.maven_group
 
-sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8' // Need this here so eclipse task generates correctly.
+java.toolchain.languageVersion = JavaLanguageVersion.of(8) // Mojang ships Java 8 to end users, so your mod should target Java 8.
 
 println('Java: ' + System.getProperty('java.version') + ' JVM: ' + System.getProperty('java.vm.version') + '(' + System.getProperty('java.vendor') + ') Arch: ' + System.getProperty('os.arch'))
 println('Mod Name: ' + archivesBaseName + ', Mod Version: ' + version + ', Minecraft Version: ' + modMinecraftVersion + ', Forge Version: ' + modForgeVersion)
@@ -99,6 +98,7 @@ minecraft {
 
 dependencies {
 	minecraft 'net.minecraftforge:forge:' + modMinecraftVersion + '-' + modForgeVersion
+	annotationProcessor 'org.spongepowered:mixin:0.8:processor'
 	compile 'org.spongepowered:mixin:0.8'
 	compile fileTree(include: ['*.jar'], dir: 'libs')
 	compile fg.deobf("me.shedaniel.cloth:cloth-config-forge:"+cloth_config_version)

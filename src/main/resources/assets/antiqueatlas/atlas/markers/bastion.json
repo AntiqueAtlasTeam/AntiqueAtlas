@@ -1,0 +1,10 @@
+{
+	"version": 1,
+	"textures": [
+		"antiqueatlas:textures/gui/markers/tower.png"
+	],
+	"isTile": true,
+	"isTechnical": true,
+	"centerX": 0.5,
+	"centerY": 0.75
+}
