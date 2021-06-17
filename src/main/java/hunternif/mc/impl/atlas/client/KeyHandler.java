@@ -1,5 +1,6 @@
 package hunternif.mc.impl.atlas.client;
 
+import hunternif.mc.impl.atlas.AntiqueAtlasModClient;
 import hunternif.mc.impl.atlas.client.gui.GuiAtlas;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;
@@ -34,9 +35,7 @@ public class KeyHandler {
             if (currentScreen instanceof GuiAtlas) {
                 currentScreen.closeScreen();
             } else {
-                GuiAtlas gui = new GuiAtlas();
-                gui.updateL18n();
-                client.displayGuiScreen(gui);
+                AntiqueAtlasModClient.openAtlasGUI();
             }
         }
     }
