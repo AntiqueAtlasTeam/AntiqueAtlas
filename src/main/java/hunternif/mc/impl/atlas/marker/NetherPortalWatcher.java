@@ -98,7 +98,7 @@ public class NetherPortalWatcher {
 			return;
 		}
 
-		for (ItemStack stack : player.inventory.main) {
+		for (ItemStack stack : player.getInventory().main) {
 			if (stack == null || !(stack.getItem() instanceof AtlasItem)) continue;
 
 			addPortalMarkerIfNone(player, world, AtlasItem.getAtlasID(stack));

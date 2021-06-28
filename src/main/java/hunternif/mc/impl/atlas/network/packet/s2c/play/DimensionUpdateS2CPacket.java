@@ -39,7 +39,7 @@ public class DimensionUpdateS2CPacket extends S2CPacket {
 
 	public static void apply(MinecraftClient client, ClientPlayNetworkHandler handler, PacketByteBuf buf, PacketSender responseSender) {
 		int atlasID = buf.readVarInt();
-		RegistryKey<World> world = RegistryKey.of(Registry.DIMENSION, buf.readIdentifier());
+		RegistryKey<World> world = RegistryKey.of(Registry.WORLD_KEY, buf.readIdentifier());
 		int tileCount = buf.readVarInt();
 
 		if (world == null) {

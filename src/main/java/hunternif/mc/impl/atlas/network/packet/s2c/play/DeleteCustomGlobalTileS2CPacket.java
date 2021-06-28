@@ -32,7 +32,7 @@ public class DeleteCustomGlobalTileS2CPacket extends S2CPacket {
 	}
 
 	public static void apply(MinecraftClient client, ClientPlayNetworkHandler handler, PacketByteBuf buf, PacketSender responseSender) {
-		RegistryKey<World> world = RegistryKey.of(Registry.DIMENSION, buf.readIdentifier());
+		RegistryKey<World> world = RegistryKey.of(Registry.WORLD_KEY, buf.readIdentifier());
 		int chunkX = buf.readVarInt();
 		int chunkZ = buf.readVarInt();
 

@@ -22,30 +22,30 @@ import java.util.Random;
 
 @Mixin(StructureStart.class)
 public class StructureStartMixin {
-    @Redirect(method = "generateStructure", at = @At(value = "INVOKE", target = "Lnet/minecraft/structure/StructurePiece;generate(Lnet/minecraft/world/StructureWorldAccess;Lnet/minecraft/world/gen/StructureAccessor;Lnet/minecraft/world/gen/chunk/ChunkGenerator;Ljava/util/Random;Lnet/minecraft/util/math/BlockBox;Lnet/minecraft/util/math/ChunkPos;Lnet/minecraft/util/math/BlockPos;)Z"))
-    private boolean structurePieceGenerated(StructurePiece structurePiece, StructureWorldAccess serverWorldAccess, StructureAccessor structureAccessor, ChunkGenerator chunkGenerator, Random random, BlockBox boundingBox, ChunkPos chunkPos, BlockPos blockPos) {
-        ServerWorld world;
-
-        if (serverWorldAccess instanceof ServerWorld) {
-            world = (ServerWorld) serverWorldAccess;
-        } else {
-            world = ((ChunkRegion) serverWorldAccess).world;
-        }
-
-        StructurePieceAddedCallback.EVENT.invoker().onStructurePieceAdded(structurePiece, world);
-        return structurePiece.generate(serverWorldAccess, structureAccessor, chunkGenerator, random, boundingBox, chunkPos, blockPos);
-    }
-
-    @Inject(method = "generateStructure", at = @At(value = "INVOKE", target = "Lnet/minecraft/structure/StructureStart;setBoundingBoxFromChildren()V", shift = At.Shift.AFTER))
-    private void structureGenerated(StructureWorldAccess serverWorldAccess, StructureAccessor structureAccessor, ChunkGenerator chunkGenerator, Random random, BlockBox blockBox, ChunkPos chunkPos, CallbackInfo ci) {
-        ServerWorld world;
-
-        if (serverWorldAccess instanceof ServerWorld) {
-            world = (ServerWorld) serverWorldAccess;
-        } else {
-            world = ((ChunkRegion) serverWorldAccess).world;
-        }
-
-        StructureAddedCallback.EVENT.invoker().onStructureAdded((StructureStart<?>) (Object) this, world);
-    }
+//    @Redirect(method = "generateStructure", at = @At(value = "INVOKE", target = "Lnet/minecraft/structure/StructurePiece;generate(Lnet/minecraft/world/StructureWorldAccess;Lnet/minecraft/world/gen/StructureAccessor;Lnet/minecraft/world/gen/chunk/ChunkGenerator;Ljava/util/Random;Lnet/minecraft/util/math/BlockBox;Lnet/minecraft/util/math/ChunkPos;Lnet/minecraft/util/math/BlockPos;)Z"))
+//    private boolean structurePieceGenerated(StructurePiece structurePiece, StructureWorldAccess serverWorldAccess, StructureAccessor structureAccessor, ChunkGenerator chunkGenerator, Random random, BlockBox boundingBox, ChunkPos chunkPos, BlockPos blockPos) {
+//        ServerWorld world;
+//
+//        if (serverWorldAccess instanceof ServerWorld) {
+//            world = (ServerWorld) serverWorldAccess;
+//        } else {
+//            world = ((ChunkRegion) serverWorldAccess).world;
+//        }
+//
+//        StructurePieceAddedCallback.EVENT.invoker().onStructurePieceAdded(structurePiece, world);
+//        return structurePiece.generate(serverWorldAccess, structureAccessor, chunkGenerator, random, boundingBox, chunkPos, blockPos);
+//    }
+//
+//    @Inject(method = "generateStructure", at = @At(value = "INVOKE", target = "Lnet/minecraft/structure/StructureStart;setBoundingBoxFromChildren()V", shift = At.Shift.AFTER))
+//    private void structureGenerated(StructureWorldAccess serverWorldAccess, StructureAccessor structureAccessor, ChunkGenerator chunkGenerator, Random random, BlockBox blockBox, ChunkPos chunkPos, CallbackInfo ci) {
+//        ServerWorld world;
+//
+//        if (serverWorldAccess instanceof ServerWorld) {
+//            world = (ServerWorld) serverWorldAccess;
+//        } else {
+//            world = ((ChunkRegion) serverWorldAccess).world;
+//        }
+//
+//        StructureAddedCallback.EVENT.invoker().onStructureAdded((StructureStart<?>) (Object) this, world);
+//    }
 }

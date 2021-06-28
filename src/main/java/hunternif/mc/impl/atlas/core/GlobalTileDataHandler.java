@@ -22,8 +22,8 @@ public class GlobalTileDataHandler {
             new ConcurrentHashMap<>(2, 0.75f, 2);
 
     public void onWorldLoad(MinecraftServer server, ServerWorld world) {
-        worldData.put(world.getRegistryKey(), world.getPersistentStateManager().getOrCreate(() -> {
-            TileDataStorage data = new TileDataStorage(DATA_KEY);
+        worldData.put(world.getRegistryKey(), world.getPersistentStateManager().getOrCreate(TileDataStorage::readNbt, () -> {
+            TileDataStorage data = new TileDataStorage();
             data.markDirty();
             return data;
         }, DATA_KEY));
@@ -35,7 +35,7 @@ public class GlobalTileDataHandler {
 
     public TileDataStorage getData(RegistryKey<World> world) {
         return worldData.computeIfAbsent(world,
-                k -> new TileDataStorage(DATA_KEY));
+                k -> new TileDataStorage());
     }
 
     public void onPlayerLogin(ServerPlayerEntity player) {

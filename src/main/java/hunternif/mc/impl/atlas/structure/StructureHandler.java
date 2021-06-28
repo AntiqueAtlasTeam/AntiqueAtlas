@@ -74,7 +74,7 @@ public class StructureHandler {
             if (pool.getPoolElement() instanceof SinglePoolElement) {
                 SinglePoolElement singlePoolElement = (SinglePoolElement) pool.getPoolElement();
 
-                Optional<Identifier> left = singlePoolElement.field_24015.left();
+                Optional<Identifier> left = singlePoolElement.location.left();
                 if (left.isPresent()) {
                     String path = left.get().getPath();
 
@@ -122,8 +122,8 @@ public class StructureHandler {
         Identifier structureId = Registry.STRUCTURE_FEATURE.getId(structureStart.getFeature());
         if (STRUCTURE_PIECE_TO_MARKER_MAP.containsKey(structureId)) {
             Triple<Integer, Integer, Identifier> key = Triple.of(
-                    structureStart.getBoundingBox().getCenter().getX(),
-                    structureStart.getBoundingBox().getCenter().getY(),
+                    structureStart.setBoundingBoxFromChildren().getCenter().getX(),
+                    structureStart.setBoundingBoxFromChildren().getCenter().getY(),
                     structureId);
 
             if (VISITED_STRUCTURES.contains(key)) return;
@@ -134,8 +134,8 @@ public class StructureHandler {
                     false,
                     STRUCTURE_PIECE_TO_MARKER_MAP.get(structureId).getLeft(),
                     STRUCTURE_PIECE_TO_MARKER_MAP.get(structureId).getRight(),
-                    structureStart.getBoundingBox().getCenter().getX(),
-                    structureStart.getBoundingBox().getCenter().getZ()
+                    structureStart.setBoundingBoxFromChildren().getCenter().getX(),
+                    structureStart.setBoundingBoxFromChildren().getCenter().getZ()
             );
         }
     }

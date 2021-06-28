@@ -2,9 +2,9 @@ package hunternif.mc.impl.atlas.core;
 
 import hunternif.mc.impl.atlas.util.Log;
 import hunternif.mc.impl.atlas.util.Rect;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.StringTag;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtList;
+import net.minecraft.nbt.NbtString;
 import net.minecraft.util.Identifier;
 
 /**
@@ -41,12 +41,12 @@ public class TileGroup implements ITileStorage {
 
     }
 
-    public TileGroup readFromNBT(CompoundTag compound) {
+    public TileGroup readFromNBT(NbtCompound compound) {
         this.scope.minX = compound.getIntArray(TAG_POSITION)[0];
         this.scope.minY = compound.getIntArray(TAG_POSITION)[1];
         this.scope.maxX = this.scope.minX + CHUNK_STEP - 1;
         this.scope.maxY = this.scope.minY + CHUNK_STEP - 1;
-        ListTag listTag = compound.getList(TAG_TILES, 8);
+        NbtList listTag = compound.getList(TAG_TILES, 8);
         for (int y = 0; y < CHUNK_STEP; y++) {
             for (int x = 0; x < CHUNK_STEP; x++) {
                 // order:
@@ -60,16 +60,16 @@ public class TileGroup implements ITileStorage {
         return this;
     }
 
-    public CompoundTag writeToNBT(CompoundTag compound) {
+    public NbtCompound writeToNBT(NbtCompound compound) {
         int[] pos = {scope.minX, scope.minY};
-        ListTag listTag = new ListTag();
+        NbtList listTag = new NbtList();
         for (int y = 0; y < CHUNK_STEP; y++) {
             for (int x = 0; x < CHUNK_STEP; x++) {
                 // order:
                 // 0 1 2
                 // 3 4 5
                 // 6 7 8
-                listTag.add(x + y * CHUNK_STEP, StringTag.of(this.tiles[x][y] == null ? "antiqueatlas:%null#" : this.tiles[x][y].toString()));
+                listTag.add(x + y * CHUNK_STEP, NbtString.of(this.tiles[x][y] == null ? "antiqueatlas:%null#" : this.tiles[x][y].toString()));
             }
         }
 

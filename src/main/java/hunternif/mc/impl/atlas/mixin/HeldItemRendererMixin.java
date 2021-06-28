@@ -9,11 +9,11 @@ import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.item.HeldItemRenderer;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.client.util.math.Vector3f;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Arm;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.Vec3f;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -66,18 +66,18 @@ public abstract class HeldItemRendererMixin {
         matrices.translate(0.0D, -g / 2.0F, h);
         float i = getMapAngle(pitch);
         matrices.translate(0.0D, 0.04F + equipProgress * -1.2F + i * -0.5F, -0.7200000286102295D);
-        matrices.multiply(Vector3f.POSITIVE_X.getDegreesQuaternion(i * -85.0F));
+        matrices.multiply(Vec3f.POSITIVE_X.getDegreesQuaternion(i * -85.0F));
 
         if (!this.client.player.isInvisible()) {
             matrices.push();
-            matrices.multiply(Vector3f.POSITIVE_Y.getDegreesQuaternion(90.0F));
+            matrices.multiply(Vec3f.POSITIVE_Y.getDegreesQuaternion(90.0F));
             this.renderArm(matrices, vertexConsumers, light, Arm.RIGHT);
             this.renderArm(matrices, vertexConsumers, light, Arm.LEFT);
             matrices.pop();
         }
 
         float j = MathHelper.sin(f * 3.1415927F);
-        matrices.multiply(Vector3f.POSITIVE_X.getDegreesQuaternion(j * 20.0F));
+        matrices.multiply(Vec3f.POSITIVE_X.getDegreesQuaternion(j * 20.0F));
         matrices.scale(0.5F, 0.5F, 1.0F);
 
         this.renderFirstPersonAtlas(matrices, vertexConsumers, light, this.mainHand);
@@ -89,7 +89,7 @@ public abstract class HeldItemRendererMixin {
         matrices.translate(f * 0.125F, -0.125D, 0.0D);
         if (!this.client.player.isInvisible()) {
             matrices.push();
-            matrices.multiply(Vector3f.POSITIVE_Z.getDegreesQuaternion(f * 10.0F));
+            matrices.multiply(Vec3f.POSITIVE_Z.getDegreesQuaternion(f * 10.0F));
             this.renderArmHoldingItem(matrices, vertexConsumers, light, equipProgress, swingProgress, arm);
             matrices.pop();
         }
@@ -102,11 +102,11 @@ public abstract class HeldItemRendererMixin {
         float j = 0.4F * MathHelper.sin(g * 6.2831855F);
         float k = -0.3F * MathHelper.sin(swingProgress * 3.1415927F);
         matrices.translate(f * i, j - 0.3F * h, k);
-        matrices.multiply(Vector3f.POSITIVE_X.getDegreesQuaternion(h * -45.0F));
-        matrices.multiply(Vector3f.POSITIVE_Y.getDegreesQuaternion(f * h * -30.0F));
+        matrices.multiply(Vec3f.POSITIVE_X.getDegreesQuaternion(h * -45.0F));
+        matrices.multiply(Vec3f.POSITIVE_Y.getDegreesQuaternion(f * h * -30.0F));
 
-        matrices.multiply(Vector3f.POSITIVE_Y.getDegreesQuaternion(180.0F));
-        matrices.multiply(Vector3f.POSITIVE_Z.getDegreesQuaternion(180.0F));
+        matrices.multiply(Vec3f.POSITIVE_Y.getDegreesQuaternion(180.0F));
+        matrices.multiply(Vec3f.POSITIVE_Z.getDegreesQuaternion(180.0F));
         matrices.scale(0.38F, 0.38F, 0.38F);
         matrices.translate(-0.75D, -0.5D, 0.0D);
         matrices.scale(0.0078125F, 0.0078125F, 0.0078125F);
@@ -118,8 +118,8 @@ public abstract class HeldItemRendererMixin {
     }
 
     private void renderFirstPersonAtlas(MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, ItemStack mainHand) {
-        matrices.multiply(Vector3f.POSITIVE_Y.getDegreesQuaternion(180.0F));
-        matrices.multiply(Vector3f.POSITIVE_Z.getDegreesQuaternion(180.0F));
+        matrices.multiply(Vec3f.POSITIVE_Y.getDegreesQuaternion(180.0F));
+        matrices.multiply(Vec3f.POSITIVE_Z.getDegreesQuaternion(180.0F));
 
         matrices.scale(0.38F, 0.38F, 0.38F);
         matrices.translate(-1.85D, -0.5D, 0.0D);

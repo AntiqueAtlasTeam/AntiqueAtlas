@@ -46,8 +46,7 @@ public class GuiViewport extends GuiComponent {
     }
 
     @Override
-    public void init(MinecraftClient client, int w, int h) {
-        super.init(client, w, h);
+    public void init() {
         screenScale = client.getWindow().getScaleFactor();
     }
 

@@ -17,9 +17,9 @@ import net.minecraft.world.World;
  */
 public class MarkersDataHandler {
 	private static final String MARKERS_DATA_PREFIX = "aaMarkers_";
-	
+
 	private final Map<String, MarkersData> markersDataClientCache = new ConcurrentHashMap<>();
-	
+
 	/** Loads data for the given atlas or creates a new one. */
 	public MarkersData getMarkersData(ItemStack stack, World world) {
 		if (stack.getItem() instanceof AtlasItem) {
@@ -28,24 +28,24 @@ public class MarkersDataHandler {
 			return null;
 		}
 	}
-	
+
 	/** Loads data for the given atlas ID or creates a new one. */
 	public MarkersData getMarkersData(int atlasID, World world) {
 		String key = getMarkersDataKey(atlasID);
 		if (world.isClient) {
 			// Since atlas data doesn't really belong to a single world-dimension,
 			// it can be cached. This should fix #67
-			return markersDataClientCache.computeIfAbsent(key, MarkersData::new);
+			return markersDataClientCache.computeIfAbsent(key, s -> new MarkersData());
 		} else {
 			PersistentStateManager manager = ((ServerWorld) world).getPersistentStateManager();
-			return manager.getOrCreate(() -> new MarkersData(key), key);
+			return manager.getOrCreate(MarkersData::readNbt, () -> new MarkersData(), key);
 		}
 	}
-	
+
 	private String getMarkersDataKey(int atlasID) {
 		return MARKERS_DATA_PREFIX + atlasID;
 	}
-	
+
 	/**
 	 * This method resets the cache when the client loads a new world.
 	 * It is required in order that old markers data is not

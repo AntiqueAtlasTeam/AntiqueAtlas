@@ -10,34 +10,34 @@ import net.fabricmc.api.Environment;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 @Environment(EnvType.CLIENT)
 public class MarkerApiImplClient implements MarkerAPI {
     @Nullable
     @Override
-    public Marker putMarker(@Nonnull World world, boolean visibleAhead, int atlasID, Identifier marker, Text label, int x, int z) {
+    public Marker putMarker(@NotNull World world, boolean visibleAhead, int atlasID, Identifier marker, Text label, int x, int z) {
         new AddMarkerC2SPacket(atlasID, marker, x, z, visibleAhead, label).send();
         return null;
     }
 
     @Nullable
     @Override
-    public Marker putGlobalMarker(@Nonnull World world, boolean visibleAhead, Identifier marker, Text label, int x, int z) {
+    public Marker putGlobalMarker(@NotNull World world, boolean visibleAhead, Identifier marker, Text label, int x, int z) {
         AntiqueAtlasMod.LOG.warn("Client tried to add a global marker");
 
         return null;
     }
 
     @Override
-    public void deleteMarker(@Nonnull World world, int atlasID, int markerID) {
+    public void deleteMarker(@NotNull World world, int atlasID, int markerID) {
         new DeleteMarkerRequestC2SPacket(atlasID, markerID).send();
     }
 
     @Override
-    public void deleteGlobalMarker(@Nonnull World world, int markerID) {
+    public void deleteGlobalMarker(@NotNull World world, int markerID) {
         AntiqueAtlasMod.LOG.warn("Client tried to delete a global marker");
     }
 }

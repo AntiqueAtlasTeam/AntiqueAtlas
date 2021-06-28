@@ -41,10 +41,10 @@ public class TileDataHandler {
         if (world.isClient) {
             // Since atlas data doesn't really belong to a single world-dimension,
             // it can be cached. This should fix #67
-            return atlasDataClientCache.computeIfAbsent(key, AtlasData::new);
+            return atlasDataClientCache.computeIfAbsent(key, s -> new AtlasData());
         } else {
             PersistentStateManager manager = ((ServerWorld) world).getPersistentStateManager();
-            return manager.getOrCreate(() -> new AtlasData(key), key);
+            return manager.getOrCreate(AtlasData::readNbt, AtlasData::new, key);
         }
     }
 

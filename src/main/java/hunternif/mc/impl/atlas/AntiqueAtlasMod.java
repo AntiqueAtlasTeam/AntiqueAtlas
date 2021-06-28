@@ -49,7 +49,7 @@ public class AntiqueAtlasMod implements ModInitializer {
 			return null;
 		}
 
-		return ((ServerWorld) world).getPersistentStateManager().getOrCreate(() -> new GlobalAtlasData("antiqueatlas:global_atlas_data"), "antiqueatlas:global_atlas_data");
+		return ((ServerWorld) world).getPersistentStateManager().getOrCreate(GlobalAtlasData::readNbt, GlobalAtlasData::new, "antiqueatlas:global_atlas_data");
 	}
 
 	@Override

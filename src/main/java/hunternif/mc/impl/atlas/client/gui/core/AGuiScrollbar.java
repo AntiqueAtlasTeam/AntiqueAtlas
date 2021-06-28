@@ -196,7 +196,7 @@ public abstract class AGuiScrollbar extends GuiComponent {
         RenderSystem.enableTexture();
         RenderSystem.enableBlend();
         RenderSystem.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-        RenderSystem.color4f(1, 1, 1, 1);
+        RenderSystem.setShaderColor(1, 1, 1, 1);
 
         drawAnchor(matrices);
 

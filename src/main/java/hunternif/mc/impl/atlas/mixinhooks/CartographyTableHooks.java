@@ -20,13 +20,13 @@ public class CartographyTableHooks {
         }
 
         if (map.getItem() == Items.FILLED_MAP) {
-            MapState mapState = FilledMapItem.getMapState(map, player.getEntityWorld());
+            MapState mapState = FilledMapItem.getMapState(FilledMapItem.getMapId(map), player.getEntityWorld());
             if (mapState != null) {
-                mapState.icons.forEach((key, icon) -> {
+                mapState.getIcons().forEach(icon -> {
                     int i = 1 << mapState.scale;
 
-                    int x = (int) ((int) (icon.getX() - 0.5f) / 2f) * i + mapState.xCenter;
-                    int z = (int) ((int) (icon.getZ() - 0.5f) / 2f) * i + mapState.zCenter;
+                    int x = (int) ((int) (icon.getX() - 0.5f) / 2f) * i + mapState.centerX;
+                    int z = (int) ((int) (icon.getZ() - 0.5f) / 2f) * i + mapState.centerZ;
 
                     Identifier type = null;
                     Text label = null;

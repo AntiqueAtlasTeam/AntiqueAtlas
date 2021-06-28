@@ -4,7 +4,6 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.world.World;
-import net.minecraft.world.dimension.DimensionType;
 
 /**
  * Handles the world-saved data with global markers.
@@ -25,8 +24,8 @@ public class GlobalMarkersDataHandler {
 
 	public void onWorldLoad(MinecraftServer server, ServerWorld world) {
 		if (world.getRegistryKey() == World.OVERWORLD) {
-			data = world.getPersistentStateManager().getOrCreate(() -> {
-				GlobalMarkersData data = new GlobalMarkersData(DATA_KEY);
+			data = world.getPersistentStateManager().getOrCreate(GlobalMarkersData::readNbt, () -> {
+				GlobalMarkersData data = new GlobalMarkersData();
 				data.markDirty();
 				return data;
 			}, DATA_KEY);
@@ -50,7 +49,7 @@ public class GlobalMarkersDataHandler {
 
 	public GlobalMarkersData getData() {
 		if (data == null) { // This will happen on the client
-			data = new GlobalMarkersData(DATA_KEY);
+			data = new GlobalMarkersData();
 		}
 		return data;
 	}

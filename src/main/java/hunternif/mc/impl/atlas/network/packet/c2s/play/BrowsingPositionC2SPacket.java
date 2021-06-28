@@ -37,7 +37,7 @@ public class BrowsingPositionC2SPacket extends C2SPacket {
 
 	public static void apply(MinecraftServer server, ServerPlayerEntity player, ServerPlayNetworkHandler handler, PacketByteBuf buf, PacketSender responseSender) {
 		int atlasID = buf.readVarInt();
-		RegistryKey<World> world = RegistryKey.of(Registry.DIMENSION, buf.readIdentifier());
+		RegistryKey<World> world = RegistryKey.of(Registry.WORLD_KEY, buf.readIdentifier());
 		int x = buf.readVarInt();
 		int y = buf.readVarInt();
 		double zoom = buf.readDouble();
