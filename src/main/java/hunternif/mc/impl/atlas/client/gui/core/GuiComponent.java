@@ -244,7 +244,6 @@ public class GuiComponent extends Screen {
         child.parent = this;
         child.setGuiCoords(guiX, guiY);
         if (MinecraftClient.getInstance() != null) {
-            child.buttons.clear();
             child.init(MinecraftClient.getInstance(), width, height);
         }
         invalidateSize();
@@ -454,10 +453,10 @@ public class GuiComponent extends Screen {
     }
 
     @Override
-    public void init(MinecraftClient mc, int width, int height) {
-        super.init(mc, width, height);
+    public void init() {
+        super.init();
         for (GuiComponent child : children) {
-            child.init(mc, width, height);
+            child.init(client, width, height);
         }
     }
 

@@ -18,7 +18,7 @@ public class NetherFortress {
 
 		if (box.getBlockCountX() > 16) {
 			int chunkZ = MathUtil.getCenter(box).getZ() >> 4;
-			for (int x = box.minX; x < box.maxX; x += 16) {
+			for (int x = box.getMinX(); x < box.getMaxX(); x += 16) {
 				matches.add(new ChunkPos(x >> 4, chunkZ));
 			}
 		}
@@ -31,7 +31,7 @@ public class NetherFortress {
 
 		if (box.getBlockCountZ() > 16) {
 			int chunkX = MathUtil.getCenter(box).getX() >> 4;
-			for (int z = box.minZ; z < box.maxZ; z += 16) {
+			for (int z = box.getMinZ(); z < box.getMaxZ(); z += 16) {
 				matches.add(new ChunkPos(chunkX, z >> 4));
 			}
 		}

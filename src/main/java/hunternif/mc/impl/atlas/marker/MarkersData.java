@@ -6,8 +6,8 @@ import hunternif.mc.impl.atlas.network.packet.s2c.play.MarkersS2CPacket;
 import hunternif.mc.impl.atlas.util.Log;
 import net.fabricmc.fabric.api.util.NbtType;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtList;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
@@ -70,26 +70,27 @@ public class MarkersData extends PersistentState {
 	private final Map<RegistryKey<World>, DimensionMarkersData> worldMap =
 			new ConcurrentHashMap<>(2, 0.75f, 2);
 
-	public MarkersData(String key) {
-		super(key);
+	public MarkersData() {
 	}
 
 
-	@Override
-	public void fromTag(CompoundTag compound) {
+	public static MarkersData readNbt(NbtCompound compound) {
+		MarkersData data = new MarkersData();
+
 		int version = compound.getInt(TAG_VERSION);
 		if (version < VERSION) {
 			Log.warn("Outdated atlas data format! Was %d but current is %d", version, VERSION);
-			this.markDirty();
+			return data;
 		}
-		ListTag dimensionMapList = compound.getList(TAG_WORLD_MAP_LIST, NbtType.COMPOUND);
-		for (int d = 0; d < dimensionMapList.size(); d++) {
-			CompoundTag tag = dimensionMapList.getCompound(d);
-			RegistryKey<World> world = RegistryKey.of(Registry.DIMENSION,new Identifier(tag.getString(TAG_WORLD_ID)));
 
-			ListTag tagList = tag.getList(TAG_MARKERS, NbtType.COMPOUND);
+		NbtList dimensionMapList = compound.getList(TAG_WORLD_MAP_LIST, NbtType.COMPOUND);
+		for (int d = 0; d < dimensionMapList.size(); d++) {
+			NbtCompound tag = dimensionMapList.getCompound(d);
+			RegistryKey<World> world = RegistryKey.of(Registry.WORLD_KEY, new Identifier(tag.getString(TAG_WORLD_ID)));
+
+			NbtList tagList = tag.getList(TAG_MARKERS, NbtType.COMPOUND);
 			for (int i = 0; i < tagList.size(); i++) {
-				CompoundTag markerTag = tagList.getCompound(i);
+				NbtCompound markerTag = tagList.getCompound(i);
 				boolean visibleAhead = true;
 				if (version < 2) {
 					Log.warn("Marker is visible ahead by default");
@@ -98,17 +99,17 @@ public class MarkersData extends PersistentState {
 				}
 				int id;
 				if (version < 3) {
-					id = getNewID();
+					id = data.getNewID();
 				} else {
 					id = markerTag.getInt(TAG_MARKER_ID);
-					if (getMarkerByID(id) != null) {
+					if (data.getMarkerByID(id) != null) {
 						Log.warn("Loading marker with duplicate id %d. Getting new id", id);
-						id = getNewID();
+						id = data.getNewID();
 					}
-					this.markDirty();
+					data.markDirty();
 				}
-				if (largestID.intValue() < id) {
-					largestID.set(id);
+				if (data.largestID.intValue() < id) {
+					data.largestID.set(id);
 				}
 
 				Marker marker = new Marker(
@@ -119,23 +120,25 @@ public class MarkersData extends PersistentState {
 						markerTag.getInt(TAG_MARKER_X),
 						markerTag.getInt(TAG_MARKER_Y),
 						visibleAhead);
-				loadMarker(marker);
+				data.loadMarker(marker);
 			}
 		}
+
+		return data;
 	}
 
 	@Override
-	public CompoundTag toTag(CompoundTag compound) {
+	public NbtCompound writeNbt(NbtCompound compound) {
 		Log.info("Saving local markers data to NBT");
 		compound.putInt(TAG_VERSION, VERSION);
-		ListTag dimensionMapList = new ListTag();
+		NbtList dimensionMapList = new NbtList();
 		for (RegistryKey<World> world : worldMap.keySet()) {
-			CompoundTag tag = new CompoundTag();
+			NbtCompound tag = new NbtCompound();
 			tag.putString(TAG_WORLD_ID, world.getValue().toString());
 			DimensionMarkersData data = getMarkersDataInWorld(world);
-			ListTag tagList = new ListTag();
+			NbtList tagList = new NbtList();
 			for (Marker marker : data.getAllMarkers()) {
-				CompoundTag markerTag = new CompoundTag();
+				NbtCompound markerTag = new NbtCompound();
 				markerTag.putInt(TAG_MARKER_ID, marker.getId());
 				markerTag.putString(TAG_MARKER_TYPE, marker.getType().toString());
 				markerTag.putString(TAG_MARKER_LABEL, Text.Serializer.toJson(marker.getLabel()));

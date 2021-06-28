@@ -47,37 +47,39 @@ public class GuiArrowButton extends GuiComponentButton {
     public void render(MatrixStack matrices, int mouseX, int mouseY, float partialTick) {
         RenderSystem.enableBlend();
         RenderSystem.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-        RenderSystem.alphaFunc(GL11.GL_GREATER, 0);
+
+        // TODO fix me for 1.17
+        //RenderSystem.alphaFunc(GL11.GL_GREATER, 0);
 
         int x = getGuiX(), y = getGuiY();
         if (isMouseOver) {
-            RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
+            RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         } else {
             // Fade out when the mouse is far from them:
             int distanceSq = (mouseX - x - getWidth() / 2) * (mouseX - x - getWidth() / 2) +
                     (mouseY - y - getHeight() / 2) * (mouseY - y - getHeight() / 2);
             double alpha = distanceSq < 400 ? 0.5 : Math.pow((double) distanceSq, -0.28);
-            RenderSystem.color4f(1, 1, 1, (float) alpha);
+            RenderSystem.setShaderColor(1, 1, 1, (float) alpha);
         }
 
         int u = 0, v = 0;
         switch (direction) {
-            case LEFT:
+            case LEFT -> {
                 u = 0;
                 v = 0;
-                break;
-            case RIGHT:
+            }
+            case RIGHT -> {
                 u = 0;
                 v = 12;
-                break;
-            case UP:
+            }
+            case UP -> {
                 u = 12;
                 v = 0;
-                break;
-            case DOWN:
+            }
+            case DOWN -> {
                 u = 12;
                 v = 12;
-                break;
+            }
         }
         Textures.BTN_ARROWS.draw(matrices, x, y, u, v, WIDTH, HEIGHT);
 

@@ -5,8 +5,8 @@ import hunternif.mc.impl.atlas.util.Log;
 import hunternif.mc.impl.atlas.util.Streams;
 import net.fabricmc.fabric.api.util.NbtType;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtList;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.ChunkPos;
@@ -31,36 +31,40 @@ public class TileDataStorage extends PersistentState {
     private static final int CHUNK_SIZE = 10000;
     private final Map<ChunkPos, Identifier> tiles = new ConcurrentHashMap<>(2, 0.75f, 2);
 
-    public TileDataStorage(String key) {
-        super(key);
+    public TileDataStorage() {
     }
 
-    @Override
-    public void fromTag(CompoundTag compound) {
+    private final Map<ChunkPos, Identifier> tiles = new ConcurrentHashMap<>(2, 0.75f, 2);
+
+    public static TileDataStorage readNbt(NbtCompound compound) {
+        TileDataStorage data = new TileDataStorage();
+
         int version = compound.getInt(TAG_VERSION);
 
         if (version < VERSION) {
             Log.warn("Outdated atlas data format! Was %d but current is %d", version, VERSION);
-            this.markDirty();
+            return data;
         }
 
-        ListTag tileList = compound.getList(TAG_TILE_LIST, NbtType.COMPOUND);
+        NbtList tileList = compound.getList(TAG_TILE_LIST, NbtType.COMPOUND);
 
         tileList.forEach(tag1 -> {
-            CompoundTag tile = (CompoundTag) tag1;
+            NbtCompound tile = (NbtCompound) tag1;
             ChunkPos coords = new ChunkPos(tile.getInt("x"), tile.getInt("y"));
-            tiles.put(coords, Identifier.tryParse(tile.getString("id")));
+            data.tiles.put(coords, Identifier.tryParse(tile.getString("id")));
         });
+
+        return data;
     }
 
     @Override
-    public CompoundTag toTag(CompoundTag compound) {
+    public NbtCompound writeNbt(NbtCompound compound) {
         compound.putInt(TAG_VERSION, VERSION);
 
-        ListTag tileList = new ListTag();
+        NbtList tileList = new NbtList();
 
         for (Entry<ChunkPos, Identifier> entry : tiles.entrySet()) {
-            CompoundTag tile = new CompoundTag();
+            NbtCompound tile = new NbtCompound();
             tile.putInt("x", entry.getKey().x);
             tile.putInt("y", entry.getKey().z);
             tile.putString("id", entry.getValue().toString());

@@ -1,5 +1,6 @@
 package hunternif.mc.impl.atlas.client.texture;
 
+import com.mojang.blaze3d.systems.RenderSystem;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
@@ -37,7 +38,8 @@ public abstract class ATexture implements ITexture {
     }
 
     public void bind() {
-        MinecraftClient.getInstance().getTextureManager().bindTexture(this.texture);
+//        MinecraftClient.getInstance().getTextureManager().bindTexture(this.texture);
+        RenderSystem.setShaderTexture(0, texture);
     }
 
     public void draw(MatrixStack matrices, int x, int y) {

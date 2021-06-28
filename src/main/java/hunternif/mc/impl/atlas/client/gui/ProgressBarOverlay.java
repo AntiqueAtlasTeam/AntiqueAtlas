@@ -7,6 +7,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.render.BufferBuilder;
 import net.minecraft.client.render.Tessellator;
+import net.minecraft.client.render.VertexFormat;
 import net.minecraft.client.render.VertexFormats;
 import net.minecraft.client.util.math.MatrixStack;
 import org.lwjgl.opengl.GL11;
@@ -52,7 +53,7 @@ class ProgressBarOverlay {
         Tessellator tessellator = Tessellator.getInstance();
         BufferBuilder vb = tessellator.getBuffer();
 
-        vb.begin(GL11.GL_QUADS, VertexFormats.POSITION_COLOR);
+        vb.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR);
 
         vb.vertex(x, y, 0).color(0.5f, 0.5f, 0.5f, 1).next();
         vb.vertex(x, y + barHeight, 0).color(0.5f, 0.5f, 0.5f, 1).next();

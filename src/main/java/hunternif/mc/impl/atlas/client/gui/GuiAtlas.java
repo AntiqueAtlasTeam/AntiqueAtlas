@@ -22,11 +22,10 @@ import hunternif.mc.impl.atlas.registry.MarkerType;
 import hunternif.mc.impl.atlas.util.*;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawableHelper;
-import net.minecraft.client.options.KeyBinding;
+import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.resource.language.I18n;
 import net.minecraft.client.sound.PositionedSoundInstance;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.client.util.math.Vector3f;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.sound.SoundCategory;
@@ -38,6 +37,7 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.Vec3f;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL11;
 
@@ -471,7 +471,7 @@ public class GuiAtlas extends GuiComponent {
     }
 
     @Override
-    protected void init() {
+    public void init() {
         super.init();
         if (state.is(EXPORTING_IMAGE)) {
             state.switchTo(NORMAL); //TODO: his causes the Export PNG progress bar to disappear when resizing game window
@@ -887,16 +887,17 @@ public class GuiAtlas extends GuiComponent {
 
         super.renderBackground(matrices);
 
-        RenderSystem.color4f(1, 1, 1, 1);
-        RenderSystem.enableAlphaTest();
-        RenderSystem.alphaFunc(GL11.GL_GREATER, 0); // So light detail on tiles is visible
+        RenderSystem.setShaderColor(1, 1, 1, 1);
+        // TODO fix me for 1.17
+//        RenderSystem.enableAlphaTest();
+//        RenderSystem.alphaFunc(GL11.GL_GREATER, 0); // So light detail on tiles is visible
         Textures.BOOK.draw(matrices, getGuiX(), getGuiY());
 
         if ((stack == null && AntiqueAtlasMod.CONFIG.itemNeeded) || biomeData == null)
             return;
 
         if (state.is(DELETING_MARKER)) {
-            RenderSystem.color4f(1, 1, 1, 0.5f);
+            RenderSystem.setShaderColor(1, 1, 1, 0.5f);
         }
         RenderSystem.enableScissor(
                 (int) ((getGuiX() + MAP_BORDER_WIDTH) * screenScale),
@@ -944,7 +945,7 @@ public class GuiAtlas extends GuiComponent {
         RenderSystem.disableScissor();
 
         // Overlay the frame so that edges of the map are smooth:
-        RenderSystem.color4f(1, 1, 1, 1);
+        RenderSystem.setShaderColor(1, 1, 1, 1);
         Textures.BOOK_FRAME.draw(matrices, getGuiX(), getGuiY());
 
         double iconScale = getIconScale();
@@ -969,12 +970,12 @@ public class GuiAtlas extends GuiComponent {
         RenderSystem.enableBlend();
         RenderSystem.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
         if (state.is(PLACING_MARKER)) {
-            RenderSystem.color4f(1, 1, 1, 0.5f);
+            RenderSystem.setShaderColor(1, 1, 1, 0.5f);
             markerFinalizer.selectedType.calculateMip(iconScale, mapScale, screenScale);
             MarkerRenderInfo renderInfo = markerFinalizer.selectedType.getRenderInfo(iconScale, mapScale, screenScale);
             markerFinalizer.selectedType.resetMip();
             renderInfo.tex.draw(matrices, mouseX + renderInfo.x, mouseY + renderInfo.y);
-            RenderSystem.color4f(1, 1, 1, 1);
+            RenderSystem.setShaderColor(1, 1, 1, 1);
         }
         RenderSystem.disableBlend();
 
@@ -1016,19 +1017,19 @@ public class GuiAtlas extends GuiComponent {
         playerOffsetZ = MathHelper.clamp(playerOffsetZ, -MAP_HEIGHT / 2, MAP_HEIGHT / 2 - 2);
 
         // Draw the icon:
-        RenderSystem.color4f(1, 1, 1, state.is(PLACING_MARKER) ? 0.5f : 1);
+        RenderSystem.setShaderColor(1, 1, 1, state.is(PLACING_MARKER) ? 0.5f : 1);
         matrices.push();
 
         matrices.translate(getGuiX() + WIDTH / 2 + playerOffsetX, getGuiY() + HEIGHT / 2 + playerOffsetZ, 0);
-        float playerRotation = (float) Math.round(player.yaw / 360f * PLAYER_ROTATION_STEPS) / PLAYER_ROTATION_STEPS * 360f;
-        matrices.multiply(Vector3f.POSITIVE_Z.getDegreesQuaternion(180 + playerRotation));
+        float playerRotation = (float) Math.round(player.getYaw() / 360f * PLAYER_ROTATION_STEPS) / PLAYER_ROTATION_STEPS * 360f;
+        matrices.multiply(Vec3f.POSITIVE_Z.getDegreesQuaternion(180 + playerRotation));
         matrices.translate((float) (-PLAYER_ICON_WIDTH / 2 * iconScale), (float) (-PLAYER_ICON_HEIGHT / 2 * iconScale), 0f);
 
         Textures.PLAYER.draw(matrices, 0, 0, (int) Math.round(PLAYER_ICON_WIDTH * iconScale), (int) Math.round(PLAYER_ICON_HEIGHT * iconScale));
 
         matrices.pop();
 
-        RenderSystem.color4f(1, 1, 1, 1);
+        RenderSystem.setShaderColor(1, 1, 1, 1);
     }
 
     private void renderScaleOverlay(MatrixStack matrices, long deltaMillis) {
@@ -1115,22 +1116,22 @@ public class GuiAtlas extends GuiComponent {
         type.resetMip();
 
         if (mouseIsOverMarker) {
-            RenderSystem.color4f(0.5f, 0.5f, 0.5f, 1);
+            RenderSystem.setShaderColor(0.5f, 0.5f, 0.5f, 1);
             hoveredMarker = marker;
             MarkerHoveredCallback.EVENT.invoker().onHovered(player, marker);
         } else {
-            RenderSystem.color4f(1, 1, 1, 1);
+            RenderSystem.setShaderColor(1, 1, 1, 1);
             if (hoveredMarker == marker) {
                 hoveredMarker = null;
             }
         }
 
         if (state.is(PLACING_MARKER)) {
-            RenderSystem.color4f(1, 1, 1, 0.5f);
+            RenderSystem.setShaderColor(1, 1, 1, 0.5f);
         } else if (state.is(DELETING_MARKER) && marker.isGlobal()) {
-            RenderSystem.color4f(1, 1, 1, 0.5f);
+            RenderSystem.setShaderColor(1, 1, 1, 0.5f);
         } else {
-            RenderSystem.color4f(1, 1, 1, 1);
+            RenderSystem.setShaderColor(1, 1, 1, 1);
         }
 
         if (AntiqueAtlasMod.CONFIG.debugRender) {
@@ -1140,7 +1141,7 @@ public class GuiAtlas extends GuiComponent {
         if (markerX <= getGuiX() + MAP_BORDER_WIDTH || markerX >= getGuiX() + MAP_WIDTH + MAP_BORDER_WIDTH
                 || markerY <= getGuiY() + MAP_BORDER_HEIGHT || markerY >= getGuiY() + MAP_HEIGHT + MAP_BORDER_HEIGHT
         ) {
-            RenderSystem.color4f(1, 1, 1, 0.5f);
+            RenderSystem.setShaderColor(1, 1, 1, 0.5f);
             info.scale(0.8);
         }
 
@@ -1150,7 +1151,7 @@ public class GuiAtlas extends GuiComponent {
 
         info.tex.draw(matrices, markerX + info.x, markerY + info.y, info.width, info.height);
 
-        RenderSystem.color4f(1, 1, 1, 1);
+        RenderSystem.setShaderColor(1, 1, 1, 1);
 
         if (isMouseOver && mouseIsOverMarker && marker.getLabel().getString().length() > 0) {
             drawTooltip(Collections.singletonList(marker.getLabel()), textRenderer);

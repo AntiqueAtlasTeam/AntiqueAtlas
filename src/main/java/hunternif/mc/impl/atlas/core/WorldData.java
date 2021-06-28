@@ -6,8 +6,8 @@ import hunternif.mc.impl.atlas.util.Log;
 import hunternif.mc.impl.atlas.util.Rect;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtList;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.ChunkPos;
@@ -176,10 +176,10 @@ public class WorldData implements ITileStorage {
         }
     }
 
-    public ListTag writeToNBT() {
-        ListTag tileGroupList = new ListTag();
+    public NbtList writeToNBT() {
+        NbtList tileGroupList = new NbtList();
         for (Entry<ChunkPos, TileGroup> entry : tileGroups.entrySet()) {
-            CompoundTag newbie = new CompoundTag();
+            NbtCompound newbie = new NbtCompound();
             entry.getValue().writeToNBT(newbie);
             tileGroupList.add(newbie);
         }
@@ -196,12 +196,12 @@ public class WorldData implements ITileStorage {
         }
     }
 
-    public void readFromNBT(ListTag me) {
+    public void readFromNBT(NbtList me) {
         if (me == null) {
             return;
         }
         for (int d = 0; d < me.size(); d++) {
-            CompoundTag tgTag = me.getCompound(d);
+            NbtCompound tgTag = me.getCompound(d);
             TileGroup tg = new TileGroup(0, 0);
             tg.readFromNBT(tgTag);
             putTileGroup(tg);

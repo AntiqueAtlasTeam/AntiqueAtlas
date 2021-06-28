@@ -1,6 +1,7 @@
 package hunternif.mc.impl.atlas.client.gui;
 
 import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.systems.RenderSystem;
 import hunternif.mc.impl.atlas.util.ExportImageUtil;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -8,6 +9,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.render.BufferBuilder;
 import net.minecraft.client.render.Tessellator;
+import net.minecraft.client.render.VertexFormat;
 import net.minecraft.client.render.VertexFormats;
 import net.minecraft.client.util.math.MatrixStack;
 import org.lwjgl.opengl.GL11;
@@ -28,14 +30,11 @@ public enum ExportProgressOverlay {
         TextRenderer font = MinecraftClient.getInstance().textRenderer;
         int s = 2;
 
-        GlStateManager.scaled(1.0 / s, 1.0 / s, 1);
-
         int headerWidth = font.getWidth(l.header);
         font.draw(matrices, l.header, (x) * s - headerWidth / 2F, (y) * s - 14, 0xffffff);
         int statusWidth = font.getWidth(l.status);
         font.draw(matrices, l.status, (x) * s - statusWidth / 2F, (y) * s, 0xffffff);
 
-        GlStateManager.scaled(s, s, 1);
         y += 7;
 
         x -= barWidth / 2;
@@ -43,12 +42,12 @@ public enum ExportProgressOverlay {
         if (l.maxProgress < 0)
             p = 0;
 
-        GlStateManager.disableTexture();
+        RenderSystem.disableTexture();
 
         Tessellator tessellator = Tessellator.getInstance();
         BufferBuilder vb = tessellator.getBuffer();
 
-        vb.begin(GL11.GL_QUADS, VertexFormats.POSITION_COLOR);
+        vb.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR);
 
         vb.vertex(x, y, 0).color(0.5f, 0.5f, 0.5f, 1).next();
         vb.vertex(x, y + barHeight, 0).color(0.5f, 0.5f, 0.5f, 1).next();
@@ -62,6 +61,6 @@ public enum ExportProgressOverlay {
 
         tessellator.draw();
 
-        GlStateManager.enableTexture();
+        RenderSystem.enableTexture();
     }
 }

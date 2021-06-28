@@ -75,6 +75,4 @@ public class MarkerApiImpl implements MarkerAPI {
             new DeleteMarkerResponseS2CPacket(atlasID, markerID).send(world.getServer());
         }
     }
-
-
 }

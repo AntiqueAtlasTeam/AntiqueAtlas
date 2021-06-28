@@ -44,7 +44,7 @@ public class ItemEmptyAtlas extends Item {
         if (stack.isEmpty()) {
             return new TypedActionResult<>(ActionResult.SUCCESS, atlasStack);
         } else {
-            if (!player.inventory.insertStack(atlasStack.copy())) {
+            if (!player.getInventory().insertStack(atlasStack.copy())) {
                 player.dropItem(atlasStack, true);
             }
 

@@ -1,15 +1,14 @@
 package hunternif.mc.impl.atlas.core;
 
 import net.fabricmc.fabric.api.util.NbtType;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.world.PersistentState;
 
 public class GlobalAtlasData extends PersistentState {
     public static final String TAG_NEXT_ID = "aaNextID";
     private int nextId = 1;
 
-    public GlobalAtlasData(String key) {
-        super(key);
+    public GlobalAtlasData() {
     }
 
     public int getNextAtlasId() {
@@ -18,17 +17,18 @@ public class GlobalAtlasData extends PersistentState {
         return id;
     }
 
-    @Override
-    public void fromTag(CompoundTag compound) {
+    public static GlobalAtlasData readNbt(NbtCompound compound) {
+        GlobalAtlasData data = new GlobalAtlasData();
         if (compound.contains(TAG_NEXT_ID, NbtType.NUMBER)) {
-            nextId = compound.getInt(TAG_NEXT_ID);
+            data.nextId = compound.getInt(TAG_NEXT_ID);
         } else {
-            nextId = 1;
+            data.nextId = 1;
         }
+        return data;
     }
 
     @Override
-    public CompoundTag toTag(CompoundTag var1) {
+    public NbtCompound writeNbt(NbtCompound var1) {
         var1.putInt(TAG_NEXT_ID, nextId);
         return var1;
     }

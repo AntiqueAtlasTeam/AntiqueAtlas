@@ -76,10 +76,10 @@ public class GuiMarkerFinalizer extends GuiComponent {
     }
 
     @Override
-    protected void init() {
+    public void init() {
         super.init();
 
-        addButton(btnDone = new ButtonWidget(this.width / 2 - BUTTON_WIDTH - BUTTON_SPACING / 2, this.height / 2 + 40, BUTTON_WIDTH, 20, new TranslatableText("gui.done"), (button) -> {
+        addSelectableChild(btnDone = new ButtonWidget(this.width / 2 - BUTTON_WIDTH - BUTTON_SPACING / 2, this.height / 2 + 40, BUTTON_WIDTH, 20, new TranslatableText("gui.done"), (button) -> {
             AtlasClientAPI.getMarkerAPI().putMarker(world, true, atlasID, MarkerType.REGISTRY.getId(selectedType), new LiteralText(textField.getText()), markerX, markerZ);
             Log.info("Put marker in Atlas #%d \"%s\" at (%d, %d)", atlasID, textField.getText(), markerX, markerZ);
 
@@ -89,7 +89,7 @@ public class GuiMarkerFinalizer extends GuiComponent {
                     1F, 1F);
             close();
         }));
-        addButton(btnCancel = new ButtonWidget(this.width / 2 + BUTTON_SPACING / 2, this.height / 2 + 40, BUTTON_WIDTH, 20, new TranslatableText("gui.cancel"), (button) -> {
+        addSelectableChild(btnCancel = new ButtonWidget(this.width / 2 + BUTTON_SPACING / 2, this.height / 2 + 40, BUTTON_WIDTH, 20, new TranslatableText("gui.cancel"), (button) -> {
             close();
         }));
         textField = new TextFieldWidget(MinecraftClient.getInstance().textRenderer, (this.width - 200) / 2, this.height / 2 - 81, 200, 20, new TranslatableText("gui.antiqueatlas.marker.label"));

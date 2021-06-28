@@ -26,9 +26,9 @@ public class GuiPositionButton extends GuiComponentButton {
 
             int x = getGuiX(), y = getGuiY();
             if (isMouseOver) {
-                RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
+                RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
             } else {
-                RenderSystem.color4f(1.0F, 1.0F, 1.0F, 0.5F);
+                RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 0.5F);
             }
 
             Textures.BTN_POSITION.draw(matrices, x, y, WIDTH, HEIGHT);

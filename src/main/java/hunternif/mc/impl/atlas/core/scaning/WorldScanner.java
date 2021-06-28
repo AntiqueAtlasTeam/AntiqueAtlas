@@ -71,8 +71,8 @@ public class WorldScanner {
                     continue; // Outside the circle
                 }
 
-                int chunkX = player.chunkX + dx;
-                int chunkZ = player.chunkZ + dz;
+                int chunkX = player.getChunkPos().x + dx;
+                int chunkZ = player.getChunkPos().z + dz;
 
                 TileInfo update = updateAtlasForChunk(data, player.getEntityWorld(), chunkX, chunkZ, rescanRequired);
                 if (update != null) {

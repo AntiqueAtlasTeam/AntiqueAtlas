@@ -9,7 +9,7 @@ import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.util.Identifier;
 
@@ -21,9 +21,9 @@ import net.minecraft.util.Identifier;
 public class MapDataS2CPacket extends S2CPacket {
 	public static final Identifier ID = AntiqueAtlasMod.id("packet", "s2c", "map", "data");
 
-	public MapDataS2CPacket(int atlasID, CompoundTag data) {
+	public MapDataS2CPacket(int atlasID, NbtCompound data) {
 		this.writeVarInt(atlasID);
-		this.writeCompoundTag(data);
+		this.writeNbt(data);
 	}
 
 	@Override
@@ -34,13 +34,13 @@ public class MapDataS2CPacket extends S2CPacket {
 	@Environment(EnvType.CLIENT)
 	public static void apply(MinecraftClient client, ClientPlayNetworkHandler handler, PacketByteBuf buf, PacketSender responseSender) {
 		int atlasID = buf.readVarInt();
-		CompoundTag data = buf.readCompoundTag();
+		NbtCompound data = buf.readNbt();
 
 		if (data == null) return;
 
 		client.execute(() -> {
 			AtlasData atlasData = AntiqueAtlasMod.tileData.getData(atlasID, client.player.getEntityWorld());
-			atlasData.fromTag(data);
+			atlasData.readNbt(data);
 
 			if (AntiqueAtlasMod.CONFIG.doSaveBrowsingPos && MinecraftClient.getInstance().currentScreen instanceof GuiAtlas) {
 				((GuiAtlas) MinecraftClient.getInstance().currentScreen).loadSavedBrowsingPosition();

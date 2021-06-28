@@ -8,9 +8,10 @@ import hunternif.mc.impl.atlas.network.packet.s2c.S2CPacket;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.registry.BuiltinRegistries;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.World;
@@ -34,7 +35,7 @@ public class TileGroupsS2CPacket extends S2CPacket {
 		this.writeVarInt(tileGroups.size());
 
 		for (TileGroup tileGroup : tileGroups) {
-			this.writeCompoundTag(tileGroup.writeToNBT(new CompoundTag()));
+			this.writeNbt(tileGroup.writeToNBT(new NbtCompound()));
 		}
 	}
 
@@ -45,12 +46,12 @@ public class TileGroupsS2CPacket extends S2CPacket {
 
 	public static void apply(MinecraftClient client, ClientPlayNetworkHandler handler, PacketByteBuf buf, PacketSender responseSender) {
 		int atlasID = buf.readVarInt();
-		RegistryKey<World> world = RegistryKey.of(Registry.DIMENSION, buf.readIdentifier());
+		RegistryKey<World> world = RegistryKey.of(Registry.WORLD_KEY, buf.readIdentifier());
 		int length = buf.readVarInt();
 		List<TileGroup> tileGroups = new ArrayList<>(length);
 
 		for (int i = 0; i < length; ++i) {
-			CompoundTag tag = buf.readCompoundTag();
+			NbtCompound tag = buf.readNbt();
 
 			if (tag != null) {
 				tileGroups.add(new TileGroup().readFromNBT(tag));
