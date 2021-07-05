@@ -10,18 +10,65 @@
   "gui.antiqueatlas.hideMarkers": "Скрыть метки",
   "gui.antiqueatlas.showMarkers": "Показать метки",
 
-  "gui.antiqueatlas.marker.label": "Текст метки:",
+  "gui.antiqueatlas.marker.label": "Метка:",
   "gui.antiqueatlas.marker.type": "Тип:",
   "gui.antiqueatlas.marker.village": "Деревня",
-  "gui.antiqueatlas.marker.netherPortal": "Портал Нижнего мира",
+  "gui.antiqueatlas.marker.netherPortal": "Портал в Нижний Мир",
   "gui.antiqueatlas.marker.tomb": "Здесь покоится %s",
+  "gui.antiqueatlas.marker.treasure": "Зарытый клад",
+  "gui.antiqueatlas.marker.monument": "Морской монумент",
+  "gui.antiqueatlas.marker.mansion": "Лесной особняк",
 
   "gui.antiqueatlas.export.opening": "Открывается диалоговое окно...",
   "gui.antiqueatlas.export.selectFile": "Укажите PNG файл, куда сохранять изображение карты",
   "gui.antiqueatlas.export.tooLarge": "Извините, картинка слишком большая. Попробуйте выделить больше памяти для Java.",
+
+  "gui.antiqueatlas.export.setup": "Подготовка...",
   "gui.antiqueatlas.export.rendering": "Отрисовка...",
   "gui.antiqueatlas.export.writing": "Запись в файл...",
+  "gui.antiqueatlas.export.loadingtextures": "Загрузка текстур...",
+  "gui.antiqueatlas.export.makingbuffer": "Выделение буфера размером %dx%d...",
+
+  "gui.antiqueatlas.export.renderstripe": "Отрисовка слоя %d/%d...",
+  "gui.antiqueatlas.export.writestripe": "Запись слоя...",
+
+  "gui.antiqueatlas.export.rendering.background": "Отрисовка заднего фона",
+  "gui.antiqueatlas.export.rendering.map": "Отрисовка карты",
+  "gui.antiqueatlas.export.rendering.markers": "Отрисовка меток",
 
   "key.openatlas.desc": "Открыть атлас",
   "key.antiqueatlas.category": "Antique Atlas"
+
+  "text.autoconfig.antiqueatlas.title":  "Старинный Атлас",
+  "text.autoconfig.antiqueatlas.category.gameplay":  "Игровой процесс",
+  "text.autoconfig.antiqueatlas.category.userInterface":  "Пользовательский интерфейс",
+  "text.autoconfig.antiqueatlas.category.performance":  "Производительность",
+  "text.autoconfig.antiqueatlas.category.appearance":  "Внешний вид",
+
+  "text.autoconfig.antiqueatlas.option.doSaveBrowsingPos": "Сохранить позицию",
+  "text.autoconfig.antiqueatlas.option.autoDeathMarker": "Метка смерти",
+  "text.autoconfig.antiqueatlas.option.autoVillageMarkers": "Метка деревни",
+  "text.autoconfig.antiqueatlas.option.autoNetherPortalMarkers": "Метка портала в Нижний Мир",
+  "text.autoconfig.antiqueatlas.option.itemNeeded": "Для использования необходим атлас",
+
+  "text.autoconfig.antiqueatlas.option.doScaleMarkers": "Маркеры масштаба",
+  "text.autoconfig.antiqueatlas.option.defaultScale": "Уровень приближения по умолчанию",
+  "text.autoconfig.antiqueatlas.option.minScale": "Минимальный уровень приближения",
+  "text.autoconfig.antiqueatlas.option.maxScale": "Максимальный уровень приближения",
+  "text.autoconfig.antiqueatlas.option.doReverseWheelZoom": "Инвертированный зум",
+
+  "text.autoconfig.antiqueatlas.option.scanRadius": "Радиус сканирования",
+  "text.autoconfig.antiqueatlas.option.forceChunkLoading": "Вынуждать загрузку чанков",
+  "text.autoconfig.antiqueatlas.option.newScanInterval": "Интервал сканирования",
+  "text.autoconfig.antiqueatlas.option.doRescan": "Повторное сканирование",
+  "text.autoconfig.antiqueatlas.option.rescanRate": "Частота повторных сканирований",
+  "text.autoconfig.antiqueatlas.option.markerLimit": "Лимит маркеров",
+  "text.autoconfig.antiqueatlas.option.doScanPonds": "Искать пруды при сканировании",
+  "text.autoconfig.antiqueatlas.option.doScanRavines": "Искать овраги при сканировании",
+  "text.autoconfig.antiqueatlas.option.debugRender": "Отладочная отрисовка",
+
+  "text.autoconfig.antiqueatlas.option.tileSize": "Размер плиток карты",
+  "text.autoconfig.antiqueatlas.option.markerSize": "Размер маркера",
+  "text.autoconfig.antiqueatlas.option.playerIconWidth": "Ширина иконки игрока",
+  "text.autoconfig.antiqueatlas.option.playerIconHeight": "Высота иконки игрока"
 }
