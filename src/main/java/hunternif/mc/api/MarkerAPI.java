@@ -4,9 +4,8 @@ import hunternif.mc.impl.atlas.marker.Marker;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.world.World;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * API for putting custom markers to the atlases. Set the textures on the
@@ -37,7 +36,7 @@ public interface MarkerAPI {
      * @return returns the marker. null if failed or client
      */
     @Nullable
-    Marker putMarker(@Nonnull World world, boolean visibleAhead, int atlasID, Identifier marker, Text label, int x, int z);
+    Marker putMarker(@NotNull World world, boolean visibleAhead, int atlasID, Identifier marker, Text label, int x, int z);
 
     /**
      * Put a marker in all atlases in the world at specified block coordinates.
@@ -53,7 +52,7 @@ public interface MarkerAPI {
      * @return returns the marker. null if failed or client
      */
     @Nullable
-    Marker putGlobalMarker(@Nonnull World world, boolean visibleAhead, Identifier marker, Text label, int x, int z);
+    Marker putGlobalMarker(@NotNull World world, boolean visibleAhead, Identifier marker, Text label, int x, int z);
 
     /**
      * Delete a marker from an atlas.
@@ -66,7 +65,7 @@ public interface MarkerAPI {
      * @param atlasID
      * @param markerID
      */
-    void deleteMarker(@Nonnull World world, int atlasID, int markerID);
+    void deleteMarker(@NotNull World world, int atlasID, int markerID);
 
     /**
      * Delete a global marker from all atlases. Server side only!
@@ -74,5 +73,5 @@ public interface MarkerAPI {
      * @param world
      * @param markerID
      */
-    void deleteGlobalMarker(@Nonnull World world, int markerID);
+    void deleteGlobalMarker(@NotNull World world, int markerID);
 }

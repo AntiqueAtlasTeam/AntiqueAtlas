@@ -12,9 +12,9 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.Collections;
 
 public class MarkerApiImpl implements MarkerAPI {
@@ -25,13 +25,13 @@ public class MarkerApiImpl implements MarkerAPI {
 
     @Nullable
     @Override
-    public Marker putMarker(@Nonnull World world, boolean visibleAhead, int atlasID, Identifier marker, Text label, int x, int z) {
+    public Marker putMarker(@NotNull World world, boolean visibleAhead, int atlasID, Identifier marker, Text label, int x, int z) {
         return doPutMarker(world, visibleAhead, atlasID, marker, label, x, z);
     }
 
     @Nullable
     @Override
-    public Marker putGlobalMarker(@Nonnull World world, boolean visibleAhead, Identifier marker, Text label, int x, int z) {
+    public Marker putGlobalMarker(@NotNull World world, boolean visibleAhead, Identifier marker, Text label, int x, int z) {
         return doPutMarker(world, visibleAhead, GLOBAL, marker, label, x, z);
     }
 
@@ -50,12 +50,12 @@ public class MarkerApiImpl implements MarkerAPI {
     }
 
     @Override
-    public void deleteMarker(@Nonnull World world, int atlasID, int markerID) {
+    public void deleteMarker(@NotNull World world, int atlasID, int markerID) {
         doDeleteMarker(world, atlasID, markerID);
     }
 
     @Override
-    public void deleteGlobalMarker(@Nonnull World world, int markerID) {
+    public void deleteGlobalMarker(@NotNull World world, int markerID) {
         doDeleteMarker(world, GLOBAL, markerID);
     }
 
