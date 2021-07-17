@@ -47,6 +47,7 @@ public class GuiViewport extends GuiComponent {
 
     @Override
     public void init() {
+        super.init();
         screenScale = client.getWindow().getScaleFactor();
     }
 

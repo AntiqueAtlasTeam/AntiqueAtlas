@@ -64,6 +64,7 @@ public class GuiBlinkingImage extends GuiComponent {
         drawImage(matrices);
 
         RenderSystem.disableBlend();
+        RenderSystem.setShaderColor(1,1,1,1);
     }
 
     private void drawImage(MatrixStack matrices) {
