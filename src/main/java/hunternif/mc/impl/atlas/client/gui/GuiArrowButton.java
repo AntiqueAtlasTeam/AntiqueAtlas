@@ -64,22 +64,22 @@ public class GuiArrowButton extends GuiComponentButton {
 
         int u = 0, v = 0;
         switch (direction) {
-            case LEFT -> {
+            case LEFT:
                 u = 0;
                 v = 0;
-            }
-            case RIGHT -> {
+                break;
+            case RIGHT:
                 u = 0;
                 v = 12;
-            }
-            case UP -> {
+                break;
+            case UP:
                 u = 12;
                 v = 0;
-            }
-            case DOWN -> {
+                break;
+            case DOWN:
                 u = 12;
                 v = 12;
-            }
+                break;
         }
         Textures.BTN_ARROWS.draw(matrices, x, y, u, v, WIDTH, HEIGHT);
 
