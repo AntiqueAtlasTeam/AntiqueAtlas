@@ -33,7 +33,7 @@ public class AntiqueAtlasModClient implements ClientModInitializer {
 		MinecraftClient mc = MinecraftClient.getInstance();
 		if (mc.currentScreen == null) { // In-game screen
 			guiAtlas.updateL18n();
-			mc.openScreen(gui);
+			mc.setScreen(gui);
 		}
 	}
 

@@ -625,7 +625,7 @@ public class GuiComponent extends Screen {
         if (parent != null) {
             parent.removeChild(this); // This sets parent to null
         } else {
-            MinecraftClient.getInstance().openScreen(null);
+            MinecraftClient.getInstance().setScreen(null);
         }
     }
 

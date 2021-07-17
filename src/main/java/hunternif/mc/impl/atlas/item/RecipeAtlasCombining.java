@@ -131,7 +131,7 @@ public class RecipeAtlasCombining implements CraftingRecipe {
 
         // Set atlas ID last, because otherwise we wouldn't be able copy the
         // data from the atlas which was used as a placeholder for the result.
-        result.getOrCreateTag().putInt("atlasID", atlasID);
+        result.getOrCreateNbt().putInt("atlasID", atlasID);
         return result;
     }
 }
