@@ -22,21 +22,24 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(CartographyTableScreenHandler.class)
 public abstract class MixinCartographyTableScreenHandler extends ScreenHandler {
+
+    @Shadow
+    CraftingResultInventory resultInventory;
+
     protected MixinCartographyTableScreenHandler(@Nullable ScreenHandlerType<?> type, int syncId) {
         super(type, syncId);
     }
 
-    // FIXME 1.17 broke it
-//    @Inject(method = "method_17382", at = @At("HEAD"), cancellable = true)
-//    void antiqueatlas_call(ItemStack atlas, ItemStack map, ItemStack result, World world, BlockPos pos, CallbackInfo info) {
-//        if (atlas.getItem() == AtlasAPI.getAtlasItem() && map.getItem() == Items.FILLED_MAP) {
-//            slots.get(CartographyTableScreenHandler.RESULT_SLOT_INDEX).setStack(atlas.copy());
-//
-//            this.sendContentUpdates();
-//
-//            info.cancel();
-//        }
-//    }
+    @Inject(method = "method_17382", at = @At("HEAD"), cancellable = true)
+    void antiqueatlas_call(ItemStack map, ItemStack atlas, ItemStack result, World world, BlockPos pos, CallbackInfo info) {
+        if (atlas.getItem() == AtlasAPI.getAtlasItem() && map.getItem() == Items.FILLED_MAP) {
+            this.resultInventory.setStack(CartographyTableScreenHandler.RESULT_SLOT_INDEX, atlas.copy());
+
+            this.sendContentUpdates();
+
+            info.cancel();
+        }
+    }
 
     @Inject(method = "transferSlot", at = @At("HEAD"), cancellable = true)
     void antiqueatlas_transferSlot(PlayerEntity player, int index, CallbackInfoReturnable<ItemStack> info) {

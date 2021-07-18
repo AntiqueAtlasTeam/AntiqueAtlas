@@ -33,7 +33,7 @@ class MixinCartographyTableScreenHandlerResultSlot {
     }
 
     @Inject(method = "method_7667", at = @At("HEAD"))
-    void antiqueatlas_onTakeItem(PlayerEntity player, ItemStack atlas, CallbackInfoReturnable<ItemStack> info) {
+    void antiqueatlas_onTakeItem(PlayerEntity player, ItemStack atlas, CallbackInfo info) {
         if (atlas.getItem() == AtlasAPI.getAtlasItem()) {
             ItemStack map = antiqueatlas_handler.slots.get(0).getStack();
 

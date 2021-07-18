@@ -9,7 +9,12 @@
     "MixinPlayerEntity",
     "MixinPlayerEntityDeath",
     "MixinPlayerManager",
-    "structure.StructureStartMixin"
+    "structure.StructureStartMixin",
+    "MixinCartographyTableScreenHandler",
+    "dev.MixinCartographyTableScreenHandlerSlot",
+    "prod.MixinCartographyTableScreenHandlerSlot",
+    "dev.MixinCartographyTableScreenHandlerResultSlot",
+    "prod.MixinCartographyTableScreenHandlerResultSlot",
   ],
   "client": [
     "MixinClientPlayNetworkHandler",
