@@ -62,11 +62,13 @@ public class TextureConfig implements IResourceReloadListener<Map<ResourceLocati
 
     @Override
     public CompletableFuture<Void> apply(Map<ResourceLocation, ITexture> textures, IResourceManager manager, IProfiler profiler, Executor executor) {
+        for (Map.Entry<ResourceLocation, ITexture> entry : textures.entrySet()) {
+            texture_map.put(entry.getKey(), entry.getValue());
+            Log.info("Loaded texture %s with path %s", entry.getKey(), entry.getValue().getTexture());
+        }
+
         return CompletableFuture.runAsync(() -> {
-            for (Map.Entry<ResourceLocation, ITexture> entry : textures.entrySet()) {
-                texture_map.put(entry.getKey(), entry.getValue());
-                Log.info("Loaded texture %s with path %s", entry.getKey(), entry.getValue().getTexture());
-            }
+
         });
     }
 

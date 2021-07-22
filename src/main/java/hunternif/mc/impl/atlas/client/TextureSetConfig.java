@@ -125,27 +125,29 @@ public class TextureSetConfig implements IResourceReloadListener<Collection<Text
 
 	@Override
 	public CompletableFuture<Void> apply(Collection<TextureSet> sets, IResourceManager manager, IProfiler profiler, Executor executor) {
-		return CompletableFuture.runAsync(() -> {
-			for (TextureSet set : sets) {
-				try {
-					set.loadTextures();
-					textureSetMap.register(set);
-					Log.info("Loaded texture set %s with %d custom texture(s)", set.name, set.getTexturePaths().length);
-				}
-				catch (Throwable e) {
-					Log.error(e, "Failed to load the texture set `%s`:", set.name);
-				}
+		for (TextureSet set : sets) {
+			try {
+				set.loadTextures();
+				textureSetMap.register(set);
+				Log.info("Loaded texture set %s with %d custom texture(s)", set.name, set.getTexturePaths().length);
 			}
+			catch (Throwable e) {
+				Log.error(e, "Failed to load the texture set `%s`:", set.name);
+			}
+		}
 
-			for (TextureSet set : sets) {
-				set.checkStitching();
-				
-				if (set instanceof TextureSet.TextureSetShore) {
-					TextureSet.TextureSetShore texture = (TextureSet.TextureSetShore) set;
-					texture.loadWater();
-					Log.info("Loaded water texture `%s` for shore texture `%s` texture", texture.waterName, texture.name);
-				}
+		for (TextureSet set : sets) {
+			set.checkStitching();
+
+			if (set instanceof TextureSet.TextureSetShore) {
+				TextureSet.TextureSetShore texture = (TextureSet.TextureSetShore) set;
+				texture.loadWater();
+				Log.info("Loaded water texture `%s` for shore texture `%s` texture", texture.waterName, texture.name);
 			}
+		}
+
+		return CompletableFuture.runAsync(() -> {
+
 		});
 	}
 

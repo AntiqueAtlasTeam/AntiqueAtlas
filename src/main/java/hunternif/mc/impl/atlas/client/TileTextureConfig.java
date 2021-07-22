@@ -84,21 +84,23 @@ public class TileTextureConfig implements IResourceReloadListener<Map<ResourceLo
 
     @Override
     public CompletableFuture<Void> apply(Map<ResourceLocation, ResourceLocation> tileMap, IResourceManager manager, IProfiler profiler, Executor executor) {
-        return CompletableFuture.runAsync(() -> {
-	        for (Map.Entry<ResourceLocation, ResourceLocation> entry : tileMap.entrySet()) {
-		        ResourceLocation tile_id = entry.getKey();
-		        ResourceLocation texture_set = entry.getValue();
-		        TextureSet set = textureSetMap.getByName(entry.getValue());
+        for (Map.Entry<ResourceLocation, ResourceLocation> entry : tileMap.entrySet()) {
+            ResourceLocation tile_id = entry.getKey();
+            ResourceLocation texture_set = entry.getValue();
+            TextureSet set = textureSetMap.getByName(entry.getValue());
 
-		        if(set == null) {
-		            AntiqueAtlasMod.LOG.error("Missing texture set `{}` for tile `{}`. Using default.", texture_set, tile_id);
+            if(set == null) {
+                AntiqueAtlasMod.LOG.error("Missing texture set `{}` for tile `{}`. Using default.", texture_set, tile_id);
 
-		            set = tileTextureMap.getDefaultTexture();
-                }
-
-		        tileTextureMap.setTexture(entry.getKey(), set);
-                Log.info("Using texture set %s for tile %s", set.name, tile_id);
+                set = tileTextureMap.getDefaultTexture();
             }
+
+            tileTextureMap.setTexture(entry.getKey(), set);
+            Log.info("Using texture set %s for tile %s", set.name, tile_id);
+        }
+
+        return CompletableFuture.runAsync(() -> {
+
         });
     }
 
