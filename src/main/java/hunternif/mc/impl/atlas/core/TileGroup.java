@@ -21,7 +21,7 @@ public class TileGroup implements ITileStorage {
 
 	/** The tiles in this scope */
 	ResourceLocation[][] tiles = new ResourceLocation[CHUNK_STEP][CHUNK_STEP];
-	
+
 	public TileGroup(int x, int y) {
 		scope.minX = x;
 		scope.minY = y;
@@ -45,7 +45,13 @@ public class TileGroup implements ITileStorage {
 				// 0 1 2
 				// 3 4 5
 				// 6 7 8
-				tiles[x][y] = ResourceLocation.tryCreate(listTag.getString(x + y * CHUNK_STEP));
+				// stupid OptiFine seems to "optimize" away the whole ResourceLocation checking :C
+				if (listTag.getString(x + y * CHUNK_STEP).equals("antiqueatlas:%null#"))
+				{
+					tiles[x][y] = null;
+				} else {
+					tiles[x][y] = ResourceLocation.tryCreate(listTag.getString(x + y * CHUNK_STEP));
+				}
 			}
 		}
 
@@ -109,7 +115,7 @@ public class TileGroup implements ITileStorage {
 	public Rect getScope() {
 		return scope;
 	}
-	
+
 	@Override
 	public boolean equals(Object obj) {
 		if (!(obj instanceof TileGroup)) {
