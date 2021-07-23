@@ -13,7 +13,7 @@ public class GuiScrollingContainer extends GuiComponent {
         scrollbarHor.setTexture(Textures.SCROLLBAR_HOR, 8, 7, 2);
         scrollbarVer = new GuiVScrollbar(viewport);
         scrollbarVer.setTexture(Textures.SCROLLBAR_VER, 7, 8, 2);
-        setWheelScrollsVertially();
+        setWheelScrollsVertically();
         this.addChild(viewport);
         this.addChild(scrollbarHor);
         this.addChild(scrollbarVer);
@@ -66,7 +66,7 @@ public class GuiScrollingContainer extends GuiComponent {
     /**
      * Mouse wheel will affect <b>vertical</b> scrolling and not horizontal.
      */
-    private void setWheelScrollsVertially() {
+    public void setWheelScrollsVertically() {
         scrollbarHor.setUsesWheel(false);
         scrollbarVer.setUsesWheel(true);
     }
