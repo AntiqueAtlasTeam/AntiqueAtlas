@@ -32,6 +32,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.LiteralText;
+import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
@@ -221,6 +222,7 @@ public class GuiAtlas extends GuiComponent {
      * the map drawing area, in pixels.
      */
     private int mapOffsetX, mapOffsetY;
+    private Integer targetOffsetX, targetOffsetY;
     /**
      * If true, the player's icon will be in the center of the GUI, and the
      * offset of the tiles will be calculated accordingly. Otherwise it's the
@@ -230,6 +232,8 @@ public class GuiAtlas extends GuiComponent {
     private boolean followPlayer;
 
     private final GuiScaleBar scaleBar = new GuiScaleBar();
+
+    private final GuiScrollingContainer markers = new GuiScrollingContainer();
 
     /**
      * Pixel-to-block ratio.
@@ -314,6 +318,8 @@ public class GuiAtlas extends GuiComponent {
             selectedButton = button;
             if (button.equals(btnPosition)) {
                 followPlayer = true;
+                targetOffsetX = null;
+                targetOffsetY = null;
                 btnPosition.setEnabled(false);
             } else {
                 // Navigate once, before enabling pause:
@@ -401,6 +407,10 @@ public class GuiAtlas extends GuiComponent {
         addChild(scaleBar).offsetGuiCoords(20, 198);
         scaleBar.setMapScale(1);
 
+        addChild(markers).setRelativeCoords(-10, 14);
+        markers.setViewportSize(21, 180);
+        markers.setWheelScrollsVertically();
+
         markerFinalizer.addMarkerListener(blinkingIcon);
 
         eraser.setTexture(Textures.ERASER, 12, 14, 2, 11);
@@ -444,6 +454,43 @@ public class GuiAtlas extends GuiComponent {
         MinecraftClient.getInstance().keyboard.setRepeatEvents(true);
         screenScale = MinecraftClient.getInstance().getWindow().getScaleFactor();
         setCentered();
+
+        updateBookmarkerList();
+    }
+
+    public void updateBookmarkerList() {
+        markers.removeAllContent();
+        markers.scrollTo(0,0);
+
+        if(localMarkersData == null) return;
+
+
+        int contentY = 0;
+        for (Marker marker : localMarkersData.getAllMarkers()) {
+            if (!marker.isVisibleAhead() || marker.isGlobal()) {
+                continue;
+            }
+            GuiMarkerBookmark bookmark = new GuiMarkerBookmark(marker);
+
+            bookmark.addListener(button -> {
+                if(state.is(NORMAL)) {
+                    setTargetPosition(marker.getX(), marker.getZ());
+                    followPlayer = false;
+                    btnPosition.setEnabled(true);
+                }
+                else if(state.is(DELETING_MARKER)) {
+                    AtlasClientAPI.getMarkerAPI().deleteMarker(player.getEntityWorld(),
+                            getAtlasID(), marker.getId());
+                    player.getEntityWorld().playSound(player, player.getBlockPos(),
+                            SoundEvents.UI_CARTOGRAPHY_TABLE_TAKE_RESULT, SoundCategory.AMBIENT,
+                            1F, 0.5F);
+                    state.switchTo(NORMAL);
+                }
+            });
+
+            markers.addContent(bookmark).setRelativeY(contentY);
+            contentY += 18 + 2;
+        }
     }
 
     @Override
@@ -658,11 +705,28 @@ public class GuiAtlas extends GuiComponent {
         super.tick();
         if (player == null) return;
         if (followPlayer) {
-            mapOffsetX = (int) (-player.getX() * mapScale);
-            mapOffsetY = (int) (-player.getZ() * mapScale);
+            setMapPosition((int)player.getX(), (int)player.getZ());
         }
         if (player.getEntityWorld().getTime() > timeButtonPressed + BUTTON_PAUSE) {
             navigateByButton(selectedButton);
+        }
+
+        if (targetOffsetX != null) {
+            if (Math.abs(getTargetPositionX() - mapOffsetX) > navigateStep) {
+                navigateMap(getTargetPositionX() > mapOffsetX ? navigateStep : -navigateStep, 0);
+            } else {
+                mapOffsetX = getTargetPositionX();
+                targetOffsetX = null;
+            }
+        }
+
+        if (targetOffsetY != null) {
+            if (Math.abs(getTargetPositionY() - mapOffsetY) > navigateStep) {
+                navigateMap(0, getTargetPositionY() > mapOffsetY ? navigateStep : -navigateStep);
+            } else {
+                mapOffsetY = getTargetPositionY();
+                targetOffsetY = null;
+            }
         }
 
         updateAtlasData();
@@ -715,6 +779,26 @@ public class GuiAtlas extends GuiComponent {
         followPlayer = false;
         btnPosition.setEnabled(true);
     }
+
+    private void setMapPosition(int x, int z) {
+        mapOffsetX = (int) (-x * mapScale);
+        mapOffsetY = (int) (-z * mapScale);
+        followPlayer = false;
+    }
+
+    private void setTargetPosition(int x, int z) {
+        targetOffsetX = x;
+        targetOffsetY = z;
+    }
+
+    private int getTargetPositionX() {
+        return (int)(-targetOffsetX * mapScale);
+    }
+
+    private int getTargetPositionY() {
+        return (int)(-targetOffsetY * mapScale);
+    }
+
 
     /**
      * Set the pixel-to-block ratio, maintaining the current center of the screen.

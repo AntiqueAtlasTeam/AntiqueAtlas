@@ -3,6 +3,7 @@ package hunternif.mc.impl.atlas.network.packet.s2c.play;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
 import hunternif.mc.impl.atlas.AntiqueAtlasMod;
+import hunternif.mc.impl.atlas.AntiqueAtlasModClient;
 import hunternif.mc.impl.atlas.marker.Marker;
 import hunternif.mc.impl.atlas.marker.MarkersData;
 import hunternif.mc.impl.atlas.network.packet.s2c.S2CPacket;
@@ -84,6 +85,8 @@ public class MarkersS2CPacket extends S2CPacket {
 					markersData.loadMarker(new Marker(MarkerType.REGISTRY.getId(markerType), world, precursor));
 				}
 			}
+
+			AntiqueAtlasModClient.getAtlasGUI().updateBookmarkerList();
 		});
 	}
 }

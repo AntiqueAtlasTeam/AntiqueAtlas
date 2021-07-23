@@ -13,7 +13,7 @@ public class AntiqueAtlasModClient implements ClientModInitializer {
 
 	private static GuiAtlas guiAtlas;
 
-	private static GuiAtlas getAtlasGUI() {
+	public static GuiAtlas getAtlasGUI() {
 		if (guiAtlas == null) {
 			guiAtlas = new GuiAtlas();
 			guiAtlas.setMapScale(AntiqueAtlasMod.CONFIG.defaultScale);

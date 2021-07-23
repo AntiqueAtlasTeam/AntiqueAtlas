@@ -1,8 +1,11 @@
 package hunternif.mc.impl.atlas.network.packet.s2c.play;
 
 import hunternif.mc.impl.atlas.AntiqueAtlasMod;
+import hunternif.mc.impl.atlas.AntiqueAtlasModClient;
 import hunternif.mc.impl.atlas.marker.MarkersData;
 import hunternif.mc.impl.atlas.network.packet.s2c.S2CPacket;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
@@ -31,6 +34,7 @@ public class DeleteMarkerResponseS2CPacket extends S2CPacket {
 		return ID;
 	}
 
+	@Environment(EnvType.CLIENT)
 	public static void apply(MinecraftClient client, ClientPlayNetworkHandler handler, PacketByteBuf buf, PacketSender responseSender) {
 		int atlasID = buf.readVarInt();
 		int markerID = buf.readVarInt();
@@ -40,6 +44,8 @@ public class DeleteMarkerResponseS2CPacket extends S2CPacket {
 					AntiqueAtlasMod.globalMarkersData.getData() :
 					AntiqueAtlasMod.markersData.getMarkersData(atlasID, client.player.getEntityWorld());
 			data.removeMarker(markerID);
+
+			AntiqueAtlasModClient.getAtlasGUI().updateBookmarkerList();
 		});
 	}
 }
