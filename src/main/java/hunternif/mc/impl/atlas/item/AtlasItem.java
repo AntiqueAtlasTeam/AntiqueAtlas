@@ -6,12 +6,18 @@ import hunternif.mc.impl.atlas.core.AtlasData;
 import hunternif.mc.impl.atlas.core.TileInfo;
 import hunternif.mc.impl.atlas.marker.MarkersData;
 import hunternif.mc.impl.atlas.network.packet.s2c.play.DimensionUpdateS2CPacket;
+import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.ItemUsageContext;
+import net.minecraft.item.map.MapBannerMarker;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.sound.SoundCategory;
+import net.minecraft.sound.SoundEvents;
+import net.minecraft.tag.BlockTags;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.ActionResult;
@@ -45,6 +51,25 @@ public class AtlasItem extends Item {
         }
 
         return new TypedActionResult<>(ActionResult.SUCCESS, stack);
+    }
+
+    @Override
+    public ActionResult useOnBlock(ItemUsageContext context) {
+        if (!context.getWorld().isClient()) {
+            return super.useOnBlock(context);
+        }
+
+        BlockState blockState = context.getWorld().getBlockState(context.getBlockPos());
+        if (blockState.isIn(BlockTags.BANNERS)) {
+            AntiqueAtlasModClient.openAtlasGUI(context.getStack());
+            MapBannerMarker mapBannerMarker = MapBannerMarker.fromWorldBlock(context.getWorld(), context.getBlockPos());
+            AntiqueAtlasModClient.getAtlasGUI().openMarkerFinalizer(mapBannerMarker.getName());
+            context.getWorld().playSound(context.getPlayer(), context.getBlockPos(), SoundEvents.ITEM_BOOK_PAGE_TURN, SoundCategory.BLOCKS, 1f, 1f);
+
+            return ActionResult.SUCCESS;
+        }
+
+        return super.useOnBlock(context);
     }
 
     @Override

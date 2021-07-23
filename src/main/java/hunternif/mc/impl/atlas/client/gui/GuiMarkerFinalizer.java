@@ -16,6 +16,7 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.LiteralText;
+import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.world.World;
 
@@ -129,6 +130,10 @@ public class GuiMarkerFinalizer extends GuiComponent {
             scroller.addContent(markerGui).setRelativeX(contentX);
             contentX += GuiMarkerInList.FRAME_SIZE + TYPE_SPACING;
         }
+    }
+
+    public void setMarkerName(Text name) {
+        textField.setText(name.asString());
     }
 
     @Override

@@ -424,6 +424,32 @@ public class GuiAtlas extends GuiComponent {
         return prepareToOpen();
     }
 
+    public void openMarkerFinalizer(Text name) {
+        markerFinalizer.setMarkerData(player.getEntityWorld(),
+                getAtlasID(),
+                (int) player.getX(), (int) player.getZ());
+        addChild(markerFinalizer);
+
+        if (name != null) {
+            markerFinalizer.setMarkerName(name);
+        }
+
+        blinkingIcon.setTexture(markerFinalizer.selectedType.getTexture(),
+                MARKER_SIZE, MARKER_SIZE);
+        addChildBehind(markerFinalizer, blinkingIcon)
+                .setRelativeCoords(worldXToScreenX((int) player.getX()) - getGuiX() - MARKER_SIZE / 2,
+                        worldZToScreenY((int) player.getZ()) - getGuiY() - MARKER_SIZE / 2);
+
+        // Need to intercept keyboard events to type in the label:
+        setInterceptKeyboard(true);
+
+        // Un-press all keys to prevent player from walking infinitely:
+        KeyBinding.unpressAll();
+
+        selectedButton = null;
+        state.switchTo(NORMAL);
+    }
+
     public GuiAtlas prepareToOpen() {
         MinecraftClient.getInstance().getSoundManager().play(PositionedSoundInstance.master(SoundEvents.ITEM_BOOK_PAGE_TURN, 1.0F));
 
