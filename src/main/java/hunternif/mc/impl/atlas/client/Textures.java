@@ -28,6 +28,7 @@ public class Textures {
             BTN_ARROWS = gui("navigate_arrows.png", 24, 24),
             BTN_POSITION = gui("position.png", 24, 24),
             BOOKMARKS = gui("bookmarks.png", 84, 36),
+            BOOKMARKS_LEFT = gui("bookmarks_l.png", 84, 36),
             PLAYER = gui("player.png", 7, 8),
             SCROLLBAR_HOR = gui("scrollbar_hor.png", 8, 7),
             SCROLLBAR_VER = gui("scrollbar_ver.png", 7,8),
