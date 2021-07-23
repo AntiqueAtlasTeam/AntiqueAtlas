@@ -65,11 +65,7 @@ public class GuiViewport extends GuiComponent {
 
     @Override
     boolean iterateMouseInput(UiCall callMethod) {
-        if (isMouseInRegion(getGuiX(), getGuiY(), properWidth, properHeight)) {
-            return iterateInput(callMethod);
-        } else {
-            return false;
-        }
+        return iterateInput(callMethod);
     }
 
     @Override
