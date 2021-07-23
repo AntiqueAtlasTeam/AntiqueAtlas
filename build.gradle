@@ -20,7 +20,7 @@ mixin {
 }
 
 archivesBaseName = project.archives_base_name
-version = project.mod_version
+version = project.mod_version + "-mc" + project.modMinecraftVersion
 group = project.maven_group
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(8) // Mojang ships Java 8 to end users, so your mod should target Java 8.
@@ -38,7 +38,7 @@ repositories {
 	maven {
 		url = uri("https://jitpack.io")
 	}
-	
+
 	maven {  url = "https://repo.spongepowered.org/maven" } // mixin
 	maven { url "https://maven.shedaniel.me/" } // cloth config
 }
@@ -52,7 +52,7 @@ minecraft {
             workingDirectory project.file('run/client')
 
             // Recommended logging data for a userdev environment
-            // The markers can be changed as needed. 
+            // The markers can be changed as needed.
             // "SCAN": For mods scan.
             // "REGISTRIES": For firing of registry events.
             // "REGISTRYDUMP": For getting the contents of all registries.
@@ -62,7 +62,7 @@ minecraft {
             // Recommended logging level for the console
             property 'forge.logging.console.level', 'debug'
             property 'mixin.env.disableRefMap', 'true'
-			
+
 			args '--username', 'CodeHexIO', '--uuid', 'c5751ce1d50e4d47ca120e1ea1c75542'
 
             mods {
@@ -76,7 +76,7 @@ minecraft {
             workingDirectory project.file('run/server')
 
             // Recommended logging data for a userdev environment
-            // The markers can be changed as needed. 
+            // The markers can be changed as needed.
             // "SCAN": For mods scan.
             // "REGISTRIES": For firing of registry events.
             // "REGISTRYDUMP": For getting the contents of all registries.
