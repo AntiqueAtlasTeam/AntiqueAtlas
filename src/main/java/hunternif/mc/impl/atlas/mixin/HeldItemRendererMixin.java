@@ -58,6 +58,8 @@ public abstract class HeldItemRendererMixin {
                 renderAtlasInOneHand(matrixStackIn, bufferIn, combinedLightIn, equipProgress, handside, swingProgress, stack);
             }
 
+            matrixStackIn.pop();
+
             ci.cancel();
         }
     }
