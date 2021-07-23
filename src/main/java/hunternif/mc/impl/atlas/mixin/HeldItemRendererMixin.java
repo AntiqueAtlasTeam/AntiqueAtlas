@@ -55,6 +55,8 @@ public abstract class HeldItemRendererMixin {
                 renderAtlasInOneHand(matrices, vertexConsumers, light, equipProgress, arm, swingProgress, item);
             }
 
+            matrices.pop();
+
             ci.cancel();
         }
     }
