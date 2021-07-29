@@ -53,7 +53,10 @@ public class TileGroup implements ITileStorage {
                 // 0 1 2
                 // 3 4 5
                 // 6 7 8
-                tiles[x][y] = Identifier.tryParse(listTag.getString(x + y * CHUNK_STEP));
+                String id = listTag.getString(x + y * CHUNK_STEP);
+                if (!id.isEmpty()) {
+                    tiles[x][y] = Identifier.tryParse(id);
+                }
             }
         }
 
@@ -69,7 +72,7 @@ public class TileGroup implements ITileStorage {
                 // 0 1 2
                 // 3 4 5
                 // 6 7 8
-                listTag.add(x + y * CHUNK_STEP, StringTag.of(this.tiles[x][y] == null ? "antiqueatlas:%null#" : this.tiles[x][y].toString()));
+                listTag.add(x + y * CHUNK_STEP, StringTag.of(this.tiles[x][y] == null ? "" : this.tiles[x][y].toString()));
             }
         }
 
