@@ -25,9 +25,11 @@ public class PlayerEventHandler {
     }
 
     public static void onPlayerTick(PlayerEntity player) {
-        AtlasData data = AntiqueAtlasMod.tileData.getData(
-                player.getUuid().hashCode(), player.world);
+        if (!AntiqueAtlasMod.CONFIG.itemNeeded) {
+            AtlasData data = AntiqueAtlasMod.tileData.getData(
+                    player.getUuid().hashCode(), player.world);
 
-        AntiqueAtlasMod.worldScanner.updateAtlasAroundPlayer(data, player);
+            AntiqueAtlasMod.worldScanner.updateAtlasAroundPlayer(data, player);
+        }
     }
 }
