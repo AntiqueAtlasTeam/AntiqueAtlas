@@ -66,7 +66,7 @@ public class TileTextureMap {
      */
     private void autoRegister(Biome biome) {
         if (biome == null) {
-            Log.warn("Biome is null");
+            Log.error("Given biome is null. Cannot autodetect a suitable texture set for that.");
             return;
         }
 
@@ -125,20 +125,20 @@ public class TileTextureMap {
                 break;
             case MUSHROOM:
                 setTexture(biome, TextureSetMap.instance().getByName(AntiqueAtlasMod.id("mushroom")));
+                break;
             case NETHER:
-                setTexture(biome, TextureSetMap.instance().getByName(AntiqueAtlasMod.id("soul_sand_valley")));
+                setTexture(biome, TextureSetMap.instance().getByName(AntiqueAtlasMod.id("nether_wastes")));
+                break;
             case NONE:
                 setTexture(biome, TextureSetMap.instance().getByName(AntiqueAtlasMod.id("end_void")));
                 break;
-            default:
-                Log.warn("Couldn't auto-registered standard texture set for biome %s", BuiltinRegistries.BIOME.getId(biome).toString());
-                return;
         }
 
         if (textureMap.get(BuiltinRegistries.BIOME.getId(biome)) != null) {
-            Log.info("Auto-registered standard texture set for biome %s: %s", BuiltinRegistries.BIOME.getId(biome).toString(), textureMap.get(BuiltinRegistries.BIOME.getId(biome)).name);
+            Log.info("Auto-registered standard texture set for biome %s: %s", Objects.requireNonNull(BuiltinRegistries.BIOME.getId(biome)).toString(), textureMap.get(BuiltinRegistries.BIOME.getId(biome)).name);
         } else {
-            Log.error("Failed to auto-register a standard texture set for the biome '%s'. This is most likely caused by errors in the TextureSet configurations, check your resource packs first before reporting it as an issue!", BuiltinRegistries.BIOME.getId(biome).toString());
+            Log.error("Failed to auto-register a standard texture set for the biome '%s'. This is most likely caused by errors in the TextureSet configurations, check your resource packs first before reporting it as an issue!", Objects.requireNonNull(BuiltinRegistries.BIOME.getId(biome)).toString());
+            setTexture(biome, getDefaultTexture());
         }
     }
 
@@ -183,7 +183,7 @@ public class TileTextureMap {
             checkRegistration(tile);
         }
 
-        return textureMap.get(tile);
+        return textureMap.getOrDefault(tile, getDefaultTexture());
     }
 
     public ITexture getTexture(SubTile subTile) {
