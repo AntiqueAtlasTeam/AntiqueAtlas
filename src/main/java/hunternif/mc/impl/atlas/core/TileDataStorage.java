@@ -2,6 +2,7 @@ package hunternif.mc.impl.atlas.core;
 
 import hunternif.mc.impl.atlas.network.packet.s2c.play.CustomTileInfoS2CPacket;
 import hunternif.mc.impl.atlas.util.Log;
+import hunternif.mc.impl.atlas.util.Streams;
 import net.fabricmc.fabric.api.util.NbtType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundTag;
@@ -27,12 +28,12 @@ public class TileDataStorage extends PersistentState {
     private static final int VERSION = 3;
     private static final String TAG_VERSION = "aaVersion";
     private static final String TAG_TILE_LIST = "tiles";
+    private static final int CHUNK_SIZE = 10000;
+    private final Map<ChunkPos, Identifier> tiles = new ConcurrentHashMap<>(2, 0.75f, 2);
 
     public TileDataStorage(String key) {
         super(key);
     }
-
-    private final Map<ChunkPos, Identifier> tiles = new ConcurrentHashMap<>(2, 0.75f, 2);
 
     @Override
     public void fromTag(CompoundTag compound) {
@@ -96,9 +97,9 @@ public class TileDataStorage extends PersistentState {
      * Send all data to player in several zipped packets.
      */
     public void syncToPlayer(PlayerEntity player, RegistryKey<World> world) {
-        new CustomTileInfoS2CPacket(world, tiles).send((ServerPlayerEntity) player);
+        Streams.chunked(tiles.entrySet().stream(), CHUNK_SIZE)
+                .forEach(chunk -> new CustomTileInfoS2CPacket(world, chunk).send((ServerPlayerEntity) player));
 
         Log.info("Sent custom biome data to player %s", player.getCommandSource().getName());
     }
-
 }

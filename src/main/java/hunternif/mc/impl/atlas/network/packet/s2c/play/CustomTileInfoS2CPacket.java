@@ -13,6 +13,7 @@ import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.World;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -23,11 +24,11 @@ import java.util.Map;
 public class CustomTileInfoS2CPacket extends S2CPacket {
 	public static final Identifier ID = AntiqueAtlasMod.id("packet", "s2c", "custom_tile", "info");
 
-	public CustomTileInfoS2CPacket(RegistryKey<World> world, Map<ChunkPos, Identifier> tiles) {
+	public CustomTileInfoS2CPacket(RegistryKey<World> world, List<Map.Entry<ChunkPos, Identifier>> tiles) {
 		this.writeIdentifier(world.getValue());
 		this.writeVarInt(tiles.size());
 
-		for (Map.Entry<ChunkPos, Identifier> entry : tiles.entrySet()) {
+		for (Map.Entry<ChunkPos, Identifier> entry : tiles) {
 			this.writeVarInt(entry.getKey().x);
 			this.writeVarInt(entry.getKey().z);
 			this.writeIdentifier(entry.getValue());
