@@ -132,6 +132,12 @@ public class TileTextureMap {
             case NONE:
                 setTexture(biome, TextureSetMap.instance().getByName(AntiqueAtlasMod.id("end_void")));
                 break;
+            case UNDERGROUND:
+                Log.warn("Underground biomes aren't supported yet.");
+                break;
+            default:
+                Log.warn("Couldn't auto-registered standard texture set for biome %s", BuiltinRegistries.BIOME.getId(biome).toString());
+                return;
         }
 
         if (textureMap.get(BuiltinRegistries.BIOME.getId(biome)) != null) {
