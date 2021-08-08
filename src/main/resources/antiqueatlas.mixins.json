@@ -19,6 +19,7 @@
   "client": [
     "MixinClientPlayNetworkHandler",
     "MixinInGameHud",
+    "MixinMinecraftClient",
     "HeldItemRendererMixin"
   ],
   "injectors": {
