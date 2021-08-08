@@ -20,7 +20,9 @@ public class GlobalMarkersData extends MarkersData {
 	}
 
 	public static GlobalMarkersData readNbt(NbtCompound compound) {
-		return (GlobalMarkersData) MarkersData.readNbt(compound);
+		GlobalMarkersData data = new GlobalMarkersData();
+		doReadNbt(compound, data);
+		return data;
 	}
 
 	@Override

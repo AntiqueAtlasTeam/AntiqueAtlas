@@ -73,14 +73,18 @@ public class MarkersData extends PersistentState {
 	public MarkersData() {
 	}
 
-
 	public static MarkersData readNbt(NbtCompound compound) {
 		MarkersData data = new MarkersData();
+		doReadNbt(compound, data);
+		return data;
+	}
+
+	protected static void doReadNbt(NbtCompound compound, MarkersData data) {
 
 		int version = compound.getInt(TAG_VERSION);
 		if (version < VERSION) {
 			Log.warn("Outdated atlas data format! Was %d but current is %d", version, VERSION);
-			return data;
+			return;
 		}
 
 		NbtList dimensionMapList = compound.getList(TAG_WORLD_MAP_LIST, NbtType.COMPOUND);
@@ -123,8 +127,6 @@ public class MarkersData extends PersistentState {
 				data.loadMarker(marker);
 			}
 		}
-
-		return data;
 	}
 
 	@Override
