@@ -1,5 +1,6 @@
 package hunternif.mc.impl.atlas.core;
 
+import hunternif.mc.impl.atlas.AntiqueAtlasConfig;
 import hunternif.mc.impl.atlas.AntiqueAtlasMod;
 import hunternif.mc.impl.atlas.marker.MarkersData;
 import net.minecraft.entity.player.PlayerEntity;
@@ -25,9 +26,11 @@ public class PlayerEventHandler {
     }
 
     public static void onPlayerTick(PlayerEntity player) {
-        AtlasData data = AntiqueAtlasMod.tileData.getData(
-                player.getUniqueID().hashCode(), player.world);
+        if (!AntiqueAtlasConfig.itemNeeded.get()) {
+            AtlasData data = AntiqueAtlasMod.tileData.getData(
+                    player.getUniqueID().hashCode(), player.world);
 
-        AntiqueAtlasMod.worldScanner.updateAtlasAroundPlayer(data, player);
+            AntiqueAtlasMod.worldScanner.updateAtlasAroundPlayer(data, player);
+        }
     }
 }
