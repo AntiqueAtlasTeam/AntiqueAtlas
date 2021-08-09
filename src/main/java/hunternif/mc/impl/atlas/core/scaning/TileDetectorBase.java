@@ -111,7 +111,7 @@ public class TileDetectorBase implements ITileDetector {
 
 		for (int x = 0; x < 16; x++) {
 			for (int z = 0; z < 16; z++) {
-				Biome biome = chunkBiomes.getNoiseBiome(x, 0, z);
+				Biome biome = chunkBiomes.getNoiseBiome(x, world.getSeaLevel(), z);
 				if (AntiqueAtlasConfig.doScanPonds.get()) {
 					int y = chunk.getHeightmap(Heightmap.Type.MOTION_BLOCKING).getHeight(x, z);
 					if (y > 0) {
