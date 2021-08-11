@@ -1,0 +1,74 @@
+{
+  "item.antiqueatlas.antique_atlas": "낡은 지도책 #%d",
+  "item.antiqueatlas.empty_antique_atlas": "텅 빈 낡은 지도책",
+
+  "gui.antiqueatlas.scalebar": "블럭 축척",
+  "gui.antiqueatlas.addMarker": "표식 추가",
+  "gui.antiqueatlas.delMarker": "표식 제거",
+  "gui.antiqueatlas.followPlayer": "플레이어 따라가기",
+  "gui.antiqueatlas.exportImage": "이미지로 내보내기",
+  "gui.antiqueatlas.hideMarkers": "표식 숨기기",
+  "gui.antiqueatlas.showMarkers": "표식 보이기",
+
+  "gui.antiqueatlas.marker.label": "라벨:",
+  "gui.antiqueatlas.marker.type": "종류:",
+  "gui.antiqueatlas.marker.village": "마을",
+  "gui.antiqueatlas.marker.netherPortal": "네더 차원문",
+  "gui.antiqueatlas.marker.tomb": "여기 %s 잠들다",
+  "gui.antiqueatlas.marker.treasure": "땅에 묻힌 보물",
+  "gui.antiqueatlas.marker.monument": "해저 유적",
+  "gui.antiqueatlas.marker.mansion": "삼림 대저택",
+
+  "gui.antiqueatlas.export.opening": "파일 시스템 다이얼로그 여는 중...",
+  "gui.antiqueatlas.export.selectFile": "저장할 PNG 파일을 선택해주세요.",
+  "gui.antiqueatlas.export.tooLarge": "죄송합니다! 이미지 파일이 렌더링하기에 너무 큽니다. 자바 메모리 사이즈를 늘려주세요.",
+
+  "gui.antiqueatlas.export.setup": "설정 중...",
+  "gui.antiqueatlas.export.rendering": "렌더링 중...",
+  "gui.antiqueatlas.export.writing": "파일에 쓰는 중...",
+  "gui.antiqueatlas.export.loadingtextures": "텍스쳐 로딩하는 중...",
+  "gui.antiqueatlas.export.makingbuffer": "%dx%d 이미지 버퍼 할당 중...",
+
+  "gui.antiqueatlas.export.renderstripe": "%d/%d 슬라이스 렌더링 중...",
+  "gui.antiqueatlas.export.writestripe": "슬라이스 쓰는 중...",
+
+  "gui.antiqueatlas.export.rendering.background": "배경 렌더링 중...",
+  "gui.antiqueatlas.export.rendering.map": "지도 타일 렌더링 중...",
+  "gui.antiqueatlas.export.rendering.markers": "표식 렌더링 중...",
+
+  "key.openatlas.desc": "지도책 열기",
+  "key.antiqueatlas.category": "낡은 지도책",
+
+  "text.autoconfig.antiqueatlas.title":  "낡은 지도책",
+  "text.autoconfig.antiqueatlas.category.gameplay":  "게임플레이",
+  "text.autoconfig.antiqueatlas.category.userInterface":  "유저 인터페이스",
+  "text.autoconfig.antiqueatlas.category.performance":  "성능",
+  "text.autoconfig.antiqueatlas.category.appearance":  "외관",
+
+  "text.autoconfig.antiqueatlas.option.doSaveBrowsingPos": "지도책 위치 저장",
+  "text.autoconfig.antiqueatlas.option.autoDeathMarker": "사망 표식",
+  "text.autoconfig.antiqueatlas.option.autoVillageMarkers": "마을 표식",
+  "text.autoconfig.antiqueatlas.option.autoNetherPortalMarkers": "네더 차원문 표식",
+  "text.autoconfig.antiqueatlas.option.itemNeeded": "사용에 지도책 요구",
+
+  "text.autoconfig.antiqueatlas.option.doScaleMarkers": "표식 크기 조정",
+  "text.autoconfig.antiqueatlas.option.defaultScale": "기본 확대 단계",
+  "text.autoconfig.antiqueatlas.option.minScale": "확대 단계 최소화",
+  "text.autoconfig.antiqueatlas.option.maxScale": "확대 단계 최대화",
+  "text.autoconfig.antiqueatlas.option.doReverseWheelZoom": "마우스 휠 확대 반전",
+
+  "text.autoconfig.antiqueatlas.option.scanRadius": "검색 반경",
+  "text.autoconfig.antiqueatlas.option.forceChunkLoading": "강제 청크 로딩",
+  "text.autoconfig.antiqueatlas.option.newScanInterval": "검색 간격",
+  "text.autoconfig.antiqueatlas.option.doRescan": "재검색",
+  "text.autoconfig.antiqueatlas.option.rescanRate": "재검색 빈도",
+  "text.autoconfig.antiqueatlas.option.markerLimit": "표식 한도",
+  "text.autoconfig.antiqueatlas.option.doScanPonds": "연못 검색",
+  "text.autoconfig.antiqueatlas.option.doScanRavines": "협곡 검색",
+  "text.autoconfig.antiqueatlas.option.debugRender": "디버그 렌더링",
+
+  "text.autoconfig.antiqueatlas.option.tileSize": "타일 크기",
+  "text.autoconfig.antiqueatlas.option.markerSize": "표식 크기",
+  "text.autoconfig.antiqueatlas.option.playerIconWidth": "플레이어 아이콘 너비",
+  "text.autoconfig.antiqueatlas.option.playerIconHeight": "플레이어 아이콘 높이"
+}
