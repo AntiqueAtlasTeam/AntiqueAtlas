@@ -46,7 +46,7 @@ public class GuiMarkerBookmark extends GuiComponentButton {
 
     @Override
     public void render(MatrixStack matrices, int mouseX, int mouseY, float partialTick) {
-        RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
+        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
 
         // Render background:
         int u = colorIndex * WIDTH;

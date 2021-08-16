@@ -33,9 +33,7 @@ public class TileDataStorage extends PersistentState {
 
     public TileDataStorage() {
     }
-
-    private final Map<ChunkPos, Identifier> tiles = new ConcurrentHashMap<>(2, 0.75f, 2);
-
+    
     public static TileDataStorage readNbt(NbtCompound compound) {
         TileDataStorage data = new TileDataStorage();
 
