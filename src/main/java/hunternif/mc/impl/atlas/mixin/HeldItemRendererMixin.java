@@ -115,11 +115,11 @@ public abstract class HeldItemRendererMixin {
 
         matrices.scale(0.4f, 0.4F, 0.4F);
 
-        atlasOverlayRenderer.drawOverlay(matrices, vertexConsumers, light);
+        atlasOverlayRenderer.drawOverlay(matrices, vertexConsumers, light, item);
         matrices.pop();
     }
 
-    private void renderFirstPersonAtlas(MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, ItemStack mainHand) {
+    private void renderFirstPersonAtlas(MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, ItemStack item) {
         matrices.multiply(Vector3f.POSITIVE_Y.getDegreesQuaternion(180.0F));
         matrices.multiply(Vector3f.POSITIVE_Z.getDegreesQuaternion(180.0F));
 
@@ -127,6 +127,6 @@ public abstract class HeldItemRendererMixin {
         matrices.translate(-1.85D, -0.5D, 0.0D);
         matrices.scale(0.0078125F, 0.0078125F, 0.0078125F);
 
-        atlasOverlayRenderer.drawOverlay(matrices, vertexConsumers, light);
+        atlasOverlayRenderer.drawOverlay(matrices, vertexConsumers, light, item);
     }
 }

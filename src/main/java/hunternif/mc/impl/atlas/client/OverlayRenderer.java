@@ -40,7 +40,7 @@ public class OverlayRenderer extends DrawableHelper {
     private PlayerEntity player;
     private World world;
 
-    public void drawOverlay(MatrixStack matrices, VertexConsumerProvider vertexConsumer, int light) {
+    public void drawOverlay(MatrixStack matrices, VertexConsumerProvider vertexConsumer, int light, ItemStack atlas) {
         // Overlay must close if Atlas GUI is opened
         if (MinecraftClient.getInstance().currentScreen instanceof GuiAtlas) {
             return;
@@ -53,18 +53,8 @@ public class OverlayRenderer extends DrawableHelper {
         this.player = MinecraftClient.getInstance().player;
         this.world = MinecraftClient.getInstance().world;
 
-        ItemStack mainHandStack = player.getMainHandStack();
-        ItemStack offHandStack = player.getOffHandStack();
-
-        Integer atlasID = null;
-
-        if (!mainHandStack.isEmpty() && mainHandStack.getItem() == RegistrarAntiqueAtlas.ATLAS) {
-            atlasID = AtlasItem.getAtlasID(mainHandStack);
-        } else if (!offHandStack.isEmpty() && offHandStack.getItem() == RegistrarAntiqueAtlas.ATLAS) {
-            atlasID = AtlasItem.getAtlasID(offHandStack);
-        }
-
-        if (atlasID != null) {
+        if (!atlas.isEmpty() && atlas.getItem() == RegistrarAntiqueAtlas.ATLAS) {
+            int atlasID = AtlasItem.getAtlasID(atlas);
             drawMinimap(matrices, atlasID, vertexConsumer, light);
         }
     }
