@@ -1,6 +1,7 @@
+
 {
   "item.antiqueatlas.antique_atlas": "Старинный атлас #%d",
-  "item.antiqueatlas.empty_antique_atlas": "Пустой старинный атлас",
+  "item.antiqueatlas.empty_antique_atlas": "Чистый старинный атлас",
 
   "gui.antiqueatlas.scalebar": "Масштаб в блоках",
   "gui.antiqueatlas.addMarker": "Добавить метку",
@@ -10,18 +11,65 @@
   "gui.antiqueatlas.hideMarkers": "Скрыть метки",
   "gui.antiqueatlas.showMarkers": "Показать метки",
 
-  "gui.antiqueatlas.marker.label": "Текст метки:",
-  "gui.antiqueatlas.marker.type": "Тип:",
+  "gui.antiqueatlas.marker.label": "Название:",
+  "gui.antiqueatlas.marker.type": "Обозначение:",
   "gui.antiqueatlas.marker.village": "Деревня",
   "gui.antiqueatlas.marker.netherPortal": "Портал Нижнего мира",
   "gui.antiqueatlas.marker.tomb": "Здесь покоится %s",
+  "gui.antiqueatlas.marker.treasure": "Клад",
+  "gui.antiqueatlas.marker.monument": "Подводная крепость",
+  "gui.antiqueatlas.marker.mansion": "Лесной особняк",
 
-  "gui.antiqueatlas.export.opening": "Открывается диалоговое окно...",
-  "gui.antiqueatlas.export.selectFile": "Укажите PNG файл, куда сохранять изображение карты",
-  "gui.antiqueatlas.export.tooLarge": "Извините, картинка слишком большая. Попробуйте выделить больше памяти для Java.",
+  "gui.antiqueatlas.export.opening": "Открытие диалогового окна...",
+  "gui.antiqueatlas.export.selectFile": "Укажите PNG файл, для сохранения снимка карты",
+  "gui.antiqueatlas.export.tooLarge": "Извините! Изображение слишком велико. Попробуйте выделить больше памяти для Java.",
+
+  "gui.antiqueatlas.export.setup": "Настройка...",
   "gui.antiqueatlas.export.rendering": "Отрисовка...",
   "gui.antiqueatlas.export.writing": "Запись в файл...",
+  "gui.antiqueatlas.export.loadingtextures": "Загрузка текстур...",
+  "gui.antiqueatlas.export.makingbuffer": "Выделение %dx%d буфера изображения...",
+
+  "gui.antiqueatlas.export.renderstripe": "Отрисовка фрагмента %d/%d...",
+  "gui.antiqueatlas.export.writestripe": "Запись фрагмента",
+
+  "gui.antiqueatlas.export.rendering.background": "Отрисовка фона карты",
+  "gui.antiqueatlas.export.rendering.map": "Отрисовка фрагментов карты,
+  "gui.antiqueatlas.export.rendering.markers": "Отрисовка меток",
 
   "key.openatlas.desc": "Открыть атлас",
-  "key.antiqueatlas.category": "Antique Atlas"
+  "key.antiqueatlas.category": "Старинный атлас",
+
+  "text.autoconfig.antiqueatlas.title":  "Старинный атлас",
+  "text.autoconfig.antiqueatlas.category.gameplay":  "Игровой процесс",
+  "text.autoconfig.antiqueatlas.category.userInterface":  "Пользовательский интерфейс",
+  "text.autoconfig.antiqueatlas.category.performance":  "Производительность",
+  "text.autoconfig.antiqueatlas.category.appearance":  "Внешний вид",
+
+  "text.autoconfig.antiqueatlas.option.doSaveBrowsingPos": "Сохранить положение атласа",
+  "text.autoconfig.antiqueatlas.option.autoDeathMarker": "Метки смерти",
+  "text.autoconfig.antiqueatlas.option.autoVillageMarkers": "Метка деревни",
+  "text.autoconfig.antiqueatlas.option.autoNetherPortalMarkers": "Метка портала Нижнего мира",
+  "text.autoconfig.antiqueatlas.option.itemNeeded": "Атлас необходим для использования",
+
+  "text.autoconfig.antiqueatlas.option.doScaleMarkers": "Масштаб меток",
+  "text.autoconfig.antiqueatlas.option.defaultScale": "Уровень масштабирования по умолчанию",
+  "text.autoconfig.antiqueatlas.option.minScale": "Минимальный уровень масштабирования",
+  "text.autoconfig.antiqueatlas.option.maxScale": "Максимальный уровень масштабирования",
+  "text.autoconfig.antiqueatlas.option.doReverseWheelZoom": "Реверсировать масштабирование колёсиком",
+
+  "text.autoconfig.antiqueatlas.option.scanRadius": "Радиус сканирования",
+  "text.autoconfig.antiqueatlas.option.forceChunkLoading": "Принудительная загрузка чанка",
+  "text.autoconfig.antiqueatlas.option.newScanInterval": "Интервал сканирования",
+  "text.autoconfig.antiqueatlas.option.doRescan": "Повторное сканирование",
+  "text.autoconfig.antiqueatlas.option.rescanRate": "Частота повторного сканирования",
+  "text.autoconfig.antiqueatlas.option.markerLimit": "Лимит меток",
+  "text.autoconfig.antiqueatlas.option.doScanPonds": "Сканирование водоёмов",
+  "text.autoconfig.antiqueatlas.option.doScanRavines": "Сканирование равнин",
+  "text.autoconfig.antiqueatlas.option.debugRender": "Отладочная отрисовка",
+
+  "text.autoconfig.antiqueatlas.option.tileSize": "Размер фрагмента",
+  "text.autoconfig.antiqueatlas.option.markerSize": "Размер маркера",
+  "text.autoconfig.antiqueatlas.option.playerIconWidth": "Ширина обозначения игрока",
+  "text.autoconfig.antiqueatlas.option.playerIconHeight": "Высота обозначения игрока"
 }
