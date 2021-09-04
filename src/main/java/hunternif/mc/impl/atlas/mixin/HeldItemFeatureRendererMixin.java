@@ -5,7 +5,6 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import hunternif.mc.impl.atlas.AntiqueAtlasMod;
 import hunternif.mc.impl.atlas.RegistrarAntiqueAtlas;
 import hunternif.mc.impl.atlas.client.OverlayRenderer;
 import net.minecraft.client.render.VertexConsumerProvider;
@@ -31,7 +30,18 @@ public abstract class HeldItemFeatureRendererMixin<T extends LivingEntity, M ext
     }
     
     private OverlayRenderer atlasOverlayRenderer = new OverlayRenderer();
+    private boolean enableBigMaps = false;
 
+    @Inject(method = "<init>*", at = @At("RETURN"))
+    public void constructor(CallbackInfo info) {
+        try {
+            Class.forName("dev.tr7zw.notenoughanimations.NEAnimationsLoader");
+            enableBigMaps = true;
+        }catch(Exception ex) {
+            // No "Not Enough Animations" loaded
+        }
+    }
+    
     @Inject(at = @At("HEAD"), method = "renderItem", cancellable = true)
     private void renderItem(LivingEntity entity, ItemStack stack, ModelTransformation.Mode transformationMode, Arm arm,
             MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, CallbackInfo info) {
@@ -62,7 +72,7 @@ public abstract class HeldItemFeatureRendererMixin<T extends LivingEntity, M ext
     }
     
     private void renderThirdPersonAtlas(MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, ItemStack item, boolean smallMap, boolean leftHanded) {
-        if (smallMap) {
+        if (smallMap || !enableBigMaps) {
             matrices.multiply(Vec3f.POSITIVE_Y.getDegreesQuaternion(160.0f));
             matrices.multiply(Vec3f.POSITIVE_Z.getDegreesQuaternion(180.0f));
             matrices.scale(0.38f/3, 0.38f/3, 0.38f/3);
@@ -70,19 +80,19 @@ public abstract class HeldItemFeatureRendererMixin<T extends LivingEntity, M ext
             matrices.translate(-0.8, -3.2, 0.0);
             matrices.scale(0.0098125f, 0.0098125f, 0.0098125f);
         } else {
-//            if(leftHanded) {
-//                matrices.multiply(Vec3f.POSITIVE_Y.getDegreesQuaternion(160.0f));
-//                matrices.multiply(Vec3f.POSITIVE_Z.getDegreesQuaternion(150.0f));
-//                matrices.scale(0.38f/3, 0.38f/3, 0.38f/3);
-//                
-//                matrices.translate(+0.5, -1.3, 0.0);
-//            } else {
+            if(leftHanded) {
                 matrices.multiply(Vec3f.POSITIVE_Y.getDegreesQuaternion(160.0f));
-                matrices.multiply(Vec3f.POSITIVE_Z.getDegreesQuaternion(180.0f));
+                matrices.multiply(Vec3f.POSITIVE_Z.getDegreesQuaternion(150.0f));
                 matrices.scale(0.38f/3, 0.38f/3, 0.38f/3);
                 
-                matrices.translate(-4.5, -4.2, 0.0);
-//            }
+                matrices.translate(+4.5, -4.2, 0.0);
+            } else {
+                matrices.multiply(Vec3f.POSITIVE_Y.getDegreesQuaternion(160.0f));
+                matrices.multiply(Vec3f.POSITIVE_Z.getDegreesQuaternion(220.0f));
+                matrices.scale(0.38f/3, 0.38f/3, 0.38f/3);
+                
+                matrices.translate(-4.5, -4.6, 0.0);
+            }
 
             matrices.scale(0.0138125f, 0.0138125f, 0.0138125f);
         }
