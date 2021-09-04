@@ -85,13 +85,13 @@ public abstract class HeldItemFeatureRendererMixin<T extends LivingEntity, M ext
                 matrices.multiply(Vec3f.POSITIVE_Z.getDegreesQuaternion(150.0f));
                 matrices.scale(0.38f/3, 0.38f/3, 0.38f/3);
                 
-                matrices.translate(+4.5, -4.2, 0.0);
+                matrices.translate(0, -3.6, 0.0);
             } else {
                 matrices.multiply(Vec3f.POSITIVE_Y.getDegreesQuaternion(160.0f));
-                matrices.multiply(Vec3f.POSITIVE_Z.getDegreesQuaternion(220.0f));
+                matrices.multiply(Vec3f.POSITIVE_Z.getDegreesQuaternion(210.0f));
                 matrices.scale(0.38f/3, 0.38f/3, 0.38f/3);
                 
-                matrices.translate(-4.5, -4.6, 0.0);
+                matrices.translate(-4.0, -5.0, 0.0);
             }
 
             matrices.scale(0.0138125f, 0.0138125f, 0.0138125f);
