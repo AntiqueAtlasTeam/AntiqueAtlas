@@ -67,6 +67,8 @@ public class OverlayRenderer extends DrawableHelper {
         matrices.push();
         matrices.translate(0, 0, 0.01);
         Textures.BOOK.drawWithLight(buffer, matrices, 0, 0, (int) (GuiAtlas.WIDTH * 1.5), (int) (GuiAtlas.HEIGHT * 1.5), light);
+        // Book backside
+        Textures.BOOK.drawWithLightFlipped(buffer, matrices, 0, 0, (int) (GuiAtlas.WIDTH * 1.5), (int) (GuiAtlas.HEIGHT * 1.5), light);
         matrices.pop();
 
         matrices.push();
