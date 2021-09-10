@@ -47,7 +47,6 @@ public class ClientProxy implements ResourceReloadListener {
             KeyHandler.registerBindings();
             ClientTickEvent.CLIENT_POST.register(KeyHandler::onClientTick);
         }
-
     }
 
     /**

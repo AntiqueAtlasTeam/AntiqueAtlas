@@ -17,14 +17,13 @@ import hunternif.mc.impl.atlas.structure.*;
 import me.shedaniel.architectury.event.events.LifecycleEvent;
 import me.shedaniel.autoconfig.AutoConfig;
 import me.shedaniel.autoconfig.serializer.JanksonConfigSerializer;
-import net.fabricmc.api.ModInitializer;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.Identifier;
 import net.minecraft.world.World;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public class AntiqueAtlasMod implements ModInitializer
+public class AntiqueAtlasMod
 {
     public static final String ID = "antiqueatlas";
     public static final String NAME = "Antique Atlas";
@@ -56,8 +55,7 @@ public class AntiqueAtlasMod implements ModInitializer
                         "antiqueatlas:global_atlas_data");
     }
 
-    @Override
-    public void onInitialize()
+    public static void init()
     {
         TileDetectorBase.scanBiomeTypes();
 

@@ -29,7 +29,7 @@ public class StructureStartMixin {
         if (serverWorldAccess instanceof ServerWorld) {
             world = (ServerWorld) serverWorldAccess;
         } else {
-            world = ((ChunkRegion) serverWorldAccess).world;
+            world = serverWorldAccess.toServerWorld();
         }
 
         StructurePieceAddedCallback.EVENT.invoker().onStructurePieceAdded(structurePiece, world);

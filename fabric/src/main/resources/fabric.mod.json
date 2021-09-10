@@ -8,10 +8,10 @@
   "contributors": ["coolAlias", "Kenkron", "TheCodeWarrior",  "Localizations by crafteverywhere", "CapoFantasma97", "Mazdallier", "mankra", "Zerotiger", "tyra314"],
   "entrypoints": {
     "main": [
-      "hunternif.mc.impl.atlas.AntiqueAtlasMod"
+      "hunternif.mc.impl.atlas.AntiqueAtlasModFabric"
     ],
     "client": [
-      "hunternif.mc.impl.atlas.AntiqueAtlasModClient"
+      "hunternif.mc.impl.atlas.AntiqueAtlasClientModFabric"
     ],
     "modmenu": [
       "hunternif.mc.impl.atlas.client.gui.AntiqueAtlasModMenu"

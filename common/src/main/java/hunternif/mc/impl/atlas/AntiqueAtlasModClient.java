@@ -9,7 +9,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.item.ItemStack;
 
 @Environment(EnvType.CLIENT)
-public class AntiqueAtlasModClient implements ClientModInitializer {
+public class AntiqueAtlasModClient {
 
 	private static GuiAtlas guiAtlas;
 
@@ -37,8 +37,7 @@ public class AntiqueAtlasModClient implements ClientModInitializer {
 		}
 	}
 
-	@Override
-	public void onInitializeClient() {
+	public static void init() {
 		ClientProxy clientProxy = new ClientProxy();
 		clientProxy.initClient();
 
