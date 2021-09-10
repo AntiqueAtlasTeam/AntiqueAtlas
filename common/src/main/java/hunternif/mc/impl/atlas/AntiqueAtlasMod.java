@@ -12,6 +12,7 @@ import hunternif.mc.impl.atlas.marker.GlobalMarkersDataHandler;
 import hunternif.mc.impl.atlas.marker.MarkersDataHandler;
 import hunternif.mc.impl.atlas.mixinhooks.NewPlayerConnectionCallback;
 import hunternif.mc.impl.atlas.mixinhooks.NewServerConnectionCallback;
+import hunternif.mc.impl.atlas.network.AntiqueAtlasNetworking;
 import hunternif.mc.impl.atlas.structure.*;
 import me.shedaniel.architectury.event.events.LifecycleEvent;
 import me.shedaniel.autoconfig.AutoConfig;
@@ -23,7 +24,8 @@ import net.minecraft.world.World;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public class AntiqueAtlasMod implements ModInitializer {
+public class AntiqueAtlasMod implements ModInitializer
+{
     public static final String ID = "antiqueatlas";
     public static final String NAME = "Antique Atlas";
     public static final WorldScanner worldScanner = new WorldScanner();
@@ -34,21 +36,29 @@ public class AntiqueAtlasMod implements ModInitializer {
     public static Logger LOG = LogManager.getLogger(NAME);
     public static AntiqueAtlasConfig CONFIG = new AntiqueAtlasConfig();
 
-    public static Identifier id(String... path) {
-        return path[0].contains(":") ? new Identifier(String.join(".", path)) : new Identifier(ID, String.join(".", path));
+    public static Identifier id(String... path)
+    {
+        return path[0].contains(":") ?
+                new Identifier(String.join(".", path)) :
+                new Identifier(ID, String.join(".", path));
     }
 
-    public static GlobalAtlasData getGlobalAtlasData(World world) {
-        if (world.isClient()) {
+    public static GlobalAtlasData getGlobalAtlasData(World world)
+    {
+        if (world.isClient())
+        {
             LOG.warn("Tried to access server only data from client.");
             return null;
         }
 
-        return ((ServerWorld) world).getPersistentStateManager().getOrCreate(() -> new GlobalAtlasData("antiqueatlas:global_atlas_data"), "antiqueatlas:global_atlas_data");
+        return ((ServerWorld) world).getPersistentStateManager()
+                .getOrCreate(() -> new GlobalAtlasData("antiqueatlas:global_atlas_data"),
+                        "antiqueatlas:global_atlas_data");
     }
 
     @Override
-    public void onInitialize() {
+    public void onInitialize()
+    {
         TileDetectorBase.scanBiomeTypes();
 
         AutoConfig.register(AntiqueAtlasConfig.class, JanksonConfigSerializer::new);
@@ -72,7 +82,7 @@ public class AntiqueAtlasMod implements ModInitializer {
         StructurePieceAddedCallback.EVENT.register(StructureHandler::resolve);
         StructureAddedCallback.EVENT.register(StructureHandler::resolve);
 
-//        AntiqueAtlasNetworking.registerC2SListeners();
+        AntiqueAtlasNetworking.initialize();
 
         NetherFortress.registerPieces();
         EndCity.registerMarkers();

@@ -82,7 +82,7 @@ public class RecipeAtlasCombining implements CraftingRecipe {
 
     @Override
     public ItemStack getOutput() {
-        return new ItemStack(RegistrarAntiqueAtlas.ATLAS);
+        return new ItemStack(RegistrarAntiqueAtlas.ATLAS.getOrNull());
     }
 
     @Override

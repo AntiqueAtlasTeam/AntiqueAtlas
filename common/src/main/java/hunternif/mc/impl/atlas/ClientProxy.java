@@ -22,7 +22,6 @@ public class ClientProxy implements ResourceReloadListener {
     public void initClient() {
         // read Textures first from assets
         TextureConfig textureConfig = new TextureConfig(Textures.TILE_TEXTURES_MAP);
-
         ReloadListeners.registerReloadListener(ResourceType.CLIENT_RESOURCES, textureConfig);
 
         // than read TextureSets
@@ -35,7 +34,6 @@ public class ClientProxy implements ResourceReloadListener {
         TileTextureConfig tileTextureConfig = new TileTextureConfig(tileTextureMap, textureSetMap);
         ReloadListeners.registerReloadListener(ResourceType.CLIENT_RESOURCES, tileTextureConfig);
 
-        // Legacy file name:
         ReloadListeners.registerReloadListener(ResourceType.CLIENT_RESOURCES, this);
 
         MarkerTextureConfig markerTextureConfig = new MarkerTextureConfig();
@@ -72,11 +70,11 @@ public class ClientProxy implements ResourceReloadListener {
 
     @Override
     public CompletableFuture<Void> reload(Synchronizer synchronizer, ResourceManager manager, Profiler prepareProfiler, Profiler applyProfiler, Executor prepareExecutor, Executor applyExecutor) {
-        return CompletableFuture.runAsync(() -> {
+        return CompletableFuture.completedFuture(null).thenCompose(synchronizer::whenPrepared).thenCompose(t -> CompletableFuture.runAsync(() -> {
             for (MarkerType type : MarkerType.REGISTRY) {
                 type.initMips();
             }
             assignBiomeTextures();
-        });
+        }));
     }
 }

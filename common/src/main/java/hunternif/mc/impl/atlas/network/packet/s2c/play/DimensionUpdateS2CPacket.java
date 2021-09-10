@@ -36,7 +36,7 @@ public class DimensionUpdateS2CPacket extends S2CPacket {
         int tileCount = buf.readVarInt();
 
 
-        List<TileInfo> tiles = new ArrayList<>();
+        tiles = new ArrayList<>();
         for (int i = 0; i < tileCount; ++i) {
             tiles.add(new TileInfo(
                     buf.readVarInt(),

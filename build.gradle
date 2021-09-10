@@ -17,8 +17,6 @@ subprojects {
 	dependencies {
 		minecraft "com.mojang:minecraft:${rootProject.minecraft_version}"
 		mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
-
-		modApi("me.shedaniel.cloth:cloth-config:${project.cloth_config_version}")
 	}
 }
 
