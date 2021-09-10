@@ -1,0 +1,3 @@
+accessWidener v1 named
+accessible field net/minecraft/world/ChunkRegion world Lnet/minecraft/server/world/ServerWorld;
+accessible field net/minecraft/structure/pool/SinglePoolElement field_24015 Lcom/mojang/datafixers/util/Either;
