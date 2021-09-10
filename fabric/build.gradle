@@ -7,7 +7,7 @@ configurations {
 }
 
 loom {
-	accessWidener = file("src/main/resources/antiqueatlas.accessWidener")
+	accessWidener = file("src/main/resources/antiqueatlas.accesswidener")
 }
 
 architectury {
