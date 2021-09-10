@@ -1,0 +1,45 @@
+loom {
+	accessWidener = file("src/main/resources/antiqueatlas.accessWidener")
+}
+
+dependencies {
+	// We depend on forge loader here to use the forge @Environment annotations and get the mixin dependencies
+	// Do NOT use other classes from forge loader
+	modImplementation "net.fabricmc:fabric-loader:${rootProject.fabric_loader_version}"
+	// Remove the next line if you don't want to depend on the API
+	modApi "me.shedaniel:architectury:${rootProject.architectury_version}"
+
+	modApi("me.shedaniel.cloth:cloth-config:${project.cloth_config_version}")
+}
+
+architectury {
+	common()
+}
+
+afterEvaluate {
+	remapJar {
+		remapAccessWidener.set false
+	}
+}
+
+java {
+	withSourcesJar()
+}
+
+publishing {
+	publications {
+		mavenCommon(MavenPublication) {
+			artifactId = rootProject.archives_base_name
+			// add all the jars that should be included when publishing to maven
+			artifact remapJar
+			artifact(sourcesJar) {
+				builtBy remapSourcesJar
+			}
+		}
+	}
+
+	// See https://docs.gradle.org/current/userguide/publishing_maven.html for information on how to set up publishing.
+	repositories {
+		// Add repositories to publish to here.
+	}
+}
