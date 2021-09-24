@@ -1,0 +1,74 @@
+{
+    "item.antiqueatlas.antique_atlas": "Antyczny atlas #%d",
+    "item.antiqueatlas.empty_antique_atlas": "Pusty antyczny atlas",
+    
+    "gui.antiqueatlas.scalebar": "Skala w blokach",
+    "gui.antiqueatlas.addMarker": "Dodaj znacznik",
+    "gui.antiqueatlas.delMarker": "Usuń znacznik",
+    "gui.antiqueatlas.followPlayer": "Podążaj za graczem",
+    "gui.antiqueatlas.exportImage": "Eksportuj mapę",
+    "gui.antiqueatlas.hideMarkers": "Schowaj znaczniki",
+    "gui.antiqueatlas.showMarkers": "Pokaż znaczniki",
+    
+    "gui.antiqueatlas.marker.label": "Nazwa:",
+    "gui.antiqueatlas.marker.type": "Typ:",
+    "gui.antiqueatlas.marker.village": "Wioska",
+    "gui.antiqueatlas.marker.netherPortal": "Portal Netheru",
+    "gui.antiqueatlas.marker.tomb": "Tutaj leży %s",
+    "gui.antiqueatlas.marker.treasure": "Zakopany skarb",
+    "gui.antiqueatlas.marker.monument": "Podwodna świątynia",
+    "gui.antiqueatlas.marker.mansion": "Leśny dwór",
+    
+    "gui.antiqueatlas.export.opening": "Otwieranie okna dialogowego systemu plików...",
+    "gui.antiqueatlas.export.selectFile": "Wybierz plik PNG do którego zapisać",
+    "gui.antiqueatlas.export.tooLarge": "Przepraszamy! Mapa jest zbyt duża do wyrenderowania, spróbuj zwiększyć ilość pamięci lokalnej dla Javy.",
+    
+    "gui.antiqueatlas.export.setup": "Przygotowywanie...",
+    "gui.antiqueatlas.export.rendering": "Renderowanie...",
+    "gui.antiqueatlas.export.writing": "Zapisywanie do pliku...",
+    "gui.antiqueatlas.export.loadingtextures": "Ładowanie tekstur...",
+    "gui.antiqueatlas.export.makingbuffer": "Przypisywanie %dx%d pamięci buforowania obrazu...",
+    
+    "gui.antiqueatlas.export.renderstripe": "Renderowanie wycinka %d/%d...",
+    "gui.antiqueatlas.export.writestripe": "Zapisywanie wycinka...",
+    
+    "gui.antiqueatlas.export.rendering.background": "Renderowanie tła mapy",
+    "gui.antiqueatlas.export.rendering.map": "Renderowanie fragmentów mapy",
+    "gui.antiqueatlas.export.rendering.markers": "Renderowanie znaczników",
+    
+    "key.openatlas.desc": "Otwórz atlas",
+    "key.antiqueatlas.category": "Antyczny atlas",
+    
+    "text.autoconfig.antiqueatlas.title": "Antyczny atlas",
+    "text.autoconfig.antiqueatlas.category.gameplay": "Rozgrywka",
+    "text.autoconfig.antiqueatlas.category.userInterface": "Interfejs użytkownika",
+    "text.autoconfig.antiqueatlas.category.performance": "Wydajność",
+    "text.autoconfig.antiqueatlas.category.appearance": "Wygląd",
+    
+    "text.autoconfig.antiqueatlas.option.doSaveBrowsingPos": "Zapisz pozycję w atlasie",
+    "text.autoconfig.antiqueatlas.option.autoDeathMarker": "Znacznik śmierci",
+    "text.autoconfig.antiqueatlas.option.autoVillageMarkers": "Znacznik wioski",
+    "text.autoconfig.antiqueatlas.option.autoNetherPortalMarkers": "Znacznik portalu Netheru",
+    "text.autoconfig.antiqueatlas.option.itemNeeded": "Atlas wymagany do użycia",
+    
+    "text.autoconfig.antiqueatlas.option.doScaleMarkers": "Skala znaczników",
+    "text.autoconfig.antiqueatlas.option.defaultScale": "Domyślne przybliżenie",
+    "text.autoconfig.antiqueatlas.option.minScale": "Minimalne przybliżenie",
+    "text.autoconfig.antiqueatlas.option.maxScale": "Maksymalne przybliżenie",
+    "text.autoconfig.antiqueatlas.option.doReverseWheelZoom": "Odwrócone przybliżanie rolką myszy",
+    
+    "text.autoconfig.antiqueatlas.option.scanRadius": "Zasięg skanowania",
+    "text.autoconfig.antiqueatlas.option.forceChunkLoading": "Wymuś ładowanie chunków",
+    "text.autoconfig.antiqueatlas.option.newScanInterval": "Interwał skanowania",
+    "text.autoconfig.antiqueatlas.option.doRescan": "Skanuj ponownie",
+    "text.autoconfig.antiqueatlas.option.rescanRate": "Tempo ponownego skanowania",
+    "text.autoconfig.antiqueatlas.option.markerLimit": "Limit znaczników",
+    "text.autoconfig.antiqueatlas.option.doScanPonds": "Skanuj w poszukiwaniu stawów",
+    "text.autoconfig.antiqueatlas.option.doScanRavines": "Skanuj w poszukiwaniu kanionów",
+    "text.autoconfig.antiqueatlas.option.debugRender": "Debugowanie renderowania",
+    
+    "text.autoconfig.antiqueatlas.option.tileSize": "Wielkość wycinka",
+    "text.autoconfig.antiqueatlas.option.markerSize": "Wielkość znacznika",
+    "text.autoconfig.antiqueatlas.option.playerIconWidth": "Szerokość ikony gracza",
+    "text.autoconfig.antiqueatlas.option.playerIconHeight": "Wysokość ikony gracza"
+}
