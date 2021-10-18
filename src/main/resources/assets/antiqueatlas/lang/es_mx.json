@@ -3,8 +3,8 @@
   "item.antiqueatlas.empty_antique_atlas": "Atlas antiguo vacío",
 
   "gui.antiqueatlas.scalebar": "Escala en bloques",
-  "gui.antiqueatlas.addMarker": "Añadir marcador",
-  "gui.antiqueatlas.delMarker": "Eliminar marcador",
+  "gui.antiqueatlas.addMarker": "Agregar marcador",
+  "gui.antiqueatlas.delMarker": "Borrar marcador",
   "gui.antiqueatlas.followPlayer": "Seguir al jugador",
   "gui.antiqueatlas.exportImage": "Exportar imagen",
   "gui.antiqueatlas.hideMarkers": "Ocultar marcadores",
@@ -14,7 +14,7 @@
   "gui.antiqueatlas.marker.type": "Tipo:",
   "gui.antiqueatlas.marker.village": "Aldea",
   "gui.antiqueatlas.marker.netherPortal": "Portal del Nether",
-  "gui.antiqueatlas.marker.tomb": "Aqui yace %s",
+  "gui.antiqueatlas.marker.tomb": "Aquí yace %s",
   "gui.antiqueatlas.marker.treasure": "Tesoro enterrado",
   "gui.antiqueatlas.marker.monument": "Monumento oceánico",
   "gui.antiqueatlas.marker.mansion": "Mansión del bosque",
@@ -55,7 +55,7 @@
   "text.autoconfig.antiqueatlas.option.defaultScale": "Nivel de zoom por defecto",
   "text.autoconfig.antiqueatlas.option.minScale": "Nivel de zoom mínimo",
   "text.autoconfig.antiqueatlas.option.maxScale": "Nivel de zoom máximo",
-  "text.autoconfig.antiqueatlas.option.doReverseWheelZoom": "Zoom con rueda del ratón invertido",
+  "text.autoconfig.antiqueatlas.option.doReverseWheelZoom": "Zoom con scroll invertido",
 
   "text.autoconfig.antiqueatlas.option.scanRadius": "Radio de escaneo",
   "text.autoconfig.antiqueatlas.option.forceChunkLoading": "Forzar la carga de chunks",
@@ -65,10 +65,10 @@
   "text.autoconfig.antiqueatlas.option.markerLimit": "Límite de marcadores",
   "text.autoconfig.antiqueatlas.option.doScanPonds": "Escanear charcos",
   "text.autoconfig.antiqueatlas.option.doScanRavines": "Escanear grietas",
-  "text.autoconfig.antiqueatlas.option.debugRender": "Renderizado de depuración",
+  "text.autoconfig.antiqueatlas.option.debugRender": "Renderizado debug",
 
   "text.autoconfig.antiqueatlas.option.tileSize": "Tamaño de mosaicos",
   "text.autoconfig.antiqueatlas.option.markerSize": "Tamaño de marcadores",
-  "text.autoconfig.antiqueatlas.option.playerIconWidth": "Ancho del icono del jugador",
-  "text.autoconfig.antiqueatlas.option.playerIconHeight": "Altura del icono del jugador"
+  "text.autoconfig.antiqueatlas.option.playerIconWidth": "Ancho del ícono del jugador",
+  "text.autoconfig.antiqueatlas.option.playerIconHeight": "Altura del ícono del jugador"
 }
