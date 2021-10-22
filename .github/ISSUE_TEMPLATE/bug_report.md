@@ -23,16 +23,12 @@ A clear and concise description of what you expected to happen.
 **Screenshots**
 If applicable, add screenshots to help explain your problem.
 
-**Forge version information (please complete the following information):**
- - Minecraft: [e.g. 1.16.4]
- - Forge: [e.g. 35.1.37]
- - AntiqueAtlas: [e.g. 5.4.2-forge]
-
-**Fabric version information (please complete the following information):**
- - Minecraft: [e.g. 1.16.5]
- - Fabric Launcher: [e.g. 0.11.1]
- - Fabric API: [e.g. 0.29.4]
- - AntiqueAtlas: [e.g. 5.4.2-fabric]
-
+**Version information (please complete the following information):**
+ - AntiqueAtlas: ?
+ - Minecraft: ?
+ - Forge: ?
+ - Fabric Launcher: ?
+ - Fabric API: ?
+ 
 **Additional context**
 Add any other context about the problem here.
