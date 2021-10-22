@@ -4,7 +4,7 @@
 
   "gui.antiqueatlas.scalebar": "Scala in blocchi",
   "gui.antiqueatlas.addMarker": "Aggiungi marcatore",
-  "gui.antiqueatlas.delMarker": "Elimina marcatore",
+  "gui.antiqueatlas.delMarker": "Rimuovi marcatore",
   "gui.antiqueatlas.followPlayer": "Segui giocatore",
   "gui.antiqueatlas.exportImage": "Esporta immagine",
   "gui.antiqueatlas.hideMarkers": "Nascondi marcatori",
@@ -12,12 +12,63 @@
 
   "gui.antiqueatlas.marker.label": "Etichetta:",
   "gui.antiqueatlas.marker.type": "Tipo:",
-  "gui.antiqueatlas.marker.village": "Villaggio",
-  "gui.antiqueatlas.marker.netherPortal": "Portale degli Inferi",
+  "gui.antiqueatlas.marker.village": "Villagio",
+  "gui.antiqueatlas.marker.netherPortal": "Portale del Nether",
+  "gui.antiqueatlas.marker.tomb": "Qui giace %s",
+  "gui.antiqueatlas.marker.treasure": "Tesoro nascosto",
+  "gui.antiqueatlas.marker.monument": "Monumento oceanico",
+  "gui.antiqueatlas.marker.mansion": "Magione della foresta",
 
   "gui.antiqueatlas.export.opening": "Aprendo la pagina di dialogo...",
   "gui.antiqueatlas.export.selectFile": "Seleziona dove salvare il file PNG",
   "gui.antiqueatlas.export.tooLarge": "Spiacenti! L'immagine è troppo grande da renderizzare, prova a incrementare la dimensione della memoria heap di Java.",
+
+  "gui.antiqueatlas.export.setup": "Inizializzando...",
   "gui.antiqueatlas.export.rendering": "Renderizzando...",
-  "gui.antiqueatlas.export.writing": "Scrivendo il file..."
+  "gui.antiqueatlas.export.writing": "Scrivendo su file...",
+  "gui.antiqueatlas.export.loadingtextures": "Caricando texture...",
+  "gui.antiqueatlas.export.makingbuffer": "Allocando %dx%d buffer d'immagine...",
+
+  "gui.antiqueatlas.export.renderstripe": "Renderizzando fetta %d/%d...",
+  "gui.antiqueatlas.export.writestripe": "Scrivendo fetta...",
+
+  "gui.antiqueatlas.export.rendering.background": "Renderizzando lo sfondo della mappa",
+  "gui.antiqueatlas.export.rendering.map": "Renderizzando le tile della mappa",
+  "gui.antiqueatlas.export.rendering.markers": "Renderizzando marcatori",
+
+  "key.openatlas.desc": "Apri atlante",
+  "key.antiqueatlas.category": "Antico atlante",
+
+  "text.autoconfig.antiqueatlas.title":  "Antico atlante",
+  "text.autoconfig.antiqueatlas.category.gameplay":  "Gameplay",
+  "text.autoconfig.antiqueatlas.category.userInterface":  "Interfaccia Utente",
+  "text.autoconfig.antiqueatlas.category.performance":  "Prestazioni",
+  "text.autoconfig.antiqueatlas.category.appearance":  "Aspetto",
+
+  "text.autoconfig.antiqueatlas.option.doSaveBrowsingPos": "Salva posizione dell'atlante",
+  "text.autoconfig.antiqueatlas.option.autoDeathMarker": "Marcatore di morte",
+  "text.autoconfig.antiqueatlas.option.autoVillageMarkers": "Marcatore villaggio",
+  "text.autoconfig.antiqueatlas.option.autoNetherPortalMarkers": "Marcatore portale del Nether",
+  "text.autoconfig.antiqueatlas.option.itemNeeded": "Atlante richiesto per l'uso",
+
+  "text.autoconfig.antiqueatlas.option.doScaleMarkers": "Scala marcatori",
+  "text.autoconfig.antiqueatlas.option.defaultScale": "Livello di zoom predefinito",
+  "text.autoconfig.antiqueatlas.option.minScale": "Livello di zoom minimo",
+  "text.autoconfig.antiqueatlas.option.maxScale": "Livello di zoom massimo",
+  "text.autoconfig.antiqueatlas.option.doReverseWheelZoom": "Inverti zoom con rotella del mouse",
+
+  "text.autoconfig.antiqueatlas.option.scanRadius": "Raggio di scansione",
+  "text.autoconfig.antiqueatlas.option.forceChunkLoading": "Forza il caricamento dei chunk",
+  "text.autoconfig.antiqueatlas.option.newScanInterval": "Intervallo di scansione",
+  "text.autoconfig.antiqueatlas.option.doRescan": "Riscansiona",
+  "text.autoconfig.antiqueatlas.option.rescanRate": "Rateo di riscansione",
+  "text.autoconfig.antiqueatlas.option.markerLimit": "Limite marcatori",
+  "text.autoconfig.antiqueatlas.option.doScanPonds": "Scansiona laghetti",
+  "text.autoconfig.antiqueatlas.option.doScanRavines": "Scansiona faglie",
+  "text.autoconfig.antiqueatlas.option.debugRender": "Debug del rendering",
+
+  "text.autoconfig.antiqueatlas.option.tileSize": "Dimensioni di una tile",
+  "text.autoconfig.antiqueatlas.option.markerSize": "Dimensioni di un marcatore",
+  "text.autoconfig.antiqueatlas.option.playerIconWidth": "Larghezza icona giocatore",
+  "text.autoconfig.antiqueatlas.option.playerIconHeight": "Altezza icona giocatore"
 }
