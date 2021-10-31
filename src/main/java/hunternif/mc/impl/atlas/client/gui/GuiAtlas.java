@@ -575,7 +575,7 @@ public class GuiAtlas extends hunternif.mc.impl.atlas.client.gui.core.GuiCompone
             }
             state.switchTo(NORMAL);
         } else if (isMouseOverMap && selectedButton == null) {
-            if (hoveredMarker == null || !MinecraftForge.EVENT_BUS.post(new MarkerClickedCallback(player, hoveredMarker, mouseState))) {
+            if (hoveredMarker == null || !MinecraftForge.EVENT_BUS.post(new MarkerClickedCallback.TheEvent(player, hoveredMarker, mouseState))) {
                 isDragging = true;
                 return true;
             }
@@ -1118,7 +1118,7 @@ public class GuiAtlas extends hunternif.mc.impl.atlas.client.gui.core.GuiCompone
         if (mouseIsOverMarker) {
             RenderSystem.setShaderColor(0.5f, 0.5f, 0.5f, 1);
             hoveredMarker = marker;
-            MinecraftForge.EVENT_BUS.post(new MarkerHoveredCallback(player, marker));
+            MinecraftForge.EVENT_BUS.post(new MarkerHoveredCallback.TheEvent(player, marker));
         } else {
             RenderSystem.setShaderColor(1, 1, 1, 1);
             if (hoveredMarker == marker) {
