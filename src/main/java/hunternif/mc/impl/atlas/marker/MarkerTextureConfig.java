@@ -3,14 +3,14 @@ package hunternif.mc.impl.atlas.marker;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import hunternif.mc.impl.atlas.AntiqueAtlasMod;
+import hunternif.mc.impl.atlas.forge.resource.IResourceReloadListener;
 import hunternif.mc.impl.atlas.registry.MarkerType;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-import net.fabricmc.fabric.api.resource.SimpleResourceReloadListener;
-import net.minecraft.resource.Resource;
-import net.minecraft.resource.ResourceManager;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.profiler.Profiler;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.resources.Resource;
+import net.minecraft.server.packs.resources.ResourceManager;
+import net.minecraft.util.profiling.ProfilerFiller;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -24,18 +24,18 @@ import java.util.concurrent.Executor;
  *
  * @author Hunternif
  */
-@Environment(EnvType.CLIENT)
-public class MarkerTextureConfig implements SimpleResourceReloadListener<Map<Identifier, MarkerType>> {
+@OnlyIn(Dist.CLIENT)
+public class MarkerTextureConfig implements IResourceReloadListener<Map<ResourceLocation, MarkerType>> {
     private static final int VERSION = 1;
     private static final JsonParser parser = new JsonParser();
 
     @Override
-    public CompletableFuture<Map<Identifier, MarkerType>> load(ResourceManager manager, Profiler profiler, Executor executor) {
+    public CompletableFuture<Map<ResourceLocation, MarkerType>> load(ResourceManager manager, ProfilerFiller profiler, Executor executor) {
         return CompletableFuture.supplyAsync(() -> {
-            Map<Identifier, MarkerType> typeMap = new HashMap<>();
+            Map<ResourceLocation, MarkerType> typeMap = new HashMap<>();
 
-            for (Identifier id : manager.findResources("atlas/markers", (s) -> s.endsWith(".json"))) {
-                Identifier markerId = new Identifier(
+            for (ResourceLocation id : manager.listResources("atlas/markers", (s) -> s.endsWith(".json"))) {
+                ResourceLocation markerId = new ResourceLocation(
                         id.getNamespace(),
                         id.getPath().replace("atlas/markers/", "").replace(".json", "")
                 );
@@ -69,16 +69,16 @@ public class MarkerTextureConfig implements SimpleResourceReloadListener<Map<Ide
     }
 
     @Override
-    public CompletableFuture<Void> apply(Map<Identifier, MarkerType> data, ResourceManager manager, Profiler profiler, Executor executor) {
+    public CompletableFuture<Void> apply(Map<ResourceLocation, MarkerType> data, ResourceManager manager, ProfilerFiller profiler, Executor executor) {
         return CompletableFuture.runAsync(() -> {
-            for (Identifier markerId : data.keySet()) {
+            for (ResourceLocation markerId : data.keySet()) {
                 MarkerType.register(markerId, data.get(markerId));
             }
         });
     }
 
     @Override
-    public Identifier getFabricId() {
-        return new Identifier("antiqueatlas:markers");
+    public ResourceLocation getForgeId() {
+        return new ResourceLocation("antiqueatlas:markers");
     }
 }

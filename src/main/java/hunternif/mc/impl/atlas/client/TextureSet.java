@@ -3,18 +3,18 @@ package hunternif.mc.impl.atlas.client;
 import hunternif.mc.impl.atlas.ClientProxy;
 import hunternif.mc.impl.atlas.client.texture.ITexture;
 import hunternif.mc.impl.atlas.util.Log;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-import net.minecraft.util.Identifier;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
 import java.util.*;
 
-@Environment(EnvType.CLIENT)
+@OnlyIn(Dist.CLIENT)
 public class TextureSet implements Comparable<TextureSet> {
     /**
      * Name of the texture pack to write in the config file.
      */
-    public final Identifier name;
+    public final ResourceLocation name;
 
     /**
      * The actual textures in this set.
@@ -25,17 +25,17 @@ public class TextureSet implements Comparable<TextureSet> {
      * Texture sets that a tile rendered with this set can be stitched to,
      * excluding itself.
      */
-    private final Set<Identifier> stitchTo = new HashSet<>();
-    private final Set<Identifier> stitchToHorizontal = new HashSet<>();
-    private final Set<Identifier> stitchToVertical = new HashSet<>();
-    private final Identifier[] texturePaths;
+    private final Set<ResourceLocation> stitchTo = new HashSet<>();
+    private final Set<ResourceLocation> stitchToHorizontal = new HashSet<>();
+    private final Set<ResourceLocation> stitchToVertical = new HashSet<>();
+    private final ResourceLocation[] texturePaths;
     private boolean stitchesToNull = false;
     private boolean anisotropicStitching = false;
 
     /**
      * Name has to be unique, it is used for equals() tests.
      */
-    public TextureSet(Identifier name, Identifier... textures) {
+    public TextureSet(ResourceLocation name, ResourceLocation... textures) {
         this.name = name;
         this.texturePaths = textures;
         this.textures = new ITexture[textures.length];
@@ -54,7 +54,7 @@ public class TextureSet implements Comparable<TextureSet> {
      * (but the opposite may be false, in case of asymmetric stitching.)
      */
     @SuppressWarnings("UnusedReturnValue")
-    public TextureSet stitchTo(Identifier... textureSets) {
+    public TextureSet stitchTo(ResourceLocation... textureSets) {
         Collections.addAll(stitchTo, textureSets);
         Collections.addAll(stitchToHorizontal, textureSets);
         Collections.addAll(stitchToVertical, textureSets);
@@ -62,14 +62,14 @@ public class TextureSet implements Comparable<TextureSet> {
     }
 
     @SuppressWarnings("UnusedReturnValue")
-    public TextureSet stitchToHorizontal(Identifier... textureSets) {
+    public TextureSet stitchToHorizontal(ResourceLocation... textureSets) {
         this.anisotropicStitching = true;
         Collections.addAll(stitchToHorizontal, textureSets);
         return this;
     }
 
     @SuppressWarnings("UnusedReturnValue")
-    public TextureSet stitchToVertical(Identifier... textureSets) {
+    public TextureSet stitchToVertical(ResourceLocation... textureSets) {
         this.anisotropicStitching = true;
         Collections.addAll(stitchToVertical, textureSets);
         return this;
@@ -112,7 +112,7 @@ public class TextureSet implements Comparable<TextureSet> {
         return textures[variationNumber % textures.length];
     }
 
-    public Identifier[] getTexturePaths() {
+    public ResourceLocation[] getTexturePaths() {
         return texturePaths;
     }
 
@@ -144,10 +144,10 @@ public class TextureSet implements Comparable<TextureSet> {
      * A special texture set that is stitched to everything except water.
      */
     public static class TextureSetShore extends TextureSet {
-        public final Identifier waterName;
+        public final ResourceLocation waterName;
         private TextureSet water;
 
-        TextureSetShore(Identifier name, Identifier water, Identifier... textures) {
+        TextureSetShore(ResourceLocation name, ResourceLocation water, ResourceLocation... textures) {
             super(name, textures);
             this.waterName = water;
         }

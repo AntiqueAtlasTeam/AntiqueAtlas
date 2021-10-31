@@ -1,7 +1,7 @@
 package hunternif.mc.impl.atlas.core;
 
 import hunternif.mc.impl.atlas.AntiqueAtlasMod;
-import net.minecraft.util.Identifier;
+import net.minecraft.resources.ResourceLocation;
 
 
 /**
@@ -10,7 +10,7 @@ import net.minecraft.util.Identifier;
  * @author Hunternif
  */
 public class TileIdMap {
-    public static final Identifier
+    public static final ResourceLocation
             // Village:
             TILE_VILLAGE_LIBRARY = AntiqueAtlasMod.id("npc_village_library"),
             TILE_VILLAGE_SMITHY = AntiqueAtlasMod.id("npc_village_smithy"),

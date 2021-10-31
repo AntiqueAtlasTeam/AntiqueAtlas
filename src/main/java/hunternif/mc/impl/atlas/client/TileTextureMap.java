@@ -3,13 +3,13 @@ package hunternif.mc.impl.atlas.client;
 import hunternif.mc.impl.atlas.AntiqueAtlasMod;
 import hunternif.mc.impl.atlas.client.texture.ITexture;
 import hunternif.mc.impl.atlas.util.Log;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.BuiltinRegistries;
-import net.minecraft.world.biome.Biome;
-import net.minecraft.world.gen.feature.ConfiguredFeature;
-import net.minecraft.world.gen.feature.ConfiguredFeatures;
+import net.minecraft.data.BuiltinRegistries;
+import net.minecraft.data.worldgen.Features;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
+import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.api.distmarker.Dist;
 
 import java.util.*;
 import java.util.Map.Entry;
@@ -22,7 +22,7 @@ import java.util.function.Supplier;
  *
  * @author Hunternif
  */
-@Environment(EnvType.CLIENT)
+@OnlyIn(Dist.CLIENT)
 public class TileTextureMap {
     private static final TileTextureMap INSTANCE = new TileTextureMap();
 
@@ -33,12 +33,12 @@ public class TileTextureMap {
     /**
      * This map stores the pseudo biome texture mappings, any biome with ID <0 is assumed to be a pseudo biome
      */
-    private final Map<Identifier, TextureSet> textureMap = new HashMap<>();
+    private final Map<ResourceLocation, TextureSet> textureMap = new HashMap<>();
 
     /**
      * Assign texture set to pseudo biome
      */
-    public void setTexture(Identifier tileId, TextureSet textureSet) {
+    public void setTexture(ResourceLocation tileId, TextureSet textureSet) {
         if (textureSet == null) {
             if (textureMap.remove(tileId) != null) {
                 Log.warn("Removing old texture for %d", tileId);
@@ -57,13 +57,13 @@ public class TileTextureMap {
      * Find the most appropriate standard texture set depending on
      * BiomeDictionary types.
      */
-    public void autoRegister(Identifier id, Biome biome) {
+    public void autoRegister(ResourceLocation id, Biome biome) {
         if (biome == null) {
             Log.error("Given biome is null. Cannot autodetect a suitable texture set for that.");
             return;
         }
 
-        switch (biome.getCategory()) {
+        switch (biome.getBiomeCategory()) {
             case SWAMP:
                 setTexture(id, biome.getScale() >= 0.25f ? TextureSetMap.instance().getByName(AntiqueAtlasMod.id("swamp_hills")) : TextureSetMap.instance().getByName(AntiqueAtlasMod.id("swamp")));
                 break;
@@ -108,8 +108,8 @@ public class TileTextureMap {
                 setTexture(id, biome.getScale() >= 0.25f ? TextureSetMap.instance().getByName(AntiqueAtlasMod.id("mountains")) : TextureSetMap.instance().getByName(AntiqueAtlasMod.id("hills")));
                 break;
             case THEEND:
-                List<List<Supplier<ConfiguredFeature<?, ?>>>> features = biome.getGenerationSettings().getFeatures();
-                boolean has_chorus_plant = features.stream().anyMatch(supplier -> supplier.stream().anyMatch(step -> step.get() == ConfiguredFeatures.CHORUS_PLANT));
+                List<List<Supplier<ConfiguredFeature<?, ?>>>> features = biome.getGenerationSettings().features();
+                boolean has_chorus_plant = features.stream().anyMatch(supplier -> supplier.stream().anyMatch(step -> step.get() == Features.CHORUS_PLANT));
                 if (has_chorus_plant) {
                     setTexture(id, TextureSetMap.instance().getByName(AntiqueAtlasMod.id("end_island_plants")));
                 } else {
@@ -141,7 +141,7 @@ public class TileTextureMap {
     /**
      * Auto-registers the biome if it is not registered.
      */
-    public void checkRegistration(Identifier id, Biome biome) {
+    public void checkRegistration(ResourceLocation id, Biome biome) {
         if (!isRegistered(id)) {
             autoRegister(id, biome);
         }
@@ -150,20 +150,20 @@ public class TileTextureMap {
     /**
      * Checks for pseudo biome ID - if not registered, use default
      */
-    private void checkRegistration(Identifier id) {
+    private void checkRegistration(ResourceLocation id) {
         if (!isRegistered(id)) {
             setTexture(id, getDefaultTexture());
         }
     }
 
-    public boolean isRegistered(Identifier id) {
+    public boolean isRegistered(ResourceLocation id) {
         return textureMap.containsKey(id);
     }
 
     /**
      * If unknown biome, auto-registers a texture set. If null, returns default set.
      */
-    public TextureSet getTextureSet(Identifier tile) {
+    public TextureSet getTextureSet(ResourceLocation tile) {
         if (tile == null) {
             return getDefaultTexture();
         }
@@ -182,10 +182,10 @@ public class TileTextureMap {
         return getTextureSet(subTile.tile).getTexture(subTile.variationNumber);
     }
 
-    public List<Identifier> getAllTextures() {
-        List<Identifier> list = new ArrayList<>();
+    public List<ResourceLocation> getAllTextures() {
+        List<ResourceLocation> list = new ArrayList<>();
 
-        for (Entry<Identifier, TextureSet> entry : textureMap.entrySet()) {
+        for (Entry<ResourceLocation, TextureSet> entry : textureMap.entrySet()) {
             Arrays.stream(entry.getValue().textures).forEach(iTexture -> list.add(iTexture.getTexture()));
         }
 

@@ -9,51 +9,51 @@ import hunternif.mc.impl.atlas.network.packet.s2c.play.CustomTileInfoS2CPacket;
 import hunternif.mc.impl.atlas.network.packet.s2c.play.DeleteCustomGlobalTileS2CPacket;
 import hunternif.mc.impl.atlas.network.packet.s2c.play.PutTileS2CPacket;
 import hunternif.mc.impl.atlas.util.Log;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.RegistryKey;
-import net.minecraft.world.World;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
 
 
 public class TileApiImpl implements TileAPI {
     public TileApiImpl() {
     }
 
-    public void putTile(World world, int atlasID, Identifier tile, int chunkX, int chunkZ) {
+    public void putTile(Level world, int atlasID, ResourceLocation tile, int chunkX, int chunkZ) {
         if (tile == null) {
             Log.error("Attempted to put custom tile with null name");
             return;
         }
 
-        RegistryKey<World> dimension = world.getRegistryKey();
-        if (world.isClient) {
+        ResourceKey<Level> dimension = world.dimension();
+        if (world.isClientSide) {
             new PutTileC2SPacket(atlasID, chunkX, chunkZ, tile).send();
         } else {
             AtlasData data = AntiqueAtlasMod.tileData.getData(atlasID, world);
             data.setTile(dimension, chunkX, chunkZ, tile);
-            for (PlayerEntity syncedPlayer : data.getSyncedPlayers()) {
-                new PutTileS2CPacket(atlasID, dimension, chunkX, chunkZ, tile).send((ServerPlayerEntity) syncedPlayer);
+            for (Player syncedPlayer : data.getSyncedPlayers()) {
+                new PutTileS2CPacket(atlasID, dimension, chunkX, chunkZ, tile).send((ServerPlayer) syncedPlayer);
             }
         }
     }
 
     @Override
-    public Identifier getTile(World world, int atlasID, int chunkX, int chunkZ) {
+    public ResourceLocation getTile(Level world, int atlasID, int chunkX, int chunkZ) {
         AtlasData data = AntiqueAtlasMod.tileData.getData(atlasID, world);
 
-        return data.getWorldData(world.getRegistryKey()).getTile(chunkX, chunkZ);
+        return data.getWorldData(world.dimension()).getTile(chunkX, chunkZ);
     }
 
     @Override
-    public void putGlobalTile(World world, Identifier tileId, int chunkX, int chunkZ) {
+    public void putGlobalTile(Level world, ResourceLocation tileId, int chunkX, int chunkZ) {
         if (tileId == null) {
             Log.error("Attempted to put global tile with null name");
             return;
         }
 
-        if (world.isClient) {
+        if (world.isClientSide) {
             Log.warn("Client attempted to put global tile");
             return;
         }
@@ -62,25 +62,25 @@ public class TileApiImpl implements TileAPI {
         data.setTile(chunkX, chunkZ, tileId);
 
         // Send tile packet:
-        new CustomTileInfoS2CPacket(world.getRegistryKey(), chunkX, chunkZ, tileId).send((ServerWorld) world);
+        new CustomTileInfoS2CPacket(world.dimension(), chunkX, chunkZ, tileId).send((ServerLevel) world);
     }
 
     @Override
-    public Identifier getGlobalTile(World world, int chunkX, int chunkZ) {
+    public ResourceLocation getGlobalTile(Level world, int chunkX, int chunkZ) {
         TileDataStorage data = AntiqueAtlasMod.globalTileData.getData(world);
         return data.getTile(chunkX, chunkZ);
     }
 
     @Override
-    public void deleteGlobalTile(World world, int chunkX, int chunkZ) {
-        if (world.isClient) {
+    public void deleteGlobalTile(Level world, int chunkX, int chunkZ) {
+        if (world.isClientSide) {
             Log.warn("Client attempted to delete global tile");
             return;
         }
         TileDataStorage data = AntiqueAtlasMod.globalTileData.getData(world);
         if (data.getTile(chunkX, chunkZ) != null) {
             data.removeTile(chunkX, chunkZ);
-            new DeleteCustomGlobalTileS2CPacket(world.getRegistryKey(), chunkX, chunkZ).send((ServerWorld) world);
+            new DeleteCustomGlobalTileS2CPacket(world.dimension(), chunkX, chunkZ).send((ServerLevel) world);
         }
     }
 }

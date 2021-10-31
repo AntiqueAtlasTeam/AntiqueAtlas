@@ -1,6 +1,9 @@
 package hunternif.mc.impl.atlas.client;
 
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.math.Quaternion;
+import com.mojang.math.Vector3f;
 import hunternif.mc.api.client.AtlasClientAPI;
 import hunternif.mc.impl.atlas.AntiqueAtlasMod;
 import hunternif.mc.impl.atlas.RegistrarAntiqueAtlas;
@@ -13,46 +16,43 @@ import hunternif.mc.impl.atlas.marker.MarkersData;
 import hunternif.mc.impl.atlas.registry.MarkerRenderInfo;
 import hunternif.mc.impl.atlas.registry.MarkerType;
 import hunternif.mc.impl.atlas.util.Rect;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.DrawableHelper;
-import net.minecraft.client.render.VertexConsumerProvider;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.client.util.math.Vector3d;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.math.Quaternion;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.util.math.Vec3f;
-import net.minecraft.world.World;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiComponent;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+
 import org.lwjgl.opengl.GL11;
 
 import java.util.List;
 
-@Environment(EnvType.CLIENT)
-public class OverlayRenderer extends DrawableHelper {
+@OnlyIn(Dist.CLIENT)
+public class OverlayRenderer extends GuiComponent {
     /**
      * Number of blocks per chunk in minecraft. This is certianly stored
      * somewhere else, but I couldn't be bothered to find it.
      */
     private static final int CHUNK_SIZE = 16;
     private static final float INNER_ELEMENTS_SCALE_FACTOR = 1.9F;
-    private PlayerEntity player;
-    private World world;
+    private Player player;
+    private Level world;
 
-    public void drawOverlay(MatrixStack matrices, VertexConsumerProvider vertexConsumer, int light, ItemStack atlas) {
+    public void drawOverlay(PoseStack matrices, MultiBufferSource vertexConsumer, int light, ItemStack atlas) {
         // Overlay must close if Atlas GUI is opened
-        if (MinecraftClient.getInstance().currentScreen instanceof GuiAtlas) {
+        if (Minecraft.getInstance().screen instanceof GuiAtlas) {
             return;
         }
 
-        if (MinecraftClient.getInstance().world == null || MinecraftClient.getInstance().player == null) {
+        if (Minecraft.getInstance().level == null || Minecraft.getInstance().player == null) {
             return;
         }
 
-        this.player = MinecraftClient.getInstance().player;
-        this.world = MinecraftClient.getInstance().world;
+        this.player = Minecraft.getInstance().player;
+        this.world = Minecraft.getInstance().level;
 
         if (!atlas.isEmpty() && atlas.getItem() == RegistrarAntiqueAtlas.ATLAS) {
             int atlasID = AtlasItem.getAtlasID(atlas);
@@ -60,16 +60,16 @@ public class OverlayRenderer extends DrawableHelper {
         }
     }
 
-    private void drawMinimap(MatrixStack matrices, int atlasID, VertexConsumerProvider buffer, int light) {
+    private void drawMinimap(PoseStack matrices, int atlasID, MultiBufferSource buffer, int light) {
         RenderSystem.enableBlend();
         RenderSystem.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
-        matrices.push();
+        matrices.pushPose();
         matrices.translate(0, 0, 0.01);
         Textures.BOOK.drawWithLight(buffer, matrices, 0, 0, (int) (GuiAtlas.WIDTH * 1.5), (int) (GuiAtlas.HEIGHT * 1.5), light);
-        matrices.pop();
+        matrices.popPose();
 
-        matrices.push();
+        matrices.pushPose();
         matrices.scale(INNER_ELEMENTS_SCALE_FACTOR, INNER_ELEMENTS_SCALE_FACTOR, 1F);
 
 
@@ -78,7 +78,7 @@ public class OverlayRenderer extends DrawableHelper {
         if (AntiqueAtlasMod.CONFIG.markerSize > 0) {
             drawMarkers(buffer, matrices, atlasID, light);
         }
-        matrices.pop();
+        matrices.popPose();
 
         matrices.translate(0, 0, -0.02);
         drawPlayer(buffer, matrices, light);
@@ -90,11 +90,11 @@ public class OverlayRenderer extends DrawableHelper {
         RenderSystem.disableBlend();
     }
 
-    private void drawTiles(VertexConsumerProvider buffer, MatrixStack matrices, int atlasID, int light) {
-        Rect iteratorScope = getChunkCoverage(player.getPos());
+    private void drawTiles(MultiBufferSource buffer, PoseStack matrices, int atlasID, int light) {
+        Rect iteratorScope = getChunkCoverage(player.position());
         TileRenderIterator iter = AtlasClientAPI.getTileAPI().getTiles(world, atlasID, iteratorScope, 1);
 
-        Vec3d chunkPosition = player.getPos().multiply(1D / CHUNK_SIZE, 1D / CHUNK_SIZE, 1D / CHUNK_SIZE);
+        Vec3 chunkPosition = player.position().multiply(1D / CHUNK_SIZE, 1D / CHUNK_SIZE, 1D / CHUNK_SIZE);
         int shapeMiddleX = (int) ((GuiAtlas.WIDTH * 1.5F) / (INNER_ELEMENTS_SCALE_FACTOR * 2));
         int shapeMiddleY = (int) ((GuiAtlas.HEIGHT * 1.5F) / (INNER_ELEMENTS_SCALE_FACTOR * 2));
         SetTileRenderer renderer = new SetTileRenderer(buffer, matrices, AntiqueAtlasMod.CONFIG.tileSize / 2, light);
@@ -124,41 +124,41 @@ public class OverlayRenderer extends DrawableHelper {
         renderer.draw();
     }
 
-    private void drawMarkers(VertexConsumerProvider buffer, MatrixStack matrices, int atlasID, int light) {
+    private void drawMarkers(MultiBufferSource buffer, PoseStack matrices, int atlasID, int light) {
         // biomeData needed to prevent undiscovered markers from appearing
         WorldData biomeData = AntiqueAtlasMod.tileData.getData(
                 atlasID, this.world).getWorldData(
-                this.world.getRegistryKey());
+                this.world.dimension());
         DimensionMarkersData globalMarkersData = AntiqueAtlasMod.globalMarkersData
-                .getData().getMarkersDataInWorld(this.world.getRegistryKey());
+                .getData().getMarkersDataInWorld(this.world.dimension());
 
         // Draw global markers:
         drawMarkersData(buffer, matrices, globalMarkersData, biomeData, light);
 
         MarkersData markersData = AntiqueAtlasMod.markersData.getMarkersData(
-                atlasID, MinecraftClient.getInstance().world);
+                atlasID, Minecraft.getInstance().level);
         if (markersData != null) {
-            DimensionMarkersData localMarkersData = markersData.getMarkersDataInWorld(world.getRegistryKey());
+            DimensionMarkersData localMarkersData = markersData.getMarkersDataInWorld(world.dimension());
 
             // Draw local markers:
             drawMarkersData(buffer, matrices, localMarkersData, biomeData, light);
         }
     }
 
-    private void drawPlayer(VertexConsumerProvider buffer, MatrixStack matrices, int light) {
-        matrices.push();
+    private void drawPlayer(MultiBufferSource buffer, PoseStack matrices, int light) {
+        matrices.pushPose();
 
         matrices.translate((int) ((GuiAtlas.WIDTH * 1.5F) / 2F), (int) ((GuiAtlas.HEIGHT * 1.5F) / 2F), 0);
-        matrices.multiply(new Quaternion(Vec3f.POSITIVE_Z, this.player.getHeadYaw() + 180, true));
+        matrices.mulPose(new Quaternion(Vector3f.ZP, this.player.getYHeadRot() + 180, true));
         matrices.translate(-AntiqueAtlasMod.CONFIG.playerIconWidth / 2.0, -AntiqueAtlasMod.CONFIG.playerIconHeight / 2.0, 0);
 
         Textures.PLAYER.drawWithLight(buffer, matrices, 0, 0, AntiqueAtlasMod.CONFIG.playerIconWidth, AntiqueAtlasMod.CONFIG.playerIconHeight, light);
-        matrices.pop();
+        matrices.popPose();
     }
 
-    private void drawMarkersData(VertexConsumerProvider buffer, MatrixStack matrices, DimensionMarkersData markersData, WorldData biomeData, int light) {
+    private void drawMarkersData(MultiBufferSource buffer, PoseStack matrices, DimensionMarkersData markersData, WorldData biomeData, int light) {
         //this will be large enough to include markers that are larger than tiles
-        Rect mcchunks = getChunkCoverage(player.getPos());
+        Rect mcchunks = getChunkCoverage(player.position());
         Rect chunks = new Rect(mcchunks.minX / MarkersData.CHUNK_STEP,
                 mcchunks.minY / MarkersData.CHUNK_STEP,
                 (int) Math.ceil((float) mcchunks.maxX / MarkersData.CHUNK_STEP),
@@ -166,7 +166,7 @@ public class OverlayRenderer extends DrawableHelper {
 
         int shapeMiddleX = (int) ((GuiAtlas.WIDTH * 1.5F) / (INNER_ELEMENTS_SCALE_FACTOR * 2));
         int shapeMiddleY = (int) ((GuiAtlas.HEIGHT * 1.5F) / (INNER_ELEMENTS_SCALE_FACTOR * 2));
-        Vec3d chunkPosition = player.getPos().multiply(1D / CHUNK_SIZE, 1D / CHUNK_SIZE, 1D / CHUNK_SIZE);
+        Vec3 chunkPosition = player.position().multiply(1D / CHUNK_SIZE, 1D / CHUNK_SIZE, 1D / CHUNK_SIZE);
 
         for (int x = chunks.minX; x <= chunks.maxX; x++) {
             for (int z = chunks.minY; z <= chunks.maxY; z++) {
@@ -190,7 +190,7 @@ public class OverlayRenderer extends DrawableHelper {
         }
     }
 
-    private void renderMarker(VertexConsumerProvider buffer, MatrixStack matrices, Marker marker, int x, int y, WorldData biomeData, int light) {
+    private void renderMarker(MultiBufferSource buffer, PoseStack matrices, Marker marker, int x, int y, WorldData biomeData, int light) {
         int tileHalfSize = GuiAtlas.MARKER_SIZE / 16;
         if (!((x + tileHalfSize) <= 240 && (x - tileHalfSize >= 3) && (y + tileHalfSize) < 166 && (y - tileHalfSize) >= 0))
             return;
@@ -205,7 +205,7 @@ public class OverlayRenderer extends DrawableHelper {
         info.tex.drawWithLight(buffer, matrices, x - GuiAtlas.MARKER_SIZE / 4 + 4, y - GuiAtlas.MARKER_SIZE / 4 + 4, GuiAtlas.MARKER_SIZE / 2, GuiAtlas.MARKER_SIZE / 2, light);
     }
 
-    private Rect getChunkCoverage(Vec3d position) {
+    private Rect getChunkCoverage(Vec3 position) {
         int minChunkX = (int) Math.floor(position.x / CHUNK_SIZE
                 - (GuiAtlas.WIDTH) / (4f * AntiqueAtlasMod.CONFIG.tileSize));
         minChunkX -= 4;

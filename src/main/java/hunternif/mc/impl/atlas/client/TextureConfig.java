@@ -3,14 +3,13 @@ package hunternif.mc.impl.atlas.client;
 import hunternif.mc.impl.atlas.AntiqueAtlasMod;
 import hunternif.mc.impl.atlas.client.texture.ITexture;
 import hunternif.mc.impl.atlas.client.texture.TileTexture;
+import hunternif.mc.impl.atlas.forge.resource.IResourceReloadListener;
 import hunternif.mc.impl.atlas.util.Log;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-import net.fabricmc.fabric.api.resource.SimpleResourceReloadListener;
-import net.minecraft.resource.ResourceManager;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.profiler.Profiler;
-
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.resources.ResourceManager;
+import net.minecraft.util.profiling.ProfilerFiller;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
@@ -24,25 +23,25 @@ import java.util.concurrent.Executor;
  *  - The identifier of the physical location in modid:texture/gui/tiles/tex.png
  *  - The logical identifier modid:tex referenced by TextureSets
  */
-@Environment(EnvType.CLIENT)
-public class TextureConfig implements SimpleResourceReloadListener<Map<Identifier, ITexture>> {
-    private final Map<Identifier, ITexture> texture_map;
+@OnlyIn(Dist.CLIENT)
+public class TextureConfig implements IResourceReloadListener<Map<ResourceLocation, ITexture>> {
+    private final Map<ResourceLocation, ITexture> texture_map;
 
-    public TextureConfig(Map<Identifier, ITexture> texture_map) {
+    public TextureConfig(Map<ResourceLocation, ITexture> texture_map) {
         this.texture_map = texture_map;
     }
 
     @Override
-    public CompletableFuture<Map<Identifier, ITexture>> load(ResourceManager manager, Profiler profiler, Executor executor) {
+    public CompletableFuture<Map<ResourceLocation, ITexture>> load(ResourceManager manager, ProfilerFiller profiler, Executor executor) {
         return CompletableFuture.supplyAsync(() -> {
-            Map<Identifier, ITexture> textures = new HashMap<>();
+            Map<ResourceLocation, ITexture> textures = new HashMap<>();
 
             try {
-                for (Identifier id : manager.findResources("textures/gui/tiles", (s) -> s.endsWith(".png"))) {
+                for (ResourceLocation id : manager.listResources("textures/gui/tiles", (s) -> s.endsWith(".png"))) {
                     // id now contains the physical file path of the texture
 
                     // texture_id is the logical identifier, as it will be referenced by TextureSets
-                    Identifier texture_id = new Identifier(
+                    ResourceLocation texture_id = new ResourceLocation(
                             id.getNamespace(),
                             id.getPath().replace("textures/gui/tiles/", "").replace(".png", "")
                     );
@@ -61,18 +60,19 @@ public class TextureConfig implements SimpleResourceReloadListener<Map<Identifie
     }
 
     @Override
-    public CompletableFuture<Void> apply(Map<Identifier, ITexture> textures, ResourceManager manager, Profiler profiler, Executor executor) {
-        return CompletableFuture.runAsync(() -> {
-            texture_map.clear();
-            for (Map.Entry<Identifier, ITexture> entry : textures.entrySet()) {
-                texture_map.put(entry.getKey(), entry.getValue());
-                Log.info("Loaded texture %s with path %s", entry.getKey(), entry.getValue().getTexture());
-            }
+    public CompletableFuture<Void> apply(Map<ResourceLocation, ITexture> textures, ResourceManager manager, ProfilerFiller profiler, Executor executor) {
+    	texture_map.clear();
+        for (Map.Entry<ResourceLocation, ITexture> entry : textures.entrySet()) {
+            texture_map.put(entry.getKey(), entry.getValue());
+            Log.info("Loaded texture %s with path %s", entry.getKey(), entry.getValue().getTexture());
+        }
+    	return CompletableFuture.runAsync(() -> {
+            
         });
     }
 
     @Override
-    public Identifier getFabricId() {
-        return new Identifier("antiqueatlas:textures");
+    public ResourceLocation getForgeId() {
+        return new ResourceLocation("antiqueatlas:textures");
     }
 }

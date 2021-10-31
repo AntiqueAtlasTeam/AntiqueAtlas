@@ -1,18 +1,39 @@
 package hunternif.mc.impl.atlas.structure;
 
-import net.fabricmc.fabric.api.event.Event;
-import net.fabricmc.fabric.api.event.EventFactory;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.structure.StructureStart;
-import net.minecraft.world.World;
+import java.util.function.Consumer;
+
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.level.levelgen.structure.StructureStart;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.eventbus.api.Event;
 
 public interface StructureAddedCallback {
-	Event<StructureAddedCallback> EVENT = EventFactory.createArrayBacked(StructureAddedCallback.class,
-			(invokers) -> (structurePiece, world) -> {
-				for (StructureAddedCallback callback : invokers) {
-					callback.onStructureAdded(structurePiece, world);
-				}
-			});
+	void onStructureAdded(StructureStart<?> structureStart, ServerLevel world);
+	
+	public static void register(StructureAddedCallback consumer) {
+		MinecraftForge.EVENT_BUS.addListener((Consumer<TheEvent>)event->consumer.onStructureAdded(event.getStructureStart(), event.getWorld()));
+	}
+	
+	/**
+	 * @author Stereowalker
+	 */
+	public class TheEvent extends Event {
+		private final StructureStart<?> structureStart;
+		private final ServerLevel world;
+		
+		public TheEvent(StructureStart<?> structureStart, ServerLevel world) {
+			this.structureStart = structureStart;
+			this.world = world;
+		}
 
-	void onStructureAdded(StructureStart<?> structureStart, ServerWorld world);
+		public StructureStart<?> getStructureStart() {
+			return structureStart;
+		}
+
+		public ServerLevel getWorld() {
+			return world;
+		}
+		
+	}
+	
 }

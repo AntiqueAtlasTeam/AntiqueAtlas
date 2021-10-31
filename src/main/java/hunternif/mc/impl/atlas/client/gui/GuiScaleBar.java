@@ -1,16 +1,16 @@
 package hunternif.mc.impl.atlas.client.gui;
 
+import java.util.Collections;
+import java.util.Map;
+
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
+import com.mojang.blaze3d.vertex.PoseStack;
 import hunternif.mc.impl.atlas.client.Textures;
 import hunternif.mc.impl.atlas.client.gui.core.GuiComponent;
 import hunternif.mc.impl.atlas.client.texture.ITexture;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.text.TranslatableText;
-
-import java.util.Collections;
-import java.util.Map;
+import net.minecraft.client.Minecraft;
+import net.minecraft.network.chat.TranslatableComponent;
 
 
 /**
@@ -57,14 +57,14 @@ public class GuiScaleBar extends GuiComponent {
     }
 
     @Override
-    public void render(MatrixStack matrices, int mouseX, int mouseY, float partialTick) {
+    public void render(PoseStack matrices, int mouseX, int mouseY, float partialTick) {
         ITexture texture = getTexture();
         if (texture == null) return;
 
         texture.draw(matrices, getGuiX(), getGuiY());
 
         if (isMouseOver) {
-            drawTooltip(Collections.singletonList(new TranslatableText("gui.antiqueatlas.scalebar")), MinecraftClient.getInstance().textRenderer);
+            drawTooltip(Collections.singletonList(new TranslatableComponent("gui.antiqueatlas.scalebar")), Minecraft.getInstance().font);
         }
     }
 }

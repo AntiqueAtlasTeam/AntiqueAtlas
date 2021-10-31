@@ -1,9 +1,9 @@
 package hunternif.mc.impl.atlas.client.gui.core;
 
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.sound.PositionedSoundInstance;
-import net.minecraft.sound.SoundEvent;
-import net.minecraft.sound.SoundEvents;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.resources.sounds.SimpleSoundInstance;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -52,7 +52,7 @@ public class GuiComponentButton extends GuiComponent {
     @SuppressWarnings("unchecked")
     void onClick() {
         if (clickSound != null) {
-            MinecraftClient.getInstance().getSoundManager().play(PositionedSoundInstance.master(clickSound, 1.0F));
+            Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(clickSound, 1.0F));
         }
 
         for (IButtonListener listener : listeners) {

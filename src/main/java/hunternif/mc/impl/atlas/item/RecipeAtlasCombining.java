@@ -5,16 +5,16 @@ import hunternif.mc.impl.atlas.RegistrarAntiqueAtlas;
 import hunternif.mc.impl.atlas.core.AtlasData;
 import hunternif.mc.impl.atlas.marker.Marker;
 import hunternif.mc.impl.atlas.marker.MarkersData;
-import net.minecraft.inventory.CraftingInventory;
-import net.minecraft.inventory.Inventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.recipe.CraftingRecipe;
-import net.minecraft.recipe.RecipeSerializer;
-import net.minecraft.recipe.RecipeType;
-import net.minecraft.recipe.SpecialRecipeSerializer;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.RegistryKey;
-import net.minecraft.world.World;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.Container;
+import net.minecraft.world.inventory.CraftingContainer;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.CraftingRecipe;
+import net.minecraft.world.item.crafting.RecipeSerializer;
+import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.item.crafting.SimpleRecipeSerializer;
+import net.minecraft.world.level.Level;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,10 +26,10 @@ import java.util.List;
  * @author Hunternif
  */
 public class RecipeAtlasCombining implements CraftingRecipe {
-    public static final RecipeSerializer<RecipeAtlasCombining> SERIALIZER = new SpecialRecipeSerializer<>(RecipeAtlasCombining::new);
-    private final Identifier id;
+    public static final RecipeSerializer<RecipeAtlasCombining> SERIALIZER = new SimpleRecipeSerializer<>(RecipeAtlasCombining::new);
+    private final ResourceLocation id;
 
-    public RecipeAtlasCombining(Identifier id) {
+    public RecipeAtlasCombining(ResourceLocation id) {
         this.id = id;
     }
 
@@ -39,14 +39,14 @@ public class RecipeAtlasCombining implements CraftingRecipe {
     }
 
     @Override
-    public boolean matches(CraftingInventory inv, World world) {
+    public boolean matches(CraftingContainer inv, Level world) {
         return matches(inv);
     }
 
-    private boolean matches(CraftingInventory inv) {
+    private boolean matches(CraftingContainer inv) {
         int atlasesFound = 0;
-        for (int i = 0; i < inv.size(); ++i) {
-            ItemStack stack = inv.getStack(i);
+        for (int i = 0; i < inv.getContainerSize(); ++i) {
+            ItemStack stack = inv.getItem(i);
             if (!stack.isEmpty()) {
                 if (stack.getItem() == RegistrarAntiqueAtlas.ATLAS) {
                     atlasesFound++;
@@ -57,11 +57,11 @@ public class RecipeAtlasCombining implements CraftingRecipe {
     }
 
     @Override
-    public ItemStack craft(CraftingInventory inv) {
+    public ItemStack assemble(CraftingContainer inv) {
         ItemStack firstAtlas = ItemStack.EMPTY;
         List<Integer> atlasIds = new ArrayList<>(9);
-        for (int i = 0; i < inv.size(); ++i) {
-            ItemStack stack = inv.getStack(i);
+        for (int i = 0; i < inv.getContainerSize(); ++i) {
+            ItemStack stack = inv.getItem(i);
             if (!stack.isEmpty()) {
                 if (stack.getItem() instanceof AtlasItem) {
                     if (firstAtlas.isEmpty()) {
@@ -76,17 +76,17 @@ public class RecipeAtlasCombining implements CraftingRecipe {
     }
 
     @Override
-    public boolean fits(int width, int height) {
+    public boolean canCraftInDimensions(int width, int height) {
         return true;
     }
 
     @Override
-    public ItemStack getOutput() {
+    public ItemStack getResultItem() {
         return new ItemStack(RegistrarAntiqueAtlas.ATLAS);
     }
 
     @Override
-    public Identifier getId() {
+    public ResourceLocation getId() {
         return id;
     }
 
@@ -100,27 +100,27 @@ public class RecipeAtlasCombining implements CraftingRecipe {
         return RecipeType.CRAFTING;
     }
 
-    public ItemStack onCrafted(World world, Inventory inventory, ItemStack result) {
-        if (world.isClient) return result;
+    public ItemStack onCrafted(Level world, Container inventory, ItemStack result) {
+        if (world.isClientSide) return result;
         // Until the first update, on the client the returned atlas ID is the same as the first Atlas on the crafting grid.
         int atlasID = AntiqueAtlasMod.getGlobalAtlasData(world).getNextAtlasId();
 
         AtlasData destBiomes = AntiqueAtlasMod.tileData.getData(atlasID, world);
-        destBiomes.markDirty();
+        destBiomes.setDirty();
         MarkersData destMarkers = AntiqueAtlasMod.markersData.getMarkersData(atlasID, world);
-        destMarkers.markDirty();
-        for (int i = 0; i < inventory.size(); ++i) {
-            ItemStack stack = inventory.getStack(i);
+        destMarkers.setDirty();
+        for (int i = 0; i < inventory.getContainerSize(); ++i) {
+            ItemStack stack = inventory.getItem(i);
             if (stack.isEmpty()) continue;
             AtlasData srcBiomes = AntiqueAtlasMod.tileData.getData(stack, world);
             if (destBiomes != null && srcBiomes != null && destBiomes != srcBiomes) {
-                for (RegistryKey<World> worldRegistryKey : srcBiomes.getVisitedWorlds()) {
+                for (ResourceKey<Level> worldRegistryKey : srcBiomes.getVisitedWorlds()) {
                     destBiomes.getWorldData(worldRegistryKey).addData(srcBiomes.getWorldData(worldRegistryKey));
                 }
             }
             MarkersData srcMarkers = AntiqueAtlasMod.markersData.getMarkersData(stack, world);
             if (destMarkers != null && srcMarkers != null && destMarkers != srcMarkers) {
-                for (RegistryKey<World> worldRegistryKey : srcMarkers.getVisitedDimensions()) {
+                for (ResourceKey<Level> worldRegistryKey : srcMarkers.getVisitedDimensions()) {
                     for (Marker marker : srcMarkers.getMarkersDataInWorld(worldRegistryKey).getAllMarkers()) {
                         destMarkers.createAndSaveMarker(marker.getType(),
                                 worldRegistryKey, marker.getX(), marker.getZ(), marker.isVisibleAhead(), marker.getLabel());
@@ -131,7 +131,7 @@ public class RecipeAtlasCombining implements CraftingRecipe {
 
         // Set atlas ID last, because otherwise we wouldn't be able copy the
         // data from the atlas which was used as a placeholder for the result.
-        result.getOrCreateNbt().putInt("atlasID", atlasID);
+        result.getOrCreateTag().putInt("atlasID", atlasID);
         return result;
     }
 }

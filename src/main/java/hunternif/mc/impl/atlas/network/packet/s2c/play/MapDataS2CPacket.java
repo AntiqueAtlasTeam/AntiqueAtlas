@@ -4,14 +4,13 @@ import hunternif.mc.impl.atlas.AntiqueAtlasMod;
 import hunternif.mc.impl.atlas.client.gui.GuiAtlas;
 import hunternif.mc.impl.atlas.core.AtlasData;
 import hunternif.mc.impl.atlas.network.packet.s2c.S2CPacket;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-import net.fabricmc.fabric.api.networking.v1.PacketSender;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.network.ClientPlayNetworkHandler;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.network.PacketByteBuf;
-import net.minecraft.util.Identifier;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
 /**
  * Used to sync atlas data from server to client.
@@ -19,32 +18,46 @@ import net.minecraft.util.Identifier;
  * @author Haven King
  */
 public class MapDataS2CPacket extends S2CPacket {
-	public static final Identifier ID = AntiqueAtlasMod.id("packet", "s2c", "map", "data");
+	public static final ResourceLocation ID = AntiqueAtlasMod.id("packet", "s2c", "map", "data");
 
-	public MapDataS2CPacket(int atlasID, NbtCompound data) {
-		this.writeVarInt(atlasID);
-		this.writeNbt(data);
+	int atlasID; 
+	CompoundTag data;
+
+	public MapDataS2CPacket(int atlasID, CompoundTag data) {
+		this.atlasID = atlasID;
+		this.data = data;
+	}
+
+	public static void encode(final MapDataS2CPacket msg, final FriendlyByteBuf packetBuffer) {
+		packetBuffer.writeVarInt(msg.atlasID);
+		packetBuffer.writeNbt(msg.data);
+	}
+
+	public static MapDataS2CPacket decode(final FriendlyByteBuf packetBuffer) {
+		return new MapDataS2CPacket(
+				packetBuffer.readVarInt(),
+				packetBuffer.readNbt());
 	}
 
 	@Override
-	public Identifier getId() {
-		return ID;
+	public boolean shouldRun() {
+		return this.data != null;
 	}
 
-	@Environment(EnvType.CLIENT)
-	public static void apply(MinecraftClient client, ClientPlayNetworkHandler handler, PacketByteBuf buf, PacketSender responseSender) {
-		int atlasID = buf.readVarInt();
-		NbtCompound data = buf.readNbt();
+	@OnlyIn(Dist.CLIENT)
+	@Override
+	public boolean handle(LocalPlayer player) {
+		AtlasData atlasData = AntiqueAtlasMod.tileData.getData(atlasID, player.getCommandSenderWorld());
+		atlasData.readNbt(data);
 
-		if (data == null) return;
+		if (AntiqueAtlasMod.CONFIG.doSaveBrowsingPos && Minecraft.getInstance().screen instanceof GuiAtlas) {
+			((GuiAtlas) Minecraft.getInstance().screen).loadSavedBrowsingPosition();
+		}
+		return true;
+	}
 
-		client.execute(() -> {
-			AtlasData atlasData = AntiqueAtlasMod.tileData.getData(atlasID, client.player.getEntityWorld());
-			atlasData.readNbt(data);
-
-			if (AntiqueAtlasMod.CONFIG.doSaveBrowsingPos && MinecraftClient.getInstance().currentScreen instanceof GuiAtlas) {
-				((GuiAtlas) MinecraftClient.getInstance().currentScreen).loadSavedBrowsingPosition();
-			}
-		});
+	@Override
+	public ResourceLocation getId() {
+		return ID;
 	}
 }

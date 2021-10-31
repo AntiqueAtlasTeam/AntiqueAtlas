@@ -1,9 +1,9 @@
 package hunternif.mc.impl.atlas.client.gui;
 
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.PoseStack;
 import hunternif.mc.impl.atlas.client.Textures;
 import hunternif.mc.impl.atlas.client.gui.core.GuiComponentButton;
-import net.minecraft.client.util.math.MatrixStack;
 import org.lwjgl.opengl.GL11;
 
 public class GuiArrowButton extends GuiComponentButton {
@@ -44,7 +44,7 @@ public class GuiArrowButton extends GuiComponentButton {
     }
 
     @Override
-    public void render(MatrixStack matrices, int mouseX, int mouseY, float partialTick) {
+    public void render(PoseStack matrices, int mouseX, int mouseY, float partialTick) {
         RenderSystem.enableBlend();
         RenderSystem.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 

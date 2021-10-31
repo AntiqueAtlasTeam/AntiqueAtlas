@@ -2,20 +2,20 @@ package hunternif.mc.impl.atlas.item;
 
 import hunternif.mc.impl.atlas.AntiqueAtlasMod;
 import hunternif.mc.impl.atlas.RegistrarAntiqueAtlas;
-import net.minecraft.inventory.CraftingInventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.recipe.CraftingRecipe;
-import net.minecraft.recipe.RecipeSerializer;
-import net.minecraft.recipe.RecipeType;
-import net.minecraft.recipe.SpecialRecipeSerializer;
-import net.minecraft.util.Identifier;
-import net.minecraft.world.World;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.inventory.CraftingContainer;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.CraftingRecipe;
+import net.minecraft.world.item.crafting.RecipeSerializer;
+import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.item.crafting.SimpleRecipeSerializer;
+import net.minecraft.world.level.Level;
 
 public class RecipeAtlasCloning implements CraftingRecipe {
-    public static final RecipeSerializer<?> SERIALIZER = new SpecialRecipeSerializer<>(RecipeAtlasCloning::new);
-    private final Identifier id;
+    public static final RecipeSerializer<?> SERIALIZER = new SimpleRecipeSerializer<>(RecipeAtlasCloning::new);
+    private final ResourceLocation id;
 
-    public RecipeAtlasCloning(Identifier identifier) {
+    public RecipeAtlasCloning(ResourceLocation identifier) {
         this.id = identifier;
     }
 
@@ -25,12 +25,12 @@ public class RecipeAtlasCloning implements CraftingRecipe {
     }
 
     @Override
-    public boolean matches(CraftingInventory inv, World world) {
+    public boolean matches(CraftingContainer inv, Level world) {
         int i = 0; // number of empty atlases
         ItemStack filledAtlas = ItemStack.EMPTY;
 
-        for (int j = 0; j < inv.size(); ++j) {
-            ItemStack stack = inv.getStack(j);
+        for (int j = 0; j < inv.getContainerSize(); ++j) {
+            ItemStack stack = inv.getItem(j);
 
             if (!stack.isEmpty()) {
                 if (stack.getItem() == RegistrarAntiqueAtlas.ATLAS) {
@@ -51,12 +51,12 @@ public class RecipeAtlasCloning implements CraftingRecipe {
     }
 
     @Override
-    public ItemStack craft(CraftingInventory inv) {
+    public ItemStack assemble(CraftingContainer inv) {
         int i = 0; // number of new copies
         ItemStack filledAtlas = ItemStack.EMPTY;
 
-        for (int j = 0; j < inv.size(); ++j) {
-            ItemStack stack = inv.getStack(j);
+        for (int j = 0; j < inv.getContainerSize(); ++j) {
+            ItemStack stack = inv.getItem(j);
 
             if (!stack.isEmpty()) {
                 if (stack.getItem() == RegistrarAntiqueAtlas.ATLAS) {
@@ -75,10 +75,10 @@ public class RecipeAtlasCloning implements CraftingRecipe {
 
         if (!filledAtlas.isEmpty() && i >= 1) {
             ItemStack newAtlas = new ItemStack(RegistrarAntiqueAtlas.ATLAS, i + 1);
-            newAtlas.getOrCreateNbt().putInt("atlasID", AtlasItem.getAtlasID(filledAtlas));
+            newAtlas.getOrCreateTag().putInt("atlasID", AtlasItem.getAtlasID(filledAtlas));
 
-            if (filledAtlas.hasCustomName()) {
-                newAtlas.setCustomName(filledAtlas.getName());
+            if (filledAtlas.hasCustomHoverName()) {
+                newAtlas.setHoverName(filledAtlas.getHoverName());
             }
 
             return newAtlas;
@@ -88,17 +88,17 @@ public class RecipeAtlasCloning implements CraftingRecipe {
     }
 
     @Override
-    public boolean fits(int width, int height) {
+    public boolean canCraftInDimensions(int width, int height) {
         return true;
     }
 
     @Override
-    public ItemStack getOutput() {
+    public ItemStack getResultItem() {
         return ItemStack.EMPTY;
     }
 
     @Override
-    public Identifier getId() {
+    public ResourceLocation getId() {
         return id;
     }
 

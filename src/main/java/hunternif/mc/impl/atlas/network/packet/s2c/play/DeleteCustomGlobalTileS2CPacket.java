@@ -3,14 +3,14 @@ package hunternif.mc.impl.atlas.network.packet.s2c.play;
 import hunternif.mc.impl.atlas.AntiqueAtlasMod;
 import hunternif.mc.impl.atlas.core.TileDataStorage;
 import hunternif.mc.impl.atlas.network.packet.s2c.S2CPacket;
-import net.fabricmc.fabric.api.networking.v1.PacketSender;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.network.ClientPlayNetworkHandler;
-import net.minecraft.network.PacketByteBuf;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
-import net.minecraft.util.registry.RegistryKey;
-import net.minecraft.world.World;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.core.Registry;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.Level;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
 /**
  * Sent from server to client to remove a custom global tile.
@@ -18,27 +18,41 @@ import net.minecraft.world.World;
  * @author Haven King
  */
 public class DeleteCustomGlobalTileS2CPacket extends S2CPacket {
-	public static final Identifier ID = AntiqueAtlasMod.id("packet", "c2s", "tile", "delete");
+	public static final ResourceLocation ID = AntiqueAtlasMod.id("packet", "c2s", "tile", "delete");
 
-	public DeleteCustomGlobalTileS2CPacket(RegistryKey<World> world, int chunkX, int chunkZ) {
-		this.writeIdentifier(world.getValue());
-		this.writeVarInt(chunkX);
-		this.writeVarInt(chunkZ);
+	ResourceKey<Level> world;
+	int chunkX, chunkZ;
+
+	public DeleteCustomGlobalTileS2CPacket(ResourceKey<Level> world, int chunkX, int chunkZ) {
+		this.world = world;
+		this.chunkX = chunkX;
+		this.chunkZ = chunkZ;
+	}
+
+	public static void encode(final DeleteCustomGlobalTileS2CPacket msg, final FriendlyByteBuf packetBuffer) {
+		packetBuffer.writeResourceLocation(msg.world.location());
+		packetBuffer.writeVarInt(msg.chunkX);
+		packetBuffer.writeVarInt(msg.chunkZ);
+	}
+
+	public static DeleteCustomGlobalTileS2CPacket decode(final FriendlyByteBuf packetBuffer) {
+		ResourceKey<Level> world = ResourceKey.create(Registry.DIMENSION_REGISTRY, packetBuffer.readResourceLocation());
+		int chunkX = packetBuffer.readVarInt();
+		int chunkZ = packetBuffer.readVarInt();
+
+		return new DeleteCustomGlobalTileS2CPacket(world, chunkX, chunkZ);
+	}
+
+	@OnlyIn(Dist.CLIENT)
+	@Override
+	public boolean handle(LocalPlayer player) {
+		TileDataStorage data = AntiqueAtlasMod.globalTileData.getData(this.world);
+		data.removeTile(this.chunkX, this.chunkZ);
+		return true;
 	}
 
 	@Override
-	public Identifier getId() {
+	public ResourceLocation getId() {
 		return ID;
-	}
-
-	public static void apply(MinecraftClient client, ClientPlayNetworkHandler handler, PacketByteBuf buf, PacketSender responseSender) {
-		RegistryKey<World> world = RegistryKey.of(Registry.WORLD_KEY, buf.readIdentifier());
-		int chunkX = buf.readVarInt();
-		int chunkZ = buf.readVarInt();
-
-		client.execute(() -> {
-			TileDataStorage data = AntiqueAtlasMod.globalTileData.getData(world);
-			data.removeTile(chunkX, chunkZ);
-		});
 	}
 }

@@ -1,12 +1,12 @@
 package hunternif.mc.impl.atlas.client.gui;
 
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.PoseStack;
 import hunternif.mc.impl.atlas.client.Textures;
 import hunternif.mc.impl.atlas.client.gui.core.GuiToggleButton;
 import hunternif.mc.impl.atlas.client.texture.ITexture;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.text.Text;
+import net.minecraft.client.Minecraft;
+import net.minecraft.network.chat.Component;
 
 import java.util.Collections;
 
@@ -21,14 +21,14 @@ public class GuiBookmarkButton extends GuiToggleButton {
 
     private final int colorIndex;
     private ITexture iconTexture;
-    private Text title;
+    private Component title;
 
     /**
      * @param colorIndex  0=red, 1=blue, 2=yellow, 3=green
      * @param iconTexture the path to the 16x16 texture to be drawn on top of the bookmark.
      * @param title       hovering text.
      */
-    GuiBookmarkButton(int colorIndex, ITexture iconTexture, Text title) {
+    GuiBookmarkButton(int colorIndex, ITexture iconTexture, Component title) {
         this.colorIndex = colorIndex;
         setIconTexture(iconTexture);
         setTitle(title);
@@ -39,16 +39,16 @@ public class GuiBookmarkButton extends GuiToggleButton {
         this.iconTexture = iconTexture;
     }
 
-    public Text getTitle() {
+    public Component getTitle() {
         return title;
     }
 
-    void setTitle(Text title) {
+    void setTitle(Component title) {
         this.title = title;
     }
 
     @Override
-    public void render(MatrixStack matrices, int mouseX, int mouseY, float partialTick) {
+    public void render(PoseStack matrices, int mouseX, int mouseY, float partialTick) {
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
 
         // Render background:
@@ -60,7 +60,7 @@ public class GuiBookmarkButton extends GuiToggleButton {
         iconTexture.draw(matrices, getGuiX() + (isMouseOver || isSelected() ? 3 : 2), getGuiY() + 1);
 
         if (isMouseOver) {
-            drawTooltip(Collections.singletonList(title), MinecraftClient.getInstance().textRenderer);
+            drawTooltip(Collections.singletonList(title), Minecraft.getInstance().font);
         }
     }
 }

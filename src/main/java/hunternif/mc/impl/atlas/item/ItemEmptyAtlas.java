@@ -4,51 +4,51 @@ import hunternif.mc.impl.atlas.AntiqueAtlasMod;
 import hunternif.mc.impl.atlas.RegistrarAntiqueAtlas;
 import hunternif.mc.impl.atlas.core.AtlasData;
 import hunternif.mc.impl.atlas.marker.MarkersData;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.sound.SoundCategory;
-import net.minecraft.sound.SoundEvents;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.Hand;
-import net.minecraft.util.TypedActionResult;
-import net.minecraft.world.World;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 
 public class ItemEmptyAtlas extends Item {
-    public ItemEmptyAtlas(Item.Settings settings) {
+    public ItemEmptyAtlas(Item.Properties settings) {
         super(settings);
     }
 
     @Override
-    public TypedActionResult<ItemStack> use(World world, PlayerEntity player,
-                                            Hand hand) {
-        ItemStack stack = player.getStackInHand(hand);
-        if (world.isClient) {
-            world.playSound(player, player.getBlockPos(), SoundEvents.BLOCK_ENCHANTMENT_TABLE_USE, SoundCategory.PLAYERS, 1F, 1F);
-            return new TypedActionResult<>(ActionResult.SUCCESS, stack);
+    public InteractionResultHolder<ItemStack> use(Level world, Player player,
+                                            InteractionHand hand) {
+        ItemStack stack = player.getItemInHand(hand);
+        if (world.isClientSide) {
+            world.playSound(player, player.blockPosition(), SoundEvents.ENCHANTMENT_TABLE_USE, SoundSource.PLAYERS, 1F, 1F);
+            return new InteractionResultHolder<>(InteractionResult.SUCCESS, stack);
         }
 
         int atlasID = AntiqueAtlasMod.getGlobalAtlasData(world).getNextAtlasId();
         ItemStack atlasStack = new ItemStack(RegistrarAntiqueAtlas.ATLAS);
 
-        atlasStack.getOrCreateNbt().putInt("atlasID", atlasID);
+        atlasStack.getOrCreateTag().putInt("atlasID", atlasID);
 
         AtlasData atlasData = AntiqueAtlasMod.tileData.getData(atlasID, world);
-        atlasData.getWorldData(player.getEntityWorld().getRegistryKey()).setBrowsingPositionTo(player);
-        atlasData.markDirty();
+        atlasData.getWorldData(player.getCommandSenderWorld().dimension()).setBrowsingPositionTo(player);
+        atlasData.setDirty();
 
         MarkersData markersData = AntiqueAtlasMod.markersData.getMarkersData(atlasID, world);
-        markersData.markDirty();
+        markersData.setDirty();
 
-        stack.decrement(1);
+        stack.shrink(1);
         if (stack.isEmpty()) {
-            return new TypedActionResult<>(ActionResult.SUCCESS, atlasStack);
+            return new InteractionResultHolder<>(InteractionResult.SUCCESS, atlasStack);
         } else {
-            if (!player.getInventory().insertStack(atlasStack.copy())) {
-                player.dropItem(atlasStack, true);
+            if (!player.getInventory().add(atlasStack.copy())) {
+                player.drop(atlasStack, true);
             }
 
-            return new TypedActionResult<>(ActionResult.SUCCESS, stack);
+            return new InteractionResultHolder<>(InteractionResult.SUCCESS, stack);
         }
     }
 }

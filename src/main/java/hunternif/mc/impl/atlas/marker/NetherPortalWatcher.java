@@ -5,12 +5,12 @@ import hunternif.mc.api.AtlasAPI;
 import hunternif.mc.impl.atlas.item.AtlasItem;
 import hunternif.mc.impl.atlas.mixinhooks.EntityHooksAA;
 import hunternif.mc.impl.atlas.registry.MarkerType;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.text.TranslatableText;
-import net.minecraft.world.World;
-import net.minecraft.world.dimension.DimensionType;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.dimension.DimensionType;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -47,8 +47,8 @@ public class NetherPortalWatcher {
 
 	@Override
 	public void a(Entity entity) {
-		if (entity instanceof PlayerEntity) {
-			PlayerEntity player = (PlayerEntity) entity;
+		if (entity instanceof Player) {
+			Player player = (Player) entity;
 			if (teleportingPlayersOrigin.containsKey(entity.Q())) {
 				int origin = teleportingPlayersOrigin.remove(entity.Q());
 				Log.info("Entering");
@@ -67,8 +67,8 @@ public class NetherPortalWatcher {
 
 	@Override
 	public void b(Entity entity) {
-		if (entity instanceof PlayerEntity) {
-			PlayerEntity player = (PlayerEntity) entity;
+		if (entity instanceof Player) {
+			Player player = (Player) entity;
 			if (isEntityInPortal(entity)) {
 				Log.info("Exiting");
 				// player.worldObj.provider.dimensionId is the dimension of origin
@@ -84,28 +84,28 @@ public class NetherPortalWatcher {
 
 	/** Put the Portal marker at the player's current coordinates into all
 	 * atlases that he is carrying, if the same marker is not already there. */
-	private void addPortalMarkerIfNone(PlayerEntity player) {
-		if (!AntiqueAtlasMod.CONFIG.autoNetherPortalMarkers || player.getEntityWorld().isClient) {
+	private void addPortalMarkerIfNone(Player player) {
+		if (!AntiqueAtlasMod.CONFIG.autoNetherPortalMarkers || player.getCommandSenderWorld().isClientSide) {
 			return;
 		}
 
 		// Due to switching dimensions this player entity's worldObj is lagging.
 		// We need the very specific dimension each time.
-		World world = player.getEntityWorld();
+		Level world = player.getCommandSenderWorld();
 
 		if (!AntiqueAtlasMod.CONFIG.itemNeeded) {
-			addPortalMarkerIfNone(player, world, player.getUuid().hashCode());
+			addPortalMarkerIfNone(player, world, player.getUUID().hashCode());
 			return;
 		}
 
-		for (ItemStack stack : player.getInventory().main) {
+		for (ItemStack stack : player.getInventory().items) {
 			if (stack == null || !(stack.getItem() instanceof AtlasItem)) continue;
 
 			addPortalMarkerIfNone(player, world, AtlasItem.getAtlasID(stack));
 		}
 	}
 
-	private void addPortalMarkerIfNone(PlayerEntity player, World world, int atlasID) {
+	private void addPortalMarkerIfNone(Player player, Level world, int atlasID) {
 		MarkerType netherPortalType = MarkerType.REGISTRY.get(AntiqueAtlasMod.id("nether_portal"));
 		if (netherPortalType == null) {
 			return;
@@ -113,7 +113,7 @@ public class NetherPortalWatcher {
 
 		// Can't use entity.dimension here, because its value has already been updated!
 		DimensionMarkersData data = AntiqueAtlasMod.markersData.getMarkersData(atlasID, world)
-				.getMarkersDataInWorld(world.getRegistryKey());
+				.getMarkersDataInWorld(world.dimension());
 
 		int x = (int)player.getX();
 		int z = (int)player.getZ();
@@ -130,7 +130,7 @@ public class NetherPortalWatcher {
 		}
 
 		// Marker not found, place new one:
-		AtlasAPI.getMarkerAPI().putMarker(world, false, atlasID, MarkerType.REGISTRY.getId(netherPortalType), new TranslatableText("gui.antiqueatlas.marker.netherPortal"), x, z);
+		AtlasAPI.getMarkerAPI().putMarker(world, false, atlasID, MarkerType.REGISTRY.getKey(netherPortalType), new TranslatableComponent("gui.antiqueatlas.marker.netherPortal"), x, z);
 	}
 
 	private static boolean isEntityInPortal(Entity entity) {

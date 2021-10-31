@@ -1,15 +1,15 @@
 package hunternif.mc.impl.atlas.client.texture;
 
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-import net.minecraft.util.Identifier;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
 /**
  * Represents an icon texture for the atlas gui, such as the arrows and center on player.
  */
-@Environment(EnvType.CLIENT)
+@OnlyIn(Dist.CLIENT)
 public class IconTexture extends ATexture {
-    public IconTexture(Identifier texture) {
+    public IconTexture(ResourceLocation texture) {
         super(texture);
     }
 

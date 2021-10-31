@@ -8,10 +8,10 @@ import hunternif.mc.impl.atlas.network.packet.c2s.play.DeleteMarkerRequestC2SPac
 import hunternif.mc.impl.atlas.network.packet.s2c.play.DeleteMarkerResponseS2CPacket;
 import hunternif.mc.impl.atlas.network.packet.s2c.play.MarkersS2CPacket;
 import hunternif.mc.impl.atlas.util.Log;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
-import net.minecraft.world.World;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -25,42 +25,42 @@ public class MarkerApiImpl implements MarkerAPI {
 
     @Nullable
     @Override
-    public Marker putMarker(@NotNull World world, boolean visibleAhead, int atlasID, Identifier marker, Text label, int x, int z) {
+    public Marker putMarker(@NotNull Level world, boolean visibleAhead, int atlasID, ResourceLocation marker, Component label, int x, int z) {
         return doPutMarker(world, visibleAhead, atlasID, marker, label, x, z);
     }
 
     @Nullable
     @Override
-    public Marker putGlobalMarker(@NotNull World world, boolean visibleAhead, Identifier marker, Text label, int x, int z) {
+    public Marker putGlobalMarker(@NotNull Level world, boolean visibleAhead, ResourceLocation marker, Component label, int x, int z) {
         return doPutMarker(world, visibleAhead, GLOBAL, marker, label, x, z);
     }
 
-    private Marker doPutMarker(World world, boolean visibleAhead, int atlasID, Identifier markerId, Text label, int x, int z) {
+    private Marker doPutMarker(Level world, boolean visibleAhead, int atlasID, ResourceLocation markerId, Component label, int x, int z) {
         Marker marker = null;
-        if (!world.isClient && world.getServer() != null) {
+        if (!world.isClientSide && world.getServer() != null) {
             MarkersData data = atlasID == GLOBAL
                     ? AntiqueAtlasMod.globalMarkersData.getData()
                     : AntiqueAtlasMod.markersData.getMarkersData(atlasID, world);
 
-            marker = data.createAndSaveMarker(markerId, world.getRegistryKey(), x, z, visibleAhead, label);
-            new MarkersS2CPacket(atlasID, world.getRegistryKey(), Collections.singleton(marker)).send((ServerWorld) world);
+            marker = data.createAndSaveMarker(markerId, world.dimension(), x, z, visibleAhead, label);
+            new MarkersS2CPacket(atlasID, world.dimension(), Collections.singleton(marker)).send((ServerLevel) world);
         }
 
         return marker;
     }
 
     @Override
-    public void deleteMarker(@NotNull World world, int atlasID, int markerID) {
+    public void deleteMarker(@NotNull Level world, int atlasID, int markerID) {
         doDeleteMarker(world, atlasID, markerID);
     }
 
     @Override
-    public void deleteGlobalMarker(@NotNull World world, int markerID) {
+    public void deleteGlobalMarker(@NotNull Level world, int markerID) {
         doDeleteMarker(world, GLOBAL, markerID);
     }
 
-    private void doDeleteMarker(World world, int atlasID, int markerID) {
-        if (world.isClient) {
+    private void doDeleteMarker(Level world, int atlasID, int markerID) {
+        if (world.isClientSide) {
             if (atlasID == GLOBAL) {
                 Log.warn("Client tried to delete a global marker!");
             } else {

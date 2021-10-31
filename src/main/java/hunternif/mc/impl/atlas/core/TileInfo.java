@@ -1,12 +1,12 @@
 package hunternif.mc.impl.atlas.core;
 
-import net.minecraft.util.Identifier;
+import net.minecraft.resources.ResourceLocation;
 
 public class TileInfo {
     public final int x, z;
-    public final Identifier id;
+    public final ResourceLocation id;
 
-    public TileInfo(int x, int z, Identifier id) {
+    public TileInfo(int x, int z, ResourceLocation id) {
         this.x = x;
         this.z = z;
         this.id = id;

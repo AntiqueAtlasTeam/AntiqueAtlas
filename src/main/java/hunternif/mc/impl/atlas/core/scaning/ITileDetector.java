@@ -1,8 +1,8 @@
 package hunternif.mc.impl.atlas.core.scaning;
 
-import net.minecraft.util.Identifier;
-import net.minecraft.world.World;
-import net.minecraft.world.chunk.Chunk;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.chunk.ChunkAccess;
 import org.jetbrains.annotations.Nullable;
 
 
@@ -16,7 +16,7 @@ public interface ITileDetector {
      * Finds the biome ID to be used for a given chunk.
      */
     @Nullable
-    Identifier getBiomeID(World world, Chunk chunk);
+    ResourceLocation getBiomeID(Level world, ChunkAccess chunk);
 
     int getScanRadius();
 }

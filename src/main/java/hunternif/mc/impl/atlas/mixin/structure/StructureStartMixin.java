@@ -2,16 +2,17 @@ package hunternif.mc.impl.atlas.mixin.structure;
 
 import hunternif.mc.impl.atlas.structure.StructureAddedCallback;
 import hunternif.mc.impl.atlas.structure.StructurePieceAddedCallback;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.structure.StructurePiece;
-import net.minecraft.structure.StructureStart;
-import net.minecraft.util.math.BlockBox;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.ChunkPos;
-import net.minecraft.world.ChunkRegion;
-import net.minecraft.world.StructureWorldAccess;
-import net.minecraft.world.gen.StructureAccessor;
-import net.minecraft.world.gen.chunk.ChunkGenerator;
+import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.WorldGenRegion;
+import net.minecraft.world.level.ChunkPos;
+import net.minecraft.world.level.StructureFeatureManager;
+import net.minecraft.world.level.WorldGenLevel;
+import net.minecraft.world.level.chunk.ChunkGenerator;
+import net.minecraft.world.level.levelgen.structure.BoundingBox;
+import net.minecraft.world.level.levelgen.structure.StructurePiece;
+import net.minecraft.world.level.levelgen.structure.StructureStart;
+import net.minecraftforge.common.MinecraftForge;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -26,37 +27,36 @@ import java.util.Random;
 public class StructureStartMixin {
 
     @Shadow
-    protected List<StructurePiece> children;
+    protected List<StructurePiece> pieces;
 
 
-    @Redirect(method = "generateStructure", at = @At(value = "INVOKE", target = "Lnet/minecraft/structure/StructurePiece;generate(Lnet/minecraft/world/StructureWorldAccess;Lnet/minecraft/world/gen/StructureAccessor;Lnet/minecraft/world/gen/chunk/ChunkGenerator;Ljava/util/Random;Lnet/minecraft/util/math/BlockBox;Lnet/minecraft/util/math/ChunkPos;Lnet/minecraft/util/math/BlockPos;)Z"))
-    private boolean structurePieceGenerated(StructurePiece structurePiece, StructureWorldAccess serverWorldAccess, StructureAccessor structureAccessor, ChunkGenerator chunkGenerator, Random random, BlockBox boundingBox, ChunkPos chunkPos, BlockPos blockPos) {
-        ServerWorld world;
+    @Redirect(method = "placeInChunk", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/levelgen/structure/StructurePiece;postProcess(Lnet/minecraft/world/level/WorldGenLevel;Lnet/minecraft/world/level/StructureFeatureManager;Lnet/minecraft/world/level/chunk/ChunkGenerator;Ljava/util/Random;Lnet/minecraft/world/level/levelgen/structure/BoundingBox;Lnet/minecraft/world/level/ChunkPos;Lnet/minecraft/core/BlockPos;)Z"))
+    private boolean structurePieceGenerated(StructurePiece structurePiece, WorldGenLevel serverWorldAccess, StructureFeatureManager structureAccessor, ChunkGenerator chunkGenerator, Random random, BoundingBox boundingBox, ChunkPos chunkPos, BlockPos blockPos) {
+        ServerLevel world;
 
-        if (serverWorldAccess instanceof ServerWorld) {
-            world = (ServerWorld) serverWorldAccess;
+        if (serverWorldAccess instanceof ServerLevel) {
+            world = (ServerLevel) serverWorldAccess;
         } else {
-            world = ((ChunkRegion) serverWorldAccess).world;
+            world = ((WorldGenRegion) serverWorldAccess).level;
         }
 
-        StructurePieceAddedCallback.EVENT.invoker().onStructurePieceAdded(structurePiece, world);
-        return structurePiece.generate(serverWorldAccess, structureAccessor, chunkGenerator, random, boundingBox, chunkPos, blockPos);
+        MinecraftForge.EVENT_BUS.post(new StructurePieceAddedCallback.TheEvent(structurePiece, world));
+        return structurePiece.postProcess(serverWorldAccess, structureAccessor, chunkGenerator, random, boundingBox, chunkPos, blockPos);
     }
 
-    @Inject(method = "generateStructure", at = @At("RETURN"))
-    private void structureGenerated(StructureWorldAccess serverWorldAccess, StructureAccessor structureAccessor, ChunkGenerator chunkGenerator, Random random, BlockBox blockBox, ChunkPos chunkPos, CallbackInfo ci) {
-        ServerWorld world;
+    @Inject(method = "placeInChunk", at = @At("RETURN"))
+    private void structureGenerated(WorldGenLevel serverWorldAccess, StructureFeatureManager structureAccessor, ChunkGenerator chunkGenerator, Random random, BoundingBox blockBox, ChunkPos chunkPos, CallbackInfo ci) {
+        ServerLevel world;
 
-        if (serverWorldAccess instanceof ServerWorld) {
-            world = (ServerWorld) serverWorldAccess;
+        if (serverWorldAccess instanceof ServerLevel) {
+            world = (ServerLevel) serverWorldAccess;
         } else {
-            world = ((ChunkRegion) serverWorldAccess).world;
+            world = ((WorldGenRegion) serverWorldAccess).level;
         }
 
-        synchronized (this.children) {
-            if(this.children.isEmpty()) return;
-
-            StructureAddedCallback.EVENT.invoker().onStructureAdded((StructureStart<?>) (Object) this, world);
+        synchronized (this.pieces) {
+            if(this.pieces.isEmpty()) return;
+            MinecraftForge.EVENT_BUS.post(new StructureAddedCallback.TheEvent((StructureStart<?>) (Object) this, world));
         }
     }
 }

@@ -2,12 +2,14 @@ package hunternif.mc.impl.atlas;
 
 import hunternif.mc.impl.atlas.core.TileDataHandler;
 import hunternif.mc.impl.atlas.core.scaning.TileDetectorBase;
+import hunternif.mc.impl.atlas.client.gui.AntiqueAtlasModMenu;
 import hunternif.mc.impl.atlas.core.GlobalAtlasData;
-import hunternif.mc.impl.atlas.core.PlayerEventHandler;
 import hunternif.mc.impl.atlas.core.scaning.WorldScanner;
 import hunternif.mc.impl.atlas.event.RecipeCraftedCallback;
 import hunternif.mc.impl.atlas.event.RecipeCraftedHandler;
+import hunternif.mc.impl.atlas.forge.event.ServerWorldEvents;
 import hunternif.mc.impl.atlas.core.GlobalTileDataHandler;
+import hunternif.mc.impl.atlas.core.PlayerEventHandler;
 import hunternif.mc.impl.atlas.marker.GlobalMarkersDataHandler;
 import hunternif.mc.impl.atlas.marker.MarkersDataHandler;
 import hunternif.mc.impl.atlas.mixinhooks.NewPlayerConnectionCallback;
@@ -16,15 +18,24 @@ import hunternif.mc.impl.atlas.network.AntiqueAtlasNetworking;
 import hunternif.mc.impl.atlas.structure.*;
 import me.shedaniel.autoconfig.AutoConfig;
 import me.shedaniel.autoconfig.serializer.JanksonConfigSerializer;
-import net.fabricmc.api.ModInitializer;
-import net.fabricmc.fabric.api.event.lifecycle.v1.ServerWorldEvents;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.Identifier;
-import net.minecraft.world.World;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.level.Level;
+import net.minecraftforge.fml.ModLoadingContext;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.fmlclient.ConfigGuiHandler;
+import net.minecraftforge.fmllegacy.network.NetworkRegistry;
+import net.minecraftforge.fmllegacy.network.simple.SimpleChannel;
+
+import java.util.function.Consumer;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public class AntiqueAtlasMod implements ModInitializer {
+@Mod(AntiqueAtlasMod.ID)
+public class AntiqueAtlasMod {
 	public static final String ID = "antiqueatlas";
 	public static final String NAME = "Antique Atlas";
 
@@ -39,22 +50,23 @@ public class AntiqueAtlasMod implements ModInitializer {
 
 	public static AntiqueAtlasConfig CONFIG = new AntiqueAtlasConfig();
 
-	public static Identifier id(String... path) {
-		return path[0].contains(":") ? new Identifier(String.join(".", path)) : new Identifier(ID, String.join(".", path));
+	public static ResourceLocation id(String... path) {
+		return path[0].contains(":") ? new ResourceLocation(String.join(".", path)) : new ResourceLocation(ID, String.join(".", path));
 	}
 
-	public static GlobalAtlasData getGlobalAtlasData(World world) {
-		if (world.isClient()) {
+	public static GlobalAtlasData getGlobalAtlasData(Level world) {
+		if (world.isClientSide()) {
 			LOG.warn("Tried to access server only data from client.");
 			return null;
 		}
 
-		return ((ServerWorld) world).getPersistentStateManager().getOrCreate(GlobalAtlasData::readNbt, GlobalAtlasData::new, "antiqueatlas:global_atlas_data");
+		return ((ServerLevel) world).getDataStorage().computeIfAbsent(GlobalAtlasData::readNbt, GlobalAtlasData::new, "antiqueatlas:global_atlas_data");
 	}
 
-	@Override
 	public void onInitialize() {
+		FMLJavaModLoadingContext.get().getModEventBus().addListener((Consumer<FMLCommonSetupEvent>)common-> {
 		TileDetectorBase.scanBiomeTypes();
+		});
 
 		AutoConfig.register(AntiqueAtlasConfig.class, JanksonConfigSerializer::new);
 		CONFIG = AutoConfig.getConfigHolder(AntiqueAtlasConfig.class).getConfig();
@@ -63,26 +75,37 @@ public class AntiqueAtlasMod implements ModInitializer {
 
 		AntiqueAtlasNetworking.registerC2SListeners();
 
-		NewServerConnectionCallback.EVENT.register(tileData::onClientConnectedToServer);
-		NewServerConnectionCallback.EVENT.register(markersData::onClientConnectedToServer);
-		NewServerConnectionCallback.EVENT.register(globalMarkersData::onClientConnectedToServer);
+		NewServerConnectionCallback.register(tileData::onClientConnectedToServer);
+		NewServerConnectionCallback.register(markersData::onClientConnectedToServer);
+		NewServerConnectionCallback.register(globalMarkersData::onClientConnectedToServer);
 
-		NewPlayerConnectionCallback.EVENT.register(globalMarkersData::onPlayerLogin);
-		NewPlayerConnectionCallback.EVENT.register(globalTileData::onPlayerLogin);
-		NewPlayerConnectionCallback.EVENT.register(PlayerEventHandler::onPlayerLogin);
+		NewPlayerConnectionCallback.register(globalMarkersData::onPlayerLogin);
+		NewPlayerConnectionCallback.register(globalTileData::onPlayerLogin);
+		NewPlayerConnectionCallback.register(PlayerEventHandler::onPlayerLogin);
 
-		ServerWorldEvents.LOAD.register(globalMarkersData::onWorldLoad);
-		ServerWorldEvents.LOAD.register(globalTileData::onWorldLoad);
+		ServerWorldEvents.register(globalMarkersData::onWorldLoad);
+		ServerWorldEvents.register(globalTileData::onWorldLoad);
 
-		RecipeCraftedCallback.EVENT.register(new RecipeCraftedHandler());
+		RecipeCraftedCallback.register(new RecipeCraftedHandler());
 
-		StructurePieceAddedCallback.EVENT.register(StructureHandler::resolve);
-		StructureAddedCallback.EVENT.register(StructureHandler::resolve);
+		StructurePieceAddedCallback.register(StructureHandler::resolve);
+		StructureAddedCallback.register(StructureHandler::resolve);
 
+		FMLJavaModLoadingContext.get().getModEventBus().addListener((Consumer<FMLCommonSetupEvent>)common-> {
 		NetherFortress.registerPieces();
 		EndCity.registerMarkers();
 		Village.registerMarkers();
 		Village.registerPieces();
 		Overworld.registerPieces();
+		});
+	}
+	
+	////FORGE ONLY
+	public static final SimpleChannel MOD_CHANNEL = NetworkRegistry.newSimpleChannel(id("main"), () -> "1", "1"::equals, "1"::equals);
+	public AntiqueAtlasMod() 
+	{
+		this.onInitialize();
+		new AntiqueAtlasModClient().onInitializeClient();
+		ModLoadingContext.get().registerExtensionPoint(ConfigGuiHandler.ConfigGuiFactory.class, AntiqueAtlasModMenu.getModConfigScreenFactory());
 	}
 }

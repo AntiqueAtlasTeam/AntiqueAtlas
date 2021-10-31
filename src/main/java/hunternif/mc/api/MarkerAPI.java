@@ -1,9 +1,9 @@
 package hunternif.mc.api;
 
 import hunternif.mc.impl.atlas.marker.Marker;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
-import net.minecraft.world.World;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -36,7 +36,7 @@ public interface MarkerAPI {
      * @return returns the marker. null if failed or client
      */
     @Nullable
-    Marker putMarker(@NotNull World world, boolean visibleAhead, int atlasID, Identifier marker, Text label, int x, int z);
+    Marker putMarker(@NotNull Level world, boolean visibleAhead, int atlasID, ResourceLocation marker, Component label, int x, int z);
 
     /**
      * Put a marker in all atlases in the world at specified block coordinates.
@@ -52,7 +52,7 @@ public interface MarkerAPI {
      * @return returns the marker. null if failed or client
      */
     @Nullable
-    Marker putGlobalMarker(@NotNull World world, boolean visibleAhead, Identifier marker, Text label, int x, int z);
+    Marker putGlobalMarker(@NotNull Level world, boolean visibleAhead, ResourceLocation marker, Component label, int x, int z);
 
     /**
      * Delete a marker from an atlas.
@@ -65,7 +65,7 @@ public interface MarkerAPI {
      * @param atlasID
      * @param markerID
      */
-    void deleteMarker(@NotNull World world, int atlasID, int markerID);
+    void deleteMarker(@NotNull Level world, int atlasID, int markerID);
 
     /**
      * Delete a global marker from all atlases. Server side only!
@@ -73,5 +73,5 @@ public interface MarkerAPI {
      * @param world
      * @param markerID
      */
-    void deleteGlobalMarker(@NotNull World world, int markerID);
+    void deleteGlobalMarker(@NotNull Level world, int markerID);
 }

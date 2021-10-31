@@ -2,18 +2,18 @@ package hunternif.mc.impl.atlas.client;
 
 import hunternif.mc.impl.atlas.AntiqueAtlasModClient;
 import hunternif.mc.impl.atlas.client.gui.GuiAtlas;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.option.KeyBinding;
-import net.minecraft.client.util.InputUtil;
-
+import net.minecraft.client.KeyMapping;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.event.TickEvent.ClientTickEvent;
+import net.minecraftforge.fmlclient.registry.ClientRegistry;
 import java.util.ArrayList;
 import java.util.List;
+import com.mojang.blaze3d.platform.InputConstants;
 
-@Environment(EnvType.CLIENT)
+@OnlyIn(Dist.CLIENT)
 public class KeyHandler {
     /**
      * ID's of keys
@@ -23,19 +23,19 @@ public class KeyHandler {
     /**
      * List of bindings (at this moment with only one binding)
      */
-    private static List<KeyBinding> bindings = new ArrayList<>(1);
+    private static List<KeyMapping> bindings = new ArrayList<>(1);
 
     public static void registerBindings() {
         // Initialisation of bindings
-        bindings.add(KEY_ATLAS, new KeyBinding("key.openatlas.desc", InputUtil.Type.KEYSYM, 77, "key.antiqueatlas.category"));
+        bindings.add(KEY_ATLAS, new KeyMapping("key.openatlas.desc", InputConstants.Type.KEYSYM, 77, "key.antiqueatlas.category"));
 
         // Registering all binding
-        bindings.forEach(KeyBindingHelper::registerKeyBinding);
+        bindings.forEach(ClientRegistry::registerKeyBinding);
     }
 
-    public static void onClientTick(MinecraftClient client) {
-        if (bindings.get(KEY_ATLAS).wasPressed()) {
-            Screen currentScreen = MinecraftClient.getInstance().currentScreen;
+    public static void onClientTick(ClientTickEvent event) {
+        if (bindings.get(KEY_ATLAS).consumeClick()) {
+            Screen currentScreen = Minecraft.getInstance().screen;
             if (currentScreen instanceof GuiAtlas) {
                 currentScreen.onClose();
             } else {

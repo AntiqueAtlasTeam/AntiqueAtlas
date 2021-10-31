@@ -1,8 +1,8 @@
 package hunternif.mc.impl.atlas.client;
 
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-import net.minecraft.util.Identifier;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
 import java.util.*;
 
@@ -11,7 +11,7 @@ import java.util.*;
  *
  * @author Hunternif
  */
-@Environment(EnvType.CLIENT)
+@OnlyIn(Dist.CLIENT)
 public class TextureSetMap {
     private static final TextureSetMap INSTANCE = new TextureSetMap();
 
@@ -19,17 +19,17 @@ public class TextureSetMap {
         return INSTANCE;
     }
 
-    private final Map<Identifier, TextureSet> map = new HashMap<>();
+    public final Map<ResourceLocation, TextureSet> map = new HashMap<>();
 
     public void register(TextureSet set) {
         map.put(set.name, set);
     }
 
-    public TextureSet getByName(Identifier name) {
+    public TextureSet getByName(ResourceLocation name) {
         return map.get(name);
     }
 
-    static public boolean isRegistered(Identifier name) {
+    static public boolean isRegistered(ResourceLocation name) {
         return INSTANCE.map.containsKey(name);
     }
 }
