@@ -1,14 +1,14 @@
 package hunternif.mc.impl.atlas.client.gui;
 
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.PoseStack;
 import hunternif.mc.impl.atlas.client.Textures;
 import hunternif.mc.impl.atlas.client.gui.core.GuiComponentButton;
 import hunternif.mc.impl.atlas.client.texture.ITexture;
 import hunternif.mc.impl.atlas.marker.Marker;
 import hunternif.mc.impl.atlas.registry.MarkerType;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.text.Text;
+import net.minecraft.client.Minecraft;
+import net.minecraft.network.chat.Component;
 
 import java.util.Collections;
 
@@ -39,13 +39,13 @@ public class GuiMarkerBookmark extends GuiComponentButton {
         this.iconTexture = iconTexture;
     }
 
-    public Text getTitle() {
+    public Component getTitle() {
         return marker.getLabel();
     }
 
 
     @Override
-    public void render(MatrixStack matrices, int mouseX, int mouseY, float partialTick) {
+    public void render(PoseStack matrices, int mouseX, int mouseY, float partialTick) {
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
 
         // Render background:
@@ -57,7 +57,7 @@ public class GuiMarkerBookmark extends GuiComponentButton {
         iconTexture.draw(matrices, getGuiX() - (isMouseOver ? 3 : 2), getGuiY()-3, 24,24);
 
         if (isMouseOver && !getTitle().getString().isEmpty()) {
-            drawTooltip(Collections.singletonList(getTitle()), MinecraftClient.getInstance().textRenderer);
+            drawTooltip(Collections.singletonList(getTitle()), Minecraft.getInstance().font);
         }
     }
 }

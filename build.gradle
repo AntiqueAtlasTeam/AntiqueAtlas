@@ -1,101 +1,125 @@
-plugins {
-    id 'fabric-loom' version '0.8-SNAPSHOT'
-    id 'maven-publish'
+buildscript {
+    repositories {
+        maven { url = 'https://maven.minecraftforge.net' }
+		maven { url = 'https://repo.spongepowered.org/maven' }
+		maven { url = 'https://maven.parchmentmc.org' }
+        mavenCentral()
+    }
+	
+    dependencies {
+        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.1.+', changing: true
+		classpath 'org.parchmentmc:librarian:1.+'
+		classpath group: 'org.spongepowered', name: 'mixingradle', version: '0.7-SNAPSHOT'
+    }
 }
 
-sourceCompatibility = JavaVersion.VERSION_16
-targetCompatibility = JavaVersion.VERSION_16
+apply plugin: 'net.minecraftforge.gradle'
+// Only edit below this line, the above code adds and enables the necessary things for Forge to be setup.
+apply plugin: 'eclipse'
+apply plugin: 'maven-publish'
+apply plugin: 'org.parchmentmc.librarian.forgegradle'
+apply plugin: 'org.spongepowered.mixin'
 
-archivesBaseName = project.archives_base_name
-version = project.mod_version + "-mc" + project.minecraft_version
-group = project.maven_group
-
-minecraft {
-    accessWidener = file("src/main/resources/antiqueatlas.accesswidener")
+mixin {
+    add sourceSets.main, modId+".refmap.json"
 }
+
+version = modVersion + "-mc" + modMinecraftVersion
+group = modGroup // http://maven.apache.org/guides/mini/guide-naming-conventions.html
+archivesBaseName = modGroup
+
+java.toolchain.languageVersion = JavaLanguageVersion.of(16)
+
+println('Java: ' + System.getProperty('java.version') + ' JVM: ' + System.getProperty('java.vm.version') + '(' + System.getProperty('java.vendor') + ') Arch: ' + System.getProperty('os.arch'))
+println('Mod Name: ' + modId + ', Mod Version: ' + modVersion + ', Minecraft Version: ' + modMinecraftVersion + ', Forge Version: ' + modForgeVersion)
 
 repositories {
-	maven {
-		// for fabric
-		url = "https://maven.modmuss50.me/"
-	}
-	maven {
-		// for mod menu
-		url = uri("https://jitpack.io")
-	}
-	maven {
-		// for cloth-config
-		url = "https://maven.shedaniel.me/"
-	}
-	maven {
-		url = "https://maven.terraformersmc.com/releases"
-	}
+	maven {url = "https://dvs1.progwml6.com/files/maven/"}// location of the maven that hosts JEI files
+	maven {url = "https://modmaven.k-4u.nl"}// location of a maven mirror for JEI files, as a fallback
+	maven {url = "https://maven.theillusivec4.top/"}
+	maven {url 'https://maven.blamejared.com'}
+	maven {url "https://www.cursemaven.com"}
+    maven {url = "https://repo.spongepowered.org/maven"} // mixin
+    maven {url "https://maven.shedaniel.me/"} // cloth config
+    maven {url "https://mvnrepository.com/artifact/org.jetbrains/annotations"} // Jetbrains annotations
 }
 
-dependencies {
-    //to change the versions see the gradle.properties file
-    minecraft "com.mojang:minecraft:${project.minecraft_version}"
-    mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
-    modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
+minecraft {
+    mappings channel: mappingsChannel, version: mappingsVersion
+    //makeObfSourceJar = false // an Srg named sources jar is made by default. uncomment this to disable.
+    accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
+    runs {
+        client {
+            workingDirectory project.file('run/client')
+            property 'forge.logging.markers', 'REGISTRIES'
+			arg "-mixin.config="+modId+".mixins.json"
+            // Recommended logging level for the console
+            property 'forge.logging.console.level', 'debug'
+            property 'mixin.env.remapRefMap', 'true'
+			property 'mixin.env.refMapRemappingFile', "${buildDir}/createSrgToMcp/output.srg"
 
-    // Fabric API. This is technically optional, but you probably want it anyway.
-    modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
-
-    modImplementation "com.terraformersmc:modmenu:${project.mod_menu_version}"
-
-    modApi("me.shedaniel.cloth:cloth-config-fabric:${project.cloth_config_version}") {
-        exclude(group: "net.fabricmc.fabric-api")
-    }
-}
-
-processResources {
-	inputs.property "version", project.version
-
-	filesMatching("fabric.mod.json") {		// add mod metadata
-		expand "version": project.version
-	}
-}
-
-// ensure that the encoding is set to UTF-8, no matter what the system default is
-// this fixes some edge cases with special characters not displaying correctly
-// see http://yodaconditions.net/blog/fix-for-java-file-encoding-problems-with-gradle.html
-tasks.withType(JavaCompile) {
-	options.encoding = "UTF-8"
-	it.options.release = 16
-}
-
-java {
-    // Loom will automatically attach sourcesJar to a RemapSourcesJar task and to the "build" task
-    // if it is present.
-    // If you remove this line, sources will not be generated.
-    withSourcesJar()
-}
-
-jar {
-    from("LICENSE") {
-        rename { "${it}_${project.archivesBaseName}"}
-    }
-}
-
-// configure the maven publication
-publishing {
-    publications {
-        mavenJava(MavenPublication) {
-            // add all the jars that should be included when publishing to maven
-            artifact(remapJar) {
-                builtBy remapJar
+            mods {
+                modId {
+                    source sourceSets.main
+                }
             }
-            artifact(sourcesJar) {
-                builtBy remapSourcesJar
+        }
+
+        server {
+            workingDirectory project.file('run/server')
+            property 'forge.logging.markers', 'REGISTRIES'
+			arg "-mixin.config="+modId+".mixins.json"
+            // Recommended logging level for the console
+            property 'forge.logging.console.level', 'debug'
+            property 'mixin.env.remapRefMap', 'true'
+			property 'mixin.env.refMapRemappingFile', "${buildDir}/createSrgToMcp/output.srg"
+			
+            mods {
+                modId {
+                    source sourceSets.main
+                }
             }
         }
     }
+}
 
-    // See https://docs.gradle.org/current/userguide/publishing_maven.html for information on how to set up publishing.
+dependencies {
+	minecraft 'net.minecraftforge:forge:' + modMinecraftVersion + '-' + modForgeVersion
+	annotationProcessor 'org.spongepowered:mixin:0.8.4:processor'
+	implementation 'org.spongepowered:mixin:0.8.4'
+	implementation fileTree(include: ['*.jar'], dir: 'libs')
+	implementation fg.deobf("me.shedaniel.cloth:cloth-config-forge:"+clothConfigVersion)
+	implementation group: 'org.jetbrains', name: 'annotations', version: '22.0.0'
+	
+}
+
+// Example for how to get properties into the manifest for reading by the runtime..
+jar {
+    manifest {
+        attributes([
+            "MixinConfigs": modId+".mixins.json"
+        ])
+    }
+}
+
+// Example configuration to allow publishing using the maven-publish task
+// we define a custom artifact that is sourced from the reobfJar output task
+// and then declare that to be published
+// Note you'll need to add a repository here
+//def reobfFile = file("$buildDir/reobfJar/output.jar")
+//def reobfArtifact = artifacts.add('default', reobfFile) {
+//    type 'jar'
+//    builtBy 'reobfJar'
+//}
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            artifact jar
+        }
+    }
     repositories {
-        // Add repositories to publish to here.
-        // Notice: This block does NOT have the same function as the block in the top level.
-        // The repositories here will be used for publishing your artifact, not for
-        // retrieving dependencies.
+        maven {
+            url "file:///${project.projectDir}/mcmodsrepo"
+        }
     }
 }

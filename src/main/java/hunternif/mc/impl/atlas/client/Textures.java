@@ -5,16 +5,16 @@ import hunternif.mc.impl.atlas.client.texture.ITexture;
 import hunternif.mc.impl.atlas.client.texture.IconTexture;
 import hunternif.mc.impl.atlas.client.texture.Texture;
 import hunternif.mc.impl.atlas.client.texture.TileTexture;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-import net.minecraft.util.Identifier;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
 import java.util.HashMap;
 import java.util.Map;
 
-@Environment(EnvType.CLIENT)
+@OnlyIn(Dist.CLIENT)
 public class Textures {
-    public final static Map<Identifier, ITexture> TILE_TEXTURES_MAP  = new HashMap<>();
+    public final static Map<ResourceLocation, ITexture> TILE_TEXTURES_MAP  = new HashMap<>();
 
     private static final String MOD_PREFIX = AntiqueAtlasMod.ID + ":";
     private static final String GUI = MOD_PREFIX + "textures/gui/";
@@ -51,18 +51,18 @@ public class Textures {
             ICON_HIDE_MARKERS = icon("hide_markers.png"),
             ICON_EXPORT = icon("export.png");
 
-    public static final Identifier EXPORTED_BG = new Identifier(GUI + "exported_bg.png");
+    public static final ResourceLocation EXPORTED_BG = new ResourceLocation(GUI + "exported_bg.png");
 
     // Constructor helpers:
     private static ITexture gui(String fileName, int width, int height) {
-        return new Texture(new Identifier(GUI + fileName), width, height);
+        return new Texture(new ResourceLocation(GUI + fileName), width, height);
     }
 
     private static ITexture scaleBar(String fileName) {
-        return new Texture(new Identifier(GUI_SCALEBAR + fileName), 20, 8);
+        return new Texture(new ResourceLocation(GUI_SCALEBAR + fileName), 20, 8);
     }
 
     private static ITexture icon(String fileName) {
-        return new IconTexture(new Identifier(GUI_ICONS + fileName));
+        return new IconTexture(new ResourceLocation(GUI_ICONS + fileName));
     }
 }

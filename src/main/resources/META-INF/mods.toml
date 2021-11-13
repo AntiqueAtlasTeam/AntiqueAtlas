@@ -1,0 +1,35 @@
+
+modLoader="javafml"
+loaderVersion="[37,)"
+license="GNU GENERAL PUBLIC LICENSE"
+issueTrackerURL="https://github.com/AntiqueAtlasTeam/AntiqueAtlas/issues"
+logoFile="antiqueatlas_icon.png"
+[[mods]]
+modId="antiqueatlas"
+version="${file.jarVersion}"
+displayName="Antique Atlas"
+displayURL="https://www.curseforge.com/minecraft/mc-mods/antique-atlas"
+credits="Contributors to this project: coolAlias, Kenkron, TheCodeWarrior,  Localizations by crafteverywhere, CapoFantasma97, Mazdallier, mankra, Zerotiger, tyra314, Forge port by Stereowalker"
+authors="Hunternif"
+description='''
+Antique Atlas is a book that acts like a map featuring infinite scrolling, zoom and custom labeled markers. The map is generated around the player by calculating the average biome in each 16x16 chunk.
+'''
+# A dependency - use the . to indicate dependency for a specific modid. Dependencies are optional.
+[[dependencies.antiqueatlas]] #optional
+    modId="forge" #mandatory
+    mandatory=true #mandatory
+    versionRange="[37,)" #mandatory
+    ordering="NONE"
+    side="BOTH"
+[[dependencies.antiqueatlas]]
+    modId="minecraft"
+    mandatory=true
+    versionRange="[1.17.1,1.18]"
+    ordering="NONE"
+    side="BOTH"
+[[dependencies.antiqueatlas]]
+    modId="cloth_config"
+    mandatory=true
+    versionRange="[5.0.0,)"
+    ordering="NONE"
+    side="BOTH"

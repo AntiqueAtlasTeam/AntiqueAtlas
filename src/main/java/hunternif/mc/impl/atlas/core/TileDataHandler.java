@@ -1,10 +1,10 @@
 package hunternif.mc.impl.atlas.core;
 
 import hunternif.mc.impl.atlas.item.AtlasItem;
-import net.minecraft.item.ItemStack;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.world.PersistentStateManager;
-import net.minecraft.world.World;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.storage.DimensionDataStorage;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -24,7 +24,7 @@ public class TileDataHandler {
     /**
      * Loads data for the given atlas ID or creates a new one.
      */
-    public AtlasData getData(ItemStack stack, World world) {
+    public AtlasData getData(ItemStack stack, Level world) {
         if (stack.getItem() instanceof AtlasItem) {
             return getData(AtlasItem.getAtlasID(stack), world);
         } else {
@@ -35,16 +35,16 @@ public class TileDataHandler {
     /**
      * Loads data for the given atlas or creates a new one.
      */
-    public AtlasData getData(int atlasID, World world) {
+    public AtlasData getData(int atlasID, Level world) {
         String key = getAtlasDataKey(atlasID);
 
-        if (world.isClient) {
+        if (world.isClientSide) {
             // Since atlas data doesn't really belong to a single world-dimension,
             // it can be cached. This should fix #67
             return atlasDataClientCache.computeIfAbsent(key, s -> new AtlasData());
         } else {
-            PersistentStateManager manager = ((ServerWorld) world).getPersistentStateManager();
-            return manager.getOrCreate(AtlasData::readNbt, AtlasData::new, key);
+            DimensionDataStorage manager = ((ServerLevel) world).getDataStorage();
+            return manager.computeIfAbsent(AtlasData::readNbt, AtlasData::new, key);
         }
     }
 

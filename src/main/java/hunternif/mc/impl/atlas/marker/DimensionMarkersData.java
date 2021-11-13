@@ -1,9 +1,9 @@
 package hunternif.mc.impl.atlas.marker;
 
 import hunternif.mc.impl.atlas.util.ListMapValueIterator;
-import net.minecraft.util.math.ChunkPos;
-import net.minecraft.util.registry.RegistryKey;
-import net.minecraft.world.World;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.level.ChunkPos;
+import net.minecraft.world.level.Level;
 
 import java.util.AbstractCollection;
 import java.util.Collection;
@@ -15,7 +15,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 public class DimensionMarkersData {
 	private final MarkersData parent;
-	private final RegistryKey<World> world;
+	private final ResourceKey<Level> world;
 
 	private int size = 0;
 
@@ -24,12 +24,12 @@ public class DimensionMarkersData {
 
 	private final Values values = new Values();
 
-	public DimensionMarkersData(MarkersData parent, RegistryKey<World> world) {
+	public DimensionMarkersData(MarkersData parent, ResourceKey<Level> world) {
 		this.parent = parent;
 		this.world = world;
 	}
 
-	public RegistryKey<World> getWorld() {
+	public ResourceKey<Level> getWorld() {
 		return world;
 	}
 
@@ -62,7 +62,7 @@ public class DimensionMarkersData {
 			list.add(marker);
 		}
 		size++;
-		parent.markDirty();
+		parent.setDirty();
 	}
 
 	public boolean removeMarker(Marker marker) {

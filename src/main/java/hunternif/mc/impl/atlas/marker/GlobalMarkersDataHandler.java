@@ -1,9 +1,9 @@
 package hunternif.mc.impl.atlas.marker;
 
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.world.World;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.level.Level;
 
 /**
  * Handles the world-saved data with global markers.
@@ -22,11 +22,11 @@ public class GlobalMarkersDataHandler {
 
 	private GlobalMarkersData data;
 
-	public void onWorldLoad(MinecraftServer server, ServerWorld world) {
-		if (world.getRegistryKey() == World.OVERWORLD) {
-			data = world.getPersistentStateManager().getOrCreate(GlobalMarkersData::readNbt, () -> {
+	public void onWorldLoad(MinecraftServer server, ServerLevel world) {
+		if (world.dimension() == Level.OVERWORLD) {
+			data = world.getDataStorage().computeIfAbsent(GlobalMarkersData::readNbt, () -> {
 				GlobalMarkersData data = new GlobalMarkersData();
-				data.markDirty();
+				data.setDirty();
 				return data;
 			}, DATA_KEY);
 		}
@@ -55,7 +55,7 @@ public class GlobalMarkersDataHandler {
 	}
 
 	/** Synchronizes global markers with the connecting client. */
-	public void onPlayerLogin(ServerPlayerEntity player) {
+	public void onPlayerLogin(ServerPlayer player) {
 		data.syncOnPlayer(player);
 	}
 

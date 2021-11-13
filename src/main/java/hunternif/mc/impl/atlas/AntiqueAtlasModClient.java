@@ -2,14 +2,14 @@ package hunternif.mc.impl.atlas;
 
 import hunternif.mc.impl.atlas.client.gui.GuiAtlas;
 import hunternif.mc.impl.atlas.network.AntiqueAtlasNetworking;
-import net.fabricmc.api.ClientModInitializer;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.item.ItemStack;
+import net.minecraft.client.Minecraft;
+import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 
-@Environment(EnvType.CLIENT)
-public class AntiqueAtlasModClient implements ClientModInitializer {
+@OnlyIn(Dist.CLIENT)
+public class AntiqueAtlasModClient {
 
 	private static GuiAtlas guiAtlas;
 
@@ -30,14 +30,14 @@ public class AntiqueAtlasModClient implements ClientModInitializer {
 	}
 
 	private static void openAtlasGUI(GuiAtlas gui) {
-		MinecraftClient mc = MinecraftClient.getInstance();
-		if (mc.currentScreen == null) { // In-game screen
+		Minecraft mc = Minecraft.getInstance();
+		if (mc.screen == null) { // In-game screen
 			guiAtlas.updateL18n();
 			mc.setScreen(gui);
 		}
 	}
 
-	@Override
+	
 	public void onInitializeClient() {
 		ClientProxy clientProxy = new ClientProxy();
 		clientProxy.initClient();

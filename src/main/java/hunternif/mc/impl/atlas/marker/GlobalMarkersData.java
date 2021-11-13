@@ -1,12 +1,12 @@
 package hunternif.mc.impl.atlas.marker;
 
 import me.shedaniel.cloth.clothconfig.shadowed.org.yaml.snakeyaml.error.Mark;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.RegistryKey;
-import net.minecraft.world.World;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.level.Level;
 
 /** Holds global markers, i.e. ones that appear in all atlases. */
 public class GlobalMarkersData extends MarkersData {
@@ -15,11 +15,11 @@ public class GlobalMarkersData extends MarkersData {
 	}
 
 	@Override
-	public Marker createAndSaveMarker(Identifier type, RegistryKey<World> world, int x, int y, boolean visibleAhead, Text label) {
+	public Marker createAndSaveMarker(ResourceLocation type, ResourceKey<Level> world, int x, int y, boolean visibleAhead, Component label) {
 		return super.createAndSaveMarker(type, world, x, y, visibleAhead, label).setGlobal(true);
 	}
 
-	public static GlobalMarkersData readNbt(NbtCompound compound) {
+	public static GlobalMarkersData readNbt(CompoundTag compound) {
 		GlobalMarkersData data = new GlobalMarkersData();
 		doReadNbt(compound, data);
 		return data;
@@ -31,7 +31,7 @@ public class GlobalMarkersData extends MarkersData {
 	}
 
 	/** Send all data to the player in several packets. */
-    void syncOnPlayer(ServerPlayerEntity player) {
+    void syncOnPlayer(ServerPlayer player) {
 		syncOnPlayer(-1, player);
 	}
 }

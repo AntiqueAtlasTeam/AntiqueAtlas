@@ -4,10 +4,10 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import hunternif.mc.impl.atlas.item.AtlasItem;
-import net.minecraft.item.ItemStack;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.world.PersistentStateManager;
-import net.minecraft.world.World;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.storage.DimensionDataStorage;
 
 /**
  * Provides access to {@link MarkersData}. Maintains a cache on the client side,
@@ -21,7 +21,7 @@ public class MarkersDataHandler {
 	private final Map<String, MarkersData> markersDataClientCache = new ConcurrentHashMap<>();
 
 	/** Loads data for the given atlas or creates a new one. */
-	public MarkersData getMarkersData(ItemStack stack, World world) {
+	public MarkersData getMarkersData(ItemStack stack, Level world) {
 		if (stack.getItem() instanceof AtlasItem) {
 			return getMarkersData(AtlasItem.getAtlasID(stack), world);
 		} else {
@@ -30,15 +30,15 @@ public class MarkersDataHandler {
 	}
 
 	/** Loads data for the given atlas ID or creates a new one. */
-	public MarkersData getMarkersData(int atlasID, World world) {
+	public MarkersData getMarkersData(int atlasID, Level world) {
 		String key = getMarkersDataKey(atlasID);
-		if (world.isClient) {
+		if (world.isClientSide) {
 			// Since atlas data doesn't really belong to a single world-dimension,
 			// it can be cached. This should fix #67
 			return markersDataClientCache.computeIfAbsent(key, s -> new MarkersData());
 		} else {
-			PersistentStateManager manager = ((ServerWorld) world).getPersistentStateManager();
-			return manager.getOrCreate(MarkersData::readNbt, () -> new MarkersData(), key);
+			DimensionDataStorage manager = ((ServerLevel) world).getDataStorage();
+			return manager.computeIfAbsent(MarkersData::readNbt, () -> new MarkersData(), key);
 		}
 	}
 

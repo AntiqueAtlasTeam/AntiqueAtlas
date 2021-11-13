@@ -1,8 +1,8 @@
 package hunternif.mc.impl.atlas.util;
 
-import net.minecraft.util.math.BlockBox;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Box;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.levelgen.structure.BoundingBox;
+import net.minecraft.world.phys.AABB;
 
 public class MathUtil {
     /**
@@ -24,11 +24,11 @@ public class MathUtil {
         }
     }
 
-    public static Box toAABB(BlockBox box) {
-        return new Box(box.getMinX(), box.getMinY(), box.getMinZ(), box.getMaxX(), box.getMaxY(), box.getMaxZ());
+    public static AABB toAABB(BoundingBox box) {
+        return new AABB(box.minX(), box.minY(), box.minZ(), box.maxX(), box.maxY(), box.maxZ());
     }
 
-    public static BlockPos getCenter(BlockBox box) {
-        return new BlockPos(box.getMinX() + (box.getBlockCountX() / 2), box.getMinY() + (box.getBlockCountY() / 2), box.getMinZ() + (box.getBlockCountZ() / 2));
+    public static BlockPos getCenter(BoundingBox box) {
+        return new BlockPos(box.minX() + (box.getXSpan() / 2), box.minY() + (box.getYSpan() / 2), box.minZ() + (box.getZSpan() / 2));
     }
 }

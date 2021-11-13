@@ -1,15 +1,16 @@
 package hunternif.mc.impl.atlas.network.packet.c2s.play;
 
 import hunternif.mc.impl.atlas.AntiqueAtlasMod;
+
+import java.util.function.Supplier;
+
 import hunternif.mc.api.AtlasAPI;
 import hunternif.mc.impl.atlas.network.packet.c2s.C2SPacket;
-import net.fabricmc.fabric.api.networking.v1.PacketSender;
-import net.minecraft.network.PacketByteBuf;
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.network.ServerPlayNetworkHandler;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraftforge.fmllegacy.network.NetworkEvent;
 
 /**
  * A request from a client to create a new marker. In order to prevent griefing,
@@ -18,39 +19,65 @@ import net.minecraft.util.Identifier;
  * @author Haven King
  */
 public class AddMarkerC2SPacket extends C2SPacket {
-	public static final Identifier ID = AntiqueAtlasMod.id("packet", "c2s", "marker", "add");
+	public static final ResourceLocation ID = AntiqueAtlasMod.id("packet", "c2s", "marker", "add");
 
-	public AddMarkerC2SPacket(int atlasID, Identifier markerType, int x, int z, boolean visibleBeforeDiscovery, Text label) {
-		this.writeVarInt(atlasID);
-		this.writeIdentifier(markerType);
-		this.writeVarInt(x);
-		this.writeVarInt(z);
-		this.writeBoolean(visibleBeforeDiscovery);
-		this.writeText(label);
+	int atlasID; 
+	ResourceLocation markerType; 
+	int x, z; 
+	boolean visibleBeforeDiscovery;
+	Component label;
+
+
+	public AddMarkerC2SPacket(int atlasID, ResourceLocation markerType, int x, int z, boolean visibleBeforeDiscovery, Component label) {
+		this.atlasID = atlasID;
+		this.markerType = markerType;
+		this.x = x;
+		this.z = z;
+		this.visibleBeforeDiscovery = visibleBeforeDiscovery;
+		this.label = label;
 	}
 
-	@Override
-	public Identifier getId() {
-		return ID;
+	public static void encode(final AddMarkerC2SPacket msg, final FriendlyByteBuf packetBuffer) {
+		packetBuffer.writeVarInt(msg.atlasID);
+		packetBuffer.writeResourceLocation(msg.markerType);
+		packetBuffer.writeVarInt(msg.x);
+		packetBuffer.writeVarInt(msg.z);
+		packetBuffer.writeBoolean(msg.visibleBeforeDiscovery);
+		packetBuffer.writeComponent(msg.label);
 	}
 
-	public static void apply(MinecraftServer server, ServerPlayerEntity player, ServerPlayNetworkHandler handler, PacketByteBuf buf, PacketSender responseSender) {
-		int atlasID = buf.readVarInt();
-		Identifier markerType = buf.readIdentifier();
-		int x = buf.readVarInt();
-		int z = buf.readVarInt();
-		boolean visibleBeforeDiscovery = buf.readBoolean();
-		Text label = buf.readText();
+	public static AddMarkerC2SPacket decode(final FriendlyByteBuf packetBuffer) {
+		return new AddMarkerC2SPacket(
+				packetBuffer.readVarInt(), 
+				packetBuffer.readResourceLocation(),
+				packetBuffer.readVarInt(),
+				packetBuffer.readVarInt(),
+				packetBuffer.readBoolean(),
+				packetBuffer.readComponent());
+	}
 
-		server.execute(() -> {
-			if (!AtlasAPI.getPlayerAtlases(player).contains(atlasID)) {
+	public static void handle(final AddMarkerC2SPacket msg, final Supplier<NetworkEvent.Context> contextSupplier) {
+		final NetworkEvent.Context context = contextSupplier.get();
+		context.enqueueWork(() -> {
+			final ServerPlayer sender = context.getSender();
+			if (sender == null) {
+				return;
+			}
+			ServerPlayer player = (ServerPlayer) context.getSender();
+			if (!AtlasAPI.getPlayerAtlases(player).contains(msg.atlasID)) {
 				AntiqueAtlasMod.LOG.warn(
 								"Player {} attempted to put marker into someone else's Atlas #{}}",
-						player.getName(), atlasID);
+						player.getName(), msg.atlasID);
 				return;
 			}
 
-			AtlasAPI.getMarkerAPI().putMarker(player.world, visibleBeforeDiscovery, atlasID, markerType, label, x,z);
-		});
+			AtlasAPI.getMarkerAPI().putMarker(player.level, msg.visibleBeforeDiscovery, msg.atlasID, msg.markerType, msg.label, msg.x,msg.z);
+			});
+		context.setPacketHandled(true);
+	}
+
+	@Override
+	public ResourceLocation getId() {
+		return ID;
 	}
 }

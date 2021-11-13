@@ -1,18 +1,19 @@
 package hunternif.mc.impl.atlas.network.packet.c2s.play;
 
 import hunternif.mc.impl.atlas.AntiqueAtlasMod;
+
+import java.util.function.Supplier;
+
 import hunternif.mc.api.AtlasAPI;
 import hunternif.mc.impl.atlas.network.packet.c2s.C2SPacket;
 import hunternif.mc.impl.atlas.util.Log;
-import net.fabricmc.fabric.api.networking.v1.PacketSender;
-import net.minecraft.network.PacketByteBuf;
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.network.ServerPlayNetworkHandler;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
-import net.minecraft.util.registry.RegistryKey;
-import net.minecraft.world.World;
+import net.minecraft.core.Registry;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.level.Level;
+import net.minecraftforge.fmllegacy.network.NetworkEvent;
 
 /**
  * Packet used to save the last browsing position for a dimension in an atlas.
@@ -20,37 +21,60 @@ import net.minecraft.world.World;
  * @author Haven King
  */
 public class BrowsingPositionC2SPacket extends C2SPacket {
-	public static final Identifier ID = AntiqueAtlasMod.id("packet", "c2s", "browsing_position");
+	public static final ResourceLocation ID = AntiqueAtlasMod.id("packet", "c2s", "browsing_position");
 
-	public BrowsingPositionC2SPacket(int atlasID, RegistryKey<World> world, int x, int y, double zoom) {
-		this.writeVarInt(atlasID);
-		this.writeIdentifier(world.getValue());
-		this.writeVarInt(x);
-		this.writeVarInt(y);
-		this.writeDouble(zoom);
+	int atlasID;
+	ResourceKey<Level> world;
+	int x;
+	int y;
+	double zoom;
+	
+	public BrowsingPositionC2SPacket(int atlasID, ResourceKey<Level> world, int x, int y, double zoom) {
+		this.atlasID = atlasID;
+		this.world = world;
+		this.x = x;
+		this.y = y;
+		this.zoom = zoom;
 	}
 
-	@Override
-	public Identifier getId() {
-		return ID;
+	public static void encode(final BrowsingPositionC2SPacket msg, final FriendlyByteBuf packetBuffer) {
+		packetBuffer.writeVarInt(msg.atlasID);
+		packetBuffer.writeResourceLocation(msg.world.location());
+		packetBuffer.writeVarInt(msg.x);
+		packetBuffer.writeVarInt(msg.y);
+		packetBuffer.writeDouble(msg.zoom);
 	}
 
-	public static void apply(MinecraftServer server, ServerPlayerEntity player, ServerPlayNetworkHandler handler, PacketByteBuf buf, PacketSender responseSender) {
-		int atlasID = buf.readVarInt();
-		RegistryKey<World> world = RegistryKey.of(Registry.WORLD_KEY, buf.readIdentifier());
-		int x = buf.readVarInt();
-		int y = buf.readVarInt();
-		double zoom = buf.readDouble();
+	public static BrowsingPositionC2SPacket decode(final FriendlyByteBuf packetBuffer) {
+		return new BrowsingPositionC2SPacket(
+				packetBuffer.readVarInt(),
+				ResourceKey.create(Registry.DIMENSION_REGISTRY, packetBuffer.readResourceLocation()),
+				packetBuffer.readVarInt(),
+				packetBuffer.readVarInt(),
+				packetBuffer.readDouble());
+	}
 
-		server.execute(() -> {
-			if (AntiqueAtlasMod.CONFIG.itemNeeded && !AtlasAPI.getPlayerAtlases(player).contains(atlasID)) {
+	public static void handle(final BrowsingPositionC2SPacket msg, final Supplier<NetworkEvent.Context> contextSupplier) {
+		final NetworkEvent.Context context = contextSupplier.get();
+		context.enqueueWork(() -> {
+			final ServerPlayer sender = context.getSender();
+			if (sender == null) {
+				return;
+			}
+			if (AntiqueAtlasMod.CONFIG.itemNeeded && !AtlasAPI.getPlayerAtlases(sender).contains(msg.atlasID)) {
 				Log.warn("Player %s attempted to put position marker into someone else's Atlas #%d",
-						player.getCommandSource().getName(), atlasID);
+						sender.createCommandSourceStack().getTextName(), msg.atlasID);
 				return;
 			}
 
-			AntiqueAtlasMod.tileData.getData(atlasID, player.getEntityWorld())
-					.getWorldData(world).setBrowsingPosition(x, y, zoom);
+			AntiqueAtlasMod.tileData.getData(msg.atlasID, sender.getCommandSenderWorld())
+					.getWorldData(msg.world).setBrowsingPosition(msg.x, msg.y, msg.zoom);
 		});
+		context.setPacketHandled(true);
+	}
+
+	@Override
+	public ResourceLocation getId() {
+		return ID;
 	}
 }

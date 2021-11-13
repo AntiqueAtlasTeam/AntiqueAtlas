@@ -4,15 +4,14 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import hunternif.mc.impl.atlas.AntiqueAtlasMod;
+import hunternif.mc.impl.atlas.forge.resource.IResourceReloadListener;
 import hunternif.mc.impl.atlas.util.Log;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-import net.fabricmc.fabric.api.resource.SimpleResourceReloadListener;
-import net.minecraft.resource.Resource;
-import net.minecraft.resource.ResourceManager;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.profiler.Profiler;
-
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.resources.Resource;
+import net.minecraft.server.packs.resources.ResourceManager;
+import net.minecraft.util.profiling.ProfilerFiller;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.*;
@@ -23,8 +22,8 @@ import java.util.concurrent.Executor;
 /**
  * Saves texture set names with the lists of texture variations.
  */
-@Environment(EnvType.CLIENT)
-public class TextureSetConfig implements SimpleResourceReloadListener<Collection<TextureSet>> {
+@OnlyIn(Dist.CLIENT)
+public class TextureSetConfig implements IResourceReloadListener<Collection<TextureSet>> {
     private static final int VERSION = 1;
     private static final JsonParser PARSER = new JsonParser();
     private final TextureSetMap textureSetMap;
@@ -34,13 +33,13 @@ public class TextureSetConfig implements SimpleResourceReloadListener<Collection
     }
 
     @Override
-    public CompletableFuture<Collection<TextureSet>> load(ResourceManager manager, Profiler profiler, Executor executor) {
+    public CompletableFuture<Collection<TextureSet>> load(ResourceManager manager, ProfilerFiller profiler, Executor executor) {
         return CompletableFuture.supplyAsync(() -> {
-            Map<Identifier, TextureSet> sets = new HashMap<>();
+            Map<ResourceLocation, TextureSet> sets = new HashMap<>();
 
             try {
-                for (Identifier id : manager.findResources("atlas/texture_sets", (s) -> s.endsWith(".json"))) {
-                    Identifier texture_id = new Identifier(
+                for (ResourceLocation id : manager.listResources("atlas/texture_sets", (s) -> s.endsWith(".json"))) {
+                    ResourceLocation texture_id = new ResourceLocation(
                             id.getNamespace(),
                             id.getPath().replace("atlas/texture_sets/", "").replace(".json", "")
                     );
@@ -61,15 +60,15 @@ public class TextureSetConfig implements SimpleResourceReloadListener<Collection
 
                             JsonObject data = object.getAsJsonObject("data");
 
-                            List<Identifier> textures = new ArrayList<>();
+                            List<ResourceLocation> textures = new ArrayList<>();
 
                             for (Entry<String, JsonElement> entry : data.getAsJsonObject("textures").entrySet()) {
                                 for (int i = 0; i < entry.getValue().getAsInt(); i++) {
-                                    textures.add(new Identifier(entry.getKey()));
+                                    textures.add(new ResourceLocation(entry.getKey()));
                                 }
                             }
 
-                            Identifier[] textureArray = new Identifier[textures.size()];
+                            ResourceLocation[] textureArray = new ResourceLocation[textures.size()];
                             TextureSet set;
 
                             if (!data.has("shore")) {
@@ -81,7 +80,7 @@ public class TextureSetConfig implements SimpleResourceReloadListener<Collection
                                     throw new RuntimeException("The `shore` entry is missing a water entry.");
                                 }
 
-                                set = new TextureSet.TextureSetShore(texture_id, new Identifier(shore.get("water").getAsString()), textures.toArray(textureArray));
+                                set = new TextureSet.TextureSetShore(texture_id, new ResourceLocation(shore.get("water").getAsString()), textures.toArray(textureArray));
                             }
 
                             if (data.has("stitch")) {
@@ -90,13 +89,13 @@ public class TextureSetConfig implements SimpleResourceReloadListener<Collection
 
                                     switch (to) {
                                         case "both":
-                                            set.stitchTo(new Identifier(entry.getKey()));
+                                            set.stitchTo(new ResourceLocation(entry.getKey()));
                                             break;
                                         case "horizontal":
-                                            set.stitchToHorizontal(new Identifier(entry.getKey()));
+                                            set.stitchToHorizontal(new ResourceLocation(entry.getKey()));
                                             break;
                                         case "vertical":
-                                            set.stitchToVertical(new Identifier(entry.getKey()));
+                                            set.stitchToVertical(new ResourceLocation(entry.getKey()));
                                             break;
                                         default:
                                             throw new RuntimeException("Invalid stitch value (" + to + ") for `" + entry.getKey() + "`");
@@ -120,39 +119,39 @@ public class TextureSetConfig implements SimpleResourceReloadListener<Collection
     }
 
     @Override
-    public CompletableFuture<Void> apply(Collection<TextureSet> sets, ResourceManager manager, Profiler profiler, Executor executor) {
-        return CompletableFuture.runAsync(() -> {
-            for (TextureSet set : sets) {
-                try {
-                    set.loadTextures();
-                    textureSetMap.register(set);
-                    Log.info("Loaded texture set %s with %d custom texture(s)", set.name, set.getTexturePaths().length);
-                }
-                catch (Throwable e) {
-                    Log.error(e, "Failed to load the texture set `%s`:", set.name);
-                }
-
+    public CompletableFuture<Void> apply(Collection<TextureSet> sets, ResourceManager manager, ProfilerFiller profiler, Executor executor) {
+    	for (TextureSet set : sets) {
+            try {
+                set.loadTextures();
+                textureSetMap.register(set);
+                Log.info("Loaded texture set %s with %d custom texture(s)", set.name, set.getTexturePaths().length);
+            }
+            catch (Throwable e) {
+                Log.error(e, "Failed to load the texture set `%s`:", set.name);
             }
 
-            for (TextureSet set : sets) {
-                set.checkStitching();
+        }
 
-                if (set instanceof TextureSet.TextureSetShore) {
-                    TextureSet.TextureSetShore texture = (TextureSet.TextureSetShore) set;
-                    texture.loadWater();
-                    Log.info("Loaded water texture `%s` for shore texture `%s` texture", texture.waterName, texture.name);
-                }
+        for (TextureSet set : sets) {
+            set.checkStitching();
+
+            if (set instanceof TextureSet.TextureSetShore) {
+                TextureSet.TextureSetShore texture = (TextureSet.TextureSetShore) set;
+                texture.loadWater();
+                Log.info("Loaded water texture `%s` for shore texture `%s` texture", texture.waterName, texture.name);
             }
+        }
+    	return CompletableFuture.runAsync(() -> {
         });
     }
 
     @Override
-    public Identifier getFabricId() {
-        return new Identifier("antiqueatlas:texture_sets");
+    public ResourceLocation getForgeId() {
+        return new ResourceLocation("antiqueatlas:texture_sets");
     }
 
     @Override
-    public Collection<Identifier> getFabricDependencies() {
-        return Collections.singleton(new Identifier("antiqueatlas:textures"));
+    public Collection<ResourceLocation> getForgeDependencies() {
+        return Collections.singleton(new ResourceLocation("antiqueatlas:textures"));
     }
 }

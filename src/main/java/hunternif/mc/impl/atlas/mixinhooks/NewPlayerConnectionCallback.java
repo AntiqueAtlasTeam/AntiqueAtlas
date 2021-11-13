@@ -1,17 +1,28 @@
 package hunternif.mc.impl.atlas.mixinhooks;
 
-import net.fabricmc.fabric.api.event.Event;
-import net.fabricmc.fabric.api.event.EventFactory;
-import net.minecraft.server.network.ServerPlayerEntity;
+import java.util.function.Consumer;
+
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.eventbus.api.Event;
 
 @FunctionalInterface
 public interface NewPlayerConnectionCallback {
-    Event<NewPlayerConnectionCallback> EVENT = EventFactory.createArrayBacked(NewPlayerConnectionCallback.class,
-            (invokers) -> (isRemote) -> {
-                for (NewPlayerConnectionCallback callback : invokers) {
-                    callback.onNewConnection(isRemote);
-                }
-            });
-
-    void onNewConnection(ServerPlayerEntity player);
+	public class TheEvent extends Event {
+	    private final ServerPlayer player;
+		
+		public TheEvent(ServerPlayer player) {
+			this.player = player;
+		}
+		
+		public ServerPlayer getPlayer() {
+			return player;
+		}
+	}
+	
+	void onNewConnection(ServerPlayer player);
+	
+	public static void register(NewPlayerConnectionCallback consumer) {
+		MinecraftForge.EVENT_BUS.addListener((Consumer<TheEvent>)event->consumer.onNewConnection(event.getPlayer()));
+	}
 }

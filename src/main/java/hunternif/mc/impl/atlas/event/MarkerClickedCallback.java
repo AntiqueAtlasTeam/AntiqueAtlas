@@ -1,22 +1,42 @@
 package hunternif.mc.impl.atlas.event;
 
+import java.util.function.Consumer;
+
 import hunternif.mc.impl.atlas.marker.Marker;
-import net.fabricmc.fabric.api.event.Event;
-import net.fabricmc.fabric.api.event.EventFactory;
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.entity.player.PlayerEvent;
 
 @FunctionalInterface
 public interface MarkerClickedCallback {
-    Event<MarkerClickedCallback> EVENT = EventFactory.createArrayBacked(MarkerClickedCallback.class,
-            (invokers) -> (player, marker, mouseState) -> {
-                for (MarkerClickedCallback callback : invokers) {
-                    if (callback.onClicked(player, marker, mouseState)) {
-                        return true;
-                    }
-                }
-
-                return false;
-            });
-
-    boolean onClicked(PlayerEntity player, Marker marker, int mouseState);
+    
+    public class TheEvent extends PlayerEvent {
+        Marker marker; 
+        int mouseState;
+        
+        public TheEvent(Player player, Marker marker, int mouseState) {
+        	super(player);
+        	this.marker = marker;
+        	this.mouseState = mouseState;
+        }
+        
+        public Marker getMarker() {
+    		return marker;
+    	}
+        
+        public int getMouseState() {
+    		return mouseState;
+    	}
+        
+        @Override
+        public boolean isCancelable() {
+        	return true;
+        }
+    }
+    
+    boolean onClicked(Player player, Marker marker, int mouseState);
+    
+	public static void register(MarkerClickedCallback consumer) {
+		MinecraftForge.EVENT_BUS.addListener((Consumer<TheEvent>)event->consumer.onClicked(event.getPlayer(), event.getMarker(), event.getMouseState()));
+	}
 }

@@ -1,15 +1,16 @@
 package hunternif.mc.impl.atlas.network.packet.c2s.play;
 
 import hunternif.mc.impl.atlas.AntiqueAtlasMod;
+
+import java.util.function.Supplier;
+
 import hunternif.mc.api.AtlasAPI;
 import hunternif.mc.impl.atlas.network.packet.c2s.C2SPacket;
 import hunternif.mc.impl.atlas.util.Log;
-import net.fabricmc.fabric.api.networking.v1.PacketSender;
-import net.minecraft.network.PacketByteBuf;
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.network.ServerPlayNetworkHandler;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.util.Identifier;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraftforge.fmllegacy.network.NetworkEvent;
 
 /**
  * Puts biome tile into one atlas. When sent to server, forwards it to every
@@ -18,34 +19,53 @@ import net.minecraft.util.Identifier;
  * @author Haven King
  */
 public class PutTileC2SPacket extends C2SPacket {
-	public static final Identifier ID = AntiqueAtlasMod.id("packet", "c2s", "tile", "put");
+	public static final ResourceLocation ID = AntiqueAtlasMod.id("packet", "c2s", "tile", "put");
 
-	public PutTileC2SPacket(int atlasID, int x, int z, Identifier tile) {
-		this.writeInt(atlasID);
-		this.writeVarInt(x);
-		this.writeVarInt(z);
-		this.writeIdentifier(tile);
+	int atlasID, x, z; 
+	ResourceLocation tile;
+	
+	public PutTileC2SPacket(int atlasID, int x, int z, ResourceLocation tile) {
+		this.atlasID = atlasID;
+		this.x = x;
+		this.z = z;
+		this.tile = tile;
 	}
 
-	@Override
-	public Identifier getId() {
-		return ID;
+	public static void encode(final PutTileC2SPacket msg, final FriendlyByteBuf packetBuffer) {
+		packetBuffer.writeInt(msg.atlasID);
+		packetBuffer.writeVarInt(msg.x);
+		packetBuffer.writeVarInt(msg.z);
+		packetBuffer.writeResourceLocation(msg.tile);
 	}
 
-	public static void apply(MinecraftServer server, ServerPlayerEntity player, ServerPlayNetworkHandler handler, PacketByteBuf buf, PacketSender responseSender) {
-		int atlasID = buf.readVarInt();
-		int x = buf.readVarInt();
-		int z = buf.readVarInt();
-		Identifier tile = buf.readIdentifier();
+	public static PutTileC2SPacket decode(final FriendlyByteBuf packetBuffer) {
+		return new PutTileC2SPacket(
+				packetBuffer.readVarInt(),
+						packetBuffer.readVarInt(),
+						packetBuffer.readVarInt(),
+						packetBuffer.readResourceLocation());
+	}
 
-		server.execute(() -> {
-			if (AntiqueAtlasMod.CONFIG.itemNeeded && !AtlasAPI.getPlayerAtlases(player).contains(atlasID)) {
+	public static void handle(final PutTileC2SPacket msg, final Supplier<NetworkEvent.Context> contextSupplier) {
+		final NetworkEvent.Context context = contextSupplier.get();
+		context.enqueueWork(() -> {
+			final ServerPlayer sender = context.getSender();
+			if (sender == null) {
+				return;
+			}
+			if (AntiqueAtlasMod.CONFIG.itemNeeded && !AtlasAPI.getPlayerAtlases(sender).contains(msg.atlasID)) {
 				Log.warn("Player %s attempted to modify someone else's Atlas #%d",
-						player.getName(), atlasID);
+						sender.getName(), msg.atlasID);
 				return;
 			}
 
-			AtlasAPI.getTileAPI().putTile(player.getEntityWorld(), atlasID, tile, x, z);
+			AtlasAPI.getTileAPI().putTile(sender.getCommandSenderWorld(), msg.atlasID, msg.tile, msg.x, msg.z);
 		});
+		context.setPacketHandled(true);
+	}
+
+	@Override
+	public ResourceLocation getId() {
+		return ID;
 	}
 }

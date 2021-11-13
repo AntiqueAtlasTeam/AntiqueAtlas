@@ -1,16 +1,16 @@
 package hunternif.mc.impl.atlas.core.scaning;
 
 import hunternif.mc.impl.atlas.core.TileIdMap;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.registry.BuiltinRegistries;
-import net.minecraft.world.World;
-import net.minecraft.world.biome.Biome;
-import net.minecraft.world.biome.source.BiomeArray;
-import net.minecraft.world.chunk.Chunk;
+import net.minecraft.core.BlockPos;
+import net.minecraft.data.BuiltinRegistries;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.chunk.ChunkAccess;
+import net.minecraft.world.level.chunk.ChunkBiomeContainer;
 
 import java.util.Collections;
 import java.util.Comparator;
@@ -39,17 +39,17 @@ public class TileDetectorNether extends TileDetectorBase implements ITileDetecto
     private static final int priorityLava = 1;
 
     @Override
-    public Identifier getBiomeID(World world, Chunk chunk) {
-        BiomeArray chunkBiomes = chunk.getBiomeArray();
+    public ResourceLocation getBiomeID(Level world, ChunkAccess chunk) {
+        ChunkBiomeContainer chunkBiomes = chunk.getBiomes();
         if (chunkBiomes == null)
             return null;
 
-        Map<Identifier, Integer> biomeOccurrences = new HashMap<>(BuiltinRegistries.BIOME.getIds().size());
+        Map<ResourceLocation, Integer> biomeOccurrences = new HashMap<>(BuiltinRegistries.BIOME.keySet().size());
 
         for (int x = 0; x < 16; x++) {
             for (int z = 0; z < 16; z++) {
-                Biome biome = chunkBiomes.getBiomeForNoiseGen(x, lavaSeaLevel, z);
-                if (biome.getCategory() == Biome.Category.NETHER) {
+                Biome biome = chunkBiomes.getNoiseBiome(x, lavaSeaLevel, z);
+                if (biome.getBiomeCategory() == Biome.BiomeCategory.NETHER) {
                     // The Nether!
                     Block seaLevelBlock = chunk.getBlockState(new BlockPos(x, lavaSeaLevel, z)).getBlock();
                     if (seaLevelBlock == Blocks.LAVA) {
@@ -72,7 +72,7 @@ public class TileDetectorNether extends TileDetectorBase implements ITileDetecto
 
         if (biomeOccurrences.isEmpty()) return null;
 
-        Map.Entry<Identifier, Integer> meanBiome = Collections.max(biomeOccurrences.entrySet(), Comparator
+        Map.Entry<ResourceLocation, Integer> meanBiome = Collections.max(biomeOccurrences.entrySet(), Comparator
                 .comparingInt(Map.Entry::getValue));
 
         return meanBiome.getKey();

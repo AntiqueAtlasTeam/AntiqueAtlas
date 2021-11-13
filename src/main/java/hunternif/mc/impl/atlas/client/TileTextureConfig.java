@@ -3,14 +3,14 @@ package hunternif.mc.impl.atlas.client;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import hunternif.mc.impl.atlas.AntiqueAtlasMod;
+import hunternif.mc.impl.atlas.forge.resource.IResourceReloadListener;
 import hunternif.mc.impl.atlas.util.Log;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-import net.fabricmc.fabric.api.resource.SimpleResourceReloadListener;
-import net.minecraft.resource.Resource;
-import net.minecraft.resource.ResourceManager;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.profiler.Profiler;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.resources.Resource;
+import net.minecraft.server.packs.resources.ResourceManager;
+import net.minecraft.util.profiling.ProfilerFiller;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -27,8 +27,8 @@ import java.util.concurrent.Executor;
  *
  * @author Hunternif
  */
-@Environment(EnvType.CLIENT)
-public class TileTextureConfig implements SimpleResourceReloadListener<Map<Identifier, Identifier>> {
+@OnlyIn(Dist.CLIENT)
+public class TileTextureConfig implements IResourceReloadListener<Map<ResourceLocation, ResourceLocation>> {
     private static final int VERSION = 1;
     private static final JsonParser PARSER = new JsonParser();
     private final TileTextureMap tileTextureMap;
@@ -40,13 +40,13 @@ public class TileTextureConfig implements SimpleResourceReloadListener<Map<Ident
     }
 
     @Override
-    public CompletableFuture<Map<Identifier, Identifier>> load(ResourceManager manager, Profiler profiler, Executor executor) {
+    public CompletableFuture<Map<ResourceLocation, ResourceLocation>> load(ResourceManager manager, ProfilerFiller profiler, Executor executor) {
         return CompletableFuture.supplyAsync(() -> {
-            Map<Identifier, Identifier> map = new HashMap<>();
+            Map<ResourceLocation, ResourceLocation> map = new HashMap<>();
 
             try {
-                for (Identifier id : manager.findResources("atlas/tiles", (s) -> s.endsWith(".json"))) {
-                    Identifier tile_id = new Identifier(
+                for (ResourceLocation id : manager.listResources("atlas/tiles", (s) -> s.endsWith(".json"))) {
+                    ResourceLocation tile_id = new ResourceLocation(
                             id.getNamespace(),
                             id.getPath().replace("atlas/tiles/", "").replace(".json", "")
                     );
@@ -65,7 +65,7 @@ public class TileTextureConfig implements SimpleResourceReloadListener<Map<Ident
                                 continue;
                             }
 
-                            Identifier texture_set = new Identifier(object.get("texture_set").getAsString());
+                            ResourceLocation texture_set = new ResourceLocation(object.get("texture_set").getAsString());
 
                             map.put(tile_id, texture_set);
                         }
@@ -82,32 +82,32 @@ public class TileTextureConfig implements SimpleResourceReloadListener<Map<Ident
     }
 
     @Override
-    public CompletableFuture<Void> apply(Map<Identifier, Identifier> tileMap, ResourceManager manager, Profiler profiler, Executor executor) {
-        return CompletableFuture.runAsync(() -> {
-	        for (Map.Entry<Identifier, Identifier> entry : tileMap.entrySet()) {
-		        Identifier tile_id = entry.getKey();
-		        Identifier texture_set = entry.getValue();
-		        TextureSet set = textureSetMap.getByName(entry.getValue());
+    public CompletableFuture<Void> apply(Map<ResourceLocation, ResourceLocation> tileMap, ResourceManager manager, ProfilerFiller profiler, Executor executor) {
+    	for (Map.Entry<ResourceLocation, ResourceLocation> entry : tileMap.entrySet()) {
+	        ResourceLocation tile_id = entry.getKey();
+	        ResourceLocation texture_set = entry.getValue();
+	        TextureSet set = textureSetMap.getByName(entry.getValue());
 
-		        if(set == null) {
-		            AntiqueAtlasMod.LOG.error("Missing texture set `{}` for tile `{}`. Using default.", texture_set, tile_id);
+	        if(set == null) {
+	            AntiqueAtlasMod.LOG.error("Missing texture set `{}` for tile `{}`. Using default.", texture_set, tile_id);
 
-		            set = tileTextureMap.getDefaultTexture();
-                }
-
-		        tileTextureMap.setTexture(entry.getKey(), set);
-                Log.info("Using texture set %s for tile %s", set.name, tile_id);
+	            set = tileTextureMap.getDefaultTexture();
             }
+
+	        tileTextureMap.setTexture(entry.getKey(), set);
+            Log.info("Using texture set %s for tile %s", set.name, tile_id);
+        }
+    	return CompletableFuture.runAsync(() -> {
         });
     }
 
     @Override
-    public Identifier getFabricId() {
-        return new Identifier("antiqueatlas:tile_textures");
+    public ResourceLocation getForgeId() {
+        return new ResourceLocation("antiqueatlas:tile_textures");
     }
 
     @Override
-    public Collection<Identifier> getFabricDependencies() {
-        return Collections.singleton(new Identifier("antiqueatlas:texture_sets"));
+    public Collection<ResourceLocation> getForgeDependencies() {
+        return Collections.singleton(new ResourceLocation("antiqueatlas:texture_sets"));
     }
 }

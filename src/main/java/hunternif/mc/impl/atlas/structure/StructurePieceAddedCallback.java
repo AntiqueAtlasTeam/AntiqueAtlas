@@ -1,19 +1,37 @@
 package hunternif.mc.impl.atlas.structure;
 
-import net.fabricmc.fabric.api.event.Event;
-import net.fabricmc.fabric.api.event.EventFactory;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.structure.StructurePiece;
-import net.minecraft.world.World;
-import net.minecraft.world.WorldAccess;
+import java.util.function.Consumer;
+
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.level.levelgen.structure.StructurePiece;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.eventbus.api.Event;
 
 public interface StructurePieceAddedCallback {
-	Event<StructurePieceAddedCallback> EVENT = EventFactory.createArrayBacked(StructurePieceAddedCallback.class,
-					(invokers) -> (structurePiece, world) -> {
-						for (StructurePieceAddedCallback callback : invokers) {
-							callback.onStructurePieceAdded(structurePiece, world);
-						}
-					});
+	/**
+	 * @author Stereowalker
+	 */
+	public static class TheEvent extends Event {
+		private final StructurePiece structurePiece;
+		private final ServerLevel world;
+		
+		public TheEvent(StructurePiece structurePiece, ServerLevel world) {
+			this.structurePiece = structurePiece;
+			this.world = world;
+		}
 
-	void onStructurePieceAdded(StructurePiece structurePiece, ServerWorld world);
+		public StructurePiece getStructurePiece() {
+			return structurePiece;
+		}
+		
+		public ServerLevel getWorld() {
+			return world;
+		}
+	}
+
+	void onStructurePieceAdded(StructurePiece structurePiece, ServerLevel world);
+	
+	public static void register(StructurePieceAddedCallback consumer) {
+		MinecraftForge.EVENT_BUS.addListener((Consumer<TheEvent>)event->consumer.onStructurePieceAdded(event.getStructurePiece(), event.getWorld()));
+	}
 }

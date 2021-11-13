@@ -1,7 +1,7 @@
 package hunternif.mc.api;
 
-import net.minecraft.util.Identifier;
-import net.minecraft.world.World;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.Level;
 
 /**
  * API for tiles, such as biomes and custom (i.e. dungeons, towns etc.)
@@ -31,7 +31,7 @@ public interface TileAPI {
      * @param chunkX  x chunk coordinate. (block coordinate >> 4)
      * @param chunkZ  z chunk coordinate. (block coordinate >> 4)
      */
-    void putTile(World world, int atlasID, Identifier tile, int chunkX, int chunkZ);
+    void putTile(Level world, int atlasID, ResourceLocation tile, int chunkX, int chunkZ);
 
     /**
      * Read the tile at the specified chunk in the specified atlas.
@@ -48,7 +48,7 @@ public interface TileAPI {
      * @param chunkZ  z chunk coordinate. (block coordinate >> 4)
      * @return the identifier of the requested tile
      */
-    Identifier getTile(World world, int atlasID, int chunkX, int chunkZ);
+    ResourceLocation getTile(Level world, int atlasID, int chunkX, int chunkZ);
 
     /**
      * Put the specified custom tile at the specified chunk coordinates
@@ -63,7 +63,7 @@ public interface TileAPI {
      * @param chunkX   x chunk coordinate. (block coordinate >> 4)
      * @param chunkZ   z chunk coordinate. (block coordinate >> 4)
      */
-    void putGlobalTile(World world, Identifier tile, int chunkX, int chunkZ);
+    void putGlobalTile(Level world, ResourceLocation tile, int chunkX, int chunkZ);
 
     /**
      * Get the global tile at the specified chunk coordinates
@@ -74,7 +74,7 @@ public interface TileAPI {
      * @param chunkZ   z chunk coordinate. (block coordinate >> 4)
      * @return the identifier of the requested tile
      */
-    Identifier getGlobalTile(World world, int chunkX, int chunkZ);
+    ResourceLocation getGlobalTile(Level world, int chunkX, int chunkZ);
 
     /**
      * Delete the global tile at the specified chunk coordinates if a tile has
@@ -85,5 +85,5 @@ public interface TileAPI {
      * @param chunkX x chunk coordinate. (block coordinate >> 4)
      * @param chunkZ z chunk coordinate. (block coordinate >> 4)
      */
-    void deleteGlobalTile(World world, int chunkX, int chunkZ);
+    void deleteGlobalTile(Level world, int chunkX, int chunkZ);
 }

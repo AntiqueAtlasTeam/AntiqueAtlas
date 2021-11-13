@@ -1,18 +1,18 @@
 package hunternif.mc.impl.atlas.client.gui.core;
 
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.font.TextRenderer;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.text.LiteralText;
-import net.minecraft.text.Text;
-import org.lwjgl.opengl.GL11;
-
 import java.util.List;
 import java.util.ListIterator;
 import java.util.concurrent.CopyOnWriteArrayList;
+
+import org.lwjgl.opengl.GL11;
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
 /**
  * Core visual component class, which facilitates hierarchy. You can add child
@@ -20,7 +20,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
  * keyboard events, window resize and will be moved around together with the
  * parent component.
  */
-@Environment(EnvType.CLIENT)
+@OnlyIn(Dist.CLIENT)
 public class GuiComponent extends Screen {
     @FunctionalInterface
     interface UiCall {
@@ -75,7 +75,7 @@ public class GuiComponent extends Screen {
 
     // TODO
     public GuiComponent() {
-        super(new LiteralText("component"));
+        super(new TextComponent("component"));
     }
 
     /**
@@ -243,8 +243,8 @@ public class GuiComponent extends Screen {
         }
         child.parent = this;
         child.setGuiCoords(guiX, guiY);
-        if (MinecraftClient.getInstance() != null) {
-            child.init(MinecraftClient.getInstance(), width, height);
+        if (Minecraft.getInstance() != null) {
+            child.init(Minecraft.getInstance(), width, height);
         }
         invalidateSize();
     }
@@ -411,7 +411,7 @@ public class GuiComponent extends Screen {
      * Render this GUI and its children.
      */
     @Override
-    public void render(MatrixStack matrices, int mouseX, int mouseY, float partialTick) {
+    public void render(PoseStack matrices, int mouseX, int mouseY, float partialTick) {
         super.render(matrices, mouseX, mouseY, partialTick);
         for (GuiComponent child : children) {
             if (!child.isClipped) {
@@ -456,7 +456,7 @@ public class GuiComponent extends Screen {
     public void init() {
         super.init();
         for (GuiComponent child : children) {
-            child.init(client, width, height);
+            child.init(minecraft, width, height);
         }
     }
 
@@ -554,14 +554,14 @@ public class GuiComponent extends Screen {
      * component's dimensions (i.e. if it won't fit in when drawn to the left
      * of the cursor, it will be drawn to the right instead).
      */
-    private void drawHoveringText2(MatrixStack matrices, List<Text> lines, double x, double y, TextRenderer font) {
+    private void drawHoveringText2(PoseStack matrices, List<Component> lines, double x, double y, Font font) {
         boolean stencilEnabled = GL11.glIsEnabled(GL11.GL_STENCIL_TEST);
         if (stencilEnabled) GL11.glDisable(GL11.GL_STENCIL_TEST);
 
-        TextRenderer old = this.textRenderer;
-        this.textRenderer = font;
-        renderTooltip(matrices, lines, (int) x, (int) y);
-        this.textRenderer = old;
+        Font old = this.font;
+        this.font = font;
+        renderComponentTooltip(matrices, lines, (int) x, (int) y);
+        this.font = old;
 
         if (stencilEnabled) GL11.glEnable(GL11.GL_STENCIL_TEST);
     }
@@ -581,7 +581,7 @@ public class GuiComponent extends Screen {
     /**
      * Draws a text tooltip at mouse coordinates.
      * <p>
-     * Same as {@link #drawHoveringText2(MatrixStack, List, double, double, TextRenderer)}, but
+     * Same as {@link #drawHoveringText2(PoseStack, List, double, double, Font)}, but
      * the text is drawn on the top level parent component, after all its child
      * components have finished drawing. This allows the hovering text to be
      * unobscured by other components.
@@ -591,7 +591,7 @@ public class GuiComponent extends Screen {
      * from several components which occupy the same position on the screen.
      * </p>
      */
-    protected void drawTooltip(List<Text> lines, TextRenderer font) {
+    protected void drawTooltip(List<Component> lines, Font font) {
         GuiComponent topLevel = getTopLevelParent();
         topLevel.hoveringTextInfo.lines = lines;
         topLevel.hoveringTextInfo.x = getMouseX();
@@ -608,9 +608,9 @@ public class GuiComponent extends Screen {
     private final HoveringTextInfo hoveringTextInfo = new HoveringTextInfo();
 
     private static class HoveringTextInfo {
-        List<Text> lines;
+        List<Component> lines;
         double x, y;
-        TextRenderer font;
+        Font font;
         /**
          * Whether to draw this hovering text during rendering current frame.
          * This flag is reset to false after rendering finishes.
@@ -625,7 +625,7 @@ public class GuiComponent extends Screen {
         if (parent != null) {
             parent.removeChild(this); // This sets parent to null
         } else {
-            MinecraftClient.getInstance().setScreen(null);
+            Minecraft.getInstance().setScreen(null);
         }
     }
 
@@ -638,20 +638,20 @@ public class GuiComponent extends Screen {
     /**
      * Draw a text string centered horizontally, using this GUI's font.
      */
-    protected void drawCentered(MatrixStack matrices, Text text, int y, int color, boolean dropShadow) {
-        int length = this.textRenderer.getWidth(text);
+    protected void drawCentered(PoseStack matrices, Component text, int y, int color, boolean dropShadow) {
+        int length = this.font.width(text);
         if (dropShadow) {
-            this.textRenderer.drawWithShadow(matrices, text, (float) (this.width - length) / 2, y, color);
+            this.font.drawShadow(matrices, text, (float) (this.width - length) / 2, y, color);
         } else {
-            this.textRenderer.draw(matrices, text, (float) (this.width - length) / 2, y, color);
+            this.font.draw(matrices, text, (float) (this.width - length) / 2, y, color);
         }
     }
 
     protected double getMouseX() {
-        return MinecraftClient.getInstance().mouse.getX() * width / MinecraftClient.getInstance().getWindow().getWidth();
+        return Minecraft.getInstance().mouseHandler.xpos() * width / Minecraft.getInstance().getWindow().getWidth();
     }
 
     protected double getMouseY() {
-        return MinecraftClient.getInstance().mouse.getY() * height / MinecraftClient.getInstance().getWindow().getHeight();
+        return Minecraft.getInstance().mouseHandler.ypos() * height / Minecraft.getInstance().getWindow().getHeight();
     }
 }

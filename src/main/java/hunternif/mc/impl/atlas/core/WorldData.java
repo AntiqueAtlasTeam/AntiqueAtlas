@@ -4,15 +4,15 @@ import hunternif.mc.impl.atlas.AntiqueAtlasMod;
 import hunternif.mc.impl.atlas.network.packet.s2c.play.TileGroupsS2CPacket;
 import hunternif.mc.impl.atlas.util.Log;
 import hunternif.mc.impl.atlas.util.Rect;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtList;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.math.ChunkPos;
-import net.minecraft.util.registry.RegistryKey;
-import net.minecraft.world.World;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.ChunkPos;
+import net.minecraft.world.level.Level;
 
 import java.util.ArrayList;
 import java.util.Map;
@@ -24,7 +24,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class WorldData implements ITileStorage {
     public final AtlasData parent;
-    public final RegistryKey<World> world;
+    public final ResourceKey<Level> world;
 
     private int browsingX, browsingY;
     private double browsingZoom = 0.5;
@@ -42,7 +42,7 @@ public class WorldData implements ITileStorage {
      */
     private final Rect scope = new Rect();
 
-    public WorldData(AtlasData parent, RegistryKey<World> world) {
+    public WorldData(AtlasData parent, ResourceKey<Level> world) {
         this.parent = parent;
         this.world = world;
     }
@@ -50,9 +50,9 @@ public class WorldData implements ITileStorage {
     /**
      * This function has to create a new map on each call since the packet rework
      */
-    public Map<ChunkPos, Identifier> getSeenChunks() {
-        Map<ChunkPos, Identifier> chunks = new ConcurrentHashMap<>(2, 0.75f, 2);
-        Identifier t;
+    public Map<ChunkPos, ResourceLocation> getSeenChunks() {
+        Map<ChunkPos, ResourceLocation> chunks = new ConcurrentHashMap<>(2, 0.75f, 2);
+        ResourceLocation t;
         for (Map.Entry<ChunkPos, TileGroup> entry : tileGroups.entrySet()) {
             int basex = entry.getValue().getScope().minX;
             int basey = entry.getValue().getScope().minY;
@@ -79,7 +79,7 @@ public class WorldData implements ITileStorage {
             Log.warn("Setting map zoom to invalid value of %f", zoom);
             browsingZoom = AntiqueAtlasMod.CONFIG.minScale;
         }
-        parent.markDirty();
+        parent.setDirty();
     }
 
     public void setBrowsingPositionTo(Entity e) {
@@ -101,7 +101,7 @@ public class WorldData implements ITileStorage {
     }
 
     @Override
-    public void setTile(int x, int y, Identifier tile) {
+    public void setTile(int x, int y, ResourceLocation tile) {
         ChunkPos groupPos = new ChunkPos((int) Math.floor(x / (float) TileGroup.CHUNK_STEP),
                 (int) Math.floor(y / (float) TileGroup.CHUNK_STEP));
         TileGroup tg = tileGroups.get(groupPos);
@@ -111,7 +111,7 @@ public class WorldData implements ITileStorage {
         }
         tg.setTile(x, y, tile);
         scope.extendTo(x, y);
-        parent.markDirty();
+        parent.setDirty();
     }
 
     /**
@@ -124,7 +124,7 @@ public class WorldData implements ITileStorage {
     }
 
     @Override
-    public Identifier removeTile(int x, int y) {
+    public ResourceLocation removeTile(int x, int y) {
         //TODO
         // since scope is not modified, I assume this was never really used
         // Tile oldTile = tileGroups.remove(getKey().set(x, y));
@@ -134,7 +134,7 @@ public class WorldData implements ITileStorage {
     }
 
     @Override
-    public Identifier getTile(int x, int y) {
+    public ResourceLocation getTile(int x, int y) {
         ChunkPos groupPos = new ChunkPos((int) Math.floor(x / (float) TileGroup.CHUNK_STEP),
                 (int) Math.floor(y / (float) TileGroup.CHUNK_STEP));
         TileGroup tg = tileGroups.get(groupPos);
@@ -169,17 +169,17 @@ public class WorldData implements ITileStorage {
             Rect s = group.getScope();
             for (int x = s.minX; x <= s.maxX; x++) {
                 for (int y = s.minY; y <= s.maxY; y++) {
-                    Identifier tile = group.getTile(x, y);
+                    ResourceLocation tile = group.getTile(x, y);
                     if (tile != null) setTile(x, y, tile);
                 }
             }
         }
     }
 
-    public NbtList writeToNBT() {
-        NbtList tileGroupList = new NbtList();
+    public ListTag writeToNBT() {
+        ListTag tileGroupList = new ListTag();
         for (Entry<ChunkPos, TileGroup> entry : tileGroups.entrySet()) {
-            NbtCompound newbie = new NbtCompound();
+            CompoundTag newbie = new CompoundTag();
             entry.getValue().writeToNBT(newbie);
             tileGroupList.add(newbie);
         }
@@ -196,19 +196,19 @@ public class WorldData implements ITileStorage {
         }
     }
 
-    public void readFromNBT(NbtList me) {
+    public void readFromNBT(ListTag me) {
         if (me == null) {
             return;
         }
         for (int d = 0; d < me.size(); d++) {
-            NbtCompound tgTag = me.getCompound(d);
+            CompoundTag tgTag = me.getCompound(d);
             TileGroup tg = new TileGroup(0, 0);
             tg.readFromNBT(tgTag);
             putTileGroup(tg);
         }
     }
 
-    public void syncOnPlayer(int atlasID, PlayerEntity player) {
+    public void syncOnPlayer(int atlasID, Player player) {
         Log.info("Sending dimension #%s", this.world.toString());
         ArrayList<TileGroup> tileGroups;
         tileGroups = new ArrayList<>(TileGroupsS2CPacket.TILE_GROUPS_PER_PACKET);
@@ -219,13 +219,13 @@ public class WorldData implements ITileStorage {
             count++;
             total++;
             if (count >= TileGroupsS2CPacket.TILE_GROUPS_PER_PACKET) {
-                new TileGroupsS2CPacket(atlasID, this.world, tileGroups).send((ServerPlayerEntity) player);
+                new TileGroupsS2CPacket(atlasID, this.world, tileGroups).send((ServerPlayer) player);
                 tileGroups.clear();
                 count = 0;
             }
         }
         if (count > 0) {
-            new TileGroupsS2CPacket(atlasID, this.world, tileGroups).send((ServerPlayerEntity) player);
+            new TileGroupsS2CPacket(atlasID, this.world, tileGroups).send((ServerPlayer) player);
         }
 
         Log.info("Sent dimension #%s (%d tiles)", this.world.toString(), total);

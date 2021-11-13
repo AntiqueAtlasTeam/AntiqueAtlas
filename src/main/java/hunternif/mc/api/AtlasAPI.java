@@ -4,11 +4,11 @@ import hunternif.mc.impl.atlas.AntiqueAtlasMod;
 import hunternif.mc.impl.atlas.api.impl.MarkerApiImpl;
 import hunternif.mc.impl.atlas.api.impl.TileApiImpl;
 import hunternif.mc.impl.atlas.item.AtlasItem;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
+import net.minecraft.core.Registry;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -33,7 +33,7 @@ public class AtlasAPI {
     }
 
     public static Item getAtlasItem() {
-        return Registry.ITEM.get(new Identifier("antiqueatlas:antique_atlas"));
+        return Registry.ITEM.get(new ResourceLocation("antiqueatlas:antique_atlas"));
     }
 
     /**
@@ -54,18 +54,18 @@ public class AtlasAPI {
      * Convenience method that returns a list of atlas IDs for all atlas items
      * the player is currently carrying.
      **/
-    public static List<Integer> getPlayerAtlases(PlayerEntity player) {
+    public static List<Integer> getPlayerAtlases(Player player) {
         if (!AntiqueAtlasMod.CONFIG.itemNeeded) {
-            return Collections.singletonList(player.getUuid().hashCode());
+            return Collections.singletonList(player.getUUID().hashCode());
         }
 
         List<Integer> list = new ArrayList<>();
-        for (ItemStack stack : player.getInventory().main) {
+        for (ItemStack stack : player.getInventory().items) {
             if (!stack.isEmpty() && stack.getItem() instanceof AtlasItem) {
                 list.add(AtlasItem.getAtlasID(stack));
             }
         }
-        for (ItemStack stack : player.getInventory().offHand) {
+        for (ItemStack stack : player.getInventory().offhand) {
             if (!stack.isEmpty() && stack.getItem() instanceof AtlasItem) {
                 list.add(AtlasItem.getAtlasID(stack));
             }

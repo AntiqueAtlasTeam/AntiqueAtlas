@@ -2,40 +2,40 @@ package hunternif.mc.impl.atlas.mixin.prod;
 
 import hunternif.mc.api.AtlasAPI;
 import hunternif.mc.impl.atlas.mixinhooks.CartographyTableHooks;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.inventory.Inventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.screen.CartographyTableScreenHandler;
-import net.minecraft.screen.ScreenHandlerContext;
+import net.minecraft.world.Container;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.CartographyTableMenu;
+import net.minecraft.world.inventory.ContainerLevelAccess;
+import net.minecraft.world.item.ItemStack;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-@Mixin(targets = "net.minecraft.screen.CartographyTableScreenHandler$4")
+@Mixin(targets = "net.minecraft.world.inventory.CartographyTableMenu$4")
 class MixinCartographyTableScreenHandlerSlot {
 
-    @Inject(method = "method_7680", at = @At("RETURN"), cancellable = true)
+    @Inject(method = "mayPlace", at = @At("RETURN"), cancellable = true)
     void antiqueatlas_canInsert(ItemStack stack, CallbackInfoReturnable<Boolean> info) {
         info.setReturnValue(stack.getItem() == AtlasAPI.getAtlasItem() || info.getReturnValueZ());
     }
 }
 
-@Mixin(targets = "net.minecraft.screen.CartographyTableScreenHandler$5")
+@Mixin(targets = "net.minecraft.world.inventory.CartographyTableMenu$5")
 class MixinCartographyTableScreenHandlerResultSlot {
 
-    CartographyTableScreenHandler antiqueatlas_handler;
+    CartographyTableMenu antiqueatlas_handler;
 
     @Inject(method = "<init>", at = @At("TAIL"))
-    void antiqueatlas_init(CartographyTableScreenHandler handler, Inventory inv, int a, int b, int c, ScreenHandlerContext context, CallbackInfo info) {
+    void antiqueatlas_init(CartographyTableMenu handler, Container inv, int a, int b, int c, ContainerLevelAccess context, CallbackInfo info) {
         antiqueatlas_handler = handler;
     }
 
-    @Inject(method = "method_7667", at = @At("HEAD"))
-    void antiqueatlas_onTakeItem(PlayerEntity player, ItemStack atlas, CallbackInfo info) {
+    @Inject(method = "onTake", at = @At("HEAD"))
+    void antiqueatlas_onTakeItem(Player player, ItemStack atlas, CallbackInfo info) {
         if (atlas.getItem() == AtlasAPI.getAtlasItem()) {
-            ItemStack map = antiqueatlas_handler.slots.get(0).getStack();
+            ItemStack map = antiqueatlas_handler.slots.get(0).getItem();
 
             CartographyTableHooks.onTakeItem(player, map, atlas);
         }

@@ -1,16 +1,16 @@
 package hunternif.mc.impl.atlas.mixin;
 
 import hunternif.mc.api.AtlasAPI;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.inventory.CraftingResultInventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.screen.CartographyTableScreenHandler;
-import net.minecraft.screen.ScreenHandler;
-import net.minecraft.screen.ScreenHandlerType;
-import net.minecraft.screen.slot.Slot;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.CartographyTableMenu;
+import net.minecraft.world.inventory.MenuType;
+import net.minecraft.world.inventory.ResultContainer;
+import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -20,39 +20,39 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 
-@Mixin(CartographyTableScreenHandler.class)
-public abstract class MixinCartographyTableScreenHandler extends ScreenHandler {
+@Mixin(CartographyTableMenu.class)
+public abstract class MixinCartographyTableScreenHandler extends AbstractContainerMenu {
 
     @Shadow
-    CraftingResultInventory resultInventory;
+    ResultContainer resultContainer;
 
-    protected MixinCartographyTableScreenHandler(@Nullable ScreenHandlerType<?> type, int syncId) {
+    protected MixinCartographyTableScreenHandler(@Nullable MenuType<?> type, int syncId) {
         super(type, syncId);
     }
 
-    @Inject(method = "method_17382", at = @At("HEAD"), cancellable = true)
-    void antiqueatlas_call(ItemStack map, ItemStack atlas, ItemStack result, World world, BlockPos pos, CallbackInfo info) {
+    @Inject(method = "lambda$setupResultSlot$0", at = @At("HEAD"), cancellable = true)
+    void antiqueatlas_call(ItemStack map, ItemStack atlas, ItemStack result, Level world, BlockPos pos, CallbackInfo info) {
         if (atlas.getItem() == AtlasAPI.getAtlasItem() && map.getItem() == Items.FILLED_MAP) {
-            this.resultInventory.setStack(CartographyTableScreenHandler.RESULT_SLOT_INDEX, atlas.copy());
+            this.resultContainer.setItem(CartographyTableMenu.RESULT_SLOT, atlas.copy());
 
-            this.sendContentUpdates();
+            this.broadcastChanges();
 
             info.cancel();
         }
     }
 
-    @Inject(method = "transferSlot", at = @At("HEAD"), cancellable = true)
-    void antiqueatlas_transferSlot(PlayerEntity player, int index, CallbackInfoReturnable<ItemStack> info) {
+    @Inject(method = "quickMoveStack", at = @At("HEAD"), cancellable = true)
+    void antiqueatlas_transferSlot(Player player, int index, CallbackInfoReturnable<ItemStack> info) {
         if (index >= 0 && index <= 2) return;
 
         Slot slot = this.slots.get(index);
 
-        if (slot != null && slot.hasStack()) {
-            ItemStack stack = slot.getStack();
+        if (slot != null && slot.hasItem()) {
+            ItemStack stack = slot.getItem();
 
             if (stack.getItem() != AtlasAPI.getAtlasItem()) return;
 
-            boolean result = this.insertItem(stack, 0, 2, false);
+            boolean result = this.moveItemStackTo(stack, 0, 2, false);
 
             if (!result) {
                 info.setReturnValue(ItemStack.EMPTY);

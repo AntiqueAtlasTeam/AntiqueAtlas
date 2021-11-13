@@ -2,18 +2,18 @@ package hunternif.mc.impl.atlas.core.scaning;
 
 import hunternif.mc.impl.atlas.AntiqueAtlasMod;
 import hunternif.mc.impl.atlas.core.TileIdMap;
-import net.minecraft.block.Block;
-import net.minecraft.block.Blocks;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.registry.BuiltinRegistries;
-import net.minecraft.util.registry.Registry;
-import net.minecraft.world.Heightmap;
-import net.minecraft.world.World;
-import net.minecraft.world.biome.Biome;
-import net.minecraft.world.biome.BiomeKeys;
-import net.minecraft.world.biome.source.BiomeArray;
-import net.minecraft.world.chunk.Chunk;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Registry;
+import net.minecraft.data.BuiltinRegistries;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.biome.Biomes;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.chunk.ChunkAccess;
+import net.minecraft.world.level.chunk.ChunkBiomeContainer;
+import net.minecraft.world.level.levelgen.Heightmap;
 
 import java.util.*;
 
@@ -30,7 +30,7 @@ public class TileDetectorBase implements ITileDetector {
      * This used our own representation of biomes, but this was switched to Minecraft biomes.
      * So in absence of a better idea, this will just count as River from now on.
      */
-    private static final Identifier waterPoolBiome = BiomeKeys.RIVER.getValue();
+    private static final ResourceLocation waterPoolBiome = Biomes.RIVER.location();
     /**
      * Increment the counter for water biomes by this much during iteration.
      * This is done so that water pools are more visible.
@@ -45,13 +45,13 @@ public class TileDetectorBase implements ITileDetector {
     /**
      * Set to true for biome IDs that return true for BiomeDictionary.isBiomeOfType(WATER)
      */
-    private static final Set<Identifier> waterBiomes = new HashSet<>();
+    private static final Set<ResourceLocation> waterBiomes = new HashSet<>();
     /**
      * Set to true for biome IDs that return true for BiomeDictionary.isBiomeOfType(BEACH)
      */
-    private static final Set<Identifier> beachBiomes = new HashSet<>();
+    private static final Set<ResourceLocation> beachBiomes = new HashSet<>();
 
-    private static final Set<Identifier> swampBiomes = new HashSet<>();
+    private static final Set<ResourceLocation> swampBiomes = new HashSet<>();
 
     /**
      * Scan all registered biomes to mark biomes of certain types that will be
@@ -60,22 +60,22 @@ public class TileDetectorBase implements ITileDetector {
      */
     public static void scanBiomeTypes() {
         for (Biome biome : BuiltinRegistries.BIOME) {
-            switch (biome.getCategory()) {
+            switch (biome.getBiomeCategory()) {
                 case BEACH:
-                    beachBiomes.add(BuiltinRegistries.BIOME.getId(biome));
+                    beachBiomes.add(BuiltinRegistries.BIOME.getKey(biome));
                     break;
                 case RIVER:
                 case OCEAN:
-                    waterBiomes.add(BuiltinRegistries.BIOME.getId(biome));
+                    waterBiomes.add(BuiltinRegistries.BIOME.getKey(biome));
                     break;
                 case SWAMP:
-                    swampBiomes.add(BuiltinRegistries.BIOME.getId(biome));
+                    swampBiomes.add(BuiltinRegistries.BIOME.getKey(biome));
                     break;
             }
         }
     }
 
-    int priorityForBiome(Identifier biome) {
+    int priorityForBiome(ResourceLocation biome) {
         if (waterBiomes.contains(biome)) {
             return 4;
         } else if (beachBiomes.contains(biome)) {
@@ -85,17 +85,17 @@ public class TileDetectorBase implements ITileDetector {
         }
     }
 
-    protected static Identifier getBiomeIdentifier(World world, Biome biome) {
-        return world.getRegistryManager().get(Registry.BIOME_KEY).getId(biome);
+    protected static ResourceLocation getBiomeIdentifier(Level world, Biome biome) {
+        return world.registryAccess().registryOrThrow(Registry.BIOME_REGISTRY).getKey(biome);
     }
 
-    protected static void updateOccurrencesMap(Map<Identifier, Integer> map, Identifier biome, int weight) {
+    protected static void updateOccurrencesMap(Map<ResourceLocation, Integer> map, ResourceLocation biome, int weight) {
         int occurrence = map.getOrDefault(biome, 0) + weight;
         map.put(biome, occurrence);
     }
 
-    protected static void updateOccurrencesMap(Map<Identifier, Integer> map, World world, Biome biome, int weight) {
-        Identifier id = getBiomeIdentifier(world, biome);
+    protected static void updateOccurrencesMap(Map<ResourceLocation, Integer> map, Level world, Biome biome, int weight) {
+        ResourceLocation id = getBiomeIdentifier(world, biome);
         int occurrence = map.getOrDefault(id, 0) + weight;
         map.put(id, occurrence);
     }
@@ -111,9 +111,9 @@ public class TileDetectorBase implements ITileDetector {
      * @return the detected biome ID for the given chunk
      */
     @Override
-    public Identifier getBiomeID(World world, Chunk chunk) {
-        BiomeArray chunkBiomes = chunk.getBiomeArray();
-        Map<Identifier, Integer> biomeOccurrences = new HashMap<>(BuiltinRegistries.BIOME.getIds().size());
+    public ResourceLocation getBiomeID(Level world, ChunkAccess chunk) {
+        ChunkBiomeContainer chunkBiomes = chunk.getBiomes();
+        Map<ResourceLocation, Integer> biomeOccurrences = new HashMap<>(BuiltinRegistries.BIOME.keySet().size());
 
         if (chunkBiomes == null)
             return null;
@@ -121,9 +121,9 @@ public class TileDetectorBase implements ITileDetector {
         for (int x = 0; x < 16; x++) {
             for (int z = 0; z < 16; z++) {
                 // biomes seems to be changing with height as well. Let's scan at sea level.
-                Biome biome = chunkBiomes.getBiomeForNoiseGen(x, world.getSeaLevel(), z);
+                Biome biome = chunkBiomes.getNoiseBiome(x, world.getSeaLevel(), z);
                 if (AntiqueAtlasMod.CONFIG.doScanPonds) {
-                    int y = chunk.getHeightmap(Heightmap.Type.MOTION_BLOCKING).get(x, z);
+                    int y = chunk.getOrCreateHeightmapUnprimed(Heightmap.Types.MOTION_BLOCKING).getFirstAvailable(x, z);
                     if (y > 0) {
                         Block topBlock = chunk.getBlockState(new BlockPos(x, y - 1, z)).getBlock();
                         // Check if there's surface of water at (x, z), but not swamp
@@ -140,7 +140,7 @@ public class TileDetectorBase implements ITileDetector {
                 }
 
                 if (AntiqueAtlasMod.CONFIG.doScanRavines) {
-                    int height = chunk.getHeightmap(Heightmap.Type.MOTION_BLOCKING).get(x, z);
+                    int height = chunk.getOrCreateHeightmapUnprimed(Heightmap.Types.MOTION_BLOCKING).getFirstAvailable(x, z);
 
                     if (height > 0 && height < world.getSeaLevel() - ravineMinDepth) {
                         updateOccurrencesMap(biomeOccurrences, TileIdMap.TILE_RAVINE, priorityRavine);
@@ -153,7 +153,7 @@ public class TileDetectorBase implements ITileDetector {
 
         if (biomeOccurrences.isEmpty()) return null;
 
-        Map.Entry<Identifier, Integer> meanBiome = Collections.max(biomeOccurrences.entrySet(), Comparator.comparingInt(Map.Entry::getValue));
+        Map.Entry<ResourceLocation, Integer> meanBiome = Collections.max(biomeOccurrences.entrySet(), Comparator.comparingInt(Map.Entry::getValue));
         return meanBiome.getKey();
     }
 }

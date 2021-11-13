@@ -1,25 +1,26 @@
 package hunternif.mc.impl.atlas.mixin;
 
 import hunternif.mc.impl.atlas.mixinhooks.NewServerConnectionCallback;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.network.ClientPlayNetworkHandler;
-import net.minecraft.network.packet.s2c.play.GameJoinS2CPacket;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.ClientPacketListener;
+import net.minecraft.network.protocol.game.ClientboundLoginPacket;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.common.MinecraftForge;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-@Environment(EnvType.CLIENT)
-@Mixin(ClientPlayNetworkHandler.class)
+@OnlyIn(Dist.CLIENT)
+@Mixin(ClientPacketListener.class)
 public class MixinClientPlayNetworkHandler {
     @Shadow
-    private MinecraftClient client;
+    private Minecraft minecraft;
 
-    @Inject(at = @At("RETURN"), method = "onGameJoin")
-    public void afterGameJoin(GameJoinS2CPacket packet, CallbackInfo info) {
-        NewServerConnectionCallback.EVENT.invoker().onNewConnection(!client.isIntegratedServerRunning());
+    @Inject(at = @At("RETURN"), method = "handleLogin")
+    public void afterGameJoin(ClientboundLoginPacket packet, CallbackInfo info) {
+    	MinecraftForge.EVENT_BUS.post(new NewServerConnectionCallback.TheEvent(!minecraft.hasSingleplayerServer()));
     }
 }

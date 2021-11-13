@@ -1,10 +1,10 @@
 package hunternif.mc.impl.atlas.client.texture;
 
+import com.mojang.blaze3d.vertex.PoseStack;
 import hunternif.mc.impl.atlas.client.SubTile;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.util.Identifier;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
 /**
  * A specialized class for textures used as tiles in the atlas map.
@@ -12,9 +12,9 @@ import net.minecraft.util.Identifier;
  * By default, TileTextures DO NOT bind the texture. This is on purpose to allow
  * the performance optimization shown in the SetTileRenderer.
  */
-@Environment(EnvType.CLIENT)
+@OnlyIn(Dist.CLIENT)
 public class TileTexture extends ATexture {
-    public TileTexture(Identifier texture) {
+    public TileTexture(ResourceLocation texture) {
         super(texture, false);
     }
 
@@ -28,7 +28,7 @@ public class TileTexture extends ATexture {
         return 48;
     }
 
-    public void drawSubTile(MatrixStack matrices, SubTile subtile, int tileHalfSize) {
+    public void drawSubTile(PoseStack matrices, SubTile subtile, int tileHalfSize) {
         draw(matrices, subtile.x * tileHalfSize, subtile.y * tileHalfSize, tileHalfSize, tileHalfSize, subtile.getTextureU() * 8, subtile.getTextureV() * 8, 8, 8);
     }
 }
