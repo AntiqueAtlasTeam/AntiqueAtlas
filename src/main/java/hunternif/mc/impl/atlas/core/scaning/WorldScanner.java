@@ -98,6 +98,11 @@ public class WorldScanner {
                 return null;
             }
 
+            if(!world.getChunkManager().isChunkLoaded(x,z))
+            {
+                return null;
+            }
+
             // TODO FABRIC: forceChunkLoading crashes here
             Chunk chunk = world.getChunk(x, z, ChunkStatus.FULL, AntiqueAtlasMod.CONFIG.forceChunkLoading);
 

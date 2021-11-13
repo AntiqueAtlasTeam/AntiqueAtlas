@@ -26,6 +26,7 @@ public class PlayerEventHandler {
 
     public static void onPlayerTick(PlayerEntity player) {
         if (!AntiqueAtlasMod.CONFIG.itemNeeded) {
+            // TODO Can we move world scanning to the server in this case as well?
             AtlasData data = AntiqueAtlasMod.tileData.getData(
                     player.getUuid().hashCode(), player.world);
 
