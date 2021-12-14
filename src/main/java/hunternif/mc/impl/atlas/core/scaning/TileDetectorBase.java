@@ -12,7 +12,6 @@ import net.minecraft.world.Heightmap;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.BiomeKeys;
-import net.minecraft.world.biome.source.BiomeArray;
 import net.minecraft.world.chunk.Chunk;
 
 import java.util.*;
@@ -112,16 +111,12 @@ public class TileDetectorBase implements ITileDetector {
      */
     @Override
     public Identifier getBiomeID(World world, Chunk chunk) {
-        BiomeArray chunkBiomes = chunk.getBiomeArray();
         Map<Identifier, Integer> biomeOccurrences = new HashMap<>(BuiltinRegistries.BIOME.getIds().size());
-
-        if (chunkBiomes == null)
-            return null;
 
         for (int x = 0; x < 16; x++) {
             for (int z = 0; z < 16; z++) {
                 // biomes seems to be changing with height as well. Let's scan at sea level.
-                Biome biome = chunkBiomes.getBiomeForNoiseGen(x, world.getSeaLevel(), z);
+                Biome biome = chunk.getBiomeForNoiseGen(x, world.getSeaLevel(), z);
                 if (AntiqueAtlasMod.CONFIG.doScanPonds) {
                     int y = chunk.getHeightmap(Heightmap.Type.MOTION_BLOCKING).get(x, z);
                     if (y > 0) {

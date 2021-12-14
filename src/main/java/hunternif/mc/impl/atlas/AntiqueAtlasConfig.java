@@ -19,7 +19,7 @@ public class AntiqueAtlasConfig implements ConfigData {
 
     @ConfigEntry.Category("gameplay")
     @Comment("Whether to add global markers for NPC villages.")
-    public boolean autoVillageMarkers = true;
+    public boolean autoVillageMarkers = false;
 
     @ConfigEntry.Category("gameplay")
     @Comment("Whether to add global markers for Nether Portals.")

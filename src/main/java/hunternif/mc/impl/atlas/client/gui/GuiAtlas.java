@@ -857,7 +857,7 @@ public class GuiAtlas extends GuiComponent {
         scaleBar.setMapScale(mapScale * 2);
         mapOffsetX = (int) ((mapOffsetX + addOffsetX) * (mapScale / oldScale));
         mapOffsetY = (int) ((mapOffsetY + addOffsetY) * (mapScale / oldScale));
-        scaleClipIndex = MathHelper.log2((int) (mapScale * 8192)) + 1 - 13;
+        scaleClipIndex = MathHelper.floorLog2((int) (mapScale * 8192)) + 1 - 13;
         zoomLevel = -scaleClipIndex + zoomLevelOne;
         scaleAlpha = 255;
 

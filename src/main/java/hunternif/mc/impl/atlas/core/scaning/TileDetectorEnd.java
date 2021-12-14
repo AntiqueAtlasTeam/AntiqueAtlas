@@ -9,7 +9,6 @@ import net.minecraft.world.Heightmap;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.BiomeKeys;
-import net.minecraft.world.biome.source.BiomeArray;
 import net.minecraft.world.chunk.Chunk;
 
 import java.util.Collections;
@@ -26,16 +25,12 @@ public class TileDetectorEnd extends TileDetectorBase implements ITileDetector {
 
     @Override
     public Identifier getBiomeID(World world, Chunk chunk) {
-        BiomeArray chunkBiomes = chunk.getBiomeArray();
-
-        if (chunkBiomes == null)
-            return null;
-
         Map<Identifier, Integer> biomeOccurrences = new HashMap<>(BuiltinRegistries.BIOME.getIds().size());
 
         for (int x = 0; x < 16; x++) {
             for (int z = 0; z < 16; z++) {
-                Biome biome = chunkBiomes.getBiomeForNoiseGen(x, 0, z);
+                Biome biome = chunk.getBiomeForNoiseGen(x, 0, z);
+
                 Identifier id = getBiomeIdentifier(world, biome);
 
                 if (id == BiomeKeys.THE_VOID.getValue()) {

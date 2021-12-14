@@ -69,7 +69,7 @@ public abstract class ATexture implements ITexture {
         if (autobind) {
             bind();
         }
-        drawTexturedQuadWithLight(consumer, matrices.peek().getModel(), x, x + width, y, y + height, (u + 0.0F) / (float) this.width(), (u + (float) regionWidth) / (float) this.width(), (v + 0.0F) / (float) this.height(), (v + (float) regionHeight) / (float) this.height(), light);
+        drawTexturedQuadWithLight(consumer, matrices.peek().getPositionMatrix(), x, x + width, y, y + height, (u + 0.0F) / (float) this.width(), (u + (float) regionWidth) / (float) this.width(), (v + 0.0F) / (float) this.height(), (v + (float) regionHeight) / (float) this.height(), light);
     }
 
     private void drawTexturedQuadWithLight(VertexConsumerProvider vertexConsumer, Matrix4f matrices, int x0, int x1, int y0, int y1, float u0, float u1, float v0, float v1, int light) {

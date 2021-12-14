@@ -122,8 +122,8 @@ public class StructureHandler {
         Identifier structureId = Registry.STRUCTURE_FEATURE.getId(structureStart.getFeature());
         if (STRUCTURE_PIECE_TO_MARKER_MAP.containsKey(structureId)) {
             Triple<Integer, Integer, Identifier> key = Triple.of(
-                    structureStart.setBoundingBoxFromChildren().getCenter().getX(),
-                    structureStart.setBoundingBoxFromChildren().getCenter().getY(),
+                    structureStart.getBoundingBox().getCenter().getX(),
+                    structureStart.getBoundingBox().getCenter().getY(),
                     structureId);
 
             if (VISITED_STRUCTURES.contains(key)) return;
@@ -134,8 +134,8 @@ public class StructureHandler {
                     false,
                     STRUCTURE_PIECE_TO_MARKER_MAP.get(structureId).getLeft(),
                     STRUCTURE_PIECE_TO_MARKER_MAP.get(structureId).getRight(),
-                    structureStart.setBoundingBoxFromChildren().getCenter().getX(),
-                    structureStart.setBoundingBoxFromChildren().getCenter().getZ()
+                    structureStart.getBoundingBox().getCenter().getX(),
+                    structureStart.getBoundingBox().getCenter().getZ()
             );
         }
     }

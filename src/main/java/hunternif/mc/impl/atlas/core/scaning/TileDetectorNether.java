@@ -9,7 +9,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.registry.BuiltinRegistries;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
-import net.minecraft.world.biome.source.BiomeArray;
 import net.minecraft.world.chunk.Chunk;
 
 import java.util.Collections;
@@ -40,15 +39,11 @@ public class TileDetectorNether extends TileDetectorBase implements ITileDetecto
 
     @Override
     public Identifier getBiomeID(World world, Chunk chunk) {
-        BiomeArray chunkBiomes = chunk.getBiomeArray();
-        if (chunkBiomes == null)
-            return null;
-
         Map<Identifier, Integer> biomeOccurrences = new HashMap<>(BuiltinRegistries.BIOME.getIds().size());
 
         for (int x = 0; x < 16; x++) {
             for (int z = 0; z < 16; z++) {
-                Biome biome = chunkBiomes.getBiomeForNoiseGen(x, lavaSeaLevel, z);
+                Biome biome = chunk.getBiomeForNoiseGen(x, lavaSeaLevel, z);
                 if (biome.getCategory() == Biome.Category.NETHER) {
                     // The Nether!
                     Block seaLevelBlock = chunk.getBlockState(new BlockPos(x, lavaSeaLevel, z)).getBlock();
