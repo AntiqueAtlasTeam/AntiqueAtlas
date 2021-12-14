@@ -9,6 +9,7 @@ import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.resource.SimpleResourceReloadListener;
 import net.minecraft.resource.ResourceManager;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.InvalidIdentifierException;
 import net.minecraft.util.profiler.Profiler;
 
 import java.util.HashMap;
@@ -19,10 +20,10 @@ import java.util.concurrent.Executor;
 /**
  * Reads all png files available under assets/(?modid)/textures/gui/tiles/(?tex).png as Textures that
  * are referenced by the TextureSets.
- *
+ * <p>
  * Note that each texture is represented by TWO Identifiers:
- *  - The identifier of the physical location in modid:texture/gui/tiles/tex.png
- *  - The logical identifier modid:tex referenced by TextureSets
+ * - The identifier of the physical location in modid:texture/gui/tiles/tex.png
+ * - The logical identifier modid:tex referenced by TextureSets
  */
 @Environment(EnvType.CLIENT)
 public class TextureConfig implements SimpleResourceReloadListener<Map<Identifier, ITexture>> {
@@ -37,9 +38,9 @@ public class TextureConfig implements SimpleResourceReloadListener<Map<Identifie
         return CompletableFuture.supplyAsync(() -> {
             Map<Identifier, ITexture> textures = new HashMap<>();
 
-            try {
-                for (Identifier id : manager.findResources("textures/gui/tiles", (s) -> s.endsWith(".png"))) {
-                    // id now contains the physical file path of the texture
+            for (Identifier id : manager.findResources("textures/gui/tiles", (s) -> s.endsWith(".png"))) {
+                // id now contains the physical file path of the texture
+                try {
 
                     // texture_id is the logical identifier, as it will be referenced by TextureSets
                     Identifier texture_id = new Identifier(
@@ -50,10 +51,9 @@ public class TextureConfig implements SimpleResourceReloadListener<Map<Identifie
                     AntiqueAtlasMod.LOG.info("Found new Texture: " + texture_id);
 
                     textures.put(texture_id, new TileTexture(id));
+                } catch (InvalidIdentifierException e) {
+                    AntiqueAtlasMod.LOG.warn("Failed to read texture!", e);
                 }
-
-            } catch (Throwable e) {
-                AntiqueAtlasMod.LOG.warn("Failed to read textures!", e);
             }
 
             return textures;
