@@ -64,6 +64,17 @@ public abstract class ATexture implements ITexture {
     public void drawWithLight(VertexConsumerProvider consumer, MatrixStack matrices, int x, int y, int width, int height, int light) {
         drawWithLight(consumer, matrices, x, y, width, height, 0, 0, this.width(), this.height(), light);
     }
+    
+    public void drawWithLightFlipped(VertexConsumerProvider consumer, MatrixStack matrices, int x, int y, int width, int height, int light) {
+        drawWithLightFlipped(consumer, matrices, x, y, width, height, 0, 0, this.width(), this.height(), light);
+    }
+    
+    public void drawWithLightFlipped(VertexConsumerProvider consumer, MatrixStack matrices, int x, int y, int width, int height, int u, int v, int regionWidth, int regionHeight, int light) {
+        if (autobind) {
+            bind();
+        }
+        drawTexturedQuadWithLightFlipped(consumer, matrices.peek().getModel(), x, x + width, y, y + height, (u + 0.0F) / (float) this.width(), (u + (float) regionWidth) / (float) this.width(), (v + 0.0F) / (float) this.height(), (v + (float) regionHeight) / (float) this.height(), light);
+    }
 
     public void drawWithLight(VertexConsumerProvider consumer, MatrixStack matrices, int x, int y, int width, int height, int u, int v, int regionWidth, int regionHeight, int light) {
         if (autobind) {
@@ -78,5 +89,13 @@ public abstract class ATexture implements ITexture {
         consumer.vertex(matrices, (float) x1, (float) y1, 0f).color(255, 255, 255, 255).texture(u1, v1).light(light).next();
         consumer.vertex(matrices, (float) x1, (float) y0, 0f).color(255, 255, 255, 255).texture(u1, v0).light(light).next();
         consumer.vertex(matrices, (float) x0, (float) y0, 0f).color(255, 255, 255, 255).texture(u0, v0).light(light).next();
+    }
+    
+    private void drawTexturedQuadWithLightFlipped(VertexConsumerProvider vertexConsumer, Matrix4f matrices, int x0, int x1, int y0, int y1, float u0, float u1, float v0, float v1, int light) {
+        VertexConsumer consumer = vertexConsumer.getBuffer(this.LAYER);
+        consumer.vertex(matrices, (float) x0, (float) y0, 0f).color(255, 255, 255, 255).texture(u0, v0).light(light).next();
+        consumer.vertex(matrices, (float) x1, (float) y0, 0f).color(255, 255, 255, 255).texture(u1, v0).light(light).next();
+        consumer.vertex(matrices, (float) x1, (float) y1, 0f).color(255, 255, 255, 255).texture(u1, v1).light(light).next();
+        consumer.vertex(matrices, (float) x0, (float) y1, 0f).color(255, 255, 255, 255).texture(u0, v1).light(light).next();
     }
 }

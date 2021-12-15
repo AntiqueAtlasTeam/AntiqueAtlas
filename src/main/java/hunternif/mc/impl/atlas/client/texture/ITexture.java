@@ -35,6 +35,8 @@ public interface ITexture {
     void draw(MatrixStack matrices, int x, int y, int u, int v, int regionWidth, int regionHeight);
 
     void drawWithLight(VertexConsumerProvider consumer, MatrixStack matrices, int x, int y, int width, int height, int light);
+    
+    void drawWithLightFlipped(VertexConsumerProvider consumer, MatrixStack matrices, int x, int y, int width, int height, int light);
 
     void drawWithLight(VertexConsumerProvider consumer, MatrixStack matrices, int x, int y, int width, int height, int u, int v, int regionWidth, int regionHeight, int light);
 }
