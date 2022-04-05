@@ -30,7 +30,7 @@ public abstract class MixinCartographyTableScreenHandler extends AbstractContain
         super(type, syncId);
     }
 
-    @Inject(method = "lambda$setupResultSlot$0", at = @At("HEAD"), cancellable = true)
+    @Inject(method = {"lambda$setupResultSlot$0", "m_39166_"}, at = @At("HEAD"), cancellable = true)
     void antiqueatlas_call(ItemStack map, ItemStack atlas, ItemStack result, Level world, BlockPos pos, CallbackInfo info) {
         if (atlas.getItem() == AtlasAPI.getAtlasItem() && map.getItem() == Items.FILLED_MAP) {
             this.resultContainer.setItem(CartographyTableMenu.RESULT_SLOT, atlas.copy());
