@@ -3,6 +3,7 @@
   "package": "hunternif.mc.impl.atlas.mixin",
   "compatibilityLevel": "JAVA_8",
   "plugin": "hunternif.mc.impl.atlas.mixin.VolatileMixinPlugin",
+  "refmap": "antiqueatlas.refmap.json",
   "mixins": [
     "MixinCraftingResultSlot",
     "MixinEntity",
