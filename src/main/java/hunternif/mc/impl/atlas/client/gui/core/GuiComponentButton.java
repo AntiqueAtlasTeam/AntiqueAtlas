@@ -12,7 +12,7 @@ import java.util.List;
  * A GuiComponent that can act like a button.
  */
 public class GuiComponentButton extends GuiComponent {
-    private final List<IButtonListener> listeners = new ArrayList<>();
+    private final List<IButtonListener<?>> listeners = new ArrayList<>();
 
     private boolean enabled = true;
     private SoundEvent clickSound = SoundEvents.UI_BUTTON_CLICK;
