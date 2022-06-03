@@ -1,9 +1,6 @@
 package hunternif.mc.impl.atlas;
 
-import java.util.function.Consumer;
-
-import hunternif.mc.impl.atlas.client.*;
-import hunternif.mc.impl.atlas.marker.MarkerTextureConfig;
+import hunternif.mc.impl.atlas.client.TileTextureMap;
 import hunternif.mc.impl.atlas.registry.MarkerType;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.Registry;
@@ -14,53 +11,21 @@ import net.minecraft.server.packs.resources.ResourceManagerReloadListener;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.event.RegisterClientReloadListenersEvent;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
 @OnlyIn(Dist.CLIENT)
 public class ClientProxy implements /*SimpleSynchronousResourceReloadListener*/ResourceManagerReloadListener {
-	public void initClient() {
-		final IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
-		modEventBus.addListener((Consumer<RegisterClientReloadListenersEvent>)resourceManager-> {
-			// read Textures first from assets
-	        TextureConfig textureConfig = new TextureConfig(Textures.TILE_TEXTURES_MAP);
-	        resourceManager
-	        .registerReloadListener(textureConfig);
 
-	        // than read TextureSets
-	        TextureSetMap textureSetMap = TextureSetMap.instance();
-	        TextureSetConfig textureSetConfig = new TextureSetConfig(textureSetMap);
-	        resourceManager
-	        .registerReloadListener(textureSetConfig);
-
-	        // After that, we can read the tile mappings
-	        TileTextureMap tileTextureMap = TileTextureMap.instance();
-	        TileTextureConfig tileTextureConfig = new TileTextureConfig(tileTextureMap, textureSetMap);
-	        resourceManager
-	        .registerReloadListener(tileTextureConfig);
-
-	        // Legacy file name:
-	        resourceManager
-	        .registerReloadListener(this);
-
-	        MarkerTextureConfig markerTextureConfig = new MarkerTextureConfig();
-	        resourceManager
-	        .registerReloadListener(markerTextureConfig);
-		});
-		modEventBus.addListener((Consumer<FMLClientSetupEvent>)resourceManager-> {
-			for (MarkerType type : MarkerType.REGISTRY) {
-	            type.initMips();
-	        }
-
-	        if (!AntiqueAtlasMod.CONFIG.itemNeeded) {
-	            KeyHandler.registerBindings();
-	            MinecraftForge.EVENT_BUS.addListener(KeyHandler::onClientTick);
-	        }
-		});
+	private static ClientProxy instance = null;
+	public static ClientProxy instance() {
+		if(instance == null) initialize();
+		return instance;
 	}
+	public static void initialize() {
+		if(instance == null)
+			instance = new ClientProxy();
+	}
+
+	private ClientProxy() {}
 
     /**
      * Assign default textures to vanilla biomes. The textures are assigned

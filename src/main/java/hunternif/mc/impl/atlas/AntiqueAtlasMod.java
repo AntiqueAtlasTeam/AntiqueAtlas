@@ -1,5 +1,6 @@
 package hunternif.mc.impl.atlas;
 
+import hunternif.mc.impl.atlas.client.ClientModEvents;
 import hunternif.mc.impl.atlas.core.TileDataHandler;
 import hunternif.mc.impl.atlas.core.scaning.TileDetectorBase;
 import hunternif.mc.impl.atlas.client.gui.AntiqueAtlasModMenu;
@@ -21,8 +22,10 @@ import me.shedaniel.autoconfig.serializer.JanksonConfigSerializer;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
+import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fmlclient.ConfigGuiHandler;
@@ -105,7 +108,10 @@ public class AntiqueAtlasMod {
 	public AntiqueAtlasMod() 
 	{
 		this.onInitialize();
-		new AntiqueAtlasModClient().onInitializeClient();
-		ModLoadingContext.get().registerExtensionPoint(ConfigGuiHandler.ConfigGuiFactory.class, AntiqueAtlasModMenu.getModConfigScreenFactory());
+		AntiqueAtlasNetworking.registerS2CListeners();
+		FMLJavaModLoadingContext.get().getModEventBus().<FMLClientSetupEvent>addListener(event -> {
+			new AntiqueAtlasModClient().onInitializeClient();
+			ModLoadingContext.get().registerExtensionPoint(ConfigGuiHandler.ConfigGuiFactory.class, AntiqueAtlasModMenu.getModConfigScreenFactory());
+		});
 	}
 }

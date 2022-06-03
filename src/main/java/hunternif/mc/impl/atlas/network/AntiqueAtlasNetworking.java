@@ -8,7 +8,6 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fmllegacy.network.simple.SimpleChannel;
 
 public class AntiqueAtlasNetworking {
-	@OnlyIn(Dist.CLIENT)
 	public static void registerS2CListeners() {
 		SimpleChannel channel = AntiqueAtlasMod.MOD_CHANNEL;
 		channel.registerMessage(0, CustomTileInfoS2CPacket.class, CustomTileInfoS2CPacket::encode, CustomTileInfoS2CPacket::decode, CustomTileInfoS2CPacket::message);

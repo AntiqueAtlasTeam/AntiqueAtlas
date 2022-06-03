@@ -1,12 +1,10 @@
 package hunternif.mc.impl.atlas;
 
 import hunternif.mc.impl.atlas.client.gui.GuiAtlas;
-import hunternif.mc.impl.atlas.network.AntiqueAtlasNetworking;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 
 @OnlyIn(Dist.CLIENT)
 public class AntiqueAtlasModClient {
@@ -39,9 +37,6 @@ public class AntiqueAtlasModClient {
 
 	
 	public void onInitializeClient() {
-		ClientProxy clientProxy = new ClientProxy();
-		clientProxy.initClient();
-
-		AntiqueAtlasNetworking.registerS2CListeners();
+		ClientProxy.initialize();
 	}
 }
