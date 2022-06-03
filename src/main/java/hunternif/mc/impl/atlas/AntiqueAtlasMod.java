@@ -106,9 +106,7 @@ public class AntiqueAtlasMod {
 	{
 		this.onInitialize();
 		AntiqueAtlasNetworking.registerS2CListeners();
-		FMLJavaModLoadingContext.get().getModEventBus().<FMLClientSetupEvent>addListener(event -> {
-			new AntiqueAtlasModClient().onInitializeClient();
-			ModLoadingContext.get().registerExtensionPoint(ConfigGuiHandler.ConfigGuiFactory.class, AntiqueAtlasModMenu.getModConfigScreenFactory());
-		});
+		FMLJavaModLoadingContext.get().getModEventBus().<FMLClientSetupEvent>addListener(event ->
+			ModLoadingContext.get().registerExtensionPoint(ConfigGuiHandler.ConfigGuiFactory.class, AntiqueAtlasModMenu.getModConfigScreenFactory()));
 	}
 }

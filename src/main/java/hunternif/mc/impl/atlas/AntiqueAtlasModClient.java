@@ -34,9 +34,4 @@ public class AntiqueAtlasModClient {
 			mc.setScreen(gui);
 		}
 	}
-
-	
-	public void onInitializeClient() {
-		ClientProxy.initialize();
-	}
 }

@@ -15,16 +15,8 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 @OnlyIn(Dist.CLIENT)
 public class ClientProxy implements /*SimpleSynchronousResourceReloadListener*/ResourceManagerReloadListener {
 
-	private static ClientProxy instance = null;
-	public static ClientProxy instance() {
-		if(instance == null) initialize();
-		return instance;
-	}
-	public static void initialize() {
-		if(instance == null)
-			instance = new ClientProxy();
-	}
-
+	private static final ClientProxy INSTANCE = new ClientProxy();
+	public static ClientProxy instance() { return INSTANCE;	}
 	private ClientProxy() {}
 
     /**
