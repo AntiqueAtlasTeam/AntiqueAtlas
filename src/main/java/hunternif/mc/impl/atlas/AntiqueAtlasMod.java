@@ -1,16 +1,15 @@
 package hunternif.mc.impl.atlas;
 
-import hunternif.mc.impl.atlas.client.ClientModEvents;
-import hunternif.mc.impl.atlas.core.TileDataHandler;
-import hunternif.mc.impl.atlas.core.scaning.TileDetectorBase;
 import hunternif.mc.impl.atlas.client.gui.AntiqueAtlasModMenu;
 import hunternif.mc.impl.atlas.core.GlobalAtlasData;
+import hunternif.mc.impl.atlas.core.GlobalTileDataHandler;
+import hunternif.mc.impl.atlas.core.PlayerEventHandler;
+import hunternif.mc.impl.atlas.core.TileDataHandler;
+import hunternif.mc.impl.atlas.core.scaning.TileDetectorBase;
 import hunternif.mc.impl.atlas.core.scaning.WorldScanner;
 import hunternif.mc.impl.atlas.event.RecipeCraftedCallback;
 import hunternif.mc.impl.atlas.event.RecipeCraftedHandler;
 import hunternif.mc.impl.atlas.forge.event.ServerWorldEvents;
-import hunternif.mc.impl.atlas.core.GlobalTileDataHandler;
-import hunternif.mc.impl.atlas.core.PlayerEventHandler;
 import hunternif.mc.impl.atlas.marker.GlobalMarkersDataHandler;
 import hunternif.mc.impl.atlas.marker.MarkersDataHandler;
 import hunternif.mc.impl.atlas.mixinhooks.NewPlayerConnectionCallback;
@@ -22,7 +21,6 @@ import me.shedaniel.autoconfig.serializer.JanksonConfigSerializer;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
@@ -31,11 +29,10 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fmlclient.ConfigGuiHandler;
 import net.minecraftforge.fmllegacy.network.NetworkRegistry;
 import net.minecraftforge.fmllegacy.network.simple.SimpleChannel;
-
-import java.util.function.Consumer;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import java.util.function.Consumer;
 
 @Mod(AntiqueAtlasMod.ID)
 public class AntiqueAtlasMod {
