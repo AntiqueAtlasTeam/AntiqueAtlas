@@ -97,6 +97,11 @@ public class WorldScanner {
             if (oldTile != null && !rescanRequired) {
                 return null;
             }
+            
+            if(!world.getChunkSource().hasChunk(x,z))
+            {
+                return null;
+            }
 
             // TODO FABRIC: forceChunkLoading crashes here
             ChunkAccess chunk = world.getChunk(x, z, ChunkStatus.FULL, AntiqueAtlasMod.CONFIG.forceChunkLoading);
