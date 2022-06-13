@@ -18,61 +18,61 @@ import java.util.concurrent.Executor;
 /**
  * Reads all png files available under assets/(?modid)/textures/gui/tiles/(?tex).png as Textures that
  * are referenced by the TextureSets.
- *
+ *<p>
  * Note that each texture is represented by TWO Identifiers:
- *  - The identifier of the physical location in modid:texture/gui/tiles/tex.png
- *  - The logical identifier modid:tex referenced by TextureSets
+ * - The identifier of the physical location in modid:texture/gui/tiles/tex.png
+ * - The logical identifier modid:tex referenced by TextureSets
  */
 @OnlyIn(Dist.CLIENT)
 public class TextureConfig implements IResourceReloadListener<Map<ResourceLocation, ITexture>> {
-    private final Map<ResourceLocation, ITexture> texture_map;
+	private final Map<ResourceLocation, ITexture> texture_map;
 
-    public TextureConfig(Map<ResourceLocation, ITexture> texture_map) {
-        this.texture_map = texture_map;
-    }
+	public TextureConfig(Map<ResourceLocation, ITexture> texture_map) {
+		this.texture_map = texture_map;
+	}
 
-    @Override
-    public CompletableFuture<Map<ResourceLocation, ITexture>> load(ResourceManager manager, ProfilerFiller profiler, Executor executor) {
-        return CompletableFuture.supplyAsync(() -> {
-            Map<ResourceLocation, ITexture> textures = new HashMap<>();
+	@Override
+	public CompletableFuture<Map<ResourceLocation, ITexture>> load(ResourceManager manager, ProfilerFiller profiler, Executor executor) {
+		return CompletableFuture.supplyAsync(() -> {
+			Map<ResourceLocation, ITexture> textures = new HashMap<>();
 
-            try {
-                for (ResourceLocation id : manager.listResources("textures/gui/tiles", (s) -> s.endsWith(".png"))) {
-                    // id now contains the physical file path of the texture
+			for (ResourceLocation id : manager.listResources("textures/gui/tiles", (s) -> s.endsWith(".png"))) {
+				try {
+					// id now contains the physical file path of the texture
 
-                    // texture_id is the logical identifier, as it will be referenced by TextureSets
-                    ResourceLocation texture_id = new ResourceLocation(
-                            id.getNamespace(),
-                            id.getPath().replace("textures/gui/tiles/", "").replace(".png", "")
-                    );
+					// texture_id is the logical identifier, as it will be referenced by TextureSets
+					ResourceLocation texture_id = new ResourceLocation(
+							id.getNamespace(),
+							id.getPath().replace("textures/gui/tiles/", "").replace(".png", "")
+							);
 
-                    AntiqueAtlasMod.LOG.info("Found new Texture: " + texture_id);
+					AntiqueAtlasMod.LOG.info("Found new Texture: " + texture_id);
 
-                    textures.put(texture_id, new TileTexture(id));
-                }
+					textures.put(texture_id, new TileTexture(id));
+				} catch (Throwable e) {
+					AntiqueAtlasMod.LOG.warn("Failed to read textures!", e);
+				}
+			}
 
-            } catch (Throwable e) {
-                AntiqueAtlasMod.LOG.warn("Failed to read textures!", e);
-            }
 
-            return textures;
-        });
-    }
+			return textures;
+		});
+	}
 
-    @Override
-    public CompletableFuture<Void> apply(Map<ResourceLocation, ITexture> textures, ResourceManager manager, ProfilerFiller profiler, Executor executor) {
-    	texture_map.clear();
-        for (Map.Entry<ResourceLocation, ITexture> entry : textures.entrySet()) {
-            texture_map.put(entry.getKey(), entry.getValue());
-            Log.info("Loaded texture %s with path %s", entry.getKey(), entry.getValue().getTexture());
-        }
-    	return CompletableFuture.runAsync(() -> {
-            
-        });
-    }
+	@Override
+	public CompletableFuture<Void> apply(Map<ResourceLocation, ITexture> textures, ResourceManager manager, ProfilerFiller profiler, Executor executor) {
+		texture_map.clear();
+		for (Map.Entry<ResourceLocation, ITexture> entry : textures.entrySet()) {
+			texture_map.put(entry.getKey(), entry.getValue());
+			Log.info("Loaded texture %s with path %s", entry.getKey(), entry.getValue().getTexture());
+		}
+		return CompletableFuture.runAsync(() -> {
 
-    @Override
-    public ResourceLocation getForgeId() {
-        return new ResourceLocation("antiqueatlas:textures");
-    }
+		});
+	}
+
+	@Override
+	public ResourceLocation getForgeId() {
+		return new ResourceLocation("antiqueatlas:textures");
+	}
 }

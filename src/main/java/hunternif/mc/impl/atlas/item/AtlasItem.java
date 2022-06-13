@@ -91,10 +91,9 @@ public class AtlasItem extends Item {
             markers.syncOnPlayer(atlasId, (ServerPlayer) player);
         }
 
-        // Updating map around player
-        Collection<TileInfo> newTiles = AntiqueAtlasMod.worldScanner.updateAtlasAroundPlayer(data, player);
-
         if (!world.isClientSide) {
+        	// Updating map around player
+        	Collection<TileInfo> newTiles = AntiqueAtlasMod.worldScanner.updateAtlasAroundPlayer(data, player);
             if (!newTiles.isEmpty()) {
                 new DimensionUpdateS2CPacket(atlasId, player.getCommandSenderWorld().dimension(), newTiles).send((ServerLevel) world);
             }
