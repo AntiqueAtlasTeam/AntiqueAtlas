@@ -64,7 +64,7 @@ public class AntiqueAtlasMod {
 
 	public void onInitialize() {
 		FMLJavaModLoadingContext.get().getModEventBus().addListener((Consumer<FMLCommonSetupEvent>)common-> {
-			TileDetectorBase.scanBiomeTypes();
+		TileDetectorBase.scanBiomeTypes();
 		});
 
 		AutoConfig.register(AntiqueAtlasConfig.class, JanksonConfigSerializer::new);
@@ -91,11 +91,11 @@ public class AntiqueAtlasMod {
 		StructureAddedCallback.register(StructureHandler::resolve);
 
 		FMLJavaModLoadingContext.get().getModEventBus().addListener((Consumer<FMLCommonSetupEvent>)common-> {
-			NetherFortress.registerPieces();
-			EndCity.registerMarkers();
-			Village.registerMarkers();
-			Village.registerPieces();
-			Overworld.registerPieces();
+		NetherFortress.registerPieces();
+		EndCity.registerMarkers();
+		Village.registerMarkers();
+		Village.registerPieces();
+		Overworld.registerPieces();
 		});
 	}
 
