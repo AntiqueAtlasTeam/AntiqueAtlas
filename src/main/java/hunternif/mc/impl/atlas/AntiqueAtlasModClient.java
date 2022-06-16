@@ -1,10 +1,13 @@
 package hunternif.mc.impl.atlas;
 
+import hunternif.mc.impl.atlas.client.gui.AntiqueAtlasModMenu;
 import hunternif.mc.impl.atlas.client.gui.GuiAtlas;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.fml.ModLoadingContext;
+import net.minecraftforge.fmlclient.ConfigGuiHandler;
 
 @OnlyIn(Dist.CLIENT)
 public class AntiqueAtlasModClient {
@@ -33,5 +36,13 @@ public class AntiqueAtlasModClient {
 			guiAtlas.updateL18n();
 			mc.setScreen(gui);
 		}
+	}
+
+
+	public void onInitializeClient() {
+		ClientProxy clientProxy = new ClientProxy();
+		clientProxy.initClient();
+
+		ModLoadingContext.get().registerExtensionPoint(ConfigGuiHandler.ConfigGuiFactory.class, AntiqueAtlasModMenu.getModConfigScreenFactory());
 	}
 }
