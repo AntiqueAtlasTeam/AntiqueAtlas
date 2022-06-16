@@ -98,10 +98,10 @@ public class AntiqueAtlasMod {
 		Overworld.registerPieces();
 		});
 	}
-
+	
 	////FORGE ONLY
 	public static final SimpleChannel MOD_CHANNEL = NetworkRegistry.newSimpleChannel(id("main"), () -> "1", "1"::equals, "1"::equals);
-	public AntiqueAtlasMod()
+	public AntiqueAtlasMod() 
 	{
 		this.onInitialize();
 

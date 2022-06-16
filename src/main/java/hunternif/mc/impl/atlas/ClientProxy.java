@@ -22,45 +22,45 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
 @OnlyIn(Dist.CLIENT)
 public class ClientProxy implements /*SimpleSynchronousResourceReloadListener*/ResourceManagerReloadListener {
-public void initClient() {
-final IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
-modEventBus.addListener((Consumer<RegisterClientReloadListenersEvent>)resourceManager-> {
-// read Textures first from assets
-        TextureConfig textureConfig = new TextureConfig(Textures.TILE_TEXTURES_MAP);
-        resourceManager
-                .registerReloadListener(textureConfig);
+	public void initClient() {
+		final IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
+		modEventBus.addListener((Consumer<RegisterClientReloadListenersEvent>)resourceManager-> {
+			// read Textures first from assets
+	        TextureConfig textureConfig = new TextureConfig(Textures.TILE_TEXTURES_MAP);
+	        resourceManager
+	        .registerReloadListener(textureConfig);
 
-        // than read TextureSets
-        TextureSetMap textureSetMap = TextureSetMap.instance();
-        TextureSetConfig textureSetConfig = new TextureSetConfig(textureSetMap);
-        resourceManager
-                .registerReloadListener(textureSetConfig);
+	        // than read TextureSets
+	        TextureSetMap textureSetMap = TextureSetMap.instance();
+	        TextureSetConfig textureSetConfig = new TextureSetConfig(textureSetMap);
+	        resourceManager
+	        .registerReloadListener(textureSetConfig);
 
-        // After that, we can read the tile mappings
-        TileTextureMap tileTextureMap = TileTextureMap.instance();
-        TileTextureConfig tileTextureConfig = new TileTextureConfig(tileTextureMap, textureSetMap);
-        resourceManager
-                .registerReloadListener(tileTextureConfig);
+	        // After that, we can read the tile mappings
+	        TileTextureMap tileTextureMap = TileTextureMap.instance();
+	        TileTextureConfig tileTextureConfig = new TileTextureConfig(tileTextureMap, textureSetMap);
+	        resourceManager
+	        .registerReloadListener(tileTextureConfig);
 
-        // Legacy file name:
-        resourceManager
-                .registerReloadListener(this);
+	        // Legacy file name:
+	        resourceManager
+	        .registerReloadListener(this);
 
-        MarkerTextureConfig markerTextureConfig = new MarkerTextureConfig();
-        resourceManager
-                .registerReloadListener(markerTextureConfig);
-});
-modEventBus.addListener((Consumer<FMLClientSetupEvent>)resourceManager-> {
-for (MarkerType type : MarkerType.REGISTRY) {
-            type.initMips();
-        }
+	        MarkerTextureConfig markerTextureConfig = new MarkerTextureConfig();
+	        resourceManager
+	        .registerReloadListener(markerTextureConfig);
+		});
+		modEventBus.addListener((Consumer<FMLClientSetupEvent>)resourceManager-> {
+			for (MarkerType type : MarkerType.REGISTRY) {
+	            type.initMips();
+	        }
 
-        if (!AntiqueAtlasMod.CONFIG.itemNeeded) {
-            KeyHandler.registerBindings();
-            MinecraftForge.EVENT_BUS.addListener(KeyHandler::onClientTick);
-        }
-});
-}
+	        if (!AntiqueAtlasMod.CONFIG.itemNeeded) {
+	            KeyHandler.registerBindings();
+	            MinecraftForge.EVENT_BUS.addListener(KeyHandler::onClientTick);
+	        }
+		});
+	}
 
     /**
      * Assign default textures to vanilla biomes. The textures are assigned
