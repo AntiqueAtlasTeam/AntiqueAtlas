@@ -119,7 +119,7 @@ public class TileTextureMap {
                 setTexture(id, TextureSetMap.instance().getByName(AntiqueAtlasMod.id("mountains")));
                 break;
             case THEEND:
-                List<List<Supplier<PlacedFeature>>> features = biome.getGenerationSettings().getFeatures();
+                //List<List<Supplier<PlacedFeature>>> features = biome.getGenerationSettings().getFeatures();
                 boolean has_chorus_plant = true;
                 //features.stream().anyMatch(supplier -> supplier.stream().anyMatch(step -> step.get() == ConfiguredFeatures.CHORUS_PLANT));
                 if (has_chorus_plant) {

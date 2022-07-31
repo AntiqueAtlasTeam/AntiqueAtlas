@@ -57,7 +57,7 @@ public class StructureStartMixin {
         synchronized (this.children) {
             if(this.children.isEmpty()) return;
 
-            StructureAddedCallback.EVENT.invoker().onStructureAdded((StructureStart<?>) (Object) this, world);
+            StructureAddedCallback.EVENT.invoker().onStructureAdded((StructureStart) (Object) this, world);
         }
     }
 }

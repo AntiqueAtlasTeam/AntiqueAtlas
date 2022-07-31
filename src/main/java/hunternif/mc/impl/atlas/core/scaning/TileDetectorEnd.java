@@ -29,7 +29,7 @@ public class TileDetectorEnd extends TileDetectorBase implements ITileDetector {
 
         for (int x = 0; x < 16; x++) {
             for (int z = 0; z < 16; z++) {
-                Biome biome = chunk.getBiomeForNoiseGen(x, 0, z);
+                Biome biome = chunk.getBiomeForNoiseGen(x, 0, z).value();
 
                 Identifier id = getBiomeIdentifier(world, biome);
 

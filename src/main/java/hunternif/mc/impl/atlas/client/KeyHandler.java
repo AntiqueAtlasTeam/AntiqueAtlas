@@ -37,7 +37,7 @@ public class KeyHandler {
         if (bindings.get(KEY_ATLAS).wasPressed()) {
             Screen currentScreen = MinecraftClient.getInstance().currentScreen;
             if (currentScreen instanceof GuiAtlas) {
-                currentScreen.onClose();
+                currentScreen.close();
             } else {
                 AntiqueAtlasModClient.openAtlasGUI();
             }

@@ -87,10 +87,10 @@ public class GuiMarkerFinalizer extends GuiComponent {
             world.playSound(player, player.getBlockPos(),
                     SoundEvents.ENTITY_VILLAGER_WORK_CARTOGRAPHER, SoundCategory.AMBIENT,
                     1F, 1F);
-            close();
+            closeChild();
         }));
         addDrawableChild(btnCancel = new ButtonWidget(this.width / 2 + BUTTON_SPACING / 2, this.height / 2 + 40, BUTTON_WIDTH, 20, new TranslatableText("gui.cancel"), (button) -> {
-            close();
+            closeChild();
         }));
         textField = new TextFieldWidget(MinecraftClient.getInstance().textRenderer, (this.width - 200) / 2, this.height / 2 - 81, 200, 20, new TranslatableText("gui.antiqueatlas.marker.label"));
         textField.setEditable(true);
@@ -137,10 +137,10 @@ public class GuiMarkerFinalizer extends GuiComponent {
     }
 
     @Override
-    public void close() {
-        super.close();
+    public void closeChild() {
+        super.closeChild();
         if (scroller != null) {
-            scroller.close();
+            scroller.closeChild();
         }
     }
 

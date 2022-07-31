@@ -14,7 +14,7 @@
     "dev.MixinCartographyTableScreenHandlerSlot",
     "prod.MixinCartographyTableScreenHandlerSlot",
     "dev.MixinCartographyTableScreenHandlerResultSlot",
-    "prod.MixinCartographyTableScreenHandlerResultSlot",
+    "prod.MixinCartographyTableScreenHandlerResultSlot"
   ],
   "client": [
     "MixinClientPlayNetworkHandler",

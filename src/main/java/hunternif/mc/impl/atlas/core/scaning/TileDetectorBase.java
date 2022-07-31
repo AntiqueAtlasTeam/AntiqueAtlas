@@ -116,7 +116,7 @@ public class TileDetectorBase implements ITileDetector {
         for (int x = 0; x < 16; x++) {
             for (int z = 0; z < 16; z++) {
                 // biomes seems to be changing with height as well. Let's scan at sea level.
-                Biome biome = chunk.getBiomeForNoiseGen(x, world.getSeaLevel(), z);
+                Biome biome = chunk.getBiomeForNoiseGen(x, world.getSeaLevel(), z).value();
                 if (AntiqueAtlasMod.CONFIG.doScanPonds) {
                     int y = chunk.getHeightmap(Heightmap.Type.MOTION_BLOCKING).get(x, z);
                     if (y > 0) {

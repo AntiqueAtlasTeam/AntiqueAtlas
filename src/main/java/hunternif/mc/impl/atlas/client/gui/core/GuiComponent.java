@@ -429,11 +429,11 @@ public class GuiComponent extends Screen {
      * Called when the GUI is unloaded, called for each child as well.
      */
     @Override
-    public void onClose() {
+    public void close() {
         for (GuiComponent child : children) {
-            child.onClose();
+            child.close();
         }
-        super.onClose();
+        super.close();
     }
 
     /**
@@ -621,7 +621,7 @@ public class GuiComponent extends Screen {
     /**
      * Remove itself from its parent component (if any), notifying it.
      */
-    public void close() {
+    public void closeChild() {
         if (parent != null) {
             parent.removeChild(this); // This sets parent to null
         } else {

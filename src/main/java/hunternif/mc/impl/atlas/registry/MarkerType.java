@@ -28,7 +28,8 @@ public class MarkerType {
 	public static final RegistryKey<Registry<MarkerType>> KEY = RegistryKey.ofRegistry(AntiqueAtlasMod.id("marker"));
 	public static final DefaultedRegistry<MarkerType> REGISTRY = new DefaultedRegistry<>(AntiqueAtlasMod.id("red_x_small").toString(),
 			KEY,
-			Lifecycle.experimental());
+			Lifecycle.experimental(),
+			null);
 
 	private Identifier[] icons;
 	private BitMatrix[] iconPixels;

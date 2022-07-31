@@ -118,8 +118,8 @@ public class StructureHandler {
         }
     }
 
-    public static void resolve(StructureStart<?> structureStart, ServerWorld world) {
-        Identifier structureId = Registry.STRUCTURE_FEATURE.getId(structureStart.getFeature());
+    public static void resolve(StructureStart structureStart, ServerWorld world) {
+        Identifier structureId = Registry.STRUCTURE_FEATURE.getId(structureStart.getFeature().feature);
         if (STRUCTURE_PIECE_TO_MARKER_MAP.containsKey(structureId)) {
             Triple<Integer, Integer, Identifier> key = Triple.of(
                     structureStart.getBoundingBox().getCenter().getX(),
