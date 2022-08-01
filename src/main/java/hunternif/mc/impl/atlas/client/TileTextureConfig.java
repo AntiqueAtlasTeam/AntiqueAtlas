@@ -3,6 +3,7 @@ package hunternif.mc.impl.atlas.client;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import hunternif.mc.impl.atlas.AntiqueAtlasMod;
+import hunternif.mc.impl.atlas.core.scaning.TileHeightType;
 import hunternif.mc.impl.atlas.util.Log;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -29,8 +30,6 @@ import java.util.concurrent.Executor;
  */
 @Environment(EnvType.CLIENT)
 public class TileTextureConfig implements SimpleResourceReloadListener<Map<Identifier, Identifier>> {
-    private static final int VERSION = 1;
-    private static final JsonParser PARSER = new JsonParser();
     private final TileTextureMap tileTextureMap;
     private final TextureSetMap textureSetMap;
 
@@ -46,28 +45,43 @@ public class TileTextureConfig implements SimpleResourceReloadListener<Map<Ident
 
             try {
                 for (Identifier id : manager.findResources("atlas/tiles", (s) -> s.endsWith(".json"))) {
-                    Identifier tile_id = new Identifier(
-                            id.getNamespace(),
-                            id.getPath().replace("atlas/tiles/", "").replace(".json", "")
-                    );
+                    Identifier tile_id = new Identifier(id.getNamespace(), id.getPath().replace("atlas/tiles/", "").replace(".json", ""));
 
                     try {
                         Resource resource = manager.getResource(id);
-                        try (
-                                InputStream stream = resource.getInputStream();
-                                InputStreamReader reader = new InputStreamReader(stream)
-                        ) {
-                            JsonObject object = PARSER.parse(reader).getAsJsonObject();
+                        try (InputStream stream = resource.getInputStream(); InputStreamReader reader = new InputStreamReader(stream)) {
+                            JsonObject object = JsonParser.parseReader(reader).getAsJsonObject();
 
                             int version = object.getAsJsonPrimitive("version").getAsInt();
-                            if (version != VERSION) {
+                            if (version == 1) {
+                                Identifier texture_set = new Identifier(object.get("texture_set").getAsString());
+
+                                map.put(tile_id, texture_set);
+
+                                for (TileHeightType layer : TileHeightType.values()) {
+                                    map.put(Identifier.tryParse(tile_id + "_" + layer.getName()), texture_set);
+                                }
+                            } else if (version == 2) {
+                                Identifier default_entry = TileTextureMap.DEFAULT_TEXTURE;
+
+                                try {
+                                    default_entry = new Identifier(object.getAsJsonObject("texture_sets").get("default").getAsString());
+                                } catch (Exception ignored) {
+                                }
+
+                                for (TileHeightType layer : TileHeightType.values()) {
+                                    Identifier texture_set = default_entry;
+
+                                    try {
+                                        texture_set = new Identifier(object.getAsJsonObject("texture_sets").get(layer.getName()).getAsString());
+                                    } catch (Exception ignored) {
+                                    }
+
+                                    map.put(Identifier.tryParse(tile_id + "_" + layer), texture_set);
+                                }
+                            } else {
                                 AntiqueAtlasMod.LOG.warn("The tile " + tile_id + " is in the wrong version! Skipping.");
-                                continue;
                             }
-
-                            Identifier texture_set = new Identifier(object.get("texture_set").getAsString());
-
-                            map.put(tile_id, texture_set);
                         }
                     } catch (Exception e) {
                         AntiqueAtlasMod.LOG.warn("Error reading tile mapping " + tile_id + "!", e);
@@ -84,19 +98,19 @@ public class TileTextureConfig implements SimpleResourceReloadListener<Map<Ident
     @Override
     public CompletableFuture<Void> apply(Map<Identifier, Identifier> tileMap, ResourceManager manager, Profiler profiler, Executor executor) {
         return CompletableFuture.runAsync(() -> {
-	        for (Map.Entry<Identifier, Identifier> entry : tileMap.entrySet()) {
-		        Identifier tile_id = entry.getKey();
-		        Identifier texture_set = entry.getValue();
-		        TextureSet set = textureSetMap.getByName(entry.getValue());
+            for (Map.Entry<Identifier, Identifier> entry : tileMap.entrySet()) {
+                Identifier tile_id = entry.getKey();
+                Identifier texture_set = entry.getValue();
+                TextureSet set = textureSetMap.getByName(entry.getValue());
 
-		        if(set == null) {
-		            AntiqueAtlasMod.LOG.error("Missing texture set `{}` for tile `{}`. Using default.", texture_set, tile_id);
+                if (set == null) {
+                    AntiqueAtlasMod.LOG.error("Missing texture set `{}` for tile `{}`. Using default.", texture_set, tile_id);
 
-		            set = tileTextureMap.getDefaultTexture();
+                    set = tileTextureMap.getDefaultTexture();
                 }
 
-		        tileTextureMap.setTexture(entry.getKey(), set);
-                Log.info("Using texture set %s for tile %s", set.name, tile_id);
+                tileTextureMap.setTexture(entry.getKey(), set);
+                Log.info("Loaded tile %s with texture set %s", tile_id, set.name);
             }
         });
     }
