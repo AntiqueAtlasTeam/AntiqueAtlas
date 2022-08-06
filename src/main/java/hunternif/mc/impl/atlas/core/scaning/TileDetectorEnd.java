@@ -45,7 +45,7 @@ public class TileDetectorEnd extends TileDetectorBase implements ITileDetector {
 
                     if (topBlock.getBlock() == Blocks.END_STONE) {
                         // we want to see "coast lines", so we give the islands a slightly higher weight
-                        updateOccurrencesMap(biomeOccurrences, world, biome, 3);
+                        updateOccurrencesMap(biomeOccurrences, getBiomeIdentifier(world,biome), 3);
                     } else if (topBlock.isAir()) {
                         updateOccurrencesMap(biomeOccurrences, BiomeKeys.THE_VOID.getValue(), 1);
                     }

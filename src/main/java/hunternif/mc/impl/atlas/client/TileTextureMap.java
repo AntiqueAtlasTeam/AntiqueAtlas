@@ -8,13 +8,9 @@ import net.fabricmc.api.Environment;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.BuiltinRegistries;
 import net.minecraft.world.biome.Biome;
-import net.minecraft.world.gen.feature.ConfiguredFeature;
-import net.minecraft.world.gen.feature.ConfiguredFeatures;
-import net.minecraft.world.gen.feature.PlacedFeature;
 
 import java.util.*;
 import java.util.Map.Entry;
-import java.util.function.Supplier;
 
 /**
  * Maps biome IDs (or pseudo IDs) to textures. <i>Not thread-safe!</i>
@@ -26,6 +22,8 @@ import java.util.function.Supplier;
 @Environment(EnvType.CLIENT)
 public class TileTextureMap {
     private static final TileTextureMap INSTANCE = new TileTextureMap();
+
+    public static final Identifier DEFAULT_TEXTURE = AntiqueAtlasMod.id("test");
 
     public static TileTextureMap instance() {
         return INSTANCE;
@@ -51,7 +49,7 @@ public class TileTextureMap {
     }
 
     public TextureSet getDefaultTexture() {
-        return TextureSetMap.instance().getByName(AntiqueAtlasMod.id("test"));
+        return TextureSetMap.instance().getByName(DEFAULT_TEXTURE);
     }
 
     /**
@@ -119,7 +117,8 @@ public class TileTextureMap {
                 setTexture(id, TextureSetMap.instance().getByName(AntiqueAtlasMod.id("mountains")));
                 break;
             case THEEND:
-                //List<List<Supplier<PlacedFeature>>> features = biome.getGenerationSettings().getFeatures();
+                // TODO update this check to 1.18 :(
+//                List<List<Supplier<PlacedFeature>>> features = biome.getGenerationSettings().getFeatures();
                 boolean has_chorus_plant = true;
                 //features.stream().anyMatch(supplier -> supplier.stream().anyMatch(step -> step.get() == ConfiguredFeatures.CHORUS_PLANT));
                 if (has_chorus_plant) {

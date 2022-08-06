@@ -48,8 +48,6 @@ public class TextureConfig implements SimpleResourceReloadListener<Map<Identifie
                             id.getPath().replace("textures/gui/tiles/", "").replace(".png", "")
                     );
 
-                    AntiqueAtlasMod.LOG.info("Found new Texture: " + texture_id);
-
                     textures.put(texture_id, new TileTexture(id));
                 } catch (InvalidIdentifierException e) {
                     AntiqueAtlasMod.LOG.warn("Failed to read texture!", e);

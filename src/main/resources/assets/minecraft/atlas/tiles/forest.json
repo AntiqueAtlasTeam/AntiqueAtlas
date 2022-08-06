@@ -1,4 +1,9 @@
 {
-	"version": 1,
-	"texture_set": "antiqueatlas:forest"
+	"version": 2,
+	"texture_sets": {
+		"default": "antiqueatlas:forest",
+		"mid": "antiqueatlas:forest_hills",
+		"high": "antiqueatlas:forest_hills",
+		"peak": "antiqueatlas:mountains"
+	}
 }

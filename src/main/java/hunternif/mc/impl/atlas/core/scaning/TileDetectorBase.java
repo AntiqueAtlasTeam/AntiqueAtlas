@@ -60,16 +60,9 @@ public class TileDetectorBase implements ITileDetector {
     public static void scanBiomeTypes() {
         for (Biome biome : BuiltinRegistries.BIOME) {
             switch (biome.getCategory()) {
-                case BEACH:
-                    beachBiomes.add(BuiltinRegistries.BIOME.getId(biome));
-                    break;
-                case RIVER:
-                case OCEAN:
-                    waterBiomes.add(BuiltinRegistries.BIOME.getId(biome));
-                    break;
-                case SWAMP:
-                    swampBiomes.add(BuiltinRegistries.BIOME.getId(biome));
-                    break;
+                case BEACH -> beachBiomes.add(BuiltinRegistries.BIOME.getId(biome));
+                case RIVER, OCEAN -> waterBiomes.add(BuiltinRegistries.BIOME.getId(biome));
+                case SWAMP -> swampBiomes.add(BuiltinRegistries.BIOME.getId(biome));
             }
         }
     }
@@ -84,6 +77,40 @@ public class TileDetectorBase implements ITileDetector {
         }
     }
 
+    /* these are the values used by vanilla, but it just doesn't work for me.
+    protected static TileHeightType getHeightType(double weirdness) {
+        if (weirdness < (double) VanillaTerrainParameters.getNormalizedWeirdness(0.05f)) {
+            return TileHeightType.VALLEY;
+        }
+        if (weirdness < (double) VanillaTerrainParameters.getNormalizedWeirdness(0.26666668f)) {
+            return TileHeightType.LOW;
+        }
+        if (weirdness < (double) VanillaTerrainParameters.getNormalizedWeirdness(0.4f)) {
+            return TileHeightType.MID;
+        }
+        if (weirdness < (double) VanillaTerrainParameters.getNormalizedWeirdness(0.56666666f)) {
+            return TileHeightType.HIGH;
+        }
+        return TileHeightType.PEAK;
+    } */
+
+    protected static TileHeightType getHeightTypeFromY(int y, int sealevel) {
+        if (y < sealevel + 10) {
+            return TileHeightType.VALLEY;
+        }
+        if (y < sealevel + 20) {
+            return TileHeightType.LOW;
+        }
+        if (y < sealevel + 35) {
+            return TileHeightType.MID;
+        }
+        if (y < sealevel + 50) {
+            return TileHeightType.HIGH;
+        }
+        return TileHeightType.PEAK;
+    }
+
+
     protected static Identifier getBiomeIdentifier(World world, Biome biome) {
         return world.getRegistryManager().get(Registry.BIOME_KEY).getId(biome);
     }
@@ -93,8 +120,10 @@ public class TileDetectorBase implements ITileDetector {
         map.put(biome, occurrence);
     }
 
-    protected static void updateOccurrencesMap(Map<Identifier, Integer> map, World world, Biome biome, int weight) {
+    protected static void updateOccurrencesMap(Map<Identifier, Integer> map, World world, Biome biome, TileHeightType type, int weight) {
         Identifier id = getBiomeIdentifier(world, biome);
+        id = Identifier.tryParse(id.toString() + "_" + type.getName());
+
         int occurrence = map.getOrDefault(id, 0) + weight;
         map.put(id, occurrence);
     }
@@ -116,9 +145,22 @@ public class TileDetectorBase implements ITileDetector {
         for (int x = 0; x < 16; x++) {
             for (int z = 0; z < 16; z++) {
                 // biomes seems to be changing with height as well. Let's scan at sea level.
-                Biome biome = chunk.getBiomeForNoiseGen(x, world.getSeaLevel(), z).value();
+                Biome biome = chunk.getBiomeForNoiseGen(x, world.getSeaLevel(), z);
+
+                // get top block
+                int y = chunk.getHeightmap(Heightmap.Type.MOTION_BLOCKING).get(x, z);
+
+
+                //this code runs on the server
+//                ServerChunkManager man = (ServerChunkManager) world.getChunkManager();
+//                MultiNoiseUtil.MultiNoiseSampler sampler = man.getChunkGenerator().getMultiNoiseSampler();
+//                ChunkPos pos = chunk.getPos();
+//                MultiNoiseUtil.NoiseValuePoint sample = sampler.sample(pos.getStartX() + x, y + 10, pos.getStartZ() + z);
+
+//                float m = MultiNoiseUtil.method_38666(sample.weirdnessNoise());
+//                double weirdness = VanillaTerrainParameters.getNormalizedWeirdness(m);
+
                 if (AntiqueAtlasMod.CONFIG.doScanPonds) {
-                    int y = chunk.getHeightmap(Heightmap.Type.MOTION_BLOCKING).get(x, z);
                     if (y > 0) {
                         Block topBlock = chunk.getBlockState(new BlockPos(x, y - 1, z)).getBlock();
                         // Check if there's surface of water at (x, z), but not swamp
@@ -135,14 +177,13 @@ public class TileDetectorBase implements ITileDetector {
                 }
 
                 if (AntiqueAtlasMod.CONFIG.doScanRavines) {
-                    int height = chunk.getHeightmap(Heightmap.Type.MOTION_BLOCKING).get(x, z);
-
-                    if (height > 0 && height < world.getSeaLevel() - ravineMinDepth) {
+                    if (y > 0 && y < world.getSeaLevel() - ravineMinDepth) {
                         updateOccurrencesMap(biomeOccurrences, TileIdMap.TILE_RAVINE, priorityRavine);
                     }
                 }
 
-                updateOccurrencesMap(biomeOccurrences, world, biome, priorityForBiome(getBiomeIdentifier(world,biome)));
+//                updateOccurrencesMap(biomeOccurrences, world, biome, getHeightType(weirdness), priorityForBiome(getBiomeIdentifier(world, biome)));
+                updateOccurrencesMap(biomeOccurrences, world, biome, getHeightTypeFromY(y, world.getSeaLevel()), priorityForBiome(getBiomeIdentifier(world, biome)));
             }
         }
 
