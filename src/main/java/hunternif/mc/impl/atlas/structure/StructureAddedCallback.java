@@ -14,5 +14,5 @@ public interface StructureAddedCallback {
 				}
 			});
 
-	void onStructureAdded(StructureStart<?> structureStart, ServerWorld world);
+	void onStructureAdded(StructureStart structureStart, ServerWorld world);
 }

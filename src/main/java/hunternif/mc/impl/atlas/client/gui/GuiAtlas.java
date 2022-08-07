@@ -532,7 +532,7 @@ public class GuiAtlas extends GuiComponent {
 
         // close atlas with right-click
         if (mouseState == 1 && state.is(NORMAL)) {
-            onClose();
+            close();
             return true;
         }
 
@@ -647,13 +647,13 @@ public class GuiAtlas extends GuiComponent {
         } else if (keyCode == GLFW.GLFW_KEY_MINUS || keyCode == GLFW.GLFW_KEY_KP_SUBTRACT) {
             setMapScale(mapScale / 2);
         } else if (keyCode == GLFW.GLFW_KEY_ESCAPE) {
-            onClose();
+            close();
         } else {
-            KeyBinding[] hotbarKeys = MinecraftClient.getInstance().options.keysHotbar;
+            KeyBinding[] hotbarKeys = MinecraftClient.getInstance().options.hotbarKeys;
             for (KeyBinding bind : hotbarKeys) {
                 // only handle hotbarkeys when marker gui isn't shown1
                 if (bind.matchesKey(keyCode, scanCode) && this.markerFinalizer.getParent() == null) {
-                    onClose();
+                    close();
                     // if we close the gui, then don't handle the event
                     return false;
                 }
@@ -1159,14 +1159,14 @@ public class GuiAtlas extends GuiComponent {
     }
 
     @Override
-    public boolean isPauseScreen() {
+    public boolean shouldPause() {
         return false;
     }
 
     @Override
-    public void onClose() {
-        super.onClose();
-        markerFinalizer.close();
+    public void close() {
+        super.close();
+        markerFinalizer.closeChild();
         removeChild(blinkingIcon);
         // Keyboard.enableRepeatEvents(false);
         biomeData.setBrowsingPosition(mapOffsetX, mapOffsetY, mapScale);

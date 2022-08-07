@@ -7,7 +7,7 @@ import net.minecraft.world.gen.feature.StructureFeature;
 public class EndCity {
 
     public static void registerMarkers() {
-        StructureHandler.registerMarker(StructureFeature.END_CITY, AntiqueAtlasMod.id("end_city"), new LiteralText(""));
+        StructureHandler.registerMarker(StructureFeature.ENDCITY, AntiqueAtlasMod.id("end_city"), new LiteralText(""));
     }
 
 }
