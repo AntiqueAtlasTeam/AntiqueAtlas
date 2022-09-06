@@ -69,6 +69,9 @@ public class TileTextureConfig implements SimpleResourceReloadListener<Map<Ident
                                 } catch (Exception ignored) {
                                 }
 
+                                // insert the old-style texture set with the default one
+                                map.put(tile_id, default_entry);
+
                                 for (TileHeightType layer : TileHeightType.values()) {
                                     Identifier texture_set = default_entry;
 
