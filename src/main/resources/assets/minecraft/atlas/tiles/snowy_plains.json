@@ -1,0 +1,9 @@
+{
+	"version": 2,
+	"texture_sets": {
+		"default": "antiqueatlas:snow",
+		"mid": "antiqueatlas:snow_hills",
+		"high": "antiqueatlas:snow_hills",
+		"peak": "antiqueatlas:mountains_snow_caps"
+	}
+}

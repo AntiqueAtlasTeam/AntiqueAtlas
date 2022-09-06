@@ -1,0 +1,9 @@
+{
+	"version": 2,
+	"texture_sets": {
+		"default": "antiqueatlas:birch",
+		"mid": "antiqueatlas:birch_hills",
+		"high": "antiqueatlas:birch_hills",
+		"peak": "antiqueatlas:mountains"
+	}
+}
