@@ -18,11 +18,11 @@ import java.util.concurrent.ConcurrentHashMap;
 public class GlobalTileDataHandler {
     private static final String DATA_KEY = "aAtlasTiles";
 
-    private final Map<RegistryKey<World>, TileDataStorage> worldData =
+    private final Map<RegistryKey<World>, TileDataStorage> globalTileData =
             new ConcurrentHashMap<>(2, 0.75f, 2);
 
     public void onWorldLoad(MinecraftServer server, ServerWorld world) {
-        worldData.put(world.getRegistryKey(), world.getPersistentStateManager().getOrCreate(TileDataStorage::readNbt, () -> {
+        globalTileData.put(world.getRegistryKey(), world.getPersistentStateManager().getOrCreate(TileDataStorage::readNbt, () -> {
             TileDataStorage data = new TileDataStorage();
             data.markDirty();
             return data;
@@ -34,12 +34,12 @@ public class GlobalTileDataHandler {
     }
 
     public TileDataStorage getData(RegistryKey<World> world) {
-        return worldData.computeIfAbsent(world,
+        return globalTileData.computeIfAbsent(world,
                 k -> new TileDataStorage());
     }
 
     public void onPlayerLogin(ServerPlayerEntity player) {
-        worldData.forEach((world, tileData) -> tileData.syncToPlayer(player, world));
+        globalTileData.forEach((world, tileData) -> tileData.syncToPlayer(player, world));
     }
 
 }

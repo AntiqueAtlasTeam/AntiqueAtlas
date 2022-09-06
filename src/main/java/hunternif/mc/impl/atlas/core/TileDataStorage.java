@@ -1,6 +1,6 @@
 package hunternif.mc.impl.atlas.core;
 
-import hunternif.mc.impl.atlas.network.packet.s2c.play.CustomTileInfoS2CPacket;
+import hunternif.mc.impl.atlas.network.packet.s2c.play.PutGlobalTileS2CPacket;
 import hunternif.mc.impl.atlas.util.Log;
 import hunternif.mc.impl.atlas.util.Streams;
 import net.fabricmc.fabric.api.util.NbtType;
@@ -100,7 +100,7 @@ public class TileDataStorage extends PersistentState {
      */
     public void syncToPlayer(PlayerEntity player, RegistryKey<World> world) {
         Streams.chunked(tiles.entrySet().stream(), CHUNK_SIZE)
-                .forEach(chunk -> new CustomTileInfoS2CPacket(world, chunk).send((ServerPlayerEntity) player));
+                .forEach(chunk -> new PutGlobalTileS2CPacket(world, chunk).send((ServerPlayerEntity) player));
 
         Log.info("Sent custom biome data to player %s", player.getCommandSource().getName());
     }

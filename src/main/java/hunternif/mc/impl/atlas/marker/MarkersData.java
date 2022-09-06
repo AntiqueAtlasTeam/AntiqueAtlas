@@ -2,7 +2,7 @@ package hunternif.mc.impl.atlas.marker;
 
 import hunternif.mc.impl.atlas.AntiqueAtlasMod;
 import hunternif.mc.api.MarkerAPI;
-import hunternif.mc.impl.atlas.network.packet.s2c.play.MarkersS2CPacket;
+import hunternif.mc.impl.atlas.network.packet.s2c.play.PutMarkersS2CPacket;
 import hunternif.mc.impl.atlas.util.Log;
 import net.fabricmc.fabric.api.util.NbtType;
 import net.minecraft.entity.player.PlayerEntity;
@@ -73,7 +73,7 @@ public class MarkersData extends PersistentState {
 	public MarkersData() {
 	}
 
-	public static MarkersData readNbt(NbtCompound compound) {
+	public static MarkersData fromNbt(NbtCompound compound) {
 		MarkersData data = new MarkersData();
 		doReadNbt(compound, data);
 		return data;
@@ -95,23 +95,14 @@ public class MarkersData extends PersistentState {
 			NbtList tagList = tag.getList(TAG_MARKERS, NbtType.COMPOUND);
 			for (int i = 0; i < tagList.size(); i++) {
 				NbtCompound markerTag = tagList.getCompound(i);
-				boolean visibleAhead = true;
-				if (version < 2) {
-					Log.warn("Marker is visible ahead by default");
-				} else {
-					visibleAhead = markerTag.getBoolean(TAG_MARKER_VISIBLE_AHEAD);
-				}
-				int id;
-				if (version < 3) {
+				boolean visibleAhead = markerTag.getBoolean(TAG_MARKER_VISIBLE_AHEAD);
+
+				int id = markerTag.getInt(TAG_MARKER_ID);
+				if (data.getMarkerByID(id) != null) {
+					Log.warn("Loading marker with duplicate id %d. Getting new id", id);
 					id = data.getNewID();
-				} else {
-					id = markerTag.getInt(TAG_MARKER_ID);
-					if (data.getMarkerByID(id) != null) {
-						Log.warn("Loading marker with duplicate id %d. Getting new id", id);
-						id = data.getNewID();
-					}
-					data.markDirty();
 				}
+				data.markDirty();
 				if (data.largestID.intValue() < id) {
 					data.largestID.set(id);
 				}
@@ -233,7 +224,7 @@ public class MarkersData extends PersistentState {
 		for (RegistryKey<World> world : worldMap.keySet()) {
 			DimensionMarkersData data = getMarkersDataInWorld(world);
 
-			new MarkersS2CPacket(atlasID, world, data.getAllMarkers()).send(player);
+			new PutMarkersS2CPacket(atlasID, world, data.getAllMarkers()).send(player);
 		}
 		Log.info("Sent markers data #%d to player %s", atlasID, player.getCommandSource().getName());
 		playersSentTo.add(player);

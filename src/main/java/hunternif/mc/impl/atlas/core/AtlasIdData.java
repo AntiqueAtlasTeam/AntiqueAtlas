@@ -4,11 +4,14 @@ import net.fabricmc.fabric.api.util.NbtType;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.world.PersistentState;
 
-public class GlobalAtlasData extends PersistentState {
+/**
+ * This class is used to store the next free ID for a new atlas
+ */
+public class AtlasIdData extends PersistentState {
     public static final String TAG_NEXT_ID = "aaNextID";
     private int nextId = 1;
 
-    public GlobalAtlasData() {
+    public AtlasIdData() {
     }
 
     public int getNextAtlasId() {
@@ -17,8 +20,8 @@ public class GlobalAtlasData extends PersistentState {
         return id;
     }
 
-    public static GlobalAtlasData readNbt(NbtCompound compound) {
-        GlobalAtlasData data = new GlobalAtlasData();
+    public static AtlasIdData fromNbt(NbtCompound compound) {
+        AtlasIdData data = new AtlasIdData();
         if (compound.contains(TAG_NEXT_ID, NbtType.NUMBER)) {
             data.nextId = compound.getInt(TAG_NEXT_ID);
         } else {
@@ -28,8 +31,8 @@ public class GlobalAtlasData extends PersistentState {
     }
 
     @Override
-    public NbtCompound writeNbt(NbtCompound var1) {
-        var1.putInt(TAG_NEXT_ID, nextId);
-        return var1;
+    public NbtCompound writeNbt(NbtCompound compound) {
+        compound.putInt(TAG_NEXT_ID, nextId);
+        return compound;
     }
 }

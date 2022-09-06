@@ -40,7 +40,7 @@ public class MapDataS2CPacket extends S2CPacket {
 
 		client.execute(() -> {
 			AtlasData atlasData = AntiqueAtlasMod.tileData.getData(atlasID, client.player.getEntityWorld());
-			atlasData.readNbt(data);
+			atlasData.fromNbt(data);
 
 			if (AntiqueAtlasMod.CONFIG.doSaveBrowsingPos && MinecraftClient.getInstance().currentScreen instanceof GuiAtlas) {
 				((GuiAtlas) MinecraftClient.getInstance().currentScreen).loadSavedBrowsingPosition();

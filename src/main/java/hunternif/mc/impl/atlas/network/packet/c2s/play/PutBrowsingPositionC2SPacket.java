@@ -19,10 +19,10 @@ import net.minecraft.world.World;
  * @author Hunternif
  * @author Haven King
  */
-public class BrowsingPositionC2SPacket extends C2SPacket {
-	public static final Identifier ID = AntiqueAtlasMod.id("packet", "c2s", "browsing_position");
+public class PutBrowsingPositionC2SPacket extends C2SPacket {
+	public static final Identifier ID = AntiqueAtlasMod.id("packet", "c2s", "browsing_position", "put");
 
-	public BrowsingPositionC2SPacket(int atlasID, RegistryKey<World> world, int x, int y, double zoom) {
+	public PutBrowsingPositionC2SPacket(int atlasID, RegistryKey<World> world, int x, int y, double zoom) {
 		this.writeVarInt(atlasID);
 		this.writeIdentifier(world.getValue());
 		this.writeVarInt(x);

@@ -57,6 +57,7 @@ public class DimensionUpdateS2CPacket extends S2CPacket {
 		}
 
 		client.execute(() -> {
+			assert client.player != null;
 			AtlasData data = AntiqueAtlasMod.tileData.getData(atlasID, client.player.getEntityWorld());
 
 			for (TileInfo info : tiles) {

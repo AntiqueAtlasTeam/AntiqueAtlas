@@ -4,9 +4,9 @@ import hunternif.mc.impl.atlas.AntiqueAtlasMod;
 import hunternif.mc.api.MarkerAPI;
 import hunternif.mc.impl.atlas.marker.Marker;
 import hunternif.mc.impl.atlas.marker.MarkersData;
-import hunternif.mc.impl.atlas.network.packet.c2s.play.DeleteMarkerRequestC2SPacket;
-import hunternif.mc.impl.atlas.network.packet.s2c.play.DeleteMarkerResponseS2CPacket;
-import hunternif.mc.impl.atlas.network.packet.s2c.play.MarkersS2CPacket;
+import hunternif.mc.impl.atlas.network.packet.c2s.play.DeleteMarkerC2SPacket;
+import hunternif.mc.impl.atlas.network.packet.s2c.play.DeleteMarkerS2CPacket;
+import hunternif.mc.impl.atlas.network.packet.s2c.play.PutMarkersS2CPacket;
 import hunternif.mc.impl.atlas.util.Log;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
@@ -43,7 +43,7 @@ public class MarkerApiImpl implements MarkerAPI {
                     : AntiqueAtlasMod.markersData.getMarkersData(atlasID, world);
 
             marker = data.createAndSaveMarker(markerId, world.getRegistryKey(), x, z, visibleAhead, label);
-            new MarkersS2CPacket(atlasID, world.getRegistryKey(), Collections.singleton(marker)).send((ServerWorld) world);
+            new PutMarkersS2CPacket(atlasID, world.getRegistryKey(), Collections.singleton(marker)).send((ServerWorld) world);
         }
 
         return marker;
@@ -64,7 +64,7 @@ public class MarkerApiImpl implements MarkerAPI {
             if (atlasID == GLOBAL) {
                 Log.warn("Client tried to delete a global marker!");
             } else {
-                new DeleteMarkerRequestC2SPacket(atlasID, markerID).send();
+                new DeleteMarkerC2SPacket(atlasID, markerID).send();
             }
         } else {
             MarkersData data = atlasID == GLOBAL ?
@@ -72,7 +72,7 @@ public class MarkerApiImpl implements MarkerAPI {
                     AntiqueAtlasMod.markersData.getMarkersData(atlasID, world);
             data.removeMarker(markerID);
 
-            new DeleteMarkerResponseS2CPacket(atlasID, markerID).send(world.getServer());
+            new DeleteMarkerS2CPacket(atlasID, markerID).send(world.getServer());
         }
     }
 }

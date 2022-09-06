@@ -1,7 +1,6 @@
 package hunternif.mc.impl.atlas.item;
 
 import hunternif.mc.impl.atlas.AntiqueAtlasMod;
-import hunternif.mc.impl.atlas.RegistrarAntiqueAtlas;
 import hunternif.mc.impl.atlas.core.AtlasData;
 import hunternif.mc.impl.atlas.marker.Marker;
 import hunternif.mc.impl.atlas.marker.MarkersData;
@@ -48,7 +47,7 @@ public class RecipeAtlasCombining implements CraftingRecipe {
         for (int i = 0; i < inv.size(); ++i) {
             ItemStack stack = inv.getStack(i);
             if (!stack.isEmpty()) {
-                if (stack.getItem() == RegistrarAntiqueAtlas.ATLAS) {
+                if (stack.getItem() == AntiqueAtlasItems.ATLAS) {
                     atlasesFound++;
                 }
             }
@@ -82,7 +81,7 @@ public class RecipeAtlasCombining implements CraftingRecipe {
 
     @Override
     public ItemStack getOutput() {
-        return new ItemStack(RegistrarAntiqueAtlas.ATLAS);
+        return new ItemStack(AntiqueAtlasItems.ATLAS);
     }
 
     @Override
@@ -103,7 +102,7 @@ public class RecipeAtlasCombining implements CraftingRecipe {
     public ItemStack onCrafted(World world, Inventory inventory, ItemStack result) {
         if (world.isClient) return result;
         // Until the first update, on the client the returned atlas ID is the same as the first Atlas on the crafting grid.
-        int atlasID = AntiqueAtlasMod.getGlobalAtlasData(world).getNextAtlasId();
+        int atlasID = AntiqueAtlasMod.getAtlasIdData(world).getNextAtlasId();
 
         AtlasData destBiomes = AntiqueAtlasMod.tileData.getData(atlasID, world);
         destBiomes.markDirty();

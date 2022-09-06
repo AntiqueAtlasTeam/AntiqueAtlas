@@ -1,7 +1,6 @@
 package hunternif.mc.impl.atlas.item;
 
 import hunternif.mc.impl.atlas.AntiqueAtlasMod;
-import hunternif.mc.impl.atlas.RegistrarAntiqueAtlas;
 import net.minecraft.inventory.CraftingInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.recipe.CraftingRecipe;
@@ -33,13 +32,13 @@ public class RecipeAtlasCloning implements CraftingRecipe {
             ItemStack stack = inv.getStack(j);
 
             if (!stack.isEmpty()) {
-                if (stack.getItem() == RegistrarAntiqueAtlas.ATLAS) {
+                if (stack.getItem() == AntiqueAtlasItems.ATLAS) {
                     if (!filledAtlas.isEmpty()) {
                         return false;
                     }
                     filledAtlas = stack;
                 } else {
-                    if (stack.getItem() != RegistrarAntiqueAtlas.EMPTY_ATLAS) {
+                    if (stack.getItem() != AntiqueAtlasItems.EMPTY_ATLAS) {
                         return false;
                     }
                     i++;
@@ -59,13 +58,13 @@ public class RecipeAtlasCloning implements CraftingRecipe {
             ItemStack stack = inv.getStack(j);
 
             if (!stack.isEmpty()) {
-                if (stack.getItem() == RegistrarAntiqueAtlas.ATLAS) {
+                if (stack.getItem() == AntiqueAtlasItems.ATLAS) {
                     if (!filledAtlas.isEmpty()) {
                         return ItemStack.EMPTY;
                     }
                     filledAtlas = stack;
                 } else {
-                    if (stack.getItem() != RegistrarAntiqueAtlas.EMPTY_ATLAS) {
+                    if (stack.getItem() != AntiqueAtlasItems.EMPTY_ATLAS) {
                         return ItemStack.EMPTY;
                     }
                     i++;
@@ -74,7 +73,7 @@ public class RecipeAtlasCloning implements CraftingRecipe {
         }
 
         if (!filledAtlas.isEmpty() && i >= 1) {
-            ItemStack newAtlas = new ItemStack(RegistrarAntiqueAtlas.ATLAS, i + 1);
+            ItemStack newAtlas = new ItemStack(AntiqueAtlasItems.ATLAS, i + 1);
             newAtlas.getOrCreateNbt().putInt("atlasID", AtlasItem.getAtlasID(filledAtlas));
 
             if (filledAtlas.hasCustomName()) {

@@ -16,7 +16,7 @@ public interface TileAPI {
      * the tile will be persisted with the world and loaded when the server
      * starts up.
      * <p>
-     * Note that global custom tiles, such as village territory, will override
+     * Note that global tiles, such as village territory, will override
      * tile IDs at shared chunks.
      * </p>
      * <p>

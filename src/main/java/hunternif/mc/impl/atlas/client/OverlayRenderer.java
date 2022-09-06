@@ -3,7 +3,7 @@ package hunternif.mc.impl.atlas.client;
 import com.mojang.blaze3d.systems.RenderSystem;
 import hunternif.mc.api.client.AtlasClientAPI;
 import hunternif.mc.impl.atlas.AntiqueAtlasMod;
-import hunternif.mc.impl.atlas.RegistrarAntiqueAtlas;
+import hunternif.mc.impl.atlas.item.AntiqueAtlasItems;
 import hunternif.mc.impl.atlas.client.gui.GuiAtlas;
 import hunternif.mc.impl.atlas.core.WorldData;
 import hunternif.mc.impl.atlas.item.AtlasItem;
@@ -19,7 +19,6 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.client.util.math.Vector3d;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.Quaternion;
@@ -54,7 +53,7 @@ public class OverlayRenderer extends DrawableHelper {
         this.player = MinecraftClient.getInstance().player;
         this.world = MinecraftClient.getInstance().world;
 
-        if (!atlas.isEmpty() && atlas.getItem() == RegistrarAntiqueAtlas.ATLAS) {
+        if (!atlas.isEmpty() && atlas.getItem() == AntiqueAtlasItems.ATLAS) {
             int atlasID = AtlasItem.getAtlasID(atlas);
             drawMinimap(matrices, atlasID, vertexConsumer, light);
         }

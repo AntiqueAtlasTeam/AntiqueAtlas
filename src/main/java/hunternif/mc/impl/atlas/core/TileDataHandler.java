@@ -44,7 +44,7 @@ public class TileDataHandler {
             return atlasDataClientCache.computeIfAbsent(key, s -> new AtlasData());
         } else {
             PersistentStateManager manager = ((ServerWorld) world).getPersistentStateManager();
-            return manager.getOrCreate(AtlasData::readNbt, AtlasData::new, key);
+            return manager.getOrCreate(AtlasData::fromNbt, AtlasData::new, key);
         }
     }
 

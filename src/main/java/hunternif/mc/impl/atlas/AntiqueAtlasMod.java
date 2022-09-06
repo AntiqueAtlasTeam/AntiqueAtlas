@@ -2,12 +2,13 @@ package hunternif.mc.impl.atlas;
 
 import hunternif.mc.impl.atlas.core.TileDataHandler;
 import hunternif.mc.impl.atlas.core.scaning.TileDetectorBase;
-import hunternif.mc.impl.atlas.core.GlobalAtlasData;
+import hunternif.mc.impl.atlas.core.AtlasIdData;
 import hunternif.mc.impl.atlas.core.PlayerEventHandler;
 import hunternif.mc.impl.atlas.core.scaning.WorldScanner;
 import hunternif.mc.impl.atlas.event.RecipeCraftedCallback;
 import hunternif.mc.impl.atlas.event.RecipeCraftedHandler;
 import hunternif.mc.impl.atlas.core.GlobalTileDataHandler;
+import hunternif.mc.impl.atlas.item.AntiqueAtlasItems;
 import hunternif.mc.impl.atlas.marker.GlobalMarkersDataHandler;
 import hunternif.mc.impl.atlas.marker.MarkersDataHandler;
 import hunternif.mc.impl.atlas.mixinhooks.NewPlayerConnectionCallback;
@@ -43,13 +44,13 @@ public class AntiqueAtlasMod implements ModInitializer {
 		return path[0].contains(":") ? new Identifier(String.join(".", path)) : new Identifier(ID, String.join(".", path));
 	}
 
-	public static GlobalAtlasData getGlobalAtlasData(World world) {
+	public static AtlasIdData getAtlasIdData(World world) {
 		if (world.isClient()) {
 			LOG.warn("Tried to access server only data from client.");
 			return null;
 		}
 
-		return ((ServerWorld) world).getPersistentStateManager().getOrCreate(GlobalAtlasData::readNbt, GlobalAtlasData::new, "antiqueatlas:global_atlas_data");
+		return ((ServerWorld) world).getPersistentStateManager().getOrCreate(AtlasIdData::fromNbt, AtlasIdData::new, "antiqueatlas:global_atlas_data");
 	}
 
 	@Override
@@ -59,7 +60,7 @@ public class AntiqueAtlasMod implements ModInitializer {
 		AutoConfig.register(AntiqueAtlasConfig.class, JanksonConfigSerializer::new);
 		CONFIG = AutoConfig.getConfigHolder(AntiqueAtlasConfig.class).getConfig();
 
-		RegistrarAntiqueAtlas.register();
+		AntiqueAtlasItems.register();
 
 		AntiqueAtlasNetworking.registerC2SListeners();
 

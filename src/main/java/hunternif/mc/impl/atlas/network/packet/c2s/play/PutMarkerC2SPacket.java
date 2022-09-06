@@ -17,10 +17,10 @@ import net.minecraft.util.Identifier;
  * @author Hunternif
  * @author Haven King
  */
-public class AddMarkerC2SPacket extends C2SPacket {
-	public static final Identifier ID = AntiqueAtlasMod.id("packet", "c2s", "marker", "add");
+public class PutMarkerC2SPacket extends C2SPacket {
+	public static final Identifier ID = AntiqueAtlasMod.id("packet", "c2s", "marker", "put");
 
-	public AddMarkerC2SPacket(int atlasID, Identifier markerType, int x, int z, boolean visibleBeforeDiscovery, Text label) {
+	public PutMarkerC2SPacket(int atlasID, Identifier markerType, int x, int z, boolean visibleBeforeDiscovery, Text label) {
 		this.writeVarInt(atlasID);
 		this.writeIdentifier(markerType);
 		this.writeVarInt(x);

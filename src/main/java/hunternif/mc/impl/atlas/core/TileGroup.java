@@ -41,6 +41,10 @@ public class TileGroup implements ITileStorage {
 
     }
 
+    public static TileGroup fromNBT(NbtCompound compound) {
+        return new TileGroup().readFromNBT(compound);
+    }
+
     public TileGroup readFromNBT(NbtCompound compound) {
         this.scope.minX = compound.getIntArray(TAG_POSITION)[0];
         this.scope.minY = compound.getIntArray(TAG_POSITION)[1];

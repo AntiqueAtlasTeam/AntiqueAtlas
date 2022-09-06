@@ -21,10 +21,10 @@ import java.util.Map;
  * @author Hunternif
  * @author Haven King
  */
-public class CustomTileInfoS2CPacket extends S2CPacket {
-	public static final Identifier ID = AntiqueAtlasMod.id("packet", "s2c", "custom_tile", "info");
+public class PutGlobalTileS2CPacket extends S2CPacket {
+	public static final Identifier ID = AntiqueAtlasMod.id("packet", "s2c", "global_tile", "put");
 
-	public CustomTileInfoS2CPacket(RegistryKey<World> world, List<Map.Entry<ChunkPos, Identifier>> tiles) {
+	public PutGlobalTileS2CPacket(RegistryKey<World> world, List<Map.Entry<ChunkPos, Identifier>> tiles) {
 		this.writeIdentifier(world.getValue());
 		this.writeVarInt(tiles.size());
 
@@ -35,7 +35,7 @@ public class CustomTileInfoS2CPacket extends S2CPacket {
 		}
 	}
 
-	public CustomTileInfoS2CPacket(RegistryKey<World> world, int chunkX, int chunkZ, Identifier tileId) {
+	public PutGlobalTileS2CPacket(RegistryKey<World> world, int chunkX, int chunkZ, Identifier tileId) {
 		this.writeIdentifier(world.getValue());
 		this.writeVarInt(1);
 		this.writeVarInt(chunkX);

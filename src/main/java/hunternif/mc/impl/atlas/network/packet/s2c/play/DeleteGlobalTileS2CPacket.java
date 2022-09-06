@@ -17,10 +17,10 @@ import net.minecraft.world.World;
  * @author Hunternif
  * @author Haven King
  */
-public class DeleteCustomGlobalTileS2CPacket extends S2CPacket {
-	public static final Identifier ID = AntiqueAtlasMod.id("packet", "c2s", "tile", "delete");
+public class DeleteGlobalTileS2CPacket extends S2CPacket {
+	public static final Identifier ID = AntiqueAtlasMod.id("packet", "c2s", "global_tile", "delete");
 
-	public DeleteCustomGlobalTileS2CPacket(RegistryKey<World> world, int chunkX, int chunkZ) {
+	public DeleteGlobalTileS2CPacket(RegistryKey<World> world, int chunkX, int chunkZ) {
 		this.writeIdentifier(world.getValue());
 		this.writeVarInt(chunkX);
 		this.writeVarInt(chunkZ);

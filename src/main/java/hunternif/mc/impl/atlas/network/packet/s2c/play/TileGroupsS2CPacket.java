@@ -54,12 +54,13 @@ public class TileGroupsS2CPacket extends S2CPacket {
 			NbtCompound tag = buf.readNbt();
 
 			if (tag != null) {
-				tileGroups.add(new TileGroup().readFromNBT(tag));
+				tileGroups.add(TileGroup.fromNBT(tag));
 			}
 		}
 
 		client.execute(() -> {
-			AtlasData atlasData = AntiqueAtlasMod.tileData.getData(atlasID, client.player.world);
+			assert client.player != null;
+			AtlasData atlasData = AntiqueAtlasMod.tileData.getData(atlasID, client.player.getEntityWorld());
 			WorldData dimData = atlasData.getWorldData(world);
 			for (TileGroup t : tileGroups) {
 				dimData.putTileGroup(t);

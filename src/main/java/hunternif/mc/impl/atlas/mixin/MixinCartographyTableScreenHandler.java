@@ -12,6 +12,7 @@ import net.minecraft.screen.slot.Slot;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -23,13 +24,15 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(CartographyTableScreenHandler.class)
 public abstract class MixinCartographyTableScreenHandler extends ScreenHandler {
 
+    @Final
     @Shadow
-    CraftingResultInventory resultInventory;
+    private CraftingResultInventory resultInventory;
 
     protected MixinCartographyTableScreenHandler(@Nullable ScreenHandlerType<?> type, int syncId) {
         super(type, syncId);
     }
 
+    // inject into lambda inside CartographyTableScreenHandler::updateResult
     @Inject(method = "method_17382", at = @At("HEAD"), cancellable = true)
     void antiqueatlas_call(ItemStack map, ItemStack atlas, ItemStack result, World world, BlockPos pos, CallbackInfo info) {
         if (atlas.getItem() == AtlasAPI.getAtlasItem() && map.getItem() == Items.FILLED_MAP) {
@@ -47,7 +50,7 @@ public abstract class MixinCartographyTableScreenHandler extends ScreenHandler {
 
         Slot slot = this.slots.get(index);
 
-        if (slot != null && slot.hasStack()) {
+        if (slot.hasStack()) {
             ItemStack stack = slot.getStack();
 
             if (stack.getItem() != AtlasAPI.getAtlasItem()) return;

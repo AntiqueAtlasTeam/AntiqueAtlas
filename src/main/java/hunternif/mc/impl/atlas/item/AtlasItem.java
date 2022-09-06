@@ -32,7 +32,7 @@ public class AtlasItem extends Item {
     public AtlasItem(Item.Settings settings) {
         super(settings);
     }
-
+    
     public static int getAtlasID(ItemStack stack) {
         return stack.getOrCreateNbt().getInt("atlasID");
     }
@@ -81,8 +81,8 @@ public class AtlasItem extends Item {
 
         // On the first run send the map from the server to the client:
         PlayerEntity player = (PlayerEntity) entity;
-        if (!world.isClient && !data.isSyncedOnPlayer(player) && !data.isEmpty()) {
-            data.syncOnPlayer(atlasId, player);
+        if (!world.isClient && !data.isSyncedToPlayer(player) && !data.isEmpty()) {
+            data.syncToPlayer(atlasId, player);
         }
 
         // Same thing with the local markers:
@@ -96,7 +96,7 @@ public class AtlasItem extends Item {
             Collection<TileInfo> newTiles = AntiqueAtlasMod.worldScanner.updateAtlasAroundPlayer(data, player);
 
             if (!newTiles.isEmpty()) {
-                new DimensionUpdateS2CPacket(atlasId, player.getEntityWorld().getRegistryKey(), newTiles).send((ServerWorld) world);
+                new DimensionUpdateS2CPacket(atlasId, player.getEntityWorld().getRegistryKey(), newTiles).send(((ServerWorld)world).getServer());
             }
         }
     }

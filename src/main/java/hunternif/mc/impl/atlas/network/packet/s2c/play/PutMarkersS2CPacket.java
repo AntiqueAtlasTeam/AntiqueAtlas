@@ -29,12 +29,12 @@ import java.util.List;
  * @author Hunternif
  * @author Haven King
  */
-public class MarkersS2CPacket extends S2CPacket {
-	public static final Identifier ID = AntiqueAtlasMod.id("packet", "s2c", "marker", "info");
+public class PutMarkersS2CPacket extends S2CPacket {
+	public static final Identifier ID = AntiqueAtlasMod.id("packet", "s2c", "marker", "put");
 
 	private static final int GLOBAL = -1;
 
-	public MarkersS2CPacket(int atlasID, RegistryKey<World> world, Collection<Marker> markers) {
+	public PutMarkersS2CPacket(int atlasID, RegistryKey<World> world, Collection<Marker> markers) {
 		ListMultimap<Identifier, Marker> markersByType = ArrayListMultimap.create();
 		for (Marker marker : markers) {
 			markersByType.put(marker.getType(), marker);

@@ -5,8 +5,8 @@ import hunternif.mc.api.TileAPI;
 import hunternif.mc.impl.atlas.core.AtlasData;
 import hunternif.mc.impl.atlas.core.TileDataStorage;
 import hunternif.mc.impl.atlas.network.packet.c2s.play.PutTileC2SPacket;
-import hunternif.mc.impl.atlas.network.packet.s2c.play.CustomTileInfoS2CPacket;
-import hunternif.mc.impl.atlas.network.packet.s2c.play.DeleteCustomGlobalTileS2CPacket;
+import hunternif.mc.impl.atlas.network.packet.s2c.play.PutGlobalTileS2CPacket;
+import hunternif.mc.impl.atlas.network.packet.s2c.play.DeleteGlobalTileS2CPacket;
 import hunternif.mc.impl.atlas.network.packet.s2c.play.PutTileS2CPacket;
 import hunternif.mc.impl.atlas.util.Log;
 import net.minecraft.entity.player.PlayerEntity;
@@ -62,7 +62,7 @@ public class TileApiImpl implements TileAPI {
         data.setTile(chunkX, chunkZ, tileId);
 
         // Send tile packet:
-        new CustomTileInfoS2CPacket(world.getRegistryKey(), chunkX, chunkZ, tileId).send((ServerWorld) world);
+        new PutGlobalTileS2CPacket(world.getRegistryKey(), chunkX, chunkZ, tileId).send((ServerWorld) world);
     }
 
     @Override
@@ -80,7 +80,7 @@ public class TileApiImpl implements TileAPI {
         TileDataStorage data = AntiqueAtlasMod.globalTileData.getData(world);
         if (data.getTile(chunkX, chunkZ) != null) {
             data.removeTile(chunkX, chunkZ);
-            new DeleteCustomGlobalTileS2CPacket(world.getRegistryKey(), chunkX, chunkZ).send((ServerWorld) world);
+            new DeleteGlobalTileS2CPacket(world.getRegistryKey(), chunkX, chunkZ).send((ServerWorld) world);
         }
     }
 }

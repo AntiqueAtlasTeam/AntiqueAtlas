@@ -1,6 +1,6 @@
 package hunternif.mc.impl.atlas.mixin;
 
-import hunternif.mc.impl.atlas.RegistrarAntiqueAtlas;
+import hunternif.mc.impl.atlas.item.AntiqueAtlasItems;
 import hunternif.mc.impl.atlas.client.OverlayRenderer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -48,7 +48,7 @@ public abstract class HeldItemRendererMixin {
 
     @Inject(method = "renderFirstPersonItem", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;isEmpty()Z", ordinal = 0), locals = LocalCapture.CAPTURE_FAILHARD, cancellable = true)
     private void renderAtlas(AbstractClientPlayerEntity player, float tickDelta, float pitch, Hand hand, float swingProgress, ItemStack item, float equipProgress, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, CallbackInfo ci, boolean bl, Arm arm) {
-        if (item.getItem() == RegistrarAntiqueAtlas.ATLAS) {
+        if (item.getItem() == AntiqueAtlasItems.ATLAS) {
             if (bl && this.offHand.isEmpty()) {
                 renderAtlasInBothHands(matrices, vertexConsumers, light, pitch, equipProgress, swingProgress);
             } else {

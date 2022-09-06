@@ -18,6 +18,9 @@ import java.util.*;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * This class stores all the data
+ */
 public class AtlasData extends PersistentState {
     public static final int VERSION = 4;
     public static final String TAG_VERSION = "aaVersion";
@@ -46,7 +49,7 @@ public class AtlasData extends PersistentState {
     public AtlasData() {
     }
 
-    public static AtlasData readNbt(NbtCompound compound) {
+    public static AtlasData fromNbt(NbtCompound compound) {
         AtlasData data = new AtlasData();
         int version = compound.getInt(TAG_VERSION);
         if (version < VERSION) {
@@ -127,7 +130,7 @@ public class AtlasData extends PersistentState {
         return worldMap.computeIfAbsent(world, k -> new WorldData(this, world));
     }
 
-    public Map<ChunkPos, Identifier> getSeenChunksInDimension(RegistryKey<World> world) {
+    public Map<ChunkPos, Identifier> getSeenChunksInWorld(RegistryKey<World> world) {
         return getWorldData(world).getSeenChunks();
     }
 
@@ -141,7 +144,7 @@ public class AtlasData extends PersistentState {
     /**
      * Whether this AtlasData has already been sent to the specified player.
      */
-    public boolean isSyncedOnPlayer(PlayerEntity player) {
+    public boolean isSyncedToPlayer(PlayerEntity player) {
         return playersSentTo.contains(player);
     }
 
@@ -149,7 +152,7 @@ public class AtlasData extends PersistentState {
      * Send all data to the player in several zipped packets. Called once
      * during the first run of ItemAtlas.onUpdate().
      */
-    public void syncOnPlayer(int atlasID, PlayerEntity player) {
+    public void syncToPlayer(int atlasID, PlayerEntity player) {
         NbtCompound data = new NbtCompound();
 
         // Before syncing make sure the changes are written to the nbt.
@@ -158,7 +161,7 @@ public class AtlasData extends PersistentState {
         new MapDataS2CPacket(atlasID, data).send((ServerPlayerEntity) player);
 
         for (RegistryKey<World> world : worldMap.keySet()) {
-            worldMap.get(world).syncOnPlayer(atlasID, player);
+            worldMap.get(world).syncToPlayer(atlasID, player);
         }
 
         Log.info("Sent Atlas #%d data to player %s", atlasID, player.getCommandSource().getName());
@@ -171,8 +174,7 @@ public class AtlasData extends PersistentState {
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof AtlasData)) return false;
-        AtlasData other = (AtlasData) obj;
+        if (!(obj instanceof AtlasData other)) return false;
         // TODO: This doesn't handle disjoint DimensionType keysets of equal size
         if (other.worldMap.size() != worldMap.size()) return false;
         for (RegistryKey<World> key : worldMap.keySet()) {

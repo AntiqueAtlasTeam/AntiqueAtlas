@@ -16,7 +16,7 @@ import hunternif.mc.impl.atlas.item.AtlasItem;
 import hunternif.mc.impl.atlas.marker.DimensionMarkersData;
 import hunternif.mc.impl.atlas.marker.Marker;
 import hunternif.mc.impl.atlas.marker.MarkersData;
-import hunternif.mc.impl.atlas.network.packet.c2s.play.BrowsingPositionC2SPacket;
+import hunternif.mc.impl.atlas.network.packet.c2s.play.PutBrowsingPositionC2SPacket;
 import hunternif.mc.impl.atlas.registry.MarkerRenderInfo;
 import hunternif.mc.impl.atlas.registry.MarkerType;
 import hunternif.mc.impl.atlas.util.*;
@@ -1171,7 +1171,7 @@ public class GuiAtlas extends GuiComponent {
         // Keyboard.enableRepeatEvents(false);
         biomeData.setBrowsingPosition(mapOffsetX, mapOffsetY, mapScale);
 
-        new BrowsingPositionC2SPacket(getAtlasID(), player.getEntityWorld().getRegistryKey(), mapOffsetX, mapOffsetY, mapScale).send();
+        new PutBrowsingPositionC2SPacket(getAtlasID(), player.getEntityWorld().getRegistryKey(), mapOffsetX, mapOffsetY, mapScale).send();
     }
 
     /**

@@ -13,16 +13,16 @@ import net.minecraft.util.Identifier;
 
 /**
  * Deletes a marker. A client sends this packet to the server as a request,
- * and the server sends an  to all players as a response, including the
+ * and the server sends to all players as a response, including the
  * original sender.
  * @author Hunternif
  */
-public class DeleteMarkerRequestC2SPacket extends C2SPacket {
+public class DeleteMarkerC2SPacket extends C2SPacket {
 	public static final Identifier ID = AntiqueAtlasMod.id("packet", "c2s", "marker", "delete");
 
 	private static final int GLOBAL = -1;
 
-	public DeleteMarkerRequestC2SPacket(int atlasID, int markerID) {
+	public DeleteMarkerC2SPacket(int atlasID, int markerID) {
 		this.writeVarInt(atlasID);
 		this.writeVarInt(markerID);
 	}

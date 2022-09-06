@@ -3,8 +3,8 @@ package hunternif.mc.impl.atlas.api.client.impl;
 import hunternif.mc.impl.atlas.AntiqueAtlasMod;
 import hunternif.mc.api.MarkerAPI;
 import hunternif.mc.impl.atlas.marker.Marker;
-import hunternif.mc.impl.atlas.network.packet.c2s.play.AddMarkerC2SPacket;
-import hunternif.mc.impl.atlas.network.packet.c2s.play.DeleteMarkerRequestC2SPacket;
+import hunternif.mc.impl.atlas.network.packet.c2s.play.PutMarkerC2SPacket;
+import hunternif.mc.impl.atlas.network.packet.c2s.play.DeleteMarkerC2SPacket;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.text.Text;
@@ -19,7 +19,7 @@ public class MarkerApiImplClient implements MarkerAPI {
     @Nullable
     @Override
     public Marker putMarker(@NotNull World world, boolean visibleAhead, int atlasID, Identifier marker, Text label, int x, int z) {
-        new AddMarkerC2SPacket(atlasID, marker, x, z, visibleAhead, label).send();
+        new PutMarkerC2SPacket(atlasID, marker, x, z, visibleAhead, label).send();
         return null;
     }
 
@@ -33,7 +33,7 @@ public class MarkerApiImplClient implements MarkerAPI {
 
     @Override
     public void deleteMarker(@NotNull World world, int atlasID, int markerID) {
-        new DeleteMarkerRequestC2SPacket(atlasID, markerID).send();
+        new DeleteMarkerC2SPacket(atlasID, markerID).send();
     }
 
     @Override

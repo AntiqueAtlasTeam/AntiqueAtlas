@@ -14,7 +14,7 @@ public class PlayerEventHandler {
         AtlasData data = AntiqueAtlasMod.tileData.getData(atlasID, world);
         // On the player join send the map from the server to the client:
         if (!data.isEmpty()) {
-            data.syncOnPlayer(atlasID, player);
+            data.syncToPlayer(atlasID, player);
         }
 
         // Same thing with the local markers:

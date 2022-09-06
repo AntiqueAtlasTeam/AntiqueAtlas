@@ -1,7 +1,6 @@
 package hunternif.mc.impl.atlas.item;
 
 import hunternif.mc.impl.atlas.AntiqueAtlasMod;
-import hunternif.mc.impl.atlas.RegistrarAntiqueAtlas;
 import hunternif.mc.impl.atlas.core.AtlasData;
 import hunternif.mc.impl.atlas.marker.MarkersData;
 import net.minecraft.entity.player.PlayerEntity;
@@ -14,8 +13,8 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.world.World;
 
-public class ItemEmptyAtlas extends Item {
-    public ItemEmptyAtlas(Item.Settings settings) {
+public class EmptyAtlasItem extends Item {
+    public EmptyAtlasItem(Item.Settings settings) {
         super(settings);
     }
 
@@ -23,15 +22,13 @@ public class ItemEmptyAtlas extends Item {
     public TypedActionResult<ItemStack> use(World world, PlayerEntity player,
                                             Hand hand) {
         ItemStack stack = player.getStackInHand(hand);
-        if (world.isClient) {
+        if (world.isClient()) {
             world.playSound(player, player.getBlockPos(), SoundEvents.BLOCK_ENCHANTMENT_TABLE_USE, SoundCategory.PLAYERS, 1F, 1F);
             return new TypedActionResult<>(ActionResult.SUCCESS, stack);
         }
 
-        int atlasID = AntiqueAtlasMod.getGlobalAtlasData(world).getNextAtlasId();
-        ItemStack atlasStack = new ItemStack(RegistrarAntiqueAtlas.ATLAS);
-
-        atlasStack.getOrCreateNbt().putInt("atlasID", atlasID);
+        int atlasID = AntiqueAtlasMod.getAtlasIdData(world).getNextAtlasId();
+        ItemStack atlasStack = AntiqueAtlasItems.getAtlasFromId(atlasID);
 
         AtlasData atlasData = AntiqueAtlasMod.tileData.getData(atlasID, world);
         atlasData.getWorldData(player.getEntityWorld().getRegistryKey()).setBrowsingPositionTo(player);
