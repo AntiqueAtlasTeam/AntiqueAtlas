@@ -21,6 +21,9 @@ import org.apache.commons.io.IOUtils;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.OptionalInt;
+
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.resource.Resource;
 
@@ -58,7 +61,7 @@ public class MarkerType {
 		type.initMips();
 		if (REGISTRY.containsId(location)) {
 			int id = REGISTRY.getRawId(REGISTRY.get(location));
-			REGISTRY.set(id, RegistryKey.of(KEY, location), type, Lifecycle.stable());
+			REGISTRY.replace(OptionalInt.of(id), RegistryKey.of(KEY, location), type, Lifecycle.stable());
 		} else {
 			REGISTRY.add(RegistryKey.of(KEY, location), type, Lifecycle.stable());
 		}

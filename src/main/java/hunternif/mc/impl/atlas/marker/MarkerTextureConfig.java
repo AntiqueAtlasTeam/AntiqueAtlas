@@ -71,8 +71,8 @@ public class MarkerTextureConfig implements SimpleResourceReloadListener<Map<Ide
     @Override
     public CompletableFuture<Void> apply(Map<Identifier, MarkerType> data, ResourceManager manager, Profiler profiler, Executor executor) {
         return CompletableFuture.runAsync(() -> {
-            for (Identifier markerId : data.keySet()) {
-                MarkerType.register(markerId, data.get(markerId));
+            for (Map.Entry<Identifier, MarkerType> entry : data.entrySet()) {
+                MarkerType.register(entry.getKey(), entry.getValue());
             }
         });
     }
