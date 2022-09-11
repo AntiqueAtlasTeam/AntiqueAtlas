@@ -8,6 +8,7 @@ import hunternif.mc.impl.atlas.network.packet.s2c.S2CPacket;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.util.Identifier;
@@ -38,7 +39,9 @@ public class MapDataS2CPacket extends S2CPacket {
 		if (data == null) return;
 
 		context.queue(() -> {
-			AtlasData atlasData = AntiqueAtlasMod.tileData.getData(atlasID, context.getPlayer().getEntityWorld());
+			PlayerEntity player = MinecraftClient.getInstance().player;
+			assert player != null;
+			AtlasData atlasData = AntiqueAtlasMod.tileData.getData(atlasID, player.getEntityWorld());
 			atlasData.updateFromNbt(data);
 
 			if (AntiqueAtlasMod.CONFIG.doSaveBrowsingPos && MinecraftClient.getInstance().currentScreen instanceof GuiAtlas) {

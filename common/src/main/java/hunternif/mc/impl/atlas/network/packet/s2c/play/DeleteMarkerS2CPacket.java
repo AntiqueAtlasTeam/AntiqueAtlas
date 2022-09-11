@@ -8,8 +8,12 @@ import hunternif.mc.impl.atlas.network.packet.c2s.play.DeleteMarkerC2SPacket;
 import hunternif.mc.impl.atlas.network.packet.s2c.S2CPacket;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.util.Identifier;
+
+import javax.swing.text.html.parser.Entity;
 
 /**
  * Deletes a marker. A client sends a {@link DeleteMarkerC2SPacket}
@@ -39,9 +43,11 @@ public class DeleteMarkerS2CPacket extends S2CPacket {
 		int markerID = buf.readVarInt();
 
 		context.queue(() -> {
+			PlayerEntity player = MinecraftClient.getInstance().player;
+			assert player != null;
 			MarkersData data = atlasID == GLOBAL ?
 					AntiqueAtlasMod.globalMarkersData.getData() :
-					AntiqueAtlasMod.markersData.getMarkersData(atlasID, context.getPlayer().getEntityWorld());
+					AntiqueAtlasMod.markersData.getMarkersData(atlasID, player.getEntityWorld());
 			data.removeMarker(markerID);
 
 			AntiqueAtlasModClient.getAtlasGUI().updateBookmarkerList();

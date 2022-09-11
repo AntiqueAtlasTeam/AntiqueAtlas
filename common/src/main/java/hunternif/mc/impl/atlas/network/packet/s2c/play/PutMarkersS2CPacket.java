@@ -11,6 +11,8 @@ import hunternif.mc.impl.atlas.network.packet.s2c.S2CPacket;
 import hunternif.mc.impl.atlas.registry.MarkerType;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
@@ -73,9 +75,12 @@ public class PutMarkersS2CPacket extends S2CPacket {
 		}
 
 		context.queue(() -> {
+			PlayerEntity player = MinecraftClient.getInstance().player;
+			assert player != null;
+
 			MarkersData markersData = atlasID == GLOBAL
 							? AntiqueAtlasMod.globalMarkersData.getData()
-							: AntiqueAtlasMod.markersData.getMarkersData(atlasID, context.getPlayer().getEntityWorld());
+							: AntiqueAtlasMod.markersData.getMarkersData(atlasID, player.getEntityWorld());
 
 			for (Identifier type : markersByType.keys()) {
 				MarkerType markerType = MarkerType.REGISTRY.get(type);

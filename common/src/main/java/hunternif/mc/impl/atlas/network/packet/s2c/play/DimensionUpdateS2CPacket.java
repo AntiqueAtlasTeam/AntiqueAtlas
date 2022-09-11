@@ -5,6 +5,8 @@ import hunternif.mc.impl.atlas.AntiqueAtlasMod;
 import hunternif.mc.impl.atlas.core.AtlasData;
 import hunternif.mc.impl.atlas.core.TileInfo;
 import hunternif.mc.impl.atlas.network.packet.s2c.S2CPacket;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
@@ -55,8 +57,9 @@ public class DimensionUpdateS2CPacket extends S2CPacket {
 		}
 
 		context.queue(() -> {
-			assert context.getPlayer() != null;
-			AtlasData data = AntiqueAtlasMod.tileData.getData(atlasID, context.getPlayer().getEntityWorld());
+			PlayerEntity player = MinecraftClient.getInstance().player;
+			assert player != null;
+			AtlasData data = AntiqueAtlasMod.tileData.getData(atlasID, player.getEntityWorld());
 
 			for (TileInfo info : tiles) {
 				data.getWorldData(world).setTile(info.x, info.z, info.id);
