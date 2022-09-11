@@ -222,6 +222,13 @@ public class GuiAtlas extends GuiComponent {
      * the map drawing area, in pixels.
      */
     private int mapOffsetX, mapOffsetY;
+
+    /**
+     * When dragging, this saves the partly updates of the mapOffset.
+     * Turns out, mouse dragging events are too precise.
+     */
+    private float mapOffsetDeltaX, mapOffsetDeltaY;
+
     private Integer targetOffsetX, targetOffsetY;
     /**
      * If true, the player's icon will be in the center of the GUI, and the
@@ -719,8 +726,31 @@ public class GuiAtlas extends GuiComponent {
         if (isDragging) {
             followPlayer = false;
             btnPosition.setEnabled(true);
-            mapOffsetX += (int) deltaX;
-            mapOffsetY += (int) deltaY;
+
+            mapOffsetDeltaX += deltaX;
+            mapOffsetDeltaY += deltaY;
+
+            if (mapOffsetDeltaX > 1) {
+                mapOffsetX++;
+                mapOffsetDeltaX -= 1;
+            }
+
+            if (mapOffsetDeltaX < -1) {
+                mapOffsetX--;
+                mapOffsetDeltaX += 1;
+            }
+
+
+            if (mapOffsetDeltaY > 1) {
+                mapOffsetY++;
+                mapOffsetDeltaY -= 1;
+            }
+
+            if (mapOffsetDeltaY < -1) {
+                mapOffsetY--;
+                mapOffsetDeltaY += 1;
+            }
+
             result = true;
         }
         return super.mouseDragged(mouseX, mouseY, lastMouseButton, deltaX, deltaY) || result;
