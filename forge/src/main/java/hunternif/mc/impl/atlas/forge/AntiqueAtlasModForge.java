@@ -1,5 +1,7 @@
-package hunternif.mc.impl.atlas;
+package hunternif.mc.impl.atlas.forge;
 
+import hunternif.mc.impl.atlas.AntiqueAtlasMod;
+import hunternif.mc.impl.atlas.AntiqueAtlasModClient;
 import me.shedaniel.architectury.platform.forge.EventBuses;
 import net.minecraftforge.client.event.ParticleFactoryRegisterEvent;
 import net.minecraftforge.common.MinecraftForge;
@@ -24,7 +26,7 @@ public class AntiqueAtlasModForge
     /**
      * Despite what the events name might suggest, this event can be used for more than registering
      * particle renders as it's called in the {@link net.minecraft.client.MinecraftClient} constructor.
-     * Thus here we use it to do all client stuff
+     * Thus, here we use it to do all client stuff
      *
      * @param event
      */
