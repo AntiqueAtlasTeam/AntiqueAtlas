@@ -21,6 +21,8 @@ jobs:
       - name: Build
         run: ./gradlew build
       - name: Upload artifacts
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
-          path: build/libs
+          path: |
+            fabric/build/libs/*
+            forge/build/libs/*
