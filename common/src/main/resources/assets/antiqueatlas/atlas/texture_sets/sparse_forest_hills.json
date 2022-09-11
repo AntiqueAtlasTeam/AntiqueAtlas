@@ -4,7 +4,9 @@
     "textures": {
       "antiqueatlas:forest_sparse_hills": 1,
       "antiqueatlas:forest_sparse_hills2": 1,
-      "antiqueatlas:forest_sparse_hills3": 1
+      "antiqueatlas:forest_sparse_hills3": 1,
+      "antiqueatlas:hills": 2,
+      "antiqueatlas:hills_bushes": 1
     }
   }
 }
