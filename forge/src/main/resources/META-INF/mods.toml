@@ -30,7 +30,7 @@ ordering="NONE"
 side="BOTH"
 
 [[dependencies.antiqueatlas]]
-modId="cloth-config"
+modId="cloth_config"
 mandatory=true
 versionRange="[6.2.62,)"
 ordering="NONE"
