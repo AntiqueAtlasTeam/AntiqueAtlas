@@ -33,7 +33,7 @@ public abstract class MixinCartographyTableScreenHandler extends ScreenHandler {
     }
 
     // inject into lambda inside CartographyTableScreenHandler::updateResult
-    @Inject(method = "method_17382", at = @At("HEAD"), cancellable = true)
+    @Inject(method = {"lambda$setupResultSlot$0", "method_17382", "m_39166_"}, at = @At("HEAD"), cancellable = true)
     void antiqueatlas_call(ItemStack map, ItemStack atlas, ItemStack result, World world, BlockPos pos, CallbackInfo info) {
         if (atlas.getItem() == AtlasAPI.getAtlasItem() && map.getItem() == Items.FILLED_MAP) {
             this.resultInventory.setStack(CartographyTableScreenHandler.RESULT_SLOT_INDEX, atlas.copy());
