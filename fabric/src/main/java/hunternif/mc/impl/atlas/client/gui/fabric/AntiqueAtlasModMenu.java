@@ -1,4 +1,4 @@
-package hunternif.mc.impl.atlas.client.gui;
+package hunternif.mc.impl.atlas.client.gui.fabric;
 
 import com.terraformersmc.modmenu.api.ConfigScreenFactory;
 import com.terraformersmc.modmenu.api.ModMenuApi;

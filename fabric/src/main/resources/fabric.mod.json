@@ -8,13 +8,13 @@
   "contributors": ["coolAlias", "Kenkron", "TheCodeWarrior",  "Localizations by crafteverywhere", "CapoFantasma97", "Mazdallier", "mankra", "Zerotiger"],
   "entrypoints": {
     "main": [
-      "hunternif.mc.impl.atlas.AntiqueAtlasModFabric"
+      "hunternif.mc.impl.atlas.fabric.AntiqueAtlasModFabric"
     ],
     "client": [
-      "hunternif.mc.impl.atlas.AntiqueAtlasClientModFabric"
+      "hunternif.mc.impl.atlas.fabric.AntiqueAtlasClientModFabric"
     ],
     "modmenu": [
-      "hunternif.mc.impl.atlas.client.gui.AntiqueAtlasModMenu"
+      "hunternif.mc.impl.atlas.client.gui.fabric.AntiqueAtlasModMenu"
     ]
   },
   "environment": "*",

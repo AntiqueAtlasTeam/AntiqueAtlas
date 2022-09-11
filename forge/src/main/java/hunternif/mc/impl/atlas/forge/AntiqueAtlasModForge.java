@@ -1,6 +1,8 @@
-package hunternif.mc.impl.atlas;
+package hunternif.mc.impl.atlas.forge;
 
 import dev.architectury.platform.forge.EventBuses;
+import hunternif.mc.impl.atlas.AntiqueAtlasMod;
+import hunternif.mc.impl.atlas.AntiqueAtlasModClient;
 import net.minecraftforge.client.event.ParticleFactoryRegisterEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
