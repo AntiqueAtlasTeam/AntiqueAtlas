@@ -1,0 +1,28 @@
+{
+  "required": true,
+  "package": "hunternif.mc.impl.atlas.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "plugin": "hunternif.mc.impl.atlas.mixin.VolatileMixinPlugin",
+  "mixins": [
+    "MixinCraftingResultSlot",
+    "MixinEntity",
+    "MixinPlayerEntity",
+    "MixinPlayerEntityDeath",
+    "MixinPlayerManager",
+    "structure.StructureStartMixin",
+    "MixinCartographyTableScreenHandler",
+    "dev.MixinCartographyTableScreenHandlerSlot",
+    "prod.MixinCartographyTableScreenHandlerSlot",
+    "dev.MixinCartographyTableScreenHandlerResultSlot",
+    "prod.MixinCartographyTableScreenHandlerResultSlot"
+  ],
+  "client": [
+    "MixinClientPlayNetworkHandler",
+    "MixinInGameHud",
+    "MixinMinecraftClient",
+    "HeldItemRendererMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
