@@ -43,7 +43,7 @@ public class DeleteMarkerS2CPacket extends S2CPacket {
 		int markerID = buf.readVarInt();
 
 		context.queue(() -> {
-			PlayerEntity player = MinecraftClient.getInstance().player;
+			PlayerEntity player = context.getPlayer();
 			assert player != null;
 			MarkersData data = atlasID == GLOBAL ?
 					AntiqueAtlasMod.globalMarkersData.getData() :

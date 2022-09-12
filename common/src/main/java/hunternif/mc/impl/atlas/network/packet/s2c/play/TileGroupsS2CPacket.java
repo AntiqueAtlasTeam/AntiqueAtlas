@@ -57,8 +57,9 @@ public class TileGroupsS2CPacket extends S2CPacket {
 			}
 		}
 
+
 		context.queue(() -> {
-			PlayerEntity player = MinecraftClient.getInstance().player;
+			PlayerEntity player = context.getPlayer();
 			assert player != null;
 
 			AtlasData atlasData = AntiqueAtlasMod.tileData.getData(atlasID, player.getEntityWorld());

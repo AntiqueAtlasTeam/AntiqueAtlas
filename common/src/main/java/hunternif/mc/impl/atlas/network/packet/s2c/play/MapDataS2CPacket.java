@@ -39,7 +39,7 @@ public class MapDataS2CPacket extends S2CPacket {
 		if (data == null) return;
 
 		context.queue(() -> {
-			PlayerEntity player = MinecraftClient.getInstance().player;
+			PlayerEntity player = context.getPlayer();
 			assert player != null;
 			AtlasData atlasData = AntiqueAtlasMod.tileData.getData(atlasID, player.getEntityWorld());
 			atlasData.updateFromNbt(data);

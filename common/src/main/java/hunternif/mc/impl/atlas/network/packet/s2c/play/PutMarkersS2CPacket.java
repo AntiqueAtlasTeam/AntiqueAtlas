@@ -75,7 +75,7 @@ public class PutMarkersS2CPacket extends S2CPacket {
 		}
 
 		context.queue(() -> {
-			PlayerEntity player = MinecraftClient.getInstance().player;
+			PlayerEntity player = context.getPlayer();
 			assert player != null;
 
 			MarkersData markersData = atlasID == GLOBAL

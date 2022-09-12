@@ -41,7 +41,7 @@ public class PutTileS2CPacket extends S2CPacket {
 		Identifier tile = buf.readIdentifier();
 
 		context.queue(() -> {
-			PlayerEntity player = MinecraftClient.getInstance().player;
+			PlayerEntity player = context.getPlayer();
 			assert player != null;
 
 			AtlasData data = AntiqueAtlasMod.tileData.getData(atlasID, player.getEntityWorld());
