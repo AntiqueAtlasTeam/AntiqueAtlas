@@ -4,6 +4,7 @@ import hunternif.mc.impl.atlas.AntiqueAtlasMod;
 import hunternif.mc.impl.atlas.network.packet.s2c.play.TileGroupsS2CPacket;
 import hunternif.mc.impl.atlas.util.Log;
 import hunternif.mc.impl.atlas.util.Rect;
+import hunternif.mc.impl.atlas.util.Streams;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundTag;
@@ -210,25 +211,11 @@ public class WorldData implements ITileStorage {
 
     public void syncOnPlayer(int atlasID, PlayerEntity player) {
         Log.info("Sending dimension #%s", this.world.toString());
-        ArrayList<TileGroup> tileGroups;
-        tileGroups = new ArrayList<>(TileGroupsS2CPacket.TILE_GROUPS_PER_PACKET);
-        int count = 0;
-        int total = 0;
-        for (Entry<ChunkPos, TileGroup> t : this.tileGroups.entrySet()) {
-            tileGroups.add(t.getValue());
-            count++;
-            total++;
-            if (count >= TileGroupsS2CPacket.TILE_GROUPS_PER_PACKET) {
-                new TileGroupsS2CPacket(atlasID, this.world, tileGroups).send((ServerPlayerEntity) player);
-                tileGroups.clear();
-                count = 0;
-            }
-        }
-        if (count > 0) {
-            new TileGroupsS2CPacket(atlasID, this.world, tileGroups).send((ServerPlayerEntity) player);
-        }
+        Streams.chunked(this.tileGroups.values().stream(), TileGroupsS2CPacket.TILE_GROUPS_PER_PACKET).forEach(
+                chunk -> new TileGroupsS2CPacket(atlasID, this.world, chunk).send((ServerPlayerEntity) player)
+        );
 
-        Log.info("Sent dimension #%s (%d tiles)", this.world.toString(), total);
+        Log.info("Sent dimension #%s (%d tiles)", this.world.toString(), this.tileGroups.size());
     }
 
     @Override
