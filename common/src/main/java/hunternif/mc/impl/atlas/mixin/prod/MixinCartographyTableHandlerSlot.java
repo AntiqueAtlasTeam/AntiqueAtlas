@@ -16,7 +16,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(targets = "net.minecraft.screen.CartographyTableScreenHandler$4")
 class MixinCartographyTableScreenHandlerSlot {
 
-    @Inject(method = "method_7680", at = @At("RETURN"), cancellable = true)
+    @Inject(method = {"method_7680", "func_75214_a"}, at = @At("RETURN"), cancellable = true)
     void antiqueatlas_canInsert(ItemStack stack, CallbackInfoReturnable<Boolean> info) {
         info.setReturnValue(stack.getItem() == AtlasAPI.getAtlasItem() || info.getReturnValueZ());
     }
@@ -32,7 +32,7 @@ class MixinCartographyTableScreenHandlerResultSlot {
         antiqueatlas_handler = handler;
     }
 
-    @Inject(method = "method_7667", at = @At("HEAD"))
+    @Inject(method = {"method_7667", "func_190901_a"}, at = @At("HEAD"))
     void antiqueatlas_onTakeItem(PlayerEntity player, ItemStack atlas, CallbackInfoReturnable<ItemStack> info) {
         if (atlas.getItem() == AtlasAPI.getAtlasItem()) {
             ItemStack map = antiqueatlas_handler.slots.get(0).getStack();

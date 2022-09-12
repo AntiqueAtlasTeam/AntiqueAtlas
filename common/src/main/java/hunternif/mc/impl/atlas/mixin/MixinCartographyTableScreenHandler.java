@@ -28,7 +28,7 @@ public abstract class MixinCartographyTableScreenHandler extends ScreenHandler {
         super(type, syncId);
     }
 
-    @Inject(method = {"lambda$setupResultSlot$0", "method_17382", "m_39166_"}, at = @At("HEAD"), cancellable = true)
+    @Inject(method = {"lambda$setupResultSlot$0", "method_17382", "m_39166_", "func_216996_a"}, at = @At("HEAD"), cancellable = true)
     void antiqueatlas_call(ItemStack atlas, ItemStack map, ItemStack result, World world, BlockPos pos, CallbackInfo info) {
         if (atlas.getItem() == AtlasAPI.getAtlasItem() && map.getItem() == Items.FILLED_MAP) {
             resultSlot.setStack(2, atlas.copy());
