@@ -809,7 +809,6 @@ public class GuiAtlas extends GuiComponent {
     private void setMapPosition(int x, int z) {
         mapOffsetX = (int) (-x * mapScale);
         mapOffsetY = (int) (-z * mapScale);
-        followPlayer = false;
     }
 
     private void setTargetPosition(int x, int z) {
