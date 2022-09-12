@@ -4,17 +4,17 @@
   "name": "Antique Atlas",
   "description": "Antique Atlas is a book that acts like a map featuring infinite scrolling, zoom and custom labeled markers. The map is generated around the player by calculating the average biome in each 16x16 chunk.",
   "version": "${version}",
-  "authors": ["Hunternif"],
-  "contributors": ["coolAlias", "Kenkron", "TheCodeWarrior",  "Localizations by crafteverywhere", "CapoFantasma97", "Mazdallier", "mankra", "Zerotiger", "tyra314"],
+  "authors": ["Hunternif", "tyra314"],
+  "contributors": ["coolAlias", "Kenkron", "TheCodeWarrior",  "Localizations by crafteverywhere", "CapoFantasma97", "Mazdallier", "mankra", "Zerotiger"],
   "entrypoints": {
     "main": [
-      "hunternif.mc.impl.atlas.AntiqueAtlasModFabric"
+      "hunternif.mc.impl.atlas.fabric.AntiqueAtlasModFabric"
     ],
     "client": [
-      "hunternif.mc.impl.atlas.AntiqueAtlasClientModFabric"
+      "hunternif.mc.impl.atlas.fabric.AntiqueAtlasClientModFabric"
     ],
     "modmenu": [
-      "hunternif.mc.impl.atlas.client.gui.AntiqueAtlasModMenu"
+      "hunternif.mc.impl.atlas.client.gui.fabric.AntiqueAtlasModMenu"
     ]
   },
   "environment": "*",
@@ -32,6 +32,7 @@
   },
   "accessWidener": "antiqueatlas.accesswidener",
   "mixins": [
-    "antiqueatlas.mixins.json"
+    "antiqueatlas.mixins.json",
+    "antiqueatlas-common.mixins.json"
   ]
 }

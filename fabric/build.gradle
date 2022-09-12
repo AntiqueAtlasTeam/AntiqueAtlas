@@ -1,13 +1,5 @@
 plugins {
-	id "com.github.johnrengelman.shadow" version "5.0.0"
-}
-
-configurations {
-	shadowCommon
-}
-
-loom {
-	accessWidener = file("src/main/resources/antiqueatlas.accesswidener")
+	id "com.github.johnrengelman.shadow" version "7.1.2"
 }
 
 architectury {
@@ -15,9 +7,22 @@ architectury {
 	fabric()
 }
 
+loom {
+	accessWidenerPath = project(":common").loom.accessWidenerPath
+}
+
+configurations {
+	common
+	shadowCommon // Don't use shadow from the shadow plugin because we don't want IDEA to index this.
+	compileClasspath.extendsFrom common
+	runtimeClasspath.extendsFrom common
+	developmentFabric.extendsFrom common
+}
+
+
 dependencies {
 	modImplementation "net.fabricmc:fabric-loader:${rootProject.fabric_loader_version}"
-	modImplementation "net.fabricmc.fabric-api:fabric-api:${rootProject.fabric_api_version}"
+	modApi "net.fabricmc.fabric-api:fabric-api:${rootProject.fabric_api_version}"
 	modApi "me.shedaniel:architectury-fabric:${rootProject.architectury_version}"
 
 	modImplementation "io.github.prospector:modmenu:${rootProject.mod_menu_version}"
@@ -25,15 +30,8 @@ dependencies {
 		exclude(group: "net.fabricmc.fabric-api")
 	}
 
-	implementation(project(path: ":common")) {
-		transitive = false
-	}
-	developmentFabric(project(path: ":common")) {
-		transitive = false
-	}
-	shadowCommon(project(path: ":common", configuration: "transformProductionFabric")) {
-		transitive = false
-	}
+	common(project(path: ":common", configuration: "namedElements")) { transitive false }
+	shadowCommon(project(path: ":common", configuration: "transformProductionFabric")) { transitive false }
 }
 
 processResources {
@@ -44,6 +42,8 @@ processResources {
 }
 
 shadowJar {
+	exclude "architectury.common.json"
+
 	configurations = [project.configurations.shadowCommon]
 	classifier "dev-shadow"
 }
@@ -55,11 +55,7 @@ jar {
 remapJar {
 	input.set shadowJar.archiveFile
 	dependsOn shadowJar
-	classifier "fabric"
-}
-
-java {
-	withSourcesJar()
+	classifier null
 }
 
 sourcesJar {

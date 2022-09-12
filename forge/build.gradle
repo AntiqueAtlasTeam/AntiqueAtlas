@@ -1,9 +1,5 @@
 plugins {
-    id "com.github.johnrengelman.shadow" version "5.0.0"
-}
-
-configurations {
-    shadowCommon
+    id "com.github.johnrengelman.shadow" version "7.1.2"
 }
 
 architectury {
@@ -12,23 +8,31 @@ architectury {
 }
 
 loom {
-    useFabricMixin = true
-    refmapName = "antiqueatlas.refmap.mixins.json"
+    accessWidenerPath = project(":common").loom.accessWidenerPath
+
+    forge {
+        convertAccessWideners = true
+        extraAccessWideners.add loom.accessWidenerPath.get().asFile.name
+
+        mixinConfig "antiqueatlas-common.mixins.json"
+        mixinConfig "antiqueatlas.mixins.json"
+    }
+}
+
+configurations {
+    common
+    shadowCommon // Don't use shadow from the shadow plugin because we don't want IDEA to index this.
+    compileClasspath.extendsFrom common
+    runtimeClasspath.extendsFrom common
+    developmentForge.extendsFrom common
 }
 
 dependencies {
-    forge "net.minecraftforge:forge:${rootProject.minecraft_version}-${rootProject.forge_version}"
+    forge "net.minecraftforge:forge:${rootProject.forge_version}"
     modApi "me.shedaniel:architectury-forge:${rootProject.architectury_version}"
 
-    implementation(project(path: ":common")) {
-        transitive = false
-    }
-    developmentForge(project(path: ":common")) {
-        transitive = false
-    }
-    shadowCommon(project(path: ":common", configuration: "transformProductionForge")) {
-        transitive = false
-    }
+    common(project(path: ":common", configuration: "namedElements")) { transitive false }
+    shadowCommon(project(path: ":common", configuration: "transformProductionForge")) { transitive = false }
 
     modApi("me.shedaniel.cloth:cloth-config-forge:${rootProject.cloth_config_version}")
 }
@@ -43,6 +47,7 @@ processResources {
 
 shadowJar {
     exclude "forge.mod.json"
+    exclude "architectury.common.json"
 
     configurations = [project.configurations.shadowCommon]
     classifier "dev-shadow"
@@ -51,15 +56,11 @@ shadowJar {
 remapJar {
     input.set shadowJar.archiveFile
     dependsOn shadowJar
-    classifier "forge"
+    classifier null
 }
 
 jar {
     classifier "dev"
-}
-
-java {
-    withSourcesJar()
 }
 
 sourcesJar {
