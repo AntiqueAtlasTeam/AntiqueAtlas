@@ -1,5 +1,6 @@
 plugins {
     id "com.github.johnrengelman.shadow" version "7.1.2"
+    id "me.shedaniel.unified-publishing"
 }
 
 architectury {
@@ -86,5 +87,44 @@ publishing {
     // See https://docs.gradle.org/current/userguide/publishing_maven.html for information on how to set up publishing.
     repositories {
         // Add repositories to publish to here.
+    }
+}
+
+unifiedPublishing {
+    project {
+        gameVersions = ["1.16.2", "1.16.3", "1.16.4", "1.16.5"]
+        gameLoaders = ["forge"]
+        releaseType = "release"
+
+        mainPublication tasks.remapJar
+
+        relations {
+            depends {
+                curseforge = "cloth-config"
+                modrinth = "cloth-config"
+            }
+            depends {
+                curseforge = "architectury-api"
+                modrinth = "architectury-api"
+            }
+        }
+
+        var cfToken = System.getenv("CF_TOKEN")
+        if (cfToken != null) {
+            curseforge {
+                token = cfToken
+                id = rootProject.curseforge_id
+                gameVersions.addAll "Java 17"
+                gameVersions.addAll "Java 8"
+            }
+        }
+
+        var mrToken = System.getenv("MODRINTH_TOKEN")
+        if (mrToken != null) {
+            modrinth {
+                token = mrToken
+                id = rootProject.modrinth_id
+            }
+        }
     }
 }
