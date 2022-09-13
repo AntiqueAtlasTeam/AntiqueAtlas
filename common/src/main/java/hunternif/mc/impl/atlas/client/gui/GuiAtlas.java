@@ -582,7 +582,7 @@ public class GuiAtlas extends GuiComponent {
             }
             state.switchTo(NORMAL);
         } else if (isMouseOverMap && selectedButton == null) {
-            if (hoveredMarker == null || !MarkerClickedCallback.EVENT.invoker().onClicked(player, hoveredMarker, mouseState)) {
+            if (hoveredMarker == null || !MarkerClickedCallback.EVENT.invoker().onClicked(player, hoveredMarker, mouseState).interruptsFurtherEvaluation()) {
                 isDragging = true;
                 return true;
             }
