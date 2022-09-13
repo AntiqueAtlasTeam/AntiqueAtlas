@@ -3,8 +3,9 @@ package hunternif.mc.impl.atlas.forge;
 import dev.architectury.platform.forge.EventBuses;
 import hunternif.mc.impl.atlas.AntiqueAtlasMod;
 import hunternif.mc.impl.atlas.AntiqueAtlasModClient;
-import net.minecraftforge.client.event.ParticleFactoryRegisterEvent;
-import net.minecraftforge.common.MinecraftForge;
+import hunternif.mc.impl.atlas.client.gui.forge.AntiqueAtlasConfigMenu;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
@@ -17,21 +18,8 @@ public class AntiqueAtlasModForge
         EventBuses.registerModEventBus(AntiqueAtlasMod.ID,
                 FMLJavaModLoadingContext.get().getModEventBus());
 
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::initializeClient);
-
-        MinecraftForge.EVENT_BUS.register(this);
         AntiqueAtlasMod.init();
-    }
-
-    /**
-     * Despite what the events name might suggest, this event can be used for more than registering
-     * particle renders as it's called in the {@link net.minecraft.client.MinecraftClient} constructor.
-     * Thus, here we use it to do all client stuff
-     *
-     * @param event
-     */
-    public void initializeClient(ParticleFactoryRegisterEvent event)
-    {
-        AntiqueAtlasModClient.init();
+        DistExecutor.safeRunWhenOn(Dist.CLIENT, () -> AntiqueAtlasModClient::init);
+        DistExecutor.safeRunWhenOn(Dist.CLIENT, () -> AntiqueAtlasConfigMenu::init);
     }
 }
