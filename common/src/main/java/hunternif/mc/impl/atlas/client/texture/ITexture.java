@@ -30,6 +30,8 @@ public interface ITexture {
 
     void draw(MatrixStack matrices, int x, int y, int width, int height);
 
+    void drawCenteredWithRotation(MatrixStack matrices, int x, int y, int width, int height, float rotation);
+
     void draw(MatrixStack matrices, int x, int y, int width, int height, int u, int v, int regionWidth, int regionHeight);
 
     void draw(MatrixStack matrices, int x, int y, int u, int v, int regionWidth, int regionHeight);

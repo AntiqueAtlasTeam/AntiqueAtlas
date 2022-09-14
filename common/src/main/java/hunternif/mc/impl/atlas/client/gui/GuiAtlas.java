@@ -368,7 +368,7 @@ public class GuiAtlas extends GuiComponent {
                 if (hasShiftDown()) {
                     markerFinalizer.setMarkerData(player.getEntityWorld(),
                             getAtlasID(),
-                            (int) player.getX(), (int) player.getZ());
+                            player.getBlockX(), player.getBlockZ());
                     addChild(markerFinalizer);
 
                     blinkingIcon.setTexture(markerFinalizer.selectedType.getTexture(),
@@ -493,9 +493,9 @@ public class GuiAtlas extends GuiComponent {
 
     public void updateBookmarkerList() {
         markers.removeAllContent();
-        markers.scrollTo(0,0);
+        markers.scrollTo(0, 0);
 
-        if(localMarkersData == null) return;
+        if (localMarkersData == null) return;
 
 
         int contentY = 0;
@@ -506,12 +506,11 @@ public class GuiAtlas extends GuiComponent {
             GuiMarkerBookmark bookmark = new GuiMarkerBookmark(marker);
 
             bookmark.addListener(button -> {
-                if(state.is(NORMAL)) {
+                if (state.is(NORMAL)) {
                     setTargetPosition(marker.getX(), marker.getZ());
                     followPlayer = false;
                     btnPosition.setEnabled(true);
-                }
-                else if(state.is(DELETING_MARKER)) {
+                } else if (state.is(DELETING_MARKER)) {
                     AtlasClientAPI.getMarkerAPI().deleteMarker(player.getEntityWorld(),
                             getAtlasID(), marker.getId());
                     player.getEntityWorld().playSound(player, player.getBlockPos(),
@@ -761,7 +760,7 @@ public class GuiAtlas extends GuiComponent {
         super.tick();
         if (player == null) return;
         if (followPlayer) {
-            setMapPosition((int)player.getX(), (int)player.getZ());
+            setMapPosition(player.getBlockX(), player.getBlockZ());
         }
         if (player.getEntityWorld().getTime() > timeButtonPressed + BUTTON_PAUSE) {
             navigateByButton(selectedButton);
@@ -847,11 +846,11 @@ public class GuiAtlas extends GuiComponent {
     }
 
     private int getTargetPositionX() {
-        return (int)(-targetOffsetX * mapScale);
+        return (int) (-targetOffsetX * mapScale);
     }
 
     private int getTargetPositionY() {
-        return (int)(-targetOffsetY * mapScale);
+        return (int) (-targetOffsetY * mapScale);
     }
 
 
@@ -952,7 +951,7 @@ public class GuiAtlas extends GuiComponent {
         matrices.push();
         matrices.translate(mapStartScreenX, mapStartScreenY, 0);
 
-       for(SubTileQuartet subtiles : tiles) {
+        for (SubTileQuartet subtiles : tiles) {
             for (SubTile subtile : subtiles) {
                 if (subtile == null || subtile.tile == null) continue;
                 ITexture texture = TileTextureMap.instance().getTexture(subtile);
@@ -1023,10 +1022,10 @@ public class GuiAtlas extends GuiComponent {
             } else {
                 String texture_set = TileTextureMap.instance().getTextureSet(tile).name.toString();
                 drawTooltip(Arrays.asList(
-                        new LiteralText(coords),
-                        new LiteralText(chunks),
-                        new LiteralText("Tile: " + tile.toString()),
-                        new LiteralText("TSet: " + texture_set)),
+                                new LiteralText(coords),
+                                new LiteralText(chunks),
+                                new LiteralText("Tile: " + tile),
+                                new LiteralText("TSet: " + texture_set)),
                         textRenderer);
             }
         }
@@ -1039,24 +1038,17 @@ public class GuiAtlas extends GuiComponent {
     }
 
     private void renderPlayer(MatrixStack matrices, double iconScale) {
-        // How much the player has moved from the top left corner of the map, in pixels:
-        int playerOffsetX = (int) (player.getX() * mapScale) + mapOffsetX;
-        int playerOffsetZ = (int) (player.getZ() * mapScale) + mapOffsetY;
-        playerOffsetX = MathHelper.clamp(playerOffsetX, -MAP_WIDTH / 2, MAP_WIDTH / 2);
-        playerOffsetZ = MathHelper.clamp(playerOffsetZ, -MAP_HEIGHT / 2, MAP_HEIGHT / 2 - 2);
+        int playerOffsetX = worldXToScreenX(player.getBlockX());
+        int playerOffsetY = worldZToScreenY(player.getBlockZ());
+
+        playerOffsetX = MathHelper.clamp(playerOffsetX, getGuiX() + MAP_BORDER_WIDTH, getGuiX() + MAP_WIDTH + MAP_BORDER_WIDTH);
+        playerOffsetY = MathHelper.clamp(playerOffsetY, getGuiY() + MAP_BORDER_HEIGHT, getGuiY() + MAP_HEIGHT + MAP_BORDER_HEIGHT);
 
         // Draw the icon:
         RenderSystem.setShaderColor(1, 1, 1, state.is(PLACING_MARKER) ? 0.5f : 1);
-        matrices.push();
-
-        matrices.translate(getGuiX() + WIDTH / 2 + playerOffsetX, getGuiY() + HEIGHT / 2 + playerOffsetZ, 0);
         float playerRotation = (float) Math.round(player.getYaw() / 360f * PLAYER_ROTATION_STEPS) / PLAYER_ROTATION_STEPS * 360f;
-        matrices.multiply(Vec3f.POSITIVE_Z.getDegreesQuaternion(180 + playerRotation));
-        matrices.translate((float) (-PLAYER_ICON_WIDTH / 2 * iconScale), (float) (-PLAYER_ICON_HEIGHT / 2 * iconScale), 0f);
 
-        Textures.PLAYER.draw(matrices, 0, 0, (int) Math.round(PLAYER_ICON_WIDTH * iconScale), (int) Math.round(PLAYER_ICON_HEIGHT * iconScale));
-
-        matrices.pop();
+        Textures.PLAYER.drawCenteredWithRotation(matrices, playerOffsetX, playerOffsetY, (int) Math.round(PLAYER_ICON_WIDTH * iconScale), (int) Math.round(PLAYER_ICON_HEIGHT * iconScale), playerRotation);
 
         RenderSystem.setShaderColor(1, 1, 1, 1);
     }
@@ -1174,8 +1166,8 @@ public class GuiAtlas extends GuiComponent {
             info.scale(0.8);
         }
 
-        markerX = MathHelper.clamp(markerX, getGuiX() + MAP_BORDER_WIDTH,  getGuiX() + MAP_WIDTH + MAP_BORDER_WIDTH);
-        markerY = MathHelper.clamp(markerY, getGuiY() + MAP_BORDER_HEIGHT,  getGuiY() + MAP_HEIGHT + MAP_BORDER_HEIGHT);
+        markerX = MathHelper.clamp(markerX, getGuiX() + MAP_BORDER_WIDTH, getGuiX() + MAP_WIDTH + MAP_BORDER_WIDTH);
+        markerY = MathHelper.clamp(markerY, getGuiY() + MAP_BORDER_HEIGHT, getGuiY() + MAP_HEIGHT + MAP_BORDER_HEIGHT);
 
 
         info.tex.draw(matrices, markerX + info.x, markerY + info.y, info.width, info.height);

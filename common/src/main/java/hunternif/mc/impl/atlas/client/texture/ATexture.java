@@ -3,7 +3,6 @@ package hunternif.mc.impl.atlas.client.texture;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.VertexConsumer;
@@ -11,6 +10,7 @@ import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Matrix4f;
+import net.minecraft.util.math.Vec3f;
 
 /**
  * An abstract base class, which implements the ITexture interface using
@@ -38,7 +38,6 @@ public abstract class ATexture implements ITexture {
     }
 
     public void bind() {
-//        MinecraftClient.getInstance().getTextureManager().bindTexture(this.texture);
         RenderSystem.setShaderTexture(0, texture);
     }
 
@@ -59,6 +58,17 @@ public abstract class ATexture implements ITexture {
             bind();
         }
         DrawableHelper.drawTexture(matrices, x, y, width, height, u, v, regionWidth, regionHeight, this.width(), this.height());
+    }
+
+    public void drawCenteredWithRotation(MatrixStack matrices, int x, int y, int width, int height, float rotation) {
+        matrices.push();
+        matrices.translate(x, y, 0);
+        matrices.multiply(Vec3f.POSITIVE_Z.getDegreesQuaternion(180 + rotation));
+        matrices.translate(-width / 2f, -height / 2f, 0f);
+
+        draw(matrices, 0,0, width, height);
+
+        matrices.pop();
     }
 
     public void drawWithLight(VertexConsumerProvider consumer, MatrixStack matrices, int x, int y, int width, int height, int light) {
