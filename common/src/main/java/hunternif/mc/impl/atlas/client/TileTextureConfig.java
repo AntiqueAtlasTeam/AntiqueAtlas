@@ -92,7 +92,7 @@ public class TileTextureConfig implements IResourceReloadListener<Map<Identifier
             }
 
             return map;
-        });
+        }, executor);
     }
 
     @Override
@@ -112,7 +112,7 @@ public class TileTextureConfig implements IResourceReloadListener<Map<Identifier
                 tileTextureMap.setTexture(entry.getKey(), set);
                 Log.info("Loaded tile %s with texture set %s", tile_id, set.name);
             }
-        });
+        }, executor);
     }
 
     @Override

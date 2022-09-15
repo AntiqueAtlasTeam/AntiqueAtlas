@@ -54,7 +54,7 @@ public class TextureConfig implements IResourceReloadListener<Map<Identifier, IT
             }
 
             return textures;
-        });
+        }, executor);
     }
 
     @Override
@@ -65,7 +65,7 @@ public class TextureConfig implements IResourceReloadListener<Map<Identifier, IT
                 texture_map.put(entry.getKey(), entry.getValue());
                 Log.info("Loaded texture %s with path %s", entry.getKey(), entry.getValue().getTexture());
             }
-        });
+        }, executor);
     }
 
     @Override

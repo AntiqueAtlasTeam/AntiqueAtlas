@@ -93,6 +93,6 @@ public class ClientProxy implements ResourceReloader {
                 type.initMips();
             }
             assignBiomeTextures();
-        }));
+        }, applyExecutor));
     }
 }
