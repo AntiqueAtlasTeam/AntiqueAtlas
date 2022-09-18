@@ -730,25 +730,17 @@ public class GuiAtlas extends GuiComponent {
             mapOffsetDeltaX += deltaX;
             mapOffsetDeltaY += deltaY;
 
-            if (mapOffsetDeltaX > 1) {
-                mapOffsetX++;
-                mapOffsetDeltaX -= 1;
+            int offsetX = (int) (Math.signum(mapOffsetDeltaX) * Math.floor(Math.abs(mapOffsetDeltaX)));
+            int offsetY = (int) (Math.signum(mapOffsetDeltaY) * Math.floor(Math.abs(mapOffsetDeltaY)));
+
+            if (Math.abs(mapOffsetDeltaX) >= 1) {
+                mapOffsetDeltaX = mapOffsetDeltaX - offsetX;
+                mapOffsetX += offsetX;
             }
 
-            if (mapOffsetDeltaX < -1) {
-                mapOffsetX--;
-                mapOffsetDeltaX += 1;
-            }
-
-
-            if (mapOffsetDeltaY > 1) {
-                mapOffsetY++;
-                mapOffsetDeltaY -= 1;
-            }
-
-            if (mapOffsetDeltaY < -1) {
-                mapOffsetY--;
-                mapOffsetDeltaY += 1;
+            if (Math.abs(mapOffsetDeltaY) >= 1) {
+                mapOffsetDeltaY = mapOffsetDeltaY - offsetY;
+                mapOffsetY += offsetY;
             }
 
             result = true;
