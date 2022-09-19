@@ -5,6 +5,9 @@
   "mixins": [
   ],
   "client": [
+    "TextureConfigMixin",
+    "TextureSetConfigMixin",
+    "TileTextureConfigMixin"
   ],
   "injectors": {
     "defaultRequire": 1
