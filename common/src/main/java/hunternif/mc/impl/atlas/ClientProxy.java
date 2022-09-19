@@ -19,23 +19,27 @@ import net.minecraft.world.biome.Biome;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
+import java.util.function.BiConsumer;
 
 @Environment(EnvType.CLIENT)
 public class ClientProxy implements ResourceReloader {
+    public static BiConsumer<ResourceType, ResourceReloader> SORTED_REGISTER_LISTENER = ReloadListenerRegistry::register;
+
     public void initClient() {
+
         // read Textures first from assets
         TextureConfig textureConfig = new TextureConfig(Textures.TILE_TEXTURES_MAP);
-        ReloadListenerRegistry.register(ResourceType.CLIENT_RESOURCES, textureConfig);
+        SORTED_REGISTER_LISTENER.accept(ResourceType.CLIENT_RESOURCES, textureConfig);
 
         // then read TextureSets
         TextureSetMap textureSetMap = TextureSetMap.instance();
         TextureSetConfig textureSetConfig = new TextureSetConfig(textureSetMap);
-        ReloadListenerRegistry.register(ResourceType.CLIENT_RESOURCES, textureSetConfig);
+        SORTED_REGISTER_LISTENER.accept(ResourceType.CLIENT_RESOURCES, textureSetConfig);
 
         // After that, we can read the tile mappings
         TileTextureMap tileTextureMap = TileTextureMap.instance();
         TileTextureConfig tileTextureConfig = new TileTextureConfig(tileTextureMap, textureSetMap);
-        ReloadListenerRegistry.register(ResourceType.CLIENT_RESOURCES, tileTextureConfig);
+        SORTED_REGISTER_LISTENER.accept(ResourceType.CLIENT_RESOURCES, tileTextureConfig);
 
         // Legacy file name:
         ReloadListenerRegistry.register(ResourceType.CLIENT_RESOURCES, this);
