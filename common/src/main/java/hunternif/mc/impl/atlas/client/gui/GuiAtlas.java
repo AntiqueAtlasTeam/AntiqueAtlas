@@ -964,8 +964,6 @@ public class GuiAtlas extends GuiComponent {
         int markersEndX = MathUtil.roundToBase(mapEndX, MarkersData.CHUNK_STEP) / MarkersData.CHUNK_STEP + 1;
         int markersEndZ = MathUtil.roundToBase(mapEndZ, MarkersData.CHUNK_STEP) / MarkersData.CHUNK_STEP + 1;
 
-        RenderSystem.disableScissor();
-
         // Overlay the frame so that edges of the map are smooth:
         RenderSystem.setShaderColor(1, 1, 1, 1);
         Textures.BOOK_FRAME.draw(matrices, getGuiX(), getGuiY());
@@ -975,6 +973,8 @@ public class GuiAtlas extends GuiComponent {
         // Draw global markers:
         renderMarkers(matrices, markersStartX, markersStartZ, markersEndX, markersEndZ, globalMarkersData);
         renderMarkers(matrices, markersStartX, markersStartZ, markersEndX, markersEndZ, localMarkersData);
+
+        RenderSystem.disableScissor();
 
         Textures.BOOK_FRAME_NARROW.draw(matrices, getGuiX(), getGuiY());
 
@@ -1156,13 +1156,16 @@ public class GuiAtlas extends GuiComponent {
         if (markerX <= getGuiX() + MAP_BORDER_WIDTH || markerX >= getGuiX() + MAP_WIDTH + MAP_BORDER_WIDTH
                 || markerY <= getGuiY() + MAP_BORDER_HEIGHT || markerY >= getGuiY() + MAP_HEIGHT + MAP_BORDER_HEIGHT
         ) {
-            RenderSystem.setShaderColor(1, 1, 1, 0.5f);
-            info.scale(0.8);
+            if (!type.isTechnical()) {
+                RenderSystem.setShaderColor(1, 1, 1, 0.5f);
+                info.scale(0.8);
+            }
         }
 
-        markerX = MathHelper.clamp(markerX, getGuiX() + MAP_BORDER_WIDTH, getGuiX() + MAP_WIDTH + MAP_BORDER_WIDTH);
-        markerY = MathHelper.clamp(markerY, getGuiY() + MAP_BORDER_HEIGHT, getGuiY() + MAP_HEIGHT + MAP_BORDER_HEIGHT);
-
+        if (!type.isTechnical()) {
+            markerX = MathHelper.clamp(markerX, getGuiX() + MAP_BORDER_WIDTH, getGuiX() + MAP_WIDTH + MAP_BORDER_WIDTH);
+            markerY = MathHelper.clamp(markerY, getGuiY() + MAP_BORDER_HEIGHT, getGuiY() + MAP_HEIGHT + MAP_BORDER_HEIGHT);
+        }
 
         info.tex.draw(matrices, markerX + info.x, markerY + info.y, info.width, info.height);
 
