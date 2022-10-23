@@ -39,6 +39,6 @@ side="BOTH"
 [[dependencies.antiqueatlas]]
 modId = "architectury"
 mandatory = true
-versionRange = "[4.9.83,)"
+versionRange = "[4.10.86,)"
 ordering = "AFTER"
 side = "BOTH"
