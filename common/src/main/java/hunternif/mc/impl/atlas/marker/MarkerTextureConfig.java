@@ -65,7 +65,7 @@ public class MarkerTextureConfig implements IResourceReloadListener<Map<Identifi
             }
 
             return typeMap;
-        });
+        }, executor);
     }
 
     @Override
@@ -74,7 +74,7 @@ public class MarkerTextureConfig implements IResourceReloadListener<Map<Identifi
             for (Map.Entry<Identifier, MarkerType> entry : data.entrySet()) {
                 MarkerType.register(entry.getKey(), entry.getValue());
             }
-        });
+        }, executor);
     }
 
     @Override

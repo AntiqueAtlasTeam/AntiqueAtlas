@@ -115,7 +115,7 @@ public class TextureSetConfig implements IResourceReloadListener<Collection<Text
             }
 
             return sets.values();
-        });
+        }, executor);
     }
 
     @Override
@@ -142,7 +142,7 @@ public class TextureSetConfig implements IResourceReloadListener<Collection<Text
                     Log.info("Loaded water texture `%s` for shore texture `%s` texture", texture.waterName, texture.name);
                 }
             }
-        });
+        }, executor);
     }
 
     @Override
