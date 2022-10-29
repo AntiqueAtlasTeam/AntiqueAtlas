@@ -2,8 +2,10 @@ package hunternif.mc.impl.atlas.client;
 
 import net.minecraft.resource.ResourceManager;
 import net.minecraft.resource.ResourceReloader;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.profiler.Profiler;
 
+import java.util.Collection;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 
@@ -30,5 +32,9 @@ public interface IResourceReloadListener<T> extends ResourceReloader
         return load.thenCompose(synchronizer::whenPrepared)
                 .thenCompose(t -> apply(t, manager, applyProfiler, applyExecutor));
     }
+
+    Identifier getId();
+
+    Collection<Identifier> getDependencies();
 
 }

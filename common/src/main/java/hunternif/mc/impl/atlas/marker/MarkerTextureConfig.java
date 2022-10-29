@@ -14,6 +14,8 @@ import net.minecraft.util.profiler.Profiler;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
@@ -26,6 +28,7 @@ import java.util.concurrent.Executor;
  */
 @Environment(EnvType.CLIENT)
 public class MarkerTextureConfig implements IResourceReloadListener<Map<Identifier, MarkerType>> {
+    public static final Identifier ID = AntiqueAtlasMod.id("markers");
     private static final int VERSION = 1;
     private static final JsonParser parser = new JsonParser();
 
@@ -65,7 +68,7 @@ public class MarkerTextureConfig implements IResourceReloadListener<Map<Identifi
             }
 
             return typeMap;
-        });
+        }, executor);
     }
 
     @Override
@@ -74,11 +77,21 @@ public class MarkerTextureConfig implements IResourceReloadListener<Map<Identifi
             for (Map.Entry<Identifier, MarkerType> entry : data.entrySet()) {
                 MarkerType.register(entry.getKey(), entry.getValue());
             }
-        });
+        }, executor);
     }
 
     @Override
     public String getName() {
-        return AntiqueAtlasMod.id("markers").toString();
+        return ID.toString();
+    }
+
+    @Override
+    public Identifier getId() {
+        return ID;
+    }
+
+    @Override
+    public Collection<Identifier> getDependencies() {
+        return Collections.emptyList();
     }
 }

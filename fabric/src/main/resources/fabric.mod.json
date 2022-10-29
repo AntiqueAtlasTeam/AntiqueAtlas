@@ -29,7 +29,7 @@
     "fabric": ">=0.28.0",
     "minecraft": ">=1.18.2",
     "cloth-config2": [">=6.2.62", "<7.0.0"],
-    "architectury": ">=4.9.83"
+    "architectury": ">=4.10.86"
   },
   "mixins": [
     "antiqueatlas.mixins.json",

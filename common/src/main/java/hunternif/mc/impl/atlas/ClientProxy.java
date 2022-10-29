@@ -25,23 +25,23 @@ public class ClientProxy implements ResourceReloader {
     public void initClient() {
         // read Textures first from assets
         TextureConfig textureConfig = new TextureConfig(Textures.TILE_TEXTURES_MAP);
-        ReloadListenerRegistry.register(ResourceType.CLIENT_RESOURCES, textureConfig);
+        ReloadListenerRegistry.register(ResourceType.CLIENT_RESOURCES, textureConfig, textureConfig.getId(), textureConfig.getDependencies());
 
         // then read TextureSets
         TextureSetMap textureSetMap = TextureSetMap.instance();
         TextureSetConfig textureSetConfig = new TextureSetConfig(textureSetMap);
-        ReloadListenerRegistry.register(ResourceType.CLIENT_RESOURCES, textureSetConfig);
+        ReloadListenerRegistry.register(ResourceType.CLIENT_RESOURCES, textureSetConfig, textureSetConfig.getId(), textureSetConfig.getDependencies());
 
         // After that, we can read the tile mappings
         TileTextureMap tileTextureMap = TileTextureMap.instance();
         TileTextureConfig tileTextureConfig = new TileTextureConfig(tileTextureMap, textureSetMap);
-        ReloadListenerRegistry.register(ResourceType.CLIENT_RESOURCES, tileTextureConfig);
+        ReloadListenerRegistry.register(ResourceType.CLIENT_RESOURCES, tileTextureConfig, tileTextureConfig.getId(), tileTextureConfig.getDependencies());
 
         // Legacy file name:
         ReloadListenerRegistry.register(ResourceType.CLIENT_RESOURCES, this);
 
         MarkerTextureConfig markerTextureConfig = new MarkerTextureConfig();
-        ReloadListenerRegistry.register(ResourceType.CLIENT_RESOURCES, markerTextureConfig);
+        ReloadListenerRegistry.register(ResourceType.CLIENT_RESOURCES, markerTextureConfig, markerTextureConfig.getId(), markerTextureConfig.getDependencies());
 
         for (MarkerType type : MarkerType.REGISTRY) {
             type.initMips();
@@ -93,6 +93,6 @@ public class ClientProxy implements ResourceReloader {
                 type.initMips();
             }
             assignBiomeTextures();
-        }));
+        }, applyExecutor));
     }
 }

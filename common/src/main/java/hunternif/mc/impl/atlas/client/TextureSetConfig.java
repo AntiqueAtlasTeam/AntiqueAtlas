@@ -24,6 +24,7 @@ import java.util.concurrent.Executor;
  */
 @Environment(EnvType.CLIENT)
 public class TextureSetConfig implements IResourceReloadListener<Collection<TextureSet>> {
+    public static final Identifier ID = AntiqueAtlasMod.id("texture_sets");
     private static final int VERSION = 1;
     private static final JsonParser PARSER = new JsonParser();
     private final TextureSetMap textureSetMap;
@@ -115,7 +116,7 @@ public class TextureSetConfig implements IResourceReloadListener<Collection<Text
             }
 
             return sets.values();
-        });
+        }, executor);
     }
 
     @Override
@@ -142,17 +143,21 @@ public class TextureSetConfig implements IResourceReloadListener<Collection<Text
                     Log.info("Loaded water texture `%s` for shore texture `%s` texture", texture.waterName, texture.name);
                 }
             }
-        });
+        }, executor);
     }
 
     @Override
     public String getName() {
-        return AntiqueAtlasMod.id("texture_sets").toString();
+        return ID.toString();
     }
 
-    // TODO Fix dependencies
-//    @Override
-//    public Collection<Identifier> getFabricDependencies() {
-//        return Collections.singleton(new Identifier("antiqueatlas:textures"));
-//    }
+    @Override
+    public Identifier getId() {
+        return ID;
+    }
+
+    @Override
+    public Collection<Identifier> getDependencies() {
+        return Collections.singleton(TextureConfig.ID);
+    }
 }

@@ -11,6 +11,8 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.InvalidIdentifierException;
 import net.minecraft.util.profiler.Profiler;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
@@ -26,6 +28,7 @@ import java.util.concurrent.Executor;
  */
 @Environment(EnvType.CLIENT)
 public class TextureConfig implements IResourceReloadListener<Map<Identifier, ITexture>> {
+    public static final Identifier ID = AntiqueAtlasMod.id("textures");
     private final Map<Identifier, ITexture> texture_map;
 
     public TextureConfig(Map<Identifier, ITexture> texture_map) {
@@ -54,7 +57,7 @@ public class TextureConfig implements IResourceReloadListener<Map<Identifier, IT
             }
 
             return textures;
-        });
+        }, executor);
     }
 
     @Override
@@ -65,11 +68,21 @@ public class TextureConfig implements IResourceReloadListener<Map<Identifier, IT
                 texture_map.put(entry.getKey(), entry.getValue());
                 Log.info("Loaded texture %s with path %s", entry.getKey(), entry.getValue().getTexture());
             }
-        });
+        }, executor);
     }
 
     @Override
     public String getName() {
-        return AntiqueAtlasMod.id("textures").toString();
+        return ID.toString();
+    }
+
+    @Override
+    public Identifier getId() {
+        return ID;
+    }
+
+    @Override
+    public Collection<Identifier> getDependencies() {
+        return Collections.emptyList();
     }
 }

@@ -14,6 +14,8 @@ import net.minecraft.util.profiler.Profiler;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
@@ -27,6 +29,7 @@ import java.util.concurrent.Executor;
  */
 @Environment(EnvType.CLIENT)
 public class TileTextureConfig implements IResourceReloadListener<Map<Identifier, Identifier>> {
+    public static final Identifier ID = AntiqueAtlasMod.id("tile_textures");
     private final TileTextureMap tileTextureMap;
     private final TextureSetMap textureSetMap;
 
@@ -92,7 +95,7 @@ public class TileTextureConfig implements IResourceReloadListener<Map<Identifier
             }
 
             return map;
-        });
+        }, executor);
     }
 
     @Override
@@ -112,17 +115,21 @@ public class TileTextureConfig implements IResourceReloadListener<Map<Identifier
                 tileTextureMap.setTexture(entry.getKey(), set);
                 Log.info("Loaded tile %s with texture set %s", tile_id, set.name);
             }
-        });
+        }, executor);
     }
 
     @Override
     public String getName() {
-        return AntiqueAtlasMod.id("tile_textures").toString();
+        return ID.toString();
     }
 
-    // TODO Fix dependencies
-//    @Override
-//    public Collection<Identifier> getFabricDependencies() {
-//        return Collections.singleton(new Identifier("antiqueatlas:texture_sets"));
-//    }
+    @Override
+    public Identifier getId() {
+        return ID;
+    }
+
+    @Override
+    public Collection<Identifier> getDependencies() {
+        return Collections.singleton(TextureSetConfig.ID);
+    }
 }
