@@ -62,6 +62,7 @@
   "text.autoconfig.antiqueatlas.option.doScanPonds": "Suche nach Wasserbecken",
   "text.autoconfig.antiqueatlas.option.doScanRavines": "Suche nach Schluchten",
   "text.autoconfig.antiqueatlas.option.debugRender": "Debug rendering",
+  "text.autoconfig.antiqueatlas.option.resourcePackLogging": "Logge Laden von Resource Packs",
 
   "text.autoconfig.antiqueatlas.option.tileSize": "Größe einer Kachel",
   "text.autoconfig.antiqueatlas.option.markerSize": "Größe einer Markierung",

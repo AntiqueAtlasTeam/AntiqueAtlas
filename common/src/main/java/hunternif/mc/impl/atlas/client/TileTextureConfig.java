@@ -2,6 +2,7 @@ package hunternif.mc.impl.atlas.client;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import hunternif.mc.impl.atlas.AntiqueAtlasConfig;
 import hunternif.mc.impl.atlas.AntiqueAtlasMod;
 import hunternif.mc.impl.atlas.core.scaning.TileHeightType;
 import hunternif.mc.impl.atlas.util.Log;
@@ -113,7 +114,8 @@ public class TileTextureConfig implements IResourceReloadListener<Map<Identifier
                 }
 
                 tileTextureMap.setTexture(entry.getKey(), set);
-                Log.info("Loaded tile %s with texture set %s", tile_id, set.name);
+                if (AntiqueAtlasMod.CONFIG.resourcePackLogging)
+                    Log.info("Loaded tile %s with texture set %s", tile_id, set.name);
             }
         }, executor);
     }

@@ -66,6 +66,8 @@
   "text.autoconfig.antiqueatlas.option.doScanPonds": "Scan for ponds",
   "text.autoconfig.antiqueatlas.option.doScanRavines": "Scan for ravines",
   "text.autoconfig.antiqueatlas.option.debugRender": "Debug rendering",
+  "text.autoconfig.antiqueatlas.option.resourcePackLogging": "Log loading of resource packs",
+
 
   "text.autoconfig.antiqueatlas.option.tileSize": "Size of a tile",
   "text.autoconfig.antiqueatlas.option.markerSize": "Size of a marker",

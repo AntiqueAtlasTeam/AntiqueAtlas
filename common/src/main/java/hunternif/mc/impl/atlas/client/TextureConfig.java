@@ -66,7 +66,8 @@ public class TextureConfig implements IResourceReloadListener<Map<Identifier, IT
             texture_map.clear();
             for (Map.Entry<Identifier, ITexture> entry : textures.entrySet()) {
                 texture_map.put(entry.getKey(), entry.getValue());
-                Log.info("Loaded texture %s with path %s", entry.getKey(), entry.getValue().getTexture());
+                if (AntiqueAtlasMod.CONFIG.resourcePackLogging)
+                    Log.info("Loaded texture %s with path %s", entry.getKey(), entry.getValue().getTexture());
             }
         }, executor);
     }

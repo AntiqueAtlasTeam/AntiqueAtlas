@@ -126,7 +126,8 @@ public class TextureSetConfig implements IResourceReloadListener<Collection<Text
                 try {
                     set.loadTextures();
                     textureSetMap.register(set);
-                    Log.info("Loaded texture set %s with %d custom texture(s)", set.name, set.getTexturePaths().length);
+                    if (AntiqueAtlasMod.CONFIG.resourcePackLogging)
+                        Log.info("Loaded texture set %s with %d custom texture(s)", set.name, set.getTexturePaths().length);
                 }
                 catch (Throwable e) {
                     Log.error(e, "Failed to load the texture set `%s`:", set.name);
@@ -140,7 +141,8 @@ public class TextureSetConfig implements IResourceReloadListener<Collection<Text
                 if (set instanceof TextureSet.TextureSetShore) {
                     TextureSet.TextureSetShore texture = (TextureSet.TextureSetShore) set;
                     texture.loadWater();
-                    Log.info("Loaded water texture `%s` for shore texture `%s` texture", texture.waterName, texture.name);
+                    if (AntiqueAtlasMod.CONFIG.resourcePackLogging)
+                        Log.info("Loaded water texture `%s` for shore texture `%s` texture", texture.waterName, texture.name);
                 }
             }
         }, executor);

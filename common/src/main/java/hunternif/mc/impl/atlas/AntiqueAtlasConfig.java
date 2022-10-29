@@ -91,6 +91,10 @@ public class AntiqueAtlasConfig implements ConfigData {
     @Comment("If true, map render time will be output.")
     public boolean debugRender = false;
 
+    @ConfigEntry.Category("performance")
+    @Comment("If true, all resource pack loading information will be logged during start and reload.")
+    public boolean resourcePackLogging = true;
+
     @ConfigEntry.Category("appearance")
     @Comment("The size (in GUI pixels) of a map's tile.\nNote that this will change with Minecraft's GUI scale configuration.\nWhen using a small gui scale, the map may look better with a TILE_SIZE of 16 or more.")
     //@Setting.Constrain.Range(min = 1, max = 10)
