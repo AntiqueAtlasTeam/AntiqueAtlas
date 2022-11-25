@@ -207,7 +207,7 @@ public class MarkerType {
 			NativeImage bufferedimage = null;
 
 			try {
-				iresource = MinecraftClient.getInstance().getResourceManager().getResource(icons[i]);
+				iresource = MinecraftClient.getInstance().getResourceManager().getResource(icons[i]).orElseThrow();
 				bufferedimage = NativeImage.read(iresource.getInputStream());
 				iconSizes[i] = Math.min(bufferedimage.getWidth(), bufferedimage.getHeight());
 				BitMatrix matrix = new BitMatrix(bufferedimage.getWidth(), bufferedimage.getHeight(), false);
@@ -244,7 +244,7 @@ public class MarkerType {
 				if (bufferedimage != null) {
 					bufferedimage.close();
 				}
-				IOUtils.closeQuietly(iresource);
+//				IOUtils.closeQuietly(iresource);
 			}
 		}
 	}

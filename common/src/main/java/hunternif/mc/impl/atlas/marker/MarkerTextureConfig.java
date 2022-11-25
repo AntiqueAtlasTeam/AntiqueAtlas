@@ -37,14 +37,14 @@ public class MarkerTextureConfig implements IResourceReloadListener<Map<Identifi
         return CompletableFuture.supplyAsync(() -> {
             Map<Identifier, MarkerType> typeMap = new HashMap<>();
 
-            for (Identifier id : manager.findResources("atlas/markers", (s) -> s.endsWith(".json"))) {
+            for (Identifier id : manager.findResources("atlas/markers", (s) -> s.getPath().endsWith(".json")).keySet()) {
                 Identifier markerId = new Identifier(
                         id.getNamespace(),
                         id.getPath().replace("atlas/markers/", "").replace(".json", "")
                 );
 
                 try {
-                    Resource resource = manager.getResource(id);
+                    Resource resource = manager.getResource(id).orElseThrow();
                     try (
                             InputStream stream = resource.getInputStream();
                             InputStreamReader reader = new InputStreamReader(stream)

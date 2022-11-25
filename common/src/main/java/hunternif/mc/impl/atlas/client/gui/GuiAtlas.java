@@ -19,7 +19,10 @@ import hunternif.mc.impl.atlas.marker.MarkersData;
 import hunternif.mc.impl.atlas.network.packet.c2s.play.PutBrowsingPositionC2SPacket;
 import hunternif.mc.impl.atlas.registry.MarkerRenderInfo;
 import hunternif.mc.impl.atlas.registry.MarkerType;
-import hunternif.mc.impl.atlas.util.*;
+import hunternif.mc.impl.atlas.util.ExportImageUtil;
+import hunternif.mc.impl.atlas.util.Log;
+import hunternif.mc.impl.atlas.util.MathUtil;
+import hunternif.mc.impl.atlas.util.Rect;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.option.KeyBinding;
@@ -30,14 +33,11 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
-import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Vec3f;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL11;
 
@@ -93,14 +93,14 @@ public class GuiAtlas extends GuiComponent {
         public void onEnterState() {
             // Set the button as not selected so that it can be clicked again:
             btnShowMarkers.setSelected(false);
-            btnShowMarkers.setTitle(new TranslatableText("gui.antiqueatlas.showMarkers"));
+            btnShowMarkers.setTitle(Text.translatable("gui.antiqueatlas.showMarkers"));
             btnShowMarkers.setIconTexture(Textures.ICON_SHOW_MARKERS);
         }
 
         @Override
         public void onExitState() {
             btnShowMarkers.setSelected(false);
-            btnShowMarkers.setTitle(new TranslatableText("gui.antiqueatlas.hideMarkers"));
+            btnShowMarkers.setTitle(Text.translatable("gui.antiqueatlas.hideMarkers"));
             btnShowMarkers.setIconTexture(Textures.ICON_HIDE_MARKERS);
         }
     };
@@ -340,7 +340,7 @@ public class GuiAtlas extends GuiComponent {
         btnRight.addListener(positionListener);
         btnPosition.addListener(positionListener);
 
-        btnExportPng = new GuiBookmarkButton(1, Textures.ICON_EXPORT, new TranslatableText("gui.antiqueatlas.exportImage")) {
+        btnExportPng = new GuiBookmarkButton(1, Textures.ICON_EXPORT, Text.translatable("gui.antiqueatlas.exportImage")) {
             @Override
             public boolean isEnabled() {
                 return !ExportImageUtil.isExporting;
@@ -354,7 +354,7 @@ public class GuiAtlas extends GuiComponent {
             }
         });
 
-        btnMarker = new GuiBookmarkButton(0, Textures.ICON_ADD_MARKER, new TranslatableText("gui.antiqueatlas.addMarker"));
+        btnMarker = new GuiBookmarkButton(0, Textures.ICON_ADD_MARKER, Text.translatable("gui.antiqueatlas.addMarker"));
         addChild(btnMarker).offsetGuiCoords(300, 14);
         btnMarker.addListener(button -> {
             if (state.is(PLACING_MARKER)) {
@@ -388,7 +388,7 @@ public class GuiAtlas extends GuiComponent {
                 }
             }
         });
-        btnDelMarker = new GuiBookmarkButton(2, Textures.ICON_DELETE_MARKER, new TranslatableText("gui.antiqueatlas.delMarker"));
+        btnDelMarker = new GuiBookmarkButton(2, Textures.ICON_DELETE_MARKER, Text.translatable("gui.antiqueatlas.delMarker"));
         addChild(btnDelMarker).offsetGuiCoords(300, 33);
         btnDelMarker.addListener(button -> {
             if (state.is(DELETING_MARKER)) {
@@ -399,7 +399,7 @@ public class GuiAtlas extends GuiComponent {
                 state.switchTo(DELETING_MARKER);
             }
         });
-        btnShowMarkers = new GuiBookmarkButton(3, Textures.ICON_HIDE_MARKERS, new TranslatableText("gui.antiqueatlas.hideMarkers"));
+        btnShowMarkers = new GuiBookmarkButton(3, Textures.ICON_HIDE_MARKERS, Text.translatable("gui.antiqueatlas.hideMarkers"));
         addChild(btnShowMarkers).offsetGuiCoords(300, 52);
         btnShowMarkers.addListener(button -> {
             selectedButton = null;
@@ -1012,14 +1012,15 @@ public class GuiAtlas extends GuiComponent {
             Identifier tile = biomeData.getTile(pos.x, pos.z);
 
             if (tile == null) {
-                drawTooltip(Arrays.asList(new LiteralText(coords), new LiteralText(chunks)), textRenderer);
+                
+                drawTooltip(Arrays.asList(Text.of(coords), Text.of(chunks)), textRenderer);
             } else {
                 String texture_set = TileTextureMap.instance().getTextureSet(tile).name.toString();
                 drawTooltip(Arrays.asList(
-                                new LiteralText(coords),
-                                new LiteralText(chunks),
-                                new LiteralText("Tile: " + tile),
-                                new LiteralText("TSet: " + texture_set)),
+                                Text.of(coords),
+                                Text.of(chunks),
+                                Text.of("Tile: " + tile),
+                                Text.of("TSet: " + texture_set)),
                         textRenderer);
             }
         }
@@ -1226,8 +1227,8 @@ public class GuiAtlas extends GuiComponent {
      * Update all text labels to current localization.
      */
     public void updateL18n() {
-        btnExportPng.setTitle(new TranslatableText("gui.antiqueatlas.exportImage"));
-        btnMarker.setTitle(new TranslatableText("gui.antiqueatlas.addMarker"));
+        btnExportPng.setTitle(Text.translatable("gui.antiqueatlas.exportImage"));
+        btnMarker.setTitle(Text.translatable("gui.antiqueatlas.addMarker"));
     }
 
     /**

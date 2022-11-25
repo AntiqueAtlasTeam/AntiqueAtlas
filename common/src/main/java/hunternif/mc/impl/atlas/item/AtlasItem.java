@@ -14,12 +14,10 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUsageContext;
 import net.minecraft.item.map.MapBannerMarker;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.tag.BlockTags;
 import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
@@ -40,7 +38,7 @@ public class AtlasItem extends Item {
 
     @Override
     public Text getName(ItemStack stack) {
-        return new TranslatableText(this.getTranslationKey(), getAtlasID(stack));
+        return Text.translatable(this.getTranslationKey(), getAtlasID(stack));
     }
 
     @Override

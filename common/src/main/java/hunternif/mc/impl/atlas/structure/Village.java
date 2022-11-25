@@ -2,13 +2,17 @@ package hunternif.mc.impl.atlas.structure;
 
 import hunternif.mc.impl.atlas.AntiqueAtlasMod;
 import hunternif.mc.impl.atlas.core.TileIdMap;
-import net.minecraft.text.TranslatableText;
-import net.minecraft.world.gen.feature.StructureFeature;
+import net.minecraft.text.Text;
+import net.minecraft.world.gen.structure.Structures;
 
 public class Village {
     public static void registerMarkers() {
         if (AntiqueAtlasMod.CONFIG.autoVillageMarkers) {
-            StructureHandler.registerMarker(StructureFeature.VILLAGE, AntiqueAtlasMod.id("village"), new TranslatableText("gui.antiqueatlas.marker.village"));
+            StructureHandler.registerMarker(Structures.VILLAGE_DESERT.value().getType(), AntiqueAtlasMod.id("village"), Text.translatable("gui.antiqueatlas.marker.village"));
+            StructureHandler.registerMarker(Structures.VILLAGE_PLAINS.value().getType(), AntiqueAtlasMod.id("village"), Text.translatable("gui.antiqueatlas.marker.village"));
+            StructureHandler.registerMarker(Structures.VILLAGE_SAVANNA.value().getType(), AntiqueAtlasMod.id("village"), Text.translatable("gui.antiqueatlas.marker.village"));
+            StructureHandler.registerMarker(Structures.VILLAGE_SNOWY.value().getType(), AntiqueAtlasMod.id("village"), Text.translatable("gui.antiqueatlas.marker.village"));
+            StructureHandler.registerMarker(Structures.VILLAGE_TAIGA.value().getType(), AntiqueAtlasMod.id("village"), Text.translatable("gui.antiqueatlas.marker.village"));
         }
     }
 

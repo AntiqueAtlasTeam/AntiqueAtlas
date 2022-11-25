@@ -7,7 +7,7 @@ import hunternif.mc.impl.atlas.client.gui.core.GuiComponent;
 import hunternif.mc.impl.atlas.client.texture.ITexture;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.text.TranslatableText;
+import net.minecraft.text.Text;
 
 import java.util.Collections;
 import java.util.Map;
@@ -64,7 +64,7 @@ public class GuiScaleBar extends GuiComponent {
         texture.draw(matrices, getGuiX(), getGuiY());
 
         if (isMouseOver) {
-            drawTooltip(Collections.singletonList(new TranslatableText("gui.antiqueatlas.scalebar")), MinecraftClient.getInstance().textRenderer);
+            drawTooltip(Collections.singletonList(Text.translatable("gui.antiqueatlas.scalebar")), MinecraftClient.getInstance().textRenderer);
         }
     }
 }

@@ -9,6 +9,7 @@ loom {
 dependencies {
     // We depend on fabric loader here to use the fabric @Environment annotations and get the mixin dependencies
     // Do NOT use other classes from fabric loader
+    minecraft "com.mojang:minecraft:${project.minecraft_version}"
     modImplementation "net.fabricmc:fabric-loader:${rootProject.fabric_loader_version}"
 
     modApi "dev.architectury:architectury:${rootProject.architectury_version}"

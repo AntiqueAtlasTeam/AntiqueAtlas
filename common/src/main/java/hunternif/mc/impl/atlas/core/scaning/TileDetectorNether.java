@@ -44,7 +44,7 @@ public class TileDetectorNether extends TileDetectorBase implements ITileDetecto
         for (int x = 0; x < 16; x++) {
             for (int z = 0; z < 16; z++) {
                 Biome biome = chunk.getBiomeForNoiseGen(x, lavaSeaLevel, z).value();
-                if (biome.getCategory() == Biome.Category.NETHER) {
+                if (world.getDimensionKey().getValue().getPath().equals("the_nether")) {
                     // The Nether!
                     Block seaLevelBlock = chunk.getBlockState(new BlockPos(x, lavaSeaLevel, z)).getBlock();
                     if (seaLevelBlock == Blocks.LAVA) {

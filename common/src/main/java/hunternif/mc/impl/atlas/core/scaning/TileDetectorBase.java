@@ -58,13 +58,13 @@ public class TileDetectorBase implements ITileDetector {
      * (Currently WATER, BEACH and SWAMP)
      */
     public static void scanBiomeTypes() {
-        for (Biome biome : BuiltinRegistries.BIOME) {
-            switch (biome.getCategory()) {
-                case BEACH -> beachBiomes.add(BuiltinRegistries.BIOME.getId(biome));
-                case RIVER, OCEAN -> waterBiomes.add(BuiltinRegistries.BIOME.getId(biome));
-                case SWAMP -> swampBiomes.add(BuiltinRegistries.BIOME.getId(biome));
-            }
-        }
+//        for (Biome biome : BuiltinRegistries.BIOME) {
+//            switch (biome.getCategory()) {
+//                case BEACH -> beachBiomes.add(BuiltinRegistries.BIOME.getId(biome));
+//                case RIVER, OCEAN -> waterBiomes.add(BuiltinRegistries.BIOME.getId(biome));
+//                case SWAMP -> swampBiomes.add(BuiltinRegistries.BIOME.getId(biome));
+//            }
+//        }
     }
 
     int priorityForBiome(Identifier biome) {
