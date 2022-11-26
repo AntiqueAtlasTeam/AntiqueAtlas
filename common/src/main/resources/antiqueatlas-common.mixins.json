@@ -20,7 +20,8 @@
     "MixinClientPlayNetworkHandler",
     "MixinInGameHud",
     "MixinMinecraftClient",
-    "HeldItemRendererMixin"
+    "HeldItemRendererMixin",
+    "HeldItemFeatureRendererMixin"
   ],
   "injectors": {
     "defaultRequire": 1

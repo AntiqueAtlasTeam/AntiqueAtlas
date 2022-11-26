@@ -56,6 +56,7 @@
   "text.autoconfig.antiqueatlas.option.minScale": "Minimum zoom level",
   "text.autoconfig.antiqueatlas.option.maxScale": "Maximum zoom level",
   "text.autoconfig.antiqueatlas.option.doReverseWheelZoom": "Reversed mouse wheel zoom",
+  "text.autoconfig.antiqueatlas.option.showOthersAtlas": "Render atlas held by other players",
 
   "text.autoconfig.antiqueatlas.option.scanRadius": "Scan radius",
   "text.autoconfig.antiqueatlas.option.forceChunkLoading": "Force chunk loading",

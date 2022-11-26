@@ -52,6 +52,10 @@ public class AntiqueAtlasConfig implements ConfigData {
     @Comment("If false (by default), then mousewheel up is zoom in, mousewheel down is zoom out.\nIf true, then the direction is reversed.")
     public boolean doReverseWheelZoom = false;
 
+    @ConfigEntry.Category("userInterface")
+    @Comment("If false (by default), then do not render other players' maps.")
+    public boolean showOthersAtlas = false;
+
     //=========== Performance settings ============
     @ConfigEntry.Category("performance")
     @Comment("The radius of the area around the player which is scanned by the Atlas at regular intervals.\nNote that this will not force faraway chunks to load, unless force_chunk_loading is enabled.\nLower value gives better performance.")

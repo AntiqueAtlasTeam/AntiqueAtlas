@@ -12,10 +12,14 @@ public class Texture extends ATexture {
     public final int width;
     public final int height;
 
-    public Texture(Identifier texture, int width, int height, boolean autobind) {
-        super(texture, autobind);
+    public Texture(Identifier texture, int width, int height, boolean autobind, boolean flipped) {
+        super(texture, autobind, flipped);
         this.width = width;
         this.height = height;
+    }
+
+    public Texture(Identifier texture, int width, int height, boolean autobind) {
+        this(texture, width, height, autobind, false);
     }
 
     public Texture(Identifier texture, int width, int height) {

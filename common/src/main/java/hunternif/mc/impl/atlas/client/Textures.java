@@ -23,6 +23,7 @@ public class Textures {
 
     public static final ITexture
             BOOK = gui("book.png", 310, 218),
+            BOOK_COVER = gui("book_cover.png", 310, 218, true),
             BOOK_FRAME = gui("book_frame.png", 310, 218),
             BOOK_FRAME_NARROW = gui("book_frame_narrow.png", 310, 218),
             BTN_ARROWS = gui("navigate_arrows.png", 24, 24),
@@ -55,7 +56,10 @@ public class Textures {
 
     // Constructor helpers:
     private static ITexture gui(String fileName, int width, int height) {
-        return new Texture(new Identifier(GUI + fileName), width, height);
+        return gui(fileName, width, height, false);
+    }
+    private static ITexture gui(String fileName, int width, int height, boolean flipped) {
+        return new Texture(new Identifier(GUI + fileName), width, height, true, flipped);
     }
 
     private static ITexture scaleBar(String fileName) {

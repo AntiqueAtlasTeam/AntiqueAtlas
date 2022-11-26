@@ -20,6 +20,7 @@ import net.minecraft.util.math.Vec3f;
 public abstract class ATexture implements ITexture {
     final Identifier texture;
     final boolean autobind;
+    private boolean flipped;
 
     private final RenderLayer LAYER;
 
@@ -28,8 +29,13 @@ public abstract class ATexture implements ITexture {
     }
 
     public ATexture(Identifier texture, boolean autobind) {
+        this(texture, autobind, false);
+    }
+
+    public ATexture(Identifier texture, boolean autobind, boolean flipped) {
         this.texture = texture;
         this.autobind = autobind;
+        this.flipped = flipped;
         this.LAYER = RenderLayer.getText(texture);
     }
 
@@ -84,9 +90,9 @@ public abstract class ATexture implements ITexture {
 
     private void drawTexturedQuadWithLight(VertexConsumerProvider vertexConsumer, Matrix4f matrices, int x0, int x1, int y0, int y1, float u0, float u1, float v0, float v1, int light) {
         VertexConsumer consumer = vertexConsumer.getBuffer(this.LAYER);
-        consumer.vertex(matrices, (float) x0, (float) y1, 0f).color(255, 255, 255, 255).texture(u0, v1).light(light).next();
-        consumer.vertex(matrices, (float) x1, (float) y1, 0f).color(255, 255, 255, 255).texture(u1, v1).light(light).next();
-        consumer.vertex(matrices, (float) x1, (float) y0, 0f).color(255, 255, 255, 255).texture(u1, v0).light(light).next();
-        consumer.vertex(matrices, (float) x0, (float) y0, 0f).color(255, 255, 255, 255).texture(u0, v0).light(light).next();
+        consumer.vertex(matrices, (float) x0, flipped ? y0 : y1, 0f).color(255, 255, 255, 255).texture(u0, flipped ? v0 : v1).light(light).next();
+        consumer.vertex(matrices, (float) x1, flipped ? y0 : y1, 0f).color(255, 255, 255, 255).texture(u1, flipped ? v0 : v1).light(light).next();
+        consumer.vertex(matrices, (float) x1, flipped ? y1 : y0, 0f).color(255, 255, 255, 255).texture(u1, flipped ? v1 : v0).light(light).next();
+        consumer.vertex(matrices, (float) x0, flipped ? y1 : y0, 0f).color(255, 255, 255, 255).texture(u0, flipped ? v1 : v0).light(light).next();
     }
 }

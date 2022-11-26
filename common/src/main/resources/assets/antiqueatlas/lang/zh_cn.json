@@ -15,6 +15,9 @@
   "gui.antiqueatlas.marker.village": "村庄",
   "gui.antiqueatlas.marker.netherPortal": "下界传送门",
   "gui.antiqueatlas.marker.tomb": "%s 在此长眠",
+  "gui.antiqueatlas.marker.treasure": "埋藏的宝藏",
+  "gui.antiqueatlas.marker.monument": "海底神殿",
+  "gui.antiqueatlas.marker.mansion": "林地府邸",
 
   "gui.antiqueatlas.export.opening": "打开文件系统对话框……",
   "gui.antiqueatlas.export.selectFile": "选择PNG格式图片并另存为",
@@ -34,5 +37,41 @@
   "gui.antiqueatlas.export.rendering.markers": "渲染标记",
 
   "key.openatlas.desc": "打开古式地图",
-  "key.antiqueatlas.category": "古式地图"
+  "key.antiqueatlas.category": "古式地图",
+
+  "text.autoconfig.antiqueatlas.title": "古式地图(Antique Atlas)",
+  "text.autoconfig.antiqueatlas.category.gameplay": "玩法",
+  "text.autoconfig.antiqueatlas.category.userInterface": "用户接口",
+  "text.autoconfig.antiqueatlas.category.performance": "性能",
+  "text.autoconfig.antiqueatlas.category.appearance": "样式",
+
+  "text.autoconfig.antiqueatlas.option.doSaveBrowsingPos": "记住位置和缩放级别",
+  "text.autoconfig.antiqueatlas.option.autoDeathMarker": "标记死亡地点",
+  "text.autoconfig.antiqueatlas.option.autoVillageMarkers": "自动标记村庄",
+  "text.autoconfig.antiqueatlas.option.autoNetherPortalMarkers": "自动标记下界传送门",
+  "text.autoconfig.antiqueatlas.option.itemNeeded": "必须使用物品打开",
+
+  "text.autoconfig.antiqueatlas.option.doScaleMarkers": "缩放标记图标",
+  "text.autoconfig.antiqueatlas.option.defaultScale": "默认缩放级别",
+  "text.autoconfig.antiqueatlas.option.minScale": "最小缩放级别",
+  "text.autoconfig.antiqueatlas.option.maxScale": "最大缩放级别",
+  "text.autoconfig.antiqueatlas.option.doReverseWheelZoom": "鼠标滚轮反向缩放",
+  "text.autoconfig.antiqueatlas.option.showOthersAtlas": "渲染其他玩家手上的地图",
+
+  "text.autoconfig.antiqueatlas.option.scanRadius": "扫描半径",
+  "text.autoconfig.antiqueatlas.option.forceChunkLoading": "强制加载区块",
+  "text.autoconfig.antiqueatlas.option.newScanInterval": "扫描间隔",
+  "text.autoconfig.antiqueatlas.option.doRescan": "重新扫描",
+  "text.autoconfig.antiqueatlas.option.rescanRate": "重新扫描速率",
+  "text.autoconfig.antiqueatlas.option.markerLimit": "标记数量",
+  "text.autoconfig.antiqueatlas.option.doScanPonds": "扫描湖泊",
+  "text.autoconfig.antiqueatlas.option.doScanRavines": "扫描峡谷",
+  "text.autoconfig.antiqueatlas.option.debugRender": "调试渲染",
+  "text.autoconfig.antiqueatlas.option.resourcePackLogging": "资源包加载日志",
+
+
+  "text.autoconfig.antiqueatlas.option.tileSize": "地块大小",
+  "text.autoconfig.antiqueatlas.option.markerSize": "标记图标大小",
+  "text.autoconfig.antiqueatlas.option.playerIconWidth": "玩家图标宽",
+  "text.autoconfig.antiqueatlas.option.playerIconHeight": "玩家图标高"
 }
