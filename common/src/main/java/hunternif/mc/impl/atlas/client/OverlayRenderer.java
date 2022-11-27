@@ -39,6 +39,20 @@ public class OverlayRenderer extends DrawableHelper {
     private static final float INNER_ELEMENTS_SCALE_FACTOR = 1.9F;
     private PlayerEntity player;
     private World world;
+    private Boolean iris;
+
+    private Boolean irisLoad() {
+        if (iris == null) {
+            try {
+                Class.forName("net.coderbot.iris.Iris");
+                // Iris
+                iris = true;
+            } catch (ClassNotFoundException ignored) {
+                iris = false;
+            }
+        }
+        return iris;
+    }
 
     public void drawOverlay(MatrixStack matrices, VertexConsumerProvider vertexConsumer, int light, ItemStack atlas) {
         // Overlay must close if Atlas GUI is opened
@@ -63,6 +77,13 @@ public class OverlayRenderer extends DrawableHelper {
         RenderSystem.enableBlend();
         RenderSystem.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
+        if (!irisLoad()) {
+            matrices.push();
+            matrices.translate(0, 0, 0.01);
+            Textures.BOOK.drawWithLight(buffer, matrices, 0, 0, (int) (GuiAtlas.WIDTH * 1.5), (int) (GuiAtlas.HEIGHT * 1.5), light);
+            matrices.pop();
+        }
+
         matrices.push();
         matrices.scale(INNER_ELEMENTS_SCALE_FACTOR, INNER_ELEMENTS_SCALE_FACTOR, 1F);
 
@@ -80,10 +101,13 @@ public class OverlayRenderer extends DrawableHelper {
         // Overlay the frame so that edges of the map are smooth:
         matrices.translate(0, 0, -0.01);
         Textures.BOOK_FRAME.drawWithLight(buffer, matrices, 0, 0, (int) (GuiAtlas.WIDTH * 1.5), (int) (GuiAtlas.HEIGHT * 1.5), light);
+        if (irisLoad()) {
 
-        matrices.translate(0, 0, 0.04);
-        // I don't know why, anyway, it's compatible with iris when I put it here
-        Textures.BOOK.drawWithLight(buffer, matrices, 0, 0, (int) (GuiAtlas.WIDTH * 1.5), (int) (GuiAtlas.HEIGHT * 1.5), light);
+            matrices.push();
+            matrices.translate(0, 0, 0.05);
+            Textures.BOOK.drawWithLight(buffer, matrices, 0, 0, (int) (GuiAtlas.WIDTH * 1.5), (int) (GuiAtlas.HEIGHT * 1.5), light);
+            matrices.pop();
+        }
 
         RenderSystem.disableBlend();
     }
