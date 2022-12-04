@@ -29,7 +29,7 @@ public class ItemEmptyAtlas extends Item {
         }
 
         int atlasID = AntiqueAtlasMod.getGlobalAtlasData(world).getNextAtlasId();
-        ItemStack atlasStack = new ItemStack(RegistrarAntiqueAtlas.ATLAS.getOrNull());
+        ItemStack atlasStack = new ItemStack(RegistrarAntiqueAtlas.ATLAS.get());
 
         atlasStack.getOrCreateTag().putInt("atlasID", atlasID);
 

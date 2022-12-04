@@ -48,7 +48,7 @@ public class RecipeAtlasCombining implements CraftingRecipe {
         for (int i = 0; i < inv.size(); ++i) {
             ItemStack stack = inv.getStack(i);
             if (!stack.isEmpty()) {
-                if (stack.getItem() == RegistrarAntiqueAtlas.ATLAS) {
+                if (stack.getItem() == RegistrarAntiqueAtlas.ATLAS.get()) {
                     atlasesFound++;
                 }
             }
@@ -82,7 +82,7 @@ public class RecipeAtlasCombining implements CraftingRecipe {
 
     @Override
     public ItemStack getOutput() {
-        return new ItemStack(RegistrarAntiqueAtlas.ATLAS.getOrNull());
+        return new ItemStack(RegistrarAntiqueAtlas.ATLAS.get());
     }
 
     @Override

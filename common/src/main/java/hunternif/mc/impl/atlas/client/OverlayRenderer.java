@@ -53,7 +53,7 @@ public class OverlayRenderer extends DrawableHelper {
         this.player = MinecraftClient.getInstance().player;
         this.world = MinecraftClient.getInstance().world;
 
-        if (!atlas.isEmpty() && atlas.getItem() == RegistrarAntiqueAtlas.ATLAS.getOrNull()) {
+        if (!atlas.isEmpty() && atlas.getItem() == RegistrarAntiqueAtlas.ATLAS.get()) {
             int atlasID = AtlasItem.getAtlasID(atlas);
             drawMinimap(matrices, atlasID, vertexConsumer, light);
         }

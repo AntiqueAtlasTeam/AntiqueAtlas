@@ -33,13 +33,13 @@ public class RecipeAtlasCloning implements CraftingRecipe {
             ItemStack stack = inv.getStack(j);
 
             if (!stack.isEmpty()) {
-                if (stack.getItem() == RegistrarAntiqueAtlas.ATLAS) {
+                if (stack.getItem() == RegistrarAntiqueAtlas.ATLAS.get()) {
                     if (!filledAtlas.isEmpty()) {
                         return false;
                     }
                     filledAtlas = stack;
                 } else {
-                    if (stack.getItem() != RegistrarAntiqueAtlas.EMPTY_ATLAS) {
+                    if (stack.getItem() != RegistrarAntiqueAtlas.EMPTY_ATLAS.get()) {
                         return false;
                     }
                     i++;
@@ -59,13 +59,13 @@ public class RecipeAtlasCloning implements CraftingRecipe {
             ItemStack stack = inv.getStack(j);
 
             if (!stack.isEmpty()) {
-                if (stack.getItem() == RegistrarAntiqueAtlas.ATLAS) {
+                if (stack.getItem() == RegistrarAntiqueAtlas.ATLAS.get()) {
                     if (!filledAtlas.isEmpty()) {
                         return ItemStack.EMPTY;
                     }
                     filledAtlas = stack;
                 } else {
-                    if (stack.getItem() != RegistrarAntiqueAtlas.EMPTY_ATLAS) {
+                    if (stack.getItem() != RegistrarAntiqueAtlas.EMPTY_ATLAS.get()) {
                         return ItemStack.EMPTY;
                     }
                     i++;
@@ -74,7 +74,7 @@ public class RecipeAtlasCloning implements CraftingRecipe {
         }
 
         if (!filledAtlas.isEmpty() && i >= 1) {
-            ItemStack newAtlas = new ItemStack(RegistrarAntiqueAtlas.ATLAS.getOrNull(), i + 1);
+            ItemStack newAtlas = new ItemStack(RegistrarAntiqueAtlas.ATLAS.get(), i + 1);
             newAtlas.getOrCreateTag().putInt("atlasID", AtlasItem.getAtlasID(filledAtlas));
 
             if (filledAtlas.hasCustomName()) {
