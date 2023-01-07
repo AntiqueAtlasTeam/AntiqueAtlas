@@ -4,6 +4,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import hunternif.mc.impl.atlas.AntiqueAtlasMod;
+import hunternif.mc.impl.atlas.resource.ResourceReloadListener;
 import hunternif.mc.impl.atlas.util.Log;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -23,7 +24,7 @@ import java.util.concurrent.Executor;
  * Saves texture set names with the lists of texture variations.
  */
 @Environment(EnvType.CLIENT)
-public class TextureSetConfig implements IResourceReloadListener<Collection<TextureSet>> {
+public class TextureSetConfig implements ResourceReloadListener<Collection<TextureSet>> {
     public static final Identifier ID = AntiqueAtlasMod.id("texture_sets");
     private static final int VERSION = 1;
     private static final JsonParser PARSER = new JsonParser();
@@ -128,8 +129,7 @@ public class TextureSetConfig implements IResourceReloadListener<Collection<Text
                     textureSetMap.register(set);
                     if (AntiqueAtlasMod.CONFIG.resourcePackLogging)
                         Log.info("Loaded texture set %s with %d custom texture(s)", set.name, set.getTexturePaths().length);
-                }
-                catch (Throwable e) {
+                } catch (Throwable e) {
                     Log.error(e, "Failed to load the texture set `%s`:", set.name);
                 }
 
@@ -146,11 +146,6 @@ public class TextureSetConfig implements IResourceReloadListener<Collection<Text
                 }
             }
         }, executor);
-    }
-
-    @Override
-    public String getName() {
-        return ID.toString();
     }
 
     @Override

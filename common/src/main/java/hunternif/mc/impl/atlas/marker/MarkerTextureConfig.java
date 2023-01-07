@@ -3,7 +3,7 @@ package hunternif.mc.impl.atlas.marker;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import hunternif.mc.impl.atlas.AntiqueAtlasMod;
-import hunternif.mc.impl.atlas.client.IResourceReloadListener;
+import hunternif.mc.impl.atlas.resource.ResourceReloadListener;
 import hunternif.mc.impl.atlas.registry.MarkerType;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -27,7 +27,7 @@ import java.util.concurrent.Executor;
  * @author Hunternif
  */
 @Environment(EnvType.CLIENT)
-public class MarkerTextureConfig implements IResourceReloadListener<Map<Identifier, MarkerType>> {
+public class MarkerTextureConfig implements ResourceReloadListener<Map<Identifier, MarkerType>> {
     public static final Identifier ID = AntiqueAtlasMod.id("markers");
     private static final int VERSION = 1;
     private static final JsonParser parser = new JsonParser();

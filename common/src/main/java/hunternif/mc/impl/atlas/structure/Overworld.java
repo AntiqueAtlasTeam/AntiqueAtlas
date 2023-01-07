@@ -1,6 +1,7 @@
 package hunternif.mc.impl.atlas.structure;
 
 import hunternif.mc.impl.atlas.core.TileIdMap;
+import net.minecraft.structure.StructurePiece;
 import net.minecraft.structure.StructurePieceType;
 import net.minecraft.structure.pool.StructurePoolElement;
 import net.minecraft.util.math.BlockBox;
@@ -17,7 +18,7 @@ public class Overworld {
         StructureHandler.registerTile(StructurePieceType.RUINED_PORTAL, 10, TileIdMap.RUINED_PORTAL, Overworld::aboveGround);
     }
 
-    private static Collection<ChunkPos> aboveGround(World world, @SuppressWarnings("unused") StructurePoolElement structurePoolElement, BlockBox blockBox) {
+    private static Collection<ChunkPos> aboveGround(World world, @SuppressWarnings("unused") StructurePoolElement structurePoolElement, BlockBox blockBox, StructurePiece piece) {
         BlockPos center = new BlockPos(blockBox.getCenter());
         if (world.getSeaLevel() - 4 <= center.getY()) {
             return Collections.singleton(new ChunkPos(center));

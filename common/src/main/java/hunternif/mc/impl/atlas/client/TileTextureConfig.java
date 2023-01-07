@@ -2,9 +2,9 @@ package hunternif.mc.impl.atlas.client;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import hunternif.mc.impl.atlas.AntiqueAtlasConfig;
 import hunternif.mc.impl.atlas.AntiqueAtlasMod;
 import hunternif.mc.impl.atlas.core.scaning.TileHeightType;
+import hunternif.mc.impl.atlas.resource.ResourceReloadListener;
 import hunternif.mc.impl.atlas.util.Log;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -29,7 +29,7 @@ import java.util.concurrent.Executor;
  * @author Hunternif
  */
 @Environment(EnvType.CLIENT)
-public class TileTextureConfig implements IResourceReloadListener<Map<Identifier, Identifier>> {
+public class TileTextureConfig implements ResourceReloadListener<Map<Identifier, Identifier>> {
     public static final Identifier ID = AntiqueAtlasMod.id("tile_textures");
     private final TileTextureMap tileTextureMap;
     private final TextureSetMap textureSetMap;
@@ -119,12 +119,7 @@ public class TileTextureConfig implements IResourceReloadListener<Map<Identifier
             }
         }, executor);
     }
-
-    @Override
-    public String getName() {
-        return ID.toString();
-    }
-
+    
     @Override
     public Identifier getId() {
         return ID;

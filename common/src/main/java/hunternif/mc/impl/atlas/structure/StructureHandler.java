@@ -1,13 +1,12 @@
 package hunternif.mc.impl.atlas.structure;
 
 import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
 import hunternif.mc.api.AtlasAPI;
+import hunternif.mc.impl.atlas.AntiqueAtlasMod;
 import hunternif.mc.impl.atlas.util.MathUtil;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.structure.PoolStructurePiece;
-import net.minecraft.structure.StructurePiece;
-import net.minecraft.structure.StructurePieceType;
-import net.minecraft.structure.StructureStart;
+import net.minecraft.structure.*;
 import net.minecraft.structure.pool.SinglePoolElement;
 import net.minecraft.structure.pool.StructurePoolElement;
 import net.minecraft.text.Text;
@@ -25,10 +24,39 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class StructureHandler {
     private static final HashMultimap<Identifier, Pair<Identifier, Setter>> STRUCTURE_PIECE_TO_TILE_MAP = HashMultimap.create();
-    private static final Map<String, Pair<Identifier, Setter>> JIGSAW_TO_TILE_MAP = new HashMap<>();
+    private static final Multimap<Identifier, Pair<Identifier, Setter>> JIGSAW_TO_TILE_MAP = HashMultimap.create();
     private static final Map<Identifier, Pair<Identifier, Text>> STRUCTURE_PIECE_TO_MARKER_MAP = new HashMap<>();
     private static final Map<Identifier, Integer> STRUCTURE_PIECE_TILE_PRIORITY = new HashMap<>();
-    private static final Setter ALWAYS = (world, element, box) -> Collections.singleton(new ChunkPos(MathUtil.getCenter(box).getX() >> 4, MathUtil.getCenter(box).getZ() >> 4));
+    public static final Setter ALWAYS = (world, element, box, rotation) -> Collections.singleton(new ChunkPos(MathUtil.getCenter(box).getX() >> 4, MathUtil.getCenter(box).getZ() >> 4));
+
+
+    public static Collection<ChunkPos> IF_X_DIRECTION(World world, StructurePoolElement element, BlockBox box, StructurePiece piece) {
+        if (piece instanceof PoolStructurePiece poolPiece) {
+            List<JigsawJunction> junctions = poolPiece.getJunctions();
+            if (junctions.size() == 2) {
+                if (junctions.get(0).getSourceX() == junctions.get(1).getSourceX() || junctions.get(0).getSourceZ() != junctions.get(1).getSourceZ()) {
+                    return Collections.singleton(new ChunkPos(MathUtil.getCenter(box)));
+                }
+            } else {
+                return Collections.singleton(new ChunkPos(MathUtil.getCenter(box)));
+            }
+        }
+        return Collections.emptyList();
+    }
+
+    public static Collection<ChunkPos> IF_Z_DIRECTION(World world, StructurePoolElement element, BlockBox box, StructurePiece piece) {
+        if (piece instanceof PoolStructurePiece poolPiece) {
+            List<JigsawJunction> junctions = poolPiece.getJunctions();
+            if (junctions.size() == 2) {
+                if (junctions.get(0).getSourceZ() == junctions.get(1).getSourceZ() || junctions.get(0).getSourceX() != junctions.get(1).getSourceX()) {
+                    return Collections.singleton(new ChunkPos(MathUtil.getCenter(box)));
+                }
+            } else {
+                return Collections.singleton(new ChunkPos(MathUtil.getCenter(box)));
+            }
+        }
+        return Collections.emptyList();
+    }
 
     private static final Set<Triple<Integer, Integer, Identifier>> VISITED_STRUCTURES = Collections.newSetFromMap(new ConcurrentHashMap<>());
 
@@ -42,12 +70,12 @@ public class StructureHandler {
         registerTile(structurePieceType, priority, textureId, ALWAYS);
     }
 
-    public static void registerJigsawTile(String jigsawPattern, int priority, Identifier tileID, Setter setter) {
+    public static void registerJigsawTile(Identifier jigsawPattern, int priority, Identifier tileID, Setter setter) {
         JIGSAW_TO_TILE_MAP.put(jigsawPattern, new Pair<>(tileID, setter));
         STRUCTURE_PIECE_TILE_PRIORITY.put(tileID, priority);
     }
 
-    public static void registerJigsawTile(String jigsawPattern, int priority, Identifier tileID) {
+    public static void registerJigsawTile(Identifier jigsawPattern, int priority, Identifier tileID) {
         registerJigsawTile(jigsawPattern, priority, tileID, ALWAYS);
     }
 
@@ -71,20 +99,20 @@ public class StructureHandler {
         if (jigsawPiece instanceof PoolStructurePiece) {
             PoolStructurePiece pool = (PoolStructurePiece) jigsawPiece;
 
+            AntiqueAtlasMod.LOG.warn(pool.toString());
+
             if (pool.getPoolElement() instanceof SinglePoolElement) {
                 SinglePoolElement singlePoolElement = (SinglePoolElement) pool.getPoolElement();
 
                 Optional<Identifier> left = singlePoolElement.location.left();
-                if (left.isPresent()) {
-                    String path = left.get().getPath();
+                AntiqueAtlasMod.LOG.warn(left.toString());
 
-                    for (Map.Entry<String, Pair<Identifier, Setter>> entry : JIGSAW_TO_TILE_MAP.entrySet()) {
-                        Identifier tile = entry.getValue().getLeft();
-                        Setter setter = entry.getValue().getRight();
-                        if (path.contains(entry.getKey())) {
-                            for(ChunkPos pos : setter.matches(world, singlePoolElement, pool.getBoundingBox())) {
-                                put(world, pos.x, pos.z, tile);
-                            }
+                if (left.isPresent()) {
+                    for (Pair<Identifier, Setter> entry : JIGSAW_TO_TILE_MAP.get(left.get())) {
+                        Identifier tile = entry.getLeft();
+                        Setter setter = entry.getRight();
+                        for (ChunkPos pos : setter.matches(world, singlePoolElement, pool.getBoundingBox(), jigsawPiece)) {
+                            put(world, pos.x, pos.z, tile);
                         }
                     }
                 }
@@ -106,9 +134,9 @@ public class StructureHandler {
                 Collection<ChunkPos> matches;
                 if (structurePiece instanceof PoolStructurePiece) {
                     PoolStructurePiece pool = (PoolStructurePiece) structurePiece;
-                    matches = entry.getRight().matches(world, pool.getPoolElement(), pool.getBoundingBox());
+                    matches = entry.getRight().matches(world, pool.getPoolElement(), pool.getBoundingBox(), structurePiece);
                 } else {
-                    matches = entry.getRight().matches(world, null, structurePiece.getBoundingBox());
+                    matches = entry.getRight().matches(world, null, structurePiece.getBoundingBox(), structurePiece);
                 }
 
                 for (ChunkPos pos : matches) {
@@ -141,6 +169,6 @@ public class StructureHandler {
     }
 
     interface Setter {
-        Collection<ChunkPos> matches(World world, StructurePoolElement element, BlockBox box);
+        Collection<ChunkPos> matches(World world, StructurePoolElement element, BlockBox box, StructurePiece rotation);
     }
 }

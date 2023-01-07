@@ -1,4 +1,4 @@
-package hunternif.mc.impl.atlas.client;
+package hunternif.mc.impl.atlas.resource;
 
 import net.minecraft.resource.ResourceManager;
 import net.minecraft.resource.ResourceReloader;
@@ -9,8 +9,7 @@ import java.util.Collection;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 
-public interface IResourceReloadListener<T> extends ResourceReloader
-{
+public interface ResourceReloadListener<T> extends ResourceReloader {
 
     CompletableFuture<T> load(ResourceManager manager, Profiler profiler, Executor executor);
 
@@ -25,12 +24,15 @@ public interface IResourceReloadListener<T> extends ResourceReloader
                                            Profiler prepareProfiler,
                                            Profiler applyProfiler,
                                            Executor prepareExecutor,
-                                           Executor applyExecutor)
-    {
+                                           Executor applyExecutor) {
         CompletableFuture<T> load = load(manager, prepareProfiler, prepareExecutor);
 
         return load.thenCompose(synchronizer::whenPrepared)
                 .thenCompose(t -> apply(t, manager, applyProfiler, applyExecutor));
+    }
+
+    default String getName() {
+        return getId().toString();
     }
 
     Identifier getId();

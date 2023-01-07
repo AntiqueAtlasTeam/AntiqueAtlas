@@ -3,6 +3,7 @@ package hunternif.mc.impl.atlas.client;
 import hunternif.mc.impl.atlas.AntiqueAtlasMod;
 import hunternif.mc.impl.atlas.client.texture.ITexture;
 import hunternif.mc.impl.atlas.client.texture.TileTexture;
+import hunternif.mc.impl.atlas.resource.ResourceReloadListener;
 import hunternif.mc.impl.atlas.util.Log;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -27,7 +28,7 @@ import java.util.concurrent.Executor;
  * - The logical identifier modid:tex referenced by TextureSets
  */
 @Environment(EnvType.CLIENT)
-public class TextureConfig implements IResourceReloadListener<Map<Identifier, ITexture>> {
+public class TextureConfig implements ResourceReloadListener<Map<Identifier, ITexture>> {
     public static final Identifier ID = AntiqueAtlasMod.id("textures");
     private final Map<Identifier, ITexture> texture_map;
 
@@ -70,11 +71,6 @@ public class TextureConfig implements IResourceReloadListener<Map<Identifier, IT
                     Log.info("Loaded texture %s with path %s", entry.getKey(), entry.getValue().getTexture());
             }
         }, executor);
-    }
-
-    @Override
-    public String getName() {
-        return ID.toString();
     }
 
     @Override
