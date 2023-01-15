@@ -64,6 +64,11 @@ public class OverlayRenderer extends DrawableHelper {
         RenderSystem.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
         matrices.push();
+        matrices.translate(0, 0, 0.01);
+        Textures.BOOK.drawWithLight(buffer, matrices, 0, 0, (int) (GuiAtlas.WIDTH * 1.5), (int) (GuiAtlas.HEIGHT * 1.5), light);
+        matrices.pop();
+
+        matrices.push();
         matrices.scale(INNER_ELEMENTS_SCALE_FACTOR, INNER_ELEMENTS_SCALE_FACTOR, 1F);
 
 
@@ -80,10 +85,6 @@ public class OverlayRenderer extends DrawableHelper {
         // Overlay the frame so that edges of the map are smooth:
         matrices.translate(0, 0, -0.01);
         Textures.BOOK_FRAME.drawWithLight(buffer, matrices, 0, 0, (int) (GuiAtlas.WIDTH * 1.5), (int) (GuiAtlas.HEIGHT * 1.5), light);
-
-        matrices.translate(0, 0, 0.04);
-        // I don't know why, anyway, it's compatible with iris when I put it here
-        Textures.BOOK.drawWithLight(buffer, matrices, 0, 0, (int) (GuiAtlas.WIDTH * 1.5), (int) (GuiAtlas.HEIGHT * 1.5), light);
 
         RenderSystem.disableBlend();
     }
