@@ -14,7 +14,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUsageContext;
 import net.minecraft.item.map.MapBannerMarker;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.tag.BlockTags;
@@ -89,7 +88,7 @@ public class AtlasItem extends Item {
         // Same thing with the local markers:
         MarkersData markers = AntiqueAtlasMod.markersData.getMarkersData(stack, world);
         if (!world.isClient && !markers.isSyncedOnPlayer(player) && !markers.isEmpty()) {
-            markers.syncOnPlayer(atlasId, (ServerPlayerEntity) player);
+            markers.syncToPlayer(atlasId, (ServerPlayerEntity) player);
         }
 
         if (!world.isClient) {

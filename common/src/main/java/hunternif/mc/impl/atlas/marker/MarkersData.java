@@ -220,7 +220,7 @@ public class MarkersData extends PersistentState {
 
 	/** Send all data to the player in several packets. Called once during the
 	 * first run of ItemAtlas.onUpdate(). */
-	public void syncOnPlayer(int atlasID, ServerPlayerEntity player) {
+	public void syncToPlayer(int atlasID, ServerPlayerEntity player) {
 		for (RegistryKey<World> world : worldMap.keySet()) {
 			DimensionMarkersData data = getMarkersDataInWorld(world);
 

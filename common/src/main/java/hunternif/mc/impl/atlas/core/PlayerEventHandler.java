@@ -20,7 +20,7 @@ public class PlayerEventHandler {
         // Same thing with the local markers:
         MarkersData markers = AntiqueAtlasMod.markersData.getMarkersData(atlasID, world);
         if (!markers.isEmpty()) {
-            markers.syncOnPlayer(atlasID, player);
+            markers.syncToPlayer(atlasID, player);
         }
     }
 

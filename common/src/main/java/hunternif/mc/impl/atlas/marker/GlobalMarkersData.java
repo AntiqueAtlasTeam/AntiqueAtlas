@@ -1,6 +1,5 @@
 package hunternif.mc.impl.atlas.marker;
 
-import me.shedaniel.cloth.clothconfig.shadowed.org.yaml.snakeyaml.error.Mark;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
@@ -32,6 +31,6 @@ public class GlobalMarkersData extends MarkersData {
 
 	/** Send all data to the player in several packets. */
     void syncOnPlayer(ServerPlayerEntity player) {
-		syncOnPlayer(-1, player);
+		syncToPlayer(-1, player);
 	}
 }

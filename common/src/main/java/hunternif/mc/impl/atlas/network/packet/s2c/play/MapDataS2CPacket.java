@@ -15,38 +15,39 @@ import net.minecraft.util.Identifier;
 
 /**
  * Used to sync atlas data from server to client.
+ *
  * @author Hunternif
  * @author Haven King
  */
 public class MapDataS2CPacket extends S2CPacket {
-	public static final Identifier ID = AntiqueAtlasMod.id("packet", "s2c", "map", "data");
+    public static final Identifier ID = AntiqueAtlasMod.id("packet", "s2c", "map", "data");
 
-	public MapDataS2CPacket(int atlasID, NbtCompound data) {
-		this.writeVarInt(atlasID);
-		this.writeNbt(data);
-	}
+    public MapDataS2CPacket(int atlasID, NbtCompound data) {
+        this.writeVarInt(atlasID);
+        this.writeNbt(data);
+    }
 
-	@Override
-	public Identifier getId() {
-		return ID;
-	}
+    @Override
+    public Identifier getId() {
+        return ID;
+    }
 
-	@Environment(EnvType.CLIENT)
-	public static void apply(PacketByteBuf buf, NetworkManager.PacketContext context) {
-		int atlasID = buf.readVarInt();
-		NbtCompound data = buf.readNbt();
+    @Environment(EnvType.CLIENT)
+    public static void apply(PacketByteBuf buf, NetworkManager.PacketContext context) {
+        int atlasID = buf.readVarInt();
+        NbtCompound data = buf.readNbt();
 
-		if (data == null) return;
+        if (data == null) return;
 
-		context.queue(() -> {
-			PlayerEntity player = context.getPlayer();
-			assert player != null;
-			AtlasData atlasData = AntiqueAtlasMod.tileData.getData(atlasID, player.getEntityWorld());
-			atlasData.updateFromNbt(data);
+        context.queue(() -> {
+            PlayerEntity player = context.getPlayer();
 
-			if (AntiqueAtlasMod.CONFIG.doSaveBrowsingPos && MinecraftClient.getInstance().currentScreen instanceof GuiAtlas) {
-				((GuiAtlas) MinecraftClient.getInstance().currentScreen).loadSavedBrowsingPosition();
-			}
-		});
-	}
+            AtlasData atlasData = AntiqueAtlasMod.tileData.getData(atlasID, player != null ? player.getEntityWorld() : MinecraftClient.getInstance().world);
+            atlasData.updateFromNbt(data);
+
+            if (AntiqueAtlasMod.CONFIG.doSaveBrowsingPos && MinecraftClient.getInstance().currentScreen instanceof GuiAtlas) {
+                ((GuiAtlas) MinecraftClient.getInstance().currentScreen).loadSavedBrowsingPosition();
+            }
+        });
+    }
 }
