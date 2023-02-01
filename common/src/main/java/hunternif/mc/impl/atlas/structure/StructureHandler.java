@@ -3,7 +3,6 @@ package hunternif.mc.impl.atlas.structure;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import hunternif.mc.api.AtlasAPI;
-import hunternif.mc.impl.atlas.AntiqueAtlasMod;
 import hunternif.mc.impl.atlas.util.MathUtil;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.structure.*;
@@ -30,7 +29,7 @@ public class StructureHandler {
     public static final Setter ALWAYS = (world, element, box, rotation) -> Collections.singleton(new ChunkPos(MathUtil.getCenter(box).getX() >> 4, MathUtil.getCenter(box).getZ() >> 4));
 
 
-    public static Collection<ChunkPos> IF_X_DIRECTION(World world, StructurePoolElement element, BlockBox box, StructurePiece piece) {
+    public static Collection<ChunkPos> IF_X_DIRECTION(World ignoredWorld, StructurePoolElement ignoredElement, BlockBox box, StructurePiece piece) {
         if (piece instanceof PoolStructurePiece poolPiece) {
             List<JigsawJunction> junctions = poolPiece.getJunctions();
             if (junctions.size() == 2) {
@@ -44,7 +43,7 @@ public class StructureHandler {
         return Collections.emptyList();
     }
 
-    public static Collection<ChunkPos> IF_Z_DIRECTION(World world, StructurePoolElement element, BlockBox box, StructurePiece piece) {
+    public static Collection<ChunkPos> IF_Z_DIRECTION(World ignoredWorld, StructurePoolElement ignoredElement, BlockBox box, StructurePiece piece) {
         if (piece instanceof PoolStructurePiece poolPiece) {
             List<JigsawJunction> junctions = poolPiece.getJunctions();
             if (junctions.size() == 2) {
@@ -96,16 +95,9 @@ public class StructureHandler {
     }
 
     private static void resolveJigsaw(StructurePiece jigsawPiece, ServerWorld world) {
-        if (jigsawPiece instanceof PoolStructurePiece) {
-            PoolStructurePiece pool = (PoolStructurePiece) jigsawPiece;
-
-            AntiqueAtlasMod.LOG.warn(pool.toString());
-
-            if (pool.getPoolElement() instanceof SinglePoolElement) {
-                SinglePoolElement singlePoolElement = (SinglePoolElement) pool.getPoolElement();
-
+        if (jigsawPiece instanceof PoolStructurePiece pool) {
+            if (pool.getPoolElement() instanceof SinglePoolElement singlePoolElement) {
                 Optional<Identifier> left = singlePoolElement.location.left();
-                AntiqueAtlasMod.LOG.warn(left.toString());
 
                 if (left.isPresent()) {
                     for (Pair<Identifier, Setter> entry : JIGSAW_TO_TILE_MAP.get(left.get())) {
@@ -132,8 +124,7 @@ public class StructureHandler {
         if (STRUCTURE_PIECE_TO_TILE_MAP.containsKey(structurePieceId)) {
             for (Pair<Identifier, Setter> entry : STRUCTURE_PIECE_TO_TILE_MAP.get(structurePieceId)) {
                 Collection<ChunkPos> matches;
-                if (structurePiece instanceof PoolStructurePiece) {
-                    PoolStructurePiece pool = (PoolStructurePiece) structurePiece;
+                if (structurePiece instanceof PoolStructurePiece pool) {
                     matches = entry.getRight().matches(world, pool.getPoolElement(), pool.getBoundingBox(), structurePiece);
                 } else {
                     matches = entry.getRight().matches(world, null, structurePiece.getBoundingBox(), structurePiece);
