@@ -127,7 +127,7 @@ public class TileTextureMap {
                 setTexture(biome, TextureSetMap.instance().getByName(AntiqueAtlasMod.id("mushroom")));
                 break;
             case NETHER:
-                setTexture(biome, TextureSetMap.instance().getByName(AntiqueAtlasMod.id("nether_wastes")));
+                setTexture(biome, TextureSetMap.instance().getByName(AntiqueAtlasMod.id("cave_walls")));
                 break;
             case NONE:
                 setTexture(biome, TextureSetMap.instance().getByName(AntiqueAtlasMod.id("end_void")));
