@@ -15,8 +15,10 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.profiler.Profiler;
 import net.minecraft.util.registry.BuiltinRegistries;
 import net.minecraft.util.registry.Registry;
+import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.biome.Biome;
 
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 
@@ -55,28 +57,23 @@ public class ClientProxy implements ResourceReloader {
     }
 
     /**
-     * Assign default textures to vanilla biomes. The textures are assigned
-     * only if the biome was not in the config. This prevents unnecessary
-     * overwriting, to aid people who manually modify the config.
-     */
-    private void assignBiomeTextures() {
-        // Now let's register every other biome, they'll come from other mods
-        for (Biome biome : BuiltinRegistries.BIOME) {
-            TileTextureMap.instance().checkRegistration(BuiltinRegistries.BIOME.getId(biome), biome);
-        }
-    }
-
-    /**
      * Assign default textures to biomes defined in the client world, but
      * not part of the BuiltinRegistries.BIOME. This happens for all biomes
      * defined in data packs. Also, as these are only available per world,
      * we need the ClientWorld loaded here.
      */
     public static void assignCustomBiomeTextures(ClientWorld world) {
-        for (Biome biome : world.getRegistryManager().get(Registry.BIOME_KEY)) {
-            Identifier id = world.getRegistryManager().get(Registry.BIOME_KEY).getId(biome);
+        for (Map.Entry<RegistryKey<Biome>, Biome> biome : BuiltinRegistries.BIOME.getEntrySet()) {
+            Identifier id = BuiltinRegistries.BIOME.getId(biome.getValue());
             if (!TileTextureMap.instance().isRegistered(id)) {
-                TileTextureMap.instance().autoRegister(id, biome);
+                TileTextureMap.instance().autoRegister(id, biome.getKey());
+            }
+        }
+
+        for (Map.Entry<RegistryKey<Biome>, Biome> entry : world.getRegistryManager().get(Registry.BIOME_KEY).getEntrySet()) {
+            Identifier id = world.getRegistryManager().get(Registry.BIOME_KEY).getId(entry.getValue());
+            if (!TileTextureMap.instance().isRegistered(id)) {
+                TileTextureMap.instance().autoRegister(id, entry.getKey());
             }
         }
     }
@@ -92,7 +89,6 @@ public class ClientProxy implements ResourceReloader {
             for (MarkerType type : MarkerType.REGISTRY) {
                 type.initMips();
             }
-            assignBiomeTextures();
         }, applyExecutor));
     }
 }
