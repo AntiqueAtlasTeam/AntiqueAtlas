@@ -4,6 +4,8 @@ import dev.architectury.networking.NetworkManager;
 import hunternif.mc.impl.atlas.AntiqueAtlasMod;
 import hunternif.mc.impl.atlas.core.TileDataStorage;
 import hunternif.mc.impl.atlas.network.packet.s2c.S2CPacket;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.ChunkPos;
@@ -46,6 +48,7 @@ public class PutGlobalTileS2CPacket extends S2CPacket {
 		return ID;
 	}
 
+	@Environment(EnvType.CLIENT)
 	public static void apply(PacketByteBuf buf, NetworkManager.PacketContext context) {
 		RegistryKey<World> world = RegistryKey.of(Registry.WORLD_KEY, buf.readIdentifier());
 		int tileCount = buf.readVarInt();

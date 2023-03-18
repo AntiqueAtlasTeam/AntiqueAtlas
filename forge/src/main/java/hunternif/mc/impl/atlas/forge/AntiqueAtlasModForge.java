@@ -1,11 +1,11 @@
 package hunternif.mc.impl.atlas.forge;
 
+import dev.architectury.platform.Platform;
 import dev.architectury.platform.forge.EventBuses;
+import dev.architectury.utils.Env;
 import hunternif.mc.impl.atlas.AntiqueAtlasMod;
 import hunternif.mc.impl.atlas.AntiqueAtlasModClient;
 import hunternif.mc.impl.atlas.client.gui.forge.AntiqueAtlasConfigMenu;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
@@ -19,7 +19,11 @@ public class AntiqueAtlasModForge
                 FMLJavaModLoadingContext.get().getModEventBus());
 
         AntiqueAtlasMod.init();
-        DistExecutor.safeRunWhenOn(Dist.CLIENT, () -> AntiqueAtlasModClient::init);
-        DistExecutor.safeRunWhenOn(Dist.CLIENT, () -> AntiqueAtlasConfigMenu::init);
+
+        if (Platform.getEnvironment() == Env.CLIENT)
+        {
+            AntiqueAtlasModClient.init();
+            AntiqueAtlasConfigMenu.init();
+        }
     }
 }

@@ -4,8 +4,8 @@ import dev.architectury.networking.NetworkManager;
 import hunternif.mc.impl.atlas.AntiqueAtlasMod;
 import hunternif.mc.impl.atlas.core.AtlasData;
 import hunternif.mc.impl.atlas.network.packet.s2c.S2CPacket;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.entity.player.PlayerEntity;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
@@ -33,6 +33,7 @@ public class PutTileS2CPacket extends S2CPacket {
 		return ID;
 	}
 
+	@Environment(EnvType.CLIENT)
 	public static void apply(PacketByteBuf buf, NetworkManager.PacketContext context) {
 		int atlasID = buf.readVarInt();
 		RegistryKey<World> world = RegistryKey.of(Registry.WORLD_KEY, buf.readIdentifier());
@@ -41,10 +42,7 @@ public class PutTileS2CPacket extends S2CPacket {
 		Identifier tile = buf.readIdentifier();
 
 		context.queue(() -> {
-			PlayerEntity player = context.getPlayer();
-			assert player != null;
-
-			AtlasData data = AntiqueAtlasMod.tileData.getData(atlasID, player.getEntityWorld());
+			AtlasData data = AntiqueAtlasMod.tileData.getData(atlasID, context.getPlayer().getEntityWorld());
 			data.setTile(world, x, z, tile);
 		});
 	}

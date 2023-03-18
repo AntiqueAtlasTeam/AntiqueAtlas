@@ -6,8 +6,8 @@ import hunternif.mc.impl.atlas.core.AtlasData;
 import hunternif.mc.impl.atlas.core.TileGroup;
 import hunternif.mc.impl.atlas.core.WorldData;
 import hunternif.mc.impl.atlas.network.packet.s2c.S2CPacket;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.entity.player.PlayerEntity;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.util.Identifier;
@@ -44,6 +44,7 @@ public class TileGroupsS2CPacket extends S2CPacket {
         return ID;
     }
 
+    @Environment(EnvType.CLIENT)
     public static void apply(PacketByteBuf buf, NetworkManager.PacketContext context) {
         int atlasID = buf.readVarInt();
         RegistryKey<World> world = RegistryKey.of(Registry.WORLD_KEY, buf.readIdentifier());
@@ -60,8 +61,7 @@ public class TileGroupsS2CPacket extends S2CPacket {
 
 
         context.queue(() -> {
-            PlayerEntity player = context.getPlayer();
-            AtlasData atlasData = AntiqueAtlasMod.tileData.getData(atlasID, player != null ? player.getEntityWorld() : MinecraftClient.getInstance().world);
+            AtlasData atlasData = AntiqueAtlasMod.tileData.getData(atlasID, context.getPlayer().getEntityWorld());
             WorldData worldData = atlasData.getWorldData(world);
             for (TileGroup t : tileGroups) {
                 worldData.putTileGroup(t);
