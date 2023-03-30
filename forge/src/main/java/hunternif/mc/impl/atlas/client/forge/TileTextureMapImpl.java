@@ -1,6 +1,7 @@
 package hunternif.mc.impl.atlas.client.forge;
 
 import hunternif.mc.impl.atlas.AntiqueAtlasMod;
+import hunternif.mc.impl.atlas.client.TileTextureMap;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.tag.BiomeTags;
 import net.minecraft.util.Identifier;
@@ -149,8 +150,6 @@ public class TileTextureMapImpl {
             return Optional.of(AntiqueAtlasMod.id("mushroom"));
         }
 
-
-
         if (biomeTag.isIn(BiomeTags.IS_BADLANDS)) {
             return Optional.of(AntiqueAtlasMod.id("mesa"));
         }
@@ -163,6 +162,6 @@ public class TileTextureMapImpl {
             AntiqueAtlasMod.LOG.warn("Underground biomes aren't supported yet.");
         }
 
-        return Optional.empty();
+        return TileTextureMap.guessFittingTextureSetFallback(biomeTag.value());
     }
 }

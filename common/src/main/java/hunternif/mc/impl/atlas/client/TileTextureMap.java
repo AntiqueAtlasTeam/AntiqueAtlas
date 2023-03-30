@@ -8,8 +8,11 @@ import hunternif.mc.impl.atlas.util.Log;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.registry.BuiltinRegistries;
+import net.minecraft.util.registry.RegistryEntryList;
 import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.biome.Biome;
+import net.minecraft.world.gen.feature.PlacedFeature;
 
 import java.util.*;
 import java.util.Map.Entry;
@@ -91,6 +94,47 @@ public class TileTextureMap {
     @ExpectPlatform
     static private Optional<Identifier> guessFittingTextureSet(RegistryKey<Biome> biome) {
         throw new AssertionError("Not implemented");
+    }
+
+    static public Optional<Identifier> guessFittingTextureSetFallback(Biome biome) {
+        Identifier texture_set = switch (biome.getCategory()) {
+            case SWAMP -> AntiqueAtlasMod.id("swamp");
+            case OCEAN, RIVER ->
+                    biome.getPrecipitation() == Biome.Precipitation.SNOW ? AntiqueAtlasMod.id("ice") : AntiqueAtlasMod.id("water");
+            case BEACH -> AntiqueAtlasMod.id("shore");
+            case JUNGLE -> AntiqueAtlasMod.id("jungle");
+            case SAVANNA -> AntiqueAtlasMod.id("savanna");
+            case MESA -> AntiqueAtlasMod.id("plateau_mesa");
+            case FOREST ->
+                    biome.getPrecipitation() == Biome.Precipitation.SNOW ? AntiqueAtlasMod.id("snow_pines") : AntiqueAtlasMod.id("forest");
+            case PLAINS ->
+                    biome.getPrecipitation() == Biome.Precipitation.SNOW ? AntiqueAtlasMod.id("snow") : AntiqueAtlasMod.id("plains");
+            case ICY -> AntiqueAtlasMod.id("ice_spikes");
+            case DESERT -> AntiqueAtlasMod.id("desert");
+            case TAIGA -> AntiqueAtlasMod.id("snow");
+            case EXTREME_HILLS -> AntiqueAtlasMod.id("hills");
+            case MOUNTAIN -> AntiqueAtlasMod.id("mountains");
+            case THEEND -> {
+                List<RegistryEntryList<PlacedFeature>> features = biome.getGenerationSettings().getFeatures();
+                PlacedFeature chorus_plant_feature = BuiltinRegistries.PLACED_FEATURE.get(new Identifier("chorus_plant"));
+                assert chorus_plant_feature != null;
+                boolean has_chorus_plant = features.stream().anyMatch(entries -> entries.stream().anyMatch(feature -> feature.value() == chorus_plant_feature));
+                if (has_chorus_plant) {
+                    yield AntiqueAtlasMod.id("end_island_plants");
+                } else {
+                    yield AntiqueAtlasMod.id("end_island");
+                }
+            }
+            case MUSHROOM -> AntiqueAtlasMod.id("mushroom");
+            case NETHER -> AntiqueAtlasMod.id("soul_sand_valley");
+            case NONE -> AntiqueAtlasMod.id("end_void");
+            case UNDERGROUND -> {
+                Log.warn("Underground biomes aren't supported yet.");
+                yield null;
+            }
+        };
+
+        return Optional.ofNullable(texture_set);
     }
 
     public boolean isRegistered(Identifier id) {

@@ -1,6 +1,7 @@
 package hunternif.mc.impl.atlas.client.fabric;
 
 import hunternif.mc.impl.atlas.AntiqueAtlasMod;
+import hunternif.mc.impl.atlas.client.TileTextureMap;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.tag.convention.v1.ConventionalBiomeTags;
@@ -156,6 +157,6 @@ public class TileTextureMapImpl {
             return Optional.of(AntiqueAtlasMod.id("mesa"));
         }
 
-        return Optional.empty();
+        return TileTextureMap.guessFittingTextureSetFallback(biomeTag.value());
     }
 }
