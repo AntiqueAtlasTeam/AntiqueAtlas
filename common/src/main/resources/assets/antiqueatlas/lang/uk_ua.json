@@ -1,0 +1,76 @@
+{
+  "item.antiqueatlas.antique_atlas": "Антикварний атлас #%d",
+  "item.antiqueatlas.empty_antique_atlas": "Порожній антикварний атлас",
+
+  "gui.antiqueatlas.scalebar": "Масштаб у блоках",
+  "gui.antiqueatlas.addMarker": "Додати мітку",
+  "gui.antiqueatlas.delMarker": "Видалити мітку",
+  "gui.antiqueatlas.followPlayer": "Сфокусуватися на гравці",
+  "gui.antiqueatlas.exportImage": "Експортувати світлину",
+  "gui.antiqueatlas.hideMarkers": "Приховати мітки",
+  "gui.antiqueatlas.showMarkers": "Показати мітки",
+
+  "gui.antiqueatlas.marker.label": "Ярлик:",
+  "gui.antiqueatlas.marker.type": "Тип:",
+  "gui.antiqueatlas.marker.village": "Село",
+  "gui.antiqueatlas.marker.netherPortal": "Портал у Незер",
+  "gui.antiqueatlas.marker.tomb": "Here lies %s",
+  "gui.antiqueatlas.marker.treasure": "Скарб",
+  "gui.antiqueatlas.marker.monument": "Океанічний монумент",
+  "gui.antiqueatlas.marker.mansion": "Лісовий маєток",
+
+  "gui.antiqueatlas.export.opening": "Відкриття діалогового вікна файлової системи...",
+  "gui.antiqueatlas.export.selectFile": "Оберіть файл PNG, щоб зберегти",
+  "gui.antiqueatlas.export.tooLarge": "Вибачте! Ця світлина занадто велика для рендерингу, спробуйте виділити більше пам'яті Java.",
+
+  "gui.antiqueatlas.export.setup": "Налаштування...",
+  "gui.antiqueatlas.export.rendering": "Рендеринг...",
+  "gui.antiqueatlas.export.writing": "Запис у файл...",
+  "gui.antiqueatlas.export.loadingtextures": "Завантаження текстур...",
+  "gui.antiqueatlas.export.makingbuffer": "Виділення буфера розміром %dx%d...",
+
+  "gui.antiqueatlas.export.renderstripe": "Візуалізація фрагменту %d/%d...",
+  "gui.antiqueatlas.export.writestripe": "Запис фрагменту...",
+
+  "gui.antiqueatlas.export.rendering.background": "Візуалізація фону мапи",
+  "gui.antiqueatlas.export.rendering.map": "Візуалізація заголовків мапи",
+  "gui.antiqueatlas.export.rendering.markers": "Візуалізація міток",
+
+  "key.openatlas.desc": "Відкрити атлас",
+  "key.antiqueatlas.category": "Антикварний атлас",
+
+  "text.autoconfig.antiqueatlas.title":  "Антикварний атлас",
+  "text.autoconfig.antiqueatlas.category.gameplay":  "Ігровий процес",
+  "text.autoconfig.antiqueatlas.category.userInterface":  "Інтерфейс користувача",
+  "text.autoconfig.antiqueatlas.category.performance":  "Продуктивність",
+  "text.autoconfig.antiqueatlas.category.appearance":  "Зовнішній вигляд",
+
+  "text.autoconfig.antiqueatlas.option.doSaveBrowsingPos": "Зберегти позицію атласа",
+  "text.autoconfig.antiqueatlas.option.autoDeathMarker": "Мітка смерті",
+  "text.autoconfig.antiqueatlas.option.autoVillageMarkers": "Мітка села",
+  "text.autoconfig.antiqueatlas.option.autoNetherPortalMarkers": "Мітка порталу в Незер",
+  "text.autoconfig.antiqueatlas.option.itemNeeded": "Для використання необхідний атлас",
+
+  "text.autoconfig.antiqueatlas.option.doScaleMarkers": "Масштабувати мітки",
+  "text.autoconfig.antiqueatlas.option.defaultScale": "Типовий рівень масштабування",
+  "text.autoconfig.antiqueatlas.option.minScale": "Мінімальний рівень масштабування",
+  "text.autoconfig.antiqueatlas.option.maxScale": "Максимальний рівень масштабування",
+  "text.autoconfig.antiqueatlas.option.doReverseWheelZoom": "Інвертоване масштабування колесом миші",
+
+  "text.autoconfig.antiqueatlas.option.scanRadius": "Радіус сканування",
+  "text.autoconfig.antiqueatlas.option.forceChunkLoading": "Примусове завантаження чанків",
+  "text.autoconfig.antiqueatlas.option.newScanInterval": "Інтервал сканування",
+  "text.autoconfig.antiqueatlas.option.doRescan": "Повторне сканування",
+  "text.autoconfig.antiqueatlas.option.rescanRate": "Частота повторного сканування",
+  "text.autoconfig.antiqueatlas.option.markerLimit": "Ліміт міток",
+  "text.autoconfig.antiqueatlas.option.doScanPonds": "Сканування ставків",
+  "text.autoconfig.antiqueatlas.option.doScanRavines": "Сканування ущелин",
+  "text.autoconfig.antiqueatlas.option.debugRender": "Налагоджувальний рендеринг",
+  "text.autoconfig.antiqueatlas.option.resourcePackLogging": "Журнал завантаження пакетів ресурсів",
+
+
+  "text.autoconfig.antiqueatlas.option.tileSize": "Розмір плиток",
+  "text.autoconfig.antiqueatlas.option.markerSize": "Розмір міток",
+  "text.autoconfig.antiqueatlas.option.playerIconWidth": "Ширини іконки гравця",
+  "text.autoconfig.antiqueatlas.option.playerIconHeight": "Висота іконки гравця"
+}
