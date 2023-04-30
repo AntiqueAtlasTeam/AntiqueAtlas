@@ -1,0 +1,89 @@
+##Translated by KameiB for RLCraft 2.9.2. Jan/2023
+item.antiqueAtlas.name=Atlas antiguo
+item.emptyAntiqueAtlas.name=Atlas antiguo vacio
+
+gui.antiqueatlas.scalebar=Escala en bloques
+gui.antiqueatlas.addMarker=Añadir marcador
+gui.antiqueatlas.delMarker=Borrar marcador
+gui.antiqueatlas.followPlayer=Seguir jugador
+gui.antiqueatlas.exportImage=Exportar imagen
+gui.antiqueatlas.hideMarkers=Ocultar marcadores
+gui.antiqueatlas.showMarkers=Mostrar marcadores
+
+gui.antiqueatlas.marker.label=Etiqueta:
+gui.antiqueatlas.marker.type=Tipo:
+gui.antiqueatlas.marker.village=Aldea
+gui.antiqueatlas.marker.netherPortal=Portal del Nether
+gui.antiqueatlas.marker.tomb=Aqui yace %s
+
+gui.antiqueatlas.export.opening=Abriendo ventana de archivos...
+gui.antiqueatlas.export.selectFile=Seleccione un archivo PNG en donde guardar
+gui.antiqueatlas.export.success=Imagen exportada como %s
+gui.antiqueatlas.export.tooLarge=Ups! La imagen es muy grande para renderizar. Aumenta la memoria asignada a Java.
+gui.antiqueatlas.export.atlasTooLarge=Ups! La imagen es muy grande para renderizar. Aumenta "exportSizeLimit" en als opciones del mod.
+
+gui.antiqueatlas.export.setup=Configurando...
+gui.antiqueatlas.export.rendering=Renderizando...
+gui.antiqueatlas.export.writing=Escribiendo el archivo...
+gui.antiqueatlas.export.loadingtextures=Cargando texturas...
+gui.antiqueatlas.export.makingbuffer=Asignando %dx%d buffer de imagen...
+
+gui.antiqueatlas.export.renderstripe=Renderizando rebanada %d/%d...
+gui.antiqueatlas.export.writestripe=Escribiendo rebanada...
+
+gui.antiqueatlas.export.rendering.background=Renderizando fondo del mapa
+gui.antiqueatlas.export.rendering.map=Renderizando mosaicos del mapa
+gui.antiqueatlas.export.rendering.markers=Renderizando marcadores
+
+key.openatlas.desc=Abrir Atlas
+key.antiqueatlas.category=Antique Atlas
+
+#Added by KameiB. Config GUI texts
+antiqueatlas.gameplay=Aventura
+antiqueatlas.gameplay.tooltip=Iconos que se usaran durante tu aventura
+antiqueatlas.gameplay.autodeathmarker=Marcadores de muertes
+antiqueatlas.gameplay.autodeathmarker.tooltip=Crear marcadores donde donde murio el jugador
+antiqueatlas.gameplay.autonetherportalmarkers=Marcadores de portales de Nether
+antiqueatlas.gameplay.autonetherportalmarkers.tooltip=Crear marcadores de portales de Nether
+antiqueatlas.gameplay.autovillagemarkers=Marcadores de aldeas
+antiqueatlas.gameplay.autovillagemarkers.tooltip=Crear marcadores donde hay aldeas
+antiqueatlas.gameplay.dosavebrowsingpos=Posicion de busqueda
+antiqueatlas.gameplay.dosavebrowsingpos.tooltip=Recordar la ultima posicion y zoom en cada dimension.\n§fSi se deshabilita, todas las dimensiones y todos los atlas se sincronizaran a las mismas coordenadas y zoom, y el mapa "seguira" al jugador por defecto.§r
+antiqueatlas.gameplay.itemneeded=Item requerido
+antiqueatlas.gameplay.itemneeded.tooltip=El jugador necesitara craftear un atlas para poder usarlo
+
+antiqueatlas.performance=Rendimiento
+antiqueatlas.performance.tooltip=Configuraciones de rendimiento
+antiqueatlas.performance.debugrender=Depurador de renderizado
+antiqueatlas.performance.debugrender.tooltip=Si se habilita, se mostrara el tiempo de renderizado del mapa
+antiqueatlas.performance.dorescan=Re escanear
+antiqueatlas.performance.dorescan.tooltip=Re escanear chunks mapeados previamente en el area. Esto es util cuando hay cambios como en la costa (incluyendo fosas de agua y lava), o si la tierra desaparece completamente (para mundos en el cielo).\n§fDeshabilite para mejorar el rendimiento.§r
+antiqueatlas.performance.doscanponds=Escanear fosas
+antiqueatlas.performance.doscanponds.tooltip=Hacer un escaneo adicional para ubicar pequeñas fosas de agua o lava.\n§fDeshabilite para mejorar el rendimiento.§r
+antiqueatlas.performance.doscanravines=Escanear ravines
+antiqueatlas.performance.doscanravines.tooltip=Hacer un escaneo adicional para ubicar ravines.\n§fDeshabilite para mejorar el rendimiento.§r
+antiqueatlas.performance.exportsizelimit=Tamaño MAX para exportar
+antiqueatlas.performance.exportsizelimit.tooltip=Tamaño maximo de la imagen a exportar. Los atlas muy grandes no se exportaran para prevenir crasheos.\n§fMin: 32\nMax: 2147483647§r
+antiqueatlas.performance.forcechunkloading=Forzar carga de chunks
+antiqueatlas.performance.forcechunkloading.tooltip=Forzar el cargado de chunks dentro del radio de escaneo aun si excede la distancia regular de cargado de chunks.\n§cHabilitar esto reducira TREMENDAMENTE el rendimiento!§r
+antiqueatlas.performance.markerlimit=Limite de marcadores
+antiqueatlas.performance.markerlimit.tooltip=Cantidad maxima de marcadores que puede tener un atlas.\n§fMin: 0\nMax: 2147483647§r
+antiqueatlas.performance.newscaninterval=Intervalo de escaneo
+antiqueatlas.performance.newscaninterval.tooltip=Tiempo en segundos entre dos escaneos del area.\n§fUn valor alto mejora el rendimiento.§r
+antiqueatlas.performance.rescanrate=Frecuencia de re escaneo
+antiqueatlas.performance.rescanrate.tooltip=Cantidad de escaneos de area entre re escaneos completos.\n§fUn valor alto mejora el rendimiento.\nMin: 1\nMax: 1000§r
+antiqueatlas.performance.scanradius=Radio de escaneo
+antiqueatlas.performance.scanradius.tooltip=Radio del area alrededor del jugador que sera escaneada por el Atlas con regularidad.\n§fToma en cuenta que esto no forzara que se carguen los chunks lejanos, a menos que "Forzar carga de chunks" este habilitado.\nUn valor bajo mejora el rendimiento.§r
+
+antiqueatlas.userinterface=Interfaz de usuario
+antiqueatlas.userinterface.tooltip=Configuraciones de la interface de usario
+antiqueatlas.userinterface.defaultscale=Escala por defecto
+antiqueatlas.userinterface.defaultscale.tooltip=Nivel de zoom por defecto. Este numero corresponde al tamaño de un bloque en el mapa, relativo al tamaño de pixel de la Interfaz de Usuario.\n§eSe recomienda en potencias de 2.\n§fMin: 0.001953125\nMax: 16.0§r
+antiqueatlas.userinterface.doreversewheelzoom=Invertir rueda del mouse
+antiqueatlas.userinterface.doreversewheelzoom.tooltip=Por defecto (false):\n§eRueda hacia arriba = Acercar\n§eRueda hacia abajo = Alejar§r\n§fSi es true, estas direcciones se invierten.§r
+antiqueatlas.userinterface.doscalemarkers=Escalar marcadores
+antiqueatlas.userinterface.doscalemarkers.tooltip=Escalar los marcadores segun el zoom actual
+antiqueatlas.userinterface.maxscale=Escala maxima
+antiqueatlas.userinterface.maxscale.tooltip=Nivel maximo de zoom. Este numero corresponde al tamaño de un bloque en el mapa, relativo al tamaño de pixel de la Interfaz de Usuario.\n§eSe recomienda en potencias de 2.§r\n§fMin: 0.001953125\nMax: 16.0§r
+antiqueatlas.userinterface.minscale=Escala minima
+antiqueatlas.userinterface.minscale.tooltip=Nivel minimo de zoom. Este numero corresponde al tamaño de un bloque en el mapa, relativo al tamaño de pixel de la Interfaz de Usuario.\n§eSe recomienda en potencias de 2.§r\n§cUn valor pequeño reducira el rendimiento!§r\n§fMin: 0.001953125\nMax: 16.0§r
