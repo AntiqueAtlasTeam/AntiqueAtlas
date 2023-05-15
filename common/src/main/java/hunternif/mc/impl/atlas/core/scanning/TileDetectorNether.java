@@ -1,4 +1,4 @@
-package hunternif.mc.impl.atlas.core.scaning;
+package hunternif.mc.impl.atlas.core.scanning;
 
 import hunternif.mc.impl.atlas.core.TileIdMap;
 import net.minecraft.block.Block;

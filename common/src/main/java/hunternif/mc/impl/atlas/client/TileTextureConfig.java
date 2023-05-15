@@ -3,7 +3,7 @@ package hunternif.mc.impl.atlas.client;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import hunternif.mc.impl.atlas.AntiqueAtlasMod;
-import hunternif.mc.impl.atlas.core.scaning.TileHeightType;
+import hunternif.mc.impl.atlas.core.scanning.TileHeightType;
 import hunternif.mc.impl.atlas.resource.ResourceReloadListener;
 import hunternif.mc.impl.atlas.util.Log;
 import net.fabricmc.api.EnvType;

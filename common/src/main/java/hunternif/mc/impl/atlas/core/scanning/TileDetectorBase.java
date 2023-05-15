@@ -1,4 +1,4 @@
-package hunternif.mc.impl.atlas.core.scaning;
+package hunternif.mc.impl.atlas.core.scanning;
 
 import dev.architectury.injectables.annotations.ExpectPlatform;
 import hunternif.mc.impl.atlas.AntiqueAtlasMod;
