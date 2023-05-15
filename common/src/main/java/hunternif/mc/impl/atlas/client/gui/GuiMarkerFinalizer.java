@@ -131,7 +131,7 @@ public class GuiMarkerFinalizer extends GuiComponent {
     }
 
     public void setMarkerName(Text name) {
-        textField.setText(name.asString());
+        textField.setText(name.getString());
     }
 
     @Override

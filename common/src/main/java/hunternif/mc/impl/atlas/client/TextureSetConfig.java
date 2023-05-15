@@ -13,6 +13,7 @@ import net.minecraft.resource.ResourceManager;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.profiler.Profiler;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.*;
@@ -40,14 +41,14 @@ public class TextureSetConfig implements ResourceReloadListener<Collection<Textu
             Map<Identifier, TextureSet> sets = new HashMap<>();
 
             try {
-                for (Identifier id : manager.findResources("atlas/texture_sets", (s) -> s.endsWith(".json"))) {
+                for (Identifier id : manager.findResources("atlas/texture_sets", id -> id.toString().endsWith(".json")).keySet()) {
                     Identifier texture_id = new Identifier(
                             id.getNamespace(),
                             id.getPath().replace("atlas/texture_sets/", "").replace(".json", "")
                     );
 
                     try {
-                        Resource resource = manager.getResource(id);
+                        Resource resource = manager.getResource(id).orElseThrow(IOException::new);
                         try (
                                 InputStream stream = resource.getInputStream();
                                 InputStreamReader reader = new InputStreamReader(stream)

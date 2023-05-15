@@ -13,6 +13,7 @@ import net.minecraft.resource.ResourceManager;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.profiler.Profiler;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Collection;
@@ -45,11 +46,11 @@ public class TileTextureConfig implements ResourceReloadListener<Map<Identifier,
             Map<Identifier, Identifier> map = new HashMap<>();
 
             try {
-                for (Identifier id : manager.findResources("atlas/tiles", (s) -> s.endsWith(".json"))) {
+                for (Identifier id : manager.findResources("atlas/tiles", id -> id.toString().endsWith(".json")).keySet()) {
                     Identifier tile_id = new Identifier(id.getNamespace(), id.getPath().replace("atlas/tiles/", "").replace(".json", ""));
 
                     try {
-                        Resource resource = manager.getResource(id);
+                        Resource resource = manager.getResource(id).orElseThrow(IOException::new);
                         try (InputStream stream = resource.getInputStream(); InputStreamReader reader = new InputStreamReader(stream)) {
                             JsonObject object = JsonParser.parseReader(reader).getAsJsonObject();
 
