@@ -89,7 +89,7 @@ public class TileDetectorBase implements ITileDetector {
         throw new AssertionError("Not implemented");
     }
 
-    private int priorityForBiome(World world, Biome biome) {
+    public static int priorityForBiome(World world, Biome biome) {
         Registry<Biome> biomeRegistry = world.getRegistryManager().get(Registry.BIOME_KEY);
         RegistryEntry<Biome> biomeTag = biomeRegistry.entryOf(biomeRegistry.getKey(biome).orElse(null));
         if (biomeTag.isIn(BiomeTags.IS_OCEAN) || biomeTag.isIn(BiomeTags.IS_RIVER) || biomeTag.isIn(BiomeTags.IS_DEEP_OCEAN)) {

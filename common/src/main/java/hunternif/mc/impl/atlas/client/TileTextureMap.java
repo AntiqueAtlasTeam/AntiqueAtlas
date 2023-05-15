@@ -97,6 +97,8 @@ public class TileTextureMap {
     }
 
     static public Optional<Identifier> guessFittingTextureSetFallback(Biome biome) {
+        /*
+        Biome categories are dead - so a fallback from tags just isn't a thing afaik
         Identifier texture_set = switch (biome.getCategory()) {
             case SWAMP -> AntiqueAtlasMod.id("swamp");
             case OCEAN, RIVER ->
@@ -133,8 +135,9 @@ public class TileTextureMap {
                 yield null;
             }
         };
+         */
 
-        return Optional.ofNullable(texture_set);
+        return Optional.empty();
     }
 
     public boolean isRegistered(Identifier id) {
