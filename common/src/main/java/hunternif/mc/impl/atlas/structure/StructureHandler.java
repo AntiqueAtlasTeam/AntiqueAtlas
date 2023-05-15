@@ -15,7 +15,7 @@ import net.minecraft.util.math.BlockBox;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.World;
-import net.minecraft.world.gen.feature.StructureFeature;
+import net.minecraft.world.gen.structure.StructureType;
 import org.apache.commons.lang3.tuple.Triple;
 
 import java.util.*;
@@ -78,8 +78,8 @@ public class StructureHandler {
         registerJigsawTile(jigsawPattern, priority, tileID, ALWAYS);
     }
 
-    public static void registerMarker(StructureFeature<?> structureFeature, Identifier markerType, Text name) {
-        STRUCTURE_PIECE_TO_MARKER_MAP.put(Registry.STRUCTURE_FEATURE.getId(structureFeature), new Pair<>(markerType, name));
+    public static void registerMarker(StructureType<?> structureFeature, Identifier markerType, Text name) {
+        STRUCTURE_PIECE_TO_MARKER_MAP.put(Registry.STRUCTURE_TYPE.getId(structureFeature), new Pair<>(markerType, name));
     }
 
     private static int getPriority(Identifier structurePieceId) {
@@ -138,7 +138,7 @@ public class StructureHandler {
     }
 
     public static void resolve(StructureStart structureStart, ServerWorld world) {
-        Identifier structureId = Registry.STRUCTURE_FEATURE.getId(structureStart.getFeature().feature);
+        Identifier structureId = Registry.STRUCTURE_TYPE.getId(structureStart.getStructure().getType());
         if (STRUCTURE_PIECE_TO_MARKER_MAP.containsKey(structureId)) {
             Triple<Integer, Integer, Identifier> key = Triple.of(
                     structureStart.getBoundingBox().getCenter().getX(),
