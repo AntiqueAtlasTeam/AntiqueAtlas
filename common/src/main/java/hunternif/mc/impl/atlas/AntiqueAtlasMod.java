@@ -55,8 +55,6 @@ public class AntiqueAtlasMod {
     }
 
     public static void init() {
-        TileDetectorBase.scanBiomeTypes();
-
         AutoConfig.register(AntiqueAtlasConfig.class, JanksonConfigSerializer::new);
         CONFIG = AutoConfig.getConfigHolder(AntiqueAtlasConfig.class).getConfig();
 
