@@ -23,7 +23,7 @@ public class TileTextureMapImpl {
 
         RegistryEntry<Biome> biomeTag = MinecraftClient.getInstance().world.getRegistryManager().get(Registry.BIOME_KEY).entryOf(biome);
 
-        if (biomeTag.isIn(Tags.Biomes.IS_END)) {
+        if (biomeTag.isIn(BiomeTags.IS_END)) {
 //            if (biomeTag.isIn(Tags.Biomes.END) || biomeTag.isIn(ConventionalBiomeTags.VEGETATION_SPARSE)) {
 //                return Optional.of(AntiqueAtlasMod.id("end_island_plants"));
 //            } else {
@@ -57,7 +57,7 @@ public class TileTextureMapImpl {
             return Optional.of(AntiqueAtlasMod.id("water"));
         }
 
-        if (biomeTag.isIn(BiomeTags.IS_BEACH) || biomeTag.isIn(Tags.Biomes.IS_BEACH)) {
+        if (biomeTag.isIn(BiomeTags.IS_BEACH) || biomeTag.isIn(BiomeTags.IS_BEACH)) {
             return Optional.of(AntiqueAtlasMod.id("shore"));
         }
 
@@ -69,7 +69,7 @@ public class TileTextureMapImpl {
             }
         }
 
-        if (biomeTag.isIn(Tags.Biomes.IS_SAVANNA)) {
+        if (biomeTag.isIn(BiomeTags.IS_SAVANNA)) {
             return Optional.of(AntiqueAtlasMod.id("savana"));
         }
 
