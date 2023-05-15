@@ -3,6 +3,7 @@ package hunternif.mc.impl.atlas.core.watcher;
 import hunternif.mc.api.AtlasAPI;
 import hunternif.mc.impl.atlas.AntiqueAtlasMod;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 
 /**

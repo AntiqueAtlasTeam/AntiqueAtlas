@@ -8,6 +8,7 @@ import hunternif.mc.impl.atlas.registry.MarkerType;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.text.Text;
 import net.minecraft.world.World;
 import net.minecraft.world.dimension.DimensionType;
 import java.util.List;

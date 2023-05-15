@@ -7,6 +7,7 @@ import hunternif.mc.impl.atlas.client.gui.core.GuiComponent;
 import hunternif.mc.impl.atlas.client.texture.ITexture;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.text.Text;
 
 import java.util.Collections;
 import java.util.Map;

@@ -5,6 +5,7 @@ import hunternif.mc.impl.atlas.client.Textures;
 import hunternif.mc.impl.atlas.client.gui.core.GuiComponentButton;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.text.Text;
 import org.lwjgl.opengl.GL11;
 
 import java.util.Collections;
