@@ -15,6 +15,9 @@
   "gui.antiqueatlas.marker.village": "Dorf",
   "gui.antiqueatlas.marker.netherPortal": "Nether-Portal",
   "gui.antiqueatlas.marker.tomb": "Hier ruht %s",
+  "gui.antiqueatlas.marker.treasure": "Vergrabener Schatz",
+  "gui.antiqueatlas.marker.monument": "Ozeanmonument",
+  "gui.antiqueatlas.marker.mansion": "Waldanwesen",
 
   "gui.antiqueatlas.export.opening": "Öffne Datei-Dialogfeld...",
   "gui.antiqueatlas.export.selectFile": "Wähle PNG-Datei zum Speichern aus",
