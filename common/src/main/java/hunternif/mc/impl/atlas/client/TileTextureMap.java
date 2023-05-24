@@ -93,50 +93,6 @@ public class TileTextureMap {
         throw new AssertionError("Not implemented");
     }
 
-    static public Optional<Identifier> guessFittingTextureSetFallback(Biome biome) {
-        /*
-        Biome categories are dead - so a fallback from tags just isn't a thing afaik
-        Identifier texture_set = switch (biome.getCategory()) {
-            case SWAMP -> AntiqueAtlasMod.id("swamp");
-            case OCEAN, RIVER ->
-                    biome.getPrecipitation() == Biome.Precipitation.SNOW ? AntiqueAtlasMod.id("ice") : AntiqueAtlasMod.id("water");
-            case BEACH -> AntiqueAtlasMod.id("shore");
-            case JUNGLE -> AntiqueAtlasMod.id("jungle");
-            case SAVANNA -> AntiqueAtlasMod.id("savanna");
-            case MESA -> AntiqueAtlasMod.id("plateau_mesa");
-            case FOREST ->
-                    biome.getPrecipitation() == Biome.Precipitation.SNOW ? AntiqueAtlasMod.id("snow_pines") : AntiqueAtlasMod.id("forest");
-            case PLAINS ->
-                    biome.getPrecipitation() == Biome.Precipitation.SNOW ? AntiqueAtlasMod.id("snow") : AntiqueAtlasMod.id("plains");
-            case ICY -> AntiqueAtlasMod.id("ice_spikes");
-            case DESERT -> AntiqueAtlasMod.id("desert");
-            case TAIGA -> AntiqueAtlasMod.id("snow");
-            case EXTREME_HILLS -> AntiqueAtlasMod.id("hills");
-            case MOUNTAIN -> AntiqueAtlasMod.id("mountains");
-            case THEEND -> {
-                List<RegistryEntryList<PlacedFeature>> features = biome.getGenerationSettings().getFeatures();
-                PlacedFeature chorus_plant_feature = BuiltinRegistries.PLACED_FEATURE.get(new Identifier("chorus_plant"));
-                assert chorus_plant_feature != null;
-                boolean has_chorus_plant = features.stream().anyMatch(entries -> entries.stream().anyMatch(feature -> feature.value() == chorus_plant_feature));
-                if (has_chorus_plant) {
-                    yield AntiqueAtlasMod.id("end_island_plants");
-                } else {
-                    yield AntiqueAtlasMod.id("end_island");
-                }
-            }
-            case MUSHROOM -> AntiqueAtlasMod.id("mushroom");
-            case NETHER -> AntiqueAtlasMod.id("soul_sand_valley");
-            case NONE -> AntiqueAtlasMod.id("end_void");
-            case UNDERGROUND -> {
-                Log.warn("Underground biomes aren't supported yet.");
-                yield null;
-            }
-        };
-         */
-
-        return Optional.empty();
-    }
-
     public boolean isRegistered(Identifier id) {
         return textureMap.containsKey(id);
     }

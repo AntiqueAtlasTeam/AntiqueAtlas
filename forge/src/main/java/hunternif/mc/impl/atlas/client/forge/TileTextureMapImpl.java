@@ -162,6 +162,6 @@ public class TileTextureMapImpl {
             AntiqueAtlasMod.LOG.warn("Underground biomes aren't supported yet.");
         }
 
-        return TileTextureMap.guessFittingTextureSetFallback(biomeTag.value());
+        return Optional.empty();
     }
 }

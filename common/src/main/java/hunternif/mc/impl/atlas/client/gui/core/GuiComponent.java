@@ -74,7 +74,7 @@ public class GuiComponent extends Screen {
 
     // TODO
     public GuiComponent() {
-        super(Text.translatable("component"));
+        super(Text.literal("component"));
     }
 
     /**

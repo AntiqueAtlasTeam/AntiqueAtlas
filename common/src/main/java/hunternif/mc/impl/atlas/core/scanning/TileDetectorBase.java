@@ -47,49 +47,12 @@ public class TileDetectorBase implements ITileDetector {
      */
     private static final int ravineMinDepth = 7;
 
-//  Seems like init-time biome classification isn't a thing anymore, so, can't cache these, at least not out of world.
-//    /**
-//     * Set to true for biome IDs that return true for BiomeDictionary.isBiomeOfType(WATER)
-//     */
-//    private static final Set<Identifier> waterBiomes = new HashSet<>();
-//    /**
-//     * Set to true for biome IDs that return true for BiomeDictionary.isBiomeOfType(BEACH)
-//     */
-//    private static final Set<Identifier> beachBiomes = new HashSet<>();
-//
-//    private static final Set<Identifier> swampBiomes = new HashSet<>();
-//
-//    /**
-//     * Scan all registered biomes to mark biomes of certain types that will be
-//     * given higher priority when identifying mean biome ID for a chunk.
-//     * (Currently WATER, BEACH and SWAMP)
-//     */
-//    public static void scanBiomeTypes() {
-//        for (Biome biome : BuiltinRegistries.BIOME) {
-//            switch (biome.getCategory()) {
-//                case BEACH -> beachBiomes.add(BuiltinRegistries.BIOME.getId(biome));
-//                case RIVER, OCEAN -> waterBiomes.add(BuiltinRegistries.BIOME.getId(biome));
-//                case SWAMP -> swampBiomes.add(BuiltinRegistries.BIOME.getId(biome));
-//            }
-//        }
-//    }
-//
-//    int priorityForBiome(Identifier biome) {
-//        if (waterBiomes.contains(biome)) {
-//            return 4;
-//        } else if (beachBiomes.contains(biome)) {
-//            return 3;
-//        } else {
-//            return 1;
-//        }
-//    }
-
     @ExpectPlatform
     static private boolean hasSwampWater(RegistryEntry<Biome> biomeTag) {
         throw new AssertionError("Not implemented");
     }
 
-    public static int priorityForBiome(World world, Biome biome) {
+    static int priorityForBiome(World world, Biome biome) {
         Registry<Biome> biomeRegistry = world.getRegistryManager().get(Registry.BIOME_KEY);
         RegistryEntry<Biome> biomeTag = biomeRegistry.entryOf(biomeRegistry.getKey(biome).orElse(null));
         if (biomeTag.isIn(BiomeTags.IS_OCEAN) || biomeTag.isIn(BiomeTags.IS_RIVER) || biomeTag.isIn(BiomeTags.IS_DEEP_OCEAN)) {

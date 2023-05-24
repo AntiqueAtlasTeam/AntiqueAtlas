@@ -3,18 +3,24 @@ package hunternif.mc.impl.atlas.structure;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import hunternif.mc.api.AtlasAPI;
+import hunternif.mc.impl.atlas.AntiqueAtlasMod;
 import hunternif.mc.impl.atlas.util.MathUtil;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.structure.*;
 import net.minecraft.structure.pool.SinglePoolElement;
 import net.minecraft.structure.pool.StructurePoolElement;
+import net.minecraft.tag.StructureTags;
+import net.minecraft.tag.TagKey;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Pair;
 import net.minecraft.util.math.BlockBox;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.registry.Registry;
+import net.minecraft.util.registry.RegistryEntry;
 import net.minecraft.world.World;
+import net.minecraft.world.biome.Biome;
+import net.minecraft.world.gen.structure.Structure;
 import net.minecraft.world.gen.structure.StructureType;
 import org.apache.commons.lang3.tuple.Triple;
 
@@ -25,6 +31,7 @@ public class StructureHandler {
     private static final HashMultimap<Identifier, Pair<Identifier, Setter>> STRUCTURE_PIECE_TO_TILE_MAP = HashMultimap.create();
     private static final Multimap<Identifier, Pair<Identifier, Setter>> JIGSAW_TO_TILE_MAP = HashMultimap.create();
     private static final Map<Identifier, Pair<Identifier, Text>> STRUCTURE_PIECE_TO_MARKER_MAP = new HashMap<>();
+    private static final Map<TagKey<Structure>, Pair<Identifier, Text>> STRUCTURE_TAG_TO_MARKER_MAP = new HashMap<>();
     private static final Map<Identifier, Integer> STRUCTURE_PIECE_TILE_PRIORITY = new HashMap<>();
     public static final Setter ALWAYS = (world, element, box, rotation) -> Collections.singleton(new ChunkPos(MathUtil.getCenter(box).getX() >> 4, MathUtil.getCenter(box).getZ() >> 4));
 
@@ -80,6 +87,10 @@ public class StructureHandler {
 
     public static void registerMarker(StructureType<?> structureFeature, Identifier markerType, Text name) {
         STRUCTURE_PIECE_TO_MARKER_MAP.put(Registry.STRUCTURE_TYPE.getId(structureFeature), new Pair<>(markerType, name));
+    }
+
+    public static void registerMarker(TagKey<Structure> structureTag, Identifier markerType, Text name) {
+        STRUCTURE_TAG_TO_MARKER_MAP.put(structureTag, new Pair<>(markerType, name));
     }
 
     private static int getPriority(Identifier structurePieceId) {
@@ -139,7 +150,24 @@ public class StructureHandler {
 
     public static void resolve(StructureStart structureStart, ServerWorld world) {
         Identifier structureId = Registry.STRUCTURE_TYPE.getId(structureStart.getStructure().getType());
+
+
+        Pair<Identifier, Text> foundMarker = null;
+
         if (STRUCTURE_PIECE_TO_MARKER_MAP.containsKey(structureId)) {
+            foundMarker =  STRUCTURE_PIECE_TO_MARKER_MAP.get(structureId);
+        } else {
+            Registry<Structure> structureRegistry = world.getRegistryManager().get(Registry.STRUCTURE_KEY);
+            RegistryEntry<Structure> structureTag = structureRegistry.entryOf(structureRegistry.getKey(structureStart.getStructure()).orElse(null));
+            for (Map.Entry<TagKey<Structure>, Pair<Identifier, Text>> entry : STRUCTURE_TAG_TO_MARKER_MAP.entrySet()) {
+                if (structureTag.isIn(entry.getKey())) {
+                    foundMarker = entry.getValue();
+                    break;
+                }
+            }
+        }
+
+        if (foundMarker != null) {
             Triple<Integer, Integer, Identifier> key = Triple.of(
                     structureStart.getBoundingBox().getCenter().getX(),
                     structureStart.getBoundingBox().getCenter().getY(),
@@ -151,8 +179,8 @@ public class StructureHandler {
             AtlasAPI.getMarkerAPI().putGlobalMarker(
                     world,
                     false,
-                    STRUCTURE_PIECE_TO_MARKER_MAP.get(structureId).getLeft(),
-                    STRUCTURE_PIECE_TO_MARKER_MAP.get(structureId).getRight(),
+                    foundMarker.getLeft(),
+                    foundMarker.getRight(),
                     structureStart.getBoundingBox().getCenter().getX(),
                     structureStart.getBoundingBox().getCenter().getZ()
             );

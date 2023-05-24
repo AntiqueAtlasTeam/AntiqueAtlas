@@ -157,6 +157,6 @@ public class TileTextureMapImpl {
             return Optional.of(AntiqueAtlasMod.id("mesa"));
         }
 
-        return TileTextureMap.guessFittingTextureSetFallback(biomeTag.value());
+        return Optional.empty();
     }
 }

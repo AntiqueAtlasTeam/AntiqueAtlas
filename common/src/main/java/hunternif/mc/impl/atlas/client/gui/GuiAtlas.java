@@ -1010,14 +1010,14 @@ public class GuiAtlas extends GuiComponent {
             Identifier tile = biomeData.getTile(pos.x, pos.z);
 
             if (tile == null) {
-                drawTooltip(Arrays.asList(Text.translatable(coords), Text.translatable(chunks)), textRenderer);
+                drawTooltip(Arrays.asList(Text.literal(coords), Text.literal(chunks)), textRenderer);
             } else {
                 String texture_set = TileTextureMap.instance().getTextureSet(tile).name.toString();
                 drawTooltip(Arrays.asList(
-                                Text.translatable(coords),
-                                Text.translatable(chunks),
-                                Text.translatable("Tile: " + tile),
-                                Text.translatable("TSet: " + texture_set)),
+                                Text.literal(coords),
+                                Text.literal(chunks),
+                                Text.literal("Tile: " + tile),
+                                Text.literal("TSet: " + texture_set)),
                         textRenderer);
             }
         }

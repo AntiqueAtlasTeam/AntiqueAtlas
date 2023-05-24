@@ -78,7 +78,7 @@ public class GuiMarkerFinalizer extends GuiComponent {
         super.init();
 
         addDrawableChild(btnDone = new ButtonWidget(this.width / 2 - BUTTON_WIDTH - BUTTON_SPACING / 2, this.height / 2 + 40, BUTTON_WIDTH, 20, Text.translatable("gui.done"), (button) -> {
-            AtlasClientAPI.getMarkerAPI().putMarker(world, true, atlasID, MarkerType.REGISTRY.getId(selectedType), Text.translatable(textField.getText()), markerX, markerZ);
+            AtlasClientAPI.getMarkerAPI().putMarker(world, true, atlasID, MarkerType.REGISTRY.getId(selectedType), Text.literal(textField.getText()), markerX, markerZ);
             Log.info("Put marker in Atlas #%d \"%s\" at (%d, %d)", atlasID, textField.getText(), markerX, markerZ);
 
             ClientPlayerEntity player = MinecraftClient.getInstance().player;
