@@ -41,7 +41,7 @@ public class TileTextureMapImpl {
         return biomeTag.isIn(ConventionalBiomeTags.BEACH);
     }
 
-    private static boolean biomeIsJungle(RegistryEntry<Biome> biomeTag) {
+    public static boolean biomeIsJungle(RegistryEntry<Biome> biomeTag) {
         return biomeTag.isIn(ConventionalBiomeTags.JUNGLE) || biomeTag.isIn(ConventionalBiomeTags.TREE_JUNGLE);
     }
 
