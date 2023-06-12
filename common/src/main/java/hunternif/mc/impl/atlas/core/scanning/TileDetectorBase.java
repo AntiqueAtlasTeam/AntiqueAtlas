@@ -52,9 +52,7 @@ public class TileDetectorBase implements ITileDetector {
         throw new AssertionError("Not implemented");
     }
 
-    static int priorityForBiome(World world, Biome biome) {
-        Registry<Biome> biomeRegistry = world.getRegistryManager().get(Registry.BIOME_KEY);
-        RegistryEntry<Biome> biomeTag = biomeRegistry.entryOf(biomeRegistry.getKey(biome).orElse(null));
+    static int priorityForBiome(RegistryEntry<Biome> biomeTag) {
         if (biomeTag.isIn(BiomeTags.IS_OCEAN) || biomeTag.isIn(BiomeTags.IS_RIVER) || biomeTag.isIn(BiomeTags.IS_DEEP_OCEAN)) {
             return 4;
         } else if (biomeTag.isIn(BiomeTags.IS_BEACH)) {
@@ -175,7 +173,7 @@ public class TileDetectorBase implements ITileDetector {
                 }
 
 //                updateOccurrencesMap(biomeOccurrences, world, biome, getHeightType(weirdness), priorityForBiome(getBiomeIdentifier(world, biome)));
-                updateOccurrencesMap(biomeOccurrences, world, biome, getHeightTypeFromY(y, world.getSeaLevel()), priorityForBiome(world, biome));
+                updateOccurrencesMap(biomeOccurrences, world, biome, getHeightTypeFromY(y, world.getSeaLevel()), priorityForBiome(biomeTag));
             }
         }
 
