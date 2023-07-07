@@ -53,7 +53,7 @@ public class TileTextureMapImpl {
         return biomeTag.isIn((ConventionalBiomeTags.BADLANDS)) || biomeTag.isIn((ConventionalBiomeTags.MESA));
     }
 
-    private static boolean biomeIsPlateau(RegistryEntry<Biome> biomeTag) {
+    public static boolean biomeIsPlateau(RegistryEntry<Biome> biomeTag) {
         return false; // None
     }
 

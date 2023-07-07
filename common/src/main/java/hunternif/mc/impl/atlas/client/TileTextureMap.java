@@ -286,7 +286,7 @@ public class TileTextureMap {
     }
 
     @ExpectPlatform
-    private static boolean biomeIsPlateau(RegistryEntry<Biome> biomeTag) {
+    public static boolean biomeIsPlateau(RegistryEntry<Biome> biomeTag) {
         return false;
     }
 

@@ -53,7 +53,7 @@ public class TileTextureMapImpl {
         return false; // None
     }
 
-    private static boolean biomeIsPlateau(RegistryEntry<Biome> biomeTag) {
+    public static boolean biomeIsPlateau(RegistryEntry<Biome> biomeTag) {
         return biomeTag.isIn((Tags.Biomes.IS_PLATEAU));
     }
 
