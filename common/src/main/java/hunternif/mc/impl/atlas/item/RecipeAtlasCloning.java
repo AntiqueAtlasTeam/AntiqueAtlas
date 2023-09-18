@@ -1,12 +1,14 @@
 package hunternif.mc.impl.atlas.item;
 
 import hunternif.mc.impl.atlas.AntiqueAtlasMod;
-import net.minecraft.inventory.CraftingInventory;
+import net.minecraft.inventory.RecipeInputInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.recipe.CraftingRecipe;
 import net.minecraft.recipe.RecipeSerializer;
 import net.minecraft.recipe.RecipeType;
 import net.minecraft.recipe.SpecialRecipeSerializer;
+import net.minecraft.recipe.book.CraftingRecipeCategory;
+import net.minecraft.registry.DynamicRegistryManager;
 import net.minecraft.util.Identifier;
 import net.minecraft.world.World;
 
@@ -14,7 +16,7 @@ public class RecipeAtlasCloning implements CraftingRecipe {
     public static final RecipeSerializer<?> SERIALIZER = new SpecialRecipeSerializer<>(RecipeAtlasCloning::new);
     private final Identifier id;
 
-    public RecipeAtlasCloning(Identifier identifier) {
+    public RecipeAtlasCloning(Identifier identifier, CraftingRecipeCategory craftingRecipeCategory) {
         this.id = identifier;
     }
 
@@ -24,7 +26,7 @@ public class RecipeAtlasCloning implements CraftingRecipe {
     }
 
     @Override
-    public boolean matches(CraftingInventory inv, World world) {
+    public boolean matches(RecipeInputInventory inv, World world) {
         int i = 0; // number of empty atlases
         ItemStack filledAtlas = ItemStack.EMPTY;
 
@@ -50,7 +52,7 @@ public class RecipeAtlasCloning implements CraftingRecipe {
     }
 
     @Override
-    public ItemStack craft(CraftingInventory inv) {
+    public ItemStack craft(RecipeInputInventory inv, DynamicRegistryManager dynamicRegistryManager) {
         int i = 0; // number of new copies
         ItemStack filledAtlas = ItemStack.EMPTY;
 
@@ -92,7 +94,7 @@ public class RecipeAtlasCloning implements CraftingRecipe {
     }
 
     @Override
-    public ItemStack getOutput() {
+    public ItemStack getOutput(DynamicRegistryManager dynamicRegistryManager) {
         return ItemStack.EMPTY;
     }
 
@@ -109,5 +111,10 @@ public class RecipeAtlasCloning implements CraftingRecipe {
     @Override
     public RecipeType<?> getType() {
         return RecipeType.CRAFTING;
+    }
+
+    @Override
+    public CraftingRecipeCategory getCategory() {
+        return CraftingRecipeCategory.MISC;
     }
 }

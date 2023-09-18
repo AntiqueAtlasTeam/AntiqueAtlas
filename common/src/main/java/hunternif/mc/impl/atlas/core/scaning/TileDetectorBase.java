@@ -4,10 +4,11 @@ import hunternif.mc.impl.atlas.AntiqueAtlasMod;
 import hunternif.mc.impl.atlas.core.TileIdMap;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
+import net.minecraft.registry.RegistryKeys;
+import net.minecraft.registry.entry.RegistryEntry;
+import net.minecraft.registry.tag.BiomeTags;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.registry.BuiltinRegistries;
-import net.minecraft.util.registry.Registry;
 import net.minecraft.world.Heightmap;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
@@ -52,25 +53,26 @@ public class TileDetectorBase implements ITileDetector {
 
     private static final Set<Identifier> swampBiomes = new HashSet<>();
 
-    /**
+    /*
+        We check the tags now!
+
      * Scan all registered biomes to mark biomes of certain types that will be
      * given higher priority when identifying mean biome ID for a chunk.
      * (Currently WATER, BEACH and SWAMP)
-     */
-    public static void scanBiomeTypes() {
-        for (Biome biome : BuiltinRegistries.BIOME) {
+    public static void scanBiomeTypes(World world) {
+        for (Biome biome : Registries.BIOME_SOURCE) {
             switch (biome.getCategory()) {
                 case BEACH -> beachBiomes.add(BuiltinRegistries.BIOME.getId(biome));
                 case RIVER, OCEAN -> waterBiomes.add(BuiltinRegistries.BIOME.getId(biome));
                 case SWAMP -> swampBiomes.add(BuiltinRegistries.BIOME.getId(biome));
             }
         }
-    }
+    }*/
 
-    int priorityForBiome(Identifier biome) {
-        if (waterBiomes.contains(biome)) {
+    int priorityForBiome(RegistryEntry<Biome> biomeRegistryKey) {
+        if (biomeRegistryKey.isIn(BiomeTags.IS_RIVER) || biomeRegistryKey.isIn(BiomeTags.IS_OCEAN)) {
             return 4;
-        } else if (beachBiomes.contains(biome)) {
+        } else if (biomeRegistryKey.isIn(BiomeTags.IS_BEACH)) {
             return 3;
         } else {
             return 1;
@@ -112,7 +114,7 @@ public class TileDetectorBase implements ITileDetector {
 
 
     protected static Identifier getBiomeIdentifier(World world, Biome biome) {
-        return world.getRegistryManager().get(Registry.BIOME_KEY).getId(biome);
+        return world.getRegistryManager().get(RegistryKeys.BIOME).getId(biome);
     }
 
     protected static void updateOccurrencesMap(Map<Identifier, Integer> map, Identifier biome, int weight) {
@@ -140,12 +142,16 @@ public class TileDetectorBase implements ITileDetector {
      */
     @Override
     public Identifier getBiomeID(World world, Chunk chunk) {
-        Map<Identifier, Integer> biomeOccurrences = new HashMap<>(BuiltinRegistries.BIOME.getIds().size());
+        var BIOME_REGISTRY = world.getRegistryManager().get(RegistryKeys.BIOME);
+        Map<Identifier, Integer> biomeOccurrences = new HashMap<>(BIOME_REGISTRY.getIds().size());
 
         for (int x = 0; x < 16; x++) {
             for (int z = 0; z < 16; z++) {
+
+                RegistryEntry<Biome> registryEntryBiome = chunk.getBiomeForNoiseGen(x, world.getSeaLevel(), z);
                 // biomes seems to be changing with height as well. Let's scan at sea level.
-                Biome biome = chunk.getBiomeForNoiseGen(x, world.getSeaLevel(), z).value();
+                Biome biome = registryEntryBiome.value();
+
 
                 // get top block
                 int y = chunk.getHeightmap(Heightmap.Type.MOTION_BLOCKING).get(x, z);
@@ -183,7 +189,7 @@ public class TileDetectorBase implements ITileDetector {
                 }
 
 //                updateOccurrencesMap(biomeOccurrences, world, biome, getHeightType(weirdness), priorityForBiome(getBiomeIdentifier(world, biome)));
-                updateOccurrencesMap(biomeOccurrences, world, biome, getHeightTypeFromY(y, world.getSeaLevel()), priorityForBiome(getBiomeIdentifier(world, biome)));
+                updateOccurrencesMap(biomeOccurrences, world, biome, getHeightTypeFromY(y, world.getSeaLevel()), priorityForBiome(registryEntryBiome));
             }
         }
 

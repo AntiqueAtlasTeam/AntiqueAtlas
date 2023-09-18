@@ -45,11 +45,11 @@ public class TileTextureConfig implements ResourceReloadListener<Map<Identifier,
             Map<Identifier, Identifier> map = new HashMap<>();
 
             try {
-                for (Identifier id : manager.findResources("atlas/tiles", (s) -> s.endsWith(".json"))) {
+                for (Identifier id : manager.findResources("atlas/tiles", (s) -> s.getPath().endsWith(".json")).keySet()) {
                     Identifier tile_id = new Identifier(id.getNamespace(), id.getPath().replace("atlas/tiles/", "").replace(".json", ""));
 
                     try {
-                        Resource resource = manager.getResource(id);
+                        Resource resource = manager.getResource(id).get();
                         try (InputStream stream = resource.getInputStream(); InputStreamReader reader = new InputStreamReader(stream)) {
                             JsonObject object = JsonParser.parseReader(reader).getAsJsonObject();
 

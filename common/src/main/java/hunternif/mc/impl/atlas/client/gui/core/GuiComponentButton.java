@@ -15,7 +15,7 @@ public class GuiComponentButton extends GuiComponent {
     private final List<IButtonListener> listeners = new ArrayList<>();
 
     private boolean enabled = true;
-    private SoundEvent clickSound = SoundEvents.UI_BUTTON_CLICK;
+    private SoundEvent clickSound = SoundEvents.UI_BUTTON_CLICK.value();
 
     public void setEnabled(boolean value) {
         enabled = value;

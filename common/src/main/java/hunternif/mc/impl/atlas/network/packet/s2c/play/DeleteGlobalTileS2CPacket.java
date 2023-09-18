@@ -7,9 +7,9 @@ import hunternif.mc.impl.atlas.network.packet.s2c.S2CPacket;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.network.PacketByteBuf;
+import net.minecraft.registry.RegistryKey;
+import net.minecraft.registry.RegistryKeys;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
-import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.World;
 
 /**
@@ -33,7 +33,7 @@ public class DeleteGlobalTileS2CPacket extends S2CPacket {
 
 	@Environment(EnvType.CLIENT)
 	public static void apply(PacketByteBuf buf, NetworkManager.PacketContext context) {
-		RegistryKey<World> world = RegistryKey.of(Registry.WORLD_KEY, buf.readIdentifier());
+		RegistryKey<World> world = RegistryKey.of(RegistryKeys.WORLD, buf.readIdentifier());
 		int chunkX = buf.readVarInt();
 		int chunkZ = buf.readVarInt();
 

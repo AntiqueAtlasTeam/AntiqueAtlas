@@ -40,14 +40,14 @@ public class TextureSetConfig implements ResourceReloadListener<Collection<Textu
             Map<Identifier, TextureSet> sets = new HashMap<>();
 
             try {
-                for (Identifier id : manager.findResources("atlas/texture_sets", (s) -> s.endsWith(".json"))) {
+                for (Identifier id : manager.findResources("atlas/texture_sets", (s) -> s.getPath().endsWith(".json")).keySet()) {
                     Identifier texture_id = new Identifier(
                             id.getNamespace(),
                             id.getPath().replace("atlas/texture_sets/", "").replace(".json", "")
                     );
 
                     try {
-                        Resource resource = manager.getResource(id);
+                        Resource resource = manager.getResource(id).get();
                         try (
                                 InputStream stream = resource.getInputStream();
                                 InputStreamReader reader = new InputStreamReader(stream)

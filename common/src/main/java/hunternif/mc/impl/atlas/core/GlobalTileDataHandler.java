@@ -1,9 +1,8 @@
 package hunternif.mc.impl.atlas.core;
 
-import net.minecraft.server.MinecraftServer;
+import net.minecraft.registry.RegistryKey;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.World;
 
 import java.util.Map;
