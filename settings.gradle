@@ -13,6 +13,5 @@ if (JavaVersion.current().ordinal() + 1 < 17) {
 
 include("common")
 include("fabric")
-include("forge")
 
 rootProject.name = "antiqueatlas"

@@ -2,9 +2,9 @@ package hunternif.mc.impl.atlas.core.scaning;
 
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
+import net.minecraft.registry.RegistryKeys;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.registry.BuiltinRegistries;
 import net.minecraft.world.Heightmap;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
@@ -25,7 +25,8 @@ public class TileDetectorEnd extends TileDetectorBase implements ITileDetector {
 
     @Override
     public Identifier getBiomeID(World world, Chunk chunk) {
-        Map<Identifier, Integer> biomeOccurrences = new HashMap<>(BuiltinRegistries.BIOME.getIds().size());
+        var BIOME_REGISTRY = world.getRegistryManager().get(RegistryKeys.BIOME);
+        Map<Identifier, Integer> biomeOccurrences = new HashMap<>(BIOME_REGISTRY.getIds().size());
 
         for (int x = 0; x < 16; x++) {
             for (int z = 0; z < 16; z++) {

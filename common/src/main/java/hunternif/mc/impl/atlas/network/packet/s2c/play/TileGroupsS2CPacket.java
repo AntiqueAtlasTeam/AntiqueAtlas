@@ -10,9 +10,9 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.PacketByteBuf;
+import net.minecraft.registry.RegistryKey;
+import net.minecraft.registry.RegistryKeys;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
-import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.World;
 
 import java.util.ArrayList;
@@ -47,7 +47,7 @@ public class TileGroupsS2CPacket extends S2CPacket {
     @Environment(EnvType.CLIENT)
     public static void apply(PacketByteBuf buf, NetworkManager.PacketContext context) {
         int atlasID = buf.readVarInt();
-        RegistryKey<World> world = RegistryKey.of(Registry.WORLD_KEY, buf.readIdentifier());
+        RegistryKey<World> world = RegistryKey.of(RegistryKeys.WORLD, buf.readIdentifier());
         int length = buf.readVarInt();
         List<TileGroup> tileGroups = new ArrayList<>(length);
 

@@ -6,7 +6,6 @@ import hunternif.mc.impl.atlas.core.AtlasIdData;
 import hunternif.mc.impl.atlas.core.GlobalTileDataHandler;
 import hunternif.mc.impl.atlas.core.PlayerEventHandler;
 import hunternif.mc.impl.atlas.core.TileDataHandler;
-import hunternif.mc.impl.atlas.core.scaning.TileDetectorBase;
 import hunternif.mc.impl.atlas.core.scaning.WorldScanner;
 import hunternif.mc.impl.atlas.event.RecipeCraftedCallback;
 import hunternif.mc.impl.atlas.event.RecipeCraftedHandler;
@@ -55,7 +54,8 @@ public class AntiqueAtlasMod {
     }
 
     public static void init() {
-        TileDetectorBase.scanBiomeTypes();
+        //We just check for tags now
+        //TileDetectorBase.scanBiomeTypes();
 
         AutoConfig.register(AntiqueAtlasConfig.class, JanksonConfigSerializer::new);
         CONFIG = AutoConfig.getConfigHolder(AntiqueAtlasConfig.class).getConfig();
