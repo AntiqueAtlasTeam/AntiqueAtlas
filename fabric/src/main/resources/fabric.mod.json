@@ -5,7 +5,7 @@
   "description": "Antique Atlas is a book that acts like a map featuring infinite scrolling, zoom and custom labeled markers. The map is generated around the player by calculating the average biome in each 16x16 chunk.",
   "version": "${version}",
   "authors": ["Hunternif", "tyra314"],
-  "contributors": ["coolAlias", "Kenkron", "TheCodeWarrior",  "Localizations by crafteverywhere", "CapoFantasma97", "Mazdallier", "mankra", "Zerotiger"],
+  "contributors": ["coolAlias", "Kenkron", "TheCodeWarrior",  "Localizations by crafteverywhere", "CapoFantasma97", "Mazdallier", "mankra", "Zerotiger", "Dev0Louis"],
   "entrypoints": {
     "main": [
       "hunternif.mc.impl.atlas.fabric.AntiqueAtlasModFabric"

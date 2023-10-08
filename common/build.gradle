@@ -1,5 +1,5 @@
 architectury {
-    common(rootProject.enabled_platforms)
+    common(rootProject.enabled_platforms.split(","))
 }
 
 loom {
