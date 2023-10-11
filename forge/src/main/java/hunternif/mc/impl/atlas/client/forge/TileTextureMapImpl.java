@@ -3,11 +3,12 @@ package hunternif.mc.impl.atlas.client.forge;
 import hunternif.mc.impl.atlas.AntiqueAtlasMod;
 import hunternif.mc.impl.atlas.client.TileTextureMap;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.tag.BiomeTags;
+import net.minecraft.registry.RegistryKeys;
+import net.minecraft.registry.tag.BiomeTags;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
-import net.minecraft.util.registry.RegistryEntry;
-import net.minecraft.util.registry.RegistryKey;
+import net.minecraft.registry.Registry;
+import net.minecraft.registry.entry.RegistryEntry;
+import net.minecraft.registry.RegistryKey;
 import net.minecraft.world.biome.Biome;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -21,9 +22,9 @@ public class TileTextureMapImpl {
         if (MinecraftClient.getInstance().world == null)
             return Optional.empty();
 
-        RegistryEntry<Biome> biomeTag = MinecraftClient.getInstance().world.getRegistryManager().get(Registry.BIOME_KEY).entryOf(biome);
+        RegistryEntry.Reference<Biome> biomeTag = MinecraftClient.getInstance().world.getRegistryManager().get(RegistryKeys.BIOME).entryOf(biome);
 
-        if (biomeTag.isIn(Tags.Biomes.IS_END)) {
+        if (biomeTag.isIn(BiomeTags.IS_END)) {
 //            if (biomeTag.isIn(Tags.Biomes.END) || biomeTag.isIn(ConventionalBiomeTags.VEGETATION_SPARSE)) {
 //                return Optional.of(AntiqueAtlasMod.id("end_island_plants"));
 //            } else {
@@ -57,7 +58,7 @@ public class TileTextureMapImpl {
             return Optional.of(AntiqueAtlasMod.id("water"));
         }
 
-        if (biomeTag.isIn(BiomeTags.IS_BEACH) || biomeTag.isIn(Tags.Biomes.IS_BEACH)) {
+        if (biomeTag.isIn(BiomeTags.IS_BEACH) || biomeTag.isIn(BiomeTags.IS_BEACH)) {
             return Optional.of(AntiqueAtlasMod.id("shore"));
         }
 
@@ -69,7 +70,7 @@ public class TileTextureMapImpl {
             }
         }
 
-        if (biomeTag.isIn(Tags.Biomes.IS_SAVANNA)) {
+        if (biomeTag.isIn(BiomeTags.IS_SAVANNA)) {
             return Optional.of(AntiqueAtlasMod.id("savana"));
         }
 
@@ -162,6 +163,6 @@ public class TileTextureMapImpl {
             AntiqueAtlasMod.LOG.warn("Underground biomes aren't supported yet.");
         }
 
-        return TileTextureMap.guessFittingTextureSetFallback(biomeTag.value());
+        return TileTextureMap.guessFittingTextureSetFallback(biomeTag);
     }
 }

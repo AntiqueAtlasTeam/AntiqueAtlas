@@ -1,16 +1,14 @@
 package hunternif.mc.impl.atlas.client.gui;
 
-import com.mojang.blaze3d.systems.RenderSystem;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.render.BufferBuilder;
 import net.minecraft.client.render.Tessellator;
 import net.minecraft.client.render.VertexFormat;
 import net.minecraft.client.render.VertexFormats;
-import net.minecraft.client.util.math.MatrixStack;
-import org.lwjgl.opengl.GL11;
 
 class ProgressBarOverlay {
     /**
@@ -36,20 +34,20 @@ class ProgressBarOverlay {
      * Render progress bar on the screen.
      */
     @Environment(EnvType.CLIENT)
-    public void draw(MatrixStack matrices, int x, int y) {
+    public void draw(DrawContext drawContext, int x, int y) {
         ExportUpdateListener l = ExportUpdateListener.INSTANCE;
 
         int headerWidth = this.textRenderer.getWidth(l.header);
-        this.textRenderer.draw(matrices, l.header, x + (barWidth - headerWidth) / 2F, y - 14, 0xffffff);
+        drawContext.drawText(this.textRenderer, l.header, x + (barWidth - headerWidth) / 2, y - 14, 0xffffff, false);
         int statusWidth = this.textRenderer.getWidth(l.status);
-        this.textRenderer.draw(matrices, l.status, x + (barWidth - statusWidth) / 2F, y, 0xffffff);
+        drawContext.drawText(this.textRenderer, l.header, x + (barWidth - statusWidth) / 2, y, 0xffffff, false);
         y += 14;
 
         double p = l.currentProgress / l.maxProgress;
         if (l.maxProgress < 0)
             p = 0;
 
-        RenderSystem.disableTexture();
+        //RenderSystem.disableTexture();
         Tessellator tessellator = Tessellator.getInstance();
         BufferBuilder vb = tessellator.getBuffer();
 
@@ -67,7 +65,7 @@ class ProgressBarOverlay {
 
         tessellator.draw();
 
-        RenderSystem.enableTexture();
+        //RenderSystem.enableTexture();
     }
 
 }
