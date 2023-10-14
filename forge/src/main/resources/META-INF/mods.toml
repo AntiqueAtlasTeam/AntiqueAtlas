@@ -18,27 +18,27 @@ Antique Atlas is a book that acts like a map featuring infinite scrolling, zoom 
 [[dependencies.antiqueatlas]]
 modId="forge"
 mandatory=true
-versionRange="[40,)"
+versionRange="[47,)"
 ordering="NONE"
 side="BOTH"
 
 [[dependencies.antiqueatlas]]
 modId="minecraft"
 mandatory=true
-versionRange="[1.18.2,)"
+versionRange="[1.20.1,)"
 ordering="NONE"
 side="BOTH"
 
 [[dependencies.antiqueatlas]]
 modId="cloth_config"
 mandatory=true
-versionRange="[6.2.62,)"
+versionRange="[11.1.106,)"
 ordering="NONE"
 side="BOTH"
 
 [[dependencies.antiqueatlas]]
 modId = "architectury"
 mandatory = true
-versionRange = "[4.10.86,)"
+versionRange = "[9.1.12,)"
 ordering = "AFTER"
 side = "BOTH"
