@@ -5,9 +5,9 @@ import com.google.common.collect.Multiset;
 import com.google.common.collect.Ordering;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
+import net.minecraft.registry.RegistryKeys;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.registry.BuiltinRegistries;
 import net.minecraft.world.Heightmap;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
@@ -23,7 +23,7 @@ public class TileDetectorEnd extends TileDetectorBase implements ITileDetector {
 
     @Override
     public Identifier getBiomeID(World world, Chunk chunk) {
-        Multiset<Identifier> biomeOccurrences = HashMultiset.create(BuiltinRegistries.BIOME.getIds().size());
+        Multiset<Identifier> biomeOccurrences = HashMultiset.create(world.getRegistryManager().get(RegistryKeys.BIOME).size());
 
         for (int x = 0; x < 16; x++) {
             for (int z = 0; z < 16; z++) {

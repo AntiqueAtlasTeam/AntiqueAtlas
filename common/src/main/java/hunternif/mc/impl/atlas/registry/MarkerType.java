@@ -12,27 +12,25 @@ import hunternif.mc.impl.atlas.util.BitMatrix;
 import hunternif.mc.impl.atlas.util.Log;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.texture.NativeImage;
 import net.minecraft.client.texture.TextureManager;
+import net.minecraft.registry.Registry;
+import net.minecraft.registry.RegistryKey;
+import net.minecraft.registry.SimpleDefaultedRegistry;
+import net.minecraft.resource.Resource;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.*;
-import org.apache.commons.io.IOUtils;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.OptionalInt;
-
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.resource.Resource;
 
 public class MarkerType {
 	public static final RegistryKey<Registry<MarkerType>> KEY = RegistryKey.ofRegistry(AntiqueAtlasMod.id("marker"));
-	public static final DefaultedRegistry<MarkerType> REGISTRY = new DefaultedRegistry<>(AntiqueAtlasMod.id("red_x_small").toString(),
+	public static final SimpleDefaultedRegistry<MarkerType> REGISTRY = new SimpleDefaultedRegistry<>(AntiqueAtlasMod.id("red_x_small").toString(),
 			KEY,
 			Lifecycle.experimental(),
-			null);
+			false);
 
 	private Identifier[] icons;
 	private BitMatrix[] iconPixels;
@@ -61,7 +59,7 @@ public class MarkerType {
 		type.initMips();
 		if (REGISTRY.containsId(location)) {
 			int id = REGISTRY.getRawId(REGISTRY.get(location));
-			REGISTRY.replace(OptionalInt.of(id), RegistryKey.of(KEY, location), type, Lifecycle.stable());
+			REGISTRY.set(id, RegistryKey.of(KEY, location), type, Lifecycle.stable());
 		} else {
 			REGISTRY.add(RegistryKey.of(KEY, location), type, Lifecycle.stable());
 		}

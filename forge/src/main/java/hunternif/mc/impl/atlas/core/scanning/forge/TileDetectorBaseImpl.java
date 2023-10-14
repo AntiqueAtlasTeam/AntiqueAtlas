@@ -1,6 +1,6 @@
 package hunternif.mc.impl.atlas.core.scanning.forge;
 
-import net.minecraft.util.registry.RegistryEntry;
+import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.world.biome.Biome;
 import net.minecraftforge.common.Tags;
 

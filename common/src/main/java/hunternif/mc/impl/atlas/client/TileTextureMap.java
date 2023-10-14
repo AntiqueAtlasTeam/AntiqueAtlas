@@ -8,11 +8,11 @@ import hunternif.mc.impl.atlas.util.Log;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.tag.BiomeTags;
+import net.minecraft.registry.RegistryKey;
+import net.minecraft.registry.RegistryKeys;
+import net.minecraft.registry.entry.RegistryEntry;
+import net.minecraft.registry.tag.BiomeTags;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
-import net.minecraft.util.registry.RegistryEntry;
-import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.biome.Biome;
 
 import java.util.*;
@@ -96,7 +96,7 @@ public class TileTextureMap {
         if (MinecraftClient.getInstance().world == null)
             return Optional.empty();
 
-        RegistryEntry<Biome> biomeTag = MinecraftClient.getInstance().world.getRegistryManager().get(Registry.BIOME_KEY).entryOf(biome);
+        RegistryEntry<Biome> biomeTag = MinecraftClient.getInstance().world.getRegistryManager().get(RegistryKeys.BIOME).entryOf(biome);
 
         if (biomeIsVoid(biomeTag)) {
             return Optional.of(AntiqueAtlasMod.id("end_void"));

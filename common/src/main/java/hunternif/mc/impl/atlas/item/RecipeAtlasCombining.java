@@ -4,15 +4,17 @@ import hunternif.mc.impl.atlas.AntiqueAtlasMod;
 import hunternif.mc.impl.atlas.core.AtlasData;
 import hunternif.mc.impl.atlas.marker.Marker;
 import hunternif.mc.impl.atlas.marker.MarkersData;
-import net.minecraft.inventory.CraftingInventory;
 import net.minecraft.inventory.Inventory;
+import net.minecraft.inventory.RecipeInputInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.recipe.CraftingRecipe;
 import net.minecraft.recipe.RecipeSerializer;
 import net.minecraft.recipe.RecipeType;
 import net.minecraft.recipe.SpecialRecipeSerializer;
+import net.minecraft.recipe.book.CraftingRecipeCategory;
+import net.minecraft.registry.DynamicRegistryManager;
+import net.minecraft.registry.RegistryKey;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.World;
 
 import java.util.ArrayList;
@@ -27,9 +29,11 @@ import java.util.List;
 public class RecipeAtlasCombining implements CraftingRecipe {
     public static final RecipeSerializer<RecipeAtlasCombining> SERIALIZER = new SpecialRecipeSerializer<>(RecipeAtlasCombining::new);
     private final Identifier id;
+    private final CraftingRecipeCategory category;
 
-    public RecipeAtlasCombining(Identifier id) {
+    public RecipeAtlasCombining(Identifier id, CraftingRecipeCategory category) {
         this.id = id;
+        this.category = category;
     }
 
     @Override
@@ -38,11 +42,11 @@ public class RecipeAtlasCombining implements CraftingRecipe {
     }
 
     @Override
-    public boolean matches(CraftingInventory inv, World world) {
+    public boolean matches(RecipeInputInventory inv, World world) {
         return matches(inv);
     }
 
-    private boolean matches(CraftingInventory inv) {
+    private boolean matches(RecipeInputInventory inv) {
         int atlasesFound = 0;
         for (int i = 0; i < inv.size(); ++i) {
             ItemStack stack = inv.getStack(i);
@@ -56,7 +60,7 @@ public class RecipeAtlasCombining implements CraftingRecipe {
     }
 
     @Override
-    public ItemStack craft(CraftingInventory inv) {
+    public ItemStack craft(RecipeInputInventory inv, DynamicRegistryManager registryManager) {
         ItemStack firstAtlas = ItemStack.EMPTY;
         List<Integer> atlasIds = new ArrayList<>(9);
         for (int i = 0; i < inv.size(); ++i) {
@@ -80,7 +84,7 @@ public class RecipeAtlasCombining implements CraftingRecipe {
     }
 
     @Override
-    public ItemStack getOutput() {
+    public ItemStack getOutput(DynamicRegistryManager registryManager) {
         return new ItemStack(AntiqueAtlasItems.ATLAS.get());
     }
 
@@ -97,6 +101,11 @@ public class RecipeAtlasCombining implements CraftingRecipe {
     @Override
     public RecipeType<?> getType() {
         return RecipeType.CRAFTING;
+    }
+
+    @Override
+    public CraftingRecipeCategory getCategory() {
+        return category;
     }
 
     public ItemStack onCrafted(World world, Inventory inventory, ItemStack result) {

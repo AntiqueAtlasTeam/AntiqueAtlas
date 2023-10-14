@@ -71,7 +71,7 @@ public class NetherPortalWatcher {
 			PlayerEntity player = (PlayerEntity) entity;
 			if (isEntityInPortal(entity)) {
 				Log.info("Exiting");
-				// player.worldObj.provider.dimensionId is the dimension of origin
+				// player.getWorld()Obj.provider.dimensionId is the dimension of origin
 				DimensionType originDimension = player.getEntityWorld().getDimension().getType();
 				Log.info("Player %s left the %s", player.getCommandSource().getName(),
 						Registry.DIMENSION_TYPE.getId(originDimension));

@@ -7,12 +7,12 @@ import hunternif.mc.impl.atlas.core.TileIdMap;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
-import net.minecraft.tag.BiomeTags;
+import net.minecraft.registry.Registry;
+import net.minecraft.registry.RegistryKeys;
+import net.minecraft.registry.entry.RegistryEntry;
+import net.minecraft.registry.tag.BiomeTags;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.registry.BuiltinRegistries;
-import net.minecraft.util.registry.Registry;
-import net.minecraft.util.registry.RegistryEntry;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.chunk.Chunk;
@@ -40,8 +40,8 @@ public class TileDetectorNether extends TileDetectorBase implements ITileDetecto
 
     @Override
     public Identifier getBiomeID(World world, Chunk chunk) {
-        Multiset<Identifier> biomeOccurrences = HashMultiset.create(BuiltinRegistries.BIOME.getIds().size());
-        Registry<Biome> biomeRegistry = world.getRegistryManager().get(Registry.BIOME_KEY);
+        Multiset<Identifier> biomeOccurrences = HashMultiset.create(world.getRegistryManager().get(RegistryKeys.BIOME).size());
+        Registry<Biome> biomeRegistry = world.getRegistryManager().get(RegistryKeys.BIOME);
 
         for (int x = 0; x < 16; x++) {
             for (int z = 0; z < 16; z++) {

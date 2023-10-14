@@ -1,7 +1,7 @@
 package hunternif.mc.impl.atlas.client.forge;
 
-import net.minecraft.tag.BiomeTags;
-import net.minecraft.util.registry.RegistryEntry;
+import net.minecraft.registry.tag.BiomeTags;
+import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.world.biome.Biome;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;

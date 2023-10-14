@@ -8,12 +8,12 @@ import hunternif.mc.impl.atlas.AntiqueAtlasMod;
 import hunternif.mc.impl.atlas.core.TileIdMap;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
-import net.minecraft.tag.BiomeTags;
+import net.minecraft.registry.Registry;
+import net.minecraft.registry.RegistryKeys;
+import net.minecraft.registry.entry.RegistryEntry;
+import net.minecraft.registry.tag.BiomeTags;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.registry.BuiltinRegistries;
-import net.minecraft.util.registry.Registry;
-import net.minecraft.util.registry.RegistryEntry;
 import net.minecraft.world.Heightmap;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
@@ -78,7 +78,7 @@ public class TileDetectorBase implements ITileDetector {
 
 
     protected static Identifier getBiomeIdentifier(World world, Biome biome) {
-        return world.getRegistryManager().get(Registry.BIOME_KEY).getId(biome);
+        return world.getRegistryManager().get(RegistryKeys.BIOME).getId(biome);
     }
 
     protected static void updateOccurrencesMap(Multiset<Identifier> map, Identifier biome, int weight) {
@@ -103,8 +103,8 @@ public class TileDetectorBase implements ITileDetector {
      */
     @Override
     public Identifier getBiomeID(World world, Chunk chunk) {
-        Multiset<Identifier> biomeOccurrences = HashMultiset.create(BuiltinRegistries.BIOME.getIds().size());
-        Registry<Biome> biomeRegistry = world.getRegistryManager().get(Registry.BIOME_KEY);
+        Multiset<Identifier> biomeOccurrences = HashMultiset.create(world.getRegistryManager().get(RegistryKeys.BIOME).size());
+        Registry<Biome> biomeRegistry = world.getRegistryManager().get(RegistryKeys.BIOME);
 
         for (int x = 0; x < 16; x++) {
             for (int z = 0; z < 16; z++) {
