@@ -92,7 +92,8 @@ public class GuiMarkerFinalizer extends GuiComponent {
         }).dimensions(this.width / 2 + BUTTON_SPACING / 2, this.height / 2 + 40, BUTTON_WIDTH, 20).build());
         textField = new TextFieldWidget(MinecraftClient.getInstance().textRenderer, (this.width - 200) / 2, this.height / 2 - 81, 200, 20, Text.translatable("gui.antiqueatlas.marker.label"));
         textField.setEditable(true);
-        textField.setText("");
+        textField.setFocusUnlocked(true);
+        textField.setFocused(true);
 
         scroller = new GuiScrollingContainer();
         scroller.setWheelScrollsHorizontally();
