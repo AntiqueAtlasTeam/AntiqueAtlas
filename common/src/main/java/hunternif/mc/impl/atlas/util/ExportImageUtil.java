@@ -121,7 +121,7 @@ public class ExportImageUtil {
         BufferedImage bg = null;
         Map<Identifier, BufferedImage> textureImageMap = new HashMap<>();
         try {
-            InputStream is = MinecraftClient.getInstance().getResourceManager().getResource(Textures.EXPORTED_BG).getInputStream();
+            InputStream is = MinecraftClient.getInstance().getResourceManager().getResource(Textures.EXPORTED_BG).orElseThrow(IOException::new).getInputStream();
             bg = ImageIO.read(is);
             is.close();
 
@@ -136,7 +136,7 @@ public class ExportImageUtil {
             }
             for (Identifier texture : allTextures) {
                 try {
-                    is = MinecraftClient.getInstance().getResourceManager().getResource(texture).getInputStream();
+                    is = MinecraftClient.getInstance().getResourceManager().getResource(texture).orElseThrow(IOException::new).getInputStream();
                     BufferedImage tileImage = ImageIO.read(is);
                     is.close();
                     textureImageMap.put(texture, tileImage);
@@ -193,7 +193,7 @@ public class ExportImageUtil {
         BufferedImage bg = null;
         final Map<Identifier, BufferedImage> textureImageMap = new HashMap<>();
         try {
-            InputStream is = MinecraftClient.getInstance().getResourceManager().getResource(Textures.EXPORTED_BG).getInputStream();
+            InputStream is = MinecraftClient.getInstance().getResourceManager().getResource(Textures.EXPORTED_BG).orElseThrow(IOException::new).getInputStream();
             bg = ImageIO.read(is);
             is.close();
 
@@ -208,7 +208,7 @@ public class ExportImageUtil {
             }
             for (Identifier texture : allTextures) {
                 try {
-                    is = MinecraftClient.getInstance().getResourceManager().getResource(texture).getInputStream();
+                    is = MinecraftClient.getInstance().getResourceManager().getResource(texture).orElseThrow(IOException::new).getInputStream();
                     BufferedImage tileImage = ImageIO.read(is);
                     is.close();
                     textureImageMap.put(texture, tileImage);

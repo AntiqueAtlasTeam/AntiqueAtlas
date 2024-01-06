@@ -3,16 +3,17 @@ package hunternif.mc.impl.atlas.client;
 import dev.architectury.injectables.annotations.ExpectPlatform;
 import hunternif.mc.impl.atlas.AntiqueAtlasMod;
 import hunternif.mc.impl.atlas.client.texture.ITexture;
-import hunternif.mc.impl.atlas.core.scaning.TileHeightType;
+import hunternif.mc.impl.atlas.core.scanning.TileHeightType;
 import hunternif.mc.impl.atlas.util.Log;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.tag.BiomeTags;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.BuiltinRegistries;
-import net.minecraft.util.registry.RegistryEntryList;
+import net.minecraft.util.registry.Registry;
+import net.minecraft.util.registry.RegistryEntry;
 import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.biome.Biome;
-import net.minecraft.world.gen.feature.PlacedFeature;
 
 import java.util.*;
 import java.util.Map.Entry;
@@ -91,50 +92,257 @@ public class TileTextureMap {
         }
     }
 
-    @ExpectPlatform
     static private Optional<Identifier> guessFittingTextureSet(RegistryKey<Biome> biome) {
-        throw new AssertionError("Not implemented");
-    }
+        if (MinecraftClient.getInstance().world == null)
+            return Optional.empty();
 
-    static public Optional<Identifier> guessFittingTextureSetFallback(Biome biome) {
-        Identifier texture_set = switch (biome.getCategory()) {
-            case SWAMP -> AntiqueAtlasMod.id("swamp");
-            case OCEAN, RIVER ->
-                    biome.getPrecipitation() == Biome.Precipitation.SNOW ? AntiqueAtlasMod.id("ice") : AntiqueAtlasMod.id("water");
-            case BEACH -> AntiqueAtlasMod.id("shore");
-            case JUNGLE -> AntiqueAtlasMod.id("jungle");
-            case SAVANNA -> AntiqueAtlasMod.id("savanna");
-            case MESA -> AntiqueAtlasMod.id("plateau_mesa");
-            case FOREST ->
-                    biome.getPrecipitation() == Biome.Precipitation.SNOW ? AntiqueAtlasMod.id("snow_pines") : AntiqueAtlasMod.id("forest");
-            case PLAINS ->
-                    biome.getPrecipitation() == Biome.Precipitation.SNOW ? AntiqueAtlasMod.id("snow") : AntiqueAtlasMod.id("plains");
-            case ICY -> AntiqueAtlasMod.id("ice_spikes");
-            case DESERT -> AntiqueAtlasMod.id("desert");
-            case TAIGA -> AntiqueAtlasMod.id("snow");
-            case EXTREME_HILLS -> AntiqueAtlasMod.id("hills");
-            case MOUNTAIN -> AntiqueAtlasMod.id("mountains");
-            case THEEND -> {
-                List<RegistryEntryList<PlacedFeature>> features = biome.getGenerationSettings().getFeatures();
-                PlacedFeature chorus_plant_feature = BuiltinRegistries.PLACED_FEATURE.get(new Identifier("chorus_plant"));
-                assert chorus_plant_feature != null;
-                boolean has_chorus_plant = features.stream().anyMatch(entries -> entries.stream().anyMatch(feature -> feature.value() == chorus_plant_feature));
-                if (has_chorus_plant) {
-                    yield AntiqueAtlasMod.id("end_island_plants");
+        RegistryEntry<Biome> biomeTag = MinecraftClient.getInstance().world.getRegistryManager().get(Registry.BIOME_KEY).entryOf(biome);
+
+        if (biomeIsVoid(biomeTag)) {
+            return Optional.of(AntiqueAtlasMod.id("end_void"));
+        }
+
+        if (biomeTag.isIn(BiomeTags.IS_END) || biomeIsEnd(biomeTag)) {
+            if (biomeHasVegetation(biomeTag)) {
+                return Optional.of(AntiqueAtlasMod.id("end_island_plants"));
+            } else {
+                return Optional.of(AntiqueAtlasMod.id("end_island"));
+            }
+        }
+
+        if (biomeTag.isIn(BiomeTags.IS_NETHER) || biomeIsNether(biomeTag)) {
+            return Optional.of(AntiqueAtlasMod.id("soul_sand_valley"));
+        }
+
+        if (biomeIsSwamp(biomeTag)) {
+            if (biomeTag.isIn(BiomeTags.IS_HILL)) {
+                return Optional.of(AntiqueAtlasMod.id("swamp_hills"));
+            } else {
+                return Optional.of(AntiqueAtlasMod.id("swamp"));
+            }
+        }
+
+        if (biomeTag.isIn(BiomeTags.IS_OCEAN)
+                || biomeTag.isIn(BiomeTags.IS_DEEP_OCEAN)
+                || biomeTag.isIn(BiomeTags.IS_RIVER)
+                || biomeIsWater(biomeTag)) {
+            if (biomeIsIcy(biomeTag))
+                return Optional.of(AntiqueAtlasMod.id("ice"));
+
+            return Optional.of(AntiqueAtlasMod.id("water"));
+        }
+
+        if (biomeTag.isIn(BiomeTags.IS_BEACH) || biomeIsShore(biomeTag)) {
+            return Optional.of(AntiqueAtlasMod.id("shore"));
+        }
+
+        if (biomeTag.isIn(BiomeTags.IS_JUNGLE) || biomeIsJungle(biomeTag)) {
+            if (biomeTag.isIn(BiomeTags.IS_HILL)) {
+                return Optional.of(AntiqueAtlasMod.id("jungle_hills"));
+            } else {
+                return Optional.of(AntiqueAtlasMod.id("jungle"));
+            }
+        }
+
+        if (biomeTag.isIn(BiomeTags.IS_SAVANNA) || biomeIsSavanna(biomeTag)) {
+            return Optional.of(AntiqueAtlasMod.id("savana"));
+        }
+
+        if (biomeTag.isIn(BiomeTags.IS_BADLANDS) || biomeIsBadlands(biomeTag)) {
+            if (biomeIsPlateau(biomeTag)) { // Is this still valid? Does height checking supersede this?
+                return Optional.of(AntiqueAtlasMod.id("plateau_mesa"));
+            } else {
+                return Optional.of(AntiqueAtlasMod.id("mesa"));
+            }
+        }
+
+        if (biomeTag.isIn(BiomeTags.IS_FOREST) || biomeIsForest(biomeTag)) {
+            if (biomeIsIcy(biomeTag) || biomeIsSnowy(biomeTag)) {
+                if (biomeTag.isIn(BiomeTags.IS_HILL)) {
+                    return Optional.of(AntiqueAtlasMod.id("snow_pines_hills"));
                 } else {
-                    yield AntiqueAtlasMod.id("end_island");
+                    return Optional.of(AntiqueAtlasMod.id("snow_pines"));
+                }
+            } else {
+                if (biomeTag.isIn(BiomeTags.IS_HILL)) {
+                    return Optional.of(AntiqueAtlasMod.id("forest_hills"));
+                } else {
+                    return Optional.of(AntiqueAtlasMod.id("forest"));
                 }
             }
-            case MUSHROOM -> AntiqueAtlasMod.id("mushroom");
-            case NETHER -> AntiqueAtlasMod.id("soul_sand_valley");
-            case NONE -> AntiqueAtlasMod.id("end_void");
-            case UNDERGROUND -> {
-                Log.warn("Underground biomes aren't supported yet.");
-                yield null;
-            }
-        };
+        }
 
-        return Optional.ofNullable(texture_set);
+        if (biomeIsPlains(biomeTag)) {
+            if (biomeIsIcy(biomeTag) || biomeIsSnowy(biomeTag)) {
+                if (biomeTag.isIn(BiomeTags.IS_HILL)) {
+                    return Optional.of(AntiqueAtlasMod.id("snow_hills"));
+                } else {
+                    return Optional.of(AntiqueAtlasMod.id("snow"));
+                }
+            } else {
+                if (biomeTag.isIn(BiomeTags.IS_HILL)) {
+                    return Optional.of(AntiqueAtlasMod.id("hills"));
+                } else {
+                    return Optional.of(AntiqueAtlasMod.id("plains"));
+                }
+            }
+        }
+
+        if (biomeIsIcy(biomeTag)) {
+            if (biomeTag.isIn(BiomeTags.IS_HILL)) {
+                return Optional.of(AntiqueAtlasMod.id("mountains_snow_caps"));
+            } else {
+                return Optional.of(AntiqueAtlasMod.id("ice_spikes"));
+            }
+        }
+
+        if (biomeIsDesert(biomeTag)) {
+            if (biomeTag.isIn(BiomeTags.IS_HILL)) {
+                return Optional.of(AntiqueAtlasMod.id("desert_hills"));
+            } else {
+                return Optional.of(AntiqueAtlasMod.id("desert"));
+            }
+        }
+
+        if (biomeTag.isIn(BiomeTags.IS_TAIGA) || biomeIsTaiga(biomeTag)) { // should this be any snowy biome as a fallback?
+            return Optional.of(AntiqueAtlasMod.id("snow"));
+        }
+
+        if (biomeIsExtremeHills(biomeTag)) {
+            return Optional.of(AntiqueAtlasMod.id("hills"));
+        }
+
+        if (biomeIsPeak(biomeTag)) {
+            return Optional.of(AntiqueAtlasMod.id("mountains_snow_caps"));
+        }
+
+        if (biomeTag.isIn(BiomeTags.IS_MOUNTAIN) || biomeIsMountain(biomeTag)) {
+            return Optional.of(AntiqueAtlasMod.id("mountains"));
+        }
+
+        if (biomeIsMushroom(biomeTag)) {
+            return Optional.of(AntiqueAtlasMod.id("mushroom"));
+        }
+
+        if (biomeTag.isIn(BiomeTags.IS_HILL)) {
+            return Optional.of(AntiqueAtlasMod.id("hills"));
+        }
+
+        if (biomeIsUnderground(biomeTag)) {
+            AntiqueAtlasMod.LOG.warn("Underground biomes aren't supported yet.");
+        }
+
+        return Optional.empty();
+    }
+
+    @ExpectPlatform
+    public static boolean biomeIsVoid(RegistryEntry<Biome> biomeTag) {
+        return false;
+    }
+
+    @ExpectPlatform
+    public static boolean biomeIsEnd(RegistryEntry<Biome> biomeTag) {
+        return false;
+    }
+
+    @ExpectPlatform
+    public static boolean biomeHasVegetation(RegistryEntry<Biome> biomeTag) {
+        return false;
+    }
+
+    @ExpectPlatform
+    public static boolean biomeIsNether(RegistryEntry<Biome> biomeTag) {
+        return false;
+    }
+
+    @ExpectPlatform
+    public static boolean biomeIsSwamp(RegistryEntry<Biome> biomeTag) {
+        return false;
+    }
+
+    @ExpectPlatform
+    public static boolean biomeIsWater(RegistryEntry<Biome> biomeTag) {
+        return false;
+    }
+
+    @ExpectPlatform
+    public static boolean biomeIsIcy(RegistryEntry<Biome> biomeTag) {
+        return false;
+    }
+
+    @ExpectPlatform
+    public static boolean biomeIsShore(RegistryEntry<Biome> biomeTag) {
+        return false;
+    }
+
+    @ExpectPlatform
+    public static boolean biomeIsJungle(RegistryEntry<Biome> biomeTag) {
+        return false;
+    }
+
+    @ExpectPlatform
+    public static boolean biomeIsSavanna(RegistryEntry<Biome> biomeTag) {
+        return false;
+    }
+
+    @ExpectPlatform
+    public static boolean biomeIsPlateau(RegistryEntry<Biome> biomeTag) {
+        return false;
+    }
+
+    @ExpectPlatform
+    public static boolean biomeIsBadlands(RegistryEntry<Biome> biomeTag) {
+        return false;
+    }
+
+    @ExpectPlatform
+    public static boolean biomeIsForest(RegistryEntry<Biome> biomeTag) {
+        return false;
+    }
+
+    @ExpectPlatform
+    public static boolean biomeIsSnowy(RegistryEntry<Biome> biomeTag) {
+        return false;
+    }
+
+    @ExpectPlatform
+    public static boolean biomeIsPlains(RegistryEntry<Biome> biomeTag) {
+        return false;
+    }
+
+    @ExpectPlatform
+    public static boolean biomeIsDesert(RegistryEntry<Biome> biomeTag) {
+        return false;
+    }
+
+    @ExpectPlatform
+    public static boolean biomeIsTaiga(RegistryEntry<Biome> biomeTag) {
+        return false;
+    }
+
+    @ExpectPlatform
+    public static boolean biomeIsExtremeHills(RegistryEntry<Biome> biomeTag) {
+        return false;
+    }
+
+    @ExpectPlatform
+    public static boolean biomeIsPeak(RegistryEntry<Biome> biomeTag) {
+        return false;
+    }
+
+    @ExpectPlatform
+    public static boolean biomeIsMountain(RegistryEntry<Biome> biomeTag) {
+        return false;
+    }
+
+    @ExpectPlatform
+    public static boolean biomeIsMushroom(RegistryEntry<Biome> biomeTag) {
+        return false;
+    }
+
+    @ExpectPlatform
+    public static boolean biomeIsUnderground(RegistryEntry<Biome> biomeTag) {
+        return false;
     }
 
     public boolean isRegistered(Identifier id) {

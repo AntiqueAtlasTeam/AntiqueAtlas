@@ -12,6 +12,7 @@ import net.minecraft.resource.ResourceManager;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.profiler.Profiler;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Collection;
@@ -37,14 +38,14 @@ public class MarkerTextureConfig implements ResourceReloadListener<Map<Identifie
         return CompletableFuture.supplyAsync(() -> {
             Map<Identifier, MarkerType> typeMap = new HashMap<>();
 
-            for (Identifier id : manager.findResources("atlas/markers", (s) -> s.endsWith(".json"))) {
+            for (Identifier id : manager.findResources("atlas/markers", id -> id.toString().endsWith(".json")).keySet()) {
                 Identifier markerId = new Identifier(
                         id.getNamespace(),
                         id.getPath().replace("atlas/markers/", "").replace(".json", "")
                 );
 
                 try {
-                    Resource resource = manager.getResource(id);
+                    Resource resource = manager.getResource(id).orElseThrow(IOException::new);
                     try (
                             InputStream stream = resource.getInputStream();
                             InputStreamReader reader = new InputStreamReader(stream)
