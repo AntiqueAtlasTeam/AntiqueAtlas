@@ -8,7 +8,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
+import net.minecraft.registry.Registries;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -33,7 +33,7 @@ public class AtlasAPI {
     }
 
     public static Item getAtlasItem() {
-        return Registry.ITEM.get(new Identifier("antiqueatlas:antique_atlas"));
+        return Registries.ITEM.get(new Identifier("antiqueatlas:antique_atlas"));
     }
 
     /**

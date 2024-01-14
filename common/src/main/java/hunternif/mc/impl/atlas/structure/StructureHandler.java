@@ -4,6 +4,11 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import hunternif.mc.api.AtlasAPI;
 import hunternif.mc.impl.atlas.util.MathUtil;
+import net.minecraft.registry.Registries;
+import net.minecraft.registry.Registry;
+import net.minecraft.registry.RegistryKeys;
+import net.minecraft.registry.entry.RegistryEntry;
+import net.minecraft.registry.tag.TagKey;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.structure.*;
 import net.minecraft.structure.pool.SinglePoolElement;
@@ -13,9 +18,9 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.Pair;
 import net.minecraft.util.math.BlockBox;
 import net.minecraft.util.math.ChunkPos;
-import net.minecraft.util.registry.Registry;
 import net.minecraft.world.World;
-import net.minecraft.world.gen.feature.StructureFeature;
+import net.minecraft.world.gen.structure.Structure;
+import net.minecraft.world.gen.structure.StructureType;
 import org.apache.commons.lang3.tuple.Triple;
 
 import java.util.*;
@@ -25,6 +30,7 @@ public class StructureHandler {
     private static final HashMultimap<Identifier, Pair<Identifier, Setter>> STRUCTURE_PIECE_TO_TILE_MAP = HashMultimap.create();
     private static final Multimap<Identifier, Pair<Identifier, Setter>> JIGSAW_TO_TILE_MAP = HashMultimap.create();
     private static final Map<Identifier, Pair<Identifier, Text>> STRUCTURE_PIECE_TO_MARKER_MAP = new HashMap<>();
+    private static final Map<TagKey<Structure>, Pair<Identifier, Text>> STRUCTURE_TAG_TO_MARKER_MAP = new HashMap<>();
     private static final Map<Identifier, Integer> STRUCTURE_PIECE_TILE_PRIORITY = new HashMap<>();
     public static final Setter ALWAYS = (world, element, box, rotation) -> Collections.singleton(new ChunkPos(MathUtil.getCenter(box).getX() >> 4, MathUtil.getCenter(box).getZ() >> 4));
 
@@ -60,7 +66,7 @@ public class StructureHandler {
     private static final Set<Triple<Integer, Integer, Identifier>> VISITED_STRUCTURES = Collections.newSetFromMap(new ConcurrentHashMap<>());
 
     public static void registerTile(StructurePieceType structurePieceType, int priority, Identifier textureId, Setter setter) {
-        Identifier id = Registry.STRUCTURE_PIECE.getId(structurePieceType);
+        Identifier id = Registries.STRUCTURE_PIECE.getId(structurePieceType);
         STRUCTURE_PIECE_TO_TILE_MAP.put(id, new Pair<>(textureId, setter));
         STRUCTURE_PIECE_TILE_PRIORITY.put(textureId, priority);
     }
@@ -78,8 +84,12 @@ public class StructureHandler {
         registerJigsawTile(jigsawPattern, priority, tileID, ALWAYS);
     }
 
-    public static void registerMarker(StructureFeature<?> structureFeature, Identifier markerType, Text name) {
-        STRUCTURE_PIECE_TO_MARKER_MAP.put(Registry.STRUCTURE_FEATURE.getId(structureFeature), new Pair<>(markerType, name));
+    public static void registerMarker(StructureType<?> structureFeature, Identifier markerType, Text name) {
+        STRUCTURE_PIECE_TO_MARKER_MAP.put(Registries.STRUCTURE_TYPE.getId(structureFeature), new Pair<>(markerType, name));
+    }
+
+    public static void registerMarker(TagKey<Structure> structureTag, Identifier markerType, Text name) {
+        STRUCTURE_TAG_TO_MARKER_MAP.put(structureTag, new Pair<>(markerType, name));
     }
 
     private static int getPriority(Identifier structurePieceId) {
@@ -120,7 +130,7 @@ public class StructureHandler {
             return;
         }
 
-        Identifier structurePieceId = Registry.STRUCTURE_PIECE.getId(structurePiece.getType());
+        Identifier structurePieceId = Registries.STRUCTURE_PIECE.getId(structurePiece.getType());
         if (STRUCTURE_PIECE_TO_TILE_MAP.containsKey(structurePieceId)) {
             for (Pair<Identifier, Setter> entry : STRUCTURE_PIECE_TO_TILE_MAP.get(structurePieceId)) {
                 Collection<ChunkPos> matches;
@@ -138,8 +148,25 @@ public class StructureHandler {
     }
 
     public static void resolve(StructureStart structureStart, ServerWorld world) {
-        Identifier structureId = Registry.STRUCTURE_FEATURE.getId(structureStart.getFeature().feature);
+        Identifier structureId = Registries.STRUCTURE_TYPE.getId(structureStart.getStructure().getType());
+
+
+        Pair<Identifier, Text> foundMarker = null;
+
         if (STRUCTURE_PIECE_TO_MARKER_MAP.containsKey(structureId)) {
+            foundMarker =  STRUCTURE_PIECE_TO_MARKER_MAP.get(structureId);
+        } else {
+            Registry<Structure> structureRegistry = world.getRegistryManager().get(RegistryKeys.STRUCTURE);
+            RegistryEntry<Structure> structureTag = structureRegistry.entryOf(structureRegistry.getKey(structureStart.getStructure()).orElse(null));
+            for (Map.Entry<TagKey<Structure>, Pair<Identifier, Text>> entry : STRUCTURE_TAG_TO_MARKER_MAP.entrySet()) {
+                if (structureTag.isIn(entry.getKey())) {
+                    foundMarker = entry.getValue();
+                    break;
+                }
+            }
+        }
+
+        if (foundMarker != null) {
             Triple<Integer, Integer, Identifier> key = Triple.of(
                     structureStart.getBoundingBox().getCenter().getX(),
                     structureStart.getBoundingBox().getCenter().getY(),
@@ -151,8 +178,8 @@ public class StructureHandler {
             AtlasAPI.getMarkerAPI().putGlobalMarker(
                     world,
                     false,
-                    STRUCTURE_PIECE_TO_MARKER_MAP.get(structureId).getLeft(),
-                    STRUCTURE_PIECE_TO_MARKER_MAP.get(structureId).getRight(),
+                    foundMarker.getLeft(),
+                    foundMarker.getRight(),
                     structureStart.getBoundingBox().getCenter().getX(),
                     structureStart.getBoundingBox().getCenter().getZ()
             );

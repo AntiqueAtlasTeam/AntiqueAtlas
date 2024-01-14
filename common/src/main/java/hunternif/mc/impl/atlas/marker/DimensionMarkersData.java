@@ -2,7 +2,7 @@ package hunternif.mc.impl.atlas.marker;
 
 import hunternif.mc.impl.atlas.util.ListMapValueIterator;
 import net.minecraft.util.math.ChunkPos;
-import net.minecraft.util.registry.RegistryKey;
+import net.minecraft.registry.RegistryKey;
 import net.minecraft.world.World;
 
 import java.util.AbstractCollection;

@@ -1,4 +1,4 @@
-package hunternif.mc.impl.atlas.core.scaning;
+package hunternif.mc.impl.atlas.core.scanning;
 
 import net.minecraft.util.Identifier;
 import net.minecraft.world.World;

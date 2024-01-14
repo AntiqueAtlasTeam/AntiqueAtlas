@@ -7,7 +7,7 @@ import hunternif.mc.impl.atlas.client.texture.ITexture;
 import hunternif.mc.impl.atlas.marker.Marker;
 import hunternif.mc.impl.atlas.registry.MarkerType;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.text.Text;
 
 import java.util.Collections;
@@ -45,16 +45,16 @@ public class GuiMarkerBookmark extends GuiComponentButton {
 
 
     @Override
-    public void render(MatrixStack matrices, int mouseX, int mouseY, float partialTick) {
+    public void render(DrawContext context, int mouseX, int mouseY, float partialTick) {
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
 
         // Render background:
         int u = colorIndex * WIDTH;
         int v = isMouseOver ? 0 : HEIGHT;
-        Textures.BOOKMARKS_LEFT.draw(matrices, getGuiX(), getGuiY(), u, v, WIDTH, HEIGHT);
+        Textures.BOOKMARKS_LEFT.draw(context, getGuiX(), getGuiY(), u, v, WIDTH, HEIGHT);
 
         // Render the icon:
-        iconTexture.draw(matrices, getGuiX() - (isMouseOver ? 3 : 2), getGuiY()-3, 24,24);
+        iconTexture.draw(context, getGuiX() - (isMouseOver ? 3 : 2), getGuiY()-3, 24,24);
 
         if (isMouseOver && !getTitle().getString().isEmpty()) {
             drawTooltip(Collections.singletonList(getTitle()), MinecraftClient.getInstance().textRenderer);

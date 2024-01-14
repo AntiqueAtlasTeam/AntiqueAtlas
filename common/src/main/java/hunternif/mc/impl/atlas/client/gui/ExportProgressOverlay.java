@@ -1,24 +1,21 @@
 package hunternif.mc.impl.atlas.client.gui;
 
-import com.mojang.blaze3d.platform.GlStateManager;
-import com.mojang.blaze3d.systems.RenderSystem;
 import hunternif.mc.impl.atlas.util.ExportImageUtil;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.render.BufferBuilder;
 import net.minecraft.client.render.Tessellator;
 import net.minecraft.client.render.VertexFormat;
 import net.minecraft.client.render.VertexFormats;
-import net.minecraft.client.util.math.MatrixStack;
-import org.lwjgl.opengl.GL11;
 
 public enum ExportProgressOverlay {
     INSTANCE;
 
     @Environment(EnvType.CLIENT)
-    public void draw(MatrixStack matrices, int scaledWidth, int scaledHeight) {
+    public void draw(DrawContext context, int scaledWidth, int scaledHeight) {
         int x = scaledWidth - 40, y = scaledHeight - 20, barWidth = 50, barHeight = 2;
 
         ExportUpdateListener l = ExportUpdateListener.INSTANCE;
@@ -31,9 +28,9 @@ public enum ExportProgressOverlay {
         int s = 2;
 
         int headerWidth = font.getWidth(l.header);
-        font.draw(matrices, l.header, (x) * s - headerWidth / 2F, (y) * s - 14, 0xffffff);
+        context.drawText(font, l.header, (int) ((x) * s - headerWidth / 2F), (y) * s - 14, 0xffffff, false);
         int statusWidth = font.getWidth(l.status);
-        font.draw(matrices, l.status, (x) * s - statusWidth / 2F, (y) * s, 0xffffff);
+        context.drawText(font, l.status, (int) ((x) * s - statusWidth / 2F), (y) * s, 0xffffff, false);
 
         y += 7;
 
@@ -41,8 +38,6 @@ public enum ExportProgressOverlay {
         double p = l.currentProgress / l.maxProgress;
         if (l.maxProgress < 0)
             p = 0;
-
-        RenderSystem.disableTexture();
 
         Tessellator tessellator = Tessellator.getInstance();
         BufferBuilder vb = tessellator.getBuffer();
@@ -60,7 +55,5 @@ public enum ExportProgressOverlay {
         vb.vertex(x + barWidth * p, y, 0).color(0.5f, 1, 0.5f, 1).next();
 
         tessellator.draw();
-
-        RenderSystem.enableTexture();
     }
 }

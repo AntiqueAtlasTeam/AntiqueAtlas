@@ -26,7 +26,7 @@ public class JigsawConfig implements ResourceReloadListener<Map<Identifier, Stru
     public static final Map<Identifier, StructurePieceTile> PIECES = new ConcurrentHashMap<>();
 
     private static JsonObject readResource(ResourceManager manager, Identifier id) throws IOException {
-        Resource resource = manager.getResource(id);
+        Resource resource = manager.getResource(id).orElseThrow(IOException::new);
         try (InputStream stream = resource.getInputStream(); InputStreamReader reader = new InputStreamReader(stream)) {
             return JsonParser.parseReader(reader).getAsJsonObject();
         }
@@ -59,7 +59,7 @@ public class JigsawConfig implements ResourceReloadListener<Map<Identifier, Stru
 
 
             try {
-                for (Identifier id : manager.findResources("atlas/structures", (s) -> s.endsWith(".json"))) {
+                for (Identifier id : manager.findResources("atlas/structures", id -> id.toString().endsWith(".json")).keySet()) {
                     // id now contains the physical file path of the structure piece
                     AntiqueAtlasMod.LOG.info("Found structure piece config: " + id);
 

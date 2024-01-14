@@ -1,5 +1,3 @@
 accessWidener v1 named
 accessible field net/minecraft/world/ChunkRegion world Lnet/minecraft/server/world/ServerWorld;
 accessible field net/minecraft/structure/pool/SinglePoolElement location Lcom/mojang/datafixers/util/Either;
-accessible method net/minecraft/world/biome/Biome getCategory (Lnet/minecraft/util/registry/RegistryEntry;)Lnet/minecraft/world/biome/Biome$Category;
-accessible method net/minecraft/world/biome/Biome getCategory ()Lnet/minecraft/world/biome/Biome$Category;
