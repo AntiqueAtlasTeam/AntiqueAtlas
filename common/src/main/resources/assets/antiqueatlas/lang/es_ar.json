@@ -15,6 +15,9 @@
   "gui.antiqueatlas.marker.village": "Aldea",
   "gui.antiqueatlas.marker.netherPortal": "Portal del Nether",
   "gui.antiqueatlas.marker.tomb": "Aquí yace %s",
+  "gui.antiqueatlas.marker.treasure": "Tesoro enterrado",
+  "gui.antiqueatlas.marker.monument": "Monumento oceánico",
+  "gui.antiqueatlas.marker.mansion": "Mansión del bosque",
 
   "gui.antiqueatlas.export.opening": "Abriendo diálogo del sistema de archivos...",
   "gui.antiqueatlas.export.selectFile": "Selecciona el archivo PNG para guardar en",
@@ -34,5 +37,40 @@
   "gui.antiqueatlas.export.rendering.markers": "Renderizando marcadores",
 
   "key.openatlas.desc": "Abrir Atlas",
-  "key.antiqueatlas.category": "Antique Atlas"
+  "key.antiqueatlas.category": "Antique Atlas",
+
+  "text.autoconfig.antiqueatlas.title": "Antique Atlas",
+  "text.autoconfig.antiqueatlas.category.gameplay": "Jugabilidad",
+  "text.autoconfig.antiqueatlas.category.userInterface": "Interfaz de usuario",
+  "text.autoconfig.antiqueatlas.category.performance": "Rendimiento",
+  "text.autoconfig.antiqueatlas.category.appearance": "Apariencia",
+
+  "text.autoconfig.antiqueatlas.option.doSaveBrowsingPos": "Guardar posición del atlas",
+  "text.autoconfig.antiqueatlas.option.autoDeathMarker": "Marcador de muerte",
+  "text.autoconfig.antiqueatlas.option.autoVillageMarkers": "Marcador de aldea",
+  "text.autoconfig.antiqueatlas.option.autoNetherPortalMarkers": "Marcador de portal del Nether",
+  "text.autoconfig.antiqueatlas.option.itemNeeded": "Se requiere atlas para usar",
+
+  "text.autoconfig.antiqueatlas.option.doScaleMarkers": "Escalar marcadores",
+  "text.autoconfig.antiqueatlas.option.defaultScale": "Nivel de zoom por defecto",
+  "text.autoconfig.antiqueatlas.option.minScale": "Nivel de zoom mínimo",
+  "text.autoconfig.antiqueatlas.option.maxScale": "Nivel de zoom máximo",
+  "text.autoconfig.antiqueatlas.option.doReverseWheelZoom": "Invertir zoom de la rueda del mouse",
+
+  "text.autoconfig.antiqueatlas.option.scanRadius": "Radio de escaneo",
+  "text.autoconfig.antiqueatlas.option.forceChunkLoading": "Forzar carga de chunks",
+  "text.autoconfig.antiqueatlas.option.newScanInterval": "Intervalo de escaneo",
+  "text.autoconfig.antiqueatlas.option.doRescan": "Reescanear",
+  "text.autoconfig.antiqueatlas.option.rescanRate": "Frecuencia de reescaneo",
+  "text.autoconfig.antiqueatlas.option.markerLimit": "Límite de marcadores",
+  "text.autoconfig.antiqueatlas.option.doScanPonds": "Escanear estanques",
+  "text.autoconfig.antiqueatlas.option.doScanRavines": "Escanear barrancos",
+  "text.autoconfig.antiqueatlas.option.debugRender": "Renderizado de depuración",
+  "text.autoconfig.antiqueatlas.option.resourcePackLogging": "Registrar carga de paquetes de recursos",
+
+  
+  "text.autoconfig.antiqueatlas.option.tileSize": "Tamaño de un mosaico",
+  "text.autoconfig.antiqueatlas.option.markerSize": "Tamaño de un marcador",
+  "text.autoconfig.antiqueatlas.option.playerIconWidth": "Ancho del ícono del jugador",
+  "text.autoconfig.antiqueatlas.option.playerIconHeight": "Alto del ícono del jugador"
 }
