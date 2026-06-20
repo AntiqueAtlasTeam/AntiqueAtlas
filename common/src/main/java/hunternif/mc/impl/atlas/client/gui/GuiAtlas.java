@@ -652,7 +652,7 @@ public class GuiAtlas extends GuiComponent {
             setMapScale(mapScale * 2);
         } else if (keyCode == GLFW.GLFW_KEY_MINUS || keyCode == GLFW.GLFW_KEY_KP_SUBTRACT) {
             setMapScale(mapScale / 2);
-        } else if (keyCode == GLFW.GLFW_KEY_ESCAPE) {
+        } else if (keyCode == GLFW.GLFW_KEY_ESCAPE || (AntiqueAtlasMod.CONFIG.itemNeeded &&KeyHandler.ATLAS_KEYMAPPING.matchesKey(keyCode, scanCode))) {
             close();
         } else {
             KeyBinding[] hotbarKeys = MinecraftClient.getInstance().options.hotbarKeys;
