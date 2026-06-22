@@ -1,20 +1,18 @@
-package hunternif.mc.impl.atlas.core.scaning;
+package hunternif.mc.impl.atlas.core.scanning;
 
+import com.google.common.collect.HashMultiset;
+import com.google.common.collect.Multiset;
+import com.google.common.collect.Ordering;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
+import net.minecraft.registry.RegistryKeys;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.registry.BuiltinRegistries;
 import net.minecraft.world.Heightmap;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.BiomeKeys;
 import net.minecraft.world.chunk.Chunk;
-
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Detects seas of lava, cave ground and cave walls in the Nether.
@@ -25,7 +23,7 @@ public class TileDetectorEnd extends TileDetectorBase implements ITileDetector {
 
     @Override
     public Identifier getBiomeID(World world, Chunk chunk) {
-        Map<Identifier, Integer> biomeOccurrences = new HashMap<>(BuiltinRegistries.BIOME.getIds().size());
+        Multiset<Identifier> biomeOccurrences = HashMultiset.create(world.getRegistryManager().get(RegistryKeys.BIOME).size());
 
         for (int x = 0; x < 16; x++) {
             for (int z = 0; z < 16; z++) {
@@ -53,11 +51,7 @@ public class TileDetectorEnd extends TileDetectorBase implements ITileDetector {
             }
         }
 
-        if (biomeOccurrences.isEmpty())
-            return null;
-
-        Map.Entry<Identifier, Integer> meanBiome = Collections.max(biomeOccurrences.entrySet(), Comparator
-                .comparingInt(Map.Entry::getValue));
-        return meanBiome.getKey();
+        if (biomeOccurrences.isEmpty()) return null;
+        return biomeOccurrences.entrySet().stream().max(Ordering.natural().onResultOf(Multiset.Entry::getCount)).orElseThrow().getElement();
     }
 }

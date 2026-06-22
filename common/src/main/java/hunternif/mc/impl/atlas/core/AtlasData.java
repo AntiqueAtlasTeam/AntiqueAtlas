@@ -6,11 +6,11 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtList;
+import net.minecraft.registry.RegistryKey;
+import net.minecraft.registry.RegistryKeys;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.ChunkPos;
-import net.minecraft.util.registry.Registry;
-import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.PersistentState;
 import net.minecraft.world.World;
 
@@ -66,7 +66,7 @@ public class AtlasData extends PersistentState {
         for (int d = 0; d < worldMapList.size(); d++) {
             NbtCompound worldTag = worldMapList.getCompound(d);
             RegistryKey<World> worldID;
-            worldID = RegistryKey.of(Registry.WORLD_KEY, new Identifier(worldTag.getString(TAG_WORLD_ID)));
+            worldID = RegistryKey.of(RegistryKeys.WORLD, new Identifier(worldTag.getString(TAG_WORLD_ID)));
             NbtList dimensionTag = (NbtList) worldTag.get(TAG_VISITED_CHUNKS);
             WorldData dimData = this.getWorldData(worldID);
             dimData.readFromNBT(dimensionTag);

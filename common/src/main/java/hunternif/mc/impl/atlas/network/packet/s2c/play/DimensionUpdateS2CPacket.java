@@ -8,9 +8,9 @@ import hunternif.mc.impl.atlas.network.packet.s2c.S2CPacket;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.network.PacketByteBuf;
+import net.minecraft.registry.RegistryKey;
+import net.minecraft.registry.RegistryKeys;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
-import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.World;
 
 import java.util.ArrayList;
@@ -40,7 +40,7 @@ public class DimensionUpdateS2CPacket extends S2CPacket {
 	@Environment(EnvType.CLIENT)
 	public static void apply(PacketByteBuf buf, NetworkManager.PacketContext context) {
 		int atlasID = buf.readVarInt();
-		RegistryKey<World> world = RegistryKey.of(Registry.WORLD_KEY, buf.readIdentifier());
+		RegistryKey<World> world = RegistryKey.of(RegistryKeys.WORLD, buf.readIdentifier());
 		int tileCount = buf.readVarInt();
 
 		if (world == null) {

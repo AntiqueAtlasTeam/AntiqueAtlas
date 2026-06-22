@@ -44,7 +44,7 @@ public abstract class MixinCartographyTableScreenHandler extends ScreenHandler {
         }
     }
 
-    @Inject(method = "transferSlot", at = @At("HEAD"), cancellable = true)
+    @Inject(method = "quickMove", at = @At("HEAD"), cancellable = true)
     void antiqueatlas_transferSlot(PlayerEntity player, int index, CallbackInfoReturnable<ItemStack> info) {
         if (index >= 0 && index <= 2) return;
 

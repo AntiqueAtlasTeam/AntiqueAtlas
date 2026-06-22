@@ -1,20 +1,21 @@
-package hunternif.mc.impl.atlas.core.scaning;
+package hunternif.mc.impl.atlas.core.scanning;
 
+import com.google.common.collect.HashMultiset;
+import com.google.common.collect.Multiset;
+import com.google.common.collect.Ordering;
 import hunternif.mc.impl.atlas.core.TileIdMap;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
+import net.minecraft.registry.Registry;
+import net.minecraft.registry.RegistryKeys;
+import net.minecraft.registry.entry.RegistryEntry;
+import net.minecraft.registry.tag.BiomeTags;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.registry.BuiltinRegistries;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.chunk.Chunk;
-
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Detects seas of lava, cave ground and cave walls in the Nether.
@@ -39,12 +40,14 @@ public class TileDetectorNether extends TileDetectorBase implements ITileDetecto
 
     @Override
     public Identifier getBiomeID(World world, Chunk chunk) {
-        Map<Identifier, Integer> biomeOccurrences = new HashMap<>(BuiltinRegistries.BIOME.getIds().size());
+        Multiset<Identifier> biomeOccurrences = HashMultiset.create(world.getRegistryManager().get(RegistryKeys.BIOME).size());
+        Registry<Biome> biomeRegistry = world.getRegistryManager().get(RegistryKeys.BIOME);
 
         for (int x = 0; x < 16; x++) {
             for (int z = 0; z < 16; z++) {
                 Biome biome = chunk.getBiomeForNoiseGen(x, lavaSeaLevel, z).value();
-                if (biome.getCategory() == Biome.Category.NETHER) {
+                RegistryEntry<Biome> biomeTag = biomeRegistry.entryOf(biomeRegistry.getKey(biome).orElse(null));
+                if (biomeTag.isIn(BiomeTags.IS_NETHER)) {
                     // The Nether!
                     Block seaLevelBlock = chunk.getBlockState(new BlockPos(x, lavaSeaLevel, z)).getBlock();
                     if (seaLevelBlock == Blocks.LAVA) {
@@ -60,17 +63,13 @@ public class TileDetectorNether extends TileDetectorBase implements ITileDetecto
                     }
                 } else {
                     // In case there are custom biomes "modded in":
-                    updateOccurrencesMap(biomeOccurrences, getBiomeIdentifier(world,biome), priorityForBiome(getBiomeIdentifier(world,biome)));
+                    updateOccurrencesMap(biomeOccurrences, getBiomeIdentifier(world,biome), priorityForBiome(biomeTag));
                 }
             }
         }
 
         if (biomeOccurrences.isEmpty()) return null;
-
-        Map.Entry<Identifier, Integer> meanBiome = Collections.max(biomeOccurrences.entrySet(), Comparator
-                .comparingInt(Map.Entry::getValue));
-
-        return meanBiome.getKey();
+        return biomeOccurrences.entrySet().stream().max(Ordering.natural().onResultOf(Multiset.Entry::getCount)).orElseThrow().getElement();
     }
 
     @Override

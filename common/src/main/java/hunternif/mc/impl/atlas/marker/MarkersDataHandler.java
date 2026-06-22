@@ -3,7 +3,7 @@ package hunternif.mc.impl.atlas.marker;
 import hunternif.mc.impl.atlas.item.AtlasItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.registry.RegistryKey;
+import net.minecraft.registry.RegistryKey;
 import net.minecraft.world.PersistentStateManager;
 import net.minecraft.world.World;
 

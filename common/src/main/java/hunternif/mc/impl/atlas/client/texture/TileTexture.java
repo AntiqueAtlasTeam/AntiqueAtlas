@@ -3,7 +3,7 @@ package hunternif.mc.impl.atlas.client.texture;
 import hunternif.mc.impl.atlas.client.SubTile;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.util.Identifier;
 
 /**
@@ -28,7 +28,7 @@ public class TileTexture extends ATexture {
         return 48;
     }
 
-    public void drawSubTile(MatrixStack matrices, SubTile subtile, int tileHalfSize) {
-        draw(matrices, subtile.x * tileHalfSize, subtile.y * tileHalfSize, tileHalfSize, tileHalfSize, subtile.getTextureU() * 8, subtile.getTextureV() * 8, 8, 8);
+    public void drawSubTile(DrawContext context, SubTile subtile, int tileHalfSize) {
+        draw(context, subtile.x * tileHalfSize, subtile.y * tileHalfSize, tileHalfSize, tileHalfSize, subtile.getTextureU() * 8, subtile.getTextureV() * 8, 8, 8);
     }
 }

@@ -5,7 +5,7 @@ import hunternif.mc.impl.atlas.client.Textures;
 import hunternif.mc.impl.atlas.client.gui.core.GuiToggleButton;
 import hunternif.mc.impl.atlas.client.texture.ITexture;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.text.Text;
 
 import java.util.Collections;
@@ -48,16 +48,16 @@ public class GuiBookmarkButton extends GuiToggleButton {
     }
 
     @Override
-    public void render(MatrixStack matrices, int mouseX, int mouseY, float partialTick) {
+    public void render(DrawContext context, int mouseX, int mouseY, float partialTick) {
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
 
         // Render background:
         int u = colorIndex * WIDTH;
         int v = isMouseOver || isSelected() ? 0 : HEIGHT;
-        Textures.BOOKMARKS.draw(matrices, getGuiX(), getGuiY(), u, v, WIDTH, HEIGHT);
+        Textures.BOOKMARKS.draw(context, getGuiX(), getGuiY(), u, v, WIDTH, HEIGHT);
 
         // Render the icon:
-        iconTexture.draw(matrices, getGuiX() + (isMouseOver || isSelected() ? 3 : 2), getGuiY() + 1);
+        iconTexture.draw(context, getGuiX() + (isMouseOver || isSelected() ? 3 : 2), getGuiY() + 1);
 
         if (isMouseOver) {
             drawTooltip(Collections.singletonList(title), MinecraftClient.getInstance().textRenderer);

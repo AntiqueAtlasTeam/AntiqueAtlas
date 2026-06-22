@@ -93,7 +93,7 @@ publishing {
 
 unifiedPublishing {
     project {
-        gameVersions = ["1.18.2"]
+        gameVersions = ["1.20.1"]
         gameLoaders = ["forge"]
         releaseType = "release"
 
