@@ -10,7 +10,6 @@ import net.minecraft.item.Items;
 import net.minecraft.item.map.MapIcon;
 import net.minecraft.item.map.MapState;
 import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Identifier;
 
 public class CartographyTableHooks {
@@ -33,13 +32,13 @@ public class CartographyTableHooks {
 
                     if (icon.getType() == MapIcon.Type.RED_X) {
                         type = AntiqueAtlasMod.id("red_x_small");
-                        label = new TranslatableText("gui.antiqueatlas.marker.treasure");
+                        label = Text.translatable("gui.antiqueatlas.marker.treasure");
                     } else if (icon.getType() == MapIcon.Type.MONUMENT) {
                         type = AntiqueAtlasMod.id("monument");
-                        label = new TranslatableText("gui.antiqueatlas.marker.monument");
+                        label = Text.translatable("gui.antiqueatlas.marker.monument");
                     } else if (icon.getType() == MapIcon.Type.MANSION) {
                         type = AntiqueAtlasMod.id("mansion");
-                        label = new TranslatableText("gui.antiqueatlas.marker.mansion");
+                        label = Text.translatable("gui.antiqueatlas.marker.mansion");
                     }
 
                     if (type != null) {

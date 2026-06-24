@@ -21,13 +21,13 @@ import java.util.HashMap;
 class SetTileRenderer {
 
     private final HashMap<Identifier, ArrayList<TileCorner>> subjects = new HashMap<>();
-    private final MatrixStack matrices;
+    private final MatrixStack matrixStack;
     private final int tileHalfSize;
     private final int light;
     private final VertexConsumerProvider buffer;
 
-    public SetTileRenderer(VertexConsumerProvider buffer, MatrixStack matrices, int tileHalfSize, int light) {
-        this.matrices = matrices;
+    public SetTileRenderer(VertexConsumerProvider buffer, MatrixStack matrixStack, int tileHalfSize, int light) {
+        this.matrixStack = matrixStack;
         this.tileHalfSize = tileHalfSize;
         this.light = light;
         this.buffer = buffer;
@@ -53,7 +53,7 @@ class SetTileRenderer {
     private void drawInlineAutotileCorner(ITexture texture, int x, int y, int u, int v) {
         // This is dumb. But because there are drawn four at a time, these chunks prevent rendering outside of our map
         if ((x + tileHalfSize) <= 240 && (x - tileHalfSize >= 0) && (y + tileHalfSize) < 166 && (y - tileHalfSize) >= 0) {
-            texture.drawWithLight(this.buffer, this.matrices, x, y, tileHalfSize, tileHalfSize, u, v, 1, 1, this.light);
+            texture.drawWithLight(this.buffer, matrixStack, x, y, tileHalfSize, tileHalfSize, u, v, 1, 1, this.light);
         }
     }
 

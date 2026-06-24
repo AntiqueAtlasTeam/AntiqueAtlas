@@ -4,6 +4,8 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import hunternif.mc.api.AtlasAPI;
 import hunternif.mc.impl.atlas.util.MathUtil;
+import net.minecraft.registry.Registries;
+import net.minecraft.registry.RegistryKey;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.structure.*;
 import net.minecraft.structure.pool.SinglePoolElement;
@@ -13,9 +15,7 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.Pair;
 import net.minecraft.util.math.BlockBox;
 import net.minecraft.util.math.ChunkPos;
-import net.minecraft.util.registry.Registry;
 import net.minecraft.world.World;
-import net.minecraft.world.gen.feature.StructureFeature;
 import org.apache.commons.lang3.tuple.Triple;
 
 import java.util.*;
@@ -60,7 +60,7 @@ public class StructureHandler {
     private static final Set<Triple<Integer, Integer, Identifier>> VISITED_STRUCTURES = Collections.newSetFromMap(new ConcurrentHashMap<>());
 
     public static void registerTile(StructurePieceType structurePieceType, int priority, Identifier textureId, Setter setter) {
-        Identifier id = Registry.STRUCTURE_PIECE.getId(structurePieceType);
+        Identifier id = Registries.STRUCTURE_PIECE.getId(structurePieceType);
         STRUCTURE_PIECE_TO_TILE_MAP.put(id, new Pair<>(textureId, setter));
         STRUCTURE_PIECE_TILE_PRIORITY.put(textureId, priority);
     }
@@ -78,8 +78,10 @@ public class StructureHandler {
         registerJigsawTile(jigsawPattern, priority, tileID, ALWAYS);
     }
 
-    public static void registerMarker(StructureFeature<?> structureFeature, Identifier markerType, Text name) {
-        STRUCTURE_PIECE_TO_MARKER_MAP.put(Registry.STRUCTURE_FEATURE.getId(structureFeature), new Pair<>(markerType, name));
+    public static void registerMarker(Iterable<RegistryKey<?>> structureFeatures, Identifier markerType, Text name) {
+        structureFeatures.forEach(structureFeature -> {
+            STRUCTURE_PIECE_TO_MARKER_MAP.put(structureFeature.getValue(), new Pair<>(markerType, name));
+        });
     }
 
     private static int getPriority(Identifier structurePieceId) {
@@ -120,7 +122,7 @@ public class StructureHandler {
             return;
         }
 
-        Identifier structurePieceId = Registry.STRUCTURE_PIECE.getId(structurePiece.getType());
+        Identifier structurePieceId = Registries.STRUCTURE_PIECE.getId(structurePiece.getType());
         if (STRUCTURE_PIECE_TO_TILE_MAP.containsKey(structurePieceId)) {
             for (Pair<Identifier, Setter> entry : STRUCTURE_PIECE_TO_TILE_MAP.get(structurePieceId)) {
                 Collection<ChunkPos> matches;
@@ -138,7 +140,7 @@ public class StructureHandler {
     }
 
     public static void resolve(StructureStart structureStart, ServerWorld world) {
-        Identifier structureId = Registry.STRUCTURE_FEATURE.getId(structureStart.getFeature().feature);
+        Identifier structureId = Registries.STRUCTURE_TYPE.getId(structureStart.getStructure().getType());
         if (STRUCTURE_PIECE_TO_MARKER_MAP.containsKey(structureId)) {
             Triple<Integer, Integer, Identifier> key = Triple.of(
                     structureStart.getBoundingBox().getCenter().getX(),

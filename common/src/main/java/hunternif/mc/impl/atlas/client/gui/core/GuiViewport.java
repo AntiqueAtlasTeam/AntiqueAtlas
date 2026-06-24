@@ -2,7 +2,7 @@ package hunternif.mc.impl.atlas.client.gui.core;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.client.gui.DrawContext;
 
 /**
  * The children of this component are rendered and process input only inside
@@ -52,7 +52,7 @@ public class GuiViewport extends GuiComponent {
     }
 
     @Override
-    public void render(MatrixStack matrices, int mouseX, int mouseY, float par3) {
+    public void render(DrawContext matrices, int mouseX, int mouseY, float par3) {
         RenderSystem.enableScissor((int) (getGuiX() * screenScale),
                 (int) (MinecraftClient.getInstance().getWindow().getFramebufferHeight() - (getGuiY() + properHeight) * screenScale),
                 (int) (properWidth * screenScale), (int) (properHeight * screenScale));

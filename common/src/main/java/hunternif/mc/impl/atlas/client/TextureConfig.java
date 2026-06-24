@@ -41,7 +41,7 @@ public class TextureConfig implements ResourceReloadListener<Map<Identifier, ITe
         return CompletableFuture.supplyAsync(() -> {
             Map<Identifier, ITexture> textures = new HashMap<>();
 
-            for (Identifier id : manager.findResources("textures/gui/tiles", (s) -> s.endsWith(".png"))) {
+            for (Identifier id : manager.findResources("textures/gui/tiles", (s) -> s.getPath().endsWith(".png")).keySet()) {
                 // id now contains the physical file path of the texture
                 try {
 

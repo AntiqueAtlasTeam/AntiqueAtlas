@@ -47,18 +47,18 @@ shadowJar {
     exclude "architectury.common.json"
 
     configurations = [project.configurations.shadowCommon]
-    classifier "dev-shadow"
+    archiveClassifier = "dev-shadow"
 }
 
 remapJar {
     injectAccessWidener = true
     input.set shadowJar.archiveFile
     dependsOn shadowJar
-    classifier null
+    archiveClassifier = null
 }
 
 jar {
-    classifier "dev"
+    archiveClassifier = "dev"
 }
 
 sourcesJar {
@@ -89,7 +89,7 @@ publishing {
 
 unifiedPublishing {
     project {
-        gameVersions = ["1.18.2"]
+        gameVersions = ["1.20.1"]
         gameLoaders = ["fabric"]
         releaseType = "release"
 

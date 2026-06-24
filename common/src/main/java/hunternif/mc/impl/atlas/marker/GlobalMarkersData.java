@@ -1,10 +1,10 @@
 package hunternif.mc.impl.atlas.marker;
 
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.registry.RegistryKey;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.World;
 
 /** Holds global markers, i.e. ones that appear in all atlases. */
