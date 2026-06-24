@@ -1,7 +1,7 @@
 package hunternif.mc.impl.atlas.client.gui.core;
 
 import hunternif.mc.impl.atlas.client.texture.ITexture;
-import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.client.gui.DrawContext;
 
 
 /**
@@ -44,7 +44,7 @@ public class GuiCursor extends GuiComponent {
     }
 
     @Override
-    public void render(MatrixStack matrices, int mouseX, int mouseY, float partialTick) {
-        texture.draw(matrices, mouseX - pointX, mouseY - pointY, textureWidth, textureHeight);
+    public void render(DrawContext drawContext, int mouseX, int mouseY, float partialTick) {
+        texture.draw(drawContext, mouseX - pointX, mouseY - pointY, textureWidth, textureHeight);
     }
 }

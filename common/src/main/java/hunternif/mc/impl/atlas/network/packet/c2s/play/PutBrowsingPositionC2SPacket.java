@@ -1,14 +1,14 @@
 package hunternif.mc.impl.atlas.network.packet.c2s.play;
 
 import dev.architectury.networking.NetworkManager;
-import hunternif.mc.impl.atlas.AntiqueAtlasMod;
 import hunternif.mc.api.AtlasAPI;
+import hunternif.mc.impl.atlas.AntiqueAtlasMod;
 import hunternif.mc.impl.atlas.network.packet.c2s.C2SPacket;
 import hunternif.mc.impl.atlas.util.Log;
 import net.minecraft.network.PacketByteBuf;
+import net.minecraft.registry.RegistryKey;
+import net.minecraft.registry.RegistryKeys;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
-import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.World;
 
 /**
@@ -34,7 +34,7 @@ public class PutBrowsingPositionC2SPacket extends C2SPacket {
 
 	public static void apply(PacketByteBuf buf, NetworkManager.PacketContext context) {
 		int atlasID = buf.readVarInt();
-		RegistryKey<World> world = RegistryKey.of(Registry.WORLD_KEY, buf.readIdentifier());
+		RegistryKey<World> world = RegistryKey.of(RegistryKeys.WORLD, buf.readIdentifier());
 		int x = buf.readVarInt();
 		int y = buf.readVarInt();
 		double zoom = buf.readDouble();

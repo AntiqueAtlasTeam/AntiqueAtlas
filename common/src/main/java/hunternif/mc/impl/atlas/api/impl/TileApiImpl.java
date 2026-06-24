@@ -1,19 +1,19 @@
 package hunternif.mc.impl.atlas.api.impl;
 
-import hunternif.mc.impl.atlas.AntiqueAtlasMod;
 import hunternif.mc.api.TileAPI;
+import hunternif.mc.impl.atlas.AntiqueAtlasMod;
 import hunternif.mc.impl.atlas.core.AtlasData;
 import hunternif.mc.impl.atlas.core.TileDataStorage;
 import hunternif.mc.impl.atlas.network.packet.c2s.play.PutTileC2SPacket;
-import hunternif.mc.impl.atlas.network.packet.s2c.play.PutGlobalTileS2CPacket;
 import hunternif.mc.impl.atlas.network.packet.s2c.play.DeleteGlobalTileS2CPacket;
+import hunternif.mc.impl.atlas.network.packet.s2c.play.PutGlobalTileS2CPacket;
 import hunternif.mc.impl.atlas.network.packet.s2c.play.PutTileS2CPacket;
 import hunternif.mc.impl.atlas.util.Log;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.registry.RegistryKey;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.World;
 
 

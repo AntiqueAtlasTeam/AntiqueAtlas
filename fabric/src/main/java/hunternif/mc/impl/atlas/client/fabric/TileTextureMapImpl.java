@@ -6,11 +6,11 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.tag.convention.v1.ConventionalBiomeTags;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.tag.BiomeTags;
+import net.minecraft.registry.RegistryKey;
+import net.minecraft.registry.RegistryKeys;
+import net.minecraft.registry.entry.RegistryEntry;
+import net.minecraft.registry.tag.BiomeTags;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
-import net.minecraft.util.registry.RegistryEntry;
-import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.biome.Biome;
 
 import java.util.Optional;
@@ -23,8 +23,7 @@ public class TileTextureMapImpl {
         if (MinecraftClient.getInstance().world == null)
             return Optional.empty();
 
-        RegistryEntry<Biome> biomeTag = MinecraftClient.getInstance().world.getRegistryManager().get(Registry.BIOME_KEY).entryOf(biome);
-
+        RegistryEntry.Reference<Biome> biomeTag = MinecraftClient.getInstance().world.getRegistryManager().get(RegistryKeys.BIOME).entryOf(biome);
         if (biomeTag.isIn(ConventionalBiomeTags.SWAMP)) {
             if (biomeTag.isIn(BiomeTags.IS_HILL)) {
                 return Optional.of(AntiqueAtlasMod.id("swamp_hills"));
@@ -157,6 +156,6 @@ public class TileTextureMapImpl {
             return Optional.of(AntiqueAtlasMod.id("mesa"));
         }
 
-        return TileTextureMap.guessFittingTextureSetFallback(biomeTag.value());
+        return TileTextureMap.guessFittingTextureSetFallback(biomeTag);
     }
 }

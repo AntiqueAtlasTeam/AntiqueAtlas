@@ -7,12 +7,10 @@ import hunternif.mc.impl.atlas.core.scaning.TileHeightType;
 import hunternif.mc.impl.atlas.util.Log;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.minecraft.registry.RegistryKey;
+import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.BuiltinRegistries;
-import net.minecraft.util.registry.RegistryEntryList;
-import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.biome.Biome;
-import net.minecraft.world.gen.feature.PlacedFeature;
 
 import java.util.*;
 import java.util.Map.Entry;
@@ -96,8 +94,10 @@ public class TileTextureMap {
         throw new AssertionError("Not implemented");
     }
 
-    static public Optional<Identifier> guessFittingTextureSetFallback(Biome biome) {
-        Identifier texture_set = switch (biome.getCategory()) {
+    //TODO: This is not implemented, because I do not want to do this.
+    static public Optional<Identifier> guessFittingTextureSetFallback(RegistryEntry.Reference<Biome> biome) {
+        AntiqueAtlasMod.LOG.error("FALLBACK WAS CALLED");
+        /**Identifier texture_set = switch (biome.getCategory()) {
             case SWAMP -> AntiqueAtlasMod.id("swamp");
             case OCEAN, RIVER ->
                     biome.getPrecipitation() == Biome.Precipitation.SNOW ? AntiqueAtlasMod.id("ice") : AntiqueAtlasMod.id("water");
@@ -132,9 +132,9 @@ public class TileTextureMap {
                 Log.warn("Underground biomes aren't supported yet.");
                 yield null;
             }
-        };
+        };**/
 
-        return Optional.ofNullable(texture_set);
+        return Optional.ofNullable(null);
     }
 
     public boolean isRegistered(Identifier id) {

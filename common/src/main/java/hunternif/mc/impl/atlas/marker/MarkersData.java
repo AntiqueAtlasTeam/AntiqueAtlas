@@ -1,18 +1,18 @@
 package hunternif.mc.impl.atlas.marker;
 
-import hunternif.mc.impl.atlas.AntiqueAtlasMod;
 import hunternif.mc.api.MarkerAPI;
+import hunternif.mc.impl.atlas.AntiqueAtlasMod;
 import hunternif.mc.impl.atlas.network.packet.s2c.play.PutMarkersS2CPacket;
 import hunternif.mc.impl.atlas.util.Log;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtList;
+import net.minecraft.registry.RegistryKey;
+import net.minecraft.registry.RegistryKeys;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
-import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.PersistentState;
 import net.minecraft.world.World;
 
@@ -90,7 +90,7 @@ public class MarkersData extends PersistentState {
 		NbtList dimensionMapList = compound.getList(TAG_WORLD_MAP_LIST, NbtElement.COMPOUND_TYPE);
 		for (int d = 0; d < dimensionMapList.size(); d++) {
 			NbtCompound tag = dimensionMapList.getCompound(d);
-			RegistryKey<World> world = RegistryKey.of(Registry.WORLD_KEY, new Identifier(tag.getString(TAG_WORLD_ID)));
+			RegistryKey<World> world = RegistryKey.of(RegistryKeys.WORLD, new Identifier(tag.getString(TAG_WORLD_ID)));
 
 			NbtList tagList = tag.getList(TAG_MARKERS, NbtElement.COMPOUND_TYPE);
 			for (int i = 0; i < tagList.size(); i++) {

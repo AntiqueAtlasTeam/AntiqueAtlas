@@ -3,8 +3,8 @@ package hunternif.mc.impl.atlas.marker;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import hunternif.mc.impl.atlas.AntiqueAtlasMod;
-import hunternif.mc.impl.atlas.resource.ResourceReloadListener;
 import hunternif.mc.impl.atlas.registry.MarkerType;
+import hunternif.mc.impl.atlas.resource.ResourceReloadListener;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.resource.Resource;
@@ -37,14 +37,14 @@ public class MarkerTextureConfig implements ResourceReloadListener<Map<Identifie
         return CompletableFuture.supplyAsync(() -> {
             Map<Identifier, MarkerType> typeMap = new HashMap<>();
 
-            for (Identifier id : manager.findResources("atlas/markers", (s) -> s.endsWith(".json"))) {
+            for (Identifier id : manager.findResources("atlas/markers", (id) -> id.toString().endsWith(".json")).keySet()) {
                 Identifier markerId = new Identifier(
                         id.getNamespace(),
                         id.getPath().replace("atlas/markers/", "").replace(".json", "")
                 );
 
                 try {
-                    Resource resource = manager.getResource(id);
+                    Resource resource = manager.getResource(id).get();
                     try (
                             InputStream stream = resource.getInputStream();
                             InputStreamReader reader = new InputStreamReader(stream)

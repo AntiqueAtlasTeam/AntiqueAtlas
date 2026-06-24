@@ -8,7 +8,7 @@ import net.minecraft.world.World;
 
 public class PlayerEventHandler {
     public static void onPlayerLogin(ServerPlayerEntity player) {
-        World world = player.world;
+        World world = player.getWorld();
         int atlasID = player.getUuid().hashCode();
 
         AtlasData data = AntiqueAtlasMod.tileData.getData(atlasID, world);
@@ -28,7 +28,7 @@ public class PlayerEventHandler {
         if (!AntiqueAtlasMod.CONFIG.itemNeeded) {
             // TODO Can we move world scanning to the server in this case as well?
             AtlasData data = AntiqueAtlasMod.tileData.getData(
-                    player.getUuid().hashCode(), player.world);
+                    player.getUuid().hashCode(), player.getWorld());
 
             AntiqueAtlasMod.worldScanner.updateAtlasAroundPlayer(data, player);
         }
