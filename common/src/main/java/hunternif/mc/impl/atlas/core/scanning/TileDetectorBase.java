@@ -1,20 +1,24 @@
-package hunternif.mc.impl.atlas.core.scaning;
+package hunternif.mc.impl.atlas.core.scanning;
 
+import com.google.common.collect.HashMultiset;
+import com.google.common.collect.Multiset;
+import com.google.common.collect.Ordering;
+import dev.architectury.injectables.annotations.ExpectPlatform;
 import hunternif.mc.impl.atlas.AntiqueAtlasMod;
 import hunternif.mc.impl.atlas.core.TileIdMap;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
+import net.minecraft.tag.BiomeTags;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.registry.BuiltinRegistries;
 import net.minecraft.util.registry.Registry;
+import net.minecraft.util.registry.RegistryEntry;
 import net.minecraft.world.Heightmap;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.BiomeKeys;
 import net.minecraft.world.chunk.Chunk;
-
-import java.util.*;
 
 /**
  * Detects the 256 vanilla biomes, water pools and lava pools.
@@ -41,58 +45,20 @@ public class TileDetectorBase implements ITileDetector {
      */
     private static final int ravineMinDepth = 7;
 
-    /**
-     * Set to true for biome IDs that return true for BiomeDictionary.isBiomeOfType(WATER)
-     */
-    private static final Set<Identifier> waterBiomes = new HashSet<>();
-    /**
-     * Set to true for biome IDs that return true for BiomeDictionary.isBiomeOfType(BEACH)
-     */
-    private static final Set<Identifier> beachBiomes = new HashSet<>();
-
-    private static final Set<Identifier> swampBiomes = new HashSet<>();
-
-    /**
-     * Scan all registered biomes to mark biomes of certain types that will be
-     * given higher priority when identifying mean biome ID for a chunk.
-     * (Currently WATER, BEACH and SWAMP)
-     */
-    public static void scanBiomeTypes() {
-        for (Biome biome : BuiltinRegistries.BIOME) {
-            switch (biome.getCategory()) {
-                case BEACH -> beachBiomes.add(BuiltinRegistries.BIOME.getId(biome));
-                case RIVER, OCEAN -> waterBiomes.add(BuiltinRegistries.BIOME.getId(biome));
-                case SWAMP -> swampBiomes.add(BuiltinRegistries.BIOME.getId(biome));
-            }
-        }
+    @ExpectPlatform
+    static private boolean hasSwampWater(RegistryEntry<Biome> biomeTag) {
+        throw new AssertionError("Not implemented");
     }
 
-    int priorityForBiome(Identifier biome) {
-        if (waterBiomes.contains(biome)) {
+    static int priorityForBiome(RegistryEntry<Biome> biomeTag) {
+        if (biomeTag.isIn(BiomeTags.IS_OCEAN) || biomeTag.isIn(BiomeTags.IS_RIVER) || biomeTag.isIn(BiomeTags.IS_DEEP_OCEAN)) {
             return 4;
-        } else if (beachBiomes.contains(biome)) {
+        } else if (biomeTag.isIn(BiomeTags.IS_BEACH)) {
             return 3;
         } else {
             return 1;
         }
     }
-
-    /* these are the values used by vanilla, but it just doesn't work for me.
-    protected static TileHeightType getHeightType(double weirdness) {
-        if (weirdness < (double) VanillaTerrainParameters.getNormalizedWeirdness(0.05f)) {
-            return TileHeightType.VALLEY;
-        }
-        if (weirdness < (double) VanillaTerrainParameters.getNormalizedWeirdness(0.26666668f)) {
-            return TileHeightType.LOW;
-        }
-        if (weirdness < (double) VanillaTerrainParameters.getNormalizedWeirdness(0.4f)) {
-            return TileHeightType.MID;
-        }
-        if (weirdness < (double) VanillaTerrainParameters.getNormalizedWeirdness(0.56666666f)) {
-            return TileHeightType.HIGH;
-        }
-        return TileHeightType.PEAK;
-    } */
 
     protected static TileHeightType getHeightTypeFromY(int y, int sealevel) {
         if (y < sealevel + 10) {
@@ -115,17 +81,14 @@ public class TileDetectorBase implements ITileDetector {
         return world.getRegistryManager().get(Registry.BIOME_KEY).getId(biome);
     }
 
-    protected static void updateOccurrencesMap(Map<Identifier, Integer> map, Identifier biome, int weight) {
-        int occurrence = map.getOrDefault(biome, 0) + weight;
-        map.put(biome, occurrence);
+    protected static void updateOccurrencesMap(Multiset<Identifier> map, Identifier biome, int weight) {
+        map.add(biome, weight);
     }
 
-    protected static void updateOccurrencesMap(Map<Identifier, Integer> map, World world, Biome biome, TileHeightType type, int weight) {
+    protected static void updateOccurrencesMap(Multiset<Identifier> map, World world, Biome biome, TileHeightType type, int weight) {
         Identifier id = getBiomeIdentifier(world, biome);
-        id = Identifier.tryParse(id.toString() + "_" + type.getName());
-
-        int occurrence = map.getOrDefault(id, 0) + weight;
-        map.put(id, occurrence);
+        id = new Identifier(id.getNamespace(), id.getPath() + "_" + type.getName());
+        map.add(id, weight);
     }
 
     @Override
@@ -140,32 +103,25 @@ public class TileDetectorBase implements ITileDetector {
      */
     @Override
     public Identifier getBiomeID(World world, Chunk chunk) {
-        Map<Identifier, Integer> biomeOccurrences = new HashMap<>(BuiltinRegistries.BIOME.getIds().size());
+        Multiset<Identifier> biomeOccurrences = HashMultiset.create(BuiltinRegistries.BIOME.getIds().size());
+        Registry<Biome> biomeRegistry = world.getRegistryManager().get(Registry.BIOME_KEY);
 
         for (int x = 0; x < 16; x++) {
             for (int z = 0; z < 16; z++) {
                 // biomes seems to be changing with height as well. Let's scan at sea level.
                 Biome biome = chunk.getBiomeForNoiseGen(x, world.getSeaLevel(), z).value();
+                RegistryEntry<Biome> biomeTag = biomeRegistry.entryOf(biomeRegistry.getKey(biome).orElse(null));
 
                 // get top block
                 int y = chunk.getHeightmap(Heightmap.Type.MOTION_BLOCKING).get(x, z);
-
-
-                //this code runs on the server
-//                ServerChunkManager man = (ServerChunkManager) world.getChunkManager();
-//                MultiNoiseUtil.MultiNoiseSampler sampler = man.getChunkGenerator().getMultiNoiseSampler();
-//                ChunkPos pos = chunk.getPos();
-//                MultiNoiseUtil.NoiseValuePoint sample = sampler.sample(pos.getStartX() + x, y + 10, pos.getStartZ() + z);
-
-//                float m = MultiNoiseUtil.method_38666(sample.weirdnessNoise());
-//                double weirdness = VanillaTerrainParameters.getNormalizedWeirdness(m);
 
                 if (AntiqueAtlasMod.CONFIG.doScanPonds) {
                     if (y > 0) {
                         Block topBlock = chunk.getBlockState(new BlockPos(x, y - 1, z)).getBlock();
                         // Check if there's surface of water at (x, z), but not swamp
                         if (topBlock == Blocks.WATER) {
-                            if (swampBiomes.contains(getBiomeIdentifier(world, biome))) {
+
+                            if (hasSwampWater(biomeTag)) {
                                 updateOccurrencesMap(biomeOccurrences, TileIdMap.SWAMP_WATER, priorityWaterPool);
                             } else {
                                 updateOccurrencesMap(biomeOccurrences, waterPoolBiome, priorityWaterPool);
@@ -182,14 +138,11 @@ public class TileDetectorBase implements ITileDetector {
                     }
                 }
 
-//                updateOccurrencesMap(biomeOccurrences, world, biome, getHeightType(weirdness), priorityForBiome(getBiomeIdentifier(world, biome)));
-                updateOccurrencesMap(biomeOccurrences, world, biome, getHeightTypeFromY(y, world.getSeaLevel()), priorityForBiome(getBiomeIdentifier(world, biome)));
+                updateOccurrencesMap(biomeOccurrences, world, biome, getHeightTypeFromY(y, world.getSeaLevel()), priorityForBiome(biomeTag));
             }
         }
 
         if (biomeOccurrences.isEmpty()) return null;
-
-        Map.Entry<Identifier, Integer> meanBiome = Collections.max(biomeOccurrences.entrySet(), Comparator.comparingInt(Map.Entry::getValue));
-        return meanBiome.getKey();
+        return biomeOccurrences.entrySet().stream().max(Ordering.natural().onResultOf(Multiset.Entry::getCount)).orElseThrow().getElement();
     }
 }

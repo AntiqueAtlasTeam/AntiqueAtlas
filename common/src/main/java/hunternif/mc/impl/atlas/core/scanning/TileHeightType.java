@@ -1,4 +1,4 @@
-package hunternif.mc.impl.atlas.core.scaning;
+package hunternif.mc.impl.atlas.core.scanning;
 
 /**
  * The enum represents the different height levels in biomes.

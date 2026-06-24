@@ -203,11 +203,10 @@ public class MarkerType {
 				Log.warn("Marker %s -- Texture location is null at index %d!", MarkerType.REGISTRY.getId(this).toString(), i);
 			}
 
-			Resource iresource = null;
 			NativeImage bufferedimage = null;
 
 			try {
-				iresource = MinecraftClient.getInstance().getResourceManager().getResource(icons[i]);
+				Resource iresource = MinecraftClient.getInstance().getResourceManager().getResource(icons[i]).orElseThrow(IOException::new);
 				bufferedimage = NativeImage.read(iresource.getInputStream());
 				iconSizes[i] = Math.min(bufferedimage.getWidth(), bufferedimage.getHeight());
 				BitMatrix matrix = new BitMatrix(bufferedimage.getWidth(), bufferedimage.getHeight(), false);
@@ -244,7 +243,6 @@ public class MarkerType {
 				if (bufferedimage != null) {
 					bufferedimage.close();
 				}
-				IOUtils.closeQuietly(iresource);
 			}
 		}
 	}

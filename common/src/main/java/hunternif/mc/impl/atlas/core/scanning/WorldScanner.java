@@ -1,4 +1,4 @@
-package hunternif.mc.impl.atlas.core.scaning;
+package hunternif.mc.impl.atlas.core.scanning;
 
 import hunternif.mc.api.AtlasAPI;
 import hunternif.mc.impl.atlas.AntiqueAtlasMod;
